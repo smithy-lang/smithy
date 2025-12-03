@@ -3,6 +3,7 @@ package software.amazon.smithy.model.validation.node;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeJmespathRuntime;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ContractsTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;

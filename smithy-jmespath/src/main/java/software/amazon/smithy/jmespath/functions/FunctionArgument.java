@@ -1,6 +1,7 @@
 package software.amazon.smithy.jmespath.functions;
 
 import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
@@ -16,27 +17,27 @@ public abstract class FunctionArgument<T> {
     }
 
     public T expectValue() {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public T expectString() {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public T expectNumber() {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public T expectObject() {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public T expectAnyOf(Set<RuntimeType> types) {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public JmespathExpression expectExpression() {
-        throw new JmespathException("invalid-type");
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
     public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, JmespathExpression expression) {
@@ -64,7 +65,7 @@ public abstract class FunctionArgument<T> {
             if (runtime.is(value, runtimeType)) {
                 return value;
             } else {
-                throw new JmespathException("invalid-type");
+                throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
             }
         }
 
@@ -72,7 +73,7 @@ public abstract class FunctionArgument<T> {
             if (types.contains(runtime.typeOf(value))) {
                 return value;
             } else {
-                throw new JmespathException("invalid-type");
+                throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
             }
         }
 

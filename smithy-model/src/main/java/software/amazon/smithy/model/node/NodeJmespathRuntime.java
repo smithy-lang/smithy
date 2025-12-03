@@ -1,20 +1,17 @@
-package software.amazon.smithy.model.validation.node;
+package software.amazon.smithy.model.node;
 
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
+import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.node.NumberNode;
 
 import java.util.Optional;
 
 public class NodeJmespathRuntime implements JmespathRuntime<Node> {
+
+    public static final NodeJmespathRuntime INSTANCE = new NodeJmespathRuntime();
 
     @Override
     public RuntimeType typeOf(Node value) {
@@ -40,7 +37,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public boolean toBoolean(Node value) {
+    public boolean asBoolean(Node value) {
         return value.expectBooleanNode().getValue();
     }
 
@@ -50,7 +47,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public String toString(Node value) {
+    public String asString(Node value) {
         return value.expectStringNode().getValue();
     }
 
@@ -65,7 +62,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Number toNumber(Node value) {
+    public Number asNumber(Node value) {
         return value.expectNumberNode().getValue();
     }
 
@@ -85,8 +82,12 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Iterable<Node> toIterable(Node array) {
-        return array.expectArrayNode().getElements();
+    public Iterable<Node> toIterable(Node value) {
+        if (value.isArrayNode()) {
+            return value.expectArrayNode().getElements();
+        } else {
+            return new WrappingIterable<>(x -> x, value.expectObjectNode().getMembers().keySet());
+        }
     }
 
     @Override
@@ -115,8 +116,12 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public Node value(Node value, Node name) {
-        Optional<Node> result = value.expectObjectNode().getMember(name.expectStringNode().getValue());
-        return result.orElseGet(this::createNull);
+        if (value.isObjectNode()) {
+            Optional<Node> result = value.expectObjectNode().getMember(name.expectStringNode().getValue());
+            return result.orElseGet(this::createNull);
+        } else {
+            return createNull();
+        }
     }
 
     @Override

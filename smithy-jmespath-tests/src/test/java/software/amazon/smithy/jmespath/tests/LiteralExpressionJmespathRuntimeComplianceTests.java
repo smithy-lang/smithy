@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.jmespath;
+package software.amazon.smithy.jmespath.tests;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.jmespath.LiteralExpressionJmespathRuntime;
 
 import java.util.stream.Stream;
 
-public class ComplianceTests {
+public class LiteralExpressionJmespathRuntimeComplianceTests {
     @ParameterizedTest(name = "{0}")
     @MethodSource("source")
     public void testRunner(String filename, Runnable callable) throws Exception {
@@ -18,6 +19,6 @@ public class ComplianceTests {
     }
 
     public static Stream<?> source() {
-        return ComplianceTestRunner.defaultParameterizedTestSource(ComplianceTests.class, LiteralExpressionJmespathRuntime.INSTANCE);
+        return ComplianceTestRunner.defaultParameterizedTestSource(LiteralExpressionJmespathRuntime.INSTANCE);
     }
 }
