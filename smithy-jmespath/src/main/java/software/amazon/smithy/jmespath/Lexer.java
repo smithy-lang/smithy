@@ -401,10 +401,9 @@ final class Lexer<T> {
                     skip();
                     builder.append('\'');
                 } else {
-                    if (peek() == '\\') {
-                        skip();
-                    }
                     builder.append('\\');
+                    builder.append(peek());
+                    skip();
                 }
             } else if (peek() == '\'') {
                 skip();
