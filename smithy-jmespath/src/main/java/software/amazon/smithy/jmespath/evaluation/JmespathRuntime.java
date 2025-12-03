@@ -1,6 +1,7 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.Collection;
@@ -20,18 +21,18 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             case NULL:
                 return false;
             case BOOLEAN:
-                return toBoolean(value);
+                return asBoolean(value);
             case STRING:
-                return !toString(value).isEmpty();
+                return !asString(value).isEmpty();
             case NUMBER:
                 return true;
             case ARRAY:
             case OBJECT:
                 Iterable<? extends T> iterable = toIterable(value);
                 if (iterable instanceof Collection<?>) {
-                    return ((Collection<?>) iterable).isEmpty();
+                    return !((Collection<?>) iterable).isEmpty();
                 } else {
-                    return !iterable.iterator().hasNext();
+                    return iterable.iterator().hasNext();
                 }
             default: throw new IllegalStateException();
         }
@@ -43,24 +44,24 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     default int compare(T a, T b) {
         // TODO: More types
-        return EvaluationUtils.compareNumbersWithPromotion(toNumber(a), toNumber(b));
+        return EvaluationUtils.compareNumbersWithPromotion(asNumber(a), asNumber(b));
     }
 
     T createNull();
 
     T createBoolean(boolean b);
 
-    boolean toBoolean(T value);
+    boolean asBoolean(T value);
 
     T createString(String string);
 
-    String toString(T value);
+    String asString(T value);
 
     T createNumber(Number value);
 
     NumberType numberType(T value);
 
-    Number toNumber(T value);
+    Number asNumber(T value);
 
     // Common collection operations
 
@@ -77,28 +78,32 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         // TODO: Move to a static method somewhere
         JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
         int length = length(array).intValue();
-        int step = toNumber(stepNumber).intValue();
+        int step = asNumber(stepNumber).intValue();
         if (step == 0) {
-            throw new JmespathException("invalid-value");
+            throw new JmespathException(JmespathExceptionType.INVALID_VALUE, "invalid-value");
         }
-        int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : toNumber(startNumber).intValue();
+        int start = is(startNumber, RuntimeType.NULL) ? (step > 0 ? 0 : length) : asNumber(startNumber).intValue();
         if (start < 0) {
             start = length + start;
         }
-        int stop = is(stopNumber, RuntimeType.NULL) ? (step > 0 ? length : 0) : toNumber(stopNumber).intValue();
+        int stop = is(stopNumber, RuntimeType.NULL) ? (step > 0 ? length : 0) : asNumber(stopNumber).intValue();
         if (stop < 0) {
             stop = length + stop;
         }
 
         if (start < stop) {
-            // TODO: Use iterate(...) when step == 1
-            for (int idx = start; idx < stop; idx += step) {
-                output.add(element(array, createNumber(idx)));
+            if (step > 0) {
+                // TODO: Use iterate(...) when step == 1
+                for (int idx = start; idx < stop; idx += step) {
+                    output.add(element(array, createNumber(idx)));
+                }
             }
         } else {
-            // List is iterating in reverse
-            for (int idx = start; idx > stop; idx -= step) {
-                output.add(element(array, createNumber(idx - 1)));
+            if (step < 0) {
+                // List is iterating in reverse
+                for (int idx = start; idx > stop; idx += step) {
+                    output.add(element(array, createNumber(idx - 1)));
+                }
             }
         }
         return output.build();
@@ -130,7 +135,49 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         T build();
     }
 
-    // TODO: T parseJson(String)?
-    // Only worth it if we make parsing use the runtime as well,
-    // and recognize LiteralExpressions that are wrapping a T somehow.
+    default String toString(T value) {
+        // Quick and dirty implementation just for test names for now
+        switch (typeOf(value)) {
+            case NULL:
+                return "null";
+            case BOOLEAN:
+                return asBoolean(value) ? "true" : "false";
+            case STRING:
+                return '"' + asString(value) + '"';
+            case NUMBER:
+                return asNumber(value).toString();
+            case ARRAY:
+                StringBuilder arrayStringBuilder = new StringBuilder();
+                arrayStringBuilder.append("[");
+                boolean first = true;
+                for (T element : toIterable(value)) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        arrayStringBuilder.append(", ");
+                    }
+                    arrayStringBuilder.append(toString(element));
+                }
+                arrayStringBuilder.append("]");
+                return arrayStringBuilder.toString();
+            case OBJECT:
+                StringBuilder objectStringBuilder = new StringBuilder();
+                objectStringBuilder.append("{");
+                boolean firstKey = true;
+                for (T key : toIterable(value)) {
+                    if (firstKey) {
+                        firstKey = false;
+                    } else {
+                        objectStringBuilder.append(", ");
+                    }
+                    objectStringBuilder.append(toString(key));
+                    objectStringBuilder.append(": ");
+                    objectStringBuilder.append(toString(value(value, key)));
+                }
+                objectStringBuilder.append("}");
+                return objectStringBuilder.toString();
+            default:
+                throw new IllegalStateException();
+        }
+    }
 }

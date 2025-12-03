@@ -31,7 +31,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     }
 
     @Override
-    public boolean toBoolean(LiteralExpression value) {
+    public boolean asBoolean(LiteralExpression value) {
         return value.expectBooleanValue();
     }
 
@@ -41,7 +41,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     }
 
     @Override
-    public String toString(LiteralExpression value) {
+    public String asString(LiteralExpression value) {
         return value.expectStringValue();
     }
 
@@ -56,7 +56,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     }
 
     @Override
-    public Number toNumber(LiteralExpression value) {
+    public Number asNumber(LiteralExpression value) {
         return value.expectNumberValue();
     }
 
@@ -99,7 +99,11 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
 
         @Override
         public void addAll(LiteralExpression array) {
-            result.addAll(array.expectArrayValue());
+            if (array.isArrayValue()) {
+                result.addAll(array.expectArrayValue());
+            } else {
+                result.addAll(array.expectObjectValue().keySet());
+            }
         }
 
         @Override
@@ -110,7 +114,11 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
 
     @Override
     public LiteralExpression value(LiteralExpression value, LiteralExpression name) {
-        return LiteralExpression.from(value.expectObjectValue().get(name.expectStringValue()));
+        if (value.isObjectValue()) {
+            return value.getObjectField(name.expectStringValue());
+        } else {
+            return createNull();
+        }
     }
 
     @Override

@@ -17,13 +17,13 @@ public class MapObjectBuilder<T> implements JmespathRuntime.ObjectBuilder<T> {
 
     @Override
     public void put(T key, T value) {
-        result.put(runtime.toString(key), value);
+        result.put(runtime.asString(key), value);
     }
 
     @Override
     public void putAll(T object) {
         for (T key : runtime.toIterable(object)) {
-            result.put(runtime.toString(key), key);
+            result.put(runtime.asString(key), key);
         }
     }
 

@@ -16,7 +16,7 @@ public class AbsFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
-        Number number = runtime.toNumber(value);
+        Number number = runtime.asNumber(value);
 
         switch (runtime.numberType(value)) {
             case BYTE:

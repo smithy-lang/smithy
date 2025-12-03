@@ -5,6 +5,8 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.ExpressionVisitor;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.AndExpression;
@@ -113,7 +115,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         }
         JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
         for (T val : runtime.toIterable(value)) {
-            if (runtime.is(value, RuntimeType.ARRAY)) {
+            if (runtime.is(val, RuntimeType.ARRAY)) {
                 flattened.addAll(val);
                 continue;
             }
@@ -125,6 +127,9 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitFunction(FunctionExpression functionExpression) {
         Function function = FunctionRegistry.lookup(functionExpression.getName());
+        if (function == null) {
+            throw new JmespathException(JmespathExceptionType.UNKNOWN_FUNCTION, functionExpression.getName());
+        }
         List<FunctionArgument<T>> arguments = new ArrayList<>();
         for (JmespathExpression expr : functionExpression.getArguments()) {
             if (expr instanceof ExpressionTypeExpression) {
