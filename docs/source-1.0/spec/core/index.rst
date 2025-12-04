@@ -82,6 +82,7 @@ Table of contents
     model
     prelude-model
     constraint-traits
+    contract-traits
     documentation-traits
     type-refinement-traits
     protocol-traits
