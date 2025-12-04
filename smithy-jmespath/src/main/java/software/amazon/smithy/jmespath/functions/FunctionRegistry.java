@@ -20,10 +20,25 @@ public class FunctionRegistry {
     static {
         registerFunction(new AbsFunction());
         registerFunction(new AvgFunction());
+        registerFunction(new CeilFunction());
         registerFunction(new ContainsFunction());
+        registerFunction(new EndsWithFunction());
+        registerFunction(new FloorFunction());
+        registerFunction(new JoinFunction());
         registerFunction(new KeysFunction());
         registerFunction(new LengthFunction());
+        registerFunction(new MaxFunction());
+        registerFunction(new MaxByFunction());
+        registerFunction(new MinFunction());
+        registerFunction(new MinByFunction());
+        registerFunction(new NotNullFunction());
+        registerFunction(new ReverseFunction());
+        registerFunction(new SortFunction());
+        registerFunction(new SortByFunction());
+        registerFunction(new StartsWithFunction());
         registerFunction(new SumFunction());
+        registerFunction(new ToNumberFunction());
+        registerFunction(new ToStringFunction());
         registerFunction(new TypeFunction());
         registerFunction(new ValuesFunction());
     }
