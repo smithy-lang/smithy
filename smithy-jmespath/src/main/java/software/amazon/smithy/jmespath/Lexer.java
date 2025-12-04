@@ -189,7 +189,8 @@ final class Lexer<T> {
     }
 
     private JmespathException syntax(String message) {
-        return new JmespathException(JmespathExceptionType.SYNTAX, "Syntax error at line " + line + " column " + column + ": " + message);
+        return new JmespathException(JmespathExceptionType.SYNTAX,
+                "Syntax error at line " + line + " column " + column + ": " + message);
     }
 
     private void skip() {

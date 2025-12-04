@@ -1,13 +1,16 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.build.plugins;
-
-import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import software.amazon.smithy.build.PluginContext;
+import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
 
 public class IDLPlugin implements SmithyBuildPlugin {
     private static final String NAME = "idl";
@@ -21,7 +24,7 @@ public class IDLPlugin implements SmithyBuildPlugin {
     public void execute(PluginContext context) {
         boolean includePrelude = context.getSettings().getBooleanMemberOrDefault("includePreludeShapes");
         SmithyIdlModelSerializer.Builder builder = SmithyIdlModelSerializer.builder()
-            .basePath(context.getFileManifest().getBaseDir());
+                .basePath(context.getFileManifest().getBaseDir());
         if (includePrelude) {
             builder.serializePrelude();
         }

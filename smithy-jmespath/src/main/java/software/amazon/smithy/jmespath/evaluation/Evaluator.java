@@ -4,6 +4,10 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
@@ -27,14 +31,9 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
-import software.amazon.smithy.jmespath.functions.FunctionArgument;
 import software.amazon.smithy.jmespath.functions.Function;
+import software.amazon.smithy.jmespath.functions.FunctionArgument;
 import software.amazon.smithy.jmespath.functions.FunctionRegistry;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalInt;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
@@ -130,7 +129,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         List<FunctionArgument<T>> arguments = new ArrayList<>();
         for (JmespathExpression expr : functionExpression.getArguments()) {
             if (expr instanceof ExpressionTypeExpression) {
-                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression)expr).getExpression()));
+                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression) expr).getExpression()));
             } else {
                 arguments.add(FunctionArgument.of(runtime, visit(expr)));
             }

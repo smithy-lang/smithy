@@ -1,20 +1,14 @@
-/**
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.model.traits;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.BuilderRef;
@@ -39,8 +33,10 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
     @Override
     protected Node createNode() {
         return values.stream()
-            .collect(ArrayNode.collect())
-            .toBuilder().sourceLocation(getSourceLocation()).build();
+                .collect(ArrayNode.collect())
+                .toBuilder()
+                .sourceLocation(getSourceLocation())
+                .build();
     }
 
     /**
@@ -70,7 +66,7 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
      */
     public SmithyBuilder<ContractsTrait> toBuilder() {
         return builder().sourceLocation(getSourceLocation())
-            .values(values);
+                .values(values);
     }
 
     public static Builder builder() {
@@ -138,9 +134,9 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
-                .withMember("expression", Node.from(expression))
-                .withOptionalMember("description", getDescription().map(m -> Node.from(m)))
-                .build();
+                    .withMember("expression", Node.from(expression))
+                    .withOptionalMember("description", getDescription().map(m -> Node.from(m)))
+                    .build();
         }
 
         /**
@@ -153,8 +149,8 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
         public static Contract fromNode(Node node) {
             Builder builder = builder();
             node.expectObjectNode()
-                .expectStringMember("expression", builder::expression)
-                .getStringMember("description", builder::description);
+                    .expectStringMember("expression", builder::expression)
+                    .getStringMember("description", builder::description);
 
             return builder.build();
         }
@@ -178,8 +174,8 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
          */
         public SmithyBuilder<Contract> toBuilder() {
             return builder()
-                .expression(expression)
-                .description(description);
+                    .expression(expression)
+                    .description(description);
         }
 
         public static Builder builder() {

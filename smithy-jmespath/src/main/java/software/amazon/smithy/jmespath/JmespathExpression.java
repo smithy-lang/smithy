@@ -7,8 +7,8 @@ package software.amazon.smithy.jmespath;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 /**
  * Represents a JMESPath AST node.

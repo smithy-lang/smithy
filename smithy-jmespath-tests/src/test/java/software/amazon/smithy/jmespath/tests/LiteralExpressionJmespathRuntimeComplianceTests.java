@@ -2,14 +2,12 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath.tests;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.jmespath.LiteralExpressionJmespathRuntime;
-
-import java.util.stream.Stream;
 
 public class LiteralExpressionJmespathRuntimeComplianceTests {
     @ParameterizedTest(name = "{0}")

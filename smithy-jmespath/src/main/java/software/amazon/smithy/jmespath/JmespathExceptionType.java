@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath;
 
 public enum JmespathExceptionType {
@@ -19,8 +23,7 @@ public enum JmespathExceptionType {
 
     OTHER("other");
 
-    JmespathExceptionType(String id) {
-    }
+    JmespathExceptionType(String id) {}
 
     public static JmespathExceptionType fromID(String id) {
         return valueOf(id.toUpperCase().replace('-', '_'));

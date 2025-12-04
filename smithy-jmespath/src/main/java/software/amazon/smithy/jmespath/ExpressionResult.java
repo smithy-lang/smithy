@@ -4,11 +4,10 @@
  */
 package software.amazon.smithy.jmespath;
 
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
-
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
 
 /**
  * Contains the result of {@link JmespathExpression#lint}.

@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -22,7 +26,13 @@ public class ContractsTraitPlugin extends MemberAndShapeTraitPlugin<Shape, Node,
         }
     }
 
-    private void checkContract(Shape shape, ContractsTrait.Contract contract, Node value, Context context, Emitter emitter) {
+    private void checkContract(
+            Shape shape,
+            ContractsTrait.Contract contract,
+            Node value,
+            Context context,
+            Emitter emitter
+    ) {
         JmespathExpression expression = JmespathExpression.parse(contract.getExpression());
         Evaluator<Node> evaluator = new Evaluator<>(value, new NodeJmespathRuntime());
         Node result = evaluator.visit(expression);

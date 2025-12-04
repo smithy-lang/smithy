@@ -1,13 +1,16 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.model.node;
 
+import java.util.Optional;
 import software.amazon.smithy.jmespath.RuntimeType;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
 import software.amazon.smithy.model.SourceLocation;
-
-import java.util.Optional;
 
 public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
@@ -16,13 +19,20 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     @Override
     public RuntimeType typeOf(Node value) {
         switch (value.getType()) {
-            case OBJECT: return RuntimeType.OBJECT;
-            case ARRAY: return RuntimeType.ARRAY;
-            case STRING: return RuntimeType.STRING;
-            case NUMBER: return RuntimeType.NUMBER;
-            case BOOLEAN: return RuntimeType.BOOLEAN;
-            case NULL: return RuntimeType.NULL;
-            default: throw new IllegalStateException();
+            case OBJECT:
+                return RuntimeType.OBJECT;
+            case ARRAY:
+                return RuntimeType.ARRAY;
+            case STRING:
+                return RuntimeType.STRING;
+            case NUMBER:
+                return RuntimeType.NUMBER;
+            case BOOLEAN:
+                return RuntimeType.BOOLEAN;
+            case NULL:
+                return RuntimeType.NULL;
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -69,10 +79,14 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     @Override
     public Number length(Node value) {
         switch (value.getType()) {
-            case OBJECT: return value.expectObjectNode().size();
-            case ARRAY: return value.expectArrayNode().size();
-            case STRING: return EvaluationUtils.codePointCount(value.expectStringNode().getValue());
-            default: throw new IllegalArgumentException();
+            case OBJECT:
+                return value.expectObjectNode().size();
+            case ARRAY:
+                return value.expectArrayNode().size();
+            case STRING:
+                return EvaluationUtils.codePointCount(value.expectStringNode().getValue());
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
