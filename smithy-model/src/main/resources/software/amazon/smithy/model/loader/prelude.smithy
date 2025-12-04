@@ -770,7 +770,8 @@ string pattern
 )
 structure required {}
 
-/// TODO: These expressions must produce 'true'...
+/// Restricts shape values to those that satisfy one or more JMESPath expressions.
+/// Each expression must produce 'true'.
 @trait(
     selector: "*"
 )
