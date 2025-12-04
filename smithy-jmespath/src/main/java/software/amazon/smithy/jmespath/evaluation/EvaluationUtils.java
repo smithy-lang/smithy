@@ -9,7 +9,7 @@ import java.math.BigInteger;
 
 public class EvaluationUtils {
 
-    public static InheritingClassMap<NumberType> numberTypeForClass = InheritingClassMap.<NumberType>builder()
+    public static final InheritingClassMap<NumberType> numberTypeForClass = InheritingClassMap.<NumberType>builder()
             .put(Byte.class, NumberType.BYTE)
             .put(Short.class, NumberType.SHORT)
             .put(Integer.class, NumberType.INTEGER)

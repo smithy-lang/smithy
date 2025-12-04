@@ -7,7 +7,9 @@ package software.amazon.smithy.jmespath.tests;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -62,13 +64,11 @@ public class ComplianceTestRunner<T> {
     public static <T> Stream<Object[]> defaultParameterizedTestSource(JmespathRuntime<T> runtime) {
         ComplianceTestRunner<T> runner = new ComplianceTestRunner<>(runtime);
         URL manifest = ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/MANIFEST");
-        try {
-            new BufferedReader(new InputStreamReader(manifest.openStream())).lines()
-                    .forEach(line -> {
-                        var url =
-                                ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/" + line.trim());
-                        runner.testCases.addAll(TestCase.from(url, runtime));
-                    });
+        try (var reader = new BufferedReader(new InputStreamReader(manifest.openStream(), StandardCharsets.UTF_8))) {
+            reader.lines().forEach(line -> {
+                var url = ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/" + line.trim());
+                runner.testCases.addAll(TestCase.from(url, runtime));
+            });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
