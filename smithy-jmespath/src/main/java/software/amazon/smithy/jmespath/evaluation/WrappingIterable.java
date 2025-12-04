@@ -1,7 +1,8 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath.evaluation;
-
-import software.amazon.smithy.jmespath.LiteralExpressionJmespathRuntime;
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
 
 import java.util.Iterator;
 import java.util.function.Function;

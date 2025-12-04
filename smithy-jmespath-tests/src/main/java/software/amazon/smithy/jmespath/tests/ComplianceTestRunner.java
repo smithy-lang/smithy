@@ -2,17 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-
 package software.amazon.smithy.jmespath.tests;
-
-import org.junit.jupiter.api.Assumptions;
-import software.amazon.smithy.jmespath.JmespathException;
-import software.amazon.smithy.jmespath.JmespathExceptionType;
-import software.amazon.smithy.jmespath.JmespathExpression;
-import software.amazon.smithy.jmespath.RuntimeType;
-import software.amazon.smithy.jmespath.evaluation.Evaluator;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.utils.IoUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +11,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Assumptions;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.Evaluator;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.utils.IoUtils;
 
 public class ComplianceTestRunner<T> {
     private static final String DEFAULT_TEST_CASE_LOCATION = "compliance";
@@ -53,8 +51,7 @@ public class ComplianceTestRunner<T> {
             "sum",
             "to_array",
             "to_string",
-            "to_number"
-    );
+            "to_number");
     private final JmespathRuntime<T> runtime;
     private final List<TestCase<T>> testCases = new ArrayList<>();
 
@@ -68,7 +65,8 @@ public class ComplianceTestRunner<T> {
         try {
             new BufferedReader(new InputStreamReader(manifest.openStream())).lines()
                     .forEach(line -> {
-                        var url = ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/" + line.trim());
+                        var url =
+                                ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/" + line.trim());
                         runner.testCases.addAll(TestCase.from(url, runtime));
                     });
         } catch (IOException e) {
@@ -81,9 +79,15 @@ public class ComplianceTestRunner<T> {
         return testCases.stream().map(testCase -> new Object[] {testCase.name(), testCase});
     }
 
-    private record TestCase<T>(JmespathRuntime<T> runtime, String testSuite, String comment,
-                               T given, String expression, T expectedResult, JmespathExceptionType expectedError,
-                               String benchmark)
+    private record TestCase<T>(
+            JmespathRuntime<T> runtime,
+            String testSuite,
+            String comment,
+            T given,
+            String expression,
+            T expectedResult,
+            JmespathExceptionType expectedError,
+            String benchmark)
             implements Runnable {
         public static <T> List<TestCase<T>> from(URL url, JmespathRuntime<T> runtime) {
             var path = url.getPath();
@@ -99,7 +103,8 @@ public class ComplianceTestRunner<T> {
                     String expression = valueAsString(runtime, testCase, EXPRESSION_MEMBER);
                     var result = value(runtime, testCase, RESULT_MEMBER);
                     var expectedErrorString = valueAsString(runtime, testCase, ERROR_MEMBER);
-                    var expectedError = expectedErrorString != null ? JmespathExceptionType.fromID(expectedErrorString) : null;
+                    var expectedError =
+                            expectedErrorString != null ? JmespathExceptionType.fromID(expectedErrorString) : null;
 
                     // Special case: The spec says function names cannot be quoted,
                     // but our parser allows it and it may be useful in the future.
@@ -108,7 +113,14 @@ public class ComplianceTestRunner<T> {
                     }
 
                     var benchmark = valueAsString(runtime, testCase, BENCH_MEMBER);
-                    testCases.add(new TestCase<>(runtime, testSuiteName, comment, given, expression, result, expectedError, benchmark));
+                    testCases.add(new TestCase<>(runtime,
+                            testSuiteName,
+                            comment,
+                            given,
+                            expression,
+                            result,
+                            expectedError,
+                            benchmark));
                 }
             }
             return testCases;
@@ -124,7 +136,8 @@ public class ComplianceTestRunner<T> {
         }
 
         private String name() {
-            return testSuite + (comment != null ? " - " + comment : "") + " (" + runtime.toString(given) + ")[" + expression + "]";
+            return testSuite + (comment != null ? " - " + comment : "") + " (" + runtime.toString(given) + ")["
+                    + expression + "]";
         }
 
         @Override

@@ -1,8 +1,11 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath.functions;
 
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-
 import java.util.List;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 public class ValuesFunction implements Function {
     @Override
@@ -18,7 +21,7 @@ public class ValuesFunction implements Function {
         JmespathRuntime.ArrayBuilder<T> arrayBuilder = runtime.arrayBuilder();
         for (T key : runtime.toIterable(value)) {
             arrayBuilder.add(runtime.value(value, key));
-        };
+        } ;
         return arrayBuilder.build();
     }
 }

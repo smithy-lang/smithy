@@ -1,12 +1,15 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath.functions;
 
+import java.util.Set;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-
-import java.util.Set;
 
 public abstract class FunctionArgument<T> {
 
@@ -107,6 +110,4 @@ public abstract class FunctionArgument<T> {
         }
     }
 
-
 }
-

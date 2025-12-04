@@ -1,15 +1,18 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath;
-
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
-import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
+import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
 
 public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
@@ -63,10 +66,14 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     @Override
     public Number length(LiteralExpression value) {
         switch (value.getType()) {
-            case STRING: return EvaluationUtils.codePointCount(value.expectStringValue());
-            case ARRAY: return value.expectArrayValue().size();
-            case OBJECT: return value.expectObjectValue().size();
-            default: throw new IllegalStateException();
+            case STRING:
+                return EvaluationUtils.codePointCount(value.expectStringValue());
+            case ARRAY:
+                return value.expectArrayValue().size();
+            case OBJECT:
+                return value.expectObjectValue().size();
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -78,9 +85,12 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     @Override
     public Iterable<LiteralExpression> toIterable(LiteralExpression array) {
         switch (array.getType()) {
-            case ARRAY: return new WrappingIterable<>(LiteralExpression::from, array.expectArrayValue());
-            case OBJECT: return new WrappingIterable<>(LiteralExpression::from, array.expectObjectValue().keySet());
-            default: throw new IllegalStateException("invalid-type");
+            case ARRAY:
+                return new WrappingIterable<>(LiteralExpression::from, array.expectArrayValue());
+            case OBJECT:
+                return new WrappingIterable<>(LiteralExpression::from, array.expectObjectValue().keySet());
+            default:
+                throw new IllegalStateException("invalid-type");
         }
     }
 

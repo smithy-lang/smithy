@@ -1,10 +1,13 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath.functions;
-
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 public class AbsFunction implements Function {
     @Override
@@ -25,10 +28,14 @@ public class AbsFunction implements Function {
                 return runtime.createNumber(Math.abs(number.intValue()));
             case LONG:
                 return runtime.createNumber(Math.abs(number.longValue()));
-            case FLOAT: return runtime.createNumber(Math.abs(number.floatValue()));
-            case DOUBLE: return runtime.createNumber(Math.abs(number.doubleValue()));
-            case BIG_INTEGER: return runtime.createNumber(((BigInteger)number).abs());
-            case BIG_DECIMAL: return runtime.createNumber(((BigDecimal)number).abs());
+            case FLOAT:
+                return runtime.createNumber(Math.abs(number.floatValue()));
+            case DOUBLE:
+                return runtime.createNumber(Math.abs(number.doubleValue()));
+            case BIG_INTEGER:
+                return runtime.createNumber(((BigInteger) number).abs());
+            case BIG_DECIMAL:
+                return runtime.createNumber(((BigDecimal) number).abs());
             default:
                 throw new IllegalArgumentException("`abs` only supports numeric arguments");
         }

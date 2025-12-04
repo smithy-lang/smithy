@@ -1,12 +1,15 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.jmespath.evaluation;
-
-import software.amazon.smithy.jmespath.JmespathException;
-import software.amazon.smithy.jmespath.JmespathExceptionType;
-import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.RuntimeType;
 
 public interface JmespathRuntime<T> extends Comparator<T> {
 
@@ -34,7 +37,8 @@ public interface JmespathRuntime<T> extends Comparator<T> {
                 } else {
                     return iterable.iterator().hasNext();
                 }
-            default: throw new IllegalStateException();
+            default:
+                throw new IllegalStateException();
         }
     }
 

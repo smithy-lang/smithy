@@ -254,7 +254,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (String) value;
         }
 
-        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Expected a string literal, but found " + value);
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a string literal, but found " + value);
     }
 
     /**
@@ -268,7 +269,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (Number) value;
         }
 
-        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Expected a number literal, but found " + value);
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a number literal, but found " + value);
     }
 
     /**
@@ -282,7 +284,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (Boolean) value;
         }
 
-        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Expected a boolean literal, but found " + value);
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a boolean literal, but found " + value);
     }
 
     /**
@@ -296,7 +299,8 @@ public final class LiteralExpression extends JmespathExpression {
         try {
             return (List<Object>) value;
         } catch (ClassCastException e) {
-            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Expected an array literal, but found " + value);
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                    "Expected an array literal, but found " + value);
         }
     }
 
@@ -311,7 +315,8 @@ public final class LiteralExpression extends JmespathExpression {
         try {
             return (Map<String, Object>) value;
         } catch (ClassCastException e) {
-            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Expected a map literal, but found " + value);
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                    "Expected a map literal, but found " + value);
         }
     }
 
