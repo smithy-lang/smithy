@@ -32,8 +32,6 @@ public class ComplianceTestRunner<T> {
     private static final String BENCH_MEMBER = "bench";
     // TODO: Remove these suppressions as remaining functions are supported
     private static final List<String> UNSUPPORTED_FUNCTIONS = List.of(
-            "avg",
-            "contains",
             "ceil",
             "ends_with",
             "floor",
@@ -49,7 +47,6 @@ public class ComplianceTestRunner<T> {
             "sort",
             "sort_by",
             "starts_with",
-            "sum",
             "to_array",
             "to_string",
             "to_number");
