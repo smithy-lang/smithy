@@ -50,7 +50,13 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     default int compare(T a, T b) {
-        return EvaluationUtils.compareNumbersWithPromotion(asNumber(a), asNumber(b));
+        if (is(a, RuntimeType.STRING) && is(b, RuntimeType.STRING)) {
+            return asString(a).compareTo(asString(b));
+        } else if (is(a, RuntimeType.NUMBER) && is(b, RuntimeType.NUMBER)) {
+            return EvaluationUtils.compareNumbersWithPromotion(asNumber(a), asNumber(b));
+        } else {
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
+        }
     }
 
     T createNull();
@@ -188,7 +194,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
                     if (first) {
                         first = false;
                     } else {
-                        arrayStringBuilder.append(", ");
+                        arrayStringBuilder.append(",");
                     }
                     arrayStringBuilder.append(toString(element));
                 }

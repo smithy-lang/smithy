@@ -32,24 +32,9 @@ public class ComplianceTestRunner<T> {
     private static final String BENCH_MEMBER = "bench";
     // TODO: Remove these suppressions as remaining functions are supported
     private static final List<String> UNSUPPORTED_FUNCTIONS = List.of(
-            "ceil",
-            "ends_with",
-            "floor",
-            "join",
             "map",
-            "max",
-            "max_by",
             "merge",
-            "min",
-            "min_by",
-            "not_null",
-            "reverse",
-            "sort",
-            "sort_by",
-            "starts_with",
-            "to_array",
-            "to_string",
-            "to_number");
+            "to_array");
     private final JmespathRuntime<T> runtime;
     private final List<TestCase<T>> testCases = new ArrayList<>();
 
@@ -168,7 +153,7 @@ public class ComplianceTestRunner<T> {
                     throw new AssertionError("Expected error does not match actual error. \n"
                             + "Expected: " + (expectedError != null ? expectedError : "(no error)") + "\n"
                             + "Actual: " + e.getType() + " - " + e.getMessage() + "\n"
-                            + "For query: " + expression + "\n");
+                            + "For query: " + expression + "\n", e);
                 }
             }
         }
