@@ -30,11 +30,6 @@ public class ComplianceTestRunner<T> {
     private static final String RESULT_MEMBER = "result";
     private static final String ERROR_MEMBER = "error";
     private static final String BENCH_MEMBER = "bench";
-    // TODO: Remove these suppressions as remaining functions are supported
-    private static final List<String> UNSUPPORTED_FUNCTIONS = List.of(
-            "map",
-            "merge",
-            "to_array");
     private final JmespathRuntime<T> runtime;
     private final List<TestCase<T>> testCases = new ArrayList<>();
 
@@ -123,12 +118,6 @@ public class ComplianceTestRunner<T> {
 
         @Override
         public void run() {
-            // Filters out unsupported functions
-            // TODO: Remove once all built-in functions are supported
-            if (UNSUPPORTED_FUNCTIONS.stream().anyMatch(expression::contains)) {
-                Assumptions.abort("Unsupported functions");
-            }
-
             try {
                 var parsed = JmespathExpression.parse(expression);
                 var result = new Evaluator<>(given, runtime).visit(parsed);

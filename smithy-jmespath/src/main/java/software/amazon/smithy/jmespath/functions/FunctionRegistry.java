@@ -27,7 +27,9 @@ public class FunctionRegistry {
         registerFunction(new JoinFunction());
         registerFunction(new KeysFunction());
         registerFunction(new LengthFunction());
+        registerFunction(new MapFunction());
         registerFunction(new MaxFunction());
+        registerFunction(new MergeFunction());
         registerFunction(new MaxByFunction());
         registerFunction(new MinFunction());
         registerFunction(new MinByFunction());
@@ -37,6 +39,7 @@ public class FunctionRegistry {
         registerFunction(new SortByFunction());
         registerFunction(new StartsWithFunction());
         registerFunction(new SumFunction());
+        registerFunction(new ToArrayFunction());
         registerFunction(new ToNumberFunction());
         registerFunction(new ToStringFunction());
         registerFunction(new TypeFunction());
