@@ -1,12 +1,12 @@
 import React from "react";
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import "../src/i18n/client.tsx";
 import "../src/index.css";
 
 const preview: Preview = {
   parameters: {
-    backgrounds: { disable: true },
+    backgrounds: { disabled: true },
     controls: {
       matchers: {
         color: /(background|color)$/i,

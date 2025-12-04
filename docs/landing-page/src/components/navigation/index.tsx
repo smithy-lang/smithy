@@ -14,9 +14,9 @@ export const TopNavigation = () => {
   const { t } = useTranslation("translation", { keyPrefix: "navigation" });
   const githubAlt = t("githubLabel");
   return (
-    <div className="bg-smithy-black text-white h-[var(--nav-offset)] fixed top-0 z-50">
+    <div className="bg-smithy-black text-white h-(--nav-offset) fixed top-0 z-50">
       <NavigationMenu>
-        <NavigationMenuList className="h-[var(--nav-offset)] px-10 w-screen flex flex-row justify-between">
+        <NavigationMenuList className="h-(--nav-offset) px-10 w-screen flex flex-row justify-between">
           <NavigationMenuItem className="flex-1">
             <div className="flex-1 min-w-36">
               <a href="/" aria-label="Return to index">
@@ -29,7 +29,7 @@ export const TopNavigation = () => {
             </div>
           </NavigationMenuItem>
           <NavigationMenuItem className="w-1/3 flex flex-row gap-x-8 justify-between lg:flex hidden">
-            <MenuLinks className="hover:bg-gradient-to-l hover:from-primary hover:to-secondary inline-block hover:text-transparent hover:bg-clip-text" />
+            <MenuLinks className="hover:bg-linear-to-l hover:from-primary hover:to-secondary inline-block hover:text-transparent hover:bg-clip-text" />
           </NavigationMenuItem>
           <NavigationMenuItem className="flex-1 flex justify-end items-end">
             <a

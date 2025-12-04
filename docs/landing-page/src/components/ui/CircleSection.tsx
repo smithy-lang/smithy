@@ -21,7 +21,7 @@ export const CircleSection = (props: CircleSectionProps) => {
           <a
             key={imgProps.src}
             href={imgProps.location}
-            className="hover:bg-gradient-to-r hover:from-secondary hover:to-primary hover:text-primary-foreground hover:shadow-lg rounded-full relative group"
+            className="hover:bg-linear-to-r hover:from-secondary hover:to-primary hover:text-primary-foreground hover:shadow-lg rounded-full relative group"
           >
             <div className="flex justify-center bg-[rgb(241,239,237)] rounded-full hover:bg-[rgb(241,239,237)]/80">
               <img

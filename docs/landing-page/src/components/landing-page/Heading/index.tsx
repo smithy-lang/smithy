@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Navigation } from "lucide-react";
 
 interface HeadingProps {
-  serviceExampleRef: React.RefObject<HTMLDivElement>;
+  serviceExampleRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const Heading = (props: HeadingProps) => {

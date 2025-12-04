@@ -8,7 +8,7 @@ const altText = "Two large quotation marks in red and pink neon style";
 export const Quote = () => {
   const { t } = useTranslation("translation", { keyPrefix: "heroQuote" });
   return (
-    <SmithyGlow className="bg-[position:175%_-50%]">
+    <SmithyGlow className="bg-position-[175%_-50%]">
       <div className="flex flex-col items-center justify-center p-6 pt-10 lg:p-20 text-center">
         <div className="h-12 mb-4">
           <img
