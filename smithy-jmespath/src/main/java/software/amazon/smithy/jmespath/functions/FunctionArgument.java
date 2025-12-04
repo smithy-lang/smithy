@@ -31,6 +31,10 @@ public abstract class FunctionArgument<T> {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
+    public T expectArray() {
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
+    }
+
     public T expectObject() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
@@ -88,6 +92,11 @@ public abstract class FunctionArgument<T> {
         @Override
         public T expectNumber() {
             return expectType(RuntimeType.NUMBER);
+        }
+
+        @Override
+        public T expectArray() {
+            return expectType(RuntimeType.ARRAY);
         }
 
         @Override

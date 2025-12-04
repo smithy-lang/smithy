@@ -19,8 +19,11 @@ public class FunctionRegistry {
 
     static {
         registerFunction(new AbsFunction());
+        registerFunction(new AvgFunction());
+        registerFunction(new ContainsFunction());
         registerFunction(new KeysFunction());
         registerFunction(new LengthFunction());
+        registerFunction(new SumFunction());
         registerFunction(new TypeFunction());
         registerFunction(new ValuesFunction());
     }

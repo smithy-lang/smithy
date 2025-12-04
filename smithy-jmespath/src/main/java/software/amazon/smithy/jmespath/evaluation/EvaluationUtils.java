@@ -63,6 +63,24 @@ public class EvaluationUtils {
         }
     }
 
+    public static Number addNumbers(Number a, Number b) {
+        if (isBig(a, b)) {
+            return toBigDecimal(a).add(toBigDecimal(b));
+        } else if (a instanceof Double || b instanceof Double || a instanceof Float || b instanceof Float) {
+            return a.doubleValue() + b.doubleValue();
+        } else {
+            return Math.addExact(a.longValue(), b.longValue());
+        }
+    }
+
+    public static Number divideNumbers(Number a, Number b) {
+        if (isBig(a, b)) {
+            return toBigDecimal(a).divide(toBigDecimal(b));
+        } else {
+            return a.doubleValue() / b.doubleValue();
+        }
+    }
+
     public static int codePointCount(String string) {
         return string.codePointCount(0, string.length());
     }
