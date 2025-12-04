@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Fixed a broken ABNF specification in rules engine docs.",
-  "pull_requests": [
-    "[#2831](https://github.com/smithy-lang/smithy/pull/2831)"
-  ]
-}
