@@ -27,7 +27,7 @@ public class MapObjectBuilder<T> implements JmespathRuntime.ObjectBuilder<T> {
     @Override
     public void putAll(T object) {
         for (T key : runtime.toIterable(object)) {
-            result.put(runtime.asString(key), key);
+            result.put(runtime.asString(key), runtime.value(object, key));
         }
     }
 
