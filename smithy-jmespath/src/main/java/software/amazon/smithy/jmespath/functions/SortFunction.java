@@ -5,7 +5,6 @@
 package software.amazon.smithy.jmespath.functions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
@@ -19,14 +18,14 @@ public class SortFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
-        
+
         List<T> elements = new ArrayList<>();
         for (T element : runtime.toIterable(array)) {
             elements.add(element);
         }
-        
+
         elements.sort(runtime);
-        
+
         JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
         for (T element : elements) {
             builder.add(element);

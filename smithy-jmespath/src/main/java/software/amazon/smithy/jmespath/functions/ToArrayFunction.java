@@ -18,7 +18,7 @@ public class ToArrayFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
-        
+
         if (runtime.is(value, RuntimeType.ARRAY)) {
             return value;
         } else {

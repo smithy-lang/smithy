@@ -29,7 +29,7 @@ public class FloorFunction implements Function {
             case BIG_INTEGER:
                 return value;
             case BIG_DECIMAL:
-                return runtime.createNumber(((BigDecimal)number).setScale(0, RoundingMode.FLOOR));
+                return runtime.createNumber(((BigDecimal) number).setScale(0, RoundingMode.FLOOR));
             case DOUBLE:
                 return runtime.createNumber(Math.floor(number.doubleValue()));
             case FLOAT:

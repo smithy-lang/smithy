@@ -18,7 +18,7 @@ public class JoinFunction implements Function {
         checkArgumentCount(2, functionArguments);
         String separator = runtime.asString(functionArguments.get(0).expectString());
         T array = functionArguments.get(1).expectArray();
-        
+
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for (T element : runtime.toIterable(array)) {
@@ -28,7 +28,7 @@ public class JoinFunction implements Function {
             result.append(runtime.asString(element));
             first = false;
         }
-        
+
         return runtime.createString(result.toString());
     }
 }

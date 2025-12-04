@@ -19,7 +19,7 @@ public class MapFunction implements Function {
         checkArgumentCount(2, functionArguments);
         JmespathExpression expression = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();
-        
+
         JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
         for (T element : runtime.toIterable(array)) {
             builder.add(expression.evaluate(element, runtime));

@@ -17,14 +17,14 @@ public class ToNumberFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
-        
+
         switch (runtime.typeOf(value)) {
             case NUMBER:
                 return value;
             case STRING:
                 try {
                     String str = runtime.asString(value);
-                    if (str.contains(".")) {
+                    if (str.contains(".") || str.toLowerCase().contains("e")) {
                         return runtime.createNumber(Double.parseDouble(str));
                     } else {
                         return runtime.createNumber(Long.parseLong(str));

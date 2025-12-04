@@ -18,10 +18,10 @@ public class StartsWithFunction implements Function {
         checkArgumentCount(2, functionArguments);
         T subject = functionArguments.get(0).expectString();
         T prefix = functionArguments.get(1).expectString();
-        
+
         String subjectStr = runtime.asString(subject);
         String prefixStr = runtime.asString(prefix);
-        
+
         return runtime.createBoolean(subjectStr.startsWith(prefixStr));
     }
 }

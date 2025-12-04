@@ -5,7 +5,6 @@
 package software.amazon.smithy.jmespath.functions;
 
 import java.util.List;
-
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;

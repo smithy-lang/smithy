@@ -6,6 +6,7 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
@@ -43,10 +44,49 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     default boolean equal(T a, T b) {
-        if (is(a, RuntimeType.NUMBER) && is(b, RuntimeType.NUMBER)) {
-            return compare(a, b) == 0;
+        switch (typeOf(a)) {
+            case NULL:
+            case STRING:
+            case BOOLEAN:
+                return Objects.equals(a, b);
+            case NUMBER:
+                if (!is(b, RuntimeType.NUMBER)) {
+                    return false;
+                }
+                return compare(a, b) == 0;
+            case ARRAY:
+                if (!is(b, RuntimeType.ARRAY)) {
+                    return false;
+                }
+                Iterator<? extends T> aIter = toIterable(a).iterator();
+                Iterator<? extends T> bIter = toIterable(b).iterator();
+                while (aIter.hasNext()) {
+                    if (!bIter.hasNext()) {
+                        return false;
+                    }
+                    if (!equal(aIter.next(), bIter.next())) {
+                        return false;
+                    }
+                }
+                return !bIter.hasNext();
+            case OBJECT:
+                if (!is(b, RuntimeType.OBJECT)) {
+                    return false;
+                }
+                if (!length(a).equals(length(b))) {
+                    return false;
+                }
+                for (T key : toIterable(a)) {
+                    T aValue = value(a, key);
+                    T bValue = value(b, key);
+                    if (!equal(aValue, bValue)) {
+                        return false;
+                    }
+                }
+                return true;
+            default:
+                throw new IllegalStateException();
         }
-        return Objects.equals(a, b);
     }
 
     default int compare(T a, T b) {

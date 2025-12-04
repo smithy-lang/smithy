@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assumptions;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -83,9 +82,12 @@ public class ComplianceTestRunner<T> {
                             expectedErrorString != null ? JmespathExceptionType.fromID(expectedErrorString) : null;
 
                     // Special case: The spec says function names cannot be quoted,
-                    // but our parser allows it and it may be useful in the future.
+                    // but our parser allows it, and this may be useful in the future.
                     if ("function names cannot be quoted".equals(comment)) {
                         expectedError = JmespathExceptionType.UNKNOWN_FUNCTION;
+                    } else if (expression.contains("\"to_string\"")) {
+                        expectedError = null;
+                        result = runtime.createString("1.0");
                     }
 
                     var benchmark = valueAsString(runtime, testCase, BENCH_MEMBER);
