@@ -21,7 +21,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 @SmithyGenerated
 public final class ContractsTrait extends AbstractTrait implements ToSmithyBuilder<ContractsTrait> {
-    public static final ShapeId ID = ShapeId.from("smithy.contracts#contracts");
+    public static final ShapeId ID = ShapeId.from("smithy.api#contracts");
 
     private final List<Contract> values;
 
@@ -135,7 +135,7 @@ public final class ContractsTrait extends AbstractTrait implements ToSmithyBuild
         public Node toNode() {
             return Node.objectNodeBuilder()
                     .withMember("expression", Node.from(expression))
-                    .withOptionalMember("description", getDescription().map(m -> Node.from(m)))
+                    .withOptionalMember("description", getDescription().map(Node::from))
                     .build();
         }
 
