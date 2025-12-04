@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { IdePanel } from "./ide-panel";
 import { ServiceExample } from "@/components/landing-page/ServiceExample";

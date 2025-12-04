@@ -9,8 +9,8 @@ type Coords = {
 };
 
 export interface SpiderProps {
-  startComponent: React.RefObject<HTMLElement>;
-  endComponents: React.RefObject<HTMLElement>[];
+  startComponent: React.RefObject<HTMLElement | null>;
+  endComponents: React.RefObject<HTMLElement | null>[];
   curveLevel?: number;
 }
 

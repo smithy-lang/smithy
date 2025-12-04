@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineConnector } from "@/components/svg/line";
 
 interface WebProps {
-  smithyBuildRef: RefObject<HTMLDivElement>;
+  smithyBuildRef: RefObject<HTMLDivElement | null>;
 }
 
 export const Web = (props: WebProps) => {

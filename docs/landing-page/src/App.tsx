@@ -17,7 +17,7 @@ function App() {
   return (
     <>
       <TopNavigation />
-      <main className="pt-[var(--nav-offset)]">
+      <main className="pt-(--nav-offset)">
         <Heading serviceExampleRef={serviceExample} />
 
         <SubHeading modelRef={modelRef} />

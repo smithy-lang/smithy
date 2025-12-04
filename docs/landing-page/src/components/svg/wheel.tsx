@@ -10,8 +10,8 @@ import React, {
 import { LineConnector } from "./line";
 
 export interface WheelProps {
-  centerComponent: React.ReactElement<{ ref?: RefObject<HTMLElement> }>;
-  endComponents: React.ReactElement<{ ref?: RefObject<HTMLElement> }>[];
+  centerComponent: React.ReactElement<{ ref?: RefObject<HTMLElement | null> }>;
+  endComponents: React.ReactElement<{ ref?: RefObject<HTMLElement | null> }>[];
   lineColor?: string;
 }
 
@@ -70,8 +70,9 @@ export const Wheel = (props: WheelProps) => {
 
     for (let i = 0; i < 8; i++) {
       if (fillOrder.includes(i)) {
-        const component: React.ReactElement<{ ref?: RefObject<HTMLElement> }> =
-          props.endComponents[currentEndComponent];
+        const component: React.ReactElement<{
+          ref?: RefObject<HTMLElement | null>;
+        }> = props.endComponents[currentEndComponent];
 
         const wrappedComponent = (
           <div key={i} className="flex flex-col justify-center">
