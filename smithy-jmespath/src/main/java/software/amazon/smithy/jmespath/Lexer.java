@@ -468,7 +468,12 @@ final class Lexer<T> {
         String lexeme = sliceFrom(start);
 
         try {
-            double number = Double.parseDouble(lexeme);
+            Number number;
+            if (lexeme.contains(".") || lexeme.toLowerCase().contains("e")) {
+                number = Double.parseDouble(lexeme);
+            } else {
+                number = Long.parseLong(lexeme);
+            }
             LiteralExpression node = new LiteralExpression(number, currentLine, currentColumn);
             return new Token(TokenType.NUMBER, node, currentLine, currentColumn);
         } catch (NumberFormatException e) {

@@ -17,7 +17,7 @@ public class ToStringFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
-        
+
         switch (runtime.typeOf(value)) {
             case STRING:
                 return value;

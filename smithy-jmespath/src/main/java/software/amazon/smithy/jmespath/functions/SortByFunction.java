@@ -21,7 +21,7 @@ public class SortByFunction implements Function {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         JmespathExpression expression = functionArguments.get(1).expectExpression();
-        
+
         List<T> elements = new ArrayList<>();
         for (T element : runtime.toIterable(array)) {
             elements.add(element);
@@ -32,7 +32,7 @@ public class SortByFunction implements Function {
             T bValue = expression.evaluate(b, runtime);
             return runtime.compare(aValue, bValue);
         });
-        
+
         JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
         for (T element : elements) {
             builder.add(element);

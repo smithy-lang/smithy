@@ -4,10 +4,9 @@
  */
 package software.amazon.smithy.jmespath.functions;
 
+import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-
-import java.util.List;
 
 public class MinByFunction implements Function {
     @Override

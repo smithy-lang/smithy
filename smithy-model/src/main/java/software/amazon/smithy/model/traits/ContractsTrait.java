@@ -17,7 +17,8 @@ import software.amazon.smithy.utils.SmithyGenerated;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * TODO: These expressions must produce 'true'...
+ * Restricts shape values to those that satisfy one or more JMESPath expressions.
+ * Each expression must produce 'true'.
  */
 @SmithyGenerated
 public final class ContractsTrait extends AbstractTrait implements ToSmithyBuilder<ContractsTrait> {

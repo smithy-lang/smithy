@@ -5,6 +5,8 @@
 package software.amazon.smithy.model.node;
 
 import java.util.Optional;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
@@ -48,7 +50,11 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public boolean asBoolean(Node value) {
-        return value.expectBooleanNode().getValue();
+        try {
+            return value.expectBooleanNode().getValue();
+        } catch (ExpectationNotMetException e) {
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Incorrect type", e);
+        }
     }
 
     @Override
@@ -58,7 +64,11 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public String asString(Node value) {
-        return value.expectStringNode().getValue();
+        try {
+            return value.expectStringNode().getValue();
+        } catch (ExpectationNotMetException e) {
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Incorrect type", e);
+        }
     }
 
     @Override
@@ -73,7 +83,11 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public Number asNumber(Node value) {
-        return value.expectNumberNode().getValue();
+        try {
+            return value.expectNumberNode().getValue();
+        } catch (ExpectationNotMetException e) {
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "Incorrect type", e);
+        }
     }
 
     @Override

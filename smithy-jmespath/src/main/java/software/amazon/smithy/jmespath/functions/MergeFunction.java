@@ -16,12 +16,12 @@ public class MergeFunction implements Function {
     @Override
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         JmespathRuntime.ObjectBuilder<T> builder = runtime.objectBuilder();
-        
+
         for (FunctionArgument<T> arg : functionArguments) {
             T object = arg.expectObject();
             builder.putAll(object);
         }
-        
+
         return builder.build();
     }
 }

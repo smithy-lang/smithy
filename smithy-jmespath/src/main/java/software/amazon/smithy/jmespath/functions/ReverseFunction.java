@@ -28,7 +28,7 @@ public class ReverseFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectAnyOf(PARAMETER_TYPES);
-        
+
         if (runtime.is(value, RuntimeType.STRING)) {
             String str = runtime.asString(value);
             return runtime.createString(new StringBuilder(str).reverse().toString());
@@ -38,7 +38,7 @@ public class ReverseFunction implements Function {
                 elements.add(element);
             }
             Collections.reverse(elements);
-            
+
             JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
             for (T element : elements) {
                 builder.add(element);

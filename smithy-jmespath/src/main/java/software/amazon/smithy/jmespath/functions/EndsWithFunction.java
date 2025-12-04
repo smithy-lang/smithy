@@ -18,10 +18,10 @@ public class EndsWithFunction implements Function {
         checkArgumentCount(2, functionArguments);
         T subject = functionArguments.get(0).expectString();
         T suffix = functionArguments.get(1).expectString();
-        
+
         String subjectStr = runtime.asString(subject);
         String suffixStr = runtime.asString(suffix);
-        
+
         return runtime.createBoolean(subjectStr.endsWith(suffixStr));
     }
 }

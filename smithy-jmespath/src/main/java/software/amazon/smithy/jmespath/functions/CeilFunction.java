@@ -29,7 +29,7 @@ public class CeilFunction implements Function {
             case BIG_INTEGER:
                 return value;
             case BIG_DECIMAL:
-                return runtime.createNumber(((BigDecimal)number).setScale(0, RoundingMode.CEILING));
+                return runtime.createNumber(((BigDecimal) number).setScale(0, RoundingMode.CEILING));
             case DOUBLE:
                 return runtime.createNumber(Math.ceil(number.doubleValue()));
             case FLOAT:
