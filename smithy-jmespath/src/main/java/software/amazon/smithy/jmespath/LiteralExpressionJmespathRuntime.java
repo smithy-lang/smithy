@@ -104,7 +104,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
 
         @Override
         public void add(LiteralExpression value) {
-            result.add(value);
+            result.add(value.getValue());
         }
 
         @Override
@@ -141,7 +141,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
 
         @Override
         public void put(LiteralExpression key, LiteralExpression value) {
-            result.put(key.expectStringValue(), value);
+            result.put(key.expectStringValue(), value.getValue());
         }
 
         @Override

@@ -76,6 +76,14 @@ public final class LiteralExpression extends JmespathExpression {
         }
     }
 
+    public static Object unwrap(Object value) {
+        if (value instanceof LiteralExpression) {
+            return ((LiteralExpression) value).getValue();
+        } else {
+            return value;
+        }
+    }
+
     @Override
     public <T> T accept(ExpressionVisitor<T> visitor) {
         return visitor.visitLiteral(this);

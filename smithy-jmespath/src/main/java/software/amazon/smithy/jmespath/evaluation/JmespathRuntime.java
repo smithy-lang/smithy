@@ -43,11 +43,13 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     default boolean equal(T a, T b) {
+        if (is(a, RuntimeType.NUMBER) && is(b, RuntimeType.NUMBER)) {
+            return compare(a, b) == 0;
+        }
         return Objects.equals(a, b);
     }
 
     default int compare(T a, T b) {
-        // TODO: More types
         return EvaluationUtils.compareNumbersWithPromotion(asNumber(a), asNumber(b));
     }
 
