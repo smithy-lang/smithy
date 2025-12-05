@@ -12,8 +12,6 @@ description = "This module is a library used to validate Smithy models, create f
 extra["displayName"] = "Smithy :: Build"
 extra["moduleName"] = "software.amazon.smithy.build"
 
-version = "1.63.0-SNAPSHOT"
-
 dependencies {
     api(project(":smithy-utils"))
     api(project(":smithy-model"))
