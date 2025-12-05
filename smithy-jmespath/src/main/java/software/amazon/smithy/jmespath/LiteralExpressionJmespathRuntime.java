@@ -11,8 +11,8 @@ import java.util.Map;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.MappingIterable;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
 
 public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 

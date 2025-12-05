@@ -10,8 +10,8 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.jmespath.evaluation.MappingIterable;
+import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.model.SourceLocation;
 
 public class NodeJmespathRuntime implements JmespathRuntime<Node> {

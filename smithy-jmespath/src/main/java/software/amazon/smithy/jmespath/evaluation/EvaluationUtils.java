@@ -4,12 +4,11 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
-import software.amazon.smithy.jmespath.RuntimeType;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Objects;
+import software.amazon.smithy.jmespath.RuntimeType;
 
 public class EvaluationUtils {
 
