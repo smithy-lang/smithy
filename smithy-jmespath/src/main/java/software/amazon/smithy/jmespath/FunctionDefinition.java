@@ -4,21 +4,9 @@
  */
 package software.amazon.smithy.jmespath;
 
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.ANY;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.ARRAY;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.BOOLEAN;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.NUMBER;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.OBJECT;
-import static software.amazon.smithy.jmespath.ast.LiteralExpression.STRING;
-
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.jmespath.functions.FunctionArgument;
 
 /**
  * Defines the positional arguments, variadic arguments, and return value
