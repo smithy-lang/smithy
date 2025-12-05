@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath.functions;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class MergeFunction implements Function {
+class MergeFunction implements Function {
     @Override
     public String name() {
         return "merge";

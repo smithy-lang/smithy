@@ -9,7 +9,7 @@ import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class ContainsFunction implements Function {
+class ContainsFunction implements Function {
     @Override
     public String name() {
         return "contains";

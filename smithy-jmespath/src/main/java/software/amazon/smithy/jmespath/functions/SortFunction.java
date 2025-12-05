@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class SortFunction implements Function {
+class SortFunction implements Function {
     @Override
     public String name() {
         return "sort";

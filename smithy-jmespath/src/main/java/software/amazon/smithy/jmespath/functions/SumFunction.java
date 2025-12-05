@@ -8,7 +8,7 @@ import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class SumFunction implements Function {
+class SumFunction implements Function {
     @Override
     public String name() {
         return "sum";

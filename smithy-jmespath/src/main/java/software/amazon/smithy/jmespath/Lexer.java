@@ -36,7 +36,7 @@ final class Lexer<T> {
     }
 
     static <T> TokenIterator tokenize(String expression, JmespathRuntime<T> runtime) {
-        return new Lexer<T>(expression, runtime).doTokenize();
+        return new Lexer<>(expression, runtime).doTokenize();
     }
 
     TokenIterator doTokenize() {

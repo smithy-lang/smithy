@@ -10,7 +10,7 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class NotNullFunction implements Function {
+class NotNullFunction implements Function {
     @Override
     public String name() {
         return "not_null";

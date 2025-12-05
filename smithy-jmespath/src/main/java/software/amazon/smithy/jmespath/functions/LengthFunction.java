@@ -10,7 +10,7 @@ import java.util.Set;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class LengthFunction implements Function {
+class LengthFunction implements Function {
 
     private static final Set<RuntimeType> PARAMETER_TYPES = new HashSet<>();
     static {

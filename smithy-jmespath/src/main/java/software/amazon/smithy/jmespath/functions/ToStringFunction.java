@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath.functions;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class ToStringFunction implements Function {
+class ToStringFunction implements Function {
     @Override
     public String name() {
         return "to_string";
