@@ -23,7 +23,9 @@ import software.amazon.smithy.model.shapes.ShapeType;
  *     <li>The {@code Number} production is combined into a single {@link #NUMBER} node. Productions like
  *     {@code DecimalPoint}, {@code Exp}, etc are not exposed in the token tree.</li>
  *     <li>The {@code QuotedText} production is combined into a single {@link #QUOTED_TEXT} node.
+ *     <li>The {@code ByteString} production is combined into a single {@link #BYTE_STRING} node.
  *     <li>The {@code TextBlock} production is combined into a single {@link #TEXT_BLOCK} node.
+ *     <li>The {@code ByteTextBlock} production is combined into a single {@link #BYTE_TEXT_BLOCK} node.
  * </ul>
  */
 public enum TreeType {
@@ -604,17 +606,21 @@ public enum TreeType {
                     tokenizer.expect(IdlToken.LBRACE,
                             IdlToken.LBRACKET,
                             IdlToken.TEXT_BLOCK,
+                            IdlToken.BYTE_TEXT_BLOCK,
                             IdlToken.STRING,
+                            IdlToken.BYTE_STRING,
                             IdlToken.NUMBER,
                             IdlToken.IDENTIFIER);
                     switch (tokenizer.getCurrentToken()) {
                         case LBRACE:
                         case LBRACKET:
                         case TEXT_BLOCK:
+                        case BYTE_TEXT_BLOCK:
                         case NUMBER:
                             TRAIT_NODE.parse(tokenizer);
                             break;
                         case STRING:
+                        case BYTE_STRING:
                         case IDENTIFIER:
                         default:
                             CapturedToken nextPastWs = tokenizer.peekWhile(1,
@@ -710,7 +716,9 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 IdlToken token = tokenizer.expect(IdlToken.STRING,
+                        IdlToken.BYTE_STRING,
                         IdlToken.TEXT_BLOCK,
+                        IdlToken.BYTE_TEXT_BLOCK,
                         IdlToken.NUMBER,
                         IdlToken.IDENTIFIER,
                         IdlToken.LBRACE,
@@ -725,7 +733,9 @@ public enum TreeType {
                         }
                         break;
                     case STRING:
+                    case BYTE_STRING:
                     case TEXT_BLOCK:
+                    case BYTE_TEXT_BLOCK:
                         NODE_STRING_VALUE.parse(tokenizer);
                         break;
                     case NUMBER:
@@ -772,7 +782,9 @@ public enum TreeType {
                 optionalWs(tokenizer);
 
                 while (tokenizer.hasNext()) {
-                    if (tokenizer.expect(IdlToken.RBRACE, IdlToken.STRING, IdlToken.IDENTIFIER) == IdlToken.RBRACE) {
+                    IdlToken token = tokenizer
+                            .expect(IdlToken.RBRACE, IdlToken.STRING, IdlToken.BYTE_STRING, IdlToken.IDENTIFIER);
+                    if (token == IdlToken.RBRACE) {
                         break;
                     }
                     NODE_OBJECT_KVP.parse(tokenizer);
@@ -803,10 +815,18 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                if (tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING) == IdlToken.IDENTIFIER) {
-                    IDENTIFIER.parse(tokenizer);
-                } else {
-                    QUOTED_TEXT.parse(tokenizer);
+                IdlToken token = tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING, IdlToken.BYTE_STRING);
+                switch (token) {
+                    case STRING:
+                        QUOTED_TEXT.parse(tokenizer);
+                        break;
+                    case BYTE_STRING:
+                        BYTE_STRING.parse(tokenizer);
+                        break;
+                    case IDENTIFIER:
+                    default:
+                        IDENTIFIER.parse(tokenizer);
+                        break;
                 }
             });
         }
@@ -824,12 +844,24 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                switch (tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.IDENTIFIER)) {
+                IdlToken token = tokenizer.expect(IdlToken.STRING,
+                        IdlToken.BYTE_STRING,
+                        IdlToken.TEXT_BLOCK,
+                        IdlToken.BYTE_TEXT_BLOCK,
+                        IdlToken.IDENTIFIER);
+
+                switch (token) {
                     case STRING:
                         QUOTED_TEXT.parse(tokenizer);
                         break;
+                    case BYTE_STRING:
+                        BYTE_STRING.parse(tokenizer);
+                        break;
                     case TEXT_BLOCK:
                         TEXT_BLOCK.parse(tokenizer);
+                        break;
+                    case BYTE_TEXT_BLOCK:
+                        BYTE_TEXT_BLOCK.parse(tokenizer);
                         break;
                     case IDENTIFIER:
                     default:
@@ -849,11 +881,31 @@ public enum TreeType {
         }
     },
 
+    BYTE_STRING {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.BYTE_STRING);
+                tokenizer.next();
+            });
+        }
+    },
+
     TEXT_BLOCK {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 tokenizer.expect(IdlToken.TEXT_BLOCK);
+                tokenizer.next();
+            });
+        }
+    },
+
+    BYTE_TEXT_BLOCK {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.BYTE_TEXT_BLOCK);
                 tokenizer.next();
             });
         }

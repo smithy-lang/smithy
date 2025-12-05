@@ -15,6 +15,12 @@ document documentTrait
 string stringTrait
 
 @trait
+string byteStringTrait
+
+@trait
+string byteTextBlockTrait
+
+@trait
 structure annotationTrait {}
 
 // This is used to test that trait locations are properly set for a variety of
@@ -26,33 +32,37 @@ structure annotationTrait {}
 // variation.
 
 /// Documentation trait using the doc comment syntax
-@annotationTrait     // Annotation trait without parens
-@internal()          // Annotation trait with parens
-@deprecated(         // Structured trait with no braces
+@annotationTrait            // Annotation trait without parens
+@internal()                 // Annotation trait with parens
+@deprecated(                // Structured trait with no braces
     since: "1.0"
 )
-@tags(["foo"])       // List trait
-@unstable({})        // Structured trait with braces
-@stringTrait("foo")  // String trait using normal string syntax
+@tags(["foo"])              // List trait
+@unstable({})               // Structured trait with braces
+@stringTrait("foo")         // String trait using normal string syntax
+@byteStringTrait(b"foo")    // String trait using byte string syntax
 @since("""
-    0.9""")          // String trait using block syntax
-@numberTrait(1)      // Number trait
-@boolTrait(true)     // Boolean trait
-@documentTrait(null) // Null value trait
+    0.9""")                 // String trait using block syntax
+@byteTextBlockTrait(b"foo") // String trait using byte text block syntax
+@numberTrait(1)             // Number trait
+@boolTrait(true)            // Boolean trait
+@documentTrait(null)        // Null value trait
 structure TraitBearer {
     /// Documentation trait using the doc comment syntax
-    @annotationTrait     // Annotation trait without parens
-    @internal()          // Annotation trait with parens
-    @deprecated(         // Structured trait with no braces
+    @annotationTrait            // Annotation trait without parens
+    @internal()                 // Annotation trait with parens
+    @deprecated(                // Structured trait with no braces
         since: "1.0"
     )
-    @tags(["foo"])       // List trait
-    @unstable({})        // Structured trait with braces
-    @stringTrait("foo")  // String trait using normal string syntax
+    @tags(["foo"])              // List trait
+    @unstable({})               // Structured trait with braces
+    @stringTrait("foo")         // String trait using normal string syntax
+    @byteStringTrait(b"foo")    // String trait using byte string syntax
     @since("""
-        0.9""")          // String trait using block syntax
-    @numberTrait(1)      // Number trait
-    @boolTrait(true)     // Boolean trait
-    @documentTrait(null) // Null value trait
+        0.9""")                 // String trait using block syntax
+    @byteTextBlockTrait(b"foo") // String trait using byte text block syntax
+    @numberTrait(1)             // Number trait
+    @boolTrait(true)            // Boolean trait
+    @documentTrait(null)        // Null value trait
     member: String
 }
