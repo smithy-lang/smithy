@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add CloudWatch Metric Namespace to AWS service trait",
+  "pull_requests": []
+}
