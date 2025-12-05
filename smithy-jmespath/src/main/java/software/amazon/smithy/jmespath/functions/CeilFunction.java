@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class CeilFunction implements Function {
+class CeilFunction implements Function {
     @Override
     public String name() {
         return "ceil";

@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class FloorFunction implements Function {
+class FloorFunction implements Function {
     @Override
     public String name() {
         return "floor";

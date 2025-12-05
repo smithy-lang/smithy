@@ -12,7 +12,7 @@ import java.util.Set;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class ReverseFunction implements Function {
+class ReverseFunction implements Function {
     private static final Set<RuntimeType> PARAMETER_TYPES = new HashSet<>();
     static {
         PARAMETER_TYPES.add(RuntimeType.STRING);

@@ -10,7 +10,7 @@ import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class SortByFunction implements Function {
+class SortByFunction implements Function {
     @Override
     public String name() {
         return "sort_by";

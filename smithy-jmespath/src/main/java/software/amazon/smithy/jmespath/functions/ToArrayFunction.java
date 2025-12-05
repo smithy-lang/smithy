@@ -8,7 +8,7 @@ import java.util.List;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class ToArrayFunction implements Function {
+class ToArrayFunction implements Function {
     @Override
     public String name() {
         return "to_array";

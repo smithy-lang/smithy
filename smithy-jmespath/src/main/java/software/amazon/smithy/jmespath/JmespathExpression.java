@@ -38,7 +38,7 @@ public abstract class JmespathExpression {
      * Parse a JMESPath expression.
      *
      * @param text Expression to parse.
-     * @param runtime JmespathRuntime used to instantiate literal values.
+     * @param runtime The JmespathRuntime used to instantiate literal values.
      * @return Returns the parsed expression.
      * @throws JmespathException if the expression is invalid.
      */
@@ -50,7 +50,7 @@ public abstract class JmespathExpression {
      * Parse a JSON value.
      *
      * @param text JSON value to parse.
-     * @param runtime JmespathRuntime used to instantiate the parsed JSON value.
+     * @param runtime The JmespathRuntime used to instantiate the parsed JSON value.
      * @return Returns the parsed JSON value.
      * @throws JmespathException if the text is invalid.
      */
@@ -109,10 +109,23 @@ public abstract class JmespathExpression {
         return new LinterResult(result.getType(), problems);
     }
 
+    /**
+     * Evaluate the expression for the given current node.
+     *
+     * @param currentNode The value to set as the current node.
+     * @return Returns the result of evaluating the expression.
+     */
     public LiteralExpression evaluate(LiteralExpression currentNode) {
         return evaluate(currentNode, new LiteralExpressionJmespathRuntime());
     }
 
+    /**
+     * Evaluate the expression for the given current node.
+     *
+     * @param currentNode The value to set as the current node.
+     * @param runtime The JmespathRuntime used to manipulate node values.
+     * @return Returns the result of evaluating the expression.
+     */
     public <T> T evaluate(T currentNode, JmespathRuntime<T> runtime) {
         return new Evaluator<>(currentNode, runtime).visit(this);
     }

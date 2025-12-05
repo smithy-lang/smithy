@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class AbsFunction implements Function {
+class AbsFunction implements Function {
     @Override
     public String name() {
         return "abs";

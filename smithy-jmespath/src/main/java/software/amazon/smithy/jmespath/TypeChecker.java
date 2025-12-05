@@ -352,7 +352,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
             arguments.add(arg.accept(checker));
         }
 
-        FunctionDefinition def = FunctionDefinition.FUNCTIONS.get(expression.getName());
+        FunctionDefinition def = FUNCTIONS.get(expression.getName());
 
         // Function must be known.
         if (def == null) {

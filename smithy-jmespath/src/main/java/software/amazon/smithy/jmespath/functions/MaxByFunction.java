@@ -8,7 +8,7 @@ import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class MaxByFunction implements Function {
+class MaxByFunction implements Function {
     @Override
     public String name() {
         return "max_by";

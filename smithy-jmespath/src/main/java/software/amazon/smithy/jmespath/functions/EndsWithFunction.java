@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath.functions;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class EndsWithFunction implements Function {
+class EndsWithFunction implements Function {
     @Override
     public String name() {
         return "ends_with";

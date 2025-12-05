@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath.functions;
 import java.util.List;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class JoinFunction implements Function {
+class JoinFunction implements Function {
     @Override
     public String name() {
         return "join";

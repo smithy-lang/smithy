@@ -8,7 +8,7 @@ import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-public class MinByFunction implements Function {
+class MinByFunction implements Function {
     @Override
     public String name() {
         return "min_by";
