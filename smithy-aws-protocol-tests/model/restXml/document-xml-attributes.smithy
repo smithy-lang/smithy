@@ -158,3 +158,87 @@ apply XmlAttributesOnPayload @httpResponseTests([
 structure XmlAttributesPayloadRequest with [XmlAttributesInputOutput] {}
 
 structure XmlAttributesPayloadResponse with [XmlAttributesInputOutput] {}
+
+/// This example serializes an XML attribute on a payload when it's defined in the middle of the member list.
+/// This tests that implementations correctly write attributes immediately after the element start tag,
+/// which is critical for languages like C# where attribute writing must happen before child elements.
+@idempotent
+@http(uri: "/XmlAttributesInMiddle", method: "PUT")
+operation XmlAttributesInMiddle {
+    input := {
+        @httpPayload
+        payload: XmlAttributesInMiddlePayloadRequest
+    }
+    output := {
+        @httpPayload
+        payload: XmlAttributesInMiddlePayloadResponse
+    }
+}
+
+apply XmlAttributesInMiddle @httpRequestTests([
+    {
+        id: "XmlAttributesInMiddle",
+        documentation: "Serializes XML attributes on a payload when the xmlAttribute trait targets a member in the middle of the member list",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/XmlAttributesInMiddle",
+        body: """
+              <XmlAttributesInMiddlePayloadRequest test="attributeValue">
+                  <foo>Foo</foo>
+                  <baz>Baz</baz>
+              </XmlAttributesInMiddlePayloadRequest>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            payload: {
+                foo: "Foo",
+                attr: "attributeValue",
+                baz: "Baz"
+            }
+        }
+    }
+])
+
+apply XmlAttributesInMiddle @httpResponseTests([
+    {
+        id: "XmlAttributesInMiddle",
+        documentation: "Deserializes XML attributes on a payload when the xmlAttribute trait targets a member in the middle of the member list",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlAttributesInMiddlePayloadResponse test="attributeValue">
+                  <foo>Foo</foo>
+                  <baz>Baz</baz>
+              </XmlAttributesInMiddlePayloadResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            payload: {
+                foo: "Foo",
+                attr: "attributeValue",
+                baz: "Baz"
+            }
+        }
+    }
+])
+
+@mixin
+structure XmlAttributesMiddleMemberInputOutput {
+    foo: String,
+
+    @xmlAttribute
+    @xmlName("test")
+    attr: String,
+
+    baz: String,
+}
+
+structure XmlAttributesInMiddlePayloadRequest with [XmlAttributesMiddleMemberInputOutput] {}
+
+structure XmlAttributesInMiddlePayloadResponse with [XmlAttributesMiddleMemberInputOutput] {}
