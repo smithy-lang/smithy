@@ -819,7 +819,7 @@ target from traits and how their values are defined in
 .. important::
 
     Trait values MUST be compatible with the :ref:`required-trait` and any
-    associated :doc:`constraint traits <constraint-traits>` or :doc:`contract traits <contract-traits>`.
+    associated :doc:`constraint traits <constraint-traits>`.
 
 
 .. _trait-shapes:
