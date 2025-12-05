@@ -26,7 +26,7 @@ class MinByFunction implements Function {
         T min = null;
         T minBy = null;
         boolean first = true;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             T by = expression.evaluate(element, runtime);
             if (first) {
                 first = false;

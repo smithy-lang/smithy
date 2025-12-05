@@ -9,6 +9,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A default implementation of {@link JmespathRuntime.ArrayBuilder}.
+ * using a {@link List} as the backing store.
+ */
 public class ListArrayBuilder<T> implements JmespathRuntime.ArrayBuilder<T> {
 
     private final JmespathRuntime<T> runtime;
@@ -27,7 +31,7 @@ public class ListArrayBuilder<T> implements JmespathRuntime.ArrayBuilder<T> {
 
     @Override
     public void addAll(T array) {
-        Iterable<? extends T> iterable = runtime.toIterable(array);
+        Iterable<? extends T> iterable = runtime.asIterable(array);
         if (iterable instanceof Collection<?>) {
             result.addAll((Collection<? extends T>) iterable);
         } else {

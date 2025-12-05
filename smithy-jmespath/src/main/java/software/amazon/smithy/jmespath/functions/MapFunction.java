@@ -21,7 +21,7 @@ class MapFunction implements Function {
         T array = functionArguments.get(1).expectArray();
 
         JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             builder.add(expression.evaluate(element, runtime));
         }
         return builder.build();

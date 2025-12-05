@@ -12,7 +12,7 @@ import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
+import software.amazon.smithy.jmespath.evaluation.MappingIterable;
 
 public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
@@ -83,12 +83,12 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
     }
 
     @Override
-    public Iterable<LiteralExpression> toIterable(LiteralExpression array) {
+    public Iterable<LiteralExpression> asIterable(LiteralExpression array) {
         switch (array.getType()) {
             case ARRAY:
-                return new WrappingIterable<>(LiteralExpression::from, array.expectArrayValue());
+                return new MappingIterable<>(LiteralExpression::from, array.expectArrayValue());
             case OBJECT:
-                return new WrappingIterable<>(LiteralExpression::from, array.expectObjectValue().keySet());
+                return new MappingIterable<>(LiteralExpression::from, array.expectObjectValue().keySet());
             default:
                 throw new IllegalStateException("invalid-type");
         }

@@ -23,7 +23,7 @@ class SortByFunction implements Function {
         JmespathExpression expression = functionArguments.get(1).expectExpression();
 
         List<T> elements = new ArrayList<>();
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             elements.add(element);
         }
 

@@ -20,7 +20,7 @@ class SortFunction implements Function {
         T array = functionArguments.get(0).expectArray();
 
         List<T> elements = new ArrayList<>();
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             elements.add(element);
         }
 

@@ -19,7 +19,7 @@ class ValuesFunction implements Function {
         T value = functionArguments.get(0).expectObject();
 
         JmespathRuntime.ArrayBuilder<T> arrayBuilder = runtime.arrayBuilder();
-        for (T key : runtime.toIterable(value)) {
+        for (T key : runtime.asIterable(value)) {
             arrayBuilder.add(runtime.value(value, key));
         } ;
         return arrayBuilder.build();

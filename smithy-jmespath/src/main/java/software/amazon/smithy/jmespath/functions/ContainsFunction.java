@@ -26,7 +26,7 @@ class ContainsFunction implements Function {
                 String subjectString = runtime.asString(subject);
                 return runtime.createBoolean(subjectString.contains(searchString));
             case ARRAY:
-                for (T item : runtime.toIterable(subject)) {
+                for (T item : runtime.asIterable(subject)) {
                     if (runtime.equal(item, search)) {
                         return runtime.createBoolean(true);
                     }

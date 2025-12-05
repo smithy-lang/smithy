@@ -21,7 +21,7 @@ class JoinFunction implements Function {
 
         StringBuilder result = new StringBuilder();
         boolean first = true;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             if (!first) {
                 result.append(separator);
             }
