@@ -23,7 +23,7 @@ class AvgFunction implements Function {
             return runtime.createNull();
         }
         Number sum = 0D;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             sum = EvaluationUtils.addNumbers(sum, runtime.asNumber(element));
         }
         return runtime.createNumber(EvaluationUtils.divideNumbers(sum, length));

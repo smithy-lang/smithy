@@ -23,7 +23,7 @@ class MaxFunction implements Function {
 
         T max = null;
         boolean first = true;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             if (first) {
                 first = false;
                 max = element;

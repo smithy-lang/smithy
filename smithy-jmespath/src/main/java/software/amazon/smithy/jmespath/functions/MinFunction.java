@@ -23,7 +23,7 @@ class MinFunction implements Function {
 
         T min = null;
         boolean first = true;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             if (first) {
                 first = false;
                 min = element;

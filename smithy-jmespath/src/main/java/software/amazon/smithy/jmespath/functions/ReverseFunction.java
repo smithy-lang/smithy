@@ -34,7 +34,7 @@ class ReverseFunction implements Function {
             return runtime.createString(new StringBuilder(str).reverse().toString());
         } else {
             List<T> elements = new ArrayList<>();
-            for (T element : runtime.toIterable(value)) {
+            for (T element : runtime.asIterable(value)) {
                 elements.add(element);
             }
             Collections.reverse(elements);

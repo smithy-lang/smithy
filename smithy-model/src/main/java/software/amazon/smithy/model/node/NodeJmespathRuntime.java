@@ -11,7 +11,7 @@ import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
-import software.amazon.smithy.jmespath.evaluation.WrappingIterable;
+import software.amazon.smithy.jmespath.evaluation.MappingIterable;
 import software.amazon.smithy.model.SourceLocation;
 
 public class NodeJmespathRuntime implements JmespathRuntime<Node> {
@@ -110,11 +110,11 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Iterable<Node> toIterable(Node value) {
+    public Iterable<Node> asIterable(Node value) {
         if (value.isArrayNode()) {
             return value.expectArrayNode().getElements();
         } else {
-            return new WrappingIterable<>(x -> x, value.expectObjectNode().getMembers().keySet());
+            return new MappingIterable<>(x -> x, value.expectObjectNode().getMembers().keySet());
         }
     }
 

@@ -26,7 +26,7 @@ class MaxByFunction implements Function {
         T max = null;
         T maxBy = null;
         boolean first = true;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             T by = expression.evaluate(element, runtime);
             if (first) {
                 first = false;

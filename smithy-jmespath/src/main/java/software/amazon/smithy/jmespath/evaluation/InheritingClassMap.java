@@ -8,6 +8,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A map using Class values as keys that accounts for subtyping.
+ * <p>
+ * Useful for external implementations of polymorphism,
+ * such as attaching behavior to an existing type hierarchy you cannot modify.
+ * Can be more efficient than a chain of if statements using instanceof.
+ */
 public class InheritingClassMap<T> {
 
     public static <T> Builder<T> builder() {

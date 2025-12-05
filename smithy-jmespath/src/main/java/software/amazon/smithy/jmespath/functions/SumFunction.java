@@ -19,7 +19,7 @@ class SumFunction implements Function {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
         Number sum = 0L;
-        for (T element : runtime.toIterable(array)) {
+        for (T element : runtime.asIterable(array)) {
             sum = EvaluationUtils.addNumbers(sum, runtime.asNumber(element));
         }
         return runtime.createNumber(sum);

@@ -71,9 +71,9 @@ public class ComplianceTestRunner<T> {
             String text = IoUtils.readUtf8Url(url);
             T tests = JmespathExpression.parseJson(text, runtime);
 
-            for (var test : runtime.toIterable(tests)) {
+            for (var test : runtime.asIterable(tests)) {
                 var given = value(runtime, test, SUBJECT_MEMBER);
-                for (var testCase : runtime.toIterable(value(runtime, test, CASES_MEMBER))) {
+                for (var testCase : runtime.asIterable(value(runtime, test, CASES_MEMBER))) {
                     String comment = valueAsString(runtime, testCase, COMMENT_MEMBER);
                     String expression = valueAsString(runtime, testCase, EXPRESSION_MEMBER);
                     var result = value(runtime, testCase, RESULT_MEMBER);
