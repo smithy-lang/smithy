@@ -6,7 +6,6 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.Collection;
 import java.util.Comparator;
-
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;

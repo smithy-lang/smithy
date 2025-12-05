@@ -7,7 +7,6 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
@@ -324,7 +323,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (!sliceExpression.getStop().isPresent()) {
             stop = step > 0 ? length : -1;
         } else {
-            stop =sliceExpression.getStop().getAsInt();
+            stop = sliceExpression.getStop().getAsInt();
             if (stop < 0) {
                 stop = length + stop;
             }
