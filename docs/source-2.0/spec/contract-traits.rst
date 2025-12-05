@@ -1,5 +1,0 @@
-.. _contracts:
-
-================
-Smithy Contracts
-================
