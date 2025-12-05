@@ -27,6 +27,7 @@ Value type
     * :ref:`service-cloudtrail-event-source`
     * :ref:`service-doc-id`
     * :ref:`service-endpoint-prefix`
+    * :ref:`service-cloudwatch-metric-namespace`
 
 The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, ``cloudTrailEventSource`` and
@@ -62,6 +63,7 @@ The following example provides explicit values for all properties:
         cloudTrailEventSource: "myservice.amazon.aws"
         docId: "some-value-2018-03-17"
         endpointPrefix: "my-endpoint"
+        cloudWatchNamespace: "AWS/SomeValue"
     )
     service FooBaz {
         version: "2018-03-17"
@@ -239,6 +241,20 @@ This value is not unique across services and is subject to change. Therefore,
 it MUST NOT be used for client naming or for any other purpose that requires
 a static, unique identifier. :ref:`service-sdk-id` should be used for those
 purposes. Additionally, this value can be used to attempt to resolve endpoints.
+
+
+.. _service-cloudwatch-metric-namespace:
+
+``cloudWatchMetricNamespace``
+=============================
+
+The ``cloudWatchMetricNamespace`` property is a ``string`` value that defines
+the `AWS customer-facing metric namespace`_ of most metrics emitted by the
+service.
+
+This value is not unique across services. Some services may emit metrics under
+multiple namespaces, however this is the service's primary namespace. This
+value SHOULD begin with ``AWS/`` and the value after SHOULD be PascalCased.
 
 
 .. smithy-trait:: aws.api#arn
@@ -1680,6 +1696,7 @@ existing AWS services.
 .. _event records: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html
 .. _AWS CloudFormation service name: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws.template-resource-type-ref.html
 .. _ARN service namespace: http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
+.. _AWS customer-facing metric namespace: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Namespace
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
 .. _Amazon Resource Name (ARN): https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 .. _AWS Service Namespaces: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces

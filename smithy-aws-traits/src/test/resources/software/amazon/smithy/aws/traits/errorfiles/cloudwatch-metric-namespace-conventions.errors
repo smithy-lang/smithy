@@ -1,0 +1,3 @@
+[DANGER] ns.foo#NotPascalService: The service's CloudWatch metric namespace `AWS/notPascal` does not follow convention. The namespace's service component `notPascal` should be PascalCase. | CloudWatchNamespace
+[DANGER] ns.foo#NoPrefixService: The service's CloudWatch metric namespace `NoPrefix` does not follow convention. The namespace should start with the `AWS/` prefix. | CloudWatchNamespace
+[DANGER] ns.foo#BothService: The service's CloudWatch metric namespace `both` does not follow convention. The namespace should start with the `AWS/` prefix. The namespace's service component `both` should be PascalCase. | CloudWatchNamespace

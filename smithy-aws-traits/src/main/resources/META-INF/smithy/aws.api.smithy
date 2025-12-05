@@ -213,6 +213,10 @@ structure service {
     /// for those purposes. Additionally, this value can be used to attempt to
     /// resolve endpoints.
     endpointPrefix: String
+
+    /// The `cloudWatchNamespace` property is a string value that defines the
+    /// AWS customer-facing namespace of most metrics emitted by the service.
+    cloudWatchNamespace: CloudWatchMetricNamespace
 }
 
 /// Annotates a service as having tagging on 1 or more resources and associated
@@ -290,3 +294,8 @@ string ArnNamespace
 @pattern("^[A-Z][A-Za-z0-9]+$")
 @private
 string CloudFormationName
+
+@pattern("^[^:].*$")
+@length(min: 1, max: 255)
+@private
+string CloudWatchMetricNamespace

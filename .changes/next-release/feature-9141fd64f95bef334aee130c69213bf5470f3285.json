@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added CloudWatch Metric Namespace to AWS service trait.",
+  "pull_requests": [
+    "[#2877](https://github.com/smithy-lang/smithy/pull/2877)"
+  ]
+}

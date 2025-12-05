@@ -1,5 +1,6 @@
 software.amazon.smithy.aws.traits.ArnTemplateValidator
 software.amazon.smithy.aws.traits.ArnTraitValidator
+software.amazon.smithy.aws.traits.CloudWatchNamespaceValidator
 software.amazon.smithy.aws.traits.HttpChecksumTraitValidator
 software.amazon.smithy.aws.traits.SdkServiceIdValidator
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryValidator
