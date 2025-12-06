@@ -264,7 +264,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     /**
      * If the given value is an OBJECT, returns the value mapped to the given key.
-     * Otherwise, throws a JmespathException of type INVALID_TYPE.
+     * Otherwise, returns NULL.
      */
     T value(T object, T key);
 
