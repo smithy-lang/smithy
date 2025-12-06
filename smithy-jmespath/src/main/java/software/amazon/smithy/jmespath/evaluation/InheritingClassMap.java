@@ -45,7 +45,7 @@ public class InheritingClassMap<T> {
         for (Class<?> interfaceClass : clazz.getInterfaces()) {
             T interfaceResult = get(interfaceClass);
             if (interfaceResult != null) {
-                if (result != null) {
+                if (result != null && !result.equals(interfaceResult)) {
                     throw new RuntimeException("Duplicate match for " + clazz + ": "
                             + matchingClass + " and " + interfaceClass);
                 }
