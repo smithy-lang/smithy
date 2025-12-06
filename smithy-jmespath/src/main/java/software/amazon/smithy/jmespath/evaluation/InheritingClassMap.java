@@ -7,7 +7,6 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A map using Class values as keys that accounts for subtyping.

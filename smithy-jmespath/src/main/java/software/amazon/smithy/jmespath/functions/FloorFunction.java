@@ -33,7 +33,7 @@ class FloorFunction implements Function {
             case DOUBLE:
                 return runtime.createNumber(Math.floor(number.doubleValue()));
             case FLOAT:
-                return runtime.createNumber((long) Math.floor(number.floatValue()));
+                return runtime.createNumber(Math.floor(number.floatValue()));
             default:
                 throw new RuntimeException("Unknown number type: " + number.getClass().getName());
         }

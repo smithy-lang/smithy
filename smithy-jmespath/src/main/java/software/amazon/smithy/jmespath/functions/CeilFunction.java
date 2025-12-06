@@ -33,7 +33,7 @@ class CeilFunction implements Function {
             case DOUBLE:
                 return runtime.createNumber(Math.ceil(number.doubleValue()));
             case FLOAT:
-                return runtime.createNumber((long) Math.ceil(number.floatValue()));
+                return runtime.createNumber(Math.ceil(number.floatValue()));
             default:
                 throw new RuntimeException("Unknown number type: " + number.getClass().getName());
         }
