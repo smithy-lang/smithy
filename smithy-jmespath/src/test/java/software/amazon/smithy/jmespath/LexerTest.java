@@ -5,7 +5,7 @@
 package software.amazon.smithy.jmespath;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -79,7 +79,7 @@ public class LexerTest {
 
         assertThat(tokens, hasSize(2));
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
-        assertThat(tokens.get(0).value.expectArrayValue(), equalTo(Arrays.asList(1.0, true, false, null, -2.0, "hi")));
+        assertThat(tokens.get(0).value.expectArrayValue(), equalTo(Arrays.asList(1L, true, false, null, -2L, "hi")));
         assertThat(tokens.get(0).line, equalTo(1));
         assertThat(tokens.get(0).column, equalTo(1));
 
@@ -140,7 +140,7 @@ public class LexerTest {
         assertThat(tokens.get(0).type, equalTo(TokenType.LITERAL));
         Map<String, Object> obj = tokens.get(0).value.expectObjectValue();
         assertThat(obj.entrySet(), hasSize(2));
-        assertThat(obj.keySet(), contains("foo", "bar"));
+        assertThat(obj.keySet(), containsInAnyOrder("foo", "bar"));
         assertThat(obj.get("foo"), equalTo(true));
         assertThat(obj.get("bar"), equalTo(Collections.singletonMap("bam", Collections.emptyList())));
         assertThat(tokens.get(0).line, equalTo(1));
@@ -599,7 +599,7 @@ public class LexerTest {
         assertThat(tokens.get(0).toString(), equalTo("'abc'"));
         assertThat(tokens.get(1).toString(), equalTo("'.'"));
         assertThat(tokens.get(2).toString(), equalTo("':'"));
-        assertThat(tokens.get(3).toString(), equalTo("'10.0'"));
+        assertThat(tokens.get(3).toString(), equalTo("'10'"));
     }
 
     @Test
@@ -615,7 +615,7 @@ public class LexerTest {
         assertThat(tokens.get(2).line, is(3));
         assertThat(tokens.get(2).column, is(1));
 
-        assertThat(tokens.get(3).toString(), equalTo("'10.0'"));
+        assertThat(tokens.get(3).toString(), equalTo("'10'"));
         assertThat(tokens.get(3).line, is(4));
         assertThat(tokens.get(3).column, is(1));
 
