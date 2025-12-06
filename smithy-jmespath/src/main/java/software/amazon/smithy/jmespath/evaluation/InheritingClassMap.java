@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +62,7 @@ public class InheritingClassMap<T> {
 
     public static class Builder<T> {
 
-        private final Map<Class<?>, T> map = new ConcurrentHashMap<>();
+        private final Map<Class<?>, T> map = new HashMap<>();
 
         public Builder<T> put(Class<?> clazz, T value) {
             map.put(clazz, Objects.requireNonNull(value));
