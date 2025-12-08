@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.logic.cfg;
 
 import java.util.Objects;
+import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 
 /**
@@ -13,15 +14,11 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 public final class ResultNode extends CfgNode {
     private final Rule result;
     private final int hash;
-    private static final ResultNode TERMINAL = new ResultNode();
+    private static final ResultNode TERMINAL = new ResultNode(NoMatchRule.INSTANCE);
 
     public ResultNode(Rule result) {
-        this.result = result;
-        this.hash = result == null ? 11 : result.hashCode();
-    }
-
-    private ResultNode() {
-        this(null);
+        this.result = Objects.requireNonNull(result, "result cannot be null; use NoMatchRule.INSTANCE for no-match");
+        this.hash = result.hashCode();
     }
 
     /**
@@ -49,7 +46,7 @@ public final class ResultNode extends CfgNode {
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         } else {
-            return Objects.equals(result, (((ResultNode) object)).result);
+            return result.equals(((ResultNode) object).result);
         }
     }
 
