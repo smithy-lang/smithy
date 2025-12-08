@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixes a bug in toNode generation for traits with members that have the idRef trait applied.",
+  "pull_requests": [
+    "[#2871](https://github.com/smithy-lang/smithy/pull/2871)"
+  ]
+}

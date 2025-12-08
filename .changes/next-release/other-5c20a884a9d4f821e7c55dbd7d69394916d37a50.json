@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Replace streams with loops",
+  "pull_requests": [
+    "[#2866](https://github.com/smithy-lang/smithy/pull/2866)"
+  ]
+}
