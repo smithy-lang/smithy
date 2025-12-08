@@ -4,8 +4,8 @@ import { SVG } from "./svg";
 import { useResizeObserver } from "./useResizeObserver";
 
 export interface SVGArrow {
-  startComponent: React.RefObject<HTMLElement>;
-  endComponent: React.RefObject<HTMLElement>;
+  startComponent: React.RefObject<HTMLElement | null>;
+  endComponent: React.RefObject<HTMLElement | null>;
 }
 
 export const Arrow = ({ startComponent, endComponent }: SVGArrow) => {

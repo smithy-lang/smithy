@@ -11,6 +11,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -22,6 +23,7 @@ import software.amazon.smithy.utils.StringUtils;
 @SmithyInternalApi
 public final class TraitCodegenUtils {
     public static final Symbol JAVA_STRING_SYMBOL = TraitCodegenUtils.fromClass(String.class);
+    public static final Symbol SHAPE_ID_SYMBOL = TraitCodegenUtils.fromClass(ShapeId.class);
     public static final URL RESERVED_WORDS_FILE = TraitCodegenUtils.class.getResource("reserved-words.txt");
     public static final ReservedWords SHAPE_ESCAPER = new ReservedWordsBuilder()
             .loadCaseInsensitiveWords(RESERVED_WORDS_FILE, word -> word + "Shape")

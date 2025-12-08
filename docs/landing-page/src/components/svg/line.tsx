@@ -8,8 +8,8 @@ type Coordinates = {
 };
 
 interface LineConnectorProps {
-  startComponent: RefObject<HTMLElement>;
-  endComponent: RefObject<HTMLElement>;
+  startComponent: RefObject<HTMLElement | null>;
+  endComponent: RefObject<HTMLElement | null>;
   lineColor?: string;
   className?: string;
 }

@@ -35,6 +35,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     private final String cloudTrailEventSource;
     private final String docId;
     private final String endpointPrefix;
+    private final String cloudWatchNamespace;
 
     private ServiceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -46,6 +47,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 builder.cloudTrailEventSource);
         this.docId = builder.docId;
         this.endpointPrefix = SmithyBuilder.requiredState("endpointPrefix", builder.endpointPrefix);
+        this.cloudWatchNamespace = builder.cloudWatchNamespace;
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -63,21 +65,12 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                             "No sdkId was provided. Perhaps you could set this to %s?",
                             target.getName()), value));
             builder.sdkId(sdkId);
-            objectNode.getStringMember("arnNamespace")
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::arnNamespace);
-            objectNode.getStringMember("cloudFormationName")
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::cloudFormationName);
-            objectNode.getStringMember("cloudTrailEventSource")
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::cloudTrailEventSource);
-            objectNode.getStringMember("docId")
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::docId);
-            objectNode.getStringMember("endpointPrefix")
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::endpointPrefix);
+            objectNode.getStringMember("arnNamespace", builder::arnNamespace);
+            objectNode.getStringMember("cloudFormationName", builder::cloudFormationName);
+            objectNode.getStringMember("cloudTrailEventSource", builder::cloudTrailEventSource);
+            objectNode.getStringMember("docId", builder::docId);
+            objectNode.getStringMember("endpointPrefix", builder::endpointPrefix);
+            objectNode.getStringMember("cloudWatchNamespace", builder::cloudWatchNamespace);
             ServiceTrait result = builder.build(target);
             result.setNodeCache(value);
             return result;
@@ -181,6 +174,15 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return endpointPrefix;
     }
 
+    /**
+     * Gets the CloudWatch metric namespace for the service.
+     *
+     * @return Returns the optionally present CloudWatch metric namespace.
+     */
+    public Optional<String> getCloudWatchNamespace() {
+        return Optional.ofNullable(cloudWatchNamespace);
+    }
+
     @Deprecated
     public Optional<String> getAbbreviation() {
         return Optional.empty();
@@ -208,6 +210,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
                 .withOptionalMember("docId", getDocId().map(Node::from))
                 .withMember("endpointPrefix", Node.from(getEndpointPrefix()))
+                .withOptionalMember("cloudWatchNamespace", getCloudWatchNamespace().map(Node::from))
                 .build();
     }
 
@@ -226,7 +229,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     && cloudFormationName.equals(os.cloudFormationName)
                     && cloudTrailEventSource.equals(os.cloudTrailEventSource)
                     && Objects.equals(docId, os.docId)
-                    && endpointPrefix.equals(os.endpointPrefix);
+                    && endpointPrefix.equals(os.endpointPrefix)
+                    && Objects.equals(cloudWatchNamespace, os.cloudWatchNamespace);
         }
     }
 
@@ -238,7 +242,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 cloudFormationName,
                 cloudTrailEventSource,
                 docId,
-                endpointPrefix);
+                endpointPrefix,
+                cloudWatchNamespace);
     }
 
     /** Builder for {@link ServiceTrait}. */
@@ -249,6 +254,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         private String cloudTrailEventSource;
         private String docId;
         private String endpointPrefix;
+        private String cloudWatchNamespace;
 
         private Builder() {}
 
@@ -351,6 +357,17 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
          */
         public Builder endpointPrefix(String endpointPrefix) {
             this.endpointPrefix = endpointPrefix;
+            return this;
+        }
+
+        /**
+         * Set the CloudWatch metric namespace of the service.
+         *
+         * @param cloudWatchNamespace CloudWatch metric namespace of the service.
+         * @return Returns the builder.
+         */
+        public Builder cloudWatchNamespace(String cloudWatchNamespace) {
+            this.cloudWatchNamespace = cloudWatchNamespace;
             return this;
         }
 

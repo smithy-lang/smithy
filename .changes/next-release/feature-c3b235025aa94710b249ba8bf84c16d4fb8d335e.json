@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "restXml and restJson1 should support the httpChecksum trait",
-  "pull_requests": [
-    "[#2867](https://github.com/smithy-lang/smithy/pull/2867)"
-  ]
-}
