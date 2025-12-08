@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Update smithy-java doc to reflect the latest artifact names",
-  "pull_requests": [
-    "[#2862](https://github.com/smithy-lang/smithy/pull/2862)"
-  ]
-}

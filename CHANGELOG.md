@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.65.0 (2025-12-04)
+
+### Features
+
+- restXml and restJson1 should support the httpChecksum trait
+  ([#2867](https://github.com/smithy-lang/smithy/pull/2867))
+- Add a new package with tests for rule engine
+  ([#2864](https://github.com/smithy-lang/smithy/pull/2864))
+- Added a `NodeValidationVisitor` feature that enforces base64 encoding of blob
+  values. ([#2838](https://github.com/smithy-lang/smithy/pull/2838))
+
+### Bug Fixes
+
+- Fixes a bug in toNode generation for traits with members that have the idRef
+  trait applied. ([#2871](https://github.com/smithy-lang/smithy/pull/2871))
+
+### Documentation
+
+- Update smithy-java doc to reflect the latest artifact names
+  ([#2862](https://github.com/smithy-lang/smithy/pull/2862))
+- Fixed a broken ABNF specification in rules engine docs.
+  ([#2831](https://github.com/smithy-lang/smithy/pull/2831))
+
+### Other
+
+- Replace streams with loops
+  ([#2866](https://github.com/smithy-lang/smithy/pull/2866))
+
 ## 1.64.0 (2025-11-04)
 
 ### Features
