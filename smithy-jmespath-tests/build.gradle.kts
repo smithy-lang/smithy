@@ -9,7 +9,7 @@ plugins {
 description = "Compliance tests for JMESPath"
 
 extra["displayName"] = "Smithy :: JMESPath Tests"
-extra["moduleName"] = "software.amazon.smithy.jmespath"
+extra["moduleName"] = "software.amazon.smithy.jmespathtests"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
