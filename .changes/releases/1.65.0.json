@@ -1,0 +1,69 @@
+{
+  "version": "1.65.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added CloudWatch Metric Namespace to AWS service trait.",
+      "pull_requests": [
+        "[#2877](https://github.com/smithy-lang/smithy/pull/2877)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Replace streams with loops",
+      "pull_requests": [
+        "[#2866](https://github.com/smithy-lang/smithy/pull/2866)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixes a bug in toNode generation for traits with members that have the idRef trait applied.",
+      "pull_requests": [
+        "[#2871](https://github.com/smithy-lang/smithy/pull/2871)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add a new package with tests for rule engine",
+      "pull_requests": [
+        "[#2864](https://github.com/smithy-lang/smithy/pull/2864)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Update smithy-java doc to reflect the latest artifact names",
+      "pull_requests": [
+        "[#2862](https://github.com/smithy-lang/smithy/pull/2862)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Fix null result handling in CFG terminal nodes",
+      "pull_requests": [
+        "[#2881](https://github.com/smithy-lang/smithy/pull/2881)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "restXml and restJson1 should support the httpChecksum trait",
+      "pull_requests": [
+        "[#2867](https://github.com/smithy-lang/smithy/pull/2867)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a `NodeValidationVisitor` feature that enforces base64 encoding of blob values.",
+      "pull_requests": [
+        "[#2838](https://github.com/smithy-lang/smithy/pull/2838)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed a broken ABNF specification in rules engine docs.",
+      "pull_requests": [
+        "[#2831](https://github.com/smithy-lang/smithy/pull/2831)"
+      ]
+    }
+  ],
+  "date": "2025-12-09"
+}
