@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Added a section to discuss recommendations for implementing Smithy clients. Currently this section only includes information about HTTP interfaces, but it will expand over time to cover more topics related to implementing clients.",
+  "pull_requests": [
+    "[#2868](https://github.com/smithy-lang/smithy/pull/2868)"
+  ]
+}
