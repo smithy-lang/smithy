@@ -10,7 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
@@ -22,6 +26,8 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 import software.amazon.smithy.rulesengine.logic.TestHelpers;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
+import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 
 class BddCompilerTest {
 
@@ -65,8 +71,8 @@ class BddCompilerTest {
 
         assertNotNull(bdd);
         assertEquals(1, bdd.getConditionCount());
-        // Results include: NoMatchRule, endpoint, and possibly a terminal for the false branch
-        assertEquals(3, bdd.getResultCount());
+        // Results: NoMatchRule (for false branch) and endpoint (for true branch)
+        assertEquals(2, bdd.getResultCount());
         assertTrue(bdd.getRootRef() != 0);
     }
 
@@ -88,8 +94,8 @@ class BddCompilerTest {
         Bdd bdd = compiler.compile();
 
         assertEquals(1, bdd.getConditionCount());
-        // Results: NoMatchRule, error, and possibly a terminal
-        assertEquals(3, bdd.getResultCount());
+        // Results: NoMatchRule (for false branch) and error (for true branch)
+        assertEquals(2, bdd.getResultCount());
     }
 
     @Test
@@ -169,8 +175,8 @@ class BddCompilerTest {
         Bdd bdd = compiler.compile();
 
         assertEquals(0, bdd.getConditionCount());
-        // Even with no rules, there's the NoMatchRule and possibly a terminal
-        assertEquals(2, bdd.getResultCount());
+        // Only NoMatchRule - the terminal now uses NoMatchRule.INSTANCE, not a separate null result
+        assertEquals(1, bdd.getResultCount());
         // Should have at least terminal node
         assertEquals(1, bdd.getNodeCount());
     }
@@ -247,5 +253,25 @@ class BddCompilerTest {
         // For 2 conditions with AND semantics leading to one endpoint:
         // We expect approximately 3-4 nodes (depending on the exact structure)
         assertTrue(bdd.getNodeCount() <= 5, "BDD should be reduced to minimal form");
+    }
+
+    @Test
+    public void convertsModelsThatHaveNoCatchAllCondition() {
+        // This model does not define a catch-all condition, so it falls through to a null result,
+        // which maps to the NoMatchRule.
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("get-attr.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+
+        ServiceShape service = model.expectShape(
+                ShapeId.from("smithy.tests.endpointrules.getattr#FizzBuzz"),
+                ServiceShape.class);
+        EndpointRuleSetTrait trait = service.expectTrait(EndpointRuleSetTrait.class);
+        Cfg cfg = Cfg.from(trait.getEndpointRuleSet());
+        EndpointBddTrait bdd = EndpointBddTrait.from(cfg);
+
+        Assertions.assertDoesNotThrow(bdd::toNode);
     }
 }

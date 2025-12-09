@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Fix null result handling in CFG terminal nodes",
+  "pull_requests": [
+    "[#2881](https://github.com/smithy-lang/smithy/pull/2881)"
+  ]
+}
