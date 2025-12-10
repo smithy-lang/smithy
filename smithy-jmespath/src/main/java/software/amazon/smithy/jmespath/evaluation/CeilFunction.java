@@ -2,17 +2,16 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath.functions;
+package software.amazon.smithy.jmespath.evaluation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-class FloorFunction implements Function {
+class CeilFunction implements Function {
     @Override
     public String name() {
-        return "floor";
+        return "ceil";
     }
 
     @Override
@@ -29,11 +28,11 @@ class FloorFunction implements Function {
             case BIG_INTEGER:
                 return value;
             case BIG_DECIMAL:
-                return runtime.createNumber(((BigDecimal) number).setScale(0, RoundingMode.FLOOR));
+                return runtime.createNumber(((BigDecimal) number).setScale(0, RoundingMode.CEILING));
             case DOUBLE:
-                return runtime.createNumber(Math.floor(number.doubleValue()));
+                return runtime.createNumber(Math.ceil(number.doubleValue()));
             case FLOAT:
-                return runtime.createNumber(Math.floor(number.floatValue()));
+                return runtime.createNumber(Math.ceil(number.floatValue()));
             default:
                 throw new RuntimeException("Unknown number type: " + number.getClass().getName());
         }

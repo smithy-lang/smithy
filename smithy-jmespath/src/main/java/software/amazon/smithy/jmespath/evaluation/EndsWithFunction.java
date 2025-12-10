@@ -2,10 +2,9 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath.functions;
+package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 class EndsWithFunction implements Function {
     @Override
