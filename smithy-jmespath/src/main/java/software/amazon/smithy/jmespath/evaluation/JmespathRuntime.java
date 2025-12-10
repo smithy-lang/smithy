@@ -207,9 +207,17 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     interface ArrayBuilder<T> {
 
+        /**
+         * Adds the given value to the array being built.
+         */
         void add(T value);
 
-        void addAll(T array);
+        /**
+         * If the given value is an ARRAY, adds all the elements of the array.
+         * If the given value is an OBJECT, adds all the keys of the object.
+         * Otherwise, throws a JmespathException of type INVALID_TYPE.
+         */
+        void addAll(T collection);
 
         T build();
     }
@@ -218,30 +226,26 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * If the given value is an ARRAY, returns the element at the given index.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      */
-    T element(T array, T index);
+    T element(T array, int index);
 
     /**
      * If the given value is an ARRAY, returns the specified slice.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      * <p>
-     * The start, stop, and step values will always be non-null.
      * Start and stop will always be non-negative, and step will always be non-zero.
      */
-    default T slice(T array, Number startNumber, Number stopNumber, Number stepNumber) {
+    default T slice(T array, int start, int stop, int step) {
         if (is(array, RuntimeType.NULL)) {
             return createNull();
         }
 
         JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
-        int start = startNumber.intValue();
-        int stop = stopNumber.intValue();
-        int step = stepNumber.intValue();
 
         if (start < stop) {
             // If step is negative, the result is an empty array.
             if (step > 0) {
                 for (int idx = start; idx < stop; idx += step) {
-                    output.add(element(array, createNumber(idx)));
+                    output.add(element(array, idx));
                 }
             }
         } else {
@@ -249,7 +253,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             if (step < 0) {
                 // List is iterating in reverse
                 for (int idx = start; idx > stop; idx += step) {
-                    output.add(element(array, createNumber(idx)));
+                    output.add(element(array, idx));
                 }
             }
         }
@@ -264,8 +268,15 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     interface ObjectBuilder<T> {
 
+        /**
+         * Adds the given key/value pair to the object being built.
+         */
         void put(T key, T value);
 
+        /**
+         * If the given value is an OBJECT, adds all of its key/value pairs.
+         * Otherwise, throws a JmespathException of type INVALID_TYPE.
+         */
         void putAll(T object);
 
         T build();
@@ -285,14 +296,11 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * Returns the number of elements in an ARRAY or the number of keys in an OBJECT.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      */
-    Number length(T value);
+    int length(T value);
 
     /**
      * Iterate over the elements of an ARRAY or the keys of an OBJECT.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
-     * <p>
-     * Does not use Collection to avoid assuming there are fewer than Integer.MAX_VALUE
-     * elements in the array.
      */
     Iterable<? extends T> asIterable(T value);
 }

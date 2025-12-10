@@ -64,7 +64,7 @@ public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<L
     }
 
     @Override
-    public Number length(LiteralExpression value) {
+    public int length(LiteralExpression value) {
         switch (value.getType()) {
             case STRING:
                 return EvaluationUtils.codePointCount(value.expectStringValue());
@@ -78,8 +78,8 @@ public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<L
     }
 
     @Override
-    public LiteralExpression element(LiteralExpression array, LiteralExpression index) {
-        return LiteralExpression.from(array.expectArrayValue().get(index.expectNumberValue().intValue()));
+    public LiteralExpression element(LiteralExpression array, int index) {
+        return LiteralExpression.from(array.expectArrayValue().get(index));
     }
 
     @Override

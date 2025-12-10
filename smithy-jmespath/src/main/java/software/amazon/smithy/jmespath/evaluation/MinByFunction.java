@@ -18,7 +18,7 @@ class MinByFunction implements Function {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         JmespathExpression expression = functionArguments.get(1).expectExpression();
-        if (runtime.length(array).intValue() == 0) {
+        if (runtime.length(array) == 0) {
             return runtime.createNull();
         }
 
