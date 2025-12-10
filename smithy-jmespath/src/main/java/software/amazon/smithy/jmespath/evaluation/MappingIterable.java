@@ -7,7 +7,7 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class MappingIterable<T, R> implements Iterable<R> {
+public final class MappingIterable<T, R> implements Iterable<R> {
 
     private final Iterable<T> inner;
     private final Function<? super T, ? extends R> mapping;
