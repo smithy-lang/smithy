@@ -164,7 +164,11 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitLiteral(LiteralExpression literalExpression) {
-        if (literalExpression.isNumberValue()) {
+        if (literalExpression.isStringValue()) {
+            return runtime.createString(literalExpression.expectStringValue());
+        } else if (literalExpression.isBooleanValue()) {
+            return runtime.createBoolean(literalExpression.expectBooleanValue());
+        } else if (literalExpression.isNumberValue()) {
             return runtime.createNumber(literalExpression.expectNumberValue());
         } else if (literalExpression.isArrayValue()) {
             JmespathRuntime.ArrayBuilder<T> result = runtime.arrayBuilder();
@@ -180,10 +184,6 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
                 result.put(key, value);
             }
             return result.build();
-        } else if (literalExpression.isStringValue()) {
-            return runtime.createString(literalExpression.expectStringValue());
-        } else if (literalExpression.isBooleanValue()) {
-            return runtime.createBoolean(literalExpression.expectBooleanValue());
         } else if (literalExpression.isNullValue()) {
             return runtime.createNull();
         }

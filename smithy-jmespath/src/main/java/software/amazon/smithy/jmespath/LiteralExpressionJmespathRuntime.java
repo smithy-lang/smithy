@@ -14,7 +14,7 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.MappingIterable;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
-public class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
+public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
     public static final LiteralExpressionJmespathRuntime INSTANCE = new LiteralExpressionJmespathRuntime();
 
@@ -99,7 +99,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
         return new ArrayLiteralExpressionBuilder();
     }
 
-    private static class ArrayLiteralExpressionBuilder implements ArrayBuilder<LiteralExpression> {
+    private static final class ArrayLiteralExpressionBuilder implements ArrayBuilder<LiteralExpression> {
         private final List<Object> result = new ArrayList<>();
 
         @Override
@@ -136,7 +136,7 @@ public class LiteralExpressionJmespathRuntime implements JmespathRuntime<Literal
         return new ObjectLiteralExpressionBuilder();
     }
 
-    private static class ObjectLiteralExpressionBuilder implements ObjectBuilder<LiteralExpression> {
+    private static final class ObjectLiteralExpressionBuilder implements ObjectBuilder<LiteralExpression> {
         private final Map<String, Object> result = new HashMap<>();
 
         @Override

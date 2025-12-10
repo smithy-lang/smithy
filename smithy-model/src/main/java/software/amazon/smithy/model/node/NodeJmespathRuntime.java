@@ -45,7 +45,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public Node createBoolean(boolean b) {
-        return new BooleanNode(b, SourceLocation.none());
+        return Node.from(b);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public Node createNumber(Number value) {
-        return new NumberNode(value, SourceLocation.none());
+        return Node.from(value);
     }
 
     @Override
@@ -110,11 +110,11 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Iterable<Node> asIterable(Node value) {
+    public Iterable<? extends Node> asIterable(Node value) {
         if (value.isArrayNode()) {
             return value.expectArrayNode().getElements();
         } else {
-            return new MappingIterable<>(x -> x, value.expectObjectNode().getMembers().keySet());
+            return value.expectObjectNode().getMembers().keySet();
         }
     }
 
@@ -123,7 +123,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
         return new ArrayNodeBuilder();
     }
 
-    private static class ArrayNodeBuilder implements ArrayBuilder<Node> {
+    private static final class ArrayNodeBuilder implements ArrayBuilder<Node> {
         private final ArrayNode.Builder builder = ArrayNode.builder();
 
         @Override
@@ -163,7 +163,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
         return new ObjectNodeBuilder();
     }
 
-    private static class ObjectNodeBuilder implements ObjectBuilder<Node> {
+    private static final class ObjectNodeBuilder implements ObjectBuilder<Node> {
         private final ObjectNode.Builder builder = ObjectNode.builder();
 
         @Override
