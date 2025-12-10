@@ -110,7 +110,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     @Override
     public Node element(Node array, Node index) {
-        return array.expectArrayNode().get(index.expectNumberNode().getValue().intValue()).orElseGet(this::createNull);
+        return array.expectArrayNode().elementAt(index.expectNumberNode().getValue().intValue());
     }
 
     @Override
