@@ -12,7 +12,7 @@ public final class FunctionRegistry {
     private static final Map<String, Function> BUILTINS = new HashMap<>();
 
     private static void registerFunction(Function function) {
-        if (builtins.put(function.name(), function) != null) {
+        if (BUILTINS.put(function.name(), function) != null) {
             throw new IllegalArgumentException("Duplicate function name: " + function.name());
         }
     }
@@ -47,6 +47,6 @@ public final class FunctionRegistry {
     }
 
     public static Function lookup(String name) {
-        return builtins.get(name);
+        return BUILTINS.get(name);
     }
 }
