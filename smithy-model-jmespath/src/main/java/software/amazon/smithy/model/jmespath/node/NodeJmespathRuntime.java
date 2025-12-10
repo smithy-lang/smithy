@@ -95,7 +95,7 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Number length(Node value) {
+    public int length(Node value) {
         switch (value.getType()) {
             case OBJECT:
                 return value.expectObjectNode().size();
@@ -109,8 +109,8 @@ public class NodeJmespathRuntime implements JmespathRuntime<Node> {
     }
 
     @Override
-    public Node element(Node array, Node index) {
-        return array.expectArrayNode().elementAt(index.expectNumberNode().getValue().intValue());
+    public Node element(Node array, int index) {
+        return array.expectArrayNode().elementAt(index);
     }
 
     @Override

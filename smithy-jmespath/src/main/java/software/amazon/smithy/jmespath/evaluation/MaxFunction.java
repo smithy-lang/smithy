@@ -16,7 +16,7 @@ class MaxFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
-        if (runtime.length(array).intValue() == 0) {
+        if (runtime.length(array) == 0) {
             return runtime.createNull();
         }
 

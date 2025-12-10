@@ -145,10 +145,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (!runtime.is(current, RuntimeType.ARRAY)) {
             return runtime.createNull();
         }
-        // TODO: Capping at int here unnecessarily
-        // Perhaps define intLength() and return -1 if it doesn't fit?
-        // Although technically IndexExpression should be using a Number instead of an int in the first place
-        int length = runtime.length(current).intValue();
+        int length = runtime.length(current);
         // Negative indices indicate reverse indexing in JMESPath
         if (index < 0) {
             index = length + index;
@@ -156,7 +153,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         if (length <= index || index < 0) {
             return runtime.createNull();
         }
-        return runtime.element(current, runtime.createNumber(index));
+        return runtime.element(current, index);
     }
 
     @Override
@@ -294,7 +291,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return runtime.createNull();
         }
 
-        int length = runtime.length(current).intValue();
+        int length = runtime.length(current);
 
         int step = sliceExpression.getStep();
         if (step == 0) {

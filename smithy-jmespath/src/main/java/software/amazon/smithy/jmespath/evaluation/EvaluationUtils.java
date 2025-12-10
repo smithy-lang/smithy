@@ -123,7 +123,7 @@ public final class EvaluationUtils {
                 if (!runtime.is(b, RuntimeType.OBJECT)) {
                     return false;
                 }
-                if (!runtime.length(a).equals(runtime.length(b))) {
+                if (runtime.length(a) != runtime.length(b)) {
                     return false;
                 }
                 for (T key : runtime.asIterable(a)) {
