@@ -16,6 +16,11 @@ import software.amazon.smithy.jmespath.RuntimeType;
  * <p>
  * Several methods have default implementations that are at least correct,
  * but implementors can override them with more efficient implementations.
+ * <p>
+ * In the documentation of the required behavior of each method,
+ * note that conditions like "if the value is NULL",
+ * refer to T value where typeOf(value) returns RuntimeType.NULL.
+ * A runtime may or may not use a Java `null` value for this purpose.
  */
 public interface JmespathRuntime<T> extends Comparator<T> {
 
@@ -105,21 +110,21 @@ public interface JmespathRuntime<T> extends Comparator<T> {
                 return asNumber(value).toString();
             case ARRAY:
                 StringBuilder arrayStringBuilder = new StringBuilder();
-                arrayStringBuilder.append("[");
+                arrayStringBuilder.append('[');
                 boolean first = true;
                 for (T element : asIterable(value)) {
                     if (first) {
                         first = false;
                     } else {
-                        arrayStringBuilder.append(",");
+                        arrayStringBuilder.append(',');
                     }
                     arrayStringBuilder.append(toString(element));
                 }
-                arrayStringBuilder.append("]");
+                arrayStringBuilder.append(']');
                 return arrayStringBuilder.toString();
             case OBJECT:
                 StringBuilder objectStringBuilder = new StringBuilder();
-                objectStringBuilder.append("{");
+                objectStringBuilder.append('{');
                 boolean firstKey = true;
                 for (T key : asIterable(value)) {
                     if (firstKey) {
@@ -131,7 +136,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
                     objectStringBuilder.append(": ");
                     objectStringBuilder.append(toString(value(value, key)));
                 }
-                objectStringBuilder.append("}");
+                objectStringBuilder.append('}');
                 return objectStringBuilder.toString();
             default:
                 throw new IllegalStateException();
@@ -219,24 +224,28 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * If the given value is an ARRAY, returns the specified slice.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      * <p>
-     * The start and stop values will always be non-null and non-negative.
-     * Step will always be non-zero.
-     * If step is positive, start will be less than or equal to stop.
-     * If step is negative, start will be greater than or equal to stop.
+     * The start, stop, and step values will always be non-null.
+     * Start and stop will always be non-negative, and step will always be non-zero.
      */
     default T slice(T array, Number startNumber, Number stopNumber, Number stepNumber) {
+        if (is(array, RuntimeType.NULL)) {
+            return createNull();
+        }
+
         JmespathRuntime.ArrayBuilder<T> output = arrayBuilder();
         int start = startNumber.intValue();
         int stop = stopNumber.intValue();
         int step = stepNumber.intValue();
 
         if (start < stop) {
+            // If step is negative, the result is an empty array.
             if (step > 0) {
                 for (int idx = start; idx < stop; idx += step) {
                     output.add(element(array, createNumber(idx)));
                 }
             }
         } else {
+            // If step is positive, the result is an empty array.
             if (step < 0) {
                 // List is iterating in reverse
                 for (int idx = start; idx > stop; idx += step) {
