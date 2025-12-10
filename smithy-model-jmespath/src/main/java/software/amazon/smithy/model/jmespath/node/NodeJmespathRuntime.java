@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.model.node;
+package software.amazon.smithy.model.jmespath.node;
 
 import java.util.Optional;
 import software.amazon.smithy.jmespath.JmespathException;
@@ -12,6 +12,11 @@ import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 
 public class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
