@@ -30,9 +30,6 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
-import software.amazon.smithy.jmespath.functions.Function;
-import software.amazon.smithy.jmespath.functions.FunctionArgument;
-import software.amazon.smithy.jmespath.functions.FunctionRegistry;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 

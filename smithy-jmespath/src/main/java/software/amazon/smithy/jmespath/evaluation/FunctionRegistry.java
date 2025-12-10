@@ -2,12 +2,12 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath.functions;
+package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FunctionRegistry {
+final class FunctionRegistry {
 
     private static final Map<String, Function> BUILTINS = new HashMap<>();
 
@@ -46,7 +46,7 @@ public final class FunctionRegistry {
         registerFunction(new ValuesFunction());
     }
 
-    public static Function lookup(String name) {
+    static Function lookup(String name) {
         return BUILTINS.get(name);
     }
 }

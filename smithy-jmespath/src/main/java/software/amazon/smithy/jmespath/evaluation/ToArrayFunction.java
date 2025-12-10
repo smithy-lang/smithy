@@ -2,15 +2,15 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.jmespath.functions;
+package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.jmespath.RuntimeType;
 
-class ToStringFunction implements Function {
+class ToArrayFunction implements Function {
     @Override
     public String name() {
-        return "to_string";
+        return "to_array";
     }
 
     @Override
@@ -18,11 +18,12 @@ class ToStringFunction implements Function {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 
-        switch (runtime.typeOf(value)) {
-            case STRING:
-                return value;
-            default:
-                return runtime.createString(runtime.toString(value));
+        if (runtime.is(value, RuntimeType.ARRAY)) {
+            return value;
+        } else {
+            JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
+            builder.add(value);
+            return builder.build();
         }
     }
 }

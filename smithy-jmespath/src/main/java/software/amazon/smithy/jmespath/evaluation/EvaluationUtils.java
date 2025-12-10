@@ -66,7 +66,7 @@ public final class EvaluationUtils {
         }
     }
 
-    public static Number addNumbers(Number a, Number b) {
+    static Number addNumbers(Number a, Number b) {
         if (isBig(a, b)) {
             return toBigDecimal(a).add(toBigDecimal(b));
         } else if (a instanceof Double || b instanceof Double || a instanceof Float || b instanceof Float) {
@@ -76,7 +76,7 @@ public final class EvaluationUtils {
         }
     }
 
-    public static Number divideNumbers(Number a, Number b) {
+    static Number divideNumbers(Number a, Number b) {
         if (isBig(a, b)) {
             return toBigDecimal(a).divide(toBigDecimal(b));
         } else {
@@ -88,6 +88,11 @@ public final class EvaluationUtils {
         return string.codePointCount(0, string.length());
     }
 
+    /**
+     * Default implementation of equality.
+     * Objects.equals() is not generally adequate because it will not
+     * consider equivalent Number values of different types equal.
+     */
     public static <T> boolean equals(JmespathRuntime<T> runtime, T a, T b) {
         switch (runtime.typeOf(a)) {
             case NULL:
