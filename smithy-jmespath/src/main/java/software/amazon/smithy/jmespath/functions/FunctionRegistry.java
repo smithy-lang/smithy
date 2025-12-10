@@ -7,9 +7,9 @@ package software.amazon.smithy.jmespath.functions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FunctionRegistry {
+public final class FunctionRegistry {
 
-    private static Map<String, Function> builtins = new HashMap<>();
+    private static final Map<String, Function> BUILTINS = new HashMap<>();
 
     private static void registerFunction(Function function) {
         if (builtins.put(function.name(), function) != null) {
