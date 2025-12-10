@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.RuntimeType;
 
-public class EvaluationUtils {
+public final class EvaluationUtils {
 
     public static final InheritingClassMap<NumberType> numberTypeForClass = InheritingClassMap.<NumberType>builder()
             .put(Byte.class, NumberType.BYTE)
