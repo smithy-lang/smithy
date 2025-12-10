@@ -1,16 +1,19 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS specifications" href="aws/index.html" /><link rel="prev" title="Waiters" href="waiters.html" />
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="AWS specifications" href="aws/index.html"><link rel="prev" title="Waiters" href="waiters.html">
+        <link rel="prefetch" href="../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>MQTT Protocol Bindings - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -82,7 +85,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -97,34 +100,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 <div class="announcement">
   <aside class="announcement-content">
@@ -137,8 +179,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -146,16 +187,15 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -170,7 +210,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -178,8 +218,8 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Specifications</a><input aria-label="Toggle navigation of Specifications" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="core/index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="core/model.html">1. The Smithy model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="core/prelude-model.html">2. Prelude model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="core/constraint-traits.html">3. Constraint traits</a></li>
@@ -202,7 +242,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 <li class="toctree-l2"><a class="reference internal" href="http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="waiters.html">Waiters</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="aws/index.html">AWS specifications</a><input aria-label="Toggle navigation of AWS specifications" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-iam.html">AWS IAM traits</a></li>
@@ -214,7 +254,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-query-protocol.html">AWS query protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
@@ -225,8 +265,8 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Smithy Guides</a><input aria-label="Toggle navigation of Smithy Guides" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input aria-label="Toggle navigation of Building Smithy Models" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
 </ul>
@@ -242,7 +282,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 <p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -274,43 +314,43 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-1.0/spec/mqtt.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-1.0/spec/mqtt.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-1.0/spec/mqtt.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="mqtt-protocol-bindings">
-<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="mqtt-protocol-bindings">
+<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Link to this heading">¶</a></h1>
 <p>This document defines traits that bind Smithy operations, inputs, and
 outputs to the <a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html">MQTT</a>
 messaging transport protocol. In addition to traits, it defines the
 requirements, limitations, and expected client behavior when decorating
 Smithy models with MQTT metadata.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The MQTT traits defined in this specification are still evolving and
+<p class="admonition-title">Warning</p>
+<p>The MQTT traits defined in this specification are still evolving and
 subject to change.</p>
 </div>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
 <p>Smithy is a protocol-agnostic model format that abstracts the transmission
 and serialization of operations, their inputs, and outputs. This abstraction
 allows MQTT services to be modeled in Smithy using MQTT protocol binding
@@ -319,8 +359,8 @@ support other protocol bindings like <a class="reference internal" href="core/ht
 The MQTT protocol binding traits defined in this document do not define the
 serialization format of complex payloads; the serialization format of complex
 payloads is protocol-specific.</p>
-<div class="section" id="mqtt-overview">
-<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Permalink to this heading">#</a></h3>
+<section id="mqtt-overview">
+<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Link to this heading">¶</a></h3>
 <p>MQTT is a stateful protocol in which zero or more clients establish
 long-lived sessions with a server that acts as a message broker between
 them. Clients subscribe to topics and publish and receive messages. All
@@ -340,10 +380,10 @@ packets using the <a class="reference internal" href="#smithy-mqtt-publish-trait
 topics using separate operations. The CONNECT, DISCONNECT, and other MQTT
 control packets SHOULD be handled as implementation details in Smithy
 clients that connect to a service that utilizes MQTT protocol bindings.</p>
-</div>
-</div>
-<div class="section" id="mqtt-topic-templates">
-<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="mqtt-topic-templates">
+<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Link to this heading">¶</a></h2>
 <p>An <em>MQTT topic template</em> declares an MQTT topic to be used for a given
 operation and to bind components of the topic to fields in the operations's
 input structure. The <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
@@ -384,39 +424,42 @@ and <code class="docutils literal notranslate"><span class="pre">{second}</span>
 </div>
 <p>MQTT topic templates MUST adhere to the following constraints:</p>
 <ul class="simple">
-<li>The topic template MUST adhere to the constraints defined in
+<li><p>The topic template MUST adhere to the constraints defined in
 <a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718106">section 4.7</a>
 of the MQTT specification (e.g., it MUST consist of one or more
-UTF-8 characters).</li>
-<li>The topic template MUST not contain wildcard topic characters &quot;+&quot; and &quot;#&quot;.</li>
-<li>Labels present in a topic template MUST span an entire topic level.
+UTF-8 characters).</p></li>
+<li><p>The topic template MUST not contain wildcard topic characters &quot;+&quot; and &quot;#&quot;.</p></li>
+<li><p>Labels present in a topic template MUST span an entire topic level.
 For example, &quot;foo/baz/{bar}&quot; is <strong>valid</strong> while &quot;foo/baz-{bar}&quot; is
-<strong>invalid</strong>.</li>
-<li>The &quot;{&quot; and &quot;}&quot; characters are reserved for use as topic labels and
-MUST NOT be used as literal characters.</li>
-<li>The text inside of each label MUST case-sensitively match a single member by
-name of the input structure of an operation.</li>
-<li>Operation input structures MUST NOT contain extraneous members marked with
+<strong>invalid</strong>.</p></li>
+<li><p>The &quot;{&quot; and &quot;}&quot; characters are reserved for use as topic labels and
+MUST NOT be used as literal characters.</p></li>
+<li><p>The text inside of each label MUST case-sensitively match a single member by
+name of the input structure of an operation.</p></li>
+<li><p>Operation input structures MUST NOT contain extraneous members marked with
 the <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait that do not have corresponding labels
-in the topic template.</li>
+in the topic template.</p></li>
 </ul>
-</div>
-<div class="section" id="smithy-mqtt-publish-trait">
-<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Trait summary</dt><dd>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</dd>
+</section>
+<section id="smithy-mqtt-publish-trait">
+<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Trait summary</dt><dd><p>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</p>
+</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt; * &gt; member)
 </pre></div>
 </div>
 <p><em>An operation whose output has no members</em></p>
 </dd>
-<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid
+<dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid
 <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>. The provided topic
 defines the MQTT topic to which messages are published. The MQTT topic
 template MAY contain <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">label placeholders</span></a> that
 reference top-level input members of the operation by case-sensitive
-member name.</dd>
-<dt>Conflicts with</dt><dd><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a></dd>
+member name.</p>
+</dd>
+<dt>Conflicts with</dt><dd><p><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a></p>
+</dd>
 </dl>
 <p>Input members that are not marked with the <a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
@@ -449,31 +492,34 @@ come together to form the protocol-specific payload of the PUBLISH message.</p>
 value for the &quot;{bar}&quot; label of the MQTT topic template. The &quot;message&quot; and
 &quot;anotherValue&quot; members come together to form a protocol-specific document
 that is sent in the payload of the message.</p>
-<div class="section" id="publish-validation">
-<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Permalink to this heading">#</a></h3>
+<section id="publish-validation">
+<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li>Publish operations MUST NOT have output with members.</li>
-<li>Publish operations MUST NOT utilize input event streams.</li>
-<li>Publish operations SHOULD NOT define errors.</li>
-<li>Publish MQTT topics MUST NOT conflict with other publish MQTT topics or
-the resolved MQTT topics of subscribe operations.</li>
+<li><p>Publish operations MUST NOT have output with members.</p></li>
+<li><p>Publish operations MUST NOT utilize input event streams.</p></li>
+<li><p>Publish operations SHOULD NOT define errors.</p></li>
+<li><p>Publish MQTT topics MUST NOT conflict with other publish MQTT topics or
+the resolved MQTT topics of subscribe operations.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="smithy-mqtt-subscribe-trait">
-<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Trait summary</dt><dd>Binds an operation to send one or more SUBSCRIBE control packets
-via the MQTT protocol.</dd>
+</section>
+</section>
+<section id="smithy-mqtt-subscribe-trait">
+<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Trait summary</dt><dd><p>Binds an operation to send one or more SUBSCRIBE control packets
+via the MQTT protocol.</p>
+</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])
 </pre></div>
 </div>
 <p><em>An operation with an output event stream</em></p>
 </dd>
-<dt>Trait value</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>.
+<dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>.
 The MQTT topic template MAY contain label placeholders that reference
-top-level input members of the operation by case-sensitive member name.</dd>
-<dt>Conflicts with</dt><dd><a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a></dd>
+top-level input members of the operation by case-sensitive member name.</p>
+</dd>
+<dt>Conflicts with</dt><dd><p><a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a></p>
+</dd>
 </dl>
 <p>No message is published when using an operation marked with the
 <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait. All members of the input of the operation
@@ -486,8 +532,8 @@ events SHOULD be provided by Smithy clients. When that abstraction is
 destroyed, the client SHOULD provide the ability to automatically UNSUBSCRIBE
 from topics.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Events MAY contain a member marked with
+<p class="admonition-title">Important</p>
+<p>Events MAY contain a member marked with
 <a class="reference internal" href="core/stream-traits.html#eventpayload-trait"><span class="std std-ref">eventPayload trait</span></a>, which allows for a custom
 payload to be sent as the payload of a message.</p>
 </div>
@@ -524,31 +570,33 @@ topic using an <a class="reference internal" href="core/stream-traits.html#event
 }
 </pre></div>
 </div>
-<div class="section" id="subscribe-validation">
-<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Permalink to this heading">#</a></h3>
+<section id="subscribe-validation">
+<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li>Subscribe operations MUST NOT define event streams with an
+<li><p>Subscribe operations MUST NOT define event streams with an
 <a class="reference internal" href="core/stream-traits.html#initial-response"><span class="std std-ref">initial-response</span></a>; only a single member can appear
-in the output of a subscribe operation.</li>
-<li>Every member of the input of a subscribe operation MUST be marked with the
-<a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>.</li>
-<li>Subscribe operations SHOULD NOT define errors.</li>
-<li>Subscribe MQTT topics MUST NOT conflict with other topics.</li>
-<li>Event stream events over MQTT SHOULD NOT contain the
+in the output of a subscribe operation.</p></li>
+<li><p>Every member of the input of a subscribe operation MUST be marked with the
+<a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>.</p></li>
+<li><p>Subscribe operations SHOULD NOT define errors.</p></li>
+<li><p>Subscribe MQTT topics MUST NOT conflict with other topics.</p></li>
+<li><p>Event stream events over MQTT SHOULD NOT contain the
 <a class="reference internal" href="core/stream-traits.html#eventheader-trait"><span class="std std-ref">eventHeader trait</span></a>. Support for this trait MAY be
 added to this specification once MQTT adds support for variable length
-custom headers to messages.</li>
+custom headers to messages.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="smithy-mqtt-topiclabel-trait">
-<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Trait summary</dt><dd>Binds a structure member to an <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">MQTT topic label</span></a>.</dd>
+</section>
+</section>
+<section id="smithy-mqtt-topiclabel-trait">
+<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Trait summary</dt><dd><p>Binds a structure member to an <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">MQTT topic label</span></a>.</p>
+</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">member[trait|required]</span> <span class="pre">:test(&gt;</span> <span class="pre">:test(string,</span> <span class="pre">byte,</span> <span class="pre">short,</span> <span class="pre">integer,</span> <span class="pre">long,</span> <span class="pre">boolean,</span> <span class="pre">timestamp))</span></code></p>
 <p><em>Required structure member that targets a string, byte, short, integer, long, boolean, or timestamp</em></p>
 </dd>
-<dt>Trait value</dt><dd>Annotation trait</dd>
+<dt>Trait value</dt><dd><p>Annotation trait</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait binds the value of a structure member
 so that it provides a value at runtime for a corresponding MQTT topic template
@@ -558,22 +606,22 @@ template MUST have corresponding input structure members with the same
 case-sensitive member name that is marked with the <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code>
 trait, marked with the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait, and targets a string, byte, short,
 integer, long, boolean, or timestamp shape.</p>
-<div class="section" id="label-serialization">
-<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Permalink to this heading">#</a></h3>
+<section id="label-serialization">
+<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Link to this heading">¶</a></h3>
 <p>The value of the member is substituted into an MQTT topic template using the
 following serialization:</p>
 <ul class="simple">
-<li>Strings are serialized as is, but &quot;/&quot; is replaced with %2F.</li>
-<li>Numeric values are serialized using an exact string representation of
-the number.</li>
-<li>Boolean values are serialized as the strings <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li>Timestamp values are serialized as <code class="docutils literal notranslate"><span class="pre">date-time</span></code> strings as specified
-in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC 3339</strong></a>.</li>
+<li><p>Strings are serialized as is, but &quot;/&quot; is replaced with %2F.</p></li>
+<li><p>Numeric values are serialized using an exact string representation of
+the number.</p></li>
+<li><p>Boolean values are serialized as the strings <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p>Timestamp values are serialized as <code class="docutils literal notranslate"><span class="pre">date-time</span></code> strings as specified
+in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC 3339</strong></a>.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="topic-conflicts">
-<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="topic-conflicts">
+<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Link to this heading">¶</a></h2>
 <p>MQTT topics in Smithy are fully-typed; MQTT topics modeled in Smithy are
 associated with exactly one shape that defines the payload that can be
 published to a topic. Multiple operations and events in a model MAY resolve
@@ -582,65 +630,65 @@ same shape in the Smithy model.</p>
 <p>Two resolved topics are considered conflicting if all of the following
 conditions are met:</p>
 <ul class="simple">
-<li>Both topics contain the same case-sensitive static levels and labels
-in the same topic level positions (regardless of the label name).</li>
-<li>One topic is not more specific than the other; both topics have the
-same number of levels.</li>
-<li>The topic payloads target different shapes.</li>
+<li><p>Both topics contain the same case-sensitive static levels and labels
+in the same topic level positions (regardless of the label name).</p></li>
+<li><p>One topic is not more specific than the other; both topics have the
+same number of levels.</p></li>
+<li><p>The topic payloads target different shapes.</p></li>
 </ul>
 <p>The following table provides examples of when topics do and do not conflict:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="40%" />
-<col width="40%" />
-<col width="20%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Topic A</th>
-<th class="head">Topic B</th>
-<th class="head">Conflict?</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Topic A</p></th>
+<th class="head"><p>Topic B</p></th>
+<th class="head"><p>Conflict?</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">a/{y}</span></code></td>
-<td>Yes</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a/{y}</span></code></p></td>
+<td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">{y}/{x}</span></code></td>
-<td>Yes</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{y}/{x}</span></code></p></td>
+<td><p>Yes</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/{b}/c/{d}</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">a/{d}/c/{b}</span></code></td>
-<td>Yes</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a/{b}/c/{d}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a/{d}/c/{b}</span></code></p></td>
+<td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">A/B/C</span></code></td>
-<td>No</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">A/B/C</span></code></p></td>
+<td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">{x}/{y}/{z}</span></code></td>
-<td>No</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{x}/{y}/{z}</span></code></p></td>
+<td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">b/{x}</span></code></td>
-<td>No</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b/{x}</span></code></p></td>
+<td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">a/b/notC</span></code></td>
-<td>No</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a/b/notC</span></code></p></td>
+<td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">a/b/c/d</span></code></td>
-<td>No</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a/b/c/d</span></code></p></td>
+<td><p>No</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section" id="model-definition">
-<h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="model-definition">
+<h2>Model definition<a class="headerlink" href="#model-definition" title="Link to this heading">¶</a></h2>
 <p>The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
@@ -669,8 +717,8 @@ MQTT protocol bindings.</p>
 <span class="kd">structure </span><span class="nc">topicLabel</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
         </article>
       </div>
@@ -684,10 +732,10 @@ MQTT protocol bindings.</p>
                 </div>
                 <div class="title">AWS specifications</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="waiters.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -728,7 +776,7 @@ MQTT protocol bindings.</p>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -765,14 +813,11 @@ MQTT protocol bindings.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
+</div><script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=6b89569b"></script>
     </body>
 </html>

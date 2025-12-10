@@ -61,7 +61,7 @@ Add the following dependencies to your project:
 
     dependencies {
         // Add the code generation plugins to the smithy build classpath
-        smithyBuild("software.amazon.smithy.java.codegen:plugins:__smithy_java_version__")
+        smithyBuild("software.amazon.smithy.java:client-codegen:__smithy_java_version__")
 
         // Add the client-core dependency needed by the generated code
         implementation("software.amazon.smithy.java:client-core:__smithy_java_version__")

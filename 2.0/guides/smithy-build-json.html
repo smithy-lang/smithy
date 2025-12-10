@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Gradle Plugins" href="gradle-plugin/index.html" /><link rel="prev" title="Installation" href="smithy-cli/cli_installation.html" />
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Smithy Gradle Plugins" href="gradle-plugin/index.html"><link rel="prev" title="Installation" href="smithy-cli/cli_installation.html">
+        <link rel="prefetch" href="../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>smithy-build.json - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Guides</a><input aria-label="Toggle navigation of Guides" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="building-codegen/index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,104 +410,104 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/smithy-build-json.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/guides/smithy-build-json.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/smithy-build-json.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="smithy-build-json">
-<span id="smithy-build"></span><h1>smithy-build.json<a class="headerlink" href="#smithy-build-json" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="smithy-build-json">
+<span id="smithy-build"></span><h1>smithy-build.json<a class="headerlink" href="#smithy-build-json" title="Link to this heading">¶</a></h1>
 <p>Building a Smithy model requires constructing a configuration file,
 <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>. This file is used to describe how a model is created
 and what projections of the model to create.</p>
-<div class="section" id="using-smithy-build-json">
-<span id="id1"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code><a class="headerlink" href="#using-smithy-build-json" title="Permalink to this heading">#</a></h2>
+<section id="using-smithy-build-json">
+<span id="id1"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code><a class="headerlink" href="#using-smithy-build-json" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is used to describe how a model is created and
 what projections of the model to create.</p>
 <p>The configuration file accepts the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>version</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required.</strong> Defines the version of smithy-build. Set to <cite>1.0</cite>.</td>
+<tbody>
+<tr class="row-even"><td><p>version</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required.</strong> Defines the version of smithy-build. Set to <cite>1.0</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td>outputDirectory</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The location where projections are written. Each
+<tr class="row-odd"><td><p>outputDirectory</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The location where projections are written. Each
 projection will create a subdirectory named after the projection, and
 the artifacts from the projection, including a <code class="docutils literal notranslate"><span class="pre">model.json</span></code> file,
-will be placed in the directory.</td>
+will be placed in the directory.</p></td>
 </tr>
-<tr class="row-even"><td>sources</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>Provides a list of relative files or directories that contain the
+<tr class="row-even"><td><p>sources</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Provides a list of relative files or directories that contain the
 models that are considered the source models of the build. When a
 directory is encountered, all files in the entire directory tree are
-added as sources. Sources are relative to the configuration file.</td>
+added as sources. Sources are relative to the configuration file.</p></td>
 </tr>
-<tr class="row-odd"><td>imports</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><p class="first">Provides a list of model files and directories to load when validating
+<tr class="row-odd"><td><p>imports</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Provides a list of model files and directories to load when validating
 and building the model. Imports are a local dependency: they are not
 considered part of model package being built, but are required to build
 the model package. Models added through <code class="docutils literal notranslate"><span class="pre">imports</span></code> are not present in
 the output of the built-in <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin.</p>
-<p class="last">When a directory is encountered, all files in the entire directory
+<p>When a directory is encountered, all files in the entire directory
 tree are imported. Imports defined at the top-level are used in every
 projection. Imports are relative to the configuration file.</p>
 </td>
 </tr>
-<tr class="row-even"><td>projections</td>
-<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
-<td>A map of projection names to projection configurations.</td>
+<tr class="row-even"><td><p>projections</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></p></td>
+<td><p>A map of projection names to projection configurations.</p></td>
 </tr>
-<tr class="row-odd"><td>plugins</td>
-<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
-<td>Defines the plugins to apply to the model when building every
+<tr class="row-odd"><td><p>plugins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></p></td>
+<td><p>Defines the plugins to apply to the model when building every
 projection. Plugins are a mapping of <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin IDs</span></a> to
-plugin-specific configuration objects.</td>
+plugin-specific configuration objects.</p></td>
 </tr>
-<tr class="row-even"><td>ignoreMissingPlugins</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>If a plugin can't be found, Smithy will by default fail the build. This
+<tr class="row-even"><td><p>ignoreMissingPlugins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>If a plugin can't be found, Smithy will by default fail the build. This
 setting can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to allow the build to progress even if
-a plugin can't be found on the classpath.</td>
+a plugin can't be found on the classpath.</p></td>
 </tr>
-<tr class="row-odd"><td>maven</td>
-<td><a class="reference internal" href="#maven-configuration"><span class="std std-ref">Maven configuration</span></a> structure</td>
-<td>Defines Java Maven dependencies needed to build the model.
+<tr class="row-odd"><td><p>maven</p></td>
+<td><p><a class="reference internal" href="#maven-configuration"><span class="std std-ref">Maven configuration</span></a> structure</p></td>
+<td><p>Defines Java Maven dependencies needed to build the model.
 Dependencies are used to bring in model imports, build plugins,
-validators, transforms, and other extensions.</td>
+validators, transforms, and other extensions.</p></td>
 </tr>
 </tbody>
 </table>
@@ -480,7 +520,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.64.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.65.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -524,23 +564,23 @@ validators, transforms, and other extensions.</td>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file supports comments using <code class="docutils literal notranslate"><span class="pre">//</span></code> syntax. Any
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file supports comments using <code class="docutils literal notranslate"><span class="pre">//</span></code> syntax. Any
 content between two consecutive <code class="docutils literal notranslate"><span class="pre">/</span></code> characters and a new line (<code class="docutils literal notranslate"><span class="pre">\n</span></code>) or
 the end of the file is considered a comment and ignored when parsing.</p>
 </div>
-</div>
-<div class="section" id="plugin-id-and-artifact-names">
-<span id="plugin-id"></span><h2>Plugin ID and artifact names<a class="headerlink" href="#plugin-id-and-artifact-names" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="plugin-id-and-artifact-names">
+<span id="plugin-id"></span><h2>Plugin ID and artifact names<a class="headerlink" href="#plugin-id-and-artifact-names" title="Link to this heading">¶</a></h2>
 <p>A plugin ID defines a <em>plugin name</em> and <em>artifact name</em> in the form of
 <code class="docutils literal notranslate"><span class="pre">plugin-name::artifact-name</span></code>.</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">plugin-name</span></code> is the name of the plugin Smithy finds and runs with the
-plugin-specific configuration.</li>
-<li><code class="docutils literal notranslate"><span class="pre">artifact-name</span></code> is the optional artifact name and directory where the
+<li><p><code class="docutils literal notranslate"><span class="pre">plugin-name</span></code> is the name of the plugin Smithy finds and runs with the
+plugin-specific configuration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">artifact-name</span></code> is the optional artifact name and directory where the
 plugin writes artifacts. If no <code class="docutils literal notranslate"><span class="pre">::artifact-name</span></code> is specific,
 the artifact name defaults to the plugin name. No two plugin IDs in a
-single projection can use the same artifact name.</li>
+single projection can use the same artifact name.</p></li>
 </ul>
 <p>The following example shows that the <a class="reference internal" href="#run-plugin"><span class="std std-ref">run plugin</span></a> can be used in the
 same projection multiple times using a custom artifact name.</p>
@@ -564,47 +604,47 @@ same projection multiple times using a custom artifact name.</p>
 <p>The above example will generate source projection artifacts in the
 &quot;source/foo&quot; and &quot;source/baz&quot; directories.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#projection-artifacts"><span class="std std-ref">Projection artifacts</span></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#projection-artifacts"><span class="std std-ref">Projection artifacts</span></a></p>
 </div>
-</div>
-<div class="section" id="maven-configuration">
-<span id="id2"></span><h2>Maven configuration<a class="headerlink" href="#maven-configuration" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="maven-configuration">
+<span id="id2"></span><h2>Maven configuration<a class="headerlink" href="#maven-configuration" title="Link to this heading">¶</a></h2>
 <p>Maven dependencies and repositories can be defined in smithy-build.json files,
 and the Smithy CLI will automatically resolve these dependencies using the
 <a class="reference external" href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Apache Maven</a> dependency resolver.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">maven</span></code> property accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>dependencies</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>A list of Maven dependency coordinates in the form of
+<tbody>
+<tr class="row-even"><td><p>dependencies</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>A list of Maven dependency coordinates in the form of
 <code class="docutils literal notranslate"><span class="pre">groupId:artifactId:version</span></code>. The Smithy CLI will search each
-registered Maven repository for the dependency.</td>
+registered Maven repository for the dependency.</p></td>
 </tr>
-<tr class="row-odd"><td>repositories</td>
-<td><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#maven-repositories"><span class="std std-ref">Maven Repositories</span></a> <code class="docutils literal notranslate"><span class="pre">]</span></code></td>
-<td>A list of Maven repositories to search for dependencies. If no
+<tr class="row-odd"><td><p>repositories</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#maven-repositories"><span class="std std-ref">Maven Repositories</span></a> <code class="docutils literal notranslate"><span class="pre">]</span></code></p></td>
+<td><p>A list of Maven repositories to search for dependencies. If no
 repositories are defined and the <a class="reference internal" href="#smithy-maven-repos"><span class="std std-ref">SMITHY_MAVEN_REPOS environment variable</span></a>
-is not defined, then this value defaults to <a class="reference external" href="https://search.maven.org">Maven Central</a>.</td>
+is not defined, then this value defaults to <a class="reference external" href="https://search.maven.org">Maven Central</a>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="dependency-versions">
-<h3>Dependency versions<a class="headerlink" href="#dependency-versions" title="Permalink to this heading">#</a></h3>
+<section id="dependency-versions">
+<h3>Dependency versions<a class="headerlink" href="#dependency-versions" title="Link to this heading">¶</a></h3>
 <p>Maven dependencies are defined using GAV coordinates
 (<code class="docutils literal notranslate"><span class="pre">groupId:artifactId:version</span></code>). The version of a dependency can specify
 <em>version requirements</em> that are used to control how versions are resolved.
@@ -617,103 +657,103 @@ all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
 <div class="table-wrapper colwidths-given docutils container" id="id17">
-<table border="1" class="docutils align-default" id="id17">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id17" title="Permalink to this table">#</a></caption>
+<table class="docutils align-default" id="id17">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id17" title="Link to this table">¶</a></caption>
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Version</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Version</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1.0</span></code></td>
-<td>Soft requirement for 1.0. Use 1.0 if no other version appears earlier
-in the dependency tree.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td><p>Soft requirement for 1.0. Use 1.0 if no other version appears earlier
+in the dependency tree.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">[1.0]</span></code></td>
-<td>Hard requirement for 1.0. Use 1.0 and only 1.0.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[1.0]</span></code></p></td>
+<td><p>Hard requirement for 1.0. Use 1.0 and only 1.0.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">(,1.0]</span></code></td>
-<td>Hard requirement for any version &lt;= 1.0.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">(,1.0]</span></code></p></td>
+<td><p>Hard requirement for any version &lt;= 1.0.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">[1.2,1.3]</span></code></td>
-<td>Hard requirement for any version between 1.2 and 1.3 inclusive.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[1.2,1.3]</span></code></p></td>
+<td><p>Hard requirement for any version between 1.2 and 1.3 inclusive.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">[1.0,2.0)</span></code></td>
-<td>1.0 &lt;= x &lt; 2.0; Hard requirement for any version between 1.0 inclusive
-and 2.0 exclusive.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[1.0,2.0)</span></code></p></td>
+<td><p>1.0 &lt;= x &lt; 2.0; Hard requirement for any version between 1.0 inclusive
+and 2.0 exclusive.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">[1.5,)</span></code></td>
-<td>Hard requirement for any version greater than or equal to 1.5.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[1.5,)</span></code></p></td>
+<td><p>Hard requirement for any version greater than or equal to 1.5.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">(,1.0],[1.2,)</span></code></td>
-<td>Multiple requirements are separated by commas. This requirement
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">(,1.0],[1.2,)</span></code></p></td>
+<td><p>Multiple requirements are separated by commas. This requirement
 forbids version 1.1 by adding a hard requirement for any version less
-than or equal to 1.0 or greater than or equal to 1.2.</td>
+than or equal to 1.0 or greater than or equal to 1.2.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">(,1.1),(1.1,)</span></code></td>
-<td>Hard requirement for any version except 1.1 (for example, if 1.1
-has a critical vulnerability).</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">(,1.1),(1.1,)</span></code></p></td>
+<td><p>Hard requirement for any version except 1.1 (for example, if 1.1
+has a critical vulnerability).</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="unsupported-version-requirements">
-<h4>Unsupported version requirements<a class="headerlink" href="#unsupported-version-requirements" title="Permalink to this heading">#</a></h4>
+<section id="unsupported-version-requirements">
+<h4>Unsupported version requirements<a class="headerlink" href="#unsupported-version-requirements" title="Link to this heading">¶</a></h4>
 <ul class="simple">
-<li>LATEST, RELEASE, latest-status, and latest.* versions are not supported.</li>
-<li>Gradle style <code class="docutils literal notranslate"><span class="pre">+</span></code> versions are not supported.</li>
+<li><p>LATEST, RELEASE, latest-status, and latest.* versions are not supported.</p></li>
+<li><p>Gradle style <code class="docutils literal notranslate"><span class="pre">+</span></code> versions are not supported.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="maven-repositories">
-<span id="id3"></span><h3>Maven Repositories<a class="headerlink" href="#maven-repositories" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="maven-repositories">
+<span id="id3"></span><h3>Maven Repositories<a class="headerlink" href="#maven-repositories" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">repositories</span></code> property accepts a list of structures that each accept
 the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>url</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The URL of the repository (for example, <code class="docutils literal notranslate"><span class="pre">https://repo.maven.apache.org/maven2</span></code>).</td>
+<tbody>
+<tr class="row-even"><td><p>url</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The URL of the repository (for example, <code class="docutils literal notranslate"><span class="pre">https://repo.maven.apache.org/maven2</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td>httpCredentials</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first">HTTP basic or digest credentials to use with the repository.
+<tr class="row-odd"><td><p>httpCredentials</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>HTTP basic or digest credentials to use with the repository.
 Credentials are provided in the form of &quot;username:password&quot;.</p>
-<div class="last admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Credentials SHOULD NOT be defined statically in a smithy-build.json
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Credentials SHOULD NOT be defined statically in a smithy-build.json
 file. Instead, use <a class="reference internal" href="#build-envars"><span class="std std-ref">environment variables</span></a> to
 keep credentials out of source control.</p>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>proxyHost</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The URL of the proxy to configure for this repository (for example, <code class="docutils literal notranslate"><span class="pre">http://proxy.maven.apache.org:8080</span></code>).</td>
+<tr class="row-even"><td><p>proxyHost</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The URL of the proxy to configure for this repository (for example, <code class="docutils literal notranslate"><span class="pre">http://proxy.maven.apache.org:8080</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td>proxyCredentials</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first">HTTP credentials to use with the proxy for the repository.
+<tr class="row-odd"><td><p>proxyCredentials</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>HTTP credentials to use with the proxy for the repository.
 Credentials are provided in the form of &quot;username:password&quot;.</p>
-<div class="last admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Credentials SHOULD NOT be defined statically in a smithy-build.json
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Credentials SHOULD NOT be defined statically in a smithy-build.json
 file. Instead, use <a class="reference internal" href="#build-envars"><span class="std std-ref">environment variables</span></a> to
 keep credentials out of source control.</p>
 </div>
@@ -734,15 +774,15 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.64.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.65.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="smithy-maven-repos-environment-variable">
-<span id="smithy-maven-repos"></span><h3>SMITHY_MAVEN_REPOS environment variable<a class="headerlink" href="#smithy-maven-repos-environment-variable" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="smithy-maven-repos-environment-variable">
+<span id="smithy-maven-repos"></span><h3>SMITHY_MAVEN_REPOS environment variable<a class="headerlink" href="#smithy-maven-repos-environment-variable" title="Link to this heading">¶</a></h3>
 <p>When using the Smithy CLI, the <code class="docutils literal notranslate"><span class="pre">SMITHY_MAVEN_REPOS</span></code> environment variable can
 be used to configure Maven repositories automatically. The
 <code class="docutils literal notranslate"><span class="pre">SMITHY_MAVEN_REPOS</span></code> environment variable is a pipe-delimited value (<code class="docutils literal notranslate"><span class="pre">|</span></code>)
@@ -758,19 +798,19 @@ that contains the URL of each repository to use.</p>
 variable, no default repositories are assumed when resolving the
 <code class="docutils literal notranslate"><span class="pre">maven.repositories</span></code> setting.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Repositories defined in <code class="docutils literal notranslate"><span class="pre">SMITHY_MAVEN_REPOS</span></code> take precedence over
+<p class="admonition-title">Important</p>
+<p>Repositories defined in <code class="docutils literal notranslate"><span class="pre">SMITHY_MAVEN_REPOS</span></code> take precedence over
 repositories defined through smithy-build.json configuration.</p>
 </div>
-</div>
-<div class="section" id="proxy-environment-variables">
-<h3>Proxy environment variables<a class="headerlink" href="#proxy-environment-variables" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="proxy-environment-variables">
+<h3>Proxy environment variables<a class="headerlink" href="#proxy-environment-variables" title="Link to this heading">¶</a></h3>
 <p>When using the Smithy CLI, the <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> and <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_CREDENTIALS</span></code> environment variables can be used
 to configure a proxy to use for dependency resolution. Setting these environment variables will configure a common
 proxy configuration for all repositories.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">If a <a class="reference internal" href="#maven-repositories"><span class="std std-ref">Maven Repository</span></a> definition provides a proxy configuration, that configuration will
+<p class="admonition-title">Important</p>
+<p>If a <a class="reference internal" href="#maven-repositories"><span class="std std-ref">Maven Repository</span></a> definition provides a proxy configuration, that configuration will
 override the proxy configuration defined by the <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> and <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_CREDENTIALS</span></code>
 environment variables.</p>
 </div>
@@ -784,10 +824,10 @@ variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SMITHY_PROXY_CREDENTIALS</span><span class="o">=</span><span class="s1">&#39;user:$PROXY_PASSWORD&#39;</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="projections">
-<span id="id4"></span><h2>Projections<a class="headerlink" href="#projections" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="projections">
+<span id="id4"></span><h2>Projections<a class="headerlink" href="#projections" title="Link to this heading">¶</a></h2>
 <p>A projection of a model is a filtered and modified version of a Smithy model
 that is intended for specific audiences or customers. Projections are
 useful to companies that maintain internal and external versions of an API
@@ -800,121 +840,121 @@ property. Projection names MUST match the following pattern:</p>
 </div>
 <p>A projection accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>abstract</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Defines the projection as a placeholder that other projections apply.
+<tbody>
+<tr class="row-even"><td><p>abstract</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Defines the projection as a placeholder that other projections apply.
 Smithy will not build artifacts for abstract projections. Abstract
-projections must not define <code class="docutils literal notranslate"><span class="pre">imports</span></code> or <code class="docutils literal notranslate"><span class="pre">plugins</span></code>.</td>
+projections must not define <code class="docutils literal notranslate"><span class="pre">imports</span></code> or <code class="docutils literal notranslate"><span class="pre">plugins</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>imports</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>Provides a list of relative imports to include when building this
+<tr class="row-odd"><td><p>imports</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Provides a list of relative imports to include when building this
 specific projection (in addition to any imports defined at the
 top-level). When a directory is encountered, all files in the
 directory tree are imported. Note: imports are relative to the
-configuration file.</td>
+configuration file.</p></td>
 </tr>
-<tr class="row-even"><td>transforms</td>
-<td><code class="docutils literal notranslate"><span class="pre">list&lt;Transforms&gt;</span></code></td>
-<td>Defines the transformations to apply to the projection.
+<tr class="row-even"><td><p>transforms</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list&lt;Transforms&gt;</span></code></p></td>
+<td><p>Defines the transformations to apply to the projection.
 Transformations are used to remove shapes, remove traits, modify trait
 contents, and any other kind of transformation necessary for the
-projection. Transforms are applied in the order defined.</td>
+projection. Transforms are applied in the order defined.</p></td>
 </tr>
-<tr class="row-odd"><td>plugins</td>
-<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
-<td>Defines the plugins to apply to the model when building this
+<tr class="row-odd"><td><p>plugins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></p></td>
+<td><p>Defines the plugins to apply to the model when building this
 projection. <code class="docutils literal notranslate"><span class="pre">plugins</span></code> is a mapping of a <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin IDs</span></a>
 to plugin-specific configuration objects. smithy-build will attempt
 to resolve plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate an instance of
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code> that returns a
 matching name when calling <code class="docutils literal notranslate"><span class="pre">getName</span></code>. smithy-build will emit a
-warning when a plugin cannot be resolved.</td>
+warning when a plugin cannot be resolved.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="projection-artifacts">
-<span id="id5"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Permalink to this heading">#</a></h3>
+<section id="projection-artifacts">
+<span id="id5"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Link to this heading">¶</a></h3>
 <p>smithy-build will write artifacts for each projection inside of
 <cite>outputDirectory</cite>.</p>
 <ul class="simple">
-<li>The model that is projected is placed inside of <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/model/model.json</span></code>.</li>
-<li>Build information about the projection build result, including the
+<li><p>The model that is projected is placed inside of <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/model/model.json</span></code>.</p></li>
+<li><p>Build information about the projection build result, including the
 configuration of the projection and the validation events encountered when
-validating the projected model, are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/build-info/smithy-build-info.json</span></code>.</li>
-<li>All plugin artifacts are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${artifactName}/${files...}</span></code>,
+validating the projected model, are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/build-info/smithy-build-info.json</span></code>.</p></li>
+<li><p>All plugin artifacts are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${artifactName}/${files...}</span></code>,
 where <code class="docutils literal notranslate"><span class="pre">${artifactName}</span></code> is the artifact name of the <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a>,
-and <code class="docutils literal notranslate"><span class="pre">${files...}</span></code> are the artifacts created by a plugin.</li>
+and <code class="docutils literal notranslate"><span class="pre">${files...}</span></code> are the artifacts created by a plugin.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="transforms">
-<span id="id6"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="transforms">
+<span id="id6"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Link to this heading">¶</a></h2>
 <p>Transforms are used to filter and modify the model for the projection.
 Transforms are applied to the model, in order.</p>
 <p>A transform accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The required name of the transform.</td>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The required name of the transform.</p></td>
 </tr>
-<tr class="row-odd"><td>args</td>
-<td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
-<td>A structure that contains configuration key-value pairs.</td>
+<tr class="row-odd"><td><p>args</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p></td>
+<td><p>A structure that contains configuration key-value pairs.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="apply">
-<span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Permalink to this heading">#</a></h3>
+<section id="apply">
+<span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Link to this heading">¶</a></h3>
 <p>Applies the transforms defined in the given projection names.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>projections</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The ordered list of projection names to apply. Each provided
+<tbody>
+<tr class="row-even"><td><p>projections</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The ordered list of projection names to apply. Each provided
 name must be a valid projection name. The transforms of the
 referenced projections are applied in the order provided.
-No cycles are allowed in <code class="docutils literal notranslate"><span class="pre">apply</span></code>.</td>
+No cycles are allowed in <code class="docutils literal notranslate"><span class="pre">apply</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -945,27 +985,27 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="changestringenumstoenumshapes">
-<span id="id7"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="changestringenumstoenumshapes">
+<span id="id7"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Link to this heading">¶</a></h3>
 <p>Changes string shapes with enum traits into enum shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>synthesizeNames</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Whether enums without names should have names synthesized if possible.</td>
+<tbody>
+<tr class="row-even"><td><p>synthesizeNames</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Whether enums without names should have names synthesized if possible.</p></td>
 </tr>
 </tbody>
 </table>
@@ -998,14 +1038,14 @@ applied.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <a class="reference internal" href="../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> is deprecated. It is recommended to
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> is deprecated. It is recommended to
 use an <a class="reference internal" href="../spec/simple-types.html#enum"><span class="std std-ref">enum shape</span></a> instead to avoid needing to use this
 transform.</p>
 </div>
-</div>
-<div class="section" id="makeidempotencytokensclientoptional">
-<span id="id8"></span><h3>makeIdempotencyTokensClientOptional<a class="headerlink" href="#makeidempotencytokensclientoptional" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="makeidempotencytokensclientoptional">
+<span id="id8"></span><h3>makeIdempotencyTokensClientOptional<a class="headerlink" href="#makeidempotencytokensclientoptional" title="Link to this heading">¶</a></h3>
 <p>Makes required <a class="reference internal" href="../spec/behavior-traits.html#idempotencytoken-trait"><span class="std std-ref">&#64;idempotencyToken</span></a> members <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">&#64;clientOptional</span></a>.</p>
 <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type.
 This allows a default value to get injected when missing.</p>
@@ -1023,43 +1063,43 @@ This allows a default value to get injected when missing.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="changetypes">
-<span id="id9"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="changetypes">
+<span id="id9"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Link to this heading">¶</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>shapeTypes</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code></td>
-<td>A map of shape IDs to the type to assign to the shape.</td>
+<tbody>
+<tr class="row-even"><td><p>shapeTypes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code></p></td>
+<td><p>A map of shape IDs to the type to assign to the shape.</p></td>
 </tr>
-<tr class="row-odd"><td>synthesizeEnumNames</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Whether enums without names should have names synthesized if possible.</td>
+<tr class="row-odd"><td><p>synthesizeEnumNames</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Whether enums without names should have names synthesized if possible.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>Only the following shape type changes are supported:</p>
 <ul class="simple">
-<li>Any simple type to any other simple type</li>
-<li>List to set</li>
-<li>Set to list</li>
-<li>Structure to union</li>
-<li>Union to structure</li>
-<li>String to enum</li>
+<li><p>Any simple type to any other simple type</p></li>
+<li><p>List to set</p></li>
+<li><p>Set to list</p></li>
+<li><p>Structure to union</p></li>
+<li><p>Union to structure</p></li>
+<li><p>String to enum</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -1084,30 +1124,30 @@ This allows a default value to get injected when missing.</p>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#changestringenumstoenumshapes"><span class="std std-ref">changeStringEnumsToEnumShapes</span></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#changestringenumstoenumshapes"><span class="std std-ref">changeStringEnumsToEnumShapes</span></a></p>
 </div>
-</div>
-<div class="section" id="excludeshapesbyselector">
-<span id="excludeshapesbyselector-transform"></span><h3>excludeShapesBySelector<a class="headerlink" href="#excludeshapesbyselector" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludeshapesbyselector">
+<span id="excludeshapesbyselector-transform"></span><h3>excludeShapesBySelector<a class="headerlink" href="#excludeshapesbyselector" title="Link to this heading">¶</a></h3>
 <p>Removes all shapes matching the given <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>selector</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A valid <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a> used to exclude shapes.</td>
+<tbody>
+<tr class="row-even"><td><p>selector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A valid <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a> used to exclude shapes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1131,31 +1171,31 @@ This allows a default value to get injected when missing.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="excludeshapesbytag">
-<span id="excludeshapesbytag-transform"></span><h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludeshapesbytag">
+<span id="excludeshapesbytag-transform"></span><h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Link to this heading">¶</a></h3>
 <p>Removes shapes if they are tagged with one or more of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code> via
 the <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that causes shapes to be removed.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that causes shapes to be removed.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1178,33 +1218,33 @@ the <a class="reference internal" href="../spec/documentation-traits.html#tags-t
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="excludeshapesbytrait">
-<span id="excludeshapesbytrait-transform"></span><h3>excludeShapesByTrait<a class="headerlink" href="#excludeshapesbytrait" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludeshapesbytrait">
+<span id="excludeshapesbytrait-transform"></span><h3>excludeShapesByTrait<a class="headerlink" href="#excludeshapesbytrait" title="Link to this heading">¶</a></h3>
 <p>Removes shapes if they are marked with one or more specific traits.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>traits</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>A list of trait <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape IDs</span></a>. If any of these traits
+<tbody>
+<tr class="row-even"><td><p>traits</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>A list of trait <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape IDs</span></a>. If any of these traits
 are found on a shape, the shape is removed from the model. Relative
 shape IDs are assumed to be in the <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>
-<a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> namespace.</td>
+<a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> namespace.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1226,27 +1266,27 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="includeshapesbyselector">
-<span id="includeshapesbyselector-transform"></span><h3>includeShapesBySelector<a class="headerlink" href="#includeshapesbyselector" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includeshapesbyselector">
+<span id="includeshapesbyselector-transform"></span><h3>includeShapesBySelector<a class="headerlink" href="#includeshapesbyselector" title="Link to this heading">¶</a></h3>
 <p>Includes only the shapes matching the given <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>selector</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A valid <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a> used to include shapes.</td>
+<tbody>
+<tr class="row-even"><td><p>selector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A valid <a class="reference internal" href="../spec/selectors.html#selectors"><span class="std std-ref">selector</span></a> used to include shapes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1270,31 +1310,31 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="includeshapesbytag">
-<span id="includeshapesbytag-transform"></span><h3>includeShapesByTag<a class="headerlink" href="#includeshapesbytag" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includeshapesbytag">
+<span id="includeshapesbytag-transform"></span><h3>includeShapesByTag<a class="headerlink" href="#includeshapesbytag" title="Link to this heading">¶</a></h3>
 <p>Removes shapes that are not tagged with at least one of the given <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 via the <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that causes shapes to be retained in the model.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that causes shapes to be retained in the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1317,31 +1357,31 @@ via the <a class="reference internal" href="../spec/documentation-traits.html#ta
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="includenamespaces">
-<span id="includenamespaces-transform"></span><h3>includeNamespaces<a class="headerlink" href="#includenamespaces" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includenamespaces">
+<span id="includenamespaces-transform"></span><h3>includeNamespaces<a class="headerlink" href="#includenamespaces" title="Link to this heading">¶</a></h3>
 <p>Filters out shapes that are not part of one of the given <a class="reference internal" href="../spec/idl.html#namespaces"><span class="std std-ref">namespaces</span></a>.
 Note that this does not filter out traits based on namespaces.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>namespaces</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The namespaces to include in the model.</td>
+<tbody>
+<tr class="row-even"><td><p>namespaces</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The namespaces to include in the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1364,32 +1404,32 @@ Note that this does not filter out traits based on namespaces.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="includeservices">
-<span id="includeservices-transform"></span><h3>includeServices<a class="headerlink" href="#includeservices" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includeservices">
+<span id="includeservices-transform"></span><h3>includeServices<a class="headerlink" href="#includeservices" title="Link to this heading">¶</a></h3>
 <p>Filters out service shapes that are not included in the <code class="docutils literal notranslate"><span class="pre">services</span></code> list of
 shape IDs.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>services</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The service shape IDs to include in the model. Each entry MUST be
-a valid service shape ID.</td>
+<tbody>
+<tr class="row-even"><td><p>services</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The service shape IDs to include in the model. Each entry MUST be
+a valid service shape ID.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1411,28 +1451,28 @@ a valid service shape ID.</td>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="excludetags">
-<span id="excludetags-transform"></span><h3>excludeTags<a class="headerlink" href="#excludetags" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludetags">
+<span id="excludetags-transform"></span><h3>excludeTags<a class="headerlink" href="#excludetags" title="Link to this heading">¶</a></h3>
 <p>Removes tags from shapes and trait definitions that match any of the
 provided <code class="docutils literal notranslate"><span class="pre">tags</span></code>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that are removed from the model.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that are removed from the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1454,9 +1494,9 @@ provided <code class="docutils literal notranslate"><span class="pre">tags</span
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="excludetraits">
-<span id="excludetraits-transform"></span><h3>excludeTraits<a class="headerlink" href="#excludetraits" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludetraits">
+<span id="excludetraits-transform"></span><h3>excludeTraits<a class="headerlink" href="#excludetraits" title="Link to this heading">¶</a></h3>
 <p>Removes trait definitions from a model if the trait name is present in the
 provided list of <code class="docutils literal notranslate"><span class="pre">traits</span></code>. Any instance of a removed trait is also removed
 from shapes in the model.</p>
@@ -1464,25 +1504,25 @@ from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>traits</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of traits that are removed from the model. Arguments that
+<tbody>
+<tr class="row-even"><td><p>traits</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of traits that are removed from the model. Arguments that
 end with &quot;#&quot; exclude the traits of an entire namespace. Trait
 shape IDs that are relative are assumed to be part of the
-<code class="docutils literal notranslate"><span class="pre">smithy.api</span></code> prelude namespace.</td>
+<code class="docutils literal notranslate"><span class="pre">smithy.api</span></code> prelude namespace.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1524,9 +1564,9 @@ all traits in the &quot;example.foo&quot; namespace:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="excludetraitsbytag">
-<span id="excludetraitsbytag-transform"></span><h3>excludeTraitsByTag<a class="headerlink" href="#excludetraitsbytag" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludetraitsbytag">
+<span id="excludetraitsbytag-transform"></span><h3>excludeTraitsByTag<a class="headerlink" href="#excludetraitsbytag" title="Link to this heading">¶</a></h3>
 <p>Removes trait definitions from a model if the trait definition has any of
 the provided <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a removed trait is
 also removed from shapes in the model.</p>
@@ -1534,22 +1574,22 @@ also removed from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The list of tags that, if present, cause a trait to be removed.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The list of tags that, if present, cause a trait to be removed.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1572,82 +1612,82 @@ orphaned shapes.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="filtersuppressions">
-<span id="filtersuppressions-transform"></span><h3>filterSuppressions<a class="headerlink" href="#filtersuppressions" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="filtersuppressions">
+<span id="filtersuppressions-transform"></span><h3>filterSuppressions<a class="headerlink" href="#filtersuppressions" title="Link to this heading">¶</a></h3>
 <p>Removes and modifies suppressions found in <a class="reference internal" href="../spec/model-validation.html#suppression-definition"><span class="std std-ref">metadata</span></a>
 and the <a class="reference internal" href="../spec/model-validation.html#suppress-trait"><span class="std std-ref">suppress trait</span></a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>removeUnused</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td><p class="first">Set to true to remove suppressions that have no effect.</p>
+<tbody>
+<tr class="row-even"><td><p>removeUnused</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Set to true to remove suppressions that have no effect.</p>
 <p>Shapes and validators are often removed when creating a filtered
 version of model. After removing shapes and validators, suppressions
 could be left in the model that no longer have any effect. These
 suppressions could inadvertently disclose information about private
 or unreleased features.</p>
-<p class="last">If a validation event ID is never emitted, then <code class="docutils literal notranslate"><span class="pre">&#64;suppress</span></code> traits
+<p>If a validation event ID is never emitted, then <code class="docutils literal notranslate"><span class="pre">&#64;suppress</span></code> traits
 will be updated to no longer refer to the ID and removed if they no
 longer refer to any event. Metadata suppressions are also removed if
 they have no effect.</p>
 </td>
 </tr>
-<tr class="row-odd"><td>removeReasons</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Set to true to remove the <code class="docutils literal notranslate"><span class="pre">reason</span></code> property from metadata suppressions.
+<tr class="row-odd"><td><p>removeReasons</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Set to true to remove the <code class="docutils literal notranslate"><span class="pre">reason</span></code> property from metadata suppressions.
 The reason for a suppression could reveal internal or sensitive
 information. Removing the &quot;reason&quot; from metadata suppressions is an
 extra step teams can take to ensure they do not leak internal
-information when publishing models outside of their organization.</td>
+information when publishing models outside of their organization.</p></td>
 </tr>
-<tr class="row-even"><td>eventIdAllowList</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><p class="first">Sets a list of event IDs that can be referred to in suppressions.
+<tr class="row-even"><td><p>eventIdAllowList</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Sets a list of event IDs that can be referred to in suppressions.
 Suppressions that refer to any other event ID will be updated to
 no longer refer to them, or removed if they no longer refer to any
 events.</p>
-<p class="last">This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">eventIdDenyList</span></code>.</p>
+<p>This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">eventIdDenyList</span></code>.</p>
 </td>
 </tr>
-<tr class="row-odd"><td>eventIdDenyList</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><p class="first">Sets a list of event IDs that cannot be referred to in suppressions.
+<tr class="row-odd"><td><p>eventIdDenyList</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Sets a list of event IDs that cannot be referred to in suppressions.
 Suppressions that refer to any of these event IDs will be updated to
 no longer refer to them, or removed if they no longer refer to any
 events.</p>
-<p class="last">This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">eventIdAllowList</span></code>.</p>
+<p>This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">eventIdAllowList</span></code>.</p>
 </td>
 </tr>
-<tr class="row-even"><td>namespaceAllowList</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><p class="first">Sets a list of namespaces that can be referred to in metadata
+<tr class="row-even"><td><p>namespaceAllowList</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Sets a list of namespaces that can be referred to in metadata
 suppressions. Metadata suppressions that refer to namespaces
 outside of this list, including &quot;*&quot;, will be removed.</p>
-<p class="last">This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">namespaceDenyList</span></code>.</p>
+<p>This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">namespaceDenyList</span></code>.</p>
 </td>
 </tr>
-<tr class="row-odd"><td>namespaceDenyList</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><p class="first">Sets a list of namespaces that cannot be referred to in metadata
+<tr class="row-odd"><td><p>namespaceDenyList</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Sets a list of namespaces that cannot be referred to in metadata
 suppressions. Metadata suppressions that refer to namespaces
 in this list, including &quot;*&quot;, will be removed.</p>
-<p class="last">This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">namespaceAllowList</span></code>.</p>
+<p>This setting cannot be used in tandem with <code class="docutils literal notranslate"><span class="pre">namespaceAllowList</span></code>.</p>
 </td>
 </tr>
 </tbody>
@@ -1766,28 +1806,28 @@ suppressions:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="includetags">
-<span id="includetags-transform"></span><h3>includeTags<a class="headerlink" href="#includetags" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includetags">
+<span id="includetags-transform"></span><h3>includeTags<a class="headerlink" href="#includetags" title="Link to this heading">¶</a></h3>
 <p>Removes tags from shapes and trait definitions that are not in the <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that are retained in the model.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that are retained in the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1809,9 +1849,9 @@ list.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="includetraits">
-<span id="includetraits-transform"></span><h3>includeTraits<a class="headerlink" href="#includetraits" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includetraits">
+<span id="includetraits-transform"></span><h3>includeTraits<a class="headerlink" href="#includetraits" title="Link to this heading">¶</a></h3>
 <p>Removes trait definitions from a model if the trait name is not present in the
 provided list of <code class="docutils literal notranslate"><span class="pre">traits</span></code>. Any instance of a removed trait is also removed
 from shapes in the model.</p>
@@ -1819,25 +1859,25 @@ from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>traits</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The list of trait shape IDs to include. A trait ID that ends with &quot;#&quot;
+<tbody>
+<tr class="row-even"><td><p>traits</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The list of trait shape IDs to include. A trait ID that ends with &quot;#&quot;
 will include all traits from a namespace. Trait shape IDs that are
 relative are assumed to be part of the <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>
-prelude namespace.</td>
+prelude namespace.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1879,9 +1919,9 @@ all traits in the &quot;smithy.api&quot; namespace:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="includetraitsbytag">
-<span id="includetraitsbytag-transform"></span><h3>includeTraitsByTag<a class="headerlink" href="#includetraitsbytag" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includetraitsbytag">
+<span id="includetraitsbytag-transform"></span><h3>includeTraitsByTag<a class="headerlink" href="#includetraitsbytag" title="Link to this heading">¶</a></h3>
 <p>Removes trait definitions from a model if the trait definition does not
 contain one of the provided <a class="reference internal" href="../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a
 removed trait definition is also removed from shapes in the model.</p>
@@ -1889,23 +1929,23 @@ removed trait definition is also removed from shapes in the model.</p>
 automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
 orphaned shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>tags</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The list of tags that must be present for a trait to be included
-in the filtered model.</td>
+<tbody>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The list of tags that must be present for a trait to be included
+in the filtered model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1928,31 +1968,31 @@ in the filtered model.</td>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This transformer does not remove shapes from the prelude.</p>
+<p class="admonition-title">Note</p>
+<p>This transformer does not remove shapes from the prelude.</p>
 </div>
-</div>
-<div class="section" id="excludemetadata">
-<span id="excludemetadata-transform"></span><h3>excludeMetadata<a class="headerlink" href="#excludemetadata" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excludemetadata">
+<span id="excludemetadata-transform"></span><h3>excludeMetadata<a class="headerlink" href="#excludemetadata" title="Link to this heading">¶</a></h3>
 <p>Removes model <a class="reference internal" href="../spec/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>keys</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of metadata keys that are removed from the model.</td>
+<tbody>
+<tr class="row-even"><td><p>keys</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of metadata keys that are removed from the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1974,28 +2014,28 @@ key is in the provided <code class="docutils literal notranslate"><span class="p
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="includemetadata">
-<span id="includemetadata-transform"></span><h3>includeMetadata<a class="headerlink" href="#includemetadata" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="includemetadata">
+<span id="includemetadata-transform"></span><h3>includeMetadata<a class="headerlink" href="#includemetadata" title="Link to this heading">¶</a></h3>
 <p>Removes model <a class="reference internal" href="../spec/model.html#metadata"><span class="std std-ref">metadata</span></a> key-value pairs from a model if the
 key is not in the provided <code class="docutils literal notranslate"><span class="pre">keys</span></code> list.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>keys</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of metadata keys that are retained in the model.</td>
+<tbody>
+<tr class="row-even"><td><p>keys</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of metadata keys that are retained in the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2017,9 +2057,9 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="flattenandremovemixins">
-<span id="id10"></span><h3>flattenAndRemoveMixins<a class="headerlink" href="#flattenandremovemixins" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="flattenandremovemixins">
+<span id="id10"></span><h3>flattenAndRemoveMixins<a class="headerlink" href="#flattenandremovemixins" title="Link to this heading">¶</a></h3>
 <p>Flattens <a class="reference internal" href="../spec/mixins.html#mixins"><span class="std std-ref">mixins</span></a> out of the model and into their local shapes.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -2035,42 +2075,42 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="flattennamespaces">
-<span id="id11"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="flattennamespaces">
+<span id="id11"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Link to this heading">¶</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>namespace</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>REQUIRED</strong> The target namespace.</td>
+<tbody>
+<tr class="row-even"><td><p>namespace</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>REQUIRED</strong> The target namespace.</p></td>
 </tr>
-<tr class="row-odd"><td>service</td>
-<td><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></td>
-<td><strong>REQUIRED</strong> The service to be flattened. All shapes within this
+<tr class="row-odd"><td><p>service</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></p></td>
+<td><p><strong>REQUIRED</strong> The service to be flattened. All shapes within this
 <a class="reference internal" href="../spec/service-types.html#service-closure"><span class="std std-ref">service closure</span></a> will be replaced with equivalent
-shapes in the target namespace.</td>
+shapes in the target namespace.</p></td>
 </tr>
-<tr class="row-even"><td>includeTagged</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that, if found on a shape not connected to the service,
+<tr class="row-even"><td><p>includeTagged</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that, if found on a shape not connected to the service,
 forces the shape to have its namespace flattened into the target
 namespace. When additional shapes are included, the shapes are replaced
 entirely, along with any references to the shapes which may exist within
-separate <a class="reference internal" href="../spec/service-types.html#service-closure"><span class="std std-ref">service closures</span></a>.</td>
+separate <a class="reference internal" href="../spec/service-types.html#service-closure"><span class="std std-ref">service closures</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2102,31 +2142,31 @@ long as they don't conflict with a shape within the
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="removetraitdefinitions">
-<span id="removetraitdefinitions-transform"></span><h3>removeTraitDefinitions<a class="headerlink" href="#removetraitdefinitions" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="removetraitdefinitions">
+<span id="removetraitdefinitions-transform"></span><h3>removeTraitDefinitions<a class="headerlink" href="#removetraitdefinitions" title="Link to this heading">¶</a></h3>
 <p>Removes trait definitions from the model, but leaves the instances of traits
 intact on any shapes.</p>
 <p>You can <em>export</em> trait definitions by applying specific tags to the trait
 definition and adding the list of export tags in the <code class="docutils literal notranslate"><span class="pre">exportTagged</span></code> argument.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>exportTagged</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that, if found on a trait definition, forces the trait
-to be retained in the transformed model.</td>
+<tbody>
+<tr class="row-even"><td><p>exportTagged</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that, if found on a trait definition, forces the trait
+to be retained in the transformed model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2153,33 +2193,33 @@ trait intact on shapes in the model:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="removeunusedshapes">
-<span id="removeunusedshapes-transform"></span><h3>removeUnusedShapes<a class="headerlink" href="#removeunusedshapes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="removeunusedshapes">
+<span id="removeunusedshapes-transform"></span><h3>removeUnusedShapes<a class="headerlink" href="#removeunusedshapes" title="Link to this heading">¶</a></h3>
 <p>Removes shapes from the model that are not connected to any service shape
 or to a shape definition.</p>
 <p>You can <em>export</em> shapes that are not connected to any service shape by
 applying specific tags to the shape and adding the list of export tags in
 the <code class="docutils literal notranslate"><span class="pre">exportTagged</span></code> argument.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>exportTagged</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>The set of tags that, if found on a shape, forces the shape to be
+<tbody>
+<tr class="row-even"><td><p>exportTagged</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>The set of tags that, if found on a shape, forces the shape to be
 present in the transformed model regardless of if it was connected
-to a service.</td>
+to a service.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2206,9 +2246,9 @@ but keeps the shape if it has any of the provided tags:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="removedeprecatedshapes">
-<span id="removedeprecatedshapes-transform"></span><h3>removeDeprecatedShapes<a class="headerlink" href="#removedeprecatedshapes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="removedeprecatedshapes">
+<span id="removedeprecatedshapes-transform"></span><h3>removeDeprecatedShapes<a class="headerlink" href="#removedeprecatedshapes" title="Link to this heading">¶</a></h3>
 <p>Removes any shapes that were marked as <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> before the specified version or date.</p>
 <p>This transform can be used to filter out shapes with the <a class="reference internal" href="../spec/documentation-traits.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a> applied if the
 <code class="docutils literal notranslate"><span class="pre">since</span></code> property of the trait specifies a version or date. Versions are expected to follow the
@@ -2219,28 +2259,28 @@ If the value of the <code class="docutils literal notranslate"><span class="pre"
 the shape the <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait is applied to will be removed from the model. Shapes with the <code class="docutils literal notranslate"><span class="pre">&#64;deprecated</span></code> trait,
 but no <code class="docutils literal notranslate"><span class="pre">since</span></code> property will be ignored by this transform.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>relativeDate</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Date, in <a class="reference external" href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> calendar date format (YYYY-MM-DD), to use to filter out deprecated shapes.
-Any shapes deprecated before this date will be removed from the model.</td>
+<tbody>
+<tr class="row-even"><td><p>relativeDate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Date, in <a class="reference external" href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> calendar date format (YYYY-MM-DD), to use to filter out deprecated shapes.
+Any shapes deprecated before this date will be removed from the model.</p></td>
 </tr>
-<tr class="row-odd"><td>relativeVersion</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Version, following the <a class="reference external" href="https://semver.org/">SemVer Specification</a>, to use to filter out deprecated shapes.
-Any shapes deprecated in an earlier version will be removed from the model.</td>
+<tr class="row-odd"><td><p>relativeVersion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Version, following the <a class="reference external" href="https://semver.org/">SemVer Specification</a>, to use to filter out deprecated shapes.
+Any shapes deprecated in an earlier version will be removed from the model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2265,30 +2305,30 @@ or before version <code class="docutils literal notranslate"><span class="pre">1
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="renameshapes">
-<span id="renameshapes-transform"></span><h3>renameShapes<a class="headerlink" href="#renameshapes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="renameshapes">
+<span id="renameshapes-transform"></span><h3>renameShapes<a class="headerlink" href="#renameshapes" title="Link to this heading">¶</a></h3>
 <p>Renames shapes within the model, including updating any references to the
 shapes that are being renamed.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>renamed</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map&lt;shapeId,</span> <span class="pre">shapeId&gt;</span></code></td>
-<td>The map of <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape IDs</span></a> to rename. Each key <code class="docutils literal notranslate"><span class="pre">shapeId</span></code> will be
+<tbody>
+<tr class="row-even"><td><p>renamed</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Map&lt;shapeId,</span> <span class="pre">shapeId&gt;</span></code></p></td>
+<td><p>The map of <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape IDs</span></a> to rename. Each key <code class="docutils literal notranslate"><span class="pre">shapeId</span></code> will be
 renamed to the value <code class="docutils literal notranslate"><span class="pre">shapeId</span></code>. Each <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape ID</span></a> must be
-be an absolute shape ID.</td>
+be an absolute shape ID.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2314,10 +2354,10 @@ Any references to <code class="docutils literal notranslate"><span class="pre">n
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="environment-variables">
-<span id="build-envars"></span><h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="environment-variables">
+<span id="build-envars"></span><h2>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading">¶</a></h2>
 <p>Strings in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> files can contain environment variable place
 holders that are expanded at load-time into the value of a Java system
 property or environment variable. The syntax of a placeholder is
@@ -2367,26 +2407,26 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 <p>In addition to environment variables of the process, smithy-build.json
 files have access to the following environment variables:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></td>
-<td>The root directory of the build (e.g., where the Smithy CLI was invoked).</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></p></td>
+<td><p>The root directory of the build (e.g., where the Smithy CLI was invoked).</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section" id="plugins">
-<span id="id12"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="plugins">
+<span id="id12"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Link to this heading">¶</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -2406,8 +2446,8 @@ Plugins MUST be available in the Java class path or module path in order for
 them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
-<div class="section" id="model-plugin">
-<span id="id13"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this heading">#</a></h3>
+<section id="model-plugin">
+<span id="id13"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file. By default the serialized model excludes <a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
@@ -2423,14 +2463,14 @@ to the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="build-info-plugin">
-<span id="id14"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="build-info-plugin">
+<span id="id14"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
-</div>
-<div class="section" id="sources-plugin">
-<span id="id15"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="sources-plugin">
+<span id="id15"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2446,9 +2486,9 @@ relative path from the manifest file to each model file created by the
 sources plugin. Lines that start with a number sign (#) are comments and are
 ignored. A Smithy manifest file is stored in a JAR as <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/manifest</span></code>.
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
-</div>
-<div class="section" id="run-plugin">
-<span id="id16"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="run-plugin">
+<span id="id16"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
 useful when integrating Smithy's build process with Smithy implementations
 that are not written in Java.</p>
@@ -2456,80 +2496,80 @@ that are not written in Java.</p>
 using the <a class="reference internal" href="../spec/json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a> and sent to the standard input of the
 process.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin requires a custom artifact name in its
+<p class="admonition-title">Important</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin requires a custom artifact name in its
 <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a> (e.g., <code class="docutils literal notranslate"><span class="pre">run::artifact-name</span></code>).</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin supports the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>command</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td><strong>REQUIRED</strong> The name of the program to run, followed by an optional
+<tbody>
+<tr class="row-even"><td><p>command</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p><strong>REQUIRED</strong> The name of the program to run, followed by an optional
 list of arguments. If the command uses a relative path, Smithy will
 first check if the command can be found relative to the current working
 directory. Otherwise, the program must use an absolute path or be
 available on the user's <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> if Unix-like environments or its
 equivalent in other operating systems. No arguments are sent other
-than the arguments configured in the <code class="docutils literal notranslate"><span class="pre">command</span></code> setting.</td>
+than the arguments configured in the <code class="docutils literal notranslate"><span class="pre">command</span></code> setting.</p></td>
 </tr>
-<tr class="row-odd"><td>env</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">String&gt;</span></code></td>
-<td>A map of environment variables to send to the process. The process
+<tr class="row-odd"><td><p>env</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">String&gt;</span></code></p></td>
+<td><p>A map of environment variables to send to the process. The process
 will inherit the environment variables of the containing process.
 The values defined in <code class="docutils literal notranslate"><span class="pre">env</span></code> add new variables or overwrite
-inherited variables.</td>
+inherited variables.</p></td>
 </tr>
-<tr class="row-even"><td>sendPrelude</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Set to true to include prelude shapes when sending the Smithy model to
-the standard input of the process. By default, the prelude is omitted.</td>
+<tr class="row-even"><td><p>sendPrelude</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Set to true to include prelude shapes when sending the Smithy model to
+the standard input of the process. By default, the prelude is omitted.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>Smithy will make the following environment variables available to the program:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></td>
-<td>The root directory of the build (e.g., where the Smithy CLI was invoked).</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></p></td>
+<td><p>The root directory of the build (e.g., where the Smithy CLI was invoked).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_PLUGIN_DIR</span></code></td>
-<td>The working directory of the program. All files written by the program
-should be relative to this directory.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_PLUGIN_DIR</span></code></p></td>
+<td><p>The working directory of the program. All files written by the program
+should be relative to this directory.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_PROJECTION_NAME</span></code></td>
-<td>The projection name the program was called within (e.g., &quot;source&quot;).</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_PROJECTION_NAME</span></code></p></td>
+<td><p>The projection name the program was called within (e.g., &quot;source&quot;).</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ARTIFACT_NAME</span></code></td>
-<td>The <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a> artifact name.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_ARTIFACT_NAME</span></code></p></td>
+<td><p>The <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a> artifact name.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_INCLUDES_PRELUDE</span></code></td>
-<td>Contains the value of <code class="docutils literal notranslate"><span class="pre">sendPrelude</span></code> in the form of <code class="docutils literal notranslate"><span class="pre">true</span></code> or
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SMITHY_INCLUDES_PRELUDE</span></code></p></td>
+<td><p>Contains the value of <code class="docutils literal notranslate"><span class="pre">sendPrelude</span></code> in the form of <code class="docutils literal notranslate"><span class="pre">true</span></code> or
 <code class="docutils literal notranslate"><span class="pre">false</span></code> to tell the process if the prelude is included in the
-serialized model.</td>
+serialized model.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2569,9 +2609,9 @@ of <code class="docutils literal notranslate"><span class="pre">custom-process</
 cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
         </article>
       </div>
@@ -2585,10 +2625,10 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
                 </div>
                 <div class="title">Smithy Gradle Plugins</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="smithy-cli/cli_installation.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -2629,7 +2669,7 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -2700,15 +2740,12 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/tabs.js"></script>
+</div><script src="../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Amazon API Gateway traits" href="amazon-apigateway.html" /><link rel="prev" title="AWS Declarative Endpoint Traits" href="aws-endpoints-region.html" />
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Amazon API Gateway traits" href="amazon-apigateway.html"><link rel="prev" title="AWS Declarative Endpoint Traits" href="aws-endpoints-region.html">
+        <link rel="prefetch" href="../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>AWS IAM traits - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input aria-label="Toggle navigation of Guides" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">AWS integrations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,31 +410,31 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/aws/aws-iam.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/aws/aws-iam.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/aws/aws-iam.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="aws-iam-traits">
-<span id="id1"></span><h1>AWS IAM traits<a class="headerlink" href="#aws-iam-traits" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="aws-iam-traits">
+<span id="id1"></span><h1>AWS IAM traits<a class="headerlink" href="#aws-iam-traits" title="Link to this heading">¶</a></h1>
 <p>IAM Policy Traits are used to describe the permission structure of a service
 in relation to AWS IAM. Services integrated with AWS IAM define resource types,
 actions, and condition keys that IAM users can use to construct IAM policies.</p>
@@ -405,25 +445,28 @@ with other <a class="reference external" href="https://docs.aws.amazon.com/IAM/l
 policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">Deriving condition keys</span></a>.</p>
-<div class="section" id="principal-traits">
-<span id="aws-iam-traits-principal"></span><h2>Principal traits<a class="headerlink" href="#principal-traits" title="Permalink to this heading">#</a></h2>
-<div class="section" id="aws-iam-supportedprincipaltypes-trait">
-<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id2"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string is an IAM principal type: <code class="docutils literal notranslate"><span class="pre">Root</span></code>,
-<code class="docutils literal notranslate"><span class="pre">IAMUser</span></code>, <code class="docutils literal notranslate"><span class="pre">IAMRole</span></code>, or <code class="docutils literal notranslate"><span class="pre">FederatedUser</span></code>.</dd>
+<section id="principal-traits">
+<span id="aws-iam-traits-principal"></span><h2>Principal traits<a class="headerlink" href="#principal-traits" title="Link to this heading">¶</a></h2>
+<section id="aws-iam-supportedprincipaltypes-trait">
+<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id2"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string is an IAM principal type: <code class="docutils literal notranslate"><span class="pre">Root</span></code>,
+<code class="docutils literal notranslate"><span class="pre">IAMUser</span></code>, <code class="docutils literal notranslate"><span class="pre">IAMRole</span></code>, or <code class="docutils literal notranslate"><span class="pre">FederatedUser</span></code>.</p>
+</dd>
 </dl>
 <p>Operations that are not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait
 inherit the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> of the service they are bound to.</p>
 <p>The following example defines two operations:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> defines an explicit list of the <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> it
-supports using the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait.</li>
-<li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait,
+<li><p><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> defines an explicit list of the <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> it
+supports using the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait,
 so the <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> supported by this operation are the principal
-types applied to the service.</li>
+types applied to the service.</p></li>
 </ul>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -443,60 +486,63 @@ types applied to the service.</li>
 <span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="action-traits">
-<span id="aws-iam-traits-actions"></span><h2>Action traits<a class="headerlink" href="#action-traits" title="Permalink to this heading">#</a></h2>
-<div class="section" id="aws-iam-iamaction-trait">
-<span id="aws-iam-iamaction-trait"></span><span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait<a class="headerlink" href="#aws-iam-iamaction-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates properties of a Smithy operation in AWS IAM.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</section>
+</section>
+<section id="action-traits">
+<span id="aws-iam-traits-actions"></span><h2>Action traits<a class="headerlink" href="#action-traits" title="Link to this heading">¶</a></h2>
+<section id="aws-iam-iamaction-trait">
+<span id="aws-iam-iamaction-trait"></span><span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait<a class="headerlink" href="#aws-iam-iamaction-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates properties of a Smithy operation in AWS IAM.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait is a structure that supports the following
 members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The name of the resource in AWS IAM.</td>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The name of the resource in AWS IAM.</p></td>
 </tr>
-<tr class="row-odd"><td>documentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A brief description of what granting the user permission to invoke an
-operation would entail.</td>
+<tr class="row-odd"><td><p>documentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A brief description of what granting the user permission to invoke an
+operation would entail.</p></td>
 </tr>
-<tr class="row-even"><td>relativeDocumentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A relative URL path that defines more information about the operation
-within a set of IAM-related documentation.</td>
+<tr class="row-even"><td><p>relativeDocumentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A relative URL path that defines more information about the operation
+within a set of IAM-related documentation.</p></td>
 </tr>
-<tr class="row-odd"><td>requiredActions</td>
-<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of another action.</td>
-<td>The list of actions that the invoker must be authorized to perform when
-executing the targeted operation.</td>
+<tr class="row-odd"><td><p>requiredActions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of another action.</p></td>
+<td><p>The list of actions that the invoker must be authorized to perform when
+executing the targeted operation.</p></td>
 </tr>
-<tr class="row-even"><td>resources</td>
-<td><a class="reference internal" href="#actionresources-object">ActionResources object</a></td>
-<td>The resources an IAM action can be authorized against.</td>
+<tr class="row-even"><td><p>resources</p></td>
+<td><p><a class="reference internal" href="#actionresources-object">ActionResources object</a></p></td>
+<td><p>The resources an IAM action can be authorized against.</p></td>
 </tr>
-<tr class="row-odd"><td>createsResources</td>
-<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of a resource.</td>
-<td>The list of resources that performing this IAM action will create. If
-this member is present, all inferred created resources are ignored.</td>
+<tr class="row-odd"><td><p>createsResources</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of a resource.</p></td>
+<td><p>The list of resources that performing this IAM action will create. If
+this member is present, all inferred created resources are ignored.</p></td>
 </tr>
 </tbody>
 </table>
@@ -513,37 +559,37 @@ deviates from the <a class="reference internal" href="../spec/model.html#shape-i
 <span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 </pre></div>
 </div>
-<div class="section" id="actionresources-object">
-<span id="aws-iam-iamaction-trait-actionresources"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object<a class="headerlink" href="#actionresources-object" title="Permalink to this heading">#</a></h4>
+<section id="actionresources-object">
+<span id="aws-iam-iamaction-trait-actionresources"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object<a class="headerlink" href="#actionresources-object" title="Link to this heading">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object is a container for information on the resources
 that an IAM action may be authorized against. The <code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object
 contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>required</td>
-<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></td>
-<td>Resources that will always be authorized against for functionality of
+<tbody>
+<tr class="row-even"><td><p>required</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></p></td>
+<td><p>Resources that will always be authorized against for functionality of
 the IAM action. If this member is present, all inferred required
-resources are ignored.</td>
+resources are ignored.</p></td>
 </tr>
-<tr class="row-odd"><td>optional</td>
-<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></td>
-<td><p class="first">Resources that will be authorized against based on optional behavior of
+<tr class="row-odd"><td><p>optional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></p></td>
+<td><p>Resources that will be authorized against based on optional behavior of
 the IAM action. If this member is present, all inferred optional
 resources are ignored.</p>
-<p class="last">For example, an action may create an instance that can optionally be
+<p>For example, an action may create an instance that can optionally be
 configured based on a snapshot that would be authorized against. Most
 actions do not need this property.</p>
 </td>
@@ -551,57 +597,60 @@ actions do not need this property.</p>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section" id="actionresource-object">
-<span id="aws-iam-iamaction-trait-actionresource"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object<a class="headerlink" href="#actionresource-object" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="actionresource-object">
+<span id="aws-iam-iamaction-trait-actionresource"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object<a class="headerlink" href="#actionresource-object" title="Link to this heading">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object is a container for information about a resource
 that an IAM action can be authorized against. The <code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object
 contains the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>conditionKeys</td>
-<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
-<td>The condition keys used for authorizing against this resource.</td>
+<tbody>
+<tr class="row-even"><td><p>conditionKeys</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p></td>
+<td><p>The condition keys used for authorizing against this resource.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-</div>
-<div class="section" id="deprecated-action-traits">
-<span id="aws-iam-traits-actions-deprecated-traits"></span><h3>Deprecated action traits<a class="headerlink" href="#deprecated-action-traits" title="Permalink to this heading">#</a></h3>
-<div class="section" id="aws-iam-actionname-trait">
-<span id="aws-iam-actionname-trait"></span><span id="id4"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait<a class="headerlink" href="#aws-iam-actionname-trait" title="Permalink to this heading">#</a></h4>
+</section>
+</section>
+<section id="deprecated-action-traits">
+<span id="aws-iam-traits-actions-deprecated-traits"></span><h3>Deprecated action traits<a class="headerlink" href="#deprecated-action-traits" title="Link to this heading">¶</a></h3>
+<section id="aws-iam-actionname-trait">
+<span id="aws-iam-actionname-trait"></span><span id="id4"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait<a class="headerlink" href="#aws-iam-actionname-trait" title="Link to this heading">¶</a></h4>
 <div class="admonition danger">
-<p class="first admonition-title">Danger</p>
-<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">name</span></code> property of the
+<p class="admonition-title">Danger</p>
+<p>This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">name</span></code> property of the
 <a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
 </div>
-<dl class="docutils">
-<dt>Summary</dt><dd>Provides a custom IAM action name.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Provides a custom IAM action name.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+</dd>
 </dl>
 <p>Operations not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, default to the
 <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted operation.</p>
 <p>The following example defines two operations:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, and
-resolves the action name of <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> has the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, so has the action
-name <code class="docutils literal notranslate"><span class="pre">OverridingActionName</span></code>.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, and
+resolves the action name of <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> has the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, so has the action
+name <code class="docutils literal notranslate"><span class="pre">OverridingActionName</span></code>.</p></li>
 </ul>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -620,19 +669,22 @@ name <code class="docutils literal notranslate"><span class="pre">OverridingActi
 <span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div>
-<div class="section" id="aws-iam-actionpermissiondescription-trait">
-<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id5"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="aws-iam-actionpermissiondescription-trait">
+<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id5"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Link to this heading">¶</a></h4>
 <div class="admonition danger">
-<p class="first admonition-title">Danger</p>
-<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">documentation</span></code> property of the
+<p class="admonition-title">Danger</p>
+<p>This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">documentation</span></code> property of the
 <a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
 </div>
-<dl class="docutils">
-<dt>Summary</dt><dd>A brief description of what granting the user permission to invoke an
-operation would entail.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dl class="simple">
+<dt>Summary</dt><dd><p>A brief description of what granting the user permission to invoke an
+operation would entail.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+</dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -644,20 +696,23 @@ operation would entail.</dd>
 <span class="kd">operation </span><span class="nc">FooOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div>
-<div class="section" id="aws-iam-requiredactions-trait">
-<span id="aws-iam-requiredactions-trait"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="aws-iam-requiredactions-trait">
+<span id="aws-iam-requiredactions-trait"></span><span id="id6"></span><h4><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Link to this heading">¶</a></h4>
 <div class="admonition danger">
-<p class="first admonition-title">Danger</p>
-<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">requiredActions</span></code> property of the
+<p class="admonition-title">Danger</p>
+<p>This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">requiredActions</span></code> property of the
 <a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
 </div>
-<dl class="docutils">
-<dt>Summary</dt><dd>Other actions that the invoker must be authorized to perform when
-executing the targeted operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references other actions
-required for the service to authorize.</dd>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Other actions that the invoker must be authorized to perform when
+executing the targeted operation.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references other actions
+required for the service to authorize.</p>
+</dd>
 </dl>
 <p>Defines the actions, in addition to the targeted operation, that a user must
 be authorized to execute in order invoke an operation. The following example
@@ -686,49 +741,52 @@ operation for it to complete successfully.</p>
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="resource-traits">
-<span id="aws-iam-traits-resources"></span><h2>Resource Traits<a class="headerlink" href="#resource-traits" title="Permalink to this heading">#</a></h2>
-<div class="section" id="aws-iam-iamresource-trait">
-<span id="aws-iam-iamresource-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates properties of a Smithy resource in AWS IAM.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</section>
+</section>
+</section>
+<section id="resource-traits">
+<span id="aws-iam-traits-resources"></span><h2>Resource Traits<a class="headerlink" href="#resource-traits" title="Link to this heading">¶</a></h2>
+<section id="aws-iam-iamresource-trait">
+<span id="aws-iam-iamresource-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates properties of a Smithy resource in AWS IAM.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">resource</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait is a structure that supports the following
 members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The name of the resource in AWS IAM.</td>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The name of the resource in AWS IAM.</p></td>
 </tr>
-<tr class="row-odd"><td>relativeDocumentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A relative URL path that defines more information about the resource
-within a set of IAM-related documentation.</td>
+<tr class="row-odd"><td><p>relativeDocumentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A relative URL path that defines more information about the resource
+within a set of IAM-related documentation.</p></td>
 </tr>
-<tr class="row-even"><td>disableConditionKeyInheritance</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, decouples this IAM resource's condition keys from
+<tr class="row-even"><td><p>disableConditionKeyInheritance</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, decouples this IAM resource's condition keys from
 those of its parent resource(s). This can be used in combination with
 the <a class="reference internal" href="#aws-iam-conditionkeys-trait"><span class="std std-ref">aws.iam#conditionKeys trait</span></a> trait to isolate a resource's
-condition keys from those of its parent(s).</td>
+condition keys from those of its parent(s).</p></td>
 </tr>
 </tbody>
 </table>
@@ -749,18 +807,21 @@ deviates from the <a class="reference internal" href="../spec/model.html#shape-i
 }
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="condition-key-traits">
-<span id="aws-iam-traits-condition-keys"></span><h2>Condition key traits<a class="headerlink" href="#condition-key-traits" title="Permalink to this heading">#</a></h2>
-<div class="section" id="aws-iam-defineconditionkeys-trait">
-<span id="aws-iam-defineconditionkeys-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Defines the set of condition keys that appear within a service in
+</section>
+</section>
+<section id="condition-key-traits">
+<span id="aws-iam-traits-condition-keys"></span><h2>Condition key traits<a class="headerlink" href="#condition-key-traits" title="Link to this heading">¶</a></h2>
+<section id="aws-iam-defineconditionkeys-trait">
+<span id="aws-iam-defineconditionkeys-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the set of condition keys that appear within a service in
 addition to <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">inferred</span></a> and global condition
-keys.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+keys.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait defines additional condition keys
 that appear within a service. Keys in the map must be valid IAM identifiers
@@ -769,46 +830,46 @@ expression: <code class="docutils literal notranslate"><span class="pre">&quot;^
 condition key name is specified, the service is inferred to be the
 <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>. Each condition key structure supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="10%" />
-<col width="80%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>type</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The type of contents of the condition key. The type must
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The type of contents of the condition key. The type must
 be one of: <code class="docutils literal notranslate"><span class="pre">ARN</span></code>, <code class="docutils literal notranslate"><span class="pre">Binary</span></code>, <code class="docutils literal notranslate"><span class="pre">Bool</span></code>, <code class="docutils literal notranslate"><span class="pre">Date</span></code>, <code class="docutils literal notranslate"><span class="pre">IPAddress</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Numeric</span></code>, <code class="docutils literal notranslate"><span class="pre">String</span></code>, <code class="docutils literal notranslate"><span class="pre">ArrayOfARN</span></code>, <code class="docutils literal notranslate"><span class="pre">ArrayOfBinary</span></code>,
 <code class="docutils literal notranslate"><span class="pre">ArrayOfBool</span></code>, <code class="docutils literal notranslate"><span class="pre">ArrayOfDate</span></code>, <code class="docutils literal notranslate"><span class="pre">ArrayOfIPAddress</span></code>,
 <code class="docutils literal notranslate"><span class="pre">ArrayOfNumeric</span></code>, <code class="docutils literal notranslate"><span class="pre">ArrayOfString</span></code>. See <a class="reference internal" href="#condition-key-types"><span class="std std-ref">Condition Key Types</span></a>
-for more information.</td>
+for more information.</p></td>
 </tr>
-<tr class="row-odd"><td>documentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Defines documentation about the condition key.</td>
+<tr class="row-odd"><td><p>documentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Defines documentation about the condition key.</p></td>
 </tr>
-<tr class="row-even"><td>externalDocumentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A valid URL that defines more information about the condition key.</td>
+<tr class="row-even"><td><p>externalDocumentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A valid URL that defines more information about the condition key.</p></td>
 </tr>
-<tr class="row-odd"><td>relativeDocumentation</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A relative URL path that defines more information about the condition key
-within a set of IAM-related documentation.</td>
+<tr class="row-odd"><td><p>relativeDocumentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A relative URL path that defines more information about the condition key
+within a set of IAM-related documentation.</p></td>
 </tr>
-<tr class="row-even"><td>required</td>
-<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
-<td>Defines whether a service resolved condition key is required. Not
+<tr class="row-even"><td><p>required</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Defines whether a service resolved condition key is required. Not
 applicable to request resolved condition keys, as the native
-<a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> trait MUST be used on the member directly.</td>
+<a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> trait MUST be used on the member directly.</p></td>
 </tr>
 </tbody>
 </table>
@@ -841,17 +902,20 @@ applicable to request resolved condition keys, as the native
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys are allowed to not be
+<p class="admonition-title">Note</p>
+<p>Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys are allowed to not be
 defined on the service.</p>
 </div>
-</div>
-<div class="section" id="aws-iam-conditionkeys-trait">
-<span id="aws-iam-conditionkeys-trait"></span><span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Applies condition keys, by name, to a resource or operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+</section>
+<section id="aws-iam-conditionkeys-trait">
+<span id="aws-iam-conditionkeys-trait"></span><span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Applies condition keys, by name, to a resource or operation.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p>
+</dd>
 </dl>
 <p>Condition keys derived automatically can be applied to a resource or operation
 explicitly. Condition keys applied this way MUST be either <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">inferred</span></a>
@@ -892,18 +956,21 @@ keys. The <code class="docutils literal notranslate"><span class="pre">MyOperati
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys can be referenced
+<p class="admonition-title">Note</p>
+<p>Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys can be referenced
 without being defined on the service.</p>
 </div>
-</div>
-<div class="section" id="aws-iam-serviceresolvedconditionkeys-trait">
-<span id="aws-iam-serviceresolvedconditionkeys-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-serviceresolvedconditionkeys-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Specifies the list of IAM condition keys which must be resolved by the
-service, as opposed to the value being pulled from the request.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+</section>
+<section id="aws-iam-serviceresolvedconditionkeys-trait">
+<span id="aws-iam-serviceresolvedconditionkeys-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-serviceresolvedconditionkeys-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Specifies the list of IAM condition keys which must be resolved by the
+service, as opposed to the value being pulled from the request.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p>
+</dd>
 </dl>
 <p>All condition keys defined with the <code class="docutils literal notranslate"><span class="pre">serviceResolvedConditionKeys</span></code> trait
 MUST also be defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.
@@ -915,8 +982,8 @@ meaning they must adhere to the following regular expression:
 name is specified, the service is inferred to be the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>.</p>
 <p>The following example defines two service-specific condition keys:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey1</span></code> is expected to be resolved by the service.</li>
-<li><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey2</span></code> is expected to be pulled from the request.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey1</span></code> is expected to be resolved by the service.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey2</span></code> is expected to be pulled from the request.</p></li>
 </ul>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -938,13 +1005,16 @@ name is specified, the service is inferred to be the <code class="docutils liter
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="aws-iam-conditionkeyvalue-trait">
-<span id="aws-iam-conditionkeyvalue-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeyvalue-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Uses the associated member’s value for the specified condition key.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">member</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</section>
+<section id="aws-iam-conditionkeyvalue-trait">
+<span id="aws-iam-conditionkeyvalue-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeyvalue-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Uses the associated member’s value for the specified condition key.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">member</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p>
+</dd>
 </dl>
 <p>Members not annotated with the <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code> trait, default to the
 <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted member. All
@@ -993,14 +1063,17 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="aws-iam-disableconditionkeyinference-trait">
-<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this heading">#</a></h3>
-<dl class="docutils">
-<dt>Summary</dt><dd>Declares that the condition keys of a resource should not be
-<a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">inferred</span></a>.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource)</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait</dd>
+</section>
+<section id="aws-iam-disableconditionkeyinference-trait">
+<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares that the condition keys of a resource should not be
+<a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">inferred</span></a>.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
 </dl>
 <p>When a service is marked with the <code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code>
 trait, all the resources bound to the service will not have condition
@@ -1063,71 +1136,71 @@ inference disabled.</p>
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="condition-key-types">
-<span id="id13"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="condition-key-types">
+<span id="id13"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Link to this heading">¶</a></h3>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ARN</span></code></td>
-<td>A String type that contains an <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">Amazon Resource Name (ARN)</a>.</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ARN</span></code></p></td>
+<td><p>A String type that contains an <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">Amazon Resource Name (ARN)</a>.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Binary</span></code></td>
-<td>A String type that contains base-64 encoded binary data.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Binary</span></code></p></td>
+<td><p>A String type that contains base-64 encoded binary data.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Bool</span></code></td>
-<td>A general boolean type.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Bool</span></code></p></td>
+<td><p>A general boolean type.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Date</span></code></td>
-<td>A String type that conforms to the <code class="docutils literal notranslate"><span class="pre">datetime</span></code> profile of <a class="reference external" href="http://www.w3.org/TR/NOTE-datetime">ISO 8601</a>.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Date</span></code></p></td>
+<td><p>A String type that conforms to the <code class="docutils literal notranslate"><span class="pre">datetime</span></code> profile of <a class="reference external" href="http://www.w3.org/TR/NOTE-datetime">ISO 8601</a>.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">IPAddress</span></code></td>
-<td>A String type that conforms to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc4632.html"><strong>RFC 4632</strong></a>.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IPAddress</span></code></p></td>
+<td><p>A String type that conforms to <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc4632.html"><strong>RFC 4632</strong></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Numeric</span></code></td>
-<td>A general type for integers and floats.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Numeric</span></code></p></td>
+<td><p>A general type for integers and floats.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">String</span></code></td>
-<td>A general string type.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">String</span></code></p></td>
+<td><p>A general string type.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfARN</span></code></td>
-<td>An unordered list of ARN types.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfARN</span></code></p></td>
+<td><p>An unordered list of ARN types.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfBinary</span></code></td>
-<td>An unordered list of Binary types.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfBinary</span></code></p></td>
+<td><p>An unordered list of Binary types.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfBool</span></code></td>
-<td>An unordered list of Bool types.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfBool</span></code></p></td>
+<td><p>An unordered list of Bool types.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfDate</span></code></td>
-<td>An unordered list of Date types.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfDate</span></code></p></td>
+<td><p>An unordered list of Date types.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfIPAddress</span></code></td>
-<td>An unordered list of IPAddress types.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfIPAddress</span></code></p></td>
+<td><p>An unordered list of IPAddress types.</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfNumeric</span></code></td>
-<td>An unordered list of Numeric types.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfNumeric</span></code></p></td>
+<td><p>An unordered list of Numeric types.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">ArrayOfString</span></code></td>
-<td>An unordered list of String types.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ArrayOfString</span></code></p></td>
+<td><p>An unordered list of String types.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section" id="deriving-condition-keys">
-<span id="id14"></span><h3>Deriving condition keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="deriving-condition-keys">
+<span id="id14"></span><h3>Deriving condition keys<a class="headerlink" href="#deriving-condition-keys" title="Link to this heading">¶</a></h3>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -1186,53 +1259,53 @@ trait.</p>
 </div>
 <p>The computed condition keys for the service are:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Condition Keys</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Condition Keys</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MyResource</span></code></td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code></li>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MyResource</span></code></p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code></p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">InnerResource</span></code></td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">myservice:InnerResourceYum</span></code></li>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">InnerResource</span></code></p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:Bar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">myservice:InnerResourceYum</span></code></p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MyDetachedResource</span></code></td>
-<td>None</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MyDetachedResource</span></code></p></td>
+<td><p>None</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">MyCustomResource</span></code></td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></li>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MyCustomResource</span></code></p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MyOperation</span></code></td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></li>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MyOperation</span></code></p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></p></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
         </article>
       </div>
@@ -1246,10 +1319,10 @@ trait.</p>
                 </div>
                 <div class="title">Amazon API Gateway traits</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="aws-endpoints-region.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -1290,7 +1363,7 @@ trait.</p>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -1340,15 +1413,12 @@ trait.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/tabs.js"></script>
+</div><script src="../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

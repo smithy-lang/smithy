@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="8. Documentation traits" href="documentation-traits.html" /><link rel="prev" title="6. Constraint traits" href="constraint-traits.html" />
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="8. Documentation traits" href="documentation-traits.html"><link rel="prev" title="6. Constraint traits" href="constraint-traits.html">
+        <link rel="prefetch" href="../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>7. Type refinement traits - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input aria-label="Toggle navigation of Guides" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,46 +410,48 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/spec/type-refinement-traits.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/spec/type-refinement-traits.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/spec/type-refinement-traits.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="type-refinement-traits">
-<h1><span class="section-number">7. </span>Type refinement traits<a class="headerlink" href="#type-refinement-traits" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="type-refinement-traits">
+<h1><span class="section-number">7. </span>Type refinement traits<a class="headerlink" href="#type-refinement-traits" title="Link to this heading">¶</a></h1>
 <p>Type refinement traits are traits that significantly refine, or change, the
 type of a shape.</p>
-<div class="section" id="default-trait">
-<span id="smithy-api-default-trait"></span><span id="id1"></span><h2><span class="section-number">7.1. </span><code class="docutils literal notranslate"><span class="pre">default</span></code> trait<a class="headerlink" href="#default-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Provides a structure member with a default value.</dd>
+<section id="default-trait">
+<span id="smithy-api-default-trait"></span><span id="id1"></span><h2><span class="section-number">7.1. </span><code class="docutils literal notranslate"><span class="pre">default</span></code> trait<a class="headerlink" href="#default-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Summary</dt><dd><p>Provides a structure member with a default value.</p>
+</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map,</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map)))</span></code></p>
 <p>A simple type, list, map, or a member of a structure that targets a simple type, list, or map.</p>
 </dd>
-<dt>Value type</dt><dd>Document type.</dd>
+<dt>Value type</dt><dd><p>Document type.</p>
+</dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
-<li><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></li>
-<li><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></li>
-<li><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></li>
+<li><p><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p></li>
+<li><p><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></p></li>
+<li><p><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></p></li>
+<li><p><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -464,18 +506,18 @@ value requirement of a targeted shape.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<ul class="last simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes has no impact when targeted by
-any other shape than a structure member.</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes cannot be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
-<li>The <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> applied to a member marked with the
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes has no impact when targeted by
+any other shape than a structure member.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes cannot be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p></li>
+<li><p>The <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> applied to a member marked with the
 <code class="docutils literal notranslate"><span class="pre">default</span></code> trait causes non-authoritative generators to ignore the
-<code class="docutils literal notranslate"><span class="pre">default</span></code> trait.</li>
+<code class="docutils literal notranslate"><span class="pre">default</span></code> trait.</p></li>
 </ul>
 </div>
-<div class="section" id="default-value-constraints">
-<h3><span class="section-number">7.1.1. </span>Default value constraints<a class="headerlink" href="#default-value-constraints" title="Permalink to this heading">#</a></h3>
+<section id="default-value-constraints">
+<h3><span class="section-number">7.1.1. </span>Default value constraints<a class="headerlink" href="#default-value-constraints" title="Link to this heading">¶</a></h3>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait MUST be compatible with the shape targeted
 by the member and any applied constraint traits (for example, values for
 numeric types MUST be numbers that fit within the targeted type and match any
@@ -483,28 +525,28 @@ numeric types MUST be numbers that fit within the targeted type and match any
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length</span></a> or <a class="reference internal" href="constraint-traits.html#pattern-trait"><span class="std std-ref">pattern</span></a> traits, etc).</p>
 <p>The following shapes have restrictions on their default values:</p>
 <ul class="simple">
-<li>blob: can be set to any valid base64-encoded string.</li>
-<li>enum: can be set to any valid string <em>value</em> of the enum.</li>
-<li>intEnum: can be set to any valid integer <em>value</em> of the enum.</li>
-<li>document: can be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>, <code class="docutils literal notranslate"><span class="pre">`true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, string, numbers,
-an empty list, or an empty map.</li>
-<li>list: can only be set to an empty list.</li>
-<li>map: can only be set to an empty map.</li>
-<li>structure: no default value.</li>
-<li>union: no default value.</li>
+<li><p>blob: can be set to any valid base64-encoded string.</p></li>
+<li><p>enum: can be set to any valid string <em>value</em> of the enum.</p></li>
+<li><p>intEnum: can be set to any valid integer <em>value</em> of the enum.</p></li>
+<li><p>document: can be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>, <code class="docutils literal notranslate"><span class="pre">`true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, string, numbers,
+an empty list, or an empty map.</p></li>
+<li><p>list: can only be set to an empty list.</p></li>
+<li><p>map: can only be set to an empty map.</p></li>
+<li><p>structure: no default value.</p></li>
+<li><p>union: no default value.</p></li>
 </ul>
-</div>
-<div class="section" id="impact-on-api-design">
-<h3><span class="section-number">7.1.2. </span>Impact on API design<a class="headerlink" href="#impact-on-api-design" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="impact-on-api-design">
+<h3><span class="section-number">7.1.2. </span>Impact on API design<a class="headerlink" href="#impact-on-api-design" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait SHOULD NOT be used for partial updates or patch style
 operations where it is necessary to differentiate between omitted values and
 explicitly set values. Assigning default values is typically something that
 occurs during deserialization, and as such, it is impossible for a server to
 differentiate between whether a property was set to its default value or if a
 property was omitted.</p>
-</div>
-<div class="section" id="updating-default-values">
-<h3><span class="section-number">7.1.3. </span>Updating default values<a class="headerlink" href="#updating-default-values" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="updating-default-values">
+<h3><span class="section-number">7.1.3. </span>Updating default values<a class="headerlink" href="#updating-default-values" title="Link to this heading">¶</a></h3>
 <p>The default value of a root-level shape MUST NOT be changed nor can the default
 trait be added or removed from an existing root-level shape. Changing the
 default value of a root-level shape would cause any member reference to the
@@ -515,61 +557,65 @@ necessary in extreme cases to change a default value if changing the default
 value addresses a customer-impacting issue or availability issue for a service.
 Changing default values can result in parties disagreeing on the default value
 of a member because they are using different versions of the same model.</p>
-</div>
-<div class="section" id="default-value-serialization">
-<h3><span class="section-number">7.1.4. </span>Default value serialization<a class="headerlink" href="#default-value-serialization" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="default-value-serialization">
+<h3><span class="section-number">7.1.4. </span>Default value serialization<a class="headerlink" href="#default-value-serialization" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
-<li>Implementations that ignore <code class="docutils literal notranslate"><span class="pre">default</span></code> traits do not assume a default
+<li><p>Implementations that ignore <code class="docutils literal notranslate"><span class="pre">default</span></code> traits do not assume a default
 value for a member. For example, non-authoritative implementations
 will ignore the <code class="docutils literal notranslate"><span class="pre">default</span></code> trait when a member is marked with the
 <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>. These implementations would serialize any
-explicitly given value, even if it happens to be the default value.</li>
-<li>All effective default values SHOULD be serialized. This ensures that
+explicitly given value, even if it happens to be the default value.</p></li>
+<li><p>All effective default values SHOULD be serialized. This ensures that
 messages are unambiguous and do not change during deserialization if the
-default value for a member changes after the message was serialized.</li>
-<li>To avoid information disclosure, implementations MAY choose to not serialize
-a default value if the member is marked with the <a class="reference internal" href="documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>.</li>
-<li>A member marked <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> MUST be serialized, including members that
-have a default.</li>
+default value for a member changes after the message was serialized.</p></li>
+<li><p>To avoid information disclosure, implementations MAY choose to not serialize
+a default value if the member is marked with the <a class="reference internal" href="documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>.</p></li>
+<li><p>A member marked <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> MUST be serialized, including members that
+have a default.</p></li>
 </ol>
-</div>
-</div>
-<div class="section" id="addeddefault-trait">
-<span id="smithy-api-addeddefault-trait"></span><span id="id2"></span><h2><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">addedDefault</span></code> trait<a class="headerlink" href="#addeddefault-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates that the <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a> was added to a structure member
+</section>
+</section>
+<section id="addeddefault-trait">
+<span id="smithy-api-addeddefault-trait"></span><span id="id2"></span><h2><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">addedDefault</span></code> trait<a class="headerlink" href="#addeddefault-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Summary</dt><dd><p>Indicates that the <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a> was added to a structure member
 after initially publishing the member. This allows tooling to decide
 whether to ignore the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait if it will break backward
-compatibility in the tool.</dd>
+compatibility in the tool.</p>
+</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">[trait|default]</span></code></p>
 <p><em>Member of a structure marked with the default trait</em></p>
 </dd>
-<dt>Value type</dt><dd>Annotation trait.</dd>
+<dt>Value type</dt><dd><p>Annotation trait.</p>
+</dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
-<li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
-<li><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></li>
-<li><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></li>
-<li><a class="reference internal" href="documentation-traits.html#recommended-trait"><span class="std std-ref">recommended trait</span></a></li>
+<li><p><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p></li>
+<li><p><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></p></li>
+<li><p><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></p></li>
+<li><p><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></p></li>
+<li><p><a class="reference internal" href="documentation-traits.html#recommended-trait"><span class="std std-ref">recommended trait</span></a></p></li>
 </ul>
 </dd>
 </dl>
-</div>
-<div class="section" id="required-trait">
-<span id="smithy-api-required-trait"></span><span id="id3"></span><h2><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Marks a structure member as required, meaning a value for the member MUST
-be present.</dd>
+</section>
+<section id="required-trait">
+<span id="smithy-api-required-trait"></span><span id="id3"></span><h2><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Summary</dt><dd><p>Marks a structure member as required, meaning a value for the member MUST
+be present.</p>
+</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
 <p><em>Member of a structure</em></p>
 </dd>
-<dt>Value type</dt><dd>Annotation trait.</dd>
+<dt>Value type</dt><dd><p>Annotation trait.</p>
+</dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
-<li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
-<li><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></li>
-<li><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></li>
-<li><a class="reference internal" href="documentation-traits.html#recommended-trait"><span class="std std-ref">recommended trait</span></a></li>
+<li><p><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p></li>
+<li><p><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></p></li>
+<li><p><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></p></li>
+<li><p><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></p></li>
+<li><p><a class="reference internal" href="documentation-traits.html#recommended-trait"><span class="std std-ref">recommended trait</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -581,26 +627,29 @@ be present.</dd>
 </pre></div>
 </div>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
+<p class="admonition-title">Important</p>
 <p>The required trait isn't just for inputs</p>
-<p class="last">The required trait indicates that value MUST always be present for a
+<p>The required trait indicates that value MUST always be present for a
 member. It applies to all shapes, including inputs of operations, outputs
 of operations, and errors.</p>
 </div>
-</div>
-<div class="section" id="clientoptional-trait">
-<span id="smithy-api-clientoptional-trait"></span><span id="id4"></span><h2><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait<a class="headerlink" href="#clientoptional-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Requires that non-authoritative generators like clients treat a structure
+</section>
+<section id="clientoptional-trait">
+<span id="smithy-api-clientoptional-trait"></span><span id="id4"></span><h2><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait<a class="headerlink" href="#clientoptional-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Requires that non-authoritative generators like clients treat a structure
 member as optional regardless of if the member is also marked with the
-<a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a> or <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a>.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait</dd>
+<a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a> or <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a>.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
-<li><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></li>
-<li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
-<li><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></li>
+<li><p><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p></li>
+<li><p><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></p></li>
+<li><p><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></p></li>
+<li><p><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -621,7 +670,7 @@ validation constraint rather than a type refinement trait:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>Structure members in Smithy are automatically considered optional. For example,
 the following structure:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
@@ -630,22 +679,25 @@ the following structure:</p>
 </pre></div>
 </div>
 <p>Is equivalent to the following structure:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@clientOptional</span>
 <span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="enumvalue-trait">
-<span id="smithy-api-enumvalue-trait"></span><span id="id5"></span><h2><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait<a class="headerlink" href="#enumvalue-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Defines the value of an <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a> or <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>.
+</section>
+<section id="enumvalue-trait">
+<span id="smithy-api-enumvalue-trait"></span><span id="id5"></span><h2><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait<a class="headerlink" href="#enumvalue-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the value of an <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a> or <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>.
 For enum shapes, a non-empty string value must be used. For intEnum
-shapes, an integer value must be used.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:is(enum,</span> <span class="pre">intEnum)</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">integer</span></code></dd>
+shapes, an integer value must be used.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(enum,</span> <span class="pre">intEnum)</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">integer</span></code></p>
+</dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -674,17 +726,21 @@ shapes, an integer value must be used.</dd>
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="error-trait">
-<span id="smithy-api-error-trait"></span><span id="id6"></span><h2><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates that a structure shape represents an error. All shapes
+</section>
+<section id="error-trait">
+<span id="smithy-api-error-trait"></span><span id="id6"></span><h2><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates that a structure shape represents an error. All shapes
 referenced by the <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">errors list of an operation</span></a>
-MUST be targeted with this trait.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that MUST be set to &quot;client&quot; or &quot;server&quot; to indicate if the
-client or server is at fault for the error.</dd>
-<dt>Conflicts with</dt><dd><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
+MUST be targeted with this trait.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> that MUST be set to &quot;client&quot; or &quot;server&quot; to indicate if the
+client or server is at fault for the error.</p>
+</dd>
+<dt>Conflicts with</dt><dd><p><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></p>
+</dd>
 </dl>
 <p>The following structure defines a throttling error.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
@@ -721,22 +777,25 @@ in Java).</p>
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="input-trait">
-<span id="smithy-api-input-trait"></span><span id="id7"></span><h2><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Specializes a structure for use only as the input of a single operation,
+</section>
+<section id="input-trait">
+<span id="smithy-api-input-trait"></span><span id="id7"></span><h2><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Specializes a structure for use only as the input of a single operation,
 providing relaxed backward compatibility requirements for structure
-members.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait.</dd>
+members.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait.</p>
+</dd>
 <dt>Conflicts with</dt><dd><ul class="simple">
-<li><a class="reference internal" href="#output-trait"><span class="std std-ref">output trait</span></a></li>
-<li><a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></li>
+<li><p><a class="reference internal" href="#output-trait"><span class="std std-ref">output trait</span></a></p></li>
+<li><p><a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></p></li>
 </ul>
 </dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
+<li><p><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -748,23 +807,23 @@ members.</dd>
 }
 </pre></div>
 </div>
-<div class="section" id="input-structure-constraints">
-<h3><span class="section-number">7.7.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints<a class="headerlink" href="#input-structure-constraints" title="Permalink to this heading">#</a></h3>
+<section id="input-structure-constraints">
+<h3><span class="section-number">7.7.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints<a class="headerlink" href="#input-structure-constraints" title="Link to this heading">¶</a></h3>
 <p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait MUST adhere to the
 following constraints:</p>
 <ol class="arabic simple">
-<li>They can only be referenced in the model as an operation's input.</li>
-<li>They cannot be used as the input of more than one operation.</li>
-<li>They SHOULD have a shape name that starts with the name of the
+<li><p>They can only be referenced in the model as an operation's input.</p></li>
+<li><p>They cannot be used as the input of more than one operation.</p></li>
+<li><p>They SHOULD have a shape name that starts with the name of the
 operation that targets it (if any). For example, the input shape of the
 <code class="docutils literal notranslate"><span class="pre">GetSprocket</span></code> operation SHOULD be named <code class="docutils literal notranslate"><span class="pre">GetSprocketInput</span></code>,
-<code class="docutils literal notranslate"><span class="pre">GetSprocketRequest</span></code>, or something similar.</li>
+<code class="docutils literal notranslate"><span class="pre">GetSprocketRequest</span></code>, or something similar.</p></li>
 </ol>
 <p>These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.</p>
-</div>
-<div class="section" id="impact-on-backward-compatibility">
-<h3><span class="section-number">7.7.2. </span>Impact on backward compatibility<a class="headerlink" href="#impact-on-backward-compatibility" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="impact-on-backward-compatibility">
+<h3><span class="section-number">7.7.2. </span>Impact on backward compatibility<a class="headerlink" href="#impact-on-backward-compatibility" title="Link to this heading">¶</a></h3>
 <p>Required members of a structure marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait are implicitly
 considered <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional</span></a>. It is backward
 compatible to remove the <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> trait from top-level members of
@@ -773,38 +832,45 @@ not need to be replaced with the <code class="docutils literal notranslate"><spa
 as well). This gives service teams the ability to remove the <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code>
 trait from top-level input members and loosen requirements without risking
 breaking previously generated clients.</p>
-</div>
-</div>
-<div class="section" id="output-trait">
-<span id="smithy-api-output-trait"></span><span id="id8"></span><h2><span class="section-number">7.8. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Specializes a structure for use only as the output of a single operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>Conflicts with</dt><dd><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a>, <a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></dd>
+</section>
+</section>
+<section id="output-trait">
+<span id="smithy-api-output-trait"></span><span id="id8"></span><h2><span class="section-number">7.8. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Specializes a structure for use only as the output of a single operation.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait.</p>
+</dd>
+<dt>Conflicts with</dt><dd><p><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a>, <a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></p>
+</dd>
 </dl>
-<div class="section" id="output-structure-constraints">
-<h3><span class="section-number">7.8.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure constraints<a class="headerlink" href="#output-structure-constraints" title="Permalink to this heading">#</a></h3>
+<section id="output-structure-constraints">
+<h3><span class="section-number">7.8.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure constraints<a class="headerlink" href="#output-structure-constraints" title="Link to this heading">¶</a></h3>
 <p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> trait MUST adhere to the
 following constraints:</p>
 <ol class="arabic simple">
-<li>They can only be referenced in the model as an operation's output.</li>
-<li>They cannot be used as the output of more than one operation.</li>
-<li>They SHOULD have a shape name that starts with the name of the
+<li><p>They can only be referenced in the model as an operation's output.</p></li>
+<li><p>They cannot be used as the output of more than one operation.</p></li>
+<li><p>They SHOULD have a shape name that starts with the name of the
 operation that targets it (if any). For example, the output shape of the
-<code class="docutils literal notranslate"><span class="pre">GetSprocket</span></code> operation SHOULD be named <code class="docutils literal notranslate"><span class="pre">GetSprocketOutput</span></code>.</li>
+<code class="docutils literal notranslate"><span class="pre">GetSprocket</span></code> operation SHOULD be named <code class="docutils literal notranslate"><span class="pre">GetSprocketOutput</span></code>.</p></li>
 </ol>
 <p>These constraints allow tooling to specialize operation output shapes in
 ways that would otherwise require complex model transformations.</p>
-</div>
-</div>
-<div class="section" id="sparse-trait">
-<span id="smithy-api-sparse-trait"></span><span id="id9"></span><h2><span class="section-number">7.9. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
-trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:is(list,</span> <span class="pre">map)</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait.</dd>
+</section>
+</section>
+<section id="sparse-trait">
+<span id="smithy-api-sparse-trait"></span><span id="id9"></span><h2><span class="section-number">7.9. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
+trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(list,</span> <span class="pre">map)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait.</p>
+</dd>
 </dl>
 <p>The following example defines a <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a> shape that MAY contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values:</p>
@@ -823,39 +889,42 @@ trait has no effect on map keys; map keys are never allowed to be <code class="d
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="mixin-trait">
-<span id="smithy-api-mixin-trait"></span><span id="id10"></span><h2><span class="section-number">7.10. </span><code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait<a class="headerlink" href="#mixin-trait" title="Permalink to this heading">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates that the targeted shape is a mixin.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:not(member)</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</section>
+<section id="mixin-trait">
+<span id="smithy-api-mixin-trait"></span><span id="id10"></span><h2><span class="section-number">7.10. </span><code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait<a class="headerlink" href="#mixin-trait" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates that the targeted shape is a mixin.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:not(member)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
 </dl>
 <p>The mixin trait is a structure that contains the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="10%" />
-<col width="80%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">localTraits</span></code></td>
-<td>[<a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
-<td><p class="first">A list of shape IDs which MUST reference valid traits that are applied
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">localTraits</span></code></p></td>
+<td><p>[<a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</p></td>
+<td><p>A list of shape IDs which MUST reference valid traits that are applied
 directly to the mixin. The traits in the list are not copied onto
 shapes that use the mixin. This only affects traits applied to the
 mixin container shape and has no impact on the members contained within
 a mixin.</p>
-<div class="last admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait is considered implicitly present in this
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait is considered implicitly present in this
 property and does not need to be explicitly added.</p>
 </div>
 </td>
@@ -875,11 +944,11 @@ property and does not need to be explicitly added.</p>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">See <a class="reference internal" href="mixins.html"><span class="doc">Mixins</span></a> for details on how mixins work.</p>
+<p class="admonition-title">See also</p>
+<p>See <a class="reference internal" href="mixins.html"><span class="doc">Mixins</span></a> for details on how mixins work.</p>
 </div>
-</div>
-</div>
+</section>
+</section>
 
         </article>
       </div>
@@ -893,10 +962,10 @@ property and does not need to be explicitly added.</p>
                 </div>
                 <div class="title"><span class="section-number">8. </span>Documentation traits</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="constraint-traits.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -937,7 +1006,7 @@ property and does not need to be explicitly added.</p>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -978,15 +1047,12 @@ property and does not need to be explicitly added.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/tabs.js"></script>
+</div><script src="../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

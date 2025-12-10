@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Smithy specification" href="spec/index.html" /><link rel="prev" title="Smithy" href="index.html" />
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Smithy specification" href="spec/index.html"><link rel="prev" title="Smithy" href="index.html">
+        <link rel="prefetch" href="_static/smithy.svg" as="image">
+        <link rel="prefetch" href="_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Quick start - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Quick start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="spec/index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="spec/model.html">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="spec/simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="spec/aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="trait-index.html">Trait index</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="guides/index.html">Guides</a><input aria-label="Toggle navigation of Guides" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="guides/smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="guides/smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="guides/gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="guides/using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guides/evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="guides/model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="guides/building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="guides/building-codegen/index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="guides/glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="aws/index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="aws/protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="aws/rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,142 +410,142 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/quickstart.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/quickstart.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/quickstart.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="quick-start">
-<h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="quick-start">
+<h1>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
 <p>This document is a tutorial that introduces the Smithy interface definition
 language (IDL). By reading this tutorial, you will learn:</p>
 <ul class="simple">
-<li>How to create a Smithy model</li>
-<li>How to define <a class="reference internal" href="spec/model.html#shapes"><span class="std std-ref">shapes</span></a>, including <a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a>,
-<a class="reference internal" href="spec/service-types.html#resource"><span class="std std-ref">Resource</span></a>, and <a class="reference internal" href="spec/service-types.html#operation"><span class="std std-ref">Operation</span></a> shapes</li>
-<li>How to apply <a class="reference internal" href="spec/model.html#traits"><span class="std std-ref">traits</span></a> to shapes</li>
+<li><p>How to create a Smithy model</p></li>
+<li><p>How to define <a class="reference internal" href="spec/model.html#shapes"><span class="std std-ref">shapes</span></a>, including <a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a>,
+<a class="reference internal" href="spec/service-types.html#resource"><span class="std std-ref">Resource</span></a>, and <a class="reference internal" href="spec/service-types.html#operation"><span class="std std-ref">Operation</span></a> shapes</p></li>
+<li><p>How to apply <a class="reference internal" href="spec/model.html#traits"><span class="std std-ref">traits</span></a> to shapes</p></li>
 </ul>
-<div class="section" id="what-is-smithy">
-<h2>What is Smithy?<a class="headerlink" href="#what-is-smithy" title="Permalink to this heading">#</a></h2>
+<section id="what-is-smithy">
+<h2>What is Smithy?<a class="headerlink" href="#what-is-smithy" title="Link to this heading">¶</a></h2>
 <p><em>Smithy</em> is an interface definition language and set of tools that allows
 developers to build clients and servers in multiple languages. Smithy
 models define a service as a collection of resources, operations, and shapes.
 A Smithy model enables API providers to generate clients and servers in
 various programming languages, API documentation, test automation, and
 example code.</p>
-</div>
-<div class="section" id="shapes-and-traits">
-<h2>Shapes and traits<a class="headerlink" href="#shapes-and-traits" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="shapes-and-traits">
+<h2>Shapes and traits<a class="headerlink" href="#shapes-and-traits" title="Link to this heading">¶</a></h2>
 <p>Smithy models consist of shapes and traits. <a class="reference internal" href="spec/model.html#shapes"><span class="std std-ref">Shapes</span></a> are
 instances of <em>types</em>. <a class="reference internal" href="spec/model.html#traits"><span class="std std-ref">Traits</span></a> are used to add more information
 to shapes that might be useful for clients, servers, or documentation.</p>
 <p>Smithy supports the following types:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#blob"><span class="std std-ref">blob</span></a></td>
-<td>Uninterpreted binary data</td>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#blob"><span class="std std-ref">blob</span></a></p></td>
+<td><p>Uninterpreted binary data</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#boolean"><span class="std std-ref">boolean</span></a></td>
-<td>Boolean value type</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#boolean"><span class="std std-ref">boolean</span></a></p></td>
+<td><p>Boolean value type</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#string"><span class="std std-ref">string</span></a></td>
-<td>UTF-8 encoded string</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#string"><span class="std std-ref">string</span></a></p></td>
+<td><p>UTF-8 encoded string</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#byte"><span class="std std-ref">byte</span></a></td>
-<td>8-bit signed integer ranging from -128 to 127 (inclusive)</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#byte"><span class="std std-ref">byte</span></a></p></td>
+<td><p>8-bit signed integer ranging from -128 to 127 (inclusive)</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#short"><span class="std std-ref">short</span></a></td>
-<td>16-bit signed integer ranging from -32,768 to 32,767 (inclusive)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#short"><span class="std std-ref">short</span></a></p></td>
+<td><p>16-bit signed integer ranging from -32,768 to 32,767 (inclusive)</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#integer"><span class="std std-ref">integer</span></a></td>
-<td>32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive)</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#integer"><span class="std std-ref">integer</span></a></p></td>
+<td><p>32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive)</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#long"><span class="std std-ref">long</span></a></td>
-<td>64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#long"><span class="std std-ref">long</span></a></p></td>
+<td><p>64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive)</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#float"><span class="std std-ref">float</span></a></td>
-<td>Single precision IEEE-754 floating point number</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#float"><span class="std std-ref">float</span></a></p></td>
+<td><p>Single precision IEEE-754 floating point number</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#double"><span class="std std-ref">double</span></a></td>
-<td>Double precision IEEE-754 floating point number</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#double"><span class="std std-ref">double</span></a></p></td>
+<td><p>Double precision IEEE-754 floating point number</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#biginteger"><span class="std std-ref">bigInteger</span></a></td>
-<td>Arbitrarily large signed integer</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#biginteger"><span class="std std-ref">bigInteger</span></a></p></td>
+<td><p>Arbitrarily large signed integer</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#bigdecimal"><span class="std std-ref">bigDecimal</span></a></td>
-<td>Arbitrary precision signed decimal number</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#bigdecimal"><span class="std std-ref">bigDecimal</span></a></p></td>
+<td><p>Arbitrary precision signed decimal number</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/simple-types.html#timestamp"><span class="std std-ref">timestamp</span></a></td>
-<td>An instant in time with no UTC offset or timezone.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/simple-types.html#timestamp"><span class="std std-ref">timestamp</span></a></p></td>
+<td><p>An instant in time with no UTC offset or timezone.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/simple-types.html#document"><span class="std std-ref">document</span></a></td>
-<td>An untyped JSON-like value.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/simple-types.html#document"><span class="std std-ref">document</span></a></p></td>
+<td><p>An untyped JSON-like value.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/aggregate-types.html#list"><span class="std std-ref">List</span></a></td>
-<td>Homogeneous collection of values</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/aggregate-types.html#list"><span class="std std-ref">List</span></a></p></td>
+<td><p>Homogeneous collection of values</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/aggregate-types.html#map"><span class="std std-ref">Map</span></a></td>
-<td>Map data structure that maps string keys to homogeneous values</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/aggregate-types.html#map"><span class="std std-ref">Map</span></a></p></td>
+<td><p>Map data structure that maps string keys to homogeneous values</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/aggregate-types.html#structure"><span class="std std-ref">Structure</span></a></td>
-<td>Fixed set of named heterogeneous members</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/aggregate-types.html#structure"><span class="std std-ref">Structure</span></a></p></td>
+<td><p>Fixed set of named heterogeneous members</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/aggregate-types.html#union"><span class="std std-ref">Union</span></a></td>
-<td>Tagged union data structure that can take on several different,
-but fixed, types</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/aggregate-types.html#union"><span class="std std-ref">Union</span></a></p></td>
+<td><p>Tagged union data structure that can take on several different,
+but fixed, types</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a></td>
-<td>Entry point of an API that aggregates resources and operations together</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a></p></td>
+<td><p>Entry point of an API that aggregates resources and operations together</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="spec/service-types.html#operation"><span class="std std-ref">Operation</span></a></td>
-<td>Represents the input, output and possible errors of an API operation</td>
+<tr class="row-even"><td><p><a class="reference internal" href="spec/service-types.html#operation"><span class="std std-ref">Operation</span></a></p></td>
+<td><p>Represents the input, output and possible errors of an API operation</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="spec/service-types.html#resource"><span class="std std-ref">Resource</span></a></td>
-<td>An entity with an identity, set of operations, and child resources</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="spec/service-types.html#resource"><span class="std std-ref">Resource</span></a></p></td>
+<td><p>An entity with an identity, set of operations, and child resources</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section" id="weather-service">
-<h2>Weather Service<a class="headerlink" href="#weather-service" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="weather-service">
+<h2>Weather Service<a class="headerlink" href="#weather-service" title="Link to this heading">¶</a></h2>
 <p>In order to demonstrate how Smithy models are defined, we will create a
 weather service.</p>
 <ol class="arabic simple">
-<li>This service provides weather information for cities.</li>
-<li>This service consists of <code class="docutils literal notranslate"><span class="pre">City</span></code> resources and <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resources.</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service has many <code class="docutils literal notranslate"><span class="pre">City</span></code> resources, and a <code class="docutils literal notranslate"><span class="pre">City</span></code>
-resource contains a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource.</li>
-<li>This service and its resources contain the following operations:
-<code class="docutils literal notranslate"><span class="pre">ListCities</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCity</span></code>, <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCurrentTime</span></code>.</li>
+<li><p>This service provides weather information for cities.</p></li>
+<li><p>This service consists of <code class="docutils literal notranslate"><span class="pre">City</span></code> resources and <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resources.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service has many <code class="docutils literal notranslate"><span class="pre">City</span></code> resources, and a <code class="docutils literal notranslate"><span class="pre">City</span></code>
+resource contains a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource.</p></li>
+<li><p>This service and its resources contain the following operations:
+<code class="docutils literal notranslate"><span class="pre">ListCities</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCity</span></code>, <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code>, <code class="docutils literal notranslate"><span class="pre">GetCurrentTime</span></code>.</p></li>
 </ol>
 <p>First, create a directory called <cite>smithy-quickstart</cite> with a <cite>model</cite> directory
 and a <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model file such that your <cite>smithy-quickstart</cite> directory has the
@@ -516,9 +556,9 @@ following file structure:</p>
 </pre></div>
 </div>
 <div class="admonition tip">
-<p class="first admonition-title">Tip</p>
+<p class="admonition-title">Tip</p>
 <p>Run the following command to create the quickstart directory and weather model file</p>
-<div class="last highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p smithy-quickstart/model \
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>mkdir -p smithy-quickstart/model \
 &amp;&amp; touch smithy-quickstart/model/weather.smithy \
 &amp;&amp; cd smithy-quickstart
 </pre></div>
@@ -527,7 +567,7 @@ following file structure:</p>
 <p>Next, we will start to model a <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service in the <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> file.
 <code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a <a class="reference internal" href="spec/idl.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
@@ -540,26 +580,26 @@ following file structure:</p>
 </div>
 </div>
 <div class="note admonition">
-<p class="first admonition-title">What's that syntax?</p>
+<p class="admonition-title">What's that syntax?</p>
 <p>Smithy models are defined using either the <a class="reference internal" href="spec/idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>
 or the <a class="reference internal" href="spec/json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a>. The JSON AST representation of a model
 is typically an artifact created by build tools to make them easier to
 use by other tooling.</p>
-<ul class="last simple">
-<li><code class="docutils literal notranslate"><span class="pre">//</span></code> is used for comments</li>
-<li><code class="docutils literal notranslate"><span class="pre">///</span></code> is used to add <a class="reference internal" href="spec/idl.html#documentation-comment"><span class="std std-ref">documentation</span></a>
-to the following shape.</li>
-<li>Keywords like <code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">structure</span></code> start the definition of a
-shape.</li>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">//</span></code> is used for comments</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">///</span></code> is used to add <a class="reference internal" href="spec/idl.html#documentation-comment"><span class="std std-ref">documentation</span></a>
+to the following shape.</p></li>
+<li><p>Keywords like <code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">structure</span></code> start the definition of a
+shape.</p></li>
 </ul>
 </div>
-</div>
-<div class="section" id="defining-resources">
-<h2>Defining resources<a class="headerlink" href="#defining-resources" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="defining-resources">
+<h2>Defining resources<a class="headerlink" href="#defining-resources" title="Link to this heading">¶</a></h2>
 <p>A resource is contained within a service or another resource. Resources have
 identifiers, operations, and any number of child resources.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
@@ -595,7 +635,7 @@ identity of the resource.</p>
 <p>Each <code class="docutils literal notranslate"><span class="pre">City</span></code> has a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>. This can be defined by adding the
 <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of the <code class="docutils literal notranslate"><span class="pre">City</span></code> resource.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span>
@@ -623,7 +663,7 @@ resource.</p>
 members of resource operations map to resource properties or identifiers to
 perform updates on or examine the state of a resource.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="w"> </span>}
@@ -660,27 +700,27 @@ perform updates on or examine the state of a resource.</p>
 </div>
 </div>
 <div class="tip admonition">
-<p class="first admonition-title">Review</p>
-<ol class="last arabic simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">resources</span></code> property binds resources to service and resource
-shapes.</li>
-<li>Resources can define identifiers.</li>
-<li>Child resources must define the same identifiers as their parents,
-and they can also define additional identifiers.</li>
-<li>Resources can define properties.</li>
-<li>Resource properties are set, modified, or read through lifecycle
-operations.</li>
+<p class="admonition-title">Review</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">resources</span></code> property binds resources to service and resource
+shapes.</p></li>
+<li><p>Resources can define identifiers.</p></li>
+<li><p>Child resources must define the same identifiers as their parents,
+and they can also define additional identifiers.</p></li>
+<li><p>Resources can define properties.</p></li>
+<li><p>Resource properties are set, modified, or read through lifecycle
+operations.</p></li>
 </ol>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">The <a class="reference internal" href="spec/idl.html#idl-target-elision"><span class="std std-ref">target elision syntax</span></a> for an easy way to
+<p class="admonition-title">See also</p>
+<p>The <a class="reference internal" href="spec/idl.html#idl-target-elision"><span class="std std-ref">target elision syntax</span></a> for an easy way to
 define structures that reference resource identifiers and properties
 without having to repeat the target definition.</p>
 </div>
-</div>
-<div class="section" id="defining-operations">
-<h2>Defining operations<a class="headerlink" href="#defining-operations" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="defining-operations">
+<h2>Defining operations<a class="headerlink" href="#defining-operations" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>, and <code class="docutils literal notranslate"><span class="pre">list</span></code>
 properties of a resource are used to define the <a class="reference internal" href="spec/service-types.html#lifecycle-operations"><span class="std std-ref">lifecycle operations</span></a> of a resource. Lifecycle operations are the canonical
 methods used to read and transition the state of a resource using well-defined
@@ -688,7 +728,7 @@ semantics. Defining lifecycle operations helps automated tooling reason about
 your API.</p>
 <p>Let's define the operation used to &quot;read&quot; a <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id5" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
@@ -728,7 +768,7 @@ your API.</p>
 </div>
 <p>And define the operation used to &quot;read&quot; a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id6" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
@@ -746,18 +786,18 @@ your API.</p>
 </div>
 </div>
 <div class="tip admonition">
-<p class="first admonition-title">Review</p>
-<ol class="last arabic simple">
-<li>Operations accept and return structured messages.</li>
-<li>Operations are bound to service shapes and resource shapes.</li>
-<li>Operations marked as <a class="reference internal" href="spec/behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a> indicate the operation
-has no side effects.</li>
-<li>Operations should define the <a class="reference internal" href="spec/type-refinement-traits.html#error-trait"><span class="std std-ref">errors</span></a> it can return.</li>
+<p class="admonition-title">Review</p>
+<ol class="arabic simple">
+<li><p>Operations accept and return structured messages.</p></li>
+<li><p>Operations are bound to service shapes and resource shapes.</p></li>
+<li><p>Operations marked as <a class="reference internal" href="spec/behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a> indicate the operation
+has no side effects.</p></li>
+<li><p>Operations should define the <a class="reference internal" href="spec/type-refinement-traits.html#error-trait"><span class="std std-ref">errors</span></a> it can return.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="listing-resources">
-<h2>Listing resources<a class="headerlink" href="#listing-resources" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="listing-resources">
+<h2>Listing resources<a class="headerlink" href="#listing-resources" title="Link to this heading">¶</a></h2>
 <p>There are many <code class="docutils literal notranslate"><span class="pre">City</span></code> resources contained within the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.
 The <a class="reference internal" href="spec/service-types.html#list-lifecycle"><span class="std std-ref">list lifecycle operation</span></a> can be added to the
 <code class="docutils literal notranslate"><span class="pre">City</span></code> resource to list all of the cities in the service. The list operation
@@ -765,7 +805,7 @@ is a <a class="reference internal" href="spec/service-types.html#collection-oper
 bind the identifier of a <code class="docutils literal notranslate"><span class="pre">City</span></code> to its input structure; we are listing
 cities, so there's no way we could provide a <code class="docutils literal notranslate"><span class="pre">City</span></code> identifier.</p>
 <div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id7" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
 <span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
@@ -826,24 +866,24 @@ relationships in your service.</p>
 <p>The above example refers to <a class="reference internal" href="spec/model.html#prelude"><span class="std std-ref">prelude shapes</span></a> like
 <code class="docutils literal notranslate"><span class="pre">String</span></code> that are automatically available in all Smithy models.</p>
 <div class="tip admonition">
-<p class="first admonition-title">Review</p>
-<ol class="last arabic simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">list</span></code> lifecycle operation is used to list resources.</li>
-<li><code class="docutils literal notranslate"><span class="pre">list</span></code> operations should be <a class="reference internal" href="spec/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</li>
-<li>The <a class="reference internal" href="spec/resource-traits.html#references-trait"><span class="std std-ref">references trait</span></a> links a structure to a resource.</li>
-<li>Prelude shapes can help DRY up models.</li>
+<p class="admonition-title">Review</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">list</span></code> lifecycle operation is used to list resources.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> operations should be <a class="reference internal" href="spec/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p></li>
+<li><p>The <a class="reference internal" href="spec/resource-traits.html#references-trait"><span class="std std-ref">references trait</span></a> links a structure to a resource.</p></li>
+<li><p>Prelude shapes can help DRY up models.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="non-lifecycle-operations">
-<h2>Non-Lifecycle Operations<a class="headerlink" href="#non-lifecycle-operations" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="non-lifecycle-operations">
+<h2>Non-Lifecycle Operations<a class="headerlink" href="#non-lifecycle-operations" title="Link to this heading">¶</a></h2>
 <p>Smithy supports operations that don't fit into the typical create, read,
 update, delete, and list lifecycles. Operations can be added to any resource or
 service shape with no special lifecycle designation using the <code class="docutils literal notranslate"><span class="pre">operations</span></code>
 property. The following operation gets the current time from the <code class="docutils literal notranslate"><span class="pre">Weather</span></code>
 service.</p>
 <div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id8" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
 <span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
@@ -866,22 +906,22 @@ service.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="building-the-model">
-<h2>Building the Model<a class="headerlink" href="#building-the-model" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="building-the-model">
+<h2>Building the Model<a class="headerlink" href="#building-the-model" title="Link to this heading">¶</a></h2>
 <p>Now that you have a model, you'll want to build it and generate additional
 artifacts from it. Building the model creates projections of the model, applies plugins to
 generate artifacts, and runs validation.</p>
-<div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Smithy CLI</label><div class="tab-content docutils container">
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Smithy CLI</label><div class="tab-content docutils">
 <div class="tip admonition">
-<p class="first admonition-title">Install required tools</p>
-<p class="last">Before you proceed, make sure you have the <a class="reference internal" href="guides/smithy-cli/cli_installation.html#cli-installation"><span class="std std-ref">Smithy CLI installed</span></a>.</p>
+<p class="admonition-title">Install required tools</p>
+<p>Before you proceed, make sure you have the <a class="reference internal" href="guides/smithy-cli/cli_installation.html#cli-installation"><span class="std std-ref">Smithy CLI installed</span></a>.</p>
 </div>
 <p>To build a Smithy model using the <a class="reference internal" href="guides/smithy-cli/index.html#smithy-cli"><span class="std std-ref">the Smithy CLI</span></a>,
 create a <a class="reference internal" href="guides/smithy-build-json.html#id1"><span class="std std-ref">smithy-build.json</span></a> file in the <code class="docutils literal notranslate"><span class="pre">smithy-quickstart</span></code> directory:</p>
 <div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id9" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id9" title="Link to this code">¶</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Version of the smithy-build.json file specification</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -893,17 +933,17 @@ create a <a class="reference internal" href="guides/smithy-build-json.html#id1">
 </div>
 <p>Next, run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">build</span></code>. That's it! We just created a simple, read-only, <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.</p>
 </div>
-<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Gradle</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Gradle</label><div class="tab-content docutils">
 <div class="tip admonition">
-<p class="first admonition-title">Install required tools</p>
-<p class="last">Before you proceed, make sure you have <a class="reference external" href="https://gradle.org/install/">gradle installed</a>.</p>
+<p class="admonition-title">Install required tools</p>
+<p>Before you proceed, make sure you have <a class="reference external" href="https://gradle.org/install/">gradle installed</a>.</p>
 </div>
 <p>To build a Smithy model using the <a class="reference internal" href="guides/gradle-plugin/index.html#smithy-gradle-plugin"><span class="std std-ref">Smithy Gradle Plugin</span></a>,
 first, create a gradle build script file in the <code class="docutils literal notranslate"><span class="pre">smithy-quickstart</span></code> directory:</p>
-<div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Kotlin</label><div class="tab-content docutils container">
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Kotlin</label><div class="tab-content docutils">
 <div class="literal-block-wrapper docutils container" id="id10">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id10" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id10" title="Link to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
 <span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.3.0&quot;</span><span class="p">)</span>
@@ -917,9 +957,9 @@ first, create a gradle build script file in the <code class="docutils literal no
 </div>
 </div>
 </div>
-<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Groovy</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Groovy</label><div class="tab-content docutils">
 <div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id11" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id11" title="Link to this code">¶</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.3.0&#39;</span>
@@ -937,7 +977,7 @@ first, create a gradle build script file in the <code class="docutils literal no
 <p>Next, create a <a class="reference internal" href="guides/smithy-build-json.html#id1"><span class="std std-ref">smithy-build.json</span></a> file in the
 <code class="docutils literal notranslate"><span class="pre">smithy-quickstart</span></code> directory:</p>
 <div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Version of the smithy-build.json file specification</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
@@ -948,44 +988,44 @@ first, create a gradle build script file in the <code class="docutils literal no
 <p>Finally, run <code class="docutils literal notranslate"><span class="pre">gradle</span> <span class="pre">build</span></code>. That's it! We just created a simple, read-only, <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.</p>
 </div>
 </div>
-</div>
-<div class="section" id="next-steps">
-<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
-<li>Try adding a &quot;create&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</li>
-<li>Try adding a &quot;delete&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</li>
-<li>Try adding <a class="reference internal" href="spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> to the API.</li>
-<li>Try adding <a class="reference internal" href="spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> to shapes and filtering them out with
-<a class="reference internal" href="guides/smithy-build-json.html#excludeshapesbytag-transform"><span class="std std-ref">excludeShapesByTag</span></a>.</li>
-<li>Follow the <a class="reference internal" href="guides/using-code-generation/index.html#using-code-generation"><span class="std std-ref">Using Code Generation Guide</span></a>
-to generate code for the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.</li>
+<li><p>Try adding a &quot;create&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p></li>
+<li><p>Try adding a &quot;delete&quot; lifecycle operation to <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p></li>
+<li><p>Try adding <a class="reference internal" href="spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a> to the API.</p></li>
+<li><p>Try adding <a class="reference internal" href="spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags</span></a> to shapes and filtering them out with
+<a class="reference internal" href="guides/smithy-build-json.html#excludeshapesbytag-transform"><span class="std std-ref">excludeShapesByTag</span></a>.</p></li>
+<li><p>Follow the <a class="reference internal" href="guides/using-code-generation/index.html#using-code-generation"><span class="std std-ref">Using Code Generation Guide</span></a>
+to generate code for the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service.</p></li>
 </ol>
 <p>There's plenty more to explore in Smithy.</p>
 <ul class="simple">
-<li>The <a class="reference internal" href="spec/index.html#smithy-specification"><span class="std std-ref">Smithy specification</span></a> can teach you
-everything you need to know about Smithy models.</li>
-<li><a class="reference internal" href="guides/smithy-cli/index.html#smithy-cli"><span class="std std-ref">The Smithy CLI</span></a> is the easiest way to do interesting
+<li><p>The <a class="reference internal" href="spec/index.html#smithy-specification"><span class="std std-ref">Smithy specification</span></a> can teach you
+everything you need to know about Smithy models.</p></li>
+<li><p><a class="reference internal" href="guides/smithy-cli/index.html#smithy-cli"><span class="std std-ref">The Smithy CLI</span></a> is the easiest way to do interesting
 things with Smithy models like code generation, creating different
-versions of a model for different audiences, and more.</li>
-<li>The <a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a>
+versions of a model for different audiences, and more.</p></li>
+<li><p>The <a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a>
 repo on GitHub provides various example models and package layouts that
 show how to use tools like the Smithy CLI or
-<a class="reference internal" href="guides/gradle-plugin/index.html#smithy-gradle-plugin"><span class="std std-ref">Gradle plugin</span></a>.</li>
+<a class="reference internal" href="guides/gradle-plugin/index.html#smithy-gradle-plugin"><span class="std std-ref">Gradle plugin</span></a>.</p></li>
 </ul>
-</div>
-<div class="section" id="complete-example">
-<h2>Complete example<a class="headerlink" href="#complete-example" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="complete-example">
+<h2>Complete example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>You can clone a working version of this quickstart example using the
 <a class="reference internal" href="guides/smithy-cli/index.html#smithy-cli"><span class="std std-ref">Smithy CLI</span></a> <code class="docutils literal notranslate"><span class="pre">init</span></code> command.</p>
-<div class="tab-set last docutils container">
-<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Quickstart with Smithy CLI</label><div class="tab-content docutils container">
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Quickstart with Smithy CLI</label><div class="tab-content docutils">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span> <span class="n">init</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_directory</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </div>
-<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Quickstart with Gradle</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Quickstart with Gradle</label><div class="tab-content docutils">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span> <span class="n">init</span> <span class="o">-</span><span class="n">t</span> <span class="n">quickstart</span><span class="o">-</span><span class="n">gradle</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_directory</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -993,8 +1033,8 @@ show how to use tools like the Smithy CLI or
 </div>
 </div>
 <p>If you followed all the steps in this guide, your working directory should be laid out like so:</p>
-<div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Smithy CLI</label><div class="tab-content docutils container">
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Smithy CLI</label><div class="tab-content docutils">
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
 ├── smithy-build.json
 └── model
@@ -1002,7 +1042,7 @@ show how to use tools like the Smithy CLI or
 </pre></div>
 </div>
 </div>
-<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Gradle</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Gradle</label><div class="tab-content docutils">
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
 ├── build.gradle.kts
 ├── smithy-build.json
@@ -1014,7 +1054,7 @@ show how to use tools like the Smithy CLI or
 </div>
 <p>The complete <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model should look like:</p>
 <div class="literal-block-wrapper docutils container" id="id13">
-<div class="code-block-caption"><span class="caption-text">weather.smithy</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">weather.smithy</span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">example.weather</span>
@@ -1156,8 +1196,8 @@ show how to use tools like the Smithy CLI or
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
         </article>
       </div>
@@ -1171,10 +1211,10 @@ show how to use tools like the Smithy CLI or
                 </div>
                 <div class="title">Smithy specification</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="index.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -1215,7 +1255,7 @@ show how to use tools like the Smithy CLI or
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -1243,15 +1283,12 @@ show how to use tools like the Smithy CLI or
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/scripts/furo.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/tabs.js"></script>
+</div><script src="_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=6b89569b"></script>
+    <script src="_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

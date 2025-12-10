@@ -20,7 +20,7 @@ Add the ``mock-client-plugin`` package as a dependency:
     :caption: build.gradle.kts
 
     dependencies {
-        implementation("software.amazon.smithy.java.client.http.mock:mock-client-plugin:__smithy_java_version__")
+        implementation("software.amazon.smithy.java:client-mock-plugin:__smithy_java_version__")
     }
 
 Use the plugin to return canned responses from the http client:

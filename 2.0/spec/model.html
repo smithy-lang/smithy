@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="2. Simple types" href="simple-types.html" /><link rel="prev" title="Smithy specification" href="index.html" />
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="2. Simple types" href="simple-types.html"><link rel="prev" title="Smithy specification" href="index.html">
+        <link rel="prefetch" href="../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>1. The Smithy model - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input aria-label="Toggle navigation of Guides" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,40 +410,40 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/spec/model.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/spec/model.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/spec/model.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="the-smithy-model">
-<span id="smithy-model"></span><h1><span class="section-number">1. </span>The Smithy model<a class="headerlink" href="#the-smithy-model" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="the-smithy-model">
+<span id="smithy-model"></span><h1><span class="section-number">1. </span>The Smithy model<a class="headerlink" href="#the-smithy-model" title="Link to this heading">¶</a></h1>
 <p>The <em>Smithy model</em> describes the Smithy semantic model and the files used to
 create it. Smithy models are used to describe services and data structures.</p>
-<div class="section" id="smithy-overview">
-<span id="id1"></span><h2><span class="section-number">1.1. </span>Smithy overview<a class="headerlink" href="#smithy-overview" title="Permalink to this heading">#</a></h2>
+<section id="smithy-overview">
+<span id="id1"></span><h2><span class="section-number">1.1. </span>Smithy overview<a class="headerlink" href="#smithy-overview" title="Link to this heading">¶</a></h2>
 <p>Smithy is a framework that consists of a semantic model, file formats used to
 define a model, and a build process used to validate models and facilitate
 model transformations.</p>
 <div class="literal-block-wrapper docutils container" id="figure-1-1">
-<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.1</strong>: Smithy framework concepts</span><a class="headerlink" href="#figure-1-1" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.1</strong>: Smithy framework concepts</span><a class="headerlink" href="#figure-1-1" title="Link to this code">¶</a></div>
 <div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>                ┌────────────────┐ part of          ┌────────────────┐
                 │                │╲                ╱│                │
                 │ Semantic Model │─○──────────────○─│   Model File   │
@@ -422,11 +462,12 @@ model transformations.</p>
 </pre></div>
 </div>
 </div>
-<dl class="docutils">
-<dt>Semantic model</dt><dd>The in-memory model used by tools. The <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>
-may be serialized into one or more model file representations.</dd>
+<dl class="simple">
+<dt>Semantic model</dt><dd><p>The in-memory model used by tools. The <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>
+may be serialized into one or more model file representations.</p>
+</dd>
 </dl>
-<dl class="docutils" id="model-files">
+<dl id="model-files">
 <dt>Model File</dt><dd><p>A file on the file system, in a particular representation. The model files
 that make up a semantic model MAY be split across multiple files to
 improve readability or modularity, and those files are not required to
@@ -440,20 +481,20 @@ together to form a semantic model.</p>
 Representations are loaded into the semantic model by mapping the
 representation to concepts in the semantic model.</p>
 <ul class="simple">
-<li><a class="reference internal" href="idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>: a human-readable format that aims to
-streamline authoring and reading models.</li>
-<li><a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a>: a machine-readable JSON-based format.</li>
+<li><p><a class="reference internal" href="idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>: a human-readable format that aims to
+streamline authoring and reading models.</p></li>
+<li><p><a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a>: a machine-readable JSON-based format.</p></li>
 </ul>
 </dd>
 </dl>
-</div>
-<div class="section" id="the-semantic-model">
-<span id="semantic-model"></span><h2><span class="section-number">1.2. </span>The semantic model<a class="headerlink" href="#the-semantic-model" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="the-semantic-model">
+<span id="semantic-model"></span><h2><span class="section-number">1.2. </span>The semantic model<a class="headerlink" href="#the-semantic-model" title="Link to this heading">¶</a></h2>
 <p>Smithy's <em>semantic model</em> is an in-memory model used by tools. It is
 independent of any particular serialized representation. The semantic
 model contains metadata and a graph of shapes connected by shape IDs.</p>
 <div class="literal-block-wrapper docutils container" id="figure-1-2">
-<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.2</strong>: The semantic model</span><a class="headerlink" href="#figure-1-2" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.2</strong>: The semantic model</span><a class="headerlink" href="#figure-1-2" title="Link to this code">¶</a></div>
 <div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>                                      ┌───────────────┐
                                       │Semantic Model │╲
                                       ├───────────────┤─○────────┐
@@ -477,32 +518,38 @@ model contains metadata and a graph of shapes connected by shape IDs.</p>
 </pre></div>
 </div>
 </div>
-<dl class="docutils">
-<dt>Shape</dt><dd><a class="reference internal" href="#shapes"><span class="std std-ref">Shapes</span></a> are named data definitions that describe the
+<dl class="simple">
+<dt>Shape</dt><dd><p><a class="reference internal" href="#shapes"><span class="std std-ref">Shapes</span></a> are named data definitions that describe the
 structure of an API. Shapes are referenced and connected by shape IDs.
 Relationships between shapes are formed by <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> that
 target other shapes, properties of shapes like the <code class="docutils literal notranslate"><span class="pre">input</span></code> and
 <code class="docutils literal notranslate"><span class="pre">output</span></code> properties of an <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">operation</span></a>, and
-<a class="reference internal" href="#applying-traits"><span class="std std-ref">applied traits</span></a> that attach a trait to a shape.</dd>
-<dt>Shape ID</dt><dd>A <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> is used to identify shapes defined in a
+<a class="reference internal" href="#applying-traits"><span class="std std-ref">applied traits</span></a> that attach a trait to a shape.</p>
+</dd>
+<dt>Shape ID</dt><dd><p>A <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> is used to identify shapes defined in a
 model. For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#MyShape</span></code>,
 <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo$bar</span></code>, and <code class="docutils literal notranslate"><span class="pre">Baz</span></code> are all different kinds of shape
-IDs.</dd>
-<dt>Trait</dt><dd><a class="reference internal" href="#traits"><span class="std std-ref">Traits</span></a> are specialized shapes that form the basis of
+IDs.</p>
+</dd>
+<dt>Trait</dt><dd><p><a class="reference internal" href="#traits"><span class="std std-ref">Traits</span></a> are specialized shapes that form the basis of
 Smithy's meta-model. Traits are applied to shapes to associate metadata
 to a shape. They are typically used by tools to influence validation,
-serialization, and code generation.</dd>
-<dt>Applied trait</dt><dd>An applied trait is an instance of a trait applied to a shape, configured
-using a <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>.</dd>
-<dt>Model metadata</dt><dd><a class="reference internal" href="#metadata"><span class="std std-ref">Metadata</span></a> is a schema-less extensibility mechanism used
-to associate metadata to an entire model.</dd>
-<dt>Prelude</dt><dd>The <a class="reference internal" href="#prelude"><span class="std std-ref">prelude</span></a> defines various simple shapes and every
+serialization, and code generation.</p>
+</dd>
+<dt>Applied trait</dt><dd><p>An applied trait is an instance of a trait applied to a shape, configured
+using a <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>.</p>
+</dd>
+<dt>Model metadata</dt><dd><p><a class="reference internal" href="#metadata"><span class="std std-ref">Metadata</span></a> is a schema-less extensibility mechanism used
+to associate metadata to an entire model.</p>
+</dd>
+<dt>Prelude</dt><dd><p>The <a class="reference internal" href="#prelude"><span class="std std-ref">prelude</span></a> defines various simple shapes and every
 trait defined in the core specification. All Smithy models automatically
-include the prelude.</dd>
+include the prelude.</p>
+</dd>
 </dl>
-</div>
-<div class="section" id="model-metadata">
-<span id="metadata"></span><h2><span class="section-number">1.3. </span>Model metadata<a class="headerlink" href="#model-metadata" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="model-metadata">
+<span id="metadata"></span><h2><span class="section-number">1.3. </span>Model metadata<a class="headerlink" href="#model-metadata" title="Link to this heading">¶</a></h2>
 <p>Metadata is a schema-less extensibility mechanism used to associate
 metadata to an entire model. For example, metadata is used to define
 <a class="reference internal" href="model-validation.html#validator-definition"><span class="std std-ref">validators</span></a> and model-wide
@@ -522,19 +569,19 @@ a model validator:</p>
 ]
 </pre></div>
 </div>
-<div class="section" id="metadata-conflicts">
-<span id="merging-metadata"></span><h3><span class="section-number">1.3.1. </span>Metadata conflicts<a class="headerlink" href="#metadata-conflicts" title="Permalink to this heading">#</a></h3>
+<section id="metadata-conflicts">
+<span id="merging-metadata"></span><h3><span class="section-number">1.3.1. </span>Metadata conflicts<a class="headerlink" href="#metadata-conflicts" title="Link to this heading">¶</a></h3>
 <p>When a conflict occurs between top-level metadata key-value pairs,
 the following conflict resolution logic is used:</p>
 <ol class="arabic simple">
-<li>If both values are arrays, the values of both arrays are concatenated
-into a single array.</li>
-<li>Otherwise, if both values are exactly equal, the conflict is ignored.</li>
-<li>Otherwise, the conflict is invalid.</li>
+<li><p>If both values are arrays, the values of both arrays are concatenated
+into a single array.</p></li>
+<li><p>Otherwise, if both values are exactly equal, the conflict is ignored.</p></li>
+<li><p>Otherwise, the conflict is invalid.</p></li>
 </ol>
 <p>Given the following two Smithy models:</p>
 <div class="literal-block-wrapper docutils container" id="id13">
-<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]
 <span class="kd">metadata </span><span class="nc">&quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
@@ -543,7 +590,7 @@ into a single array.</li>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id14">
-<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id14" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]
 <span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>
@@ -560,14 +607,14 @@ model:</p>
 <span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="node-values">
-<span id="node-value"></span><h2><span class="section-number">1.4. </span>Node values<a class="headerlink" href="#node-values" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="node-values">
+<span id="node-value"></span><h2><span class="section-number">1.4. </span>Node values<a class="headerlink" href="#node-values" title="Link to this heading">¶</a></h2>
 <p>Node values are JSON-like values used to define metadata and the value of
 an applied trait.</p>
 <div class="literal-block-wrapper docutils container" id="figure-1-3">
-<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.3</strong>: Node value types</span><a class="headerlink" href="#figure-1-3" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.3</strong>: Node value types</span><a class="headerlink" href="#figure-1-3" title="Link to this code">¶</a></div>
 <div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>┌─────────────────┐                     ┌─────────────┐
 │ Semantic Model  │                     │Applied Trait│
 └─────────────────┘                     └─────────────┘
@@ -602,78 +649,79 @@ an applied trait.</p>
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-<div class="section" id="node-value-types">
-<h3><span class="section-number">1.4.1. </span>Node value types<a class="headerlink" href="#node-value-types" title="Permalink to this heading">#</a></h3>
+<section id="node-value-types">
+<h3><span class="section-number">1.4.1. </span>Node value types<a class="headerlink" href="#node-value-types" title="Link to this heading">¶</a></h3>
 <p>Node values have the same data model as JSON; they consist of the following
 kinds of values:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="30%" />
-<col width="70%" />
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>null</td>
-<td>The lack of a value</td>
+<tbody>
+<tr class="row-even"><td><p>null</p></td>
+<td><p>The lack of a value</p></td>
 </tr>
-<tr class="row-odd"><td>string</td>
-<td>A UTF-8 string</td>
+<tr class="row-odd"><td><p>string</p></td>
+<td><p>A UTF-8 string</p></td>
 </tr>
-<tr class="row-even"><td>number</td>
-<td>A double precision floating point number</td>
+<tr class="row-even"><td><p>number</p></td>
+<td><p>A double precision floating point number</p></td>
 </tr>
-<tr class="row-odd"><td>boolean</td>
-<td>A Boolean, true or false value</td>
+<tr class="row-odd"><td><p>boolean</p></td>
+<td><p>A Boolean, true or false value</p></td>
 </tr>
-<tr class="row-even"><td>array</td>
-<td>A list of heterogeneous node values</td>
+<tr class="row-even"><td><p>array</p></td>
+<td><p>A list of heterogeneous node values</p></td>
 </tr>
-<tr class="row-odd"><td>object</td>
-<td>A map of string keys to heterogeneous node values</td>
+<tr class="row-odd"><td><p>object</p></td>
+<td><p>A map of string keys to heterogeneous node values</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-</div>
-<div class="section" id="merging-model-files">
-<span id="merging-models"></span><h2><span class="section-number">1.5. </span>Merging model files<a class="headerlink" href="#merging-model-files" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="merging-model-files">
+<span id="merging-models"></span><h2><span class="section-number">1.5. </span>Merging model files<a class="headerlink" href="#merging-model-files" title="Link to this heading">¶</a></h2>
 <p>Multiple <a class="reference internal" href="#model-files"><span class="std std-ref">model files</span></a> can be used to create a
 <a class="reference internal" href="#semantic-model"><span class="std std-ref">semantic model</span></a>. Implementations MUST
 take the following steps when merging two or more model files:</p>
 <ol class="arabic simple">
-<li>Merge the metadata objects of all model files. If top-level metadata
+<li><p>Merge the metadata objects of all model files. If top-level metadata
 key-value pairs conflict, <a class="reference internal" href="#merging-metadata"><span class="std std-ref">merge the metadata</span></a>
-if possible or fail.</li>
-<li>Shapes defined in a single model file are added to the semantic model as-is.</li>
-<li>Shapes with the same shape ID defined in multiple model files are
-reconciled using the following rules:<ol class="arabic">
-<li>All conflicting shapes MUST have the same shape type.</li>
-<li>Conflicting <a class="reference internal" href="aggregate-types.html#aggregate-types"><span class="std std-ref">aggregate shape types</span></a> MUST contain
-the same members that target the same shapes.</li>
-<li>Conflicting <a class="reference internal" href="service-types.html#service-types"><span class="std std-ref">service shape types</span></a> MUST contain the
-same properties and target the same shapes.</li>
-<li>The traits from each shape are treated as if they are defined using
+if possible or fail.</p></li>
+<li><p>Shapes defined in a single model file are added to the semantic model as-is.</p></li>
+<li><p>Shapes with the same shape ID defined in multiple model files are
+reconciled using the following rules:</p>
+<ol class="arabic simple">
+<li><p>All conflicting shapes MUST have the same shape type.</p></li>
+<li><p>Conflicting <a class="reference internal" href="aggregate-types.html#aggregate-types"><span class="std std-ref">aggregate shape types</span></a> MUST contain
+the same members that target the same shapes.</p></li>
+<li><p>Conflicting <a class="reference internal" href="service-types.html#service-types"><span class="std std-ref">service shape types</span></a> MUST contain the
+same properties and target the same shapes.</p></li>
+<li><p>The traits from each shape are treated as if they are defined using
 an <a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statement</span></a>: non-conflicting traits are
 added to the merged shape, and conflicting traits are resolved through
-step (4).</li>
+step (4).</p></li>
 </ol>
 </li>
-<li>Conflicting traits defined in shape definitions or through apply statements
-are reconciled using <a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
+<li><p>Conflicting traits defined in shape definitions or through apply statements
+are reconciled using <a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</p></li>
 </ol>
-</div>
-<div class="section" id="shapes">
-<span id="id2"></span><h2><span class="section-number">1.6. </span>Shapes<a class="headerlink" href="#shapes" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="shapes">
+<span id="id2"></span><h2><span class="section-number">1.6. </span>Shapes<a class="headerlink" href="#shapes" title="Link to this heading">¶</a></h2>
 <p>Smithy models are made up of shapes. Shapes are named definitions of types.</p>
 <p>Shapes are visualized using the following diagram:</p>
 <div class="literal-block-wrapper docutils container" id="figure-1-4">
-<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.4</strong>: Smithy shapes</span><a class="headerlink" href="#figure-1-4" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure 1.4</strong>: Smithy shapes</span><a class="headerlink" href="#figure-1-4" title="Link to this code">¶</a></div>
 <div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>                                  ┌─────────────┐
                          members ╱│ «abstract»  │
                         ┌───────○─│    Shape    │
@@ -723,67 +771,67 @@ are reconciled using <a class="reference internal" href="#trait-conflict-resolut
 </pre></div>
 </div>
 </div>
-<div class="section" id="shape-types">
-<h3><span class="section-number">1.6.1. </span>Shape types<a class="headerlink" href="#shape-types" title="Permalink to this heading">#</a></h3>
+<section id="shape-types">
+<h3><span class="section-number">1.6.1. </span>Shape types<a class="headerlink" href="#shape-types" title="Link to this heading">¶</a></h3>
 <p>Shape types are grouped into three categories:</p>
-<dl class="docutils">
+<dl>
 <dt><a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">Simple types</span></a></dt><dd><p>Simple types are types that do not contain nested types or shape references.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#blob"><span class="std std-ref">blob</span></a></td>
-<td>Uninterpreted binary data</td>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#blob"><span class="std std-ref">blob</span></a></p></td>
+<td><p>Uninterpreted binary data</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#boolean"><span class="std std-ref">boolean</span></a></td>
-<td>Boolean value type</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#boolean"><span class="std std-ref">boolean</span></a></p></td>
+<td><p>Boolean value type</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#string"><span class="std std-ref">string</span></a></td>
-<td>UTF-8 encoded string</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#string"><span class="std std-ref">string</span></a></p></td>
+<td><p>UTF-8 encoded string</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a></td>
-<td>A string with a fixed set of values.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a></p></td>
+<td><p>A string with a fixed set of values.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#byte"><span class="std std-ref">byte</span></a></td>
-<td>8-bit signed integer ranging from -128 to 127 (inclusive)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#byte"><span class="std std-ref">byte</span></a></p></td>
+<td><p>8-bit signed integer ranging from -128 to 127 (inclusive)</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#short"><span class="std std-ref">short</span></a></td>
-<td>16-bit signed integer ranging from -32,768 to 32,767 (inclusive)</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#short"><span class="std std-ref">short</span></a></p></td>
+<td><p>16-bit signed integer ranging from -32,768 to 32,767 (inclusive)</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#integer"><span class="std std-ref">integer</span></a></td>
-<td>32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#integer"><span class="std std-ref">integer</span></a></p></td>
+<td><p>32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive)</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a></td>
-<td>An integer with a fixed set of values.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a></p></td>
+<td><p>An integer with a fixed set of values.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#long"><span class="std std-ref">long</span></a></td>
-<td>64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#long"><span class="std std-ref">long</span></a></p></td>
+<td><p>64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive)</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#float"><span class="std std-ref">float</span></a></td>
-<td>Single precision IEEE-754 floating point number</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#float"><span class="std std-ref">float</span></a></p></td>
+<td><p>Single precision IEEE-754 floating point number</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#double"><span class="std std-ref">double</span></a></td>
-<td>Double precision IEEE-754 floating point number</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#double"><span class="std std-ref">double</span></a></p></td>
+<td><p>Double precision IEEE-754 floating point number</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#biginteger"><span class="std std-ref">bigInteger</span></a></td>
-<td>Arbitrarily large signed integer</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#biginteger"><span class="std std-ref">bigInteger</span></a></p></td>
+<td><p>Arbitrarily large signed integer</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#bigdecimal"><span class="std std-ref">bigDecimal</span></a></td>
-<td>Arbitrary precision signed decimal number</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#bigdecimal"><span class="std std-ref">bigDecimal</span></a></p></td>
+<td><p>Arbitrary precision signed decimal number</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="simple-types.html#timestamp"><span class="std std-ref">timestamp</span></a></td>
-<td>An instant in time with no UTC offset or timezone.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="simple-types.html#timestamp"><span class="std std-ref">timestamp</span></a></p></td>
+<td><p>An instant in time with no UTC offset or timezone.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="simple-types.html#document"><span class="std std-ref">document</span></a></td>
-<td>Open content that functions as a kind of &quot;any&quot; type.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="simple-types.html#document"><span class="std std-ref">document</span></a></p></td>
+<td><p>Open content that functions as a kind of &quot;any&quot; type.</p></td>
 </tr>
 </tbody>
 </table>
@@ -791,29 +839,29 @@ are reconciled using <a class="reference internal" href="#trait-conflict-resolut
 </dd>
 <dt><a class="reference internal" href="aggregate-types.html#aggregate-types"><span class="std std-ref">Aggregate types</span></a></dt><dd><p>Aggregate types contain configurable member references to others shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a></td>
-<td>Ordered collection of homogeneous values</td>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a></p></td>
+<td><p>Ordered collection of homogeneous values</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a></td>
-<td>Map data structure that maps string keys to homogeneous values</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a></p></td>
+<td><p>Map data structure that maps string keys to homogeneous values</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">structure</span></a></td>
-<td>Fixed set of named heterogeneous members</td>
+<tr class="row-even"><td><p><a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">structure</span></a></p></td>
+<td><p>Fixed set of named heterogeneous members</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">union</span></a></td>
-<td>Tagged union data structure that can take on one of several
-different, but fixed, types</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">union</span></a></p></td>
+<td><p>Tagged union data structure that can take on one of several
+different, but fixed, types</p></td>
 </tr>
 </tbody>
 </table>
@@ -821,34 +869,34 @@ different, but fixed, types</td>
 </dd>
 <dt><a class="reference internal" href="service-types.html#service-types"><span class="std std-ref">Service types</span></a></dt><dd><p>Types that define the organization and operations of a service.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="service-types.html#service"><span class="std std-ref">service</span></a></td>
-<td>Entry point of an API that aggregates resources and operations together</td>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="service-types.html#service"><span class="std std-ref">service</span></a></p></td>
+<td><p>Entry point of an API that aggregates resources and operations together</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="service-types.html#operation"><span class="std std-ref">operation</span></a></td>
-<td>Represents the input, output, and errors of an API operation</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="service-types.html#operation"><span class="std std-ref">operation</span></a></p></td>
+<td><p>Represents the input, output, and errors of an API operation</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="service-types.html#resource"><span class="std std-ref">resource</span></a></td>
-<td>Entity with an identity that has a set of operations</td>
+<tr class="row-even"><td><p><a class="reference internal" href="service-types.html#resource"><span class="std std-ref">resource</span></a></p></td>
+<td><p>Entity with an identity that has a set of operations</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </dd>
 </dl>
-</div>
-<div class="section" id="member-shapes">
-<span id="member"></span><h3><span class="section-number">1.6.2. </span>Member shapes<a class="headerlink" href="#member-shapes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="member-shapes">
+<span id="member"></span><h3><span class="section-number">1.6.2. </span>Member shapes<a class="headerlink" href="#member-shapes" title="Link to this heading">¶</a></h3>
 <p><em class="dfn">Members</em> are defined in shapes to reference other shapes using
 a <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a>. Members are found in <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a>,
 <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>, <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a>, <a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a>,
@@ -867,9 +915,9 @@ documentation for <a class="reference internal" href="#shapes"><span class="std 
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="shape-id">
-<span id="id3"></span><h3><span class="section-number">1.6.3. </span>Shape ID<a class="headerlink" href="#shape-id" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="shape-id">
+<span id="id3"></span><h3><span class="section-number">1.6.3. </span>Shape ID<a class="headerlink" href="#shape-id" title="Link to this heading">¶</a></h3>
 <p>A <em class="dfn">shape ID</em> is used to refer to shapes in the model. All shapes have an
 assigned shape ID.</p>
 <p>The following example defines a shape in the <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace named
@@ -890,14 +938,16 @@ assigned shape ID.</p>
               (Absolute shape ID)
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>Absolute shape ID</dt><dd>An <em class="dfn">absolute shape ID</em> starts with a <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span></code></a>,
+<dl>
+<dt>Absolute shape ID</dt><dd><p>An <em class="dfn">absolute shape ID</em> starts with a <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span></code></a>,
 followed by &quot;<code class="docutils literal notranslate"><span class="pre">#</span></code>&quot;, followed by a <em>relative shape ID</em>. For example,
-<code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo$bar</span></code> are absolute shape IDs.</dd>
-<dt>Relative shape ID</dt><dd>A <em class="dfn">relative shape ID</em> contains a <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo$bar</span></code> are absolute shape IDs.</p>
+</dd>
+<dt>Relative shape ID</dt><dd><p>A <em class="dfn">relative shape ID</em> contains a <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>
 and an optional <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a>. The shape name and
 member name are separated by the &quot;<code class="docutils literal notranslate"><span class="pre">$</span></code>&quot; symbol if a member name is
-present. For example, <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> are relative shape IDs.</dd>
+present. For example, <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> are relative shape IDs.</p>
+</dd>
 <dt>Namespace</dt><dd><p>A namespace is a mechanism for logically grouping shapes in a way
 that makes them reusable alongside other models without naming
 conflicts. A semantic model MAY contain shapes defined across multiple
@@ -918,40 +968,49 @@ form of PascalCase in which only the first letter of acronyms,
 abbreviations, and initialisms are capitalized. For example, prefer
 <code class="docutils literal notranslate"><span class="pre">UserId</span></code> over <code class="docutils literal notranslate"><span class="pre">UserID</span></code>, and <code class="docutils literal notranslate"><span class="pre">Arn</span></code> over <code class="docutils literal notranslate"><span class="pre">ARN</span></code>.</p>
 </dd>
-<dt>Root shape ID</dt><dd>A <em class="dfn">root shape ID</em> is a shape ID that does not contain a member.
-For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> are root shape IDs.</dd>
+<dt>Root shape ID</dt><dd><p>A <em class="dfn">root shape ID</em> is a shape ID that does not contain a member.
+For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> are root shape IDs.</p>
+</dd>
 </dl>
-<div class="section" id="shape-id-abnf">
-<h4><span class="section-number">1.6.3.1. </span>Shape ID ABNF<a class="headerlink" href="#shape-id-abnf" title="Permalink to this heading">#</a></h4>
+<section id="shape-id-abnf">
+<h4><span class="section-number">1.6.3.1. </span>Shape ID ABNF<a class="headerlink" href="#shape-id-abnf" title="Link to this heading">¶</a></h4>
 <p>Shape IDs are formally defined by the following ABNF:</p>
 <pre class="productionlist highlight">
-<strong id="grammar-token-smithy-ShapeId">ShapeId</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-RootShapeId"><code class="xref docutils literal notranslate"><span class="pre">RootShapeId</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-ShapeIdMember"><code class="xref docutils literal notranslate"><span class="pre">ShapeIdMember</span></code></a>]
+<strong>ShapeId</strong> =
+    <strong id="grammar-token-smithy-ShapeId">ShapeId</strong>             ::= <a class="reference internal" href="#grammar-token-smithy-RootShapeId"><code class="xref docutils literal notranslate"><span class="pre">RootShapeId</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-ShapeIdMember"><code class="xref docutils literal notranslate"><span class="pre">ShapeIdMember</span></code></a>]
 
-<strong id="grammar-token-smithy-RootShapeId">RootShapeId</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-AbsoluteRootShapeId"><code class="xref docutils literal notranslate"><span class="pre">AbsoluteRootShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
-<strong id="grammar-token-smithy-AbsoluteRootShapeId">AbsoluteRootShapeId</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">Namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+<strong>RootShapeId</strong> =
+    <strong id="grammar-token-smithy-RootShapeId">RootShapeId</strong>         ::= <a class="reference internal" href="#grammar-token-smithy-AbsoluteRootShapeId"><code class="xref docutils literal notranslate"><span class="pre">AbsoluteRootShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
-<strong id="grammar-token-smithy-Namespace">Namespace</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>)
 
-<strong id="grammar-token-smithy-Identifier">Identifier</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-IdentifierStart"><code class="xref docutils literal notranslate"><span class="pre">IdentifierStart</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-IdentifierChars"><code class="xref docutils literal notranslate"><span class="pre">IdentifierChars</span></code></a>
+<strong>AbsoluteRootShapeId</strong> =
+    <strong id="grammar-token-smithy-AbsoluteRootShapeId">AbsoluteRootShapeId</strong> ::= <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">Namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
-<strong id="grammar-token-smithy-IdentifierStart">IdentifierStart</strong> =
-    (1*&quot;_&quot; (ALPHA / DIGIT)) / ALPHA
 
-<strong id="grammar-token-smithy-IdentifierChars">IdentifierChars</strong> =
-    ALPHA / DIGIT / &quot;_&quot;
+<strong>Namespace</strong> =
+    <strong id="grammar-token-smithy-Namespace">Namespace</strong>           ::= <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>)
 
-<strong id="grammar-token-smithy-ShapeIdMember">ShapeIdMember</strong> =
-    &quot;$&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+
+<strong>Identifier</strong> =
+    <strong id="grammar-token-smithy-Identifier">Identifier</strong>          ::= <a class="reference internal" href="#grammar-token-smithy-IdentifierStart"><code class="xref docutils literal notranslate"><span class="pre">IdentifierStart</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-IdentifierChars"><code class="xref docutils literal notranslate"><span class="pre">IdentifierChars</span></code></a>
+
+
+<strong>IdentifierStart</strong> =
+    <strong id="grammar-token-smithy-IdentifierStart">IdentifierStart</strong>     ::= (1*&quot;_&quot; (ALPHA / DIGIT)) / ALPHA
+
+
+<strong>IdentifierChars</strong> =
+    <strong id="grammar-token-smithy-IdentifierChars">IdentifierChars</strong>     ::= ALPHA / DIGIT / &quot;_&quot;
+
+
+<strong>ShapeIdMember</strong> =
+    <strong id="grammar-token-smithy-ShapeIdMember">ShapeIdMember</strong>       ::= &quot;$&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+
 </pre>
-</div>
-<div class="section" id="shape-id-conflicts">
-<span id="id4"></span><h4><span class="section-number">1.6.3.2. </span>Shape ID conflicts<a class="headerlink" href="#shape-id-conflicts" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="shape-id-conflicts">
+<span id="id4"></span><h4><span class="section-number">1.6.3.2. </span>Shape ID conflicts<a class="headerlink" href="#shape-id-conflicts" title="Link to this heading">¶</a></h4>
 <p>While shape ID references within the semantic model are case-sensitive, no
 two shapes in the semantic model can have the same case-insensitive shape ID.
 This restriction makes it easier to use Smithy models for code generation in
@@ -962,21 +1021,21 @@ To illustrate, <code class="docutils literal notranslate"><span class="pre">com.
 same semantic model. This restriction also extends to member names:
 <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$bar</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$BAR</span></code> are in conflict.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#merging-models"><span class="std std-ref">Merging model files</span></a> for information on how conflicting shape
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#merging-models"><span class="std std-ref">Merging model files</span></a> for information on how conflicting shape
 definitions for the same shape ID are handled when assembling the
 semantic model from multiple model files.</p>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="traits">
-<span id="non-aws-traits"></span><span id="id5"></span><h2><span class="section-number">1.7. </span>Traits<a class="headerlink" href="#traits" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+</section>
+<section id="traits">
+<span id="non-aws-traits"></span><span id="id5"></span><h2><span class="section-number">1.7. </span>Traits<a class="headerlink" href="#traits" title="Link to this heading">¶</a></h2>
 <p><em>Traits</em> are model components that can be attached to <a class="reference internal" href="#shapes"><span class="std std-ref">shapes</span></a>
 to describe additional information about the shape; shapes provide the
 structure and layout of an API, while traits provide refinement and style.</p>
-<div class="section" id="applying-traits">
-<span id="id6"></span><h3><span class="section-number">1.7.1. </span>Applying traits<a class="headerlink" href="#applying-traits" title="Permalink to this heading">#</a></h3>
+<section id="applying-traits">
+<span id="id6"></span><h3><span class="section-number">1.7.1. </span>Applying traits<a class="headerlink" href="#applying-traits" title="Link to this heading">¶</a></h3>
 <p>An instance of a trait applied to a shape is called an <em>applied trait</em>. Only
 a single instance of a trait can be applied to a shape. The way in which a
 trait is applied to a shape depends on the model file representation.</p>
@@ -992,13 +1051,13 @@ immediately precede a shape. The following example applies the
 </pre></div>
 </div>
 <ul class="simple">
-<li>Refer to the <a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">IDL specification</span></a> for a
-description of how traits are applied in the IDL.</li>
-<li>Refer to the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST specification</span></a> for a
-description of how traits are applied in the JSON AST.</li>
+<li><p>Refer to the <a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">IDL specification</span></a> for a
+description of how traits are applied in the IDL.</p></li>
+<li><p>Refer to the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST specification</span></a> for a
+description of how traits are applied in the JSON AST.</p></li>
 </ul>
-<div class="section" id="scope-of-member-traits">
-<h4><span class="section-number">1.7.1.1. </span>Scope of member traits<a class="headerlink" href="#scope-of-member-traits" title="Permalink to this heading">#</a></h4>
+<section id="scope-of-member-traits">
+<h4><span class="section-number">1.7.1.1. </span>Scope of member traits<a class="headerlink" href="#scope-of-member-traits" title="Link to this heading">¶</a></h4>
 <p>Traits that target <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> apply only in the context of
 the member shape and do not affect the shape targeted by the member. Traits
 applied to a member supersede traits applied to the shape targeted by the
@@ -1015,9 +1074,9 @@ takes precedence over the trait applied to <code class="docutils literal notrans
 <span class="kd">integer </span><span class="nc">PositiveInteger</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="applying-traits-externally">
-<span id="apply-statements"></span><h4><span class="section-number">1.7.1.2. </span>Applying traits externally<a class="headerlink" href="#applying-traits-externally" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="applying-traits-externally">
+<span id="apply-statements"></span><h4><span class="section-number">1.7.1.2. </span>Applying traits externally<a class="headerlink" href="#applying-traits-externally" title="Link to this heading">¶</a></h4>
 <p>Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
 <a class="reference internal" href="idl.html#grammar-token-smithy-ApplyStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
@@ -1036,21 +1095,21 @@ own a model that applies documentation traits to the shapes.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In the semantic model, applying traits outside of a shape definition is
+<p class="admonition-title">Note</p>
+<p>In the semantic model, applying traits outside of a shape definition is
 treated exactly the same as applying the trait inside of a shape
 definition.</p>
 </div>
-</div>
-<div class="section" id="trait-conflict-resolution">
-<span id="id7"></span><h4><span class="section-number">1.7.1.3. </span>Trait conflict resolution<a class="headerlink" href="#trait-conflict-resolution" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="trait-conflict-resolution">
+<span id="id7"></span><h4><span class="section-number">1.7.1.3. </span>Trait conflict resolution<a class="headerlink" href="#trait-conflict-resolution" title="Link to this heading">¶</a></h4>
 <p>Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>
 <ol class="arabic simple">
-<li>If the trait is a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape, then the conflicting trait
-values are concatenated into a single trait value.</li>
-<li>If both values are exactly equal, then the conflict is ignored.</li>
+<li><p>If the trait is a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape, then the conflicting trait
+values are concatenated into a single trait value.</p></li>
+<li><p>If both values are exactly equal, then the conflict is ignored.</p></li>
 </ol>
 <p>All other instances of trait collisions are prohibited.</p>
 <p>The following model definition is <strong>valid</strong> because the <code class="docutils literal notranslate"><span class="pre">length</span></code> trait is
@@ -1091,117 +1150,117 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 <span class="kd">apply </span><span class="nc">MyList</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">20</span>)
 </pre></div>
 </div>
-</div>
-<div class="section" id="trait-node-values">
-<span id="id8"></span><h4><span class="section-number">1.7.1.4. </span>Trait node values<a class="headerlink" href="#trait-node-values" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="trait-node-values">
+<span id="id8"></span><h4><span class="section-number">1.7.1.4. </span>Trait node values<a class="headerlink" href="#trait-node-values" title="Link to this heading">¶</a></h4>
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
 <a class="reference internal" href="idl.html#grammar-token-smithy-NodeValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> values.</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="20%" />
-<col width="60%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 60.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Smithy type</th>
-<th class="head">Node type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Smithy type</p></th>
+<th class="head"><p>Node type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>blob</td>
-<td>string</td>
-<td>A <code class="docutils literal notranslate"><span class="pre">string</span></code> value that is base64 encoded.</td>
+<tbody>
+<tr class="row-even"><td><p>blob</p></td>
+<td><p>string</p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">string</span></code> value that is base64 encoded.</p></td>
 </tr>
-<tr class="row-odd"><td>boolean</td>
-<td>boolean</td>
-<td>Can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tr class="row-odd"><td><p>boolean</p></td>
+<td><p>boolean</p></td>
+<td><p>Can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>byte</td>
-<td>number</td>
-<td>The value MUST fall within the range of -128 to 127</td>
+<tr class="row-even"><td><p>byte</p></td>
+<td><p>number</p></td>
+<td><p>The value MUST fall within the range of -128 to 127</p></td>
 </tr>
-<tr class="row-odd"><td>short</td>
-<td>number</td>
-<td>The value MUST fall within the range of -32,768 to 32,767</td>
+<tr class="row-odd"><td><p>short</p></td>
+<td><p>number</p></td>
+<td><p>The value MUST fall within the range of -32,768 to 32,767</p></td>
 </tr>
-<tr class="row-even"><td>integer</td>
-<td>number</td>
-<td>The value MUST fall within the range of -2^31 to (2^31)-1.</td>
+<tr class="row-even"><td><p>integer</p></td>
+<td><p>number</p></td>
+<td><p>The value MUST fall within the range of -2^31 to (2^31)-1.</p></td>
 </tr>
-<tr class="row-odd"><td>long</td>
-<td>number</td>
-<td>The value MUST fall within the range of -2^63 to (2^63)-1.</td>
+<tr class="row-odd"><td><p>long</p></td>
+<td><p>number</p></td>
+<td><p>The value MUST fall within the range of -2^63 to (2^63)-1.</p></td>
 </tr>
-<tr class="row-even"><td>float</td>
-<td>string | number</td>
-<td>The value MUST be either a normal JSON number or one of the following
-string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</td>
+<tr class="row-even"><td><p>float</p></td>
+<td><p>string | number</p></td>
+<td><p>The value MUST be either a normal JSON number or one of the following
+string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>double</td>
-<td>string | number</td>
-<td>The value MUST be either a normal JSON number or one of the following
-string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</td>
+<tr class="row-odd"><td><p>double</p></td>
+<td><p>string | number</p></td>
+<td><p>The value MUST be either a normal JSON number or one of the following
+string values: <code class="docutils literal notranslate"><span class="pre">&quot;NaN&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Infinity&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;-Infinity&quot;</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>bigDecimal</td>
-<td>string | number</td>
-<td>bigDecimal values can be serialized as strings to avoid rounding
-issues when parsing a Smithy model in various languages.</td>
+<tr class="row-even"><td><p>bigDecimal</p></td>
+<td><p>string | number</p></td>
+<td><p>bigDecimal values can be serialized as strings to avoid rounding
+issues when parsing a Smithy model in various languages.</p></td>
 </tr>
-<tr class="row-odd"><td>bigInteger</td>
-<td>string | number</td>
-<td>bigInteger values can be serialized as strings to avoid truncation
-issues when parsing a Smithy model in various languages.</td>
+<tr class="row-odd"><td><p>bigInteger</p></td>
+<td><p>string | number</p></td>
+<td><p>bigInteger values can be serialized as strings to avoid truncation
+issues when parsing a Smithy model in various languages.</p></td>
 </tr>
-<tr class="row-even"><td>string</td>
-<td>string</td>
-<td>The provided value SHOULD be compatible with the <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> of the
-string shape if present; however, this is not validated by Smithy.</td>
+<tr class="row-even"><td><p>string</p></td>
+<td><p>string</p></td>
+<td><p>The provided value SHOULD be compatible with the <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> of the
+string shape if present; however, this is not validated by Smithy.</p></td>
 </tr>
-<tr class="row-odd"><td>timestamp</td>
-<td>number | string</td>
-<td>If a number is provided, it represents Unix epoch seconds with optional
+<tr class="row-odd"><td><p>timestamp</p></td>
+<td><p>number | string</p></td>
+<td><p>If a number is provided, it represents Unix epoch seconds with optional
 millisecond precision. If a string is provided, it MUST be a valid
 <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3339.html"><strong>RFC 3339</strong></a> string with optional fractional precision but no UTC offset
-(for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</td>
+(for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td>list</td>
-<td>array</td>
-<td>Each value in the array MUST be compatible with the targeted member.</td>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>array</p></td>
+<td><p>Each value in the array MUST be compatible with the targeted member.</p></td>
 </tr>
-<tr class="row-odd"><td>map</td>
-<td>object</td>
-<td>Each key MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">key</span></code> member of the map, and
-each value MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">value</span></code> member of the map.</td>
+<tr class="row-odd"><td><p>map</p></td>
+<td><p>object</p></td>
+<td><p>Each key MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">key</span></code> member of the map, and
+each value MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">value</span></code> member of the map.</p></td>
 </tr>
-<tr class="row-even"><td>structure</td>
-<td>object</td>
-<td>All members marked as required MUST be provided in a corresponding
+<tr class="row-even"><td><p>structure</p></td>
+<td><p>object</p></td>
+<td><p>All members marked as required MUST be provided in a corresponding
 key-value pair. Each key MUST correspond to a single member name of
 the structure. Each value MUST be compatible with the member that
-corresponds to the member name.</td>
+corresponds to the member name.</p></td>
 </tr>
-<tr class="row-odd"><td>union</td>
-<td>object</td>
-<td>The object MUST contain a single key-value pair. The key MUST be
+<tr class="row-odd"><td><p>union</p></td>
+<td><p>object</p></td>
+<td><p>The object MUST contain a single key-value pair. The key MUST be
 one of the member names of the union shape, and the value MUST be
-compatible with the corresponding shape.</td>
+compatible with the corresponding shape.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Trait values MUST be compatible with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> and any
+<p class="admonition-title">Important</p>
+<p>Trait values MUST be compatible with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> and any
 associated <a class="reference internal" href="constraint-traits.html"><span class="doc">constraint traits</span></a>.</p>
 </div>
-</div>
-</div>
-<div class="section" id="defining-traits">
-<span id="trait-shapes"></span><span id="id9"></span><h3><span class="section-number">1.7.2. </span>Defining traits<a class="headerlink" href="#defining-traits" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="defining-traits">
+<span id="trait-shapes"></span><span id="id9"></span><h3><span class="section-number">1.7.2. </span>Defining traits<a class="headerlink" href="#defining-traits" title="Link to this heading">¶</a></h3>
 <p>Traits are defined by applying <a class="reference internal" href="#trait-trait"><span class="std std-ref">smithy.api#trait</span></a> to a shape.
 This trait can only be applied to simple types and aggregate types.
 By convention, trait shape names SHOULD use a lowercase name so that they
@@ -1253,77 +1312,79 @@ visually stand out from normal shapes.</p>
 <span class="kd">string </span><span class="nc">StringShape</span>
 </pre></div>
 </div>
-<div class="section" id="prelude-traits">
-<h4><span class="section-number">1.7.2.1. </span>Prelude traits<a class="headerlink" href="#prelude-traits" title="Permalink to this heading">#</a></h4>
+<section id="prelude-traits">
+<h4><span class="section-number">1.7.2.1. </span>Prelude traits<a class="headerlink" href="#prelude-traits" title="Link to this heading">¶</a></h4>
 <p>When using the IDL, built-in traits defined in the Smithy
 <a class="reference internal" href="#prelude"><span class="std std-ref">prelude</span></a> namespace, <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>, are automatically
 available in every Smithy model and namespace through relative shape IDs.</p>
-</div>
-<div class="section" id="references-to-traits">
-<h4><span class="section-number">1.7.2.2. </span>References to traits<a class="headerlink" href="#references-to-traits" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="references-to-traits">
+<h4><span class="section-number">1.7.2.2. </span>References to traits<a class="headerlink" href="#references-to-traits" title="Link to this heading">¶</a></h4>
 <p>The only valid reference to a trait is through applying a trait to a
 shape. Members and references within a model MUST NOT target trait shapes.</p>
-</div>
-<div class="section" id="trait-trait">
-<span id="smithy-api-trait-trait"></span><span id="id10"></span><h4><span class="section-number">1.7.2.3. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> trait<a class="headerlink" href="#trait-trait" title="Permalink to this heading">#</a></h4>
-<dl class="docutils">
-<dt>Summary</dt><dd>Marks a shape as a <a class="reference internal" href="#traits"><span class="std std-ref">trait</span></a>.</dd>
+</section>
+<section id="trait-trait">
+<span id="smithy-api-trait-trait"></span><span id="id10"></span><h4><span class="section-number">1.7.2.3. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> trait<a class="headerlink" href="#trait-trait" title="Link to this heading">¶</a></h4>
+<dl>
+<dt>Summary</dt><dd><p>Marks a shape as a <a class="reference internal" href="#traits"><span class="std std-ref">trait</span></a>.</p>
+</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map,</span> <span class="pre">structure,</span> <span class="pre">union)</span></code></p>
 <p>This trait can only be applied to simple types, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>,
 <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">union</span></code> shapes.</p>
 </dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
 </dl>
-<div class="section" id="trait-properties">
-<h5><span class="section-number">1.7.2.3.1. </span>Trait properties<a class="headerlink" href="#trait-properties" title="Permalink to this heading">#</a></h5>
+<section id="trait-properties">
+<h5><span class="section-number">1.7.2.3.1. </span>Trait properties<a class="headerlink" href="#trait-properties" title="Link to this heading">¶</a></h5>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>selector</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that defines where the trait
+<tbody>
+<tr class="row-even"><td><p>selector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that defines where the trait
 can be applied. For example, a <code class="docutils literal notranslate"><span class="pre">selector</span></code> set to <code class="docutils literal notranslate"><span class="pre">:test(list,</span> <span class="pre">map)</span></code>
 means that the trait can be applied to a <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a> or
 <a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a> shape. This value defaults to <code class="docutils literal notranslate"><span class="pre">*</span></code> if not set,
-meaning the trait can be applied to any shape.</td>
+meaning the trait can be applied to any shape.</p></td>
 </tr>
-<tr class="row-odd"><td>conflicts</td>
-<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
-<td>Defines the shape IDs of traits that MUST NOT be applied to the same
+<tr class="row-odd"><td><p>conflicts</p></td>
+<td><p>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</p></td>
+<td><p>Defines the shape IDs of traits that MUST NOT be applied to the same
 shape as the trait being defined. This allows traits to be defined as
 mutually exclusive. Provided shape IDs MAY target unknown traits
-that are not defined in the model.</td>
+that are not defined in the model.</p></td>
 </tr>
-<tr class="row-even"><td>structurallyExclusive</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>One of &quot;member&quot; or &quot;target&quot;. When set to &quot;member&quot;, only a single
+<tr class="row-even"><td><p>structurallyExclusive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>One of &quot;member&quot; or &quot;target&quot;. When set to &quot;member&quot;, only a single
 member of a structure can be marked with the trait. When set to
 &quot;target&quot;, only a single member of a structure can target a shape
-marked with this trait.</td>
+marked with this trait.</p></td>
 </tr>
-<tr class="row-odd"><td>breakingChanges</td>
-<td>[<a class="reference internal" href="#trait-breaking-change-rules"><span class="std std-ref">BreakingChangeRule</span></a>]</td>
-<td>Defines the backward compatibility rules of the trait.</td>
+<tr class="row-odd"><td><p>breakingChanges</p></td>
+<td><p>[<a class="reference internal" href="#trait-breaking-change-rules"><span class="std std-ref">BreakingChangeRule</span></a>]</p></td>
+<td><p>Defines the backward compatibility rules of the trait.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-</div>
-<div class="section" id="annotation-traits">
-<span id="annotation-trait"></span><h4><span class="section-number">1.7.2.4. </span>Annotation traits<a class="headerlink" href="#annotation-traits" title="Permalink to this heading">#</a></h4>
+</section>
+</section>
+<section id="annotation-traits">
+<span id="annotation-trait"></span><h4><span class="section-number">1.7.2.4. </span>Annotation traits<a class="headerlink" href="#annotation-traits" title="Link to this heading">¶</a></h4>
 <p>A structure trait with no members is called an <em>annotation trait</em>. It's hard
 to predict what information a trait needs to capture when modeling a domain;
 a trait might start out as a simple annotation, but later might benefit
@@ -1353,74 +1414,74 @@ after adding a member to the <code class="docutils literal notranslate"><span cl
 <span class="kd">string </span><span class="nc">MyString4</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="breaking-change-rules">
-<span id="trait-breaking-change-rules"></span><h4><span class="section-number">1.7.2.5. </span>Breaking change rules<a class="headerlink" href="#breaking-change-rules" title="Permalink to this heading">#</a></h4>
+</section>
+<section id="breaking-change-rules">
+<span id="trait-breaking-change-rules"></span><h4><span class="section-number">1.7.2.5. </span>Breaking change rules<a class="headerlink" href="#breaking-change-rules" title="Link to this heading">¶</a></h4>
 <p>Backward compatibility rules of a trait can be defined in the <code class="docutils literal notranslate"><span class="pre">breakingChanges</span></code>
 member of a trait definition. This member is a list of diff rules. Smithy
 tooling that performs semantic diff analysis between two versions of the same
 model can use these rules to detect breaking or risky changes.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Not every kind of breaking change can be described using the
+<p class="admonition-title">Note</p>
+<p>Not every kind of breaking change can be described using the
 <code class="docutils literal notranslate"><span class="pre">breakingChanges</span></code> property. Such backward compatibility rules SHOULD
 instead be described through documentation and ideally enforced through
 custom diff tooling.</p>
 </div>
 <div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>change</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first"><strong>Required</strong>. The type of change. This value can be set to one of the
+<tbody>
+<tr class="row-even"><td><p>change</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The type of change. This value can be set to one of the
 following:</p>
-<ul class="last simple">
-<li><code class="docutils literal notranslate"><span class="pre">add</span></code>: The trait or value at the given path was added.</li>
-<li><code class="docutils literal notranslate"><span class="pre">remove</span></code>: The trait or value at the given path was removed.</li>
-<li><code class="docutils literal notranslate"><span class="pre">update</span></code>: The trait or value at the given path was changed.</li>
-<li><code class="docutils literal notranslate"><span class="pre">any</span></code>: The trait or value at the given path was added, removed,
-or changed.</li>
-<li><code class="docutils literal notranslate"><span class="pre">presence</span></code>: The trait or value at the given path was either
-added or removed.</li>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span></code>: The trait or value at the given path was added.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove</span></code>: The trait or value at the given path was removed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">update</span></code>: The trait or value at the given path was changed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">any</span></code>: The trait or value at the given path was added, removed,
+or changed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">presence</span></code>: The trait or value at the given path was either
+added or removed.</p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td>path</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A JSON pointer as described in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6901.html"><strong>RFC 6901</strong></a> that points to the values
+<tr class="row-odd"><td><p>path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A JSON pointer as described in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6901.html"><strong>RFC 6901</strong></a> that points to the values
 to compare from the original model to the updated model. If omitted
 or if an empty string is provided (<code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>), the entire trait is used
 as the value for comparison. The provided pointer MUST correctly
-correspond to shapes in the model.</td>
+correspond to shapes in the model.</p></td>
 </tr>
-<tr class="row-even"><td>severity</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first">Defines the severity of the change. This value can be set to:</p>
-<ul class="last simple">
-<li><code class="docutils literal notranslate"><span class="pre">ERROR</span></code>: The change is backward incompatible. This is the default
-assumed severity.</li>
-<li><code class="docutils literal notranslate"><span class="pre">DANGER</span></code>: The change is very likely backward incompatible.</li>
-<li><code class="docutils literal notranslate"><span class="pre">WARNING</span></code>: The change might be backward incompatible.</li>
-<li><code class="docutils literal notranslate"><span class="pre">NOTE</span></code>: The change is likely ok, but should be noted during
-things like code reviews.</li>
+<tr class="row-even"><td><p>severity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Defines the severity of the change. This value can be set to:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code>: The change is backward incompatible. This is the default
+assumed severity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DANGER</span></code>: The change is very likely backward incompatible.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code>: The change might be backward incompatible.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NOTE</span></code>: The change is likely ok, but should be noted during
+things like code reviews.</p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td>message</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Provides an optional plain text message that provides information about
-why the detected change could be problematic.</td>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Provides an optional plain text message that provides information about
+why the detected change could be problematic.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1432,9 +1493,9 @@ existing shape:</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>The above trait definition is equivalent to the following:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span>{
 <span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span>
@@ -1487,8 +1548,8 @@ following trait or to remove the &quot;baz&quot; member:</p>
 </div>
 <p>Then the change to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> member from &quot;a&quot; to &quot;b&quot; is backward
 incompatible, as is the removal of the <code class="docutils literal notranslate"><span class="pre">baz</span></code> member.</p>
-<div class="section" id="referring-to-list-members">
-<h5><span class="section-number">1.7.2.5.1. </span>Referring to list members<a class="headerlink" href="#referring-to-list-members" title="Permalink to this heading">#</a></h5>
+<section id="referring-to-list-members">
+<h5><span class="section-number">1.7.2.5.1. </span>Referring to list members<a class="headerlink" href="#referring-to-list-members" title="Link to this heading">¶</a></h5>
 <p>The JSON pointer can path into the members of a list using a <code class="docutils literal notranslate"><span class="pre">member</span></code>
 segment.</p>
 <p>In the following example, it is a breaking change to change values of lists
@@ -1523,9 +1584,9 @@ or sets in instances of the <code class="docutils literal notranslate"><span cla
 </div>
 <p>Then the change to the second value of the <code class="docutils literal notranslate"><span class="pre">names</span></code> member is
 backward incompatible because it changed from <code class="docutils literal notranslate"><span class="pre">Luke</span></code> to <code class="docutils literal notranslate"><span class="pre">Chewy</span></code>.</p>
-</div>
-<div class="section" id="referring-to-map-members">
-<h5><span class="section-number">1.7.2.5.2. </span>Referring to map members<a class="headerlink" href="#referring-to-map-members" title="Permalink to this heading">#</a></h5>
+</section>
+<section id="referring-to-map-members">
+<h5><span class="section-number">1.7.2.5.2. </span>Referring to map members<a class="headerlink" href="#referring-to-map-members" title="Link to this heading">¶</a></h5>
 <p>Members of a map shape can be referenced in a JSON pointer using
 <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
 <p>The following example defines a trait where it is backward incompatible
@@ -1584,26 +1645,26 @@ incompatible.</p>
 <p>Then the change to Luke's mapping from &quot;Jedi&quot; to &quot;Ghost&quot; is
 backward incompatible.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<ul class="last simple">
-<li>Using the &quot;update&quot; <code class="docutils literal notranslate"><span class="pre">change</span></code> type with a map key has no effect.</li>
-<li>Using any <code class="docutils literal notranslate"><span class="pre">change</span></code> type other than &quot;update&quot; with map values has no
-effect.</li>
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Using the &quot;update&quot; <code class="docutils literal notranslate"><span class="pre">change</span></code> type with a map key has no effect.</p></li>
+<li><p>Using any <code class="docutils literal notranslate"><span class="pre">change</span></code> type other than &quot;update&quot; with map values has no
+effect.</p></li>
 </ul>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="prelude">
-<span id="id11"></span><h2><span class="section-number">1.8. </span>Prelude<a class="headerlink" href="#prelude" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+</section>
+</section>
+<section id="prelude">
+<span id="id11"></span><h2><span class="section-number">1.8. </span>Prelude<a class="headerlink" href="#prelude" title="Link to this heading">¶</a></h2>
 <p>All Smithy models automatically include a <em>prelude</em>. The prelude defines
 various simple shapes and every trait defined in the core specification.
 When using the <a class="reference internal" href="idl.html#idl"><span class="std std-ref">IDL</span></a>, shapes defined in the prelude that are not
 marked with the <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private trait</span></a> can be referenced from within any
 namespace using a relative shape ID.</p>
 <div class="literal-block-wrapper docutils container" id="prelude-shapes">
-<div class="code-block-caption"><span class="caption-text">Smithy Prelude</span><a class="headerlink" href="#prelude-shapes" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">Smithy Prelude</span><a class="headerlink" href="#prelude-shapes" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This model defines the Smithy prelude model.</span>
 <span class="c">//</span>
 <span class="c">// Shapes in the prelude model that are not marked as `@private` can be</span>
@@ -2875,11 +2936,11 @@ namespace using a relative shape ID.</p>
 </div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Private shapes defined in the prelude are subject to change at any time.</p>
+<p class="admonition-title">Note</p>
+<p>Private shapes defined in the prelude are subject to change at any time.</p>
 </div>
-<div class="section" id="unit-type">
-<span id="id12"></span><h3><span class="section-number">1.8.1. </span>Unit type<a class="headerlink" href="#unit-type" title="Permalink to this heading">#</a></h3>
+<section id="unit-type">
+<span id="id12"></span><h3><span class="section-number">1.8.1. </span>Unit type<a class="headerlink" href="#unit-type" title="Link to this heading">¶</a></h3>
 <p>Smithy provides a singular <a class="reference internal" href="#id12">unit type</a> named <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>. The unit
 type in Smithy is similar to <code class="docutils literal notranslate"><span class="pre">Void</span></code> and <code class="docutils literal notranslate"><span class="pre">None</span></code> in other languages. It is
 used when the input or output of an <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">operation</span></a> has no
@@ -2890,12 +2951,12 @@ as a structure shape marked with the <code class="docutils literal notranslate">
 differentiate it from other structures. It is the only such structure in the
 model that can be marked with the <code class="docutils literal notranslate"><span class="pre">smithy.api#unitType</span></code> trait.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">Union</span></a>, <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">Operation</span></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">Union</span></a>, <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">Operation</span></a></p>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
         </article>
       </div>
@@ -2909,10 +2970,10 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
                 </div>
                 <div class="title"><span class="section-number">2. </span>Simple types</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="index.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -2953,7 +3014,7 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -3021,15 +3082,12 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/tabs.js"></script>
+</div><script src="../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

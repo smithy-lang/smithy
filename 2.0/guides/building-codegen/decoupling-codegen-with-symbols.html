@@ -1,17 +1,20 @@
 <!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Using the Semantic Model" href="using-the-semantic-model.html" /><link rel="prev" title="Generating Code" href="generating-code.html" />
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Using the Semantic Model" href="using-the-semantic-model.html"><link rel="prev" title="Generating Code" href="generating-code.html">
+        <link rel="prefetch" href="../../_static/smithy.svg" as="image">
+        <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"/><meta name="generator" content="sphinx-5.3.0, furo 2022.06.21"/>
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Decoupling Codegen with Symbols - Smithy 2.0</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0abfef4d" />
     
     
 
@@ -83,7 +86,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -98,34 +101,73 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -133,8 +175,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -142,16 +183,15 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -166,14 +206,14 @@
   </div>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input aria-label="Toggle navigation of Smithy specification" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
@@ -196,17 +236,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input aria-label="Toggle navigation of Guides" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><input aria-label="Toggle navigation of The Smithy CLI" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><input aria-label="Toggle navigation of Smithy Gradle Plugins" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><input aria-label="Toggle navigation of Code Generation" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
@@ -215,13 +255,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Code Generator</a><input aria-label="Toggle navigation of Creating a Code Generator" checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
@@ -236,29 +276,29 @@
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><input aria-label="Toggle navigation of Rules engine" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input aria-label="Toggle navigation of AWS integrations" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
@@ -266,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input aria-label="Toggle navigation of AWS Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
@@ -275,14 +315,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input aria-label="Toggle navigation of AWS Service Customizations" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><input aria-label="Toggle navigation of AWS rules engine extensions" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
@@ -293,9 +333,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Languages</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/java/index.html">Java</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/java/index.html">Java</a><input aria-label="Toggle navigation of Java" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../languages/java/quickstart.html">Java Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/java/client/index.html">Client User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/java/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/generating-clients.html">Generating Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/configuration.html">Configuring Clients</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/customization.html">Customizing Client Behavior</a></li>
@@ -308,9 +348,9 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><input aria-label="Toggle navigation of Server Generator for TypeScript" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
@@ -322,24 +362,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/rust/index.html">Rust</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/rust/index.html">Rust</a><input aria-label="Toggle navigation of Rust" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><input aria-label="Toggle navigation of Python" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/golang/index.html">GoLang</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/scala/index.html">Scala</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -370,42 +410,42 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/building-codegen/decoupling-codegen-with-symbols.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/blob/main/docs/source-2.0/guides/building-codegen/decoupling-codegen-with-symbols.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/building-codegen/decoupling-codegen-with-symbols.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
 </div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
-        <article role="main">
-          <div class="section" id="decoupling-codegen-with-symbols">
-<h1>Decoupling Codegen with Symbols<a class="headerlink" href="#decoupling-codegen-with-symbols" title="Permalink to this heading">#</a></h1>
+        <article role="main" id="furo-main-content">
+          <section id="decoupling-codegen-with-symbols">
+<h1>Decoupling Codegen with Symbols<a class="headerlink" href="#decoupling-codegen-with-symbols" title="Link to this heading">¶</a></h1>
 <p><a class="reference internal" href="../glossary.html#term-Symbols"><span class="xref std std-term">Symbols</span></a> are used in Smithy code generators to refer to qualified types
 in the target programming language. Symbols provide a layer of abstraction
 between the code being generated and the logic used to determine:</p>
 <ul class="simple">
-<li>how shapes are named</li>
-<li>where types are declared and defined</li>
-<li>the runtime dependencies needed for a type</li>
-<li>the imports needed to define and reference a type</li>
+<li><p>how shapes are named</p></li>
+<li><p>where types are declared and defined</p></li>
+<li><p>the runtime dependencies needed for a type</p></li>
+<li><p>the imports needed to define and reference a type</p></li>
 </ul>
-<div class="section" id="quick-symbol-example">
-<h2>Quick Symbol example<a class="headerlink" href="#quick-symbol-example" title="Permalink to this heading">#</a></h2>
+<section id="quick-symbol-example">
+<h2>Quick Symbol example<a class="headerlink" href="#quick-symbol-example" title="Link to this heading">¶</a></h2>
 <p>The following example uses the built-in &quot;<code class="docutils literal notranslate"><span class="pre">T</span></code>&quot; formatter of
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>
 to write symbols to the generated code and automatically add imports to
@@ -437,20 +477,20 @@ the file:</p>
 <span class="w">    </span><span class="n">exampleSymbol</span><span class="p">);</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="benefits-of-symbols">
-<h2>Benefits of Symbols<a class="headerlink" href="#benefits-of-symbols" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="benefits-of-symbols">
+<h2>Benefits of Symbols<a class="headerlink" href="#benefits-of-symbols" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li>Refactoring. Symbols make it easy to refactor how shapes are generated
-and the file location of where shapes are generated.</li>
-<li>Managing imports. Symbols can contain the list of other symbols
+<li><p>Refactoring. Symbols make it easy to refactor how shapes are generated
+and the file location of where shapes are generated.</p></li>
+<li><p>Managing imports. Symbols can contain the list of other symbols
 needed in order to refer to the type. For example, if a list has
 generic type parameters (e.g., <code class="docutils literal notranslate"><span class="pre">List&lt;BigDecimal&gt;</span></code>), then the symbol
 that refers to the list would also contain symbols referring to the
 generic type parameters. All the symbols needed in a generated code
 file can then be used to automatically create import statements as
-symbols are referenced by a CodeWriter.</li>
-<li>Managing dependencies. Symbols can define the dependencies needed by
+symbols are referenced by a CodeWriter.</p></li>
+<li><p>Managing dependencies. Symbols can define the dependencies needed by
 the generated code in order to reference the symbol. For example, if
 BigDecimal implementations are provided by a third-party library,
 then a dependency is needed by the generated code in order to
@@ -458,13 +498,13 @@ reference BigDecimal in code. Symbols carry this information because
 they are implementations of a <code class="docutils literal notranslate"><span class="pre">SymbolDependencyContainer</span></code>. After
 writing code to a CodeWriter, all the dependencies of each referenced
 symbol can be used to generate a dependency graph (e.g., Maven poms,
-Python setup.py files, etc.).</li>
-<li>Readability. Referencing symbols using <code class="docutils literal notranslate"><span class="pre">$T</span></code> makes the string
-templates passed to CodeWriter more succinct.</li>
+Python setup.py files, etc.).</p></li>
+<li><p>Readability. Referencing symbols using <code class="docutils literal notranslate"><span class="pre">$T</span></code> makes the string
+templates passed to CodeWriter more succinct.</p></li>
 </ul>
-</div>
-<div class="section" id="referencing-symbols-using-symbolreference">
-<h2>Referencing Symbols using SymbolReference<a class="headerlink" href="#referencing-symbols-using-symbolreference" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="referencing-symbols-using-symbolreference">
+<h2>Referencing Symbols using SymbolReference<a class="headerlink" href="#referencing-symbols-using-symbolreference" title="Link to this heading">¶</a></h2>
 <p>A <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolReference.java">SymbolReference</a> is used to refer to another Symbol. For example, a
 SymbolReference is used when a Symbol uses generic type parameters. The
 following example is a Symbol created for a list of
@@ -486,8 +526,8 @@ following example is a Symbol created for a list of
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
-<div class="section" id="aliasing-symbols">
-<h3>Aliasing Symbols<a class="headerlink" href="#aliasing-symbols" title="Permalink to this heading">#</a></h3>
+<section id="aliasing-symbols">
+<h3>Aliasing Symbols<a class="headerlink" href="#aliasing-symbols" title="Link to this heading">¶</a></h3>
 <p>An alias can be given to SymbolReference to deconflict the symbol with
 other symbols already in the target namespace. For example, let's say
 you need to reference a type that uses a fairly common name, so you
@@ -534,10 +574,10 @@ aliases.</p>
 <span class="s">    &quot;&quot;&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="symbol-dependencies">
-<h2>Symbol dependencies<a class="headerlink" href="#symbol-dependencies" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="symbol-dependencies">
+<h2>Symbol dependencies<a class="headerlink" href="#symbol-dependencies" title="Link to this heading">¶</a></h2>
 <p>Symbols can be used to automatically generate dependency closures and
 configuration files based on the symbols written to a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>.
 This allows generated code to depend on only the closure of dependencies
@@ -584,8 +624,8 @@ libraries to need different dependencies for JavaScript code vs
 TypeScript type definitions, so two dependencies were added to the
 created <code class="docutils literal notranslate"><span class="pre">big</span></code> symbol: one that is a normal &quot;dependencies&quot; and one that
 is a &quot;<code class="docutils literal notranslate"><span class="pre">devDependencies</span></code>&quot;.</p>
-<div class="section" id="symboldependency-best-practices">
-<h3><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices<a class="headerlink" href="#symboldependency-best-practices" title="Permalink to this heading">#</a></h3>
+<section id="symboldependency-best-practices">
+<h3><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices<a class="headerlink" href="#symboldependency-best-practices" title="Link to this heading">¶</a></h3>
 <p>Creating a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> in each place the dependency is needed
 spreads them out all over a project, making it difficult to change
 dependencies. Rather than create a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> each time they
@@ -627,19 +667,19 @@ update version numbers in a single place.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<ol class="last arabic simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">enum</span></code> implements <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependencyContainer.java">SymbolDependencyContainer</a>, an abstraction
-for composing dependencies.</li>
-<li>This example is taken from
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enum</span></code> implements <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependencyContainer.java">SymbolDependencyContainer</a>, an abstraction
+for composing dependencies.</p></li>
+<li><p>This example is taken from
 <a class="reference external" href="https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/TypeScriptDependency.java">smithy-typescript</a>,
 which shows other possibilities like how to define unconditional
-dependencies that are needed by every client.</li>
+dependencies that are needed by every client.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="tracking-externally-controlled-dependencies">
-<h3>Tracking externally controlled dependencies<a class="headerlink" href="#tracking-externally-controlled-dependencies" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="tracking-externally-controlled-dependencies">
+<h3>Tracking externally controlled dependencies<a class="headerlink" href="#tracking-externally-controlled-dependencies" title="Link to this heading">¶</a></h3>
 <p>A <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/DependencyTracker.java">DependencyTracker</a> can be used to track available dependencies using a
 JSON file that can be then used to provide version numbers to an enum. This
 can be useful if version numbers are maintained outside a code generator or
@@ -674,10 +714,10 @@ need to be translated from other formats or lock files. For example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="converting-shapes-to-symbols-with-symbolproviders">
-<h2>Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#converting-shapes-to-symbols-with-symbolproviders" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="converting-shapes-to-symbols-with-symbolproviders">
+<h2>Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#converting-shapes-to-symbols-with-symbolproviders" title="Link to this heading">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is used to convert Smithy shapes to Symbols. A
 <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is the brains of a Smithy code generator; it tells
 the code generator the types used to represent shapes in the model, the
@@ -686,12 +726,12 @@ define types, and automatically ensures reserved words in the target
 language are accounted for during codegen.</p>
 <p>A selection of existing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code> can be found at:</p>
 <ol class="arabic simple">
-<li>TypeScript:
-<a class="reference external" href="https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java">https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java</a></li>
-<li>Python:
-<a class="reference external" href="https://github.com/smithy-lang/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java">https://github.com/smithy-lang/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java</a></li>
-<li>Go:
-<a class="reference external" href="https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java">https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java</a></li>
+<li><p>TypeScript:
+<a class="reference external" href="https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java">https://github.com/smithy-lang/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java</a></p></li>
+<li><p>Python:
+<a class="reference external" href="https://github.com/smithy-lang/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java">https://github.com/smithy-lang/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java</a></p></li>
+<li><p>Go:
+<a class="reference external" href="https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java">https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java</a></p></li>
 </ol>
 <p>The simplest way to implement a <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is to also implement
 <code class="docutils literal notranslate"><span class="pre">ShapeVisitor</span></code>. The basic setup will look something like this:</p>
@@ -765,8 +805,8 @@ language are accounted for during codegen.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="section" id="automatically-handling-reserved-words">
-<h3>Automatically handling reserved words<a class="headerlink" href="#automatically-handling-reserved-words" title="Permalink to this heading">#</a></h3>
+<section id="automatically-handling-reserved-words">
+<h3>Automatically handling reserved words<a class="headerlink" href="#automatically-handling-reserved-words" title="Link to this heading">¶</a></h3>
 <p>Smithy code generators are expected to generate valid code for the
 <a class="reference internal" href="../glossary.html#term-Target-environment"><span class="xref std std-term">target environment</span></a>. Service teams defining Smithy models should not
 need to know the intricacies of how Smithy models are converted to every
@@ -847,9 +887,9 @@ reserved words file case insensitively using
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="composing-symbolproviders">
-<h3>Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#composing-symbolproviders" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="composing-symbolproviders">
+<h3>Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#composing-symbolproviders" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> has a very simple interface, making it easy to
 compose functionality using decorators. Decorators can be used to do
 things like add caching or add more contextual data to Symbols.</p>
@@ -873,17 +913,17 @@ to every Symbol:</p>
 <span class="kd">var</span><span class="w"> </span><span class="n">wrapped</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyCodegenPlugin</span><span class="p">.</span><span class="na">wrapSymbolProvider</span><span class="p">(</span><span class="n">mySymbolProvider</span><span class="p">);</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="integrating-symbols-into-your-symbolwriter">
-<h2>Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code><a class="headerlink" href="#integrating-symbols-into-your-symbolwriter" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+<section id="integrating-symbols-into-your-symbolwriter">
+<h2>Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code><a class="headerlink" href="#integrating-symbols-into-your-symbolwriter" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> provides some building blocks to help integrate Symbols
 into a particular programming language, but the actual gluing together
 of abstractions, generating import statements, generating dependencies,
 accounting for aliasing, etc. is an exercise left to each language
 implementation of Smithy.</p>
-<div class="section" id="create-an-importcontainer-for-your-language">
-<h3>Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language<a class="headerlink" href="#create-an-importcontainer-for-your-language" title="Permalink to this heading">#</a></h3>
+<section id="create-an-importcontainer-for-your-language">
+<h3>Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language<a class="headerlink" href="#create-an-importcontainer-for-your-language" title="Link to this heading">¶</a></h3>
 <p>An <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ImportContainer.java">ImportContainer</a> is used to track the imports associated with a
 specific file being generated. Each time a <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> is written to a
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>, and each call to methods like <code class="docutils literal notranslate"><span class="pre">SymbolWriter#addImport</span></code>,
@@ -947,9 +987,9 @@ is added to a map of namespaces to a map of alias → target name.</p>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> implements <code class="docutils literal notranslate"><span class="pre">toString</span></code> so that <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> can
 write out imports before writing out the rest of the code.</p>
-</div>
-<div class="section" id="create-a-symbolwriter-subclass">
-<h3>Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass<a class="headerlink" href="#create-a-symbolwriter-subclass" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="create-a-symbolwriter-subclass">
+<h3>Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass<a class="headerlink" href="#create-a-symbolwriter-subclass" title="Link to this heading">¶</a></h3>
 <p>Each language should create a subclass of <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a> that
 automatically manages imports, symbols, and writes documentation
 strings.</p>
@@ -980,9 +1020,9 @@ created.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="use-writerdelegator-to-create-writers">
-<h3>Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers<a class="headerlink" href="#use-writerdelegator-to-create-writers" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="use-writerdelegator-to-create-writers">
+<h3>Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers<a class="headerlink" href="#use-writerdelegator-to-create-writers" title="Link to this heading">¶</a></h3>
 <p>In order to track the dependencies used while generating code, and to
 add code interceptors to each created <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>, code generators
 should use a <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/WriterDelegator.java">WriterDelegator</a> to create <code class="docutils literal notranslate"><span class="pre">SymbolWriters</span></code>.</p>
@@ -1028,12 +1068,12 @@ can be retrieved from the delegator using <code class="docutils literal notransl
 </div>
 <p>These dependencies can then be used to generate things like dependency
 manifests for the created code.</p>
-</div>
-</div>
-<div class="section" id="faq">
-<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading">#</a></h2>
-<div class="section" id="how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies">
-<h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Link to this heading">¶</a></h2>
+<section id="how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies">
+<h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Link to this heading">¶</a></h3>
 <p>Use typed property bags to store additional information. For example:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Symbol</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">)</span>
@@ -1051,9 +1091,9 @@ or <code class="docutils literal notranslate"><span class="pre">SymbolDependency
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="does-symbolwriter-require-one-namespace-per-file">
-<h3>Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?<a class="headerlink" href="#does-symbolwriter-require-one-namespace-per-file" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="does-symbolwriter-require-one-namespace-per-file">
+<h3>Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?<a class="headerlink" href="#does-symbolwriter-require-one-namespace-per-file" title="Link to this heading">¶</a></h3>
 <p>No, but that's the easiest way to use <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>. Your language's
 subclass can be setup in a way that it uses multiple <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
 instances per/namespace in a single file. For example, an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
@@ -1062,9 +1102,9 @@ invoked, allowing the <code class="docutils literal notranslate"><span class="pr
 relativization. Then the <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> would need special methods
 used to convert each nested namespace's imports to a string. It's an
 abstract exercise left up to the implementation.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
         </article>
       </div>
@@ -1078,10 +1118,10 @@ abstract exercise left up to the implementation.</p>
                 </div>
                 <div class="title">Using the Semantic Model</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="generating-code.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -1122,7 +1162,7 @@ abstract exercise left up to the implementation.</p>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -1167,15 +1207,12 @@ abstract exercise left up to the implementation.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/tabs.js"></script>
+</div><script src="../../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>
