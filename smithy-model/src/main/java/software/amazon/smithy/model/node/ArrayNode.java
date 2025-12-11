@@ -121,11 +121,12 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
      * Gets a node from the given index.
      *
      * @param index Index of the value to get.
-     * @return Returns the node at the given index.
-     * @throws IndexOutOfBoundsException – if the index is out of range (index < 0 || index >= size())
+     * @return Returns the node at the given index, or null if the index is out of bounds.
      */
     public Node elementAt(int index) {
-        return elements.get(index);
+        return elements.size() > index && index > -1
+                ? elements.get(index)
+                : null;
     }
 
     /**
