@@ -97,6 +97,11 @@ public final class Split extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 60;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.stringType(), Type.stringType(), Type.integerType());
         }

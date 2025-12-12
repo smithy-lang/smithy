@@ -40,9 +40,11 @@ final class BddBuilder {
 
     // Track the boundary between conditions and results
     private int conditionCount = -1;
+    private int resultCount = 0;
+    private int root = 0;
 
     /**
-     * Creates a new BDD engine.
+     * Creates a new BDD builder.
      */
     public BddBuilder() {
         this.nodeCount = 1;
@@ -53,6 +55,19 @@ final class BddBuilder {
 
     int getNodeCount() {
         return nodeCount;
+    }
+
+    int getRoot() {
+        return root;
+    }
+
+    void setRoot(int root) {
+        validateRootRef(root, nodeCount);
+        this.root = root;
+    }
+
+    void setResultCount(int resultCount) {
+        this.resultCount = resultCount;
     }
 
     /**
@@ -271,8 +286,7 @@ final class BddBuilder {
         if (nodeVar == varIndex) {
             // This node tests our variable, so take the appropriate branch
             int child = value ? nodes[base + 1] : nodes[base + 2];
-            // Only negate if child is not a result
-            return (complemented && !isResult(child)) ? negate(child) : child;
+            return applyComplement(complemented, child);
         } else if (nodeVar > varIndex) {
             // Variable doesn't appear in this BDD (due to ordering)
             return bdd;
@@ -281,8 +295,37 @@ final class BddBuilder {
             int high = cofactor(nodes[base + 1], varIndex, value);
             int low = cofactor(nodes[base + 2], varIndex, value);
             int result = makeNode(nodeVar, high, low);
-            return (complemented && !isResult(result)) ? negate(result) : result;
+            return applyComplement(complemented, result);
         }
+    }
+
+    /**
+     * Applies complement to a ref, enforcing the invariant that results never appear
+     * under complemented edges.
+     */
+    private int applyComplement(boolean complemented, int ref) {
+        if (!complemented) {
+            return ref;
+        } else if (isResult(ref)) {
+            throw new IllegalStateException("Invariant violated: complemented edge to result terminal: " + ref);
+        } else {
+            return negate(ref);
+        }
+    }
+
+    /**
+     * Returns the absolute (non-complemented) form of a ref.
+     *
+     * <p>This strips the complement bit to get the canonical positive ref,
+     * used for memoization keys and traversal. Safe because complemented refs
+     * are never results (by invariant).
+     */
+    private int absRef(int ref) {
+        if (ref <= -Bdd.RESULT_OFFSET) {
+            throw new IllegalStateException("Complemented result terminal: " + ref);
+        }
+        // Use long to handle Integer.MIN_VALUE correctly
+        return (int) (ref < 0 ? -(long) ref : (long) ref);
     }
 
     /**
@@ -389,7 +432,7 @@ final class BddBuilder {
 
         // Peel off complement on the root
         boolean rootComp = rootRef < 0;
-        int absRoot = rootComp ? negate(rootRef) : rootRef;
+        int absRoot = absRef(rootRef);
 
         // Allocate new nodes array
         int[] newNodes = new int[nodeCount * 3];
@@ -415,7 +458,7 @@ final class BddBuilder {
         this.nodeCount = newCount[0];
         clearCaches();
 
-        return rootComp ? negate(newRoot) : newRoot;
+        return applyComplement(rootComp, newRoot);
     }
 
     private int reduceRec(
@@ -430,13 +473,13 @@ final class BddBuilder {
 
         // Peel complement
         boolean comp = ref < 0;
-        int abs = comp ? negate(ref) : ref;
+        int abs = absRef(ref);
         int idx = toNodeIndex(abs);
 
         // If already mapped, return it
         int mapped = oldToNew[idx];
         if (mapped != -1) {
-            return comp ? negate(mapped) : mapped;
+            return applyComplement(comp, mapped);
         }
 
         // Recurse on children
@@ -477,7 +520,7 @@ final class BddBuilder {
         }
 
         oldToNew[idx] = resultAbs;
-        return comp ? negate(resultAbs) : resultAbs;
+        return applyComplement(comp, resultAbs);
     }
 
     /**
@@ -507,17 +550,39 @@ final class BddBuilder {
     }
 
     /**
+     * Validates that a root reference is valid.
+     */
+    private void validateRootRef(int ref, int maxNodeCount) {
+        if (ref == 0) {
+            throw new IllegalArgumentException("Invalid root: 0");
+        }
+        if (ref <= -Bdd.RESULT_OFFSET) {
+            throw new IllegalArgumentException("Invalid root: complemented result");
+        }
+        // Use long to handle Integer.MIN_VALUE correctly
+        long abs = ref < 0 ? -(long) ref : (long) ref;
+        if (abs == 1 || ref >= Bdd.RESULT_OFFSET) {
+            return; // terminal or result is valid
+        }
+        if (abs < 2 || abs > maxNodeCount) {
+            throw new IllegalArgumentException("Invalid root: node ref out of range: " + ref);
+        }
+    }
+
+    /**
      * Clear out the state of the builder, but reuse the existing arrays, maps, etc.
      *
      * @return this builder
      */
-    public BddBuilder reset() {
+    BddBuilder reset() {
         clearCaches();
         uniqueTable.clear();
         Arrays.fill(nodes, 0, nodeCount * 3, 0);
         nodeCount = 1;
         initializeTerminalNode();
         conditionCount = -1;
+        resultCount = 0;
+        root = 0;
         return this;
     }
 
@@ -527,13 +592,14 @@ final class BddBuilder {
      * @return a new BDD instance
      * @throws IllegalStateException if condition count has not been set
      */
-    Bdd build(int rootRef, int resultCount) {
+    Bdd build() {
         if (conditionCount == -1) {
             throw new IllegalStateException("Condition count must be set before building BDD");
         }
+        validateRootRef(root, nodeCount);
 
         int[] n = Arrays.copyOf(nodes, nodeCount * 3);
-        return new Bdd(rootRef, conditionCount, resultCount, nodeCount, n);
+        return new Bdd(root, conditionCount, resultCount, nodeCount, n);
     }
 
     private void validateBooleanOperands(int f, int g, String operation) {
