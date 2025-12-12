@@ -80,6 +80,11 @@ public final class IsSet extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 8;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.singletonList(Type.optionalType(Type.anyType()));
         }

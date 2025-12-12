@@ -154,6 +154,11 @@ public final class AwsPartition extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 120;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.singletonList(Type.stringType());
         }

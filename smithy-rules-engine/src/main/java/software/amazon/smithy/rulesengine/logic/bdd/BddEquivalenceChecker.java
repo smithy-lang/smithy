@@ -43,7 +43,12 @@ public final class BddEquivalenceChecker {
     private final List<Condition> conditions;
     private final List<Rule> results;
     private final List<Parameter> parameters;
+
+    // Maps from the passed-in condition list to indices
     private final Map<Condition, Integer> conditionToIndex = new HashMap<>();
+
+    // Maps CFG conditions to their index in the passed-in condition list
+    private final Map<Condition, Integer> cfgConditionToPassedIndex = new HashMap<>();
 
     private int maxSamples = DEFAULT_MAX_SAMPLES;
     private Duration timeout = DEFAULT_TIMEOUT;
@@ -62,8 +67,18 @@ public final class BddEquivalenceChecker {
         this.results = results;
         this.parameters = new ArrayList<>(cfg.getParameters().toList());
 
+        // Build index for passed-in conditions
         for (int i = 0; i < conditions.size(); i++) {
             conditionToIndex.put(conditions.get(i), i);
+        }
+
+        Condition[] cfgConditions = cfg.getConditions();
+        for (Condition cfgCond : cfgConditions) {
+            Integer idx = conditionToIndex.get(cfgCond);
+            if (idx == null) {
+                throw new IllegalStateException("CFG condition not found in passed conditions: " + cfgCond);
+            }
+            cfgConditionToPassedIndex.put(cfgCond, idx);
         }
     }
 
@@ -267,13 +282,7 @@ public final class BddEquivalenceChecker {
     }
 
     private Rule evaluateCfgWithMask(ConditionEvaluator maskEvaluator) {
-        Map<Condition, Integer> cfgConditionToIndex = new HashMap<>();
-        Condition[] cfgConditions = cfg.getConditions();
-        for (int i = 0; i < cfgConditions.length; i++) {
-            cfgConditionToIndex.put(cfgConditions[i], i);
-        }
-
-        CfgNode result = evaluateCfgNode(cfg.getRoot(), cfgConditionToIndex, maskEvaluator);
+        CfgNode result = evaluateCfgNode(cfg.getRoot(), maskEvaluator);
         if (result instanceof ResultNode) {
             return ((ResultNode) result).getResult();
         }
@@ -281,12 +290,7 @@ public final class BddEquivalenceChecker {
         return null;
     }
 
-    // Recursively evaluates a CFG node.
-    private CfgNode evaluateCfgNode(
-            CfgNode node,
-            Map<Condition, Integer> conditionToIndex,
-            ConditionEvaluator maskEvaluator
-    ) {
+    private CfgNode evaluateCfgNode(CfgNode node, ConditionEvaluator maskEvaluator) {
         if (node instanceof ResultNode) {
             return node;
         }
@@ -295,11 +299,7 @@ public final class BddEquivalenceChecker {
             ConditionNode condNode = (ConditionNode) node;
             Condition condition = condNode.getCondition().getCondition();
 
-            Integer index = conditionToIndex.get(condition);
-            if (index == null) {
-                throw new IllegalStateException("Condition not found in CFG: " + condition);
-            }
-
+            int index = cfgConditionToPassedIndex.get(condition);
             boolean conditionResult = maskEvaluator.test(index);
 
             // Handle negation if the condition reference is negated
@@ -309,9 +309,9 @@ public final class BddEquivalenceChecker {
 
             // Follow the appropriate branch
             if (conditionResult) {
-                return evaluateCfgNode(condNode.getTrueBranch(), conditionToIndex, maskEvaluator);
+                return evaluateCfgNode(condNode.getTrueBranch(), maskEvaluator);
             } else {
-                return evaluateCfgNode(condNode.getFalseBranch(), conditionToIndex, maskEvaluator);
+                return evaluateCfgNode(condNode.getFalseBranch(), maskEvaluator);
             }
         }
 

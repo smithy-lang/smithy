@@ -5,6 +5,7 @@
 package software.amazon.smithy.rulesengine.logic.bdd;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -209,5 +210,33 @@ class BddEquivalenceCheckerTest {
         checker.setMaxDuration(Duration.ofSeconds(5));
 
         assertDoesNotThrow(checker::verify);
+    }
+
+    @Test
+    void testCfgConditionMappingError() {
+        Parameters region = Parameters.builder()
+                .addParameter(Parameter.builder().name("Region").type(ParameterType.STRING).build())
+                .build();
+        Rule endpointRule = EndpointRule.builder()
+                .conditions(Condition.builder().fn(TestHelpers.isSet("Region")).build())
+                .endpoint(TestHelpers.endpoint("https://example.com"));
+        Rule errorRule = ErrorRule.builder().error(Literal.of("No region provided"));
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(region)
+                .rules(ListUtils.of(endpointRule, errorRule))
+                .build();
+
+        Cfg cfg = Cfg.from(ruleSet);
+        BddCompiler compiler = new BddCompiler(cfg, new BddBuilder());
+        Bdd bdd = compiler.compile();
+
+        // Create a different condition list that doesn't contain the CFG conditions
+        List<Condition> differentConditions = ListUtils.of(
+                Condition.builder().fn(TestHelpers.isSet("DifferentParam")).build());
+
+        // This should throw IllegalStateException due to missing CFG condition mapping
+        assertThrows(IllegalStateException.class, () -> {
+            BddEquivalenceChecker.of(cfg, bdd, differentConditions, compiler.getIndexedResults());
+        });
     }
 }

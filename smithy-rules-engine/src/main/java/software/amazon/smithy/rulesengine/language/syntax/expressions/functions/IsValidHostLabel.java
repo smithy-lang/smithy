@@ -73,6 +73,11 @@ public final class IsValidHostLabel extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 80;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.stringType(), Type.booleanType());
         }

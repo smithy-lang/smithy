@@ -127,6 +127,11 @@ public final class Coalesce extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 10;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.emptyList();
         }
