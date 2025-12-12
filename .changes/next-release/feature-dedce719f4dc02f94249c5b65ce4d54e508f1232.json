@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a generic evaluator/interpreter for JMESPath expressions.",
+  "pull_requests": [
+    "[#2878](https://github.com/smithy-lang/smithy/pull/2878)"
+  ]
+}

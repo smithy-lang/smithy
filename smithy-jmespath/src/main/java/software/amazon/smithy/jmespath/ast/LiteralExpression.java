@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
@@ -72,6 +73,14 @@ public final class LiteralExpression extends JmespathExpression {
             return (LiteralExpression) value;
         } else {
             return new LiteralExpression(value);
+        }
+    }
+
+    public static Object unwrap(Object value) {
+        if (value instanceof LiteralExpression) {
+            return ((LiteralExpression) value).getValue();
+        } else {
+            return value;
         }
     }
 
@@ -253,7 +262,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (String) value;
         }
 
-        throw new JmespathException("Expected a string literal, but found " + value.getClass());
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a string literal, but found " + value);
     }
 
     /**
@@ -267,7 +277,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (Number) value;
         }
 
-        throw new JmespathException("Expected a number literal, but found " + value.getClass());
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a number literal, but found " + value);
     }
 
     /**
@@ -281,7 +292,8 @@ public final class LiteralExpression extends JmespathExpression {
             return (Boolean) value;
         }
 
-        throw new JmespathException("Expected a boolean literal, but found " + value.getClass());
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                "Expected a boolean literal, but found " + value);
     }
 
     /**
@@ -295,7 +307,8 @@ public final class LiteralExpression extends JmespathExpression {
         try {
             return (List<Object>) value;
         } catch (ClassCastException e) {
-            throw new JmespathException("Expected an array literal, but found " + value.getClass());
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                    "Expected an array literal, but found " + value);
         }
     }
 
@@ -310,7 +323,8 @@ public final class LiteralExpression extends JmespathExpression {
         try {
             return (Map<String, Object>) value;
         } catch (ClassCastException e) {
-            throw new JmespathException("Expected a map literal, but found " + value.getClass());
+            throw new JmespathException(JmespathExceptionType.INVALID_TYPE,
+                    "Expected a map literal, but found " + value);
         }
     }
 
