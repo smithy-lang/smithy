@@ -118,16 +118,6 @@ public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBui
     }
 
     /**
-     * Gets a node from the given index.
-     *
-     * @param index Index of the value to get.
-     * @return Returns the node at the given index, or null if the index is out of bounds.
-     */
-    public Node elementAt(int index) {
-        return elements.get(index);
-    }
-
-    /**
      * Returns true if the array node is empty.
      *
      * @return Returns true if the array node is empty.

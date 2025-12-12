@@ -12,10 +12,6 @@ import software.amazon.smithy.model.SourceLocation;
  * Represents a boolean node.
  */
 public final class BooleanNode extends Node {
-
-    static final BooleanNode NO_LOCATION_TRUE = new BooleanNode(true, SourceLocation.NONE);
-    static final BooleanNode NO_LOCATION_FALSE = new BooleanNode(false, SourceLocation.NONE);
-
     private final boolean value;
 
     public BooleanNode(boolean value, SourceLocation sourceLocation) {
