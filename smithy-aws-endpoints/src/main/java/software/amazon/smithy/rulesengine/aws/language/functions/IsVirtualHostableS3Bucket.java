@@ -77,6 +77,11 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 80;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.stringType(), Type.booleanType());
         }

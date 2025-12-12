@@ -82,6 +82,11 @@ public final class Substring extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 50;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.stringType(), Type.integerType(), Type.integerType(), Type.booleanType());
         }

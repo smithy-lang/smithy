@@ -218,6 +218,11 @@ public final class GetAttr extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 25;
+        }
+
+        @Override
         public List<Type> getArguments() {
             // First argument is array or record, so we need to use any here and typecheck it elsewhere.
             return ListUtils.of(Type.anyType(), Type.stringType());

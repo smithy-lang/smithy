@@ -72,6 +72,11 @@ public final class UriEncode extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 100;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.singletonList(Type.stringType());
         }
