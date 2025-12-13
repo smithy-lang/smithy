@@ -92,6 +92,11 @@ public final class StringEquals extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 30;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.stringType(), Type.stringType());
         }

@@ -83,6 +83,11 @@ public final class BooleanEquals extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 9;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Arrays.asList(Type.booleanType(), Type.booleanType());
         }

@@ -78,7 +78,9 @@ public final class BddCompiler {
         noMatchIndex = getOrCreateResultIndex(NoMatchRule.INSTANCE);
         int rootRef = convertCfgToBdd(cfg.getRoot());
         rootRef = bddBuilder.reduce(rootRef);
-        Bdd bdd = bddBuilder.build(rootRef, indexedResults.size());
+        bddBuilder.setRoot(rootRef);
+        bddBuilder.setResultCount(indexedResults.size());
+        Bdd bdd = bddBuilder.build();
 
         long elapsed = System.currentTimeMillis() - start;
         LOGGER.fine(String.format(

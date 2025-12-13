@@ -207,9 +207,11 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
             int startSize = currentState.currentSize;
 
             for (int i = 0; i < currentState.order.length - 1; i++) {
-                if (context.constraints.canMove(i, i + 1)) {
-                    move(currentState.order, i, i + 1);
-                    BddCompilationResult compilationResult = compileBddWithResults(currentState.orderView);
+                // Adjacent swap requires both elements to be able to occupy each other's positions
+                if (context.constraints.canMove(i, i + 1) && context.constraints.canMove(i + 1, i)) {
+                    BddCompilerSupport.move(currentState.order, i, i + 1);
+                    BddCompilerSupport.BddCompilationResult compilationResult =
+                            BddCompilerSupport.compile(cfg, currentState.orderView, threadBuilder.get());
                     int swappedSize = compilationResult.bdd.getNodeCount() - 1;
                     if (swappedSize < context.bestSize) {
                         context = context.withImprovement(
@@ -218,7 +220,7 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
                                         compilationResult.bdd,
                                         compilationResult.results));
                     } else {
-                        move(currentState.order, i + 1, i); // Swap back
+                        BddCompilerSupport.move(currentState.order, i + 1, i); // Swap back
                     }
                 }
             }
@@ -265,7 +267,7 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
     private OptimizationContext tryImprovePosition(OptimizationContext context, int varIdx, List<Integer> positions) {
         PositionResult best = findBestPosition(positions, context, varIdx);
         if (best != null && best.count <= context.bestSize) { // Accept ties
-            move(context.order, varIdx, best.position);
+            BddCompilerSupport.move(context.order, varIdx, best.position);
             return context.withImprovement(best);
         }
 
@@ -276,8 +278,9 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
         return (positions.size() > PARALLEL_THRESHOLD ? positions.parallelStream() : positions.stream())
                 .map(pos -> {
                     Condition[] order = ctx.order.clone();
-                    move(order, varIdx, pos);
-                    BddCompilationResult cr = compileBddWithResults(Arrays.asList(order));
+                    BddCompilerSupport.move(order, varIdx, pos);
+                    BddCompilerSupport.BddCompilationResult cr =
+                            BddCompilerSupport.compile(cfg, Arrays.asList(order), threadBuilder.get());
                     return new PositionResult(pos, cr.bdd.getNodeCount() - 1, cr.bdd, cr.results);
                 })
                 .filter(pr -> pr.count <= ctx.bestSize)
@@ -351,33 +354,12 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
         return positions;
     }
 
-    private static void move(Condition[] arr, int from, int to) {
-        if (from == to) {
-            return;
-        }
-
-        Condition moving = arr[from];
-        if (from < to) {
-            System.arraycopy(arr, from + 1, arr, from, to - from);
-        } else {
-            System.arraycopy(arr, to, arr, to + 1, from - to);
-        }
-        arr[to] = moving;
-    }
-
     private static Map<Condition, Integer> rebuildIndex(List<Condition> orderView) {
         Map<Condition, Integer> index = new IdentityHashMap<>();
         for (int i = 0; i < orderView.size(); i++) {
             index.put(orderView.get(i), i);
         }
         return index;
-    }
-
-    private BddCompilationResult compileBddWithResults(List<Condition> ordering) {
-        BddBuilder builder = threadBuilder.get().reset();
-        BddCompiler compiler = new BddCompiler(cfg, OrderingStrategy.fixed(ordering), builder);
-        Bdd bdd = compiler.compile();
-        return new BddCompilationResult(bdd, compiler.getIndexedResults());
     }
 
     // Helper class to track optimization context within a pass
@@ -443,16 +425,6 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
 
         OptimizationResult toResult() {
             return new OptimizationResult(bestBdd, bestSize, improvements > 0, bestResults);
-        }
-    }
-
-    private static final class BddCompilationResult {
-        final Bdd bdd;
-        final List<Rule> results;
-
-        BddCompilationResult(Bdd bdd, List<Rule> results) {
-            this.bdd = bdd;
-            this.results = results;
         }
     }
 

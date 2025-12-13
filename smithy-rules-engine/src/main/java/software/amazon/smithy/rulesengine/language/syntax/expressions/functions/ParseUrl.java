@@ -81,6 +81,11 @@ public final class ParseUrl extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 200;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.singletonList(Type.stringType());
         }
