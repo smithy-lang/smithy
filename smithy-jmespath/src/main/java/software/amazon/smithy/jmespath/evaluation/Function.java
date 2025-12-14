@@ -7,10 +7,13 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.List;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.type.Type;
 
 interface Function {
 
     String name();
+
+    Type typeCheck(List<Type> arguments);
 
     <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments);
 
