@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.CaseUtils;
@@ -181,6 +182,9 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.DataShapeVisitor<Sym
 
     @Override
     public Symbol memberShape(MemberShape shape) {
+        if (shape.hasTrait(IdRefTrait.ID)) {
+            return TraitCodegenUtils.SHAPE_ID_SYMBOL;
+        }
         return toSymbol(model.expectShape(shape.getTarget()));
     }
 

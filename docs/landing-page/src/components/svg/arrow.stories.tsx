@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Arrow } from "./arrow";
 import { Card, CardHeader, CardTitle } from "../ui/card";

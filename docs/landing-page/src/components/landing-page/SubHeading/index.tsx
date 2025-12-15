@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Web } from "./web";
 
 interface SubHeadingProps {
-  modelRef: RefObject<HTMLDivElement>;
+  modelRef: RefObject<HTMLDivElement | null>;
 }
 
 const sectionClassOverrides =
@@ -28,7 +28,7 @@ export const SubHeading = (props: SubHeadingProps) => {
             className={sectionClassOverrides}
           />
 
-          <SmithyGlow className="bg-[position:center_center] w-fit lg:w-[600px] bg-[size:115%_103%] lg:bg-[size:110%] lg:relative lg:-top-12">
+          <SmithyGlow className="bg-position-[center_center] w-fit lg:w-[600px] bg-size-[115%_103%] lg:bg-size-[110%] lg:relative lg:-top-12">
             <div className="mx-4 my-12 lg:m-12">
               <Card
                 variant={"gradient-border"}

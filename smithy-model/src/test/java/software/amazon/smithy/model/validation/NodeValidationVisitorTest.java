@@ -691,4 +691,56 @@ public class NodeValidationVisitorTest {
 
         assertThat(events, empty());
     }
+
+    @ParameterizedTest
+    @MethodSource("requiredBase64BlobValueData")
+    public void withRequiredBase64BlobValuesTest(String target, String value, String[] errors) {
+        ShapeId targetId = ShapeId.from(target);
+        Node nodeValue = Node.parse(value);
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(nodeValue)
+                .model(MODEL)
+                .addFeature(NodeValidationVisitor.Feature.REQUIRE_BASE_64_BLOB_VALUES)
+                .build();
+        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(visitor);
+
+        if (errors != null) {
+            List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
+            assertThat(messages, containsInAnyOrder(errors));
+        } else if (!events.isEmpty()) {
+            Assertions.fail("Did not expect any problems with the value, but found: "
+                    + events.stream().map(Object::toString).collect(Collectors.joining("\n")));
+        }
+    }
+
+    public static Collection<Object[]> requiredBase64BlobValueData() {
+        return Arrays.asList(new Object[][] {
+
+                // Blobs
+                {"ns.foo#Blob1", "\"\"", null},
+                {"ns.foo#Blob1",
+                        "\"{}\"",
+                        new String[] {
+                                "Blob value must be a valid base64 string"
+                        }},
+                {"ns.foo#Blob1", "\"Zm9v\"", null},
+                {"ns.foo#Blob1",
+                        "true",
+                        new String[] {
+                                "Expected string value for blob shape, `ns.foo#Blob1`; found boolean value, `true`"
+                        }},
+                {"ns.foo#Blob2", "\"Zg==\"", null},
+                {"ns.foo#Blob2",
+                        "\"Zm9vbw==\"",
+                        new String[] {
+                                "Value provided for `ns.foo#Blob2` must have no more than 3 bytes, but the provided value has 4 bytes"}},
+                {"ns.foo#Blob2",
+                        "\"\"",
+                        new String[] {
+                                "Value provided for `ns.foo#Blob2` must have at least 1 bytes, but the provided value only has 0 bytes"}},
+
+                // base64 encoded value without padding
+                {"ns.foo#Blob1", "\"Zg\"", null},
+        });
+    }
 }

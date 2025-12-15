@@ -74,17 +74,18 @@ final class ToNodeMapperVisitor extends TraitVisitor<Void> {
                 ArrayNode.class,
                 "builder" + nestedLevel);
 
-        Shape memberTarget = model.expectShape(shape.getMember().getTarget());
+        MemberShape member = shape.getMember();
+        Shape memberTarget = model.expectShape(member.getTarget());
         int nextLevel = nestedLevel + 1;
         writer.write("for ($T $L : $L) {",
-                symbolProvider.toSymbol(memberTarget),
+                symbolProvider.toSymbol(member),
                 "element" + nextLevel,
                 varName);
         writer.indent();
 
         if (memberTarget.isListShape() || memberTarget.isMapShape()) {
             writer.write("$C",
-                    (Runnable) () -> shape.getMember()
+                    (Runnable) () -> member
                             .accept(new ToNodeMapperVisitor(writer,
                                     model,
                                     "element" + nextLevel,
@@ -96,7 +97,7 @@ final class ToNodeMapperVisitor extends TraitVisitor<Void> {
         } else {
             writer.write("$L.withValue($C);",
                     "builder" + nestedLevel,
-                    (Runnable) () -> shape.getMember()
+                    (Runnable) () -> member
                             .accept(new ToNodeMapperVisitor(writer,
                                     model,
                                     "element" + nextLevel,

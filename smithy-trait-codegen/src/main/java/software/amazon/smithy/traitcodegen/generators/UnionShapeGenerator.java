@@ -114,7 +114,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
             boolean isTargetUnitType = model.expectShape(memberShape.getTarget()).hasTrait(UnitTypeTrait.ID);
             writer.putContext("isTargetUnitType", isTargetUnitType);
             writer.putContext("isTrait", isTrait);
-            writer.openBlock("private static final class $U extends $T {",
+            writer.openBlock("public static final class $U extends $T {",
                     "}",
                     variantClassName,
                     unionSymbol,

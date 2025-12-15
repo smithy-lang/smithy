@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added missing suffixes to allow identification of all cases for when the nullability of a member changed\n\n* `RemovedClientOptionalTrait` for when the `@clientOptional` trait is removed.\n* `AddedNullDefault` for when a `@default(null)` is changed to a default with non-null value.\n* `RemovedNullDefault` for when a `@default(<non-null-value>)` is changed to a default with null value.",
-  "pull_requests": [
-      "[#2805](https://github.com/smithy-lang/smithy/pull/2805)"
-  ]
-}

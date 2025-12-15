@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Expanded `title` trait to apply to members.",
-  "pull_requests": [
-    "[#2791](https://github.com/smithy-lang/smithy/pull/2791)"
-  ]
-}

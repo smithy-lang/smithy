@@ -20,6 +20,17 @@ a change suggestion that adds it.
 
 To get details about optional arguments to the command, run `new-change -h`.
 
+#### Types of changes
+
+The following are the types defined for pull requests:
+
+* **feature** - A larger feature or change in behavior, usually resulting in a
+  minor version bump.
+* **bugfix** - Fixing a bug in an existing code path.
+* **documentation** - A documentation-only change.
+* **break** - A breaking change, be it a break-fix or a breaking feature change.
+* **other** - Any change that does not fit into another category.
+
 ### When Releasing Smithy
 
 Before performing a release, ensure that every pull request since the last
@@ -150,7 +161,7 @@ These actions will be performed by the `amend` script.
 #### Releases
 
 A manually-triggered GitHub workflow will bump the Smithy version, gather the
-pending changes into a release defintiion, and render the new changelog. It will
+pending changes into a release definition, and render the new changelog. It will
 then create a pull request with these changes.
 
 The workflow will have an input argument to select either a major or minor version

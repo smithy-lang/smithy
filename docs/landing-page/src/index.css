@@ -1,6 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @layer base {
   html {
@@ -88,4 +106,39 @@
 }
 .smithy-highlight-purple {
   @apply text-smithy-purple saturate-200;
+}
+
+/* Custom gradient background for SmithyPopGradient component */
+.bg-smithy-pop-gradient {
+  background-image:
+    url("/sparks/sparks.svg"),
+    linear-gradient(
+      115deg,
+      hsl(var(--smithy-plum)) 20%,
+      hsl(var(--smithy-purple)) 30%,
+      hsl(var(--smithy-rose))
+    );
+  background-position:
+    100% 100%,
+    center;
+  background-size:
+    150% 100%,
+    100%;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .bg-smithy-pop-gradient {
+    background-size:
+      85% 100%,
+      100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bg-smithy-pop-gradient {
+    background-size:
+      65% 100%,
+      100%;
+  }
 }

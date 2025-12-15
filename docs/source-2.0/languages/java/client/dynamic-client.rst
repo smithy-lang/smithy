@@ -19,14 +19,14 @@ Add the dynamic-client module as a dependency of your project:
    :caption: build.gradle.kts
 
     dependencies {
-        implementation("software.amazon.smithy.java:dynamicclient:__smithy_java_version__")
+        implementation("software.amazon.smithy.java:dynamic-client:__smithy_java_version__")
     }
 
 Then, load a Smithy model:
 
 .. code-block:: java
 
-    import software.amazon.smithy.java.dynamicclient
+    import software.amazon.smithy.java.dynamicclient.DynamicClient;
     import software.amazon.smithy.model.Model;
     ...
 
@@ -57,12 +57,15 @@ Now, create the ``DynamicClient`` instance for this model and service:
     and transport implementations on the classpath that match the protocol traits attached to the service.
 
 To call the service, create an input using a ``Document`` that mirrors what's defined in the Smithy model.
-The ``Document.createFromObject`` method can create a ``Document`` from a map:
+The ``Document.ofObject`` method can create a ``Document`` from a map:
 
 .. code-block:: java
 
-    var input = Document.createFromObject(Map.of("coffeeType", "COLD_BREW"));
-    var result = client.call("CreateOrder", input).get();
+    import software.amazon.smithy.java.core.serde.document.Document;
+    ...
+
+    var input = Document.ofObject(Map.of("coffeeType", "COLD_BREW"));
+    var result = client.call("CreateOrder", input);
     System.out.println(result);
 
 Dynamic clients, like generated clients, support the runtime configuration of protocols,

@@ -127,7 +127,7 @@ def amend(
                     repository=repository,
                     pr_number=pr_number,
                     comment=comment,
-                    file=change_file,
+                    file=change_file.relative_to(repository_dir),
                     start_line=1,
                     end_line=len(change_file.read_text().splitlines()),
                 )
@@ -142,7 +142,7 @@ def _get_new_changes(repository_dir: Path, base: str | None) -> dict[Path, Chang
     with chdir(repository_dir):
         print(f"Running a diff against base branch: {base}")
         result = subprocess.run(
-            f"git diff origin/{base} --name-only",
+            f"git diff origin/{base} --name-only --diff-filter=A",
             check=True,
             shell=True,
             capture_output=True,

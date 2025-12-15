@@ -39,7 +39,7 @@ export const Diagram = () => {
         </CardHeader>
       </Card>
 
-      <SmithyGlow className="mt-20 p-24 bg-[position:center_center] bg-[size:91%_85%]">
+      <SmithyGlow className="mt-20 p-24 bg-position-[center_center] bg-size-[91%_85%]">
         <Card
           variant={"gradient-border"}
           className="bg-smithy-black text-center"

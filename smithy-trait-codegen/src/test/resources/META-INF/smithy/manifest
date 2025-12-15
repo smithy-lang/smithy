@@ -11,10 +11,14 @@ enums/string-enum-compatibility.smithy
 enums/enum-list-member-trait.smithy
 enums/with-trait-suffix.smithy
 idref/idref-list.smithy
+idref/idref-list-member.smithy
 idref/idref-map.smithy
+idref/idref-map-member.smithy
 idref/idref-string.smithy
 idref/idref-struct-with-nested-refs.smithy
+idref/idref-struct-with-nested-member-refs.smithy
 idref/idref-struct.smithy
+idref/idref-struct-member.smithy
 ignored.smithy
 lists/number-list-trait.smithy
 lists/string-list-trait.smithy

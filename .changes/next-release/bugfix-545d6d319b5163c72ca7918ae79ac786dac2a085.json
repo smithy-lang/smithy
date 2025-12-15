@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Change generated union variant classes to public in trait codegen",
+  "pull_requests": [
+    "[#2887](https://github.com/smithy-lang/smithy/pull/2887)"
+  ]
+}

@@ -38,8 +38,8 @@ public final class RemovedServiceError extends AbstractDiffEvaluator {
                                 "The `%s` error was removed from the `%s` service. This means that it "
                                         + "is no longer considered an error common to all operations within the "
                                         + "service.",
-                                change.getShapeId(),
-                                id)));
+                                id,
+                                change.getShapeId())));
             }
         }
 

@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added support for (de)serializing byte arrays to/from base64-encoded string nodes to `NodeMapper`.",
-  "pull_requests": [
-    "[#2803](https://github.com/smithy-lang/smithy/pull/2803)"
-  ]
-}

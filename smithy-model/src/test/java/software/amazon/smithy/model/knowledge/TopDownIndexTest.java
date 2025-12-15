@@ -80,7 +80,7 @@ public class TopDownIndexTest {
 
         TopDownIndex index = TopDownIndex.of(model);
         List<ShapeId> serviceOperations = index
-                .getContainedOperations(ShapeId.from("com.example#Service"))
+                .getContainedOperations(ShapeId.from("com.example#Service"), false)
                 .stream()
                 .map(Shape::toShapeId)
                 .collect(Collectors.toList());
@@ -94,7 +94,7 @@ public class TopDownIndexTest {
                         ShapeId.from("com.example#OperationG")));
 
         List<ShapeId> resourceOperations = index
-                .getContainedOperations(ShapeId.from("com.example#ResourceA"))
+                .getContainedOperations(ShapeId.from("com.example#ResourceA"), false)
                 .stream()
                 .map(Shape::toShapeId)
                 .collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class TopDownIndexTest {
                         ShapeId.from("com.example#OperationG")));
 
         List<ShapeId> serviceResources = index
-                .getContainedResources(ShapeId.from("com.example#Service"))
+                .getContainedResources(ShapeId.from("com.example#Service"), false)
                 .stream()
                 .map(Shape::toShapeId)
                 .collect(Collectors.toList());
@@ -116,7 +116,7 @@ public class TopDownIndexTest {
                         ShapeId.from("com.example#ResourceB")));
 
         List<ShapeId> resourceResources = index
-                .getContainedResources(ShapeId.from("com.example#ResourceA"))
+                .getContainedResources(ShapeId.from("com.example#ResourceA"), false)
                 .stream()
                 .map(Shape::toShapeId)
                 .collect(Collectors.toList());
@@ -124,5 +124,60 @@ public class TopDownIndexTest {
                 contains(
                         ShapeId.from("com.example#ResourceC"),
                         ShapeId.from("com.example#ResourceB")));
+    }
+
+    @Test
+    public void sortsResultsByDefault() {
+        Model model = Model.assembler()
+                .addImport(TopDownIndexTest.class.getResource("top-down-order.smithy"))
+                .assemble()
+                .unwrap();
+
+        TopDownIndex index = TopDownIndex.of(model);
+        List<ShapeId> serviceOperations = index
+                .getContainedOperations(ShapeId.from("com.example#Service"))
+                .stream()
+                .map(Shape::toShapeId)
+                .collect(Collectors.toList());
+        assertThat(serviceOperations,
+                contains(
+                        ShapeId.from("com.example#OperationA"),
+                        ShapeId.from("com.example#OperationB"),
+                        ShapeId.from("com.example#OperationC"),
+                        ShapeId.from("com.example#OperationD"),
+                        ShapeId.from("com.example#OperationG"),
+                        ShapeId.from("com.example#OperationO")));
+
+        List<ShapeId> resourceOperations = index
+                .getContainedOperations(ShapeId.from("com.example#ResourceA"))
+                .stream()
+                .map(Shape::toShapeId)
+                .collect(Collectors.toList());
+        assertThat(resourceOperations,
+                contains(
+                        ShapeId.from("com.example#OperationD"),
+                        ShapeId.from("com.example#OperationG"),
+                        ShapeId.from("com.example#OperationO")));
+
+        List<ShapeId> serviceResources = index
+                .getContainedResources(ShapeId.from("com.example#Service"))
+                .stream()
+                .map(Shape::toShapeId)
+                .collect(Collectors.toList());
+        assertThat(serviceResources,
+                contains(
+                        ShapeId.from("com.example#ResourceA"),
+                        ShapeId.from("com.example#ResourceB"),
+                        ShapeId.from("com.example#ResourceC")));
+
+        List<ShapeId> resourceResources = index
+                .getContainedResources(ShapeId.from("com.example#ResourceA"))
+                .stream()
+                .map(Shape::toShapeId)
+                .collect(Collectors.toList());
+        assertThat(resourceResources,
+                contains(
+                        ShapeId.from("com.example#ResourceB"),
+                        ShapeId.from("com.example#ResourceC")));
     }
 }

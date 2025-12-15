@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a generic dependency graph to smithy-utils to be used for sorting various dependent objects, such as integrations and plugins.",
-  "pull_requests": [
-    "[#2774](https://github.com/smithy-lang/smithy/pull/2774)"
-  ]
-}

@@ -5,6 +5,7 @@
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.List;
@@ -40,6 +41,10 @@ public class RemovedServiceErrorTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         // Emits one even for both removals.
-        assertThat(TestHelper.findEvents(events, "RemovedServiceError").size(), equalTo(2));
+        List<ValidationEvent> foundEvents = TestHelper.findEvents(events, "RemovedServiceError");
+        assertThat(foundEvents.size(), equalTo(2));
+        for (ValidationEvent foundEvent : foundEvents) {
+            assertThat(foundEvent.getMessage(), containsString("error was removed from the `foo.baz#S` service"));
+        }
     }
 }
