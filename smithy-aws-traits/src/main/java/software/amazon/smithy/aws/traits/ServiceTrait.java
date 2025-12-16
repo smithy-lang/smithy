@@ -197,7 +197,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .arnNamespace(arnNamespace)
                 .cloudTrailEventSource(cloudTrailEventSource)
                 .docId(docId)
-                .endpointPrefix(endpointPrefix);
+                .endpointPrefix(endpointPrefix)
+                .cloudWatchNamespace(cloudWatchNamespace);
     }
 
     @Override

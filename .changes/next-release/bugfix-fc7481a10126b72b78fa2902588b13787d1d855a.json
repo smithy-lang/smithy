@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix toBuilder not supplying cloudWatchNamespace in the aws.api#service trait",
+  "pull_requests": []
+}
