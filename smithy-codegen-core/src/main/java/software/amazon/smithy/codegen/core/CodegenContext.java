@@ -5,6 +5,7 @@
 package software.amazon.smithy.codegen.core;
 
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
 
@@ -36,6 +37,26 @@ public interface CodegenContext<S, W extends SymbolWriter<W, ?>, I extends Smith
      * @return Gets the FileManifest being written to for code generation.
      */
     FileManifest fileManifest();
+
+    /**
+     * Gets the FileManifest used to create files in the projection's shared file
+     * space.
+     *
+     * <p>All files written by a generator should either be written using this
+     * manifest or the generator's isolated manifest ({@link #fileManifest()}).
+     *
+     * <p>Files written to this manifest may be read or modified by other Smithy build
+     * plugins. Generators SHOULD NOT write files to this manifest unless they
+     * specifically intend for them to be consumed by other plugins. Files that are not
+     * intended to be shared should be written to the manifest from
+     * {@link #fileManifest()}.
+     *
+     * @return Gets the optional FileManifest used to create files in the projection's
+     *         shared file space.
+     */
+    default Optional<FileManifest> sharedFileManifest() {
+        return Optional.empty();
+    }
 
     /**
      * Get the WriterDelegator used for generating code.
