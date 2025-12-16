@@ -4,9 +4,13 @@
  */
 package software.amazon.smithy.docgen;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -21,9 +25,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *     when generating links for the
  *     <a href="https://smithy.io/2.0/spec/resource-traits.html#references-trait">references trait</a>
  *     for resources that are not contained within the model.
+ * @param snippetConfigs A list of files containing snippets to include when generating docs.
  */
 @SmithyUnstableApi
-public record DocSettings(ShapeId service, String format, Map<ShapeId, String> references) {
+public record DocSettings(ShapeId service, String format, Map<ShapeId, String> references, List<Path> snippetConfigs) {
 
     /**
      * Settings for documentation generation. These can be set in the
@@ -35,6 +40,10 @@ public record DocSettings(ShapeId service, String format, Map<ShapeId, String> r
     public DocSettings {
         Objects.requireNonNull(service);
         Objects.requireNonNull(format);
+    }
+
+    public DocSettings(ShapeId service, String format, Map<ShapeId, String> references) {
+        this(service, format, references, List.of());
     }
 
     /**
@@ -52,9 +61,13 @@ public record DocSettings(ShapeId service, String format, Map<ShapeId, String> r
                 .collect(Collectors.toMap(
                         e -> ShapeId.from(e.getKey().getValue()),
                         e -> e.getValue().expectStringNode().getValue()));
+        var snippetConfigs = pluginSettings.getArrayMember("snippetConfigs")
+                .orElse(Node.arrayNode())
+                .getElementsAs(e -> Paths.get(e.expectStringNode().getValue()));
         return new DocSettings(
                 pluginSettings.expectStringMember("service").expectShapeId(),
                 pluginSettings.getStringMemberOrDefault("format", "sphinx-markdown"),
-                references);
+                references,
+                snippetConfigs);
     }
 }

@@ -4,10 +4,16 @@
  */
 package software.amazon.smithy.docgen.generators;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.directed.GenerateOperationDirective;
+import software.amazon.smithy.codegen.core.docs.Snippet;
+import software.amazon.smithy.codegen.core.docs.SnippetFile;
 import software.amazon.smithy.docgen.DocFormat;
 import software.amazon.smithy.docgen.DocGenerationContext;
 import software.amazon.smithy.docgen.DocIntegration;
@@ -26,7 +32,6 @@ import software.amazon.smithy.docgen.sections.ShapeSection;
 import software.amazon.smithy.docgen.sections.ShapeSubheadingSection;
 import software.amazon.smithy.docgen.writers.DocWriter;
 import software.amazon.smithy.docgen.writers.DocWriter.ListType;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.ExamplesTrait;
@@ -160,36 +165,80 @@ public final class OperationGenerator
             String operationLinkId
     ) {
         writer.pushState(new ExamplesSection(context, operation, examples));
-        if (examples.isEmpty()) {
+        var snippets = getExampleSnippets(context, operation, examples);
+        if (snippets.isEmpty()) {
             writer.popState();
             return;
         }
 
         writer.openHeading("Examples", operationLinkId + "-examples");
         for (var example : examples) {
+            var exampleSnippets = snippets.get(example.getTitle());
+            if (exampleSnippets == null) {
+                continue;
+            }
+
             writer.pushState(new ExampleSection(context, operation, example));
             var linkIdSuffix = example.getTitle().toLowerCase(Locale.ENGLISH).strip().replaceAll("\\s+", "-");
             writer.openHeading(example.getTitle(), operationLinkId + "-" + linkIdSuffix);
             example.getDocumentation().ifPresent(writer::writeCommonMark);
 
             writer.openTabGroup();
-            // TODO: create example writer interface allow integrations to register them
 
-            // This is just a dummy placehodler tab here to exercise tab creation before
-            // there's an interface for it.
-            writer.openCodeTab("Input", "json");
-            writer.write(Node.prettyPrintJson(example.getInput()));
-            writer.closeCodeTab();
-            writer.openCodeTab("Output", "json");
-            writer.write(Node.prettyPrintJson(example.getOutput().orElse(Node.objectNode())));
-            writer.closeCodeTab();
+            for (Snippet snippet : exampleSnippets) {
+                if (snippet.getFiles().size() == 1) {
+                    var file = snippet.getFiles().get(0);
+                    writer.openCodeTab(snippet.getTitle(), file.getLanguage());
+                    writer.write(file.getContent());
+                    writer.closeCodeTab();
+                } else {
+                    writer.openTab(snippet.getTitle());
+                    writer.openTabGroup();
+                    for (SnippetFile file : snippet.getFiles()) {
+                        writer.openCodeTab(file.getFilename(), file.getLanguage());
+                        writer.write(file.getContent());
+                        writer.closeCodeTab();
+                    }
+                    writer.closeTabGroup();
+                    writer.closeCodeTab();
+                }
+            }
 
             writer.closeTabGroup();
-
             writer.closeHeading();
             writer.popState();
         }
         writer.closeHeading();
         writer.popState();
+    }
+
+    private Map<String, List<Snippet>> getExampleSnippets(
+            DocGenerationContext context,
+            OperationShape operation,
+            List<Example> examples
+    ) {
+        var exampleMap = examples.stream().collect(Collectors.groupingBy(Example::getTitle));
+        var snippets = context.snippetConfig().getShapeSnippets(context.settings().service(), operation.getId());
+        var resolvedSnippets = new LinkedHashMap<String, List<Snippet>>();
+        for (Snippet snippet : snippets) {
+
+            // Ensure that the service has the protocol if one is expected for the snippet.
+            // This could be a bad snippet, or it could be that the protocol was filtered
+            // out.
+            if (snippet.getProtocol().isPresent()) {
+                var service = context.model().expectShape(context.settings().service());
+                if (!service.hasTrait(snippet.getProtocol().get())) {
+                    continue;
+                }
+            }
+
+            // Ensure that the snippet represent an example that's actually in the model.
+            var example = exampleMap.get(snippet.getTargetId());
+            if (example == null) {
+                continue;
+            }
+            resolvedSnippets.computeIfAbsent(snippet.getTargetId(), id -> new ArrayList<>()).add(snippet);
+        }
+        return resolvedSnippets;
     }
 }

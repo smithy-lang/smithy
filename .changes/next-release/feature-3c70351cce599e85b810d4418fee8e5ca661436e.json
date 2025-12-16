@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Updated smithy-docgen to consume snippet files to generate example sections.",
+  "pull_requests": []
+}
