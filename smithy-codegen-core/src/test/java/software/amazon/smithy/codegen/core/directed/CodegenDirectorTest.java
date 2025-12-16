@@ -37,6 +37,8 @@ public class CodegenDirectorTest {
 
         public final List<TestIntegration> integrations = new ArrayList<>();
 
+        public TestContext capturedContext;
+
         @Override
         public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<TestSettings> directive) {
             return shape -> Symbol.builder()
@@ -54,12 +56,14 @@ public class CodegenDirectorTest {
                     directive.symbolProvider(),
                     (f, s) -> new TestWriter());
 
-            return new TestContext(directive.model(),
+            capturedContext = new TestContext(directive.model(),
                     directive.settings(),
                     directive.symbolProvider(),
                     directive.fileManifest(),
+                    directive.sharedFileManifest().orElse(null),
                     delegator,
                     directive.service());
+            return capturedContext;
         }
 
         @Override
@@ -385,5 +389,31 @@ public class CodegenDirectorTest {
         }
         assertThat(capturingIntegration, notNullValue());
         assertThat(capturingIntegration.integrationSettings, equalTo(integrationSettings));
+    }
+
+    @Test
+    public void testSharedManifestPassedToContext() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
+        FileManifest manifest = new MockManifest();
+        FileManifest sharedManifest = new MockManifest();
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("directed-model.smithy"))
+                .assemble()
+                .unwrap();
+
+        runner.settings(new TestSettings());
+        runner.directedCodegen(testDirected);
+        runner.fileManifest(manifest);
+        runner.sharedFileManifest(sharedManifest);
+        runner.service(ShapeId.from("smithy.example#Foo"));
+        runner.model(model);
+        runner.integrationClass(TestIntegration.class);
+        runner.performDefaultCodegenTransforms();
+        runner.createDedicatedInputsAndOutputs();
+        runner.sortMembers();
+        runner.run();
+
+        assertThat(testDirected.capturedContext.sharedFileManifest().get(), equalTo(sharedManifest));
     }
 }

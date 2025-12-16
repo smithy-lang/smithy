@@ -68,6 +68,7 @@ public final class CodegenDirector<
     private S settings;
     private ObjectNode integrationSettings = Node.objectNode();
     private FileManifest fileManifest;
+    private FileManifest sharedFileManifest;
     private Supplier<Iterable<I>> integrationFinder;
     private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
@@ -214,6 +215,25 @@ public final class CodegenDirector<
      */
     public void fileManifest(FileManifest fileManifest) {
         this.fileManifest = fileManifest;
+    }
+
+    /**
+     * Sets the FileManifest used to create files in the projection's shared file
+     * space.
+     *
+     * <p>All files written by a generator should either be written using this
+     * manifest or the generator's isolated manifest ({@link #fileManifest}).
+     *
+     * <p>Files written to this manifest may be read or modified by other Smithy build
+     * plugins. Generators SHOULD NOT write files to this manifest unless they
+     * specifically intend for them to be consumed by other plugins. Files that are not
+     * intended to be shared should be written to the manifest from
+     * {@link #fileManifest}.
+     *
+     * @param sharedFileManifest FileManifest to use for shared files.
+     */
+    public void sharedFileManifest(FileManifest sharedFileManifest) {
+        this.sharedFileManifest = sharedFileManifest;
     }
 
     /**
@@ -490,6 +510,7 @@ public final class CodegenDirector<
                 serviceShape,
                 provider,
                 fileManifest,
+                sharedFileManifest,
                 integrations));
     }
 

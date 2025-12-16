@@ -6,6 +6,7 @@ package software.amazon.smithy.codegen.core.directed;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
@@ -22,11 +23,13 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
     private final TestSettings settings;
     private final SymbolProvider symbolProvider;
     private final FileManifest fileManifest;
+    private final FileManifest sharedFileManifest;
     private final WriterDelegator<TestWriter> delegator;
     private final ServiceShape service;
 
     static TestContext create(String modelFile, ShapeId serviceId) {
         FileManifest manifest = new MockManifest();
+        FileManifest sharedManifest = new MockManifest();
         SymbolProvider symbolProvider = (shape) -> Symbol.builder()
                 .name(shape.getId().getName())
                 .namespace("example", ".")
@@ -39,7 +42,7 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
                 .assemble()
                 .unwrap();
         ServiceShape service = model.expectShape(serviceId, ServiceShape.class);
-        return new TestContext(model, new TestSettings(), symbolProvider, manifest, delegator, service);
+        return new TestContext(model, new TestSettings(), symbolProvider, manifest, sharedManifest, delegator, service);
     }
 
     TestContext(
@@ -47,6 +50,7 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
             TestSettings settings,
             SymbolProvider symbolProvider,
             FileManifest fileManifest,
+            FileManifest sharedFileManifest,
             WriterDelegator<TestWriter> delegator,
             ServiceShape service
     ) {
@@ -54,6 +58,7 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
         this.settings = settings;
         this.symbolProvider = symbolProvider;
         this.fileManifest = fileManifest;
+        this.sharedFileManifest = sharedFileManifest;
         this.delegator = delegator;
         this.service = service;
     }
@@ -76,6 +81,11 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
     @Override
     public FileManifest fileManifest() {
         return fileManifest;
+    }
+
+    @Override
+    public Optional<FileManifest> sharedFileManifest() {
+        return Optional.ofNullable(sharedFileManifest);
     }
 
     @Override
