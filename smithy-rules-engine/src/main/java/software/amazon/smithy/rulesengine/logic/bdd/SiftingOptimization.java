@@ -59,7 +59,7 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
     // Internal effort levels for the tiered optimization stages.
     private enum OptimizationEffort {
         COARSE(11, 4, 0, 20, 4_000, 6),
-        MEDIUM(2, 20, 6, 20, 1_000, 6),
+        MEDIUM(2, 24, 6, 20, 1_000, 6),
         GRANULAR(1, 50, 12, 20, 8_000, 12);
 
         final int sampleRate;

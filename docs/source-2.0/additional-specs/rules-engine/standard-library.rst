@@ -208,6 +208,103 @@ The following example uses ``isValidHostLabel`` to check if the value of the
     }
 
 
+.. _rules-engine-standard-library-ite:
+
+``ite`` function
+================
+
+Summary
+    An if-then-else function that returns one of two values based on a boolean condition.
+Argument types
+    * condition: ``bool``
+    * trueValue: ``T`` or ``option<T>``
+    * falseValue: ``T`` or ``option<T>``
+Return type
+    * ``ite(bool, T, T)`` → ``T`` (both non-optional, result is non-optional)
+    * ``ite(bool, T, option<T>)`` → ``option<T>`` (any optional makes result optional)
+    * ``ite(bool, option<T>, T)`` → ``option<T>`` (any optional makes result optional)
+    * ``ite(bool, option<T>, option<T>)`` → ``option<T>`` (both optional, result is optional)
+Since
+    1.1
+
+The ``ite`` (if-then-else) function evaluates a boolean condition and returns one of two values based on
+the result. If the condition is ``true``, it returns ``trueValue``; if ``false``, it returns ``falseValue``.
+This function is particularly useful for computing conditional values without branching in the rule tree, resulting
+in fewer result nodes, and enabling better BDD optimizations as a result of reduced fragmentation.
+
+.. important::
+    Both ``trueValue`` and ``falseValue`` must have the same base type ``T``. The result type follows
+    the "least upper bound" rule: if either branch is optional, the result is optional.
+
+The following example uses ``ite`` to compute a URL suffix based on whether FIPS is enabled:
+
+.. code-block:: json
+
+    {
+        "fn": "ite",
+        "argv": [
+            {"ref": "UseFIPS"},
+            "-fips",
+            ""
+        ],
+        "assign": "fipsSuffix"
+    }
+
+The following example uses ``ite`` with ``coalesce`` to handle an optional boolean parameter:
+
+.. code-block:: json
+
+    {
+        "fn": "ite",
+        "argv": [
+            {
+                "fn": "coalesce",
+                "argv": [
+                    {"ref": "DisableFeature"},
+                    false
+                ]
+            },
+            "disabled",
+            "enabled"
+        ],
+        "assign": "featureState"
+    }
+
+
+.. _rules-engine-standard-library-ite-examples:
+
+--------
+Examples
+--------
+
+The following table shows various inputs and their corresponding outputs for the ``ite`` function:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 25 25 30
+
+    * - Condition
+      - True Value
+      - False Value
+      - Output
+    * - ``true``
+      - ``"-fips"``
+      - ``""``
+      - ``"-fips"``
+    * - ``false``
+      - ``"-fips"``
+      - ``""``
+      - ``""``
+    * - ``true``
+      - ``"sigv4"``
+      - ``"sigv4-s3express"``
+      - ``"sigv4"``
+    * - ``false``
+      - ``"sigv4"``
+      - ``"sigv4-s3express"``
+      - ``"sigv4-s3express"``
+
+
 .. _rules-engine-standard-library-not:
 
 ``not`` function

@@ -206,6 +206,16 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         results.add(NoMatchRule.INSTANCE); // Always add no-match at index 0
         results.addAll(serializedResults);
 
+        // Validate that results have no conditions (all conditions are hoisted into the BDD)
+        for (int i = 1; i < results.size(); i++) {
+            Rule rule = results.get(i);
+            if (!rule.getConditions().isEmpty()) {
+                throw new IllegalArgumentException(
+                        "BDD result at index " + i + " has conditions, but BDD results must not have conditions. "
+                                + "All conditions should be hoisted into the BDD decision structure.");
+            }
+        }
+
         String nodesBase64 = obj.expectStringMember("nodes").getValue();
         int nodeCount = obj.expectNumberMember("nodeCount").getValue().intValue();
         int rootRef = obj.expectNumberMember("root").getValue().intValue();
