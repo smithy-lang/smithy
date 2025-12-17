@@ -142,8 +142,15 @@ final class VariableConsolidationTransform {
                     String globalVar = globalExpressionToVar.get(canonical);
                     if (globalVar != null && !globalVar.equals(varName)) {
                         // Same expression elsewhere with different name
-                        // Check if consolidation would cause shadowing
-                        if (!wouldCauseShadowing(globalVar, path, ancestorVars)) {
+                        // Only consolidate if both variables follow SSA naming (same base, different suffix)
+                        // This prevents consolidating semantically different variables that happen to have the same value
+                        if (!hasSameBaseName(varName, globalVar)) {
+                            LOGGER.fine(
+                                    String.format("Skipping consolidation '%s' -> '%s' (different base names) for: %s",
+                                            varName,
+                                            globalVar,
+                                            canonical));
+                        } else if (!wouldCauseShadowing(globalVar, path, ancestorVars)) {
                             variableRenameMap.put(varName, globalVar);
                             consolidatedCount++;
                             LOGGER.info(String.format("Consolidating '%s' -> '%s' for: %s",
@@ -175,6 +182,42 @@ final class VariableConsolidationTransform {
                         visibleAncestorVars);
             }
         }
+    }
+
+    /**
+     * Checks if two variable names have the same base name.
+     * For SSA-style variables like "foo_1" and "foo_2", the base name is "foo".
+     * Variables without SSA suffix (like "s3e_fips" and "s3e_ds") are considered
+     * to have their full name as the base.
+     */
+    private boolean hasSameBaseName(String var1, String var2) {
+        String base1 = getSsaBaseName(var1);
+        String base2 = getSsaBaseName(var2);
+        return base1.equals(base2);
+    }
+
+    /**
+     * Extracts the SSA base name from a variable.
+     * If the variable ends with _N (where N is a number), strips the suffix.
+     * Otherwise returns the full name.
+     */
+    private String getSsaBaseName(String varName) {
+        int lastUnderscore = varName.lastIndexOf('_');
+        if (lastUnderscore > 0 && lastUnderscore < varName.length() - 1) {
+            String suffix = varName.substring(lastUnderscore + 1);
+            // Check if suffix is all digits
+            boolean allDigits = true;
+            for (int i = 0; i < suffix.length(); i++) {
+                if (!Character.isDigit(suffix.charAt(i))) {
+                    allDigits = false;
+                    break;
+                }
+            }
+            if (allDigits) {
+                return varName.substring(0, lastUnderscore);
+            }
+        }
+        return varName;
     }
 
     private boolean wouldCauseShadowing(String varName, String currentPath, Set<String> ancestorVars) {
