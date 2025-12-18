@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -125,7 +126,7 @@ public class IteTest {
         Scope<Type> scope = new Scope<>();
         scope.insert("flag", Type.booleanType());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> ite.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> ite.typeCheck(scope));
         assertTrue(ex.getMessage().contains("same base type"));
         assertTrue(ex.getMessage().contains("true branch"));
         assertTrue(ex.getMessage().contains("false branch"));
@@ -140,7 +141,7 @@ public class IteTest {
 
         Scope<Type> scope = new Scope<>();
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> ite.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> ite.typeCheck(scope));
         assertTrue(ex.getMessage().contains("non-optional Boolean"));
     }
 
@@ -154,7 +155,7 @@ public class IteTest {
         Scope<Type> scope = new Scope<>();
         scope.insert("maybeFlag", Type.optionalType(Type.booleanType()));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> ite.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> ite.typeCheck(scope));
         assertTrue(ex.getMessage().contains("non-optional Boolean"));
         assertTrue(ex.getMessage().contains("coalesce"));
     }
@@ -222,7 +223,7 @@ public class IteTest {
         scope.insert("maybeString", Type.optionalType(Type.stringType()));
         scope.insert("maybeInt", Type.optionalType(Type.integerType()));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> ite.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> ite.typeCheck(scope));
         assertTrue(ex.getMessage().contains("same base type"));
     }
 
@@ -230,5 +231,48 @@ public class IteTest {
     void testIteReturnsCorrectId() {
         assertEquals("ite", Ite.ID);
         assertEquals("ite", Ite.getDefinition().getId());
+    }
+
+    @Test
+    void testTypeMethodReturnsInferredTypeAfterTypeCheck() {
+        // Verify that type() returns the correct inferred type after typeCheck()
+        Expression condition = Expression.getReference(Identifier.of("flag"));
+        Expression trueValue = Expression.getReference(Identifier.of("maybeValue"));
+        Expression falseValue = Literal.of("default");
+        Ite ite = Ite.ofExpressions(condition, trueValue, falseValue);
+
+        Scope<Type> scope = new Scope<>();
+        scope.insert("flag", Type.booleanType());
+        scope.insert("maybeValue", Type.optionalType(Type.stringType()));
+
+        // Call typeCheck to cache the type
+        ite.typeCheck(scope);
+
+        // Now type() should return the inferred type
+        Type cachedType = ite.type();
+        assertEquals(Type.optionalType(Type.stringType()), cachedType);
+    }
+
+    @Test
+    void testNestedIteTypeInference() {
+        // Test that nested Ite expressions have correct type inference
+        Expression outerCondition = Expression.getReference(Identifier.of("outer"));
+        Expression innerCondition = Expression.getReference(Identifier.of("inner"));
+
+        // Inner ITE: ite(inner, "a", "b") => String
+        Ite innerIte = Ite.ofExpressions(innerCondition, Literal.of("a"), Literal.of("b"));
+
+        // Outer ITE: ite(outer, innerIte, "c") => String
+        Ite outerIte = Ite.ofExpressions(outerCondition, innerIte, Literal.of("c"));
+
+        Scope<Type> scope = new Scope<>();
+        scope.insert("outer", Type.booleanType());
+        scope.insert("inner", Type.booleanType());
+
+        outerIte.typeCheck(scope);
+
+        // Both inner and outer should have String type
+        assertEquals(Type.stringType(), innerIte.type());
+        assertEquals(Type.stringType(), outerIte.type());
     }
 }
