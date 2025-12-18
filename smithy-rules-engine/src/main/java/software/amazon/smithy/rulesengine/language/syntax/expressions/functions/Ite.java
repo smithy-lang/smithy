@@ -7,6 +7,7 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions.functions
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
+import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.OptionalType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -93,16 +94,16 @@ public final class Ite extends LibraryFunction {
     }
 
     @Override
-    public Type typeCheck(Scope<Type> scope) {
+    protected Type typeCheckLocal(Scope<Type> scope) throws InnerParseError {
         List<Expression> args = getArguments();
         if (args.size() != 3) {
-            throw new IllegalArgumentException("ITE requires exactly 3 arguments, got " + args.size());
+            throw new InnerParseError("ITE requires exactly 3 arguments, got " + args.size());
         }
 
         // Check condition is a boolean (non-optional)
         Type conditionType = args.get(0).typeCheck(scope);
         if (!conditionType.equals(Type.booleanType())) {
-            throw new IllegalArgumentException(String.format(
+            throw new InnerParseError(String.format(
                     "ITE condition must be a non-optional Boolean, got %s. "
                             + "Use coalesce to provide a default for optional booleans.",
                     conditionType));
@@ -118,7 +119,7 @@ public final class Ite extends LibraryFunction {
 
         // Base types must match
         if (!trueBaseType.equals(falseBaseType)) {
-            throw new IllegalArgumentException(String.format(
+            throw new InnerParseError(String.format(
                     "ITE branches must have the same base type: true branch is %s, false branch is %s",
                     trueBaseType,
                     falseBaseType));

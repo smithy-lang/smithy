@@ -23,6 +23,8 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
@@ -360,7 +362,21 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public EndpointBddTrait build() {
-            return new EndpointBddTrait(this);
+            EndpointBddTrait trait = new EndpointBddTrait(this);
+
+            // Type-check conditions and results so expression.type() works. Note that using a shared scope across
+            // each check is ok, because BDD evaluation always runs conditions in a fixed order and could in theory
+            // try every condition for a single path to a result.
+            Scope<Type> scope = new Scope<>();
+            trait.getParameters().writeToScope(scope);
+            for (Condition condition : trait.getConditions()) {
+                condition.typeCheck(scope);
+            }
+            for (Rule result : trait.getResults()) {
+                result.typeCheck(scope);
+            }
+
+            return trait;
         }
     }
 
