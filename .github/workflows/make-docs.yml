@@ -89,7 +89,7 @@ jobs:
         ref: 'gh-pages'
     - name: Download artifacts
       id: download
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: smithy-docs
         path: /tmp/smithy-docs
