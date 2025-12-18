@@ -40,8 +40,9 @@ final class FormatVisitor {
         }
 
         TokenTree tree = cursor.getTree();
+        TreeType treeType = tree.getType();
 
-        switch (tree.getType()) {
+        switch (treeType) {
             case IDL: {
                 return visit(cursor.getFirstChild(TreeType.WS))
                         .append(visit(cursor.getFirstChild(TreeType.CONTROL_SECTION)))
@@ -452,7 +453,8 @@ final class FormatVisitor {
                         : Doc.text(tree.concatTokens());
             }
 
-            case TEXT_BLOCK: {
+            case TEXT_BLOCK:
+            case BYTE_TEXT_BLOCK: {
                 // Dispersing the lines of the text block preserves any indentation applied from formatting parent
                 // nodes.
 
@@ -461,14 +463,19 @@ final class FormatVisitor {
                 String stringValue = cursor.getTree()
                         .tokens()
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
+                        .orElseThrow(() -> new RuntimeException(
+                                "TEXT_BLOCK or BYTE_TEXT_BLOCK cursor does not have an IDL token"))
                         .getStringContents();
 
                 // If the last character is a newline, then the closing triple quote must be on the next line.
                 boolean endQuoteOnNextLine = stringValue.endsWith("\n") || stringValue.endsWith("\r");
 
                 List<Doc> resultLines = new ArrayList<>();
-                resultLines.add(Doc.text("\"\"\""));
+                if (treeType == TreeType.TEXT_BLOCK) {
+                    resultLines.add(Doc.text("\"\"\""));
+                } else {
+                    resultLines.add(Doc.text("b\"\"\""));
+                }
 
                 String[] inputLines = stringValue.split("\\r?\\n", -1);
                 for (int i = 0; i < inputLines.length; i++) {
@@ -502,6 +509,7 @@ final class FormatVisitor {
 
             case TOKEN:
             case QUOTED_TEXT:
+            case BYTE_STRING:
             case NUMBER:
             case SHAPE_ID:
             case ROOT_SHAPE_ID:
@@ -703,7 +711,8 @@ final class FormatVisitor {
         // have a NODE_VALUE child.
         TreeCursor nodeValue = cursor.getFirstChild(TreeType.NODE_VALUE);
         boolean isTextBlock = Optional.ofNullable(nodeValue.getFirstChild(TreeType.NODE_STRING_VALUE))
-                .map(nodeString -> nodeString.getFirstChild(TreeType.TEXT_BLOCK))
+                .map(nodeString -> Optional.ofNullable(nodeString.getFirstChild(TreeType.TEXT_BLOCK))
+                        .orElseGet(() -> nodeString.getFirstChild(TreeType.BYTE_TEXT_BLOCK)))
                 .isPresent();
         Doc nodeValueDoc = valueVisitor.apply(nodeValue);
 
