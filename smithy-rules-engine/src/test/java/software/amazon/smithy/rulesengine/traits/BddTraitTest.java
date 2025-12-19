@@ -12,6 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Coalesce;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
@@ -25,7 +32,11 @@ public class BddTraitTest {
     @Test
     void testBddTraitSerialization() {
         // Create a BddTrait with full context
-        Parameters params = Parameters.builder().build();
+        Parameter regionParam = Parameter.builder()
+                .name("Region")
+                .type(ParameterType.STRING)
+                .build();
+        Parameters params = Parameters.builder().addParameter(regionParam).build();
         Condition cond = Condition.builder().fn(TestHelpers.isSet("Region")).build();
         Rule endpoint = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
 
@@ -98,5 +109,40 @@ public class BddTraitTest {
         assertEquals(0, trait.getConditions().size());
         assertEquals(1, trait.getResults().size());
         assertEquals(-1, trait.getBdd().getRootRef()); // FALSE terminal
+    }
+
+    @Test
+    void testBuildTypeChecksExpressionsForCodegen() {
+        // Verify that after building an EndpointBddTrait, expression.type() works
+        // This is important for codegen to infer types without a scope
+        Parameter regionParam = Parameter.builder()
+                .name("Region")
+                .type(ParameterType.STRING)
+                .build();
+        Parameters params = Parameters.builder().addParameter(regionParam).build();
+
+        // Create a condition with a coalesce that infers to String
+        Expression regionRef = Expression.getReference(Identifier.of("Region"));
+        Expression fallback = Literal.of("us-east-1");
+        Coalesce coalesce = Coalesce.ofExpressions(regionRef, fallback);
+        Condition cond = Condition.builder().fn(coalesce).result(Identifier.of("resolvedRegion")).build();
+
+        Rule endpoint = EndpointRule.builder().endpoint(TestHelpers.endpoint("https://example.com"));
+
+        List<Rule> results = new ArrayList<>();
+        results.add(NoMatchRule.INSTANCE);
+        results.add(endpoint);
+
+        EndpointBddTrait trait = EndpointBddTrait.builder()
+                .parameters(params)
+                .conditions(ListUtils.of(cond))
+                .results(results)
+                .bdd(createSimpleBdd())
+                .build();
+
+        // After build(), type() should work on the coalesce expression
+        // Region is Optional<String>, fallback is String, so result is String (non-optional)
+        Coalesce builtCoalesce = (Coalesce) trait.getConditions().get(0).getFunction();
+        assertEquals(Type.stringType(), builtCoalesce.type());
     }
 }

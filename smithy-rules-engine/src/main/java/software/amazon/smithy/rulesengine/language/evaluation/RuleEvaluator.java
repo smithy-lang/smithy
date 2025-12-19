@@ -216,6 +216,12 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     }
 
     @Override
+    public Value visitIte(Expression condition, Expression trueValue, Expression falseValue) {
+        boolean cond = condition.accept(this).expectBooleanValue().getValue();
+        return cond ? trueValue.accept(this) : falseValue.accept(this);
+    }
+
+    @Override
     public Value visitGetAttr(GetAttr getAttr) {
         return getAttr.evaluate(getAttr.getTarget().accept(this));
     }

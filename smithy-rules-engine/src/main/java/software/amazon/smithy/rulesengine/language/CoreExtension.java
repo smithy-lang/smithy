@@ -11,6 +11,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsValidHostLabel;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Ite;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.ParseUrl;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Split;
@@ -43,6 +44,7 @@ public class CoreExtension implements EndpointRuleSetExtension {
                 Split.getDefinition(),
                 StringEquals.getDefinition(),
                 Substring.getDefinition(),
+                Ite.getDefinition(),
                 UriEncode.getDefinition());
     }
 }
