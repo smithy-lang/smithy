@@ -8,10 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ShapeValue;
+import software.amazon.smithy.model.knowledge.ShapeValueIndex;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 
 /**
  * Emits a validation event if a pattern trait is not anchored.
@@ -20,9 +27,14 @@ public final class PatternTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        ShapeValueIndex shapeValueIndex = ShapeValueIndex.of(model);
         List<ValidationEvent> events = new ArrayList<>();
         for (Shape shape : model.getShapesWithTrait(PatternTrait.class)) {
             validatePatternTrait(events, shape);
+
+            for (ShapeValue value : shapeValueIndex.getShapeValues(shape)) {
+                validateShapeValue(events, shape, value);
+            }
         }
 
         return events;
@@ -49,6 +61,22 @@ public final class PatternTraitValidator extends AbstractValidator {
                                     + "restrictive by default and does not require modelers to understand that Smithy patterns are "
                                     + "not automatically anchored.",
                             sj)));
+        }
+    }
+
+    // Replaces PatternTraitPlugin
+    private void validateShapeValue(List<ValidationEvent> events, Shape shape, ShapeValue shapeValue) {
+        PatternTrait trait = shape.expectTrait(PatternTrait.class);
+        Node node = shapeValue.toNode();
+
+        if (node.isStringNode()) {
+            if (!trait.getPattern().matcher(node.expectStringNode().getValue()).find()) {
+                events.add(shapeValue.constraintsEvent(
+                        String.format(
+                                "String value provided for `%s` must match regular expression: %s",
+                                shape.getId(),
+                                trait.getPattern().pattern())));
+            }
         }
     }
 }
