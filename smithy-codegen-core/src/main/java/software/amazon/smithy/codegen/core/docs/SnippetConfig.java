@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -154,29 +155,29 @@ public final class SnippetConfig implements ToSmithyBuilder<SnippetConfig>, ToNo
         private static Map<ShapeId, Map<ShapeId, List<Snippet>>> copySnippetMap(
                 Map<ShapeId, Map<ShapeId, List<Snippet>>> snippets
         ) {
-            LinkedHashMap<ShapeId, Map<ShapeId, List<Snippet>>> copy = new LinkedHashMap<>();
-            for (Map.Entry<ShapeId, Map<ShapeId, List<Snippet>>> entry : snippets.entrySet()) {
-                LinkedHashMap<ShapeId, List<Snippet>> serviceCopy = new LinkedHashMap<>();
-                for (Map.Entry<ShapeId, List<Snippet>> serviceEntry : entry.getValue().entrySet()) {
-                    serviceCopy.put(serviceEntry.getKey(), new ArrayList<>(serviceEntry.getValue()));
-                }
-                copy.put(entry.getKey(), serviceCopy);
-            }
-            return copy;
+            return copySnippetMap(snippets, ArrayList::new, Function.identity());
         }
 
         private static Map<ShapeId, Map<ShapeId, List<Snippet>>> immutableWrapSnippetMap(
                 Map<ShapeId, Map<ShapeId, List<Snippet>>> snippets
         ) {
+            return MapUtils.orderedCopyOf(copySnippetMap(snippets, ListUtils::copyOf, MapUtils::orderedCopyOf));
+        }
+
+        private static Map<ShapeId, Map<ShapeId, List<Snippet>>> copySnippetMap(
+                Map<ShapeId, Map<ShapeId, List<Snippet>>> snippets,
+                Function<List<Snippet>, List<Snippet>> copySnippetList,
+                Function<Map<ShapeId, List<Snippet>>, Map<ShapeId, List<Snippet>>> finalizeServiceCopy
+        ) {
             LinkedHashMap<ShapeId, Map<ShapeId, List<Snippet>>> copy = new LinkedHashMap<>();
             for (Map.Entry<ShapeId, Map<ShapeId, List<Snippet>>> entry : snippets.entrySet()) {
                 LinkedHashMap<ShapeId, List<Snippet>> serviceCopy = new LinkedHashMap<>();
                 for (Map.Entry<ShapeId, List<Snippet>> serviceEntry : entry.getValue().entrySet()) {
-                    serviceCopy.put(serviceEntry.getKey(), ListUtils.copyOf(serviceEntry.getValue()));
+                    serviceCopy.put(serviceEntry.getKey(), copySnippetList.apply(serviceEntry.getValue()));
                 }
-                copy.put(entry.getKey(), MapUtils.orderedCopyOf(serviceCopy));
+                copy.put(entry.getKey(), finalizeServiceCopy.apply(serviceCopy));
             }
-            return MapUtils.orderedCopyOf(copy);
+            return copy;
         }
 
         @Override

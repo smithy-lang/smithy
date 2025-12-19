@@ -6,12 +6,15 @@ package software.amazon.smithy.codegen.core.docs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -118,19 +121,20 @@ public class SnippetConfigTest {
     @Test
     public void serializesToNode() throws Exception {
         Node result = snippetConfig.toNode();
-        Node expected = Node.parse(getClass().getResource("snippet-config.json").openStream());
+        Node expected = Node.parse(IoUtils.readUtf8Url(getClass().getResource("snippet-config.json")));
         assertEquals(result, expected);
     }
 
     @Test
     public void parsesNode() throws Exception {
-        SnippetConfig actual = SnippetConfig.load(Paths.get(getClass().getResource("snippet-config.json").toURI()));
+        URL url = Objects.requireNonNull(getClass().getResource("snippet-config.json"));
+        SnippetConfig actual = SnippetConfig.load(Paths.get(url.toURI()));
         assertEquals(actual, snippetConfig);
     }
 
     @Test
     public void roundTrips() throws Exception {
-        Node expected = Node.parse(getClass().getResource("snippet-config.json").openStream());
+        Node expected = Node.parse(IoUtils.readUtf8Url(getClass().getResource("snippet-config.json")));
         Node actual = SnippetConfig.fromNode(expected).toNode();
         Node.assertEquals(actual, expected);
     }
