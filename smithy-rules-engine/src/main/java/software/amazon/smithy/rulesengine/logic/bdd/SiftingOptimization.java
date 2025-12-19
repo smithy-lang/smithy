@@ -249,9 +249,12 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
         }
         LOGGER.info("Running block moves");
 
-        List<List<Integer>> blocks = findDependencyBlocks(state.orderView).stream()
-                .filter(b -> b.size() >= 2 && b.size() <= 5)
-                .collect(Collectors.toList());
+        List<List<Integer>> blocks = new ArrayList<>();
+        for (List<Integer> b : findDependencyBlocks(state.orderView)) {
+            if (b.size() >= 2 && b.size() <= 5) {
+                blocks.add(b);
+            }
+        }
 
         for (List<Integer> block : blocks) {
             PassContext ctx = new PassContext(state, dependencyGraph);
@@ -464,7 +467,13 @@ public final class SiftingOptimization implements Function<EndpointBddTrait, End
         }
 
         // Second pass: among min-size candidates, pick lowest cost
-        int minSize = candidates.stream().mapToInt(c -> c.size).min().orElse(Integer.MAX_VALUE);
+        int minSize = Integer.MAX_VALUE;
+        for (Result c : candidates) {
+            if (c.size < minSize) {
+                minSize = c.size;
+            }
+        }
+
         Result best = null;
         for (Result c : candidates) {
             if (c.size == minSize) {
