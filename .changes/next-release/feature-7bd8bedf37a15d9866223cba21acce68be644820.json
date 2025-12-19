@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Remove [] from toString on some rules engine types",
+  "pull_requests": ["[#2904](https://github.com/smithy-lang/smithy/pull/2904)"]
+}
