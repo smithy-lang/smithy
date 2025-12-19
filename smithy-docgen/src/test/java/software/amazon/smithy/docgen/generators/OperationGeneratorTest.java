@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.not;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -33,8 +34,14 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
 
     @Override
     protected ObjectNode settings() {
+        String path;
+        try {
+            path = Paths.get(SNIPPETS_FILE.toURI()).toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return super.settings().toBuilder()
-                .withMember("snippetConfigs", Node.fromStrings(SNIPPETS_FILE.getFile()))
+                .withMember("snippetConfigs", Node.fromStrings(path))
                 .build();
     }
 
@@ -96,7 +103,7 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
                 .withoutMember("snippetConfigs")
                 .build();
 
-        sharedManifest.writeFile("snippets/snippets.json", IoUtils.readUtf8File(SNIPPETS_FILE.getFile()));
+        sharedManifest.writeFile("snippets/snippets.json", IoUtils.readUtf8Url(SNIPPETS_FILE));
         execute(manifest, sharedManifest, settings);
         var operationDocs = manifest.expectFileString("/content/operations/BasicOperation.md");
         assertThat(operationDocs, containsString("""

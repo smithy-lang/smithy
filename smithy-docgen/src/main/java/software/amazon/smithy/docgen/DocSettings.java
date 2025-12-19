@@ -5,7 +5,6 @@
 package software.amazon.smithy.docgen;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +62,7 @@ public record DocSettings(ShapeId service, String format, Map<ShapeId, String> r
                         e -> e.getValue().expectStringNode().getValue()));
         var snippetConfigs = pluginSettings.getArrayMember("snippetConfigs")
                 .orElse(Node.arrayNode())
-                .getElementsAs(e -> Paths.get(e.expectStringNode().getValue()));
+                .getElementsAs(e -> Path.of(e.expectStringNode().getValue()));
         return new DocSettings(
                 pluginSettings.expectStringMember("service").expectShapeId(),
                 pluginSettings.getStringMemberOrDefault("format", "sphinx-markdown"),

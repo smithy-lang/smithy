@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class PluginTest {
     }
 
     @Test
-    public void pluginGeneratesMarkdown() {
+    public void pluginGeneratesMarkdown() throws Exception {
         ObjectNode settings = Node.objectNodeBuilder()
                 .withMember("service", "com.example#DocumentedService")
                 .withMember("format", "markdown")
@@ -49,7 +50,7 @@ public class PluginTest {
                         Node.objectNodeBuilder()
                                 .withMember("com.example#ExternalResource", "https://aws.amazon.com")
                                 .build())
-                .withMember("snippetConfigs", Node.fromStrings(SNIPPETS.getFile()))
+                .withMember("snippetConfigs", Node.fromStrings(Paths.get(SNIPPETS.toURI()).toString()))
                 .build();
         PluginContext context = getPluginContext(model, settings);
 
@@ -64,7 +65,7 @@ public class PluginTest {
     }
 
     @Test
-    public void pluginGeneratesSphinxMarkdown(@TempDir Path tempDir) {
+    public void pluginGeneratesSphinxMarkdown() throws Exception {
         Model model = getModel("main.smithy");
         ObjectNode settings = Node.objectNodeBuilder()
                 .withMember("service", "com.example#DocumentedService")
@@ -74,7 +75,7 @@ public class PluginTest {
                         Node.objectNodeBuilder()
                                 .withMember("com.example#ExternalResource", "https://aws.amazon.com")
                                 .build())
-                .withMember("snippetConfigs", Node.fromStrings(SNIPPETS.getFile()))
+                .withMember("snippetConfigs", Node.fromStrings(Paths.get(SNIPPETS.toURI()).toString()))
                 .build();
         PluginContext context = getPluginContext(model, settings);
 
