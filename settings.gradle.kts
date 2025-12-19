@@ -6,6 +6,8 @@ pluginManagement {
     }
 }
 
+
+
 rootProject.name = "smithy"
 
 include(":smithy-aws-iam-traits")
