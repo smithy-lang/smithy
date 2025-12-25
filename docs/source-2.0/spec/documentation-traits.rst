@@ -390,9 +390,7 @@ Summary
     used in automatically generated documentation and other contexts to
     provide a user friendly name for a shape.
 Trait selector
-    ``:not(member)``
-
-    *Any service or resource*
+    ``*``
 Value type
     ``string``
 
