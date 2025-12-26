@@ -93,6 +93,7 @@ service RestXml {
         // @xmlAttribute tests
         XmlAttributes,
         XmlAttributesOnPayload,
+        XmlAttributesInMiddle,
 
         // @xmlNamespace trait tests
         XmlNamespaces,
