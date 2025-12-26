@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals;
@@ -31,6 +32,7 @@ public class SsaTransformTest {
     @Test
     void testNoDisambiguationNeeded() {
         // When variables are not shadowed, they should remain unchanged
+        // Note: Dead store elimination will remove unused bindings
         Parameter bucketParam = Parameter.builder()
                 .name("Bucket")
                 .type(ParameterType.STRING)
@@ -53,12 +55,15 @@ public class SsaTransformTest {
 
         EndpointRuleSet result = SsaTransform.transform(original);
 
-        assertEquals(original, result);
+        // Binding is removed since it's not used (dead store elimination)
+        EndpointRule resultRule = (EndpointRule) result.getRules().get(0);
+        assertEquals(false, resultRule.getConditions().get(0).getResult().isPresent());
     }
 
     @Test
     void testSimpleShadowing() {
         // Test when the same variable name is bound to different expressions
+        // Note: Dead store elimination removes unused bindings
         Parameter param = Parameter.builder()
                 .name("Input")
                 .type(ParameterType.STRING)
@@ -80,16 +85,18 @@ public class SsaTransformTest {
         List<Rule> resultRules = result.getRules();
         assertEquals(2, resultRules.size());
 
+        // Bindings are removed since they're not used (dead store elimination)
         EndpointRule resultRule1 = (EndpointRule) resultRules.get(0);
-        assertEquals("temp_ssa_1", resultRule1.getConditions().get(0).getResult().get().toString());
+        assertEquals(false, resultRule1.getConditions().get(0).getResult().isPresent());
 
         EndpointRule resultRule2 = (EndpointRule) resultRules.get(1);
-        assertEquals("temp_ssa_2", resultRule2.getConditions().get(0).getResult().get().toString());
+        assertEquals(false, resultRule2.getConditions().get(0).getResult().isPresent());
     }
 
     @Test
     void testMultipleShadowsOfSameVariable() {
         // Test when a variable is shadowed multiple times
+        // Note: Dead store elimination removes unused bindings
         Parameter param = Parameter.builder()
                 .name("Input")
                 .type(ParameterType.STRING)
@@ -109,9 +116,10 @@ public class SsaTransformTest {
         EndpointRuleSet result = SsaTransform.transform(original);
 
         List<Rule> resultRules = result.getRules();
-        assertEquals("temp_ssa_1", resultRules.get(0).getConditions().get(0).getResult().get().toString());
-        assertEquals("temp_ssa_2", resultRules.get(1).getConditions().get(0).getResult().get().toString());
-        assertEquals("temp_ssa_3", resultRules.get(2).getConditions().get(0).getResult().get().toString());
+        // Bindings are removed since they're not used (dead store elimination)
+        assertEquals(false, resultRules.get(0).getConditions().get(0).getResult().isPresent());
+        assertEquals(false, resultRules.get(1).getConditions().get(0).getResult().isPresent());
+        assertEquals(false, resultRules.get(2).getConditions().get(0).getResult().isPresent());
     }
 
     @Test
@@ -146,6 +154,7 @@ public class SsaTransformTest {
     @Test
     void testTreeRuleHandling() {
         // Test tree rules with unique variable names at each level
+        // Note: Dead store elimination removes unused bindings
         Parameter param = Parameter.builder()
                 .name("Region")
                 .type(ParameterType.STRING)
@@ -182,6 +191,7 @@ public class SsaTransformTest {
     @Test
     void testParameterShadowingAttempt() {
         // Test that attempting to shadow a parameter gets disambiguated
+        // Note: Dead store elimination removes unused bindings
         Parameter bucketParam = Parameter.builder()
                 .name("Bucket")
                 .type(ParameterType.STRING)
@@ -205,9 +215,9 @@ public class SsaTransformTest {
 
         EndpointRuleSet result = SsaTransform.transform(original);
 
-        // Should handle without issues
+        // Binding is removed since it's not used (dead store elimination)
         EndpointRule resultRule = (EndpointRule) result.getRules().get(0);
-        assertEquals("Bucket_shadow", resultRule.getConditions().get(0).getResult().get().toString());
+        assertEquals(false, resultRule.getConditions().get(0).getResult().isPresent());
     }
 
     private static EndpointRule createRuleWithBinding(String param, String value, String resultVar, String url) {
@@ -227,5 +237,9 @@ public class SsaTransformTest {
 
     private static Endpoint endpoint(String value) {
         return Endpoint.builder().url(expr(value)).build();
+    }
+
+    private static Endpoint endpoint(Expression url) {
+        return Endpoint.builder().url(url).build();
     }
 }

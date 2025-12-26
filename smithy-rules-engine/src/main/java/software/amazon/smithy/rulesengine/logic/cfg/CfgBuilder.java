@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
@@ -30,6 +32,7 @@ import software.amazon.smithy.rulesengine.logic.ConditionReference;
  * subtrees and prevent exponential growth.
  */
 public final class CfgBuilder {
+    private static final Logger LOGGER = Logger.getLogger(CfgBuilder.class.getName());
 
     final EndpointRuleSet ruleSet;
 
@@ -40,6 +43,9 @@ public final class CfgBuilder {
     private final Map<Condition, ConditionReference> conditionToReference = new HashMap<>();
     private final Map<Rule, Rule> resultCache = new HashMap<>();
     private final Map<Rule, ResultNode> resultNodeCache = new HashMap<>();
+    
+    // Track function expressions that have bindings (for isSet consolidation)
+    private final Map<String, Condition> functionBindings = new HashMap<>();
 
     public CfgBuilder(EndpointRuleSet ruleSet) {
         // Apply SSA transform to ensure globally unique variable names
@@ -114,15 +120,45 @@ public final class CfgBuilder {
         if (!canonical.equals(beforeBooleanCanon)) {
             negated = !negated;
         }
+        
+        // Consolidate isSet(f(x)) with existing v = f(x) bindings
+        canonical = consolidateIsSetWithBinding(canonical);
+
+        // Deep-copy via serialization to get fresh Expression objects.
+        // This avoids sharing expressions that may have cached types from
+        // being type-checked in different scopes during EndpointRuleSet.build().
+        canonical = Condition.fromNode(canonical.toNode());
+        
+        // Track bindings for future isSet consolidation
+        if (canonical.getResult().isPresent()) {
+            String fnKey = canonical.getFunction().toString();
+            functionBindings.putIfAbsent(fnKey, canonical);
+        }
 
         ConditionReference reference = new ConditionReference(canonical, negated);
         conditionToReference.put(condition, reference);
 
-        if (!negated && !condition.equals(canonical)) {
-            conditionToReference.put(canonical, reference);
-        }
-
         return reference;
+    }
+    
+    /**
+     * If this is isSet(f(x)) and we already have a binding v = f(x), 
+     * replace with that binding (which is semantically equivalent).
+     */
+    private Condition consolidateIsSetWithBinding(Condition condition) {
+        if (!(condition.getFunction() instanceof IsSet) || condition.getResult().isPresent()) {
+            return condition;
+        }
+        Expression inner = condition.getFunction().getArguments().get(0);
+        if (!(inner instanceof LibraryFunction)) {
+            return condition;
+        }
+        String fnKey = inner.toString();
+        Condition existingBinding = functionBindings.get(fnKey);
+        if (existingBinding != null) {
+            return existingBinding;
+        }
+        return condition;
     }
 
     private Rule intern(Rule rule) {

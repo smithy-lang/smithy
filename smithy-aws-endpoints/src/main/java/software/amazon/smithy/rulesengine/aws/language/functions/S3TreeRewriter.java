@@ -465,9 +465,8 @@ public final class S3TreeRewriter {
                 .orElse(false);
     }
 
-    // Creates just the auth ITE condition for URL override endpoints.
+    // Creates fresh auth ITE condition for URL override endpoints.
     private Condition createAuthIteCondition() {
-        // `DisableS3ExpressSessionAuth` is nullable, so we need to coalesce it to have a false default. Fix upstream?
         Expression isSessionAuthDisabled = Coalesce.ofExpressions(
                 Expression.getReference(ID_DISABLE_S3EXPRESS_SESSION_AUTH),
                 Expression.of(false));

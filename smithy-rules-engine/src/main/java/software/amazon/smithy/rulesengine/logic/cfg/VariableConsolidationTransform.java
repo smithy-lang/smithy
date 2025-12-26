@@ -141,16 +141,8 @@ final class VariableConsolidationTransform {
                     // Check for global consolidation opportunity
                     String globalVar = globalExpressionToVar.get(canonical);
                     if (globalVar != null && !globalVar.equals(varName)) {
-                        // Same expression elsewhere with different name
-                        // Only consolidate if both variables follow SSA naming (same base, different suffix)
-                        // This prevents consolidating semantically different variables that happen to have the same value
-                        if (!hasSameBaseName(varName, globalVar)) {
-                            LOGGER.fine(
-                                    String.format("Skipping consolidation '%s' -> '%s' (different base names) for: %s",
-                                            varName,
-                                            globalVar,
-                                            canonical));
-                        } else if (!wouldCauseShadowing(globalVar, path, ancestorVars)) {
+                        // Same expression elsewhere with different name - consolidate if no shadowing
+                        if (!wouldCauseShadowing(globalVar, path, ancestorVars)) {
                             variableRenameMap.put(varName, globalVar);
                             consolidatedCount++;
                             LOGGER.info(String.format("Consolidating '%s' -> '%s' for: %s",

@@ -57,8 +57,20 @@ final class SsaTransform {
     }
 
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
+        // Unwrap isSet(f(x)) to _synthetic = f(x), enabling consolidation with real bindings
+        ruleSet = UnwrapIsSetTransform.transform(ruleSet);
+
+        // Assign synthetic bindings to remaining bare function calls
+        ruleSet = BareFunctionBindingTransform.transform(ruleSet);
+
+        // Consolidate variables and eliminate redundant bindings
         ruleSet = VariableConsolidationTransform.transform(ruleSet);
+
+        // Remove bindings that are never used (before coalescing inlines them)
+        ruleSet = DeadStoreEliminationTransform.transform(ruleSet);
+
         ruleSet = CoalesceTransform.transform(ruleSet);
+        
         VariableAnalysis variableAnalysis = VariableAnalysis.analyze(ruleSet);
         SsaTransform ssaTransform = new SsaTransform(variableAnalysis);
 
