@@ -4,6 +4,11 @@
  */
 package software.amazon.smithy.docgen;
 
+import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.CreateContextDirective;
 import software.amazon.smithy.codegen.core.directed.CreateSymbolProviderDirective;
@@ -16,6 +21,7 @@ import software.amazon.smithy.codegen.core.directed.GenerateResourceDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
+import software.amazon.smithy.codegen.core.docs.SnippetConfig;
 import software.amazon.smithy.docgen.generators.MemberGenerator.MemberListingType;
 import software.amazon.smithy.docgen.generators.OperationGenerator;
 import software.amazon.smithy.docgen.generators.ResourceGenerator;
@@ -31,6 +37,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocSettings, DocIntegration> {
+    private static final Logger LOGGER = Logger.getLogger(DirectedDocGen.class.getName());
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<DocSettings> directive) {
@@ -44,7 +51,38 @@ final class DirectedDocGen implements DirectedCodegen<DocGenerationContext, DocS
                 directive.settings(),
                 directive.symbolProvider(),
                 directive.fileManifest(),
-                directive.integrations());
+                directive.integrations(),
+                loadSnippetConfig(directive));
+    }
+
+    private SnippetConfig loadSnippetConfig(CreateContextDirective<DocSettings, DocIntegration> directive) {
+        var settings = directive.settings();
+        var sharedFileManifest = directive.sharedFileManifest();
+        Set<Path> snippetConfigs = new LinkedHashSet<>(settings.snippetConfigs());
+
+        if (sharedFileManifest.isPresent()) {
+            var snippetsDir = sharedFileManifest.get().getBaseDir().resolve("snippets");
+            sharedFileManifest.get()
+                    .getFiles()
+                    .stream()
+                    .filter(path -> path.startsWith(snippetsDir) && path.toString().endsWith(".json"))
+                    .forEach(snippetConfigs::add);
+        }
+
+        if (snippetConfigs.isEmpty()) {
+            LOGGER.fine(() -> "No snippet configs were provided or discovered.");
+        } else {
+            LOGGER.fine(() -> {
+                String configFiles = snippetConfigs.stream().map(Path::toString).collect(Collectors.joining(", "));
+                return String.format("Loading snippet config(s) from: %s", configFiles);
+            });
+        }
+
+        SnippetConfig.Builder builder = SnippetConfig.builder();
+        for (Path snippetConfig : snippetConfigs) {
+            builder.mergeSnippets(SnippetConfig.load(snippetConfig));
+        }
+        return builder.build();
     }
 
     @Override

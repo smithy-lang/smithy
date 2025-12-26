@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "snippets": {
+    "smithy.example#TestService": {
+      "smithy.example#BasicOperation": [
+        {
+          "targetId": "Basic Example",
+          "title": "Text",
+          "files": [
+            {
+              "language": "txt",
+              "filename": "example.txt",
+              "content": "Example pulled from explicit config."
+            }
+          ]
+        },
+        {
+          "targetId": "Basic Example",
+          "title": "Text 2",
+          "files": [
+            {
+              "language": "txt",
+              "filename": "example.txt",
+              "content": "Example pulled from explicit config."
+            }
+          ]
+        },
+        {
+          "targetId": "Error Example",
+          "title": "Text",
+          "files": [
+            {
+              "language": "txt",
+              "filename": "example.txt",
+              "content": "Example pulled from explicit config."
+            }
+          ]
+        },
+        {
+          "targetId": "Error Example",
+          "title": "Text 2",
+          "files": [
+            {
+              "language": "txt",
+              "filename": "example.txt",
+              "content": "Example pulled from explicit config."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

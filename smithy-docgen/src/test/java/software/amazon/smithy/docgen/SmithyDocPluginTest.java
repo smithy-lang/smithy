@@ -5,46 +5,39 @@
 package software.amazon.smithy.docgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
-import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.docgen.utils.AbstractDocGenFileTest;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.IoUtils;
 
-public class SmithyDocPluginTest {
+public class SmithyDocPluginTest extends AbstractDocGenFileTest {
+    private static final URL TEST_FILE =
+            Objects.requireNonNull(SmithyDocPluginTest.class.getResource("sample-service.smithy"));
+
+    @Override
+    protected URL testFile() {
+        return TEST_FILE;
+    }
+
+    @Override
+    protected ObjectNode settings() {
+        return super.settings().toBuilder()
+                .withMember("service", "smithy.example#SampleService")
+                .build();
+    }
 
     @Test
     public void assertDocumentationFiles() {
-        MockManifest manifest = new MockManifest();
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("sample-service.smithy"))
-                .discoverModels(getClass().getClassLoader())
-                .assemble()
-                .unwrap();
-        PluginContext context = PluginContext.builder()
-                .fileManifest(manifest)
-                .model(model)
-                .settings(Node.objectNodeBuilder()
-                        .withMember("service", "smithy.example#SampleService")
-                        .build())
-                .build();
-
-        SmithyBuildPlugin plugin = new SmithyDocPlugin();
-        plugin.execute(context);
-
-        assertFalse(manifest.getFiles().isEmpty());
-        assertServicePageContents(manifest);
-    }
-
-    private void assertServicePageContents(MockManifest manifest) {
-        var actual = manifest.expectFileString("/content/index.md");
+        var fileManifest = new MockManifest();
+        execute(fileManifest);
+        var actual = fileManifest.expectFileString("/content/index.md");
         var expected = readExpectedPageContent("expected-outputs/index.md");
 
         assertEquals(expected, actual);

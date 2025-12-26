@@ -1,0 +1,85 @@
+$version: "2"
+
+namespace smithy.example
+
+service TestService {
+    operations: [
+        NoSnippets
+        BasicOperation
+    ]
+}
+
+@examples([
+    {
+        title: "Basic Example"
+        input: {
+            foo: "foo"
+        }
+        output: {
+            bar: "bar"
+        }
+    }
+    {
+        title: "Error Example"
+        input: {
+            foo: "bar"
+        }
+        error: {
+            shapeId: BasicError
+            content: {
+                message: "bar"
+            }
+        }
+    }
+])
+operation BasicOperation {
+    input := {
+        foo: String
+    }
+    output := {
+        bar: String
+    }
+    errors: [
+        BasicError
+    ]
+}
+
+@examples([
+    {
+        title: "Basic Example"
+        input: {
+            foo: "foo"
+        }
+        output: {
+            bar: "bar"
+        }
+    }
+    {
+        title: "Error Example"
+        input: {
+            foo: "bar"
+        }
+        error: {
+            shapeId: BasicError
+            content: {
+                message: "bar"
+            }
+        }
+    }
+])
+operation NoSnippets {
+    input := {
+        foo: String
+    }
+    output := {
+        bar: String
+    }
+    errors: [
+        BasicError
+    ]
+}
+
+@error("client")
+structure BasicError {
+    message: String
+}

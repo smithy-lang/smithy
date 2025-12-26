@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "snippets": {
+    "com.example#DocumentedService": {
+      "com.example#DocumentationTraits": [
+        {
+          "targetId": "Basic Example",
+          "title": "HTTP (restJson1)",
+          "files": [
+            {
+              "language": "http",
+              "filename": "request",
+              "content": "POST /DocumentationTraits HTTP/1.1\nHost: com.example\nContent-Type: application/json\nContent-Length: 19\n\n{\"deprecated\":\"foo\"}"
+            },
+            {
+              "language": "http",
+              "filename": "response",
+              "content": "foo"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

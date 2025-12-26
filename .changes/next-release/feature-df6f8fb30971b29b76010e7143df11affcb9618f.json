@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `SnippetConfig` class to codgen-core that allows sharing doc snippets that will be consumed by smithy-docgen.",
+  "pull_requests": [
+    "[#2894](https://github.com/smithy-lang/smithy/pull/2894)"
+  ]
+}

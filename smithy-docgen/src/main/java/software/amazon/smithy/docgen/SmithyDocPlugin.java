@@ -42,6 +42,7 @@ public final class SmithyDocPlugin implements SmithyBuildPlugin {
         runner.directedCodegen(new DirectedDocGen());
         runner.integrationClass(DocIntegration.class);
         runner.fileManifest(pluginContext.getFileManifest());
+        runner.sharedFileManifest(pluginContext.getSharedFileManifest());
         runner.model(getValidatedModel(pluginContext.getModel()).unwrap());
         DocSettings settings = runner.settings(DocSettings.class, pluginContext.getSettings());
         runner.service(settings.service());

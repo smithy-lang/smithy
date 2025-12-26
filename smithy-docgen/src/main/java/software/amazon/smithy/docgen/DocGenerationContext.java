@@ -11,6 +11,7 @@ import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
+import software.amazon.smithy.codegen.core.docs.SnippetConfig;
 import software.amazon.smithy.docgen.DocSymbolProvider.FileExtensionDecorator;
 import software.amazon.smithy.docgen.writers.DocWriter;
 import software.amazon.smithy.model.Model;
@@ -29,6 +30,7 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
     private final WriterDelegator<DocWriter> writerDelegator;
     private final List<DocIntegration> docIntegrations;
     private final DocFormat docFormat;
+    private final SnippetConfig snippetConfig;
 
     /**
      * Constructor.
@@ -46,10 +48,32 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
             FileManifest fileManifest,
             List<DocIntegration> docIntegrations
     ) {
+        this(model, docSettings, symbolProvider, fileManifest, docIntegrations, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param model The source model to generate for.
+     * @param docSettings Settings to customize generation.
+     * @param symbolProvider The symbol provider to use to turn shapes into symbols.
+     * @param fileManifest The file manifest to write to.
+     * @param docIntegrations A list of integrations to apply during generation.
+     * @param snippetConfig A loaded snippet file to include in the docs.
+     */
+    public DocGenerationContext(
+            Model model,
+            DocSettings docSettings,
+            SymbolProvider symbolProvider,
+            FileManifest fileManifest,
+            List<DocIntegration> docIntegrations,
+            SnippetConfig snippetConfig
+    ) {
         this.model = model;
         this.docSettings = docSettings;
         this.fileManifest = fileManifest;
         this.docIntegrations = docIntegrations;
+        this.snippetConfig = snippetConfig;
 
         DocFormat resolvedFormat = null;
         var availableFormats = new LinkedHashSet<String>();
@@ -110,5 +134,12 @@ public final class DocGenerationContext implements CodegenContext<DocSettings, D
      */
     public DocFormat docFormat() {
         return this.docFormat;
+    }
+
+    /**
+     * @return Returns the optional, consolidated snippet config.
+     */
+    public SnippetConfig snippetConfig() {
+        return snippetConfig;
     }
 }

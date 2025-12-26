@@ -278,11 +278,6 @@ structure SimpleError with [ErrorMixin] {}
 /// This operation showcases the various
 /// [documentation traits](https://smithy.io/2.0/spec/documentation-traits.html).
 ///
-/// Note that examples are only half-supported right now. An interface needs
-/// to be created and implemented to allow both code generators and protocols
-/// to provide examples that will be used in those sections. For now, it just
-/// shows the raw input / output structures.
-///
 /// The `title` trait is applied to the service.
 @examples([
     {
