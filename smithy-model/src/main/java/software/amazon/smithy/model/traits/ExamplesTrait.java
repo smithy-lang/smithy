@@ -5,14 +5,22 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ShapeValue;
+import software.amazon.smithy.model.knowledge.SimpleShapeValue;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -60,6 +68,23 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     @Override
     public int hashCode() {
         return Objects.hash(toShapeId(), examples);
+    }
+
+    @Override
+    public Set<ShapeValue> shapeValues(Model model, Shape shape) {
+        Set<ShapeValue> result = new HashSet<>(super.shapeValues(model, shape));
+
+        OperationShape operationShape = shape.asOperationShape().get();
+
+        for (Example example : examples) {
+            // TODO: Specify ALLOW_CONSTRAINT_ERRORS
+            result.add(new SimpleShapeValue(operationShape.getInputShape(), example.getInput()));
+            example.getOutput().ifPresent(output ->
+                    result.add(new SimpleShapeValue(operationShape.getOutputShape(), output)));
+            example.getError().ifPresent(result::add);
+        }
+
+        return result;
     }
 
     @Override
@@ -264,7 +289,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
     }
 
-    public static final class ErrorExample implements ToNode, ToSmithyBuilder<ErrorExample> {
+    public static final class ErrorExample implements ToNode, ToSmithyBuilder<ErrorExample>, ShapeValue {
         private final ShapeId shapeId;
         private final ObjectNode content;
 
@@ -285,6 +310,11 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
          * @return Gets the error shape id for the example.
          */
         public ShapeId getShapeId() {
+            return shapeId;
+        }
+
+        @Override
+        public ShapeId toShapeId() {
             return shapeId;
         }
 

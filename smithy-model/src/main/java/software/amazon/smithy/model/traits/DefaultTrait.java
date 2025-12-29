@@ -4,8 +4,15 @@
  */
 package software.amazon.smithy.model.traits;
 
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ShapeValue;
+import software.amazon.smithy.model.knowledge.SimpleShapeValue;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Provides a default value for a shape or member.
@@ -32,5 +39,12 @@ public final class DefaultTrait extends AbstractTrait {
         public Trait createTrait(ShapeId target, Node value) {
             return new DefaultTrait(value);
         }
+    }
+
+    @Override
+    public Set<ShapeValue> shapeValues(Model model, Shape shape) {
+        Set<ShapeValue> result = new HashSet<>(super.shapeValues(model, shape));
+        result.add(new SimpleShapeValue(shape.toShapeId(), toNode()));
+        return result;
     }
 }
