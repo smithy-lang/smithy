@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Made `DefaultBuilderRef` public.",
+  "pull_requests": [
+    "[#2894](https://github.com/smithy-lang/smithy/pull/2894)"
+  ]
+}

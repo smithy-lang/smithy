@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "snippets": {
+    "com.example#BirdService": {
+      "com.example#ListBirds": [
+        {
+          "targetId": "List Crows",
+          "title": "Python",
+          "files": [
+            {
+              "language": "python",
+              "filename": "main.py",
+              "content": "from bird_service import BirdClient\n\nclient = BirdClient()\nresponse = await client.list_birds(ListBirdsInput(genus=\"corvus\"))\nassert response == ListBirdsOutput(birds=[\n    Bird(\n        order=\"passiformes\",\n        family=\"corvidae\",\n        genus=\"corvus\",\n        species=\"cornix\",\n        common_names={\n            \"en_US\": [\"Hooded Crow\"],\n            \"de_DE\": [\"Nebelkrähe\"],\n        },\n    ),\n])"
+            }
+          ]
+        },
+        {
+          "targetId": "List Crows",
+          "title": "Python (restJson1)",
+          "protocol": "aws.protocols#restJson1",
+          "files": [
+            {
+              "language": "python",
+              "filename": "main.py",
+              "content": "from bird_service import BirdClient\n\nclient = BirdClient(protocol=RestJson1Protocol())\nresponse = await client.list_birds(ListBirdsInput(genus=\"corvus\"))\nassert response == ListBirdsOutput(birds=[\n    Bird(\n        order=\"passiformes\",\n        family=\"corvidae\",\n        genus=\"corvus\",\n        species=\"cornix\",\n        common_names={\n            \"en_US\": [\"Hooded Crow\"],\n            \"de_DE\": [\"Nebelkrähe\"],\n        },\n    ),\n])"
+            }
+          ]
+        },
+        {
+          "targetId": "List Crows",
+          "title": "HTTP",
+          "protocol": "aws.protocols#restJson1",
+          "files": [
+            {
+              "language": "http",
+              "filename": "request",
+              "content": "POST /birds HTTP/1.1\nHost: com.example.birds\nContent-Type: application/json\nContent-Length: 25\n\n{\n    \"genus\": \"corvus\"\n}"
+            },
+            {
+              "language": "http",
+              "filename": "response",
+              "content": "HTTP/1.1 200 OK\nContent-Type: application/json\nContent-Length: 248\n\n{\n    \"birds\": [{\n        \"order\": \"passiformes\"\n        \"family\": \"corvidae\"\n        \"genus\": \"corvus\"\n        \"species\": \"cornix\"\n        \"commonNames\": {\n            \"en_US\": [\"Hooded Crow\"]\n            \"de_DE\": [\"Nebelkrähe\"]\n        }\n    }]\n}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

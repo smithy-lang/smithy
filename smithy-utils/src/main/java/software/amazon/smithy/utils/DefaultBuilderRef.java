@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  *
  * @param <T> The type of value being built, borrowed, and copied.
  */
-final class DefaultBuilderRef<T> implements BuilderRef<T> {
+public final class DefaultBuilderRef<T> implements BuilderRef<T> {
 
     private final Supplier<T> ctor;
     private final Function<T, T> copyCtor;
@@ -26,7 +26,7 @@ final class DefaultBuilderRef<T> implements BuilderRef<T> {
     private T owned;
     private T borrowed;
 
-    DefaultBuilderRef(
+    public DefaultBuilderRef(
             Supplier<T> ctor,
             Function<T, T> copyCtor,
             Function<T, T> immutableWrapper,
