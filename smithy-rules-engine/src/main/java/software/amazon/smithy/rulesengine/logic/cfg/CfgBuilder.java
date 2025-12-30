@@ -15,6 +15,7 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
@@ -40,6 +41,9 @@ public final class CfgBuilder {
     private final Map<Condition, ConditionReference> conditionToReference = new HashMap<>();
     private final Map<Rule, Rule> resultCache = new HashMap<>();
     private final Map<Rule, ResultNode> resultNodeCache = new HashMap<>();
+
+    // Track function expressions that have bindings (for isSet consolidation)
+    private final Map<String, Condition> functionBindings = new HashMap<>();
 
     public CfgBuilder(EndpointRuleSet ruleSet) {
         // Apply SSA transform to ensure globally unique variable names
@@ -115,9 +119,25 @@ public final class CfgBuilder {
             negated = !negated;
         }
 
+        // Consolidate isSet(f(x)) with existing v = f(x) bindings
+        canonical = consolidateIsSetWithBinding(canonical);
+
+        // Deep-copy via serialization to get fresh Expression objects.
+        // This avoids sharing expressions that may have cached types from
+        // being type-checked in different scopes during EndpointRuleSet.build().
+        canonical = Condition.fromNode(canonical.toNode());
+
+        // Track bindings for future isSet consolidation
+        if (canonical.getResult().isPresent()) {
+            String fnKey = canonical.getFunction().toString();
+            functionBindings.putIfAbsent(fnKey, canonical);
+        }
+
         ConditionReference reference = new ConditionReference(canonical, negated);
         conditionToReference.put(condition, reference);
 
+        // Also cache the canonical form so equivalent conditions from different branches
+        // that might have different original objects will still hit the cache.
         if (!negated && !condition.equals(canonical)) {
             conditionToReference.put(canonical, reference);
         }
@@ -127,6 +147,32 @@ public final class CfgBuilder {
 
     private Rule intern(Rule rule) {
         return resultCache.computeIfAbsent(canonicalizeResult(rule), k -> k);
+    }
+
+    /**
+     * Consolidates {@code isSet(f(x))} with an existing {@code v = f(x)} binding.
+     *
+     * <p>This catches patterns that tree-level optimization cannot handle. Specifically, when the tree
+     * contains {@code not(isSet(f(x)))} in one branch and {@code v = f(x)} in another branch.
+     * Tree-level transforms can't handle this because they don't have visibility across sibling branches.
+     * The CFG builder's global {@code functionBindings} map provides this cross-branch visibility.
+     *
+     * @see SsaTransform for the full explanation of why both tree-level and CFG-level optimization are needed
+     */
+    private Condition consolidateIsSetWithBinding(Condition condition) {
+        if (!(condition.getFunction() instanceof IsSet) || condition.getResult().isPresent()) {
+            return condition;
+        }
+        Expression inner = condition.getFunction().getArguments().get(0);
+        if (!(inner instanceof LibraryFunction)) {
+            return condition;
+        }
+        String fnKey = inner.toString();
+        Condition existingBinding = functionBindings.get(fnKey);
+        if (existingBinding != null) {
+            return existingBinding;
+        }
+        return condition;
     }
 
     private Rule canonicalizeResult(Rule rule) {
@@ -139,19 +185,23 @@ public final class CfgBuilder {
         }
 
         List<Expression> args = condition.getFunction().getArguments();
-        if (args.size() != 2 || !(args.get(0) instanceof Reference) || !(args.get(1) instanceof Literal)) {
+        if (args.size() != 2) {
             return condition;
         }
 
-        Reference ref = (Reference) args.get(0);
+        // After canonicalization, literals should be in arg1 position
+        // Check if arg1 is a boolean literal with value false
+        if (!(args.get(1) instanceof Literal)) {
+            return condition;
+        }
+
         Boolean literalValue = ((Literal) args.get(1)).asBooleanLiteral().orElse(null);
 
-        if (literalValue != null && !literalValue && ruleSet != null) {
-            String varName = ref.getName().toString();
-            Optional<Parameter> param = ruleSet.getParameters().get(Identifier.of(varName));
-            if (param.isPresent() && param.get().getDefault().isPresent()) {
-                return condition.toBuilder().fn(BooleanEquals.ofExpressions(ref, true)).build();
-            }
+        // Normalize booleanEquals(X, false) to booleanEquals(X, true) with negation
+        if (literalValue != null && !literalValue) {
+            return condition.toBuilder()
+                    .fn(BooleanEquals.ofExpressions(args.get(0), true))
+                    .build();
         }
 
         return condition;

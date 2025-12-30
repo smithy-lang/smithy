@@ -33,35 +33,33 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
  */
 final class VariableAnalysis {
     private final Set<String> inputParams;
-    private final Map<String, Set<String>> bindings;
+    private final Map<String, Integer> bindingCounts;
     private final Map<String, Integer> referenceCounts;
     private final Map<String, Map<String, String>> expressionMappings;
 
     private VariableAnalysis(
             Set<String> inputParams,
-            Map<String, Set<String>> bindings,
+            Map<String, Integer> bindingCounts,
             Map<String, Integer> referenceCounts,
             Map<String, Map<String, String>> expressionMappings
     ) {
         this.inputParams = inputParams;
-        this.bindings = bindings;
+        this.bindingCounts = bindingCounts;
         this.referenceCounts = referenceCounts;
         this.expressionMappings = expressionMappings;
     }
 
     static VariableAnalysis analyze(EndpointRuleSet ruleSet) {
-        Set<String> inputParameters = extractInputParameters(ruleSet);
-
-        AnalysisVisitor visitor = new AnalysisVisitor(inputParameters);
+        AnalysisVisitor visitor = new AnalysisVisitor();
         for (Rule rule : ruleSet.getRules()) {
             visitor.visitRule(rule);
         }
 
         return new VariableAnalysis(
-                inputParameters,
-                visitor.bindings,
+                extractInputParameters(ruleSet),
+                visitor.bindingCounts,
                 visitor.referenceCounts,
-                createExpressionMappings(visitor.bindings));
+                createExpressionMappings(visitor.bindings, visitor.bindingCounts));
     }
 
     Set<String> getInputParams() {
@@ -81,13 +79,20 @@ final class VariableAnalysis {
     }
 
     boolean hasSingleBinding(String variableName) {
-        Set<String> expressions = bindings.get(variableName);
-        return expressions != null && expressions.size() == 1;
+        Integer count = bindingCounts.get(variableName);
+        return count != null && count == 1;
     }
 
     boolean hasMultipleBindings(String variableName) {
-        Set<String> expressions = bindings.get(variableName);
-        return expressions != null && expressions.size() > 1;
+        // Check if variable is bound more than once, regardless of whether expressions are the same.
+        // This is important because SSA may rewrite references in the expressions, making originally
+        // identical expressions different after SSA. For example:
+        //   Branch A: outpostId = getAttr(parsed, ...)
+        //   Branch B: outpostId = getAttr(parsed, ...)
+        // If "parsed" is renamed to "parsed_ssa_1" in branch A and "parsed_ssa_2" in branch B,
+        // the expressions become different, but we've already decided not to rename "outpostId".
+        Integer count = bindingCounts.get(variableName);
+        return count != null && count > 1;
     }
 
     boolean isSafeToInline(String variableName) {
@@ -103,29 +108,38 @@ final class VariableAnalysis {
     }
 
     private static Map<String, Map<String, String>> createExpressionMappings(
-            Map<String, Set<String>> bindings
+            Map<String, Set<String>> bindings,
+            Map<String, Integer> bindingCounts
     ) {
         Map<String, Map<String, String>> result = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
             String varName = entry.getKey();
             Set<String> expressions = entry.getValue();
-            result.put(varName, createMappingForVariable(varName, expressions));
+            int bindingCount = bindingCounts.getOrDefault(varName, 0);
+            result.put(varName, createMappingForVariable(varName, expressions, bindingCount));
         }
         return result;
     }
 
     private static Map<String, String> createMappingForVariable(
             String varName,
-            Set<String> expressions
+            Set<String> expressions,
+            int bindingCount
     ) {
         Map<String, String> mapping = new HashMap<>();
 
-        if (expressions.size() == 1) {
+        if (bindingCount <= 1) {
             // Single binding: no SSA rename needed
             String expression = expressions.iterator().next();
             mapping.put(expression, varName);
+        } else if (expressions.size() == 1) {
+            // Multiple bindings with the same expression: still need SSA rename because
+            // references in the expression may be renamed differently in each scope.
+            // Use a special suffix that indicates it's the same expression.
+            String expression = expressions.iterator().next();
+            mapping.put(expression, varName + "_ssa_1");
         } else {
-            // Multiple bindings: use SSA naming convention
+            // Multiple bindings with different expressions: use SSA naming convention
             List<String> sortedExpressions = new ArrayList<>(expressions);
             sortedExpressions.sort(String::compareTo);
             for (int i = 0; i < sortedExpressions.size(); i++) {
@@ -140,12 +154,8 @@ final class VariableAnalysis {
 
     private static class AnalysisVisitor {
         final Map<String, Set<String>> bindings = new HashMap<>();
+        final Map<String, Integer> bindingCounts = new HashMap<>();
         final Map<String, Integer> referenceCounts = new HashMap<>();
-        private final Set<String> inputParams;
-
-        AnalysisVisitor(Set<String> inputParams) {
-            this.inputParams = inputParams;
-        }
 
         void visitRule(Rule rule) {
             for (Condition condition : rule.getConditions()) {
@@ -154,8 +164,9 @@ final class VariableAnalysis {
                     LibraryFunction fn = condition.getFunction();
                     String expression = fn.toString();
 
-                    bindings.computeIfAbsent(varName, k -> new HashSet<>())
-                            .add(expression);
+                    bindings.computeIfAbsent(varName, k -> new HashSet<>()).add(expression);
+                    // Track number of times variable is bound (not just unique expressions)
+                    bindingCounts.merge(varName, 1, Integer::sum);
                 }
 
                 countReferences(condition.getFunction());

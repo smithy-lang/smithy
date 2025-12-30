@@ -219,30 +219,21 @@ public final class S3TreeRewriter {
     // Auth scheme name literal shared across all rewritten endpoints
     private static final Literal AUTH_NAME_LITERAL = Literal.stringLiteral(Template.fromString("{" + VAR_AUTH + "}"));
 
-    // Patterns to match S3Express bucket endpoint URLs (with AZ)
-    // Format: https://{Bucket}.s3express[-fips]-{AZ}[.dualstack].{Region}.amazonaws.com
-    // (negative lookahead (?!dualstack) prevents matching dualstack variants in non-DS patterns)
-    private static final Pattern S3EXPRESS_FIPS_DS = Pattern.compile("(s3express)-fips-([^.]+)\\.dualstack\\.(.+)$");
-    private static final Pattern S3EXPRESS_FIPS = Pattern.compile("(s3express)-fips-([^.]+)\\.(?!dualstack)(.+)$");
-    private static final Pattern S3EXPRESS_DS = Pattern.compile("(s3express)-([^.]+)\\.dualstack\\.(.+)$");
-    private static final Pattern S3EXPRESS_PLAIN = Pattern.compile("(s3express)-([^.]+)\\.(?!dualstack)(.+)$");
-
-    // Patterns to match S3Express control plane URLs (no AZ)
-    // Format: https://s3express-control[-fips][.dualstack].{Region}.amazonaws.com
-    private static final Pattern S3EXPRESS_CONTROL_FIPS_DS = Pattern.compile(
-            "(s3express-control)-fips\\.dualstack\\.(.+)$");
-    private static final Pattern S3EXPRESS_CONTROL_FIPS = Pattern.compile(
-            "(s3express-control)-fips\\.(?!dualstack)(.+)$");
-    private static final Pattern S3EXPRESS_CONTROL_DS = Pattern.compile(
-            "(s3express-control)\\.dualstack\\.(.+)$");
-    private static final Pattern S3EXPRESS_CONTROL_PLAIN = Pattern.compile(
-            "(s3express-control)\\.(?!dualstack)(.+)$");
-
-    // Cached canonical expression for AZ extraction: split(Bucket, "--", 0)
-    private static final Split BUCKET_SPLIT = Split.ofExpressions(
-            Expression.getReference(ID_BUCKET),
-            Expression.of("--"),
-            Expression.of(0));
+    // URL pattern matchers, ordered from most specific to least specific.
+    // Control plane patterns (no AZ) come first, then bucket patterns (with AZ).
+    // Negative lookahead (?!dualstack) prevents matching dualstack variants in non-DS patterns.
+    private static final UrlPatternMatcher[] URL_PATTERNS = {
+            // Control plane: https://s3express-control[-fips][.dualstack].{Region}.amazonaws.com
+            new UrlPatternMatcher("(s3express-control)-fips\\.dualstack\\.(.+)$", false),
+            new UrlPatternMatcher("(s3express-control)-fips\\.(?!dualstack)(.+)$", false),
+            new UrlPatternMatcher("(s3express-control)\\.dualstack\\.(.+)$", false),
+            new UrlPatternMatcher("(s3express-control)\\.(?!dualstack)(.+)$", false),
+            // Bucket: https://{Bucket}.s3express[-fips]-{AZ}[.dualstack].{Region}.amazonaws.com
+            new UrlPatternMatcher("(s3express)-fips-([^.]+)\\.dualstack\\.(.+)$", true),
+            new UrlPatternMatcher("(s3express)-fips-([^.]+)\\.(?!dualstack)(.+)$", true),
+            new UrlPatternMatcher("(s3express)-([^.]+)\\.dualstack\\.(.+)$", true),
+            new UrlPatternMatcher("(s3express)-([^.]+)\\.(?!dualstack)(.+)$", true),
+    };
 
     private int rewrittenCount = 0;
     private int totalS3ExpressCount = 0;
@@ -256,7 +247,15 @@ public final class S3TreeRewriter {
      * @return the transformed rule set
      */
     public static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
-        return new S3TreeRewriter().run(ruleSet);
+        S3TreeRewriter rewriter = new S3TreeRewriter();
+        EndpointRuleSet result = rewriter.run(ruleSet);
+
+        LOGGER.info(() -> String.format(
+                "S3 tree rewriter: %s/%s S3Express endpoints rewritten",
+                rewriter.rewrittenCount,
+                rewriter.totalS3ExpressCount));
+
+        return result;
     }
 
     private EndpointRuleSet run(EndpointRuleSet ruleSet) {
@@ -264,11 +263,6 @@ public final class S3TreeRewriter {
         for (Rule rule : ruleSet.getRules()) {
             transformedRules.add(transformRule(rule));
         }
-
-        LOGGER.info(() -> String.format(
-                "S3 tree rewriter: %s/%s S3Express endpoints rewritten",
-                rewrittenCount,
-                totalS3ExpressCount));
 
         return EndpointRuleSet.builder()
                 .sourceLocation(ruleSet.getSourceLocation())
@@ -281,7 +275,6 @@ public final class S3TreeRewriter {
     private Rule transformRule(Rule rule) {
         if (rule instanceof TreeRule) {
             TreeRule tr = (TreeRule) rule;
-            // Transform conditions
             List<Condition> transformedConditions = transformConditions(tr.getConditions());
             List<Rule> transformedChildren = new ArrayList<>();
             for (Rule child : tr.getRules()) {
@@ -304,29 +297,20 @@ public final class S3TreeRewriter {
         return result;
     }
 
-    /**
-     * Transforms a single condition.
-     *
-     * <p>Handles:
-     * <pre>
-     * AZ extraction: substring(Bucket, N, M) -> split(Bucket, "--")[1]
-     * </pre>
-     *
-     * <p>Note: Delimiter checks (s3expressAvailabilityZoneDelim) are not currently transformed because they're part
-     * of a complex fallback structure, and changing them breaks control flow. Possibly something we can improve, or
-     * wait until the upstream rules are optimized.
-     */
     private Condition transformCondition(Condition cond) {
-        // Is this a condition fishing for delimiters?
+        // Transform AZ extraction: substring(Bucket, N, M) -> split(Bucket, "--")[1]
         if (cond.getResult().isPresent()
                 && ID_AZ_ID.equals(cond.getResult().get())
                 && cond.getFunction() instanceof Substring
                 && isSubstringOnBucket((Substring) cond.getFunction())) {
-            // Replace with split-based extraction: split(Bucket, "--")[1]
-            GetAttr azExpr = GetAttr.ofExpressions(BUCKET_SPLIT, "[1]");
+            // Create fresh expression each time to avoid type-checking conflicts
+            Split bucketSplit = Split.ofExpressions(
+                    Expression.getReference(ID_BUCKET),
+                    Expression.of("--"),
+                    Expression.of(0));
+            GetAttr azExpr = GetAttr.ofExpressions(bucketSplit, "[1]");
             return cond.toBuilder().fn(azExpr).build();
         }
-
         return cond;
     }
 
@@ -335,50 +319,19 @@ public final class S3TreeRewriter {
         if (args.isEmpty()) {
             return false;
         }
-
         Expression target = args.get(0);
         return target instanceof Reference && ID_BUCKET.equals(((Reference) target).getName());
     }
 
-    // Creates ITE conditions for branchless S3Express variable computation.
-    private List<Condition> createIteConditions() {
-        List<Condition> conditions = new ArrayList<>();
-        conditions.add(createIteAssignment(VAR_FIPS, Expression.getReference(ID_USE_FIPS), FIPS_SUFFIX, EMPTY_SUFFIX));
-        conditions.add(createIteAssignment(
-                VAR_DS,
-                Expression.getReference(ID_USE_DUAL_STACK),
-                DS_SUFFIX,
-                EMPTY_SUFFIX));
-        // Auth scheme: sigv4 when session auth disabled, sigv4-s3express otherwise
-        Expression sessionAuthDisabled = Coalesce.ofExpressions(
-                Expression.getReference(ID_DISABLE_S3EXPRESS_SESSION_AUTH),
-                Expression.of(false));
-        conditions.add(createIteAssignment(VAR_AUTH, sessionAuthDisabled, AUTH_SIGV4, AUTH_SIGV4_S3EXPRESS));
-        return conditions;
-    }
-
-    // Creates an ITE-based assignment condition.
-    private Condition createIteAssignment(String varName, Expression condition, String trueValue, String falseValue) {
-        return Condition.builder()
-                .fn(Ite.ofStrings(condition, trueValue, falseValue))
-                .result(varName)
-                .build();
-    }
-
-    // Rewrites an endpoint rule to use canonical S3Express URLs and auth schemes.
     private Rule rewriteEndpoint(EndpointRule rule) {
         Endpoint endpoint = rule.getEndpoint();
         Expression urlExpr = endpoint.getUrl();
 
-        // Extract the raw URL string from the expression (IFF it's a static string, rarely is anything else).
         String urlStr = extractUrlString(urlExpr);
         if (urlStr == null) {
             return rule;
         }
 
-        // Check if this is an S3Express endpoint by URL or backend property.
-        // Note: while `contains("s3express")` is broad and could theoretically match path/query components,
-        // the subsequent matchUrl() call validates the hostname pattern before any rewriting occurs.
         boolean isS3ExpressUrl = urlStr.contains("s3express");
         boolean isS3ExpressBackend = isS3ExpressBackend(endpoint);
 
@@ -391,11 +344,9 @@ public final class S3TreeRewriter {
         // For URL override endpoints (backend=S3Express but URL doesn't match s3express hostname),
         // just canonicalize the auth scheme - no URL rewriting needed
         if (isS3ExpressBackend && !isS3ExpressUrl) {
-            // Canonicalize auth scheme to use {_s3e_auth}
             Map<Identifier, Literal> newProperties = canonicalizeAuthScheme(endpoint.getProperties());
 
             if (newProperties == endpoint.getProperties()) {
-                // No changes needed
                 return rule;
             }
 
@@ -408,7 +359,6 @@ public final class S3TreeRewriter {
                     .sourceLocation(endpoint.getSourceLocation())
                     .build();
 
-            // Add auth ITE condition for URL override endpoints
             List<Condition> allConditions = new ArrayList<>(rule.getConditions());
             allConditions.add(createAuthIteCondition());
 
@@ -425,17 +375,13 @@ public final class S3TreeRewriter {
 
         rewrittenCount++;
 
-        // Rewrite the URL to use the ITE-assigned variables
         String newUrl = match.rewriteUrl();
 
-        // Canonicalize auth scheme for bucket endpoints (not control plane)
-        // Control plane always uses sigv4, bucket endpoints vary based on DisableS3ExpressSessionAuth
         Map<Identifier, Literal> newProperties = endpoint.getProperties();
         if (match instanceof BucketUrlMatchResult) {
             newProperties = canonicalizeAuthScheme(endpoint.getProperties());
         }
 
-        // Build the new endpoint with canonicalized URL and properties
         Endpoint newEndpoint = Endpoint.builder()
                 .url(Expression.of(newUrl))
                 .headers(endpoint.getHeaders())
@@ -443,7 +389,6 @@ public final class S3TreeRewriter {
                 .sourceLocation(endpoint.getSourceLocation())
                 .build();
 
-        // Add ITE conditions: original conditions first, then ITE conditions at the end.
         List<Condition> allConditions = new ArrayList<>(rule.getConditions());
         allConditions.addAll(createIteConditions());
 
@@ -452,29 +397,42 @@ public final class S3TreeRewriter {
                 .endpoint(newEndpoint);
     }
 
-    // Checks if the endpoint has `backend` property set to "S3Express".
+    private List<Condition> createIteConditions() {
+        List<Condition> conditions = new ArrayList<>();
+        conditions.add(createIteAssignment(VAR_FIPS, Expression.getReference(ID_USE_FIPS), FIPS_SUFFIX, EMPTY_SUFFIX));
+        conditions.add(createIteAssignment(VAR_DS, Expression.getReference(ID_USE_DUAL_STACK), DS_SUFFIX, EMPTY_SUFFIX));
+        Expression sessionAuthDisabled = Coalesce.ofExpressions(
+                Expression.getReference(ID_DISABLE_S3EXPRESS_SESSION_AUTH),
+                Expression.of(false));
+        conditions.add(createIteAssignment(VAR_AUTH, sessionAuthDisabled, AUTH_SIGV4, AUTH_SIGV4_S3EXPRESS));
+        return conditions;
+    }
+
+    private Condition createIteAssignment(String varName, Expression condition, String trueValue, String falseValue) {
+        return Condition.builder()
+                .fn(Ite.ofStrings(condition, trueValue, falseValue))
+                .result(varName)
+                .build();
+    }
+
     private boolean isS3ExpressBackend(Endpoint endpoint) {
         Literal backend = endpoint.getProperties().get(ID_BACKEND);
         if (backend == null) {
             return false;
         }
-
         return backend.asStringLiteral()
                 .filter(Template::isStatic)
                 .map(t -> "S3Express".equalsIgnoreCase(t.expectLiteral()))
                 .orElse(false);
     }
 
-    // Creates just the auth ITE condition for URL override endpoints.
     private Condition createAuthIteCondition() {
-        // `DisableS3ExpressSessionAuth` is nullable, so we need to coalesce it to have a false default. Fix upstream?
         Expression isSessionAuthDisabled = Coalesce.ofExpressions(
                 Expression.getReference(ID_DISABLE_S3EXPRESS_SESSION_AUTH),
                 Expression.of(false));
         return createIteAssignment(VAR_AUTH, isSessionAuthDisabled, AUTH_SIGV4, AUTH_SIGV4_S3EXPRESS);
     }
 
-    // Canonicalizes the authScheme name in endpoint properties to use the ITE variable.
     private Map<Identifier, Literal> canonicalizeAuthScheme(Map<Identifier, Literal> properties) {
         Literal authSchemes = properties.get(ID_AUTH_SCHEMES);
         if (authSchemes == null) {
@@ -486,30 +444,25 @@ public final class S3TreeRewriter {
             return properties;
         }
 
-        // Rewrite each auth scheme's name field
         List<Literal> newSchemes = new ArrayList<>();
         for (Literal scheme : schemes) {
             Map<Identifier, Literal> record = scheme.asRecordLiteral().orElse(null);
             if (record == null) {
-                // Auth is always a record, but maybe that changes in the future, so pass it through.
                 newSchemes.add(scheme);
                 continue;
             }
 
             Literal nameLiteral = record.get(ID_NAME);
             if (nameLiteral == null) {
-                // "name" should always be set, but pass through if not.
                 newSchemes.add(scheme);
                 continue;
             }
 
-            // Only transform string literals we recognize.
             String name = nameLiteral.asStringLiteral()
                     .filter(Template::isStatic)
                     .map(Template::expectLiteral)
                     .orElse(null);
 
-            // Only rewrite if it's one of the S3Express auth schemes
             if (AUTH_SIGV4.equals(name) || AUTH_SIGV4_S3EXPRESS.equals(name)) {
                 Map<Identifier, Literal> newRecord = new LinkedHashMap<>(record);
                 newRecord.put(ID_NAME, AUTH_NAME_LITERAL);
@@ -524,63 +477,20 @@ public final class S3TreeRewriter {
         return newProperties;
     }
 
-    // Extracts the raw URL string from a URL expression.
     private String extractUrlString(Expression urlExpr) {
         return urlExpr.toNode().asStringNode().map(StringNode::getValue).orElse(null);
     }
 
-    // Matches an S3Express URL and returns the pattern match info. Tries to match in most specific order.
     private UrlMatchResult matchUrl(String url) {
-        Matcher m;
-
-        // First try control plane patterns (no AZ) since these are more specific
-        m = S3EXPRESS_CONTROL_FIPS_DS.matcher(url);
-        if (m.find()) {
-            return new ControlPlaneUrlMatchResult(url, m);
+        for (UrlPatternMatcher matcher : URL_PATTERNS) {
+            UrlMatchResult result = matcher.match(url);
+            if (result != null) {
+                return result;
+            }
         }
-
-        m = S3EXPRESS_CONTROL_FIPS.matcher(url);
-        if (m.find()) {
-            return new ControlPlaneUrlMatchResult(url, m);
-        }
-
-        m = S3EXPRESS_CONTROL_DS.matcher(url);
-        if (m.find()) {
-            return new ControlPlaneUrlMatchResult(url, m);
-        }
-
-        m = S3EXPRESS_CONTROL_PLAIN.matcher(url);
-        if (m.find()) {
-            return new ControlPlaneUrlMatchResult(url, m);
-        }
-
-        // Next, try bucket endpoint patterns (with AZ)
-        m = S3EXPRESS_FIPS_DS.matcher(url);
-        if (m.find()) {
-            return new BucketUrlMatchResult(url, m);
-        }
-
-        m = S3EXPRESS_FIPS.matcher(url);
-        if (m.find()) {
-            return new BucketUrlMatchResult(url, m);
-        }
-
-        m = S3EXPRESS_DS.matcher(url);
-        if (m.find()) {
-            return new BucketUrlMatchResult(url, m);
-        }
-
-        m = S3EXPRESS_PLAIN.matcher(url);
-        if (m.find()) {
-            return new BucketUrlMatchResult(url, m);
-        }
-
         return null;
     }
 
-    /**
-     * Result of matching an S3Express URL pattern.
-     */
     private abstract static class UrlMatchResult {
         protected final String prefix;
 
@@ -591,9 +501,6 @@ public final class S3TreeRewriter {
         abstract String rewriteUrl();
     }
 
-    /**
-     * Match result for bucket endpoints (with AZ): {prefix}s3express{fips}-{AZ}{ds}.{region}
-     */
     private static final class BucketUrlMatchResult extends UrlMatchResult {
         private final String s3express;
         private final String az;
@@ -612,9 +519,6 @@ public final class S3TreeRewriter {
         }
     }
 
-    /**
-     * Match result for control plane endpoints (no AZ): {prefix}s3express-control{fips}{ds}.{region}
-     */
     private static final class ControlPlaneUrlMatchResult extends UrlMatchResult {
         private final String s3expressControl;
         private final String regionSuffix;
@@ -628,6 +532,27 @@ public final class S3TreeRewriter {
         @Override
         String rewriteUrl() {
             return String.format("%s%s{%s}{%s}.%s", prefix, s3expressControl, VAR_FIPS, VAR_DS, regionSuffix);
+        }
+    }
+
+    private static final class UrlPatternMatcher {
+        private final Pattern pattern;
+        private final boolean isBucketPattern;
+
+        UrlPatternMatcher(String regex, boolean isBucketPattern) {
+            this.pattern = Pattern.compile(regex);
+            this.isBucketPattern = isBucketPattern;
+        }
+
+        UrlMatchResult match(String url) {
+            Matcher m = pattern.matcher(url);
+            if (!m.find()) {
+                return null;
+            } else if (isBucketPattern) {
+                return new BucketUrlMatchResult(url, m);
+            } else {
+                return new ControlPlaneUrlMatchResult(url, m);
+            }
         }
     }
 }
