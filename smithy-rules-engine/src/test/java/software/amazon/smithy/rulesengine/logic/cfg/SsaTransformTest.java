@@ -292,28 +292,39 @@ public class SsaTransformTest {
         EndpointRule resultRule1 = (EndpointRule) result.getRules().get(0);
         EndpointRule resultRule2 = (EndpointRule) result.getRules().get(1);
 
-        String resultVar1 = resultRule1.getConditions().get(0).getResult()
-                .map(Object::toString).orElse(null);
-        String resultVar2 = resultRule2.getConditions().get(0).getResult()
-                .map(Object::toString).orElse(null);
+        String resultVar1 = resultRule1.getConditions()
+                .get(0)
+                .getResult()
+                .map(Object::toString)
+                .orElse(null);
+        String resultVar2 = resultRule2.getConditions()
+                .get(0)
+                .getResult()
+                .map(Object::toString)
+                .orElse(null);
 
         System.out.println("resultVar1=" + resultVar1);
         System.out.println("resultVar2=" + resultVar2);
 
         // Both should have bindings (since they're used)
-        assertEquals(true, resultRule1.getConditions().get(0).getResult().isPresent(),
+        assertEquals(true,
+                resultRule1.getConditions().get(0).getResult().isPresent(),
                 "First binding should be present since myVar is used");
-        assertEquals(true, resultRule2.getConditions().get(0).getResult().isPresent(),
+        assertEquals(true,
+                resultRule2.getConditions().get(0).getResult().isPresent(),
                 "Second binding should be present since myVar is used");
 
         // They should be SSA-renamed to unique names
-        assertEquals(true, resultVar1.contains("_ssa_"),
+        assertEquals(true,
+                resultVar1.contains("_ssa_"),
                 "First binding should have SSA suffix, got: " + resultVar1);
-        assertEquals(true, resultVar2.contains("_ssa_"),
+        assertEquals(true,
+                resultVar2.contains("_ssa_"),
                 "Second binding should have SSA suffix, got: " + resultVar2);
 
         // They should NOT be the same (unique SSA names)
-        assertEquals(false, resultVar1.equals(resultVar2),
+        assertEquals(false,
+                resultVar1.equals(resultVar2),
                 "SSA names should be unique: " + resultVar1 + " vs " + resultVar2);
     }
 }

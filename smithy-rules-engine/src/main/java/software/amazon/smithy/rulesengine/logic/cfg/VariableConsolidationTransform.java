@@ -120,7 +120,9 @@ final class VariableConsolidationTransform extends TreeMapper {
                 conditionsToEliminate.add(condition);
                 eliminatedCount++;
                 LOGGER.fine(() -> String.format("Eliminating redundant binding: '%s' -> '%s' for: %s",
-                        varName, parentVar, canonical));
+                        varName,
+                        parentVar,
+                        canonical));
             } else {
                 currentBindings.put(canonical, varName);
                 visibleAncestorVars.add(varName);
@@ -134,11 +136,15 @@ final class VariableConsolidationTransform extends TreeMapper {
                         variableRenameMap.put(varName, globalVar);
                         consolidatedCount++;
                         LOGGER.fine(() -> String.format("Consolidating '%s' -> '%s' for: %s",
-                                varName, globalVar, canonical));
+                                varName,
+                                globalVar,
+                                canonical));
                     } else {
                         skippedDueToShadowing++;
                         LOGGER.info(() -> String.format("Shadowing skip: '%s' -> '%s' for expr: %s",
-                                varName, globalVar, canonical));
+                                varName,
+                                globalVar,
+                                canonical));
                     }
                 } else if (globalVar == null) {
                     globalExpressionToVar.put(canonical, varName);

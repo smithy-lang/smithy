@@ -128,16 +128,14 @@ final class VariableAnalysis {
     ) {
         Map<String, String> mapping = new HashMap<>();
 
-        if (bindingCount <= 1) {
-            // Single binding: no SSA rename needed
+        if (bindingCount <= 1 || expressions.size() == 1) {
+            // Single binding or multiple bindings with the same expression: no SSA rename needed.
+            // When multiple bindings have the same expression text, references inside may get
+            // SSA-renamed differently in each scope, but that's fine: the resulting expressions
+            // will differ and be treated as distinct BDD conditions. The binding name being the
+            // same doesn't cause collisions since conditions are identified by their full content.
             String expression = expressions.iterator().next();
             mapping.put(expression, varName);
-        } else if (expressions.size() == 1) {
-            // Multiple bindings with the same expression: still need SSA rename because
-            // references in the expression may be renamed differently in each scope.
-            // Use a special suffix that indicates it's the same expression.
-            String expression = expressions.iterator().next();
-            mapping.put(expression, varName + "_ssa_1");
         } else {
             // Multiple bindings with different expressions: use SSA naming convention
             List<String> sortedExpressions = new ArrayList<>(expressions);

@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.rulesengine.logic.cfg;
 
+import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
@@ -11,8 +12,6 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-
-import java.util.logging.Logger;
 
 /**
  * Assigns synthetic bindings to conditions that could benefit from variable consolidation.
