@@ -293,7 +293,7 @@ public final class CostOptimization implements Function<EndpointBddTrait, Endpoi
         private Cfg cfg;
         private ConditionCostModel costModel;
         private ToDoubleFunction<Condition> trueProbability;
-        private double maxAllowedGrowth = 0.1;
+        private double maxAllowedGrowth = 0.08;
         private int maxRounds = 30;
         private int topK = 50;
 
@@ -333,7 +333,7 @@ public final class CostOptimization implements Function<EndpointBddTrait, Endpoi
         }
 
         /**
-         * Sets the maximum allowed node growth as a fraction (default 0.1 or 10%).
+         * Sets the maximum allowed node growth as a fraction (default 0.08 or 8%).
          *
          * @param maxAllowedGrowth maximum growth (0.0 = no growth, 0.1 = 10% growth)
          * @return the builder

@@ -28,7 +28,7 @@ public final class NoMatchRule extends Rule {
 
     @Override
     protected Type typecheckValue(Scope<Type> scope) {
-        throw new UnsupportedOperationException("NO_MATCH is a sentinel");
+        return Type.anyType();
     }
 
     @Override

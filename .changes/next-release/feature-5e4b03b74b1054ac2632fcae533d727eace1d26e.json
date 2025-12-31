@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Improve BDD sifting (2x speed, more reduction)",
+  "pull_requests": [
+    "[#2890](https://github.com/smithy-lang/smithy/pull/2890)"
+  ]
+}

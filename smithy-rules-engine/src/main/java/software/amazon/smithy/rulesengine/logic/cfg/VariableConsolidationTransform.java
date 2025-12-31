@@ -4,32 +4,45 @@
  */
 package software.amazon.smithy.rulesengine.logic.cfg;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 
 /**
- * Consolidates variable names for identical expressions and eliminates redundant bindings.
+ * Consolidates variable bindings for identical expressions.
  *
- * <p>This transform identifies conditions that compute the same expression but assign
- * the result to different variable names, and either consolidates them to use the same
- * name or eliminates redundant bindings when the same expression is already bound in
- * an ancestor scope.
+ * <p>This transform performs two optimizations: elimination and consolidation.
+ *
+ * <p>Elimination: If an expression is already bound in a parent scope, child bindings are removed.
+ * <pre>
+ *     url = parseURL(Endpoint)
+ *     _synthetic = parseURL(Endpoint) // eliminated, references rewritten to 'url'
+ * </pre>
+ *
+ * <p>Consolidation: If the same expression appears in sibling scopes, all bindings use the first name.
+ * <pre>
+ *     branch1: url = parseURL(Endpoint)
+ *     branch2: parsed = parseURL(Endpoint) // renamed to 'url'
+ * </pre>
+ *
+ * <p>The transform avoids renaming when it would cause variable shadowing.
+ *
+ * @see SyntheticBindingTransform
+ * @see DeadStoreEliminationTransform
  */
-final class VariableConsolidationTransform {
+final class VariableConsolidationTransform extends TreeMapper {
     private static final Logger LOGGER = Logger.getLogger(VariableConsolidationTransform.class.getName());
 
     // Global map of canonical expressions to their first variable name seen
@@ -38,223 +51,154 @@ final class VariableConsolidationTransform {
     // Maps old variable names to new canonical names for rewriting references
     private final Map<String, String> variableRenameMap = new HashMap<>();
 
-    // Tracks conditions to eliminate (by their path in the tree)
-    private final Set<String> conditionsToEliminate = new HashSet<>();
+    // Tracks conditions to eliminate (using identity for exact instance matching)
+    private final Set<Condition> conditionsToEliminate = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    // Tracks all variables defined at each scope level to check for conflicts
-    private final Map<String, Set<String>> scopeDefinedVars = new HashMap<>();
+    // Tracks all variables defined at each rule to check for conflicts
+    private final Map<Rule, Set<String>> ruleDefinedVars = new IdentityHashMap<>();
 
     private int consolidatedCount = 0;
     private int eliminatedCount = 0;
     private int skippedDueToShadowing = 0;
 
     public static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
-        VariableConsolidationTransform transform = new VariableConsolidationTransform();
-        return transform.consolidate(ruleSet);
-    }
+        VariableConsolidationTransform t = new VariableConsolidationTransform();
 
-    private EndpointRuleSet consolidate(EndpointRuleSet ruleSet) {
-        LOGGER.info("Starting variable consolidation transform");
-
-        for (int i = 0; i < ruleSet.getRules().size(); i++) {
-            collectDefinitions(ruleSet.getRules().get(i), "rule[" + i + "]");
+        // Pass 1: Collect all variable definitions per rule
+        for (Rule rule : ruleSet.getRules()) {
+            t.collectDefinitions(rule);
         }
 
-        for (int i = 0; i < ruleSet.getRules().size(); i++) {
-            discoverBindingsInRule(ruleSet.getRules().get(i), "rule[" + i + "]", new HashMap<>(), new HashSet<>());
-        }
-
-        List<Rule> transformedRules = new ArrayList<>();
-        for (int i = 0; i < ruleSet.getRules().size(); i++) {
-            transformedRules.add(transformRule(ruleSet.getRules().get(i), "rule[" + i + "]"));
+        // Pass 2: Discover bindings to consolidate/eliminate
+        for (Rule rule : ruleSet.getRules()) {
+            t.discoverBindings(rule, new HashMap<>(), new HashSet<>());
         }
 
         LOGGER.info(String.format("Variable consolidation: %d consolidated, %d eliminated, %d skipped due to shadowing",
-                consolidatedCount,
-                eliminatedCount,
-                skippedDueToShadowing));
+                t.consolidatedCount,
+                t.eliminatedCount,
+                t.skippedDueToShadowing));
 
-        return EndpointRuleSet.builder()
-                .parameters(ruleSet.getParameters())
-                .rules(transformedRules)
-                .version(ruleSet.getVersion())
-                .build();
+        // Pass 3: Transform using TreeMapper
+        return t.endpointRuleSet(ruleSet);
     }
 
-    private void collectDefinitions(Rule rule, String path) {
+    private void collectDefinitions(Rule rule) {
         Set<String> definedVars = new HashSet<>();
-
-        // Collect all variables defined at this scope level
         for (Condition condition : rule.getConditions()) {
-            if (condition.getResult().isPresent()) {
-                definedVars.add(condition.getResult().get().toString());
-            }
+            condition.getResult().ifPresent(id -> definedVars.add(id.toString()));
         }
-
-        scopeDefinedVars.put(path, definedVars);
+        ruleDefinedVars.put(rule, definedVars);
 
         if (rule instanceof TreeRule) {
-            TreeRule treeRule = (TreeRule) rule;
-            for (int i = 0; i < treeRule.getRules().size(); i++) {
-                collectDefinitions(treeRule.getRules().get(i), path + "/tree/rule[" + i + "]");
+            for (Rule nested : ((TreeRule) rule).getRules()) {
+                collectDefinitions(nested);
             }
         }
     }
 
-    private void discoverBindingsInRule(
+    private void discoverBindings(
             Rule rule,
-            String path,
             Map<String, String> parentBindings,
             Set<String> ancestorVars
     ) {
-        // Track bindings at current scope (inherits parent bindings)
         Map<String, String> currentBindings = new HashMap<>(parentBindings);
-        // Track all variables visible from ancestors (for shadowing check)
         Set<String> visibleAncestorVars = new HashSet<>(ancestorVars);
 
-        for (int i = 0; i < rule.getConditions().size(); i++) {
-            Condition condition = rule.getConditions().get(i);
-            String condPath = path + "/cond[" + i + "]";
+        for (Condition condition : rule.getConditions()) {
+            if (!condition.getResult().isPresent()) {
+                continue;
+            }
 
-            if (condition.getResult().isPresent()) {
-                String varName = condition.getResult().get().toString();
-                LibraryFunction fn = condition.getFunction();
-                String canonical = fn.canonicalize().toString();
+            String varName = condition.getResult().get().toString();
+            String canonical = condition.getFunction().canonicalize().toString();
 
-                // Check if this expression is already bound in parent scope
-                String parentVar = parentBindings.get(canonical);
-                if (parentVar != null) {
-                    // Found duplicate in parent, eliminate this binding
-                    variableRenameMap.put(varName, parentVar);
-                    conditionsToEliminate.add(condPath);
-                    eliminatedCount++;
-                    LOGGER.info(String.format("Eliminating redundant binding at %s: '%s' -> '%s' for: %s",
-                            condPath,
-                            varName,
-                            parentVar,
-                            canonical));
-                } else {
-                    // Not bound in parent, add to current scope
-                    currentBindings.put(canonical, varName);
-                    visibleAncestorVars.add(varName);
+            // Check if already bound in parent scope
+            String parentVar = parentBindings.get(canonical);
+            if (parentVar != null) {
+                variableRenameMap.put(varName, parentVar);
+                conditionsToEliminate.add(condition);
+                eliminatedCount++;
+                LOGGER.fine(() -> String.format("Eliminating redundant binding: '%s' -> '%s' for: %s",
+                        varName,
+                        parentVar,
+                        canonical));
+            } else {
+                currentBindings.put(canonical, varName);
+                visibleAncestorVars.add(varName);
 
-                    // Check for global consolidation opportunity
-                    String globalVar = globalExpressionToVar.get(canonical);
-                    if (globalVar != null && !globalVar.equals(varName)) {
-                        // Same expression elsewhere with different name
-                        // Check if consolidation would cause shadowing
-                        if (!wouldCauseShadowing(globalVar, path, ancestorVars)) {
-                            variableRenameMap.put(varName, globalVar);
-                            consolidatedCount++;
-                            LOGGER.info(String.format("Consolidating '%s' -> '%s' for: %s",
-                                    varName,
-                                    globalVar,
-                                    canonical));
-                        } else {
-                            skippedDueToShadowing++;
-                            LOGGER.fine(String.format("Cannot consolidate '%s' -> '%s' (would shadow) for: %s",
-                                    varName,
-                                    globalVar,
-                                    canonical));
-                        }
-                    } else if (globalVar == null) {
-                        // First time seeing this expression globally
-                        globalExpressionToVar.put(canonical, varName);
+                // Check for global consolidation opportunity
+                String globalVar = globalExpressionToVar.get(canonical);
+                if (globalVar != null && !globalVar.equals(varName)) {
+                    boolean wouldShadow = wouldCauseShadowing(globalVar, rule, ancestorVars);
+                    if (!wouldShadow) {
+                        // No shadowing - safe to rename the binding
+                        variableRenameMap.put(varName, globalVar);
+                        consolidatedCount++;
+                        LOGGER.fine(() -> String.format("Consolidating '%s' -> '%s' for: %s",
+                                varName,
+                                globalVar,
+                                canonical));
+                    } else {
+                        skippedDueToShadowing++;
+                        LOGGER.info(() -> String.format("Shadowing skip: '%s' -> '%s' for expr: %s",
+                                varName,
+                                globalVar,
+                                canonical));
                     }
+                } else if (globalVar == null) {
+                    globalExpressionToVar.put(canonical, varName);
                 }
             }
         }
 
         if (rule instanceof TreeRule) {
-            TreeRule treeRule = (TreeRule) rule;
-            for (int i = 0; i < treeRule.getRules().size(); i++) {
-                discoverBindingsInRule(
-                        treeRule.getRules().get(i),
-                        path + "/tree/rule[" + i + "]",
-                        currentBindings,
-                        visibleAncestorVars);
+            for (Rule nested : ((TreeRule) rule).getRules()) {
+                discoverBindings(nested, currentBindings, visibleAncestorVars);
             }
         }
     }
 
-    private boolean wouldCauseShadowing(String varName, String currentPath, Set<String> ancestorVars) {
-        // Check if using this variable name would shadow an ancestor variable
+    private boolean wouldCauseShadowing(String varName, Rule currentRule, Set<String> ancestorVars) {
         if (ancestorVars.contains(varName)) {
             return true;
         }
 
-        // Check if any child scope already defines this variable
-        // (which would be shadowed if we use it here)
-        for (Map.Entry<String, Set<String>> entry : scopeDefinedVars.entrySet()) {
-            String scopePath = entry.getKey();
-            Set<String> scopeVars = entry.getValue();
-            // Check if this scope is a descendant of current path
-            if (scopePath.startsWith(currentPath + "/") && scopeVars.contains(varName)) {
-                return true;
+        // Check if any descendant rule defines this variable
+        return wouldShadowInDescendants(varName, currentRule);
+    }
+
+    private boolean wouldShadowInDescendants(String varName, Rule rule) {
+        if (rule instanceof TreeRule) {
+            for (Rule nested : ((TreeRule) rule).getRules()) {
+                Set<String> nestedVars = ruleDefinedVars.get(nested);
+                if (nestedVars != null && nestedVars.contains(varName)) {
+                    return true;
+                }
+                if (wouldShadowInDescendants(varName, nested)) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
-    private Rule transformRule(Rule rule, String path) {
-        List<Condition> transformedConditions = new ArrayList<>();
-
-        for (int i = 0; i < rule.getConditions().size(); i++) {
-            String condPath = path + "/cond[" + i + "]";
-
-            if (conditionsToEliminate.contains(condPath)) {
-                // Skip this condition entirely since it's redundant
-                continue;
-            }
-
-            Condition condition = rule.getConditions().get(i);
-            transformedConditions.add(transformCondition(condition));
+    @Override
+    public Condition condition(Rule rule, Condition condition) {
+        // Eliminate redundant conditions
+        if (conditionsToEliminate.contains(condition)) {
+            return null;
         }
 
-        if (rule instanceof TreeRule) {
-            TreeRule treeRule = (TreeRule) rule;
-            return TreeRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(transformedConditions)
-                    .treeRule(TreeRewriter.transformNestedRules(treeRule, path, this::transformRule));
-
-        } else if (rule instanceof EndpointRule) {
-            EndpointRule endpointRule = (EndpointRule) rule;
-            TreeRewriter rewriter = createRewriter();
-
-            return EndpointRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(transformedConditions)
-                    .endpoint(rewriter.rewriteEndpoint(endpointRule.getEndpoint()));
-
-        } else if (rule instanceof ErrorRule) {
-            ErrorRule errorRule = (ErrorRule) rule;
-            TreeRewriter rewriter = createRewriter();
-
-            return ErrorRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(transformedConditions)
-                    .error(rewriter.rewrite(errorRule.getError()));
-        }
-
-        return rule.withConditions(transformedConditions);
-    }
-
-    private Condition transformCondition(Condition condition) {
-        // Rewrite any references in the function
-        TreeRewriter rewriter = createRewriter();
         LibraryFunction fn = condition.getFunction();
-        LibraryFunction rewrittenFn = (LibraryFunction) rewriter.rewrite(fn);
+        LibraryFunction rewrittenFn = libraryFunction(fn);
 
-        // If this condition assigns to a variable that should be renamed,
-        // use the canonical name instead
+        // Check if binding needs renaming
         if (condition.getResult().isPresent()) {
             String varName = condition.getResult().get().toString();
             String canonicalName = variableRenameMap.get(varName);
 
             if (canonicalName != null) {
-                // This variable is being consolidated, use the canonical name
                 return Condition.builder()
                         .fn(rewrittenFn)
                         .result(Identifier.of(canonicalName))
@@ -262,7 +206,7 @@ final class VariableConsolidationTransform {
             }
         }
 
-        // No consolidation needed, but may still need reference rewriting
+        // Only rebuild if function changed
         if (rewrittenFn != fn) {
             return condition.toBuilder().fn(rewrittenFn).build();
         }
@@ -270,16 +214,23 @@ final class VariableConsolidationTransform {
         return condition;
     }
 
-    private TreeRewriter createRewriter() {
-        if (variableRenameMap.isEmpty()) {
-            return TreeRewriter.IDENTITY;
+    @Override
+    public Expression expression(Expression expression) {
+        // Short-circuit if no references need rewriting
+        for (String ref : expression.getReferences()) {
+            if (variableRenameMap.containsKey(ref)) {
+                return super.expression(expression);
+            }
         }
+        return expression;
+    }
 
-        Map<String, Expression> replacements = new HashMap<>();
-        for (Map.Entry<String, String> entry : variableRenameMap.entrySet()) {
-            replacements.put(entry.getKey(), Expression.getReference(Identifier.of(entry.getValue())));
+    @Override
+    public Reference reference(Reference ref) {
+        String canonicalName = variableRenameMap.get(ref.getName().toString());
+        if (canonicalName != null) {
+            return Expression.getReference(Identifier.of(canonicalName));
         }
-
-        return TreeRewriter.forReplacements(replacements);
+        return ref;
     }
 }

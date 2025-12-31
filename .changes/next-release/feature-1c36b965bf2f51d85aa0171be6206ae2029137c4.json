@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Implement rules engine ITE fn and S3 tree transform",
+  "pull_requests": [
+    "[#2903](https://github.com/smithy-lang/smithy/pull/2903)"
+  ]
+}

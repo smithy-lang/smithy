@@ -5,114 +5,104 @@
 package software.amazon.smithy.rulesengine.logic.cfg;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 
 /**
- * Transforms a decision tree into Static Single Assignment (SSA) form.
+ * Transforms a decision tree into Static Single Assignment (SSA) form and orchestrates the pre-BDD optimization
+ * pipeline (see transform()).
  *
- * <p>This transformation ensures that each variable is assigned exactly once by renaming variables when they are
- * reassigned in different parts of the tree. For example, if variable "x" is assigned in multiple branches, they
- * become "x_ssa_1", "x_ssa_2", "x_ssa_3", etc. Without this transform, the BDD compilation would confuse divergent
- * paths that have the same variable name.
+ * <h2>Why Tree-Level AND CFG-Level Optimization?</h2>
  *
- * <p>Note that this transform is only applied when the reassignment is done using different
- * arguments than previously seen assignments of the same variable name.
+ * <p>Tree-level transforms provide the bulk of optimization, but {@link CfgBuilder} performs additional
+ * consolidation via {@code consolidateIsSetWithBinding}. This catches cross-branch patterns that tree-level
+ * transforms cannot see.
+ *
+ * <p>Specifically, when one branch contains {@code not(isSet(f(x)))} and another branch contains
+ * {@code v = f(x)}, tree-level transforms can't consolidate them because:
+ * <ul>
+ *   <li>{@link SyntheticBindingTransform} doesn't see the inner {@code isSet} - it checks the outer function
+ *       which is {@code Not}, not {@code IsSet}</li>
+ *   <li>Tree transforms don't have visibility across sibling branches</li>
+ * </ul>
+ *
+ * <p>During CFG construction, {@code CfgBuilder#isNegationWrapper} unwraps the {@code Not} to get
+ * {@code isSet(f(x))}, and {@code consolidateIsSetWithBinding} can then consolidate it with the existing
+ * binding from the other branch using its global {@code functionBindings} map.
+ *
+ * <h2>SSA Renaming</h2>
+ *
+ * <p>The SSA portion ensures each variable is assigned exactly once by renaming variables when they are
+ * reassigned in different parts of the tree. For example, if variable "x" is assigned in multiple branches
+ * with different expressions, they become "x_ssa_1", "x_ssa_2", etc. Without this, BDD compilation would
+ * incorrectly share nodes for divergent paths that happen to use the same variable name.
+ *
+ * <p>SSA renaming is only applied when reassignment uses different arguments than previously seen assignments.
+ *
+ * @see CfgBuilder#createConditionReference for the CFG-level consolidation that catches cross-branch patterns
  */
-final class SsaTransform {
+final class SsaTransform extends TreeMapper {
 
     private final Deque<Map<String, String>> scopeStack = new ArrayDeque<>();
-    private final Map<Condition, Condition> rewrittenConditions = new IdentityHashMap<>();
-    private final Map<Rule, Rule> rewrittenRules = new IdentityHashMap<>();
-    private final VariableAnalysis variableAnalysis;
-    private final TreeRewriter referenceRewriter;
+    private final VariableAnalysis analysis;
 
-    private SsaTransform(VariableAnalysis variableAnalysis) {
-        scopeStack.push(new HashMap<>());
-        this.variableAnalysis = variableAnalysis;
-        this.referenceRewriter = new TreeRewriter(this::referenceRewriter, this::needsRewriting);
-    }
-
-    private Expression referenceRewriter(Reference ref) {
-        String originalName = ref.getName().toString();
-        String uniqueName = resolveReference(originalName);
-        return Expression.getReference(Identifier.of(uniqueName));
+    private SsaTransform(VariableAnalysis analysis) {
+        this.analysis = analysis;
+        // Seed initial scope with input parameters.
+        Map<String, String> initialScope = new HashMap<>();
+        for (String param : analysis.getInputParams()) {
+            initialScope.put(param, param);
+        }
+        scopeStack.push(initialScope);
     }
 
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
+        // Collapse isSet(X) + booleanEquals(X, true/false) into coalesced checks
+        ruleSet = IsSetBooleanCoalesceTransform.transform(ruleSet);
+        // Assign synthetic bindings to enable variable consolidation
+        ruleSet = SyntheticBindingTransform.transform(ruleSet);
+        // Consolidate variables and eliminate redundant bindings
         ruleSet = VariableConsolidationTransform.transform(ruleSet);
+        // Remove bindings that are never used (before coalescing inlines them)
+        ruleSet = DeadStoreEliminationTransform.transform(ruleSet);
+        // Coalesces bind-then-use patterns to reduce condition count and branching.
         ruleSet = CoalesceTransform.transform(ruleSet);
-        VariableAnalysis variableAnalysis = VariableAnalysis.analyze(ruleSet);
-        SsaTransform ssaTransform = new SsaTransform(variableAnalysis);
+        // Do an SSA transform so divergent paths in the BDD remain logically divergent and thereby correct.
+        return new SsaTransform(VariableAnalysis.analyze(ruleSet)).endpointRuleSet(ruleSet);
+    }
 
-        List<Rule> rewrittenRules = new ArrayList<>(ruleSet.getRules().size());
-        for (Rule original : ruleSet.getRules()) {
-            rewrittenRules.add(ssaTransform.processRule(original));
+    @Override
+    public Rule rule(Rule r) {
+        scopeStack.push(new HashMap<>(peekScope()));
+        try {
+            return super.rule(r);
+        } finally {
+            scopeStack.pop();
         }
-
-        return EndpointRuleSet.builder()
-                .parameters(ruleSet.getParameters())
-                .rules(rewrittenRules)
-                .version(ruleSet.getVersion())
-                .build();
     }
 
-    private Rule processRule(Rule rule) {
-        enterScope();
-        Rule rewrittenRule = rewriteRule(rule);
-        exitScope();
-        return rewrittenRule;
-    }
-
-    private void enterScope() {
-        scopeStack.push(new HashMap<>(scopeStack.peek()));
-    }
-
-    private void exitScope() {
-        if (scopeStack.size() <= 1) {
-            throw new IllegalStateException("Cannot exit global scope");
-        }
-        scopeStack.pop();
-    }
-
-    private Condition rewriteCondition(Condition condition) {
-        boolean hasBinding = condition.getResult().isPresent();
-
-        if (!hasBinding) {
-            Condition cached = rewrittenConditions.get(condition);
-            if (cached != null) {
-                return cached;
-            }
-        }
-
+    @Override
+    public Condition condition(Rule rule, Condition condition) {
         LibraryFunction fn = condition.getFunction();
-        Set<String> rewritableRefs = filterOutInputParameters(fn.getReferences());
 
         String uniqueBindingName = null;
         boolean needsUniqueBinding = false;
-        if (hasBinding) {
+        if (condition.getResult().isPresent()) {
             String varName = condition.getResult().get().toString();
 
             // Only need SSA rename if variable has multiple bindings
-            if (variableAnalysis.hasMultipleBindings(varName)) {
-                Map<String, String> expressionMap = variableAnalysis.getExpressionMappings().get(varName);
+            if (analysis.hasMultipleBindings(varName)) {
+                Map<String, String> expressionMap = analysis.getExpressionMappings().get(varName);
                 if (expressionMap != null) {
                     uniqueBindingName = expressionMap.get(fn.toString());
                     needsUniqueBinding = uniqueBindingName != null && !uniqueBindingName.equals(varName);
@@ -120,158 +110,59 @@ final class SsaTransform {
             }
         }
 
-        if (!needsRewriting(rewritableRefs) && !needsUniqueBinding) {
-            if (!hasBinding) {
-                rewrittenConditions.put(condition, condition);
-            }
+        if (doesNotNeedRewriting(fn.getReferences()) && !needsUniqueBinding) {
             return condition;
         }
 
-        LibraryFunction rewrittenExpr = (LibraryFunction) referenceRewriter.rewrite(fn);
-        boolean exprChanged = rewrittenExpr != fn;
+        LibraryFunction rewrittenFn = libraryFunction(fn);
+        boolean fnChanged = rewrittenFn != fn;
 
-        Condition rewritten;
-        if (hasBinding && uniqueBindingName != null) {
-            scopeStack.peek().put(condition.getResult().get().toString(), uniqueBindingName);
-            if (needsUniqueBinding || exprChanged) {
-                rewritten = condition.toBuilder().fn(rewrittenExpr).result(Identifier.of(uniqueBindingName)).build();
-            } else {
-                rewritten = condition;
+        if (condition.getResult().isPresent() && uniqueBindingName != null) {
+            bindVariable(condition.getResult().get().toString(), uniqueBindingName);
+            if (needsUniqueBinding || fnChanged) {
+                return condition.toBuilder().fn(rewrittenFn).result(Identifier.of(uniqueBindingName)).build();
             }
-        } else if (exprChanged) {
-            rewritten = condition.toBuilder().fn(rewrittenExpr).build();
-        } else {
-            rewritten = condition;
+        } else if (fnChanged) {
+            return condition.toBuilder().fn(rewrittenFn).build();
         }
 
-        if (!hasBinding) {
-            rewrittenConditions.put(condition, rewritten);
-        }
-
-        return rewritten;
+        return condition;
     }
 
-    private Set<String> filterOutInputParameters(Set<String> references) {
-        if (references.isEmpty() || variableAnalysis.getInputParams().isEmpty()) {
-            return references;
-        }
-
-        Set<String> filtered = new HashSet<>(references);
-        filtered.removeAll(variableAnalysis.getInputParams());
-        return filtered;
+    Map<String, String> peekScope() {
+        return Objects.requireNonNull(scopeStack.peek(), "Scope stack is empty");
     }
 
-    private boolean needsRewriting(Set<String> references) {
-        if (references.isEmpty()) {
-            return false;
-        }
+    @Override
+    public Expression expression(Expression expression) {
+        return doesNotNeedRewriting(expression.getReferences()) ? expression : super.expression(expression);
+    }
 
-        Map<String, String> currentScope = scopeStack.peek();
+    @Override
+    public Reference reference(Reference ref) {
+        String originalName = ref.getName().toString();
+        String uniqueName = peekScope().getOrDefault(originalName, originalName);
+        if (uniqueName.equals(originalName)) {
+            return ref;
+        }
+        return Expression.getReference(Identifier.of(uniqueName));
+    }
+
+    private void bindVariable(String oldName, String newName) {
+        Map<String, String> scope = peekScope();
+        String existing = scope.put(oldName, newName);
+        if (existing != null && !existing.equals(oldName)) {
+            throw new IllegalStateException("Cannot shadow variable: " + oldName + ", conflicts with " + existing);
+        }
+    }
+
+    private boolean doesNotNeedRewriting(Set<String> references) {
+        Map<String, String> scope = peekScope();
         for (String ref : references) {
-            String mapped = currentScope.get(ref);
-            if (mapped != null && !mapped.equals(ref)) {
-                return true;
+            if (!ref.equals(scope.getOrDefault(ref, ref))) {
+                return false;
             }
         }
-        return false;
-    }
-
-    private boolean needsRewriting(Expression expression) {
-        return needsRewriting(filterOutInputParameters(expression.getReferences()));
-    }
-
-    private Rule rewriteRule(Rule rule) {
-        Rule cached = rewrittenRules.get(rule);
-        if (cached != null) {
-            return cached;
-        }
-
-        List<Condition> rewrittenConditions = rewriteConditions(rule.getConditions());
-        boolean conditionsChanged = !rewrittenConditions.equals(rule.getConditions());
-
-        Rule result;
-        if (rule instanceof EndpointRule) {
-            result = rewriteEndpointRule((EndpointRule) rule, rewrittenConditions, conditionsChanged);
-        } else if (rule instanceof ErrorRule) {
-            result = rewriteErrorRule((ErrorRule) rule, rewrittenConditions, conditionsChanged);
-        } else if (rule instanceof TreeRule) {
-            result = rewriteTreeRule((TreeRule) rule, rewrittenConditions, conditionsChanged);
-        } else if (conditionsChanged) {
-            throw new UnsupportedOperationException("Cannot change rule: " + rule);
-        } else {
-            result = rule;
-        }
-
-        rewrittenRules.put(rule, result);
-        return result;
-    }
-
-    private List<Condition> rewriteConditions(List<Condition> conditions) {
-        List<Condition> rewritten = new ArrayList<>(conditions.size());
-        for (Condition condition : conditions) {
-            rewritten.add(rewriteCondition(condition));
-        }
-        return rewritten;
-    }
-
-    private Rule rewriteEndpointRule(
-            EndpointRule rule,
-            List<Condition> rewrittenConditions,
-            boolean conditionsChanged
-    ) {
-        Endpoint rewrittenEndpoint = referenceRewriter.rewriteEndpoint(rule.getEndpoint());
-
-        if (conditionsChanged || rewrittenEndpoint != rule.getEndpoint()) {
-            return EndpointRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(rewrittenConditions)
-                    .endpoint(rewrittenEndpoint);
-        }
-
-        return rule;
-    }
-
-    private Rule rewriteErrorRule(ErrorRule rule, List<Condition> rewrittenConditions, boolean conditionsChanged) {
-        Expression rewrittenError = referenceRewriter.rewrite(rule.getError());
-
-        if (conditionsChanged || rewrittenError != rule.getError()) {
-            return ErrorRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(rewrittenConditions)
-                    .error(rewrittenError);
-        }
-
-        return rule;
-    }
-
-    private Rule rewriteTreeRule(TreeRule rule, List<Condition> rewrittenConditions, boolean conditionsChanged) {
-        List<Rule> rewrittenNestedRules = new ArrayList<>();
-        boolean nestedChanged = false;
-
-        for (Rule nestedRule : rule.getRules()) {
-            enterScope();
-            Rule rewritten = rewriteRule(nestedRule);
-            rewrittenNestedRules.add(rewritten);
-            if (rewritten != nestedRule) {
-                nestedChanged = true;
-            }
-            exitScope();
-        }
-
-        if (conditionsChanged || nestedChanged) {
-            return TreeRule.builder()
-                    .description(rule.getDocumentation().orElse(null))
-                    .conditions(rewrittenConditions)
-                    .treeRule(rewrittenNestedRules);
-        }
-
-        return rule;
-    }
-
-    private String resolveReference(String originalName) {
-        // Input parameters are never rewritten
-        return variableAnalysis.getInputParams().contains(originalName)
-                ? originalName
-                : scopeStack.peek().getOrDefault(originalName, originalName);
+        return true;
     }
 }

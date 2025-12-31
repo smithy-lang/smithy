@@ -18,8 +18,8 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.StringLiteral;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -231,16 +231,27 @@ public abstract class LibraryFunction extends Expression {
      * @return true if arguments should be swapped
      */
     protected static boolean shouldSwapArgs(Expression arg0, Expression arg1) {
-        boolean arg0IsRef = isReference(arg0);
-        boolean arg1IsRef = isReference(arg1);
+        boolean arg0IsLiteral = isStaticLiteral(arg0);
+        boolean arg1IsLiteral = isStaticLiteral(arg1);
 
-        // Always put References before literals to make things consistent
-        if (arg0IsRef != arg1IsRef) {
-            return !arg0IsRef; // Swap if arg0 is literal and arg1 is reference
+        // Always put non-literals (expressions) before literals to make things consistent
+        if (arg0IsLiteral != arg1IsLiteral) {
+            return arg0IsLiteral; // Swap if arg0 is literal and arg1 is not
         }
 
         // Both same type, use string comparison for deterministic order
         return arg0.toString().compareTo(arg1.toString()) > 0;
+    }
+
+    /**
+     * Returns true if the expression is a static literal (constant value).
+     * Dynamic string literals (templates with variables) are not considered static.
+     */
+    private static boolean isStaticLiteral(Expression arg) {
+        if (arg instanceof StringLiteral) {
+            return ((StringLiteral) arg).value().isStatic();
+        }
+        return arg instanceof Literal;
     }
 
     /**
@@ -264,13 +275,4 @@ public abstract class LibraryFunction extends Expression {
         return expr;
     }
 
-    private static boolean isReference(Expression arg) {
-        if (arg instanceof Reference) {
-            return true;
-        } else if (arg instanceof StringLiteral) {
-            StringLiteral s = (StringLiteral) arg;
-            return !s.value().isStatic();
-        }
-        return false;
-    }
 }

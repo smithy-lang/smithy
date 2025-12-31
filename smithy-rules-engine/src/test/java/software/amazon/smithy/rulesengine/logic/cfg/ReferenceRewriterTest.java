@@ -34,11 +34,11 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("y")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
 
         // Test rewriting a simple reference
         Reference original = Expression.getReference(Identifier.of("x"));
-        Expression rewritten = rewriter.rewrite(original);
+        Expression rewritten = mapper.expression(original);
 
         assertEquals("y", ((Reference) rewritten).getName().toString());
     }
@@ -49,11 +49,11 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("y")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
 
         // Reference to "z" should not be rewritten
         Reference original = Expression.getReference(Identifier.of("z"));
-        Expression rewritten = rewriter.rewrite(original);
+        Expression rewritten = mapper.expression(original);
 
         assertEquals(original, rewritten);
     }
@@ -67,8 +67,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("newVar")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertInstanceOf(StringLiteral.class, rewritten);
         StringLiteral rewrittenStr = (StringLiteral) rewritten;
@@ -84,8 +84,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("replaced")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertInstanceOf(TupleLiteral.class, rewritten);
         TupleLiteral rewrittenTuple = (TupleLiteral) rewritten;
@@ -105,8 +105,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("newX")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertInstanceOf(RecordLiteral.class, rewritten);
         RecordLiteral rewrittenRecord = (RecordLiteral) rewritten;
@@ -124,8 +124,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("replacedVar")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertTrue(rewritten.toString().contains("replacedVar"));
         assertNotEquals(original, rewritten);
@@ -142,8 +142,8 @@ class ReferenceRewriterTest {
         replacements.put("a", Expression.getReference(Identifier.of("x")));
         replacements.put("b", Expression.getReference(Identifier.of("y")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertTrue(rewritten.toString().contains("x"));
         assertTrue(rewritten.toString().contains("y"));
@@ -158,8 +158,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("newVar")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertTrue(rewritten.toString().contains("newVar"));
         assertNotEquals(original, rewritten);
@@ -173,8 +173,8 @@ class ReferenceRewriterTest {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put("x", Expression.getReference(Identifier.of("y")));
 
-        TreeRewriter rewriter = TreeRewriter.forReplacements(replacements);
-        Expression rewritten = rewriter.rewrite(original);
+        TreeMapper mapper = TreeMapper.newReferenceReplacingMapper(replacements);
+        Expression rewritten = mapper.expression(original);
 
         assertEquals(original, rewritten);
     }
