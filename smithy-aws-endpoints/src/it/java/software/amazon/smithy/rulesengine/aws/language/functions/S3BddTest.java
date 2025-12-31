@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.rulesengine.aws.s3.S3TreeRewriter;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.CostOptimization;
@@ -44,33 +49,39 @@ class S3BddTest {
         for (EndpointTestCase testCase : testCases) {
             TestEvaluator.evaluate(rules, testCase);
         }
-        
+
         // Build CFG and compile to BDD
         Cfg cfg = Cfg.from(rules);
         EndpointBddTrait trait = EndpointBddTrait.from(cfg);
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append("\n=== BDD STATS ===\n");
         sb.append("Conditions: ").append(trait.getConditions().size()).append("\n");
         sb.append("Results: ").append(trait.getResults().size()).append("\n");
         sb.append("Initial BDD nodes: ").append(trait.getBdd().getNodeCount()).append("\n");
-        
+
         // Apply sifting optimization
         SiftingOptimization sifting = SiftingOptimization.builder().cfg(cfg).build();
         EndpointBddTrait siftedTrait = sifting.apply(trait);
         sb.append("After sifting - nodes: ").append(siftedTrait.getBdd().getNodeCount()).append("\n");
-        
+
         // Apply cost optimization
         CostOptimization cost = CostOptimization.builder().cfg(cfg).build();
         EndpointBddTrait optimizedTrait = cost.apply(siftedTrait);
         sb.append("After cost opt - nodes: ").append(optimizedTrait.getBdd().getNodeCount()).append("\n");
-        
+
         // Print conditions for analysis
         sb.append("\n=== CONDITIONS ===\n");
         for (int i = 0; i < trait.getConditions().size(); i++) {
             sb.append(i).append(": ").append(trait.getConditions().get(i)).append("\n");
         }
-        
+
+        // Print results (endpoints) for analysis
+        sb.append("\n=== RESULTS ===\n");
+        for (int i = 0; i < trait.getResults().size(); i++) {
+            sb.append(i).append(": ").append(trait.getResults().get(i)).append("\n");
+        }
+
         System.out.println(sb);
     }
 }
