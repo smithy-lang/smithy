@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.rulesengine.aws.s3.S3TreeRewriter;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;

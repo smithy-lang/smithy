@@ -26,7 +26,7 @@ dependencies {
 }
 
 // Integration test source set for tests that require the S3 model
-// These tests require JDK 21+ due to the S3 model dependency
+// These tests require JDK 17+ due to the S3 model dependency
 sourceSets {
     create("it") {
         compileClasspath += sourceSets["main"].output + sourceSets["test"].output
@@ -38,15 +38,11 @@ configurations["itImplementation"].extendsFrom(configurations["testImplementatio
 configurations["itRuntimeOnly"].extendsFrom(configurations["testRuntimeOnly"])
 configurations["itImplementation"].extendsFrom(s3Model)
 
-// Configure IT source set to compile with JDK 21
+// Configure IT source set to compile with current JDK (17+)
 tasks.named<JavaCompile>("compileItJava") {
-    javaCompiler.set(
-        javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(21))
-        },
-    )
-    sourceCompatibility = "21"
-    targetCompatibility = "21"
+    // Use current Java version instead of hardcoding to allow flexibility in CI
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
 }
 
 val integrationTest by tasks.registering(Test::class) {
@@ -57,11 +53,12 @@ val integrationTest by tasks.registering(Test::class) {
     dependsOn(tasks.jar)
     shouldRunAfter(tasks.test)
 
-    // Run with JDK 21
-    javaLauncher.set(
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(21))
-        },
+    // Pass build directory to tests
+    systemProperty(
+        "buildDir",
+        layout.buildDirectory
+            .get()
+            .asFile.absolutePath,
     )
 }
 
