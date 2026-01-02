@@ -9,7 +9,7 @@ module-root = ""
 name = "smithy"
 version = "1.0.0"
 dependencies = [
-    "sphinx==8.2.3",
+    "sphinx==9.1.0",
     "pygments==2.19.2",
     "furo==2025.12.19",
 
