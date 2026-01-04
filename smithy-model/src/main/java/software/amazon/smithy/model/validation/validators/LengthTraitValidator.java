@@ -78,6 +78,7 @@ public final class LengthTraitValidator extends AbstractValidator {
                 validateMapShapeValue(events, shape, lengthTrait, value);
                 break;
             case LIST:
+            case SET:
                 validateListShapeValue(events, shape, lengthTrait, value);
                 break;
         }
