@@ -133,7 +133,7 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     /**
      * Resolves and returns the output shape of an operation that contains the
      * top-level resource bound properties. Handles adjustments made with
-     * @nestedProperties trait.
+     * {@code @nestedProperties} trait.
      *
      * @param operation operation to retrieve output properties shape for.
      * @return the output shape of an operation that contains top-level resource
@@ -148,7 +148,7 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     /**
      * Resolves and returns the input shape of an operation that contains the
      * top-level resource bound properties. Handles adjustments made with
-     * @nestedProperties trait.
+     * {@code @nestedProperties} trait.
      *
      * @param operation operation to retrieve output properties shape for
      * @return the input shape of an operation that contains top-level resource
