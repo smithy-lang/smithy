@@ -46,15 +46,15 @@ public interface NodeValidatorPlugin {
     static List<NodeValidatorPlugin> getBuiltins() {
         return ListUtils.of(
                 new NonNumericFloatValuesPlugin(),
-//                new BlobLengthPlugin(),
-//                new CollectionLengthPlugin(),
+                new BlobLengthPlugin(),
+                new CollectionLengthPlugin(),
                 new IdRefPlugin(),
-//                new MapLengthPlugin(),
-//                new PatternTraitPlugin(),
+                new MapLengthPlugin(),
+                new PatternTraitPlugin(),
                 new RangeTraitPlugin(),
                 new StringEnumPlugin(),
                 new IntEnumPlugin(),
-//                new StringLengthPlugin(),
+                new StringLengthPlugin(),
                 new UniqueItemsPlugin());
     }
 

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ShapeValue;
+import software.amazon.smithy.model.knowledge.SimpleShapeValue;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
@@ -47,7 +48,7 @@ import software.amazon.smithy.utils.Pair;
  * each time the model is validated by implementing the
  * {@link Validator} interface and registering the validator through SPI.
  */
-public interface Trait extends FromSourceLocation, ToNode, ToShapeId, ShapeValue {
+public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
     /**
      * Gets the shape ID of the trait.
      *
@@ -151,6 +152,6 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId, ShapeValue
      * @param shape The shape this trait is applied to.
      */
     default Set<ShapeValue> shapeValues(Model model, Shape shape) {
-        return Collections.singleton(this);
+        return Collections.singleton(new SimpleShapeValue(shape.getId(), toShapeId(), toNode()));
     }
 }

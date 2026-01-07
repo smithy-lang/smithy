@@ -72,6 +72,7 @@ public final class PatternTraitValidator extends AbstractValidator {
         if (node.isStringNode()) {
             if (!trait.getPattern().matcher(node.expectStringNode().getValue()).find()) {
                 events.add(shapeValue.constraintsEvent(
+                        getName(),
                         String.format(
                                 "String value provided for `%s` must match regular expression: %s",
                                 shape.getId(),

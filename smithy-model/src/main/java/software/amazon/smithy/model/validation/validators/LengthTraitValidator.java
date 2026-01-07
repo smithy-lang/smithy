@@ -89,7 +89,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "Value provided for `%s` must have at least %d entries, but the provided value only "
                                         + "has %d entries",
@@ -101,7 +101,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMax().ifPresent(max -> {
             if (node.size() > max) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "Value provided for `%s` must have no more than %d entries, but the provided value "
                                         + "has %d entries",
@@ -117,7 +117,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "Value provided for `%s` must have at least %d elements, but the provided value only "
                                         + "has %d elements",
@@ -129,7 +129,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMax().ifPresent(max -> {
             if (node.size() > max) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "Value provided for `%s` must have no more than %d elements, but the provided value "
                                         + "has %d elements",
@@ -151,7 +151,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMin().ifPresent(min -> {
             if (size < min) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         "Value provided for `" + shape.getId()
                                 + "` must have at least " + min + " bytes, but the provided value only has " + size
                                 + " bytes"));
@@ -160,7 +160,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMax().ifPresent(max -> {
             if (size > max) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         "Value provided for `" + shape.getId()
                                 + "` must have no more than " + max + " bytes, but the provided value has " + size
                                 + " bytes"));
@@ -173,7 +173,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMin().ifPresent(min -> {
             if (node.getValue().length() < min) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "String value provided for `%s` must be >= %d characters, but the provided value is "
                                         + "only %d characters.",
@@ -185,7 +185,7 @@ public final class LengthTraitValidator extends AbstractValidator {
 
         trait.getMax().ifPresent(max -> {
             if (node.getValue().length() > max) {
-                events.add(shapeValue.constraintsEvent(
+                events.add(shapeValue.constraintsEvent(getName(),
                         String.format(
                                 "String value provided for `%s` must be <= %d characters, but the provided value is "
                                         + "%d characters.",

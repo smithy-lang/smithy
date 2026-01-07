@@ -4,11 +4,21 @@
  */
 package software.amazon.smithy.protocoltests.traits;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.knowledge.ShapeValue;
+import software.amazon.smithy.model.knowledge.SimpleShapeValue;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -70,5 +80,27 @@ public final class HttpRequestTestsTrait extends AbstractTrait {
     @Override
     protected Node createNode() {
         return getTestCases().stream().collect(ArrayNode.collect(getSourceLocation()));
+    }
+
+    @Override
+    public Set<ShapeValue> shapeValues(Model model, Shape shape) {
+        Set<ShapeValue> result = new HashSet<>(super.shapeValues(model, shape));
+
+        for (int i = 0; i < testCases.size(); i++) {
+            HttpMessageTestCase testCase = testCases.get(i);
+
+            // Validate the vendorParams for the test case if we have a shape defined.
+            Optional<ShapeId> vendorParamsShapeOptional = testCase.getVendorParamsShape();
+            ObjectNode vendorParams = testCase.getVendorParams();
+            if (vendorParamsShapeOptional.isPresent() && shape instanceof OperationShape) {
+                if (!vendorParams.isEmpty()) {
+                    // Otherwise, validate the params against the shape.
+                    Shape vendorParamsShape = model.expectShape(vendorParamsShapeOptional.get());
+                    result.add(new SimpleShapeValue(vendorParamsShapeOptional.get(), vendorParams));
+                }
+            }
+        }
+
+        return result;
     }
 }

@@ -93,13 +93,13 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
                             "Protocol test case defined a `vendorParamsShape` but no `vendorParams`"));
                 } else {
                     // Otherwise, validate the params against the shape.
-                    Shape vendorParamsShape = model.expectShape(vendorParamsShapeOptional.get());
-                    NodeValidationVisitor vendorParamsValidator = createVisitor(vendorParams,
-                            model,
-                            shape,
-                            i,
-                            ".vendorParams");
-                    events.addAll(vendorParamsShape.accept(vendorParamsValidator));
+//                    Shape vendorParamsShape = model.expectShape(vendorParamsShapeOptional.get());
+//                    NodeValidationVisitor vendorParamsValidator = createVisitor(vendorParams,
+//                            model,
+//                            shape,
+//                            i,
+//                            ".vendorParams");
+//                    events.addAll(vendorParamsShape.accept(vendorParamsValidator));
                 }
             }
 
