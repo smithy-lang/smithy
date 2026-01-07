@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Make husky only work for files under /docs",
+  "pull_requests": [
+    "[#2916](https://github.com/smithy-lang/smithy/pull/2916)"
+  ]
+}

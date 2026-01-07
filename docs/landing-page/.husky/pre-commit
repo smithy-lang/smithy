@@ -1,2 +1,4 @@
-cd docs/landing-page
-npm run build && npx lint-staged
+if git diff --cached --name-only | grep -q "^docs/"; then
+  cd docs/landing-page
+  npm run build && npx lint-staged
+fi
