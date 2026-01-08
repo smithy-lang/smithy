@@ -38,9 +38,8 @@ configurations["itImplementation"].extendsFrom(configurations["testImplementatio
 configurations["itRuntimeOnly"].extendsFrom(configurations["testRuntimeOnly"])
 configurations["itImplementation"].extendsFrom(s3Model)
 
-// Configure IT source set to compile with current JDK (17+)
+// Configure IT source set to compile with JDK (17+) since the models it uses require it.
 tasks.named<JavaCompile>("compileItJava") {
-    // Use current Java version instead of hardcoding to allow flexibility in CI
     sourceCompatibility = "17"
     targetCompatibility = "17"
 }

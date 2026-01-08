@@ -303,8 +303,6 @@ public class SsaTransformTest {
                 .map(Object::toString)
                 .orElse(null);
 
-        System.out.println("resultVar1=" + resultVar1);
-        System.out.println("resultVar2=" + resultVar2);
 
         // Both should have bindings (since they're used)
         assertEquals(true,
