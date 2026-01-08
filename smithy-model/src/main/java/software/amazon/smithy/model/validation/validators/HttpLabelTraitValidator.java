@@ -17,6 +17,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -76,10 +77,14 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
 
         for (MemberShape member : input.getAllMembers().values()) {
             member.getTrait(HttpLabelTrait.class).ifPresent(trait -> {
-                labels.remove(member.getMemberName());
+                // Use @resourceIdentifier value if present, otherwise use member name
+                String labelName = member.getTrait(ResourceIdentifierTrait.class)
+                        .map(ResourceIdentifierTrait::getValue)
+                        .orElse(member.getMemberName());
+                labels.remove(labelName);
 
                 // Emit an error if the member is not a valid label.
-                if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
+                if (!http.getUri().getLabel(labelName).isPresent()) {
                     events.add(error(member,
                             trait,
                             format(
@@ -88,7 +93,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
                                             + "the `%s` operation.",
                                     member.getMemberName(),
                                     operation.getId())));
-                } else if (http.getUri().getLabel(member.getMemberName()).get().isGreedyLabel()) {
+                } else if (http.getUri().getLabel(labelName).get().isGreedyLabel()) {
                     model.getShape(member.getTarget()).ifPresent(target -> {
                         // Greedy labels must be strings.
                         if (!target.isStringShape()) {

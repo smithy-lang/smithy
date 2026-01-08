@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Support @resourceIdentifier trait in HttpLabelTraitValidator to allow semantic member names while matching URI path parameters",
+  "pull_requests": [
+    "[#2920](https://github.com/smithy-lang/smithy/pull/2920)"
+  ]
+}
