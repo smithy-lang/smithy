@@ -32,10 +32,13 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -62,9 +65,11 @@ final class MigrateCommand implements Command {
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1(\\.0)?\"\\s*$");
     private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2(\\.0)?\"\\s*$");
     private final String parentCommandName;
+    private final DependencyResolver.Factory dependencyResolverFactory;
 
-    MigrateCommand(String parentCommandName) {
+    MigrateCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         this.parentCommandName = parentCommandName;
+        this.dependencyResolverFactory = dependencyResolverFactory;
     }
 
     static Command createDeprecatedAlias(Command command) {
@@ -113,20 +118,17 @@ final class MigrateCommand implements Command {
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new BuildOptions());
-
         CommandAction action = HelpActionWrapper.fromCommand(
                 this,
                 parentCommandName,
-                this::run);
+                new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
 
         return action.apply(arguments, env);
     }
 
-    private int run(Arguments arguments, Env env) {
+    private int runWithClassLoader(SmithyBuildConfig smithyBuildConfig, Arguments arguments, Env env) {
         List<String> models = arguments.getPositional();
         ClassLoader classLoader = env.classLoader();
-        ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
-        SmithyBuildConfig smithyBuildConfig = configOptions.createSmithyBuildConfig();
 
         // Set an output into a temporary directory - we don't actually care about
         // the serialized output.
@@ -172,6 +174,7 @@ final class MigrateCommand implements Command {
         // Validate upgraded models before writing
         ModelAssembler assembler = ModelBuilder.createModelAssembler(classLoader);
         smithyBuildConfig.getImports().forEach(assembler::addImport);
+        assembler.discoverModels(classLoader);
 
         List<Pair<Path, String>> upgradedModels = new ArrayList<>();
         for (Path modelFilePath : resolvedModelFiles) {
@@ -396,6 +399,28 @@ final class MigrateCommand implements Command {
             return null;
         }
 
+        @Override
+        public Void listShape(ListShape shape) {
+            getDefault(shape);
+            MemberShape member = shape.getMember();
+            Shape target = completeModel.expectShape(member.getTarget());
+            if (member.hasTrait(BoxTrait.class) || target.hasTrait(BoxTrait.ID)) {
+                writer.insertLine(shape.getSourceLocation().getLine(), "@sparse");
+            }
+            return null;
+        }
+
+        @Override
+        public Void mapShape(MapShape shape) {
+            getDefault(shape);
+            MemberShape member = shape.getValue();
+            Shape target = completeModel.expectShape(member.getTarget());
+            if (member.hasTrait(BoxTrait.class) || target.hasTrait(BoxTrait.ID)) {
+                writer.insertLine(shape.getSourceLocation().getLine(), "@sparse");
+            }
+            return null;
+        }
+
         private String serializeEnum(StringShape shape) {
             // Strip all the traits from the shape except the enum trait.
             // We're leaving the other traits where they are in the model
@@ -422,7 +447,7 @@ final class MigrateCommand implements Command {
             // The serialized file will contain things we don't want, like the
             // namespace and version statements, so here we strip everything
             // we find before the enum statement.
-            ArrayList<String> lines = new ArrayList<>();
+            List<String> lines = new ArrayList<>();
             boolean foundEnum = false;
             for (String line : serialized.split("\\r?\\n")) {
                 if (foundEnum) {

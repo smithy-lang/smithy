@@ -38,5 +38,16 @@ structure BlobPayload {
     payload: StreamingBlob
 }
 
+@sparse
+list SparseList {
+    member: Integer
+}
+
+@uniqueItems
+list SparseSet {
+    @box
+    member: Integer
+}
+
 @streaming
 blob StreamingBlob

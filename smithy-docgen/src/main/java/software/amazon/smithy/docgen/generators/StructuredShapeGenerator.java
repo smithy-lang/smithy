@@ -80,6 +80,7 @@ public final class StructuredShapeGenerator implements BiConsumer<Shape, MemberL
     }
 
     @Override
+    @SuppressWarnings("deprecated")
     public void accept(Shape shape, MemberListingType listingType) {
         // Legacy enums using the trait on a string shape should be upgraded
         // to `enum` shapes. If not, skip them here.

@@ -7,6 +7,9 @@ integer BoxedInteger
 
 integer NonBoxedInteger
 
+@box
+boolean BoxedBoolean
+
 structure StructureWithOptionalString {
     boxedTarget: BoxedInteger,
 
@@ -36,4 +39,9 @@ map BadSparseMap {
 
     @box
     value: NonBoxedInteger,
+}
+
+list GoodSparseList {
+
+    member: BoxedBoolean
 }

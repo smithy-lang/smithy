@@ -20,6 +20,8 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -27,8 +29,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AddedDefaultTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -71,6 +75,13 @@ final class ModelInteropTransformer {
 
     Model transform() {
         // TODO: can these transforms be more efficiently moved into the loader?
+        transformStructures();
+        transformLists();
+        transformMaps();
+        return ModelTransformer.create().replaceShapes(model, shapeUpgrades);
+    }
+
+    private void transformStructures() {
         for (StructureShape struct : model.getStructureShapes()) {
             if (!Prelude.isPreludeShape(struct)) {
                 if (fileToVersion.apply(struct) == Version.VERSION_1_0) {
@@ -79,23 +90,69 @@ final class ModelInteropTransformer {
                     // and then lose the original context of which version the model was built with, causing it to be
                     // errantly upgraded.
                     for (MemberShape member : struct.getAllMembers().values()) {
-                        model.getShape(member.getTarget()).ifPresent(target -> {
+                        Shape target = model.getShape(member.getTarget()).orElse(null);
+                        if (target != null) {
                             upgradeV1Member(member, target);
-                        });
+                        }
                     }
                 } else if (fileToVersion.apply(struct) == Version.VERSION_2_0) {
                     // Patch v2 based members with the box trait when necessary in order for v1 based tooling to
                     // correctly interpret a v2 model.
                     for (MemberShape member : struct.getAllMembers().values()) {
-                        model.getShape(member.getTarget()).ifPresent(target -> {
+                        Shape target = model.getShape(member.getTarget()).orElse(null);
+                        if (target != null) {
                             patchV2MemberForV1Support(member, target);
-                        });
+                        }
                     }
                 }
             }
         }
+    }
 
-        return ModelTransformer.create().replaceShapes(model, shapeUpgrades);
+    private void transformLists() {
+        for (ListShape shape : model.getListShapes()) {
+            if (Prelude.isPreludeShape(shape) || shape.hasTrait(UniqueItemsTrait.ID)) {
+                continue;
+            }
+            if (fileToVersion.apply(shape) == Version.VERSION_1_0) {
+                MemberShape member = shape.getMember();
+                Shape target = model.getShape(member.getTarget()).orElse(null);
+                if (target != null) {
+                    if (member.hasTrait(BoxTrait.ID) || target.hasTrait(BoxTrait.ID)) {
+                        ListShape.Builder builder = shape.toBuilder();
+                        builder.addTrait(new SparseTrait());
+                        shapeUpgrades.add(builder.build());
+                    }
+                }
+            } else if (fileToVersion.apply(shape) == Version.VERSION_2_0 && shape.hasTrait(SparseTrait.ID)) {
+                MemberShape member = shape.getMember();
+                Shape target = model.getShape(member.getTarget()).orElse(null);
+                patchV2MemberForV1Support(member, target);
+            }
+        }
+    }
+
+    private void transformMaps() {
+        for (MapShape shape : model.getMapShapes()) {
+            if (Prelude.isPreludeShape(shape)) {
+                continue;
+            }
+            if (fileToVersion.apply(shape) == Version.VERSION_1_0) {
+                MemberShape member = shape.getValue();
+                Shape target = model.getShape(member.getTarget()).orElse(null);
+                if (target != null) {
+                    if (member.hasTrait(BoxTrait.ID) || target.hasTrait(BoxTrait.ID)) {
+                        MapShape.Builder builder = shape.toBuilder();
+                        builder.addTrait(new SparseTrait());
+                        shapeUpgrades.add(builder.build());
+                    }
+                }
+            } else if (fileToVersion.apply(shape) == Version.VERSION_2_0 && shape.hasTrait(SparseTrait.ID)) {
+                MemberShape member = shape.getValue();
+                Shape target = model.getShape(member.getTarget()).orElse(null);
+                patchV2MemberForV1Support(member, target);
+            }
+        }
     }
 
     private void upgradeV1Member(MemberShape member, Shape target) {
