@@ -101,6 +101,60 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
     }
 
     /**
+     * Removes conditions that are not referenced by any BDD node and remaps indices.
+     *
+     * <p>This should be called after all BDD optimizations (sifting, cost optimization) are complete.
+     * A condition could become unreferenced if it is optimized away by the BDD compiler because hi==lo.
+     *
+     * @return a new trait with unreferenced conditions removed, or this trait if none were removed
+     */
+    public EndpointBddTrait removeUnreferencedConditions() {
+        // Find which conditions are actually referenced
+        int[] refCount = new int[conditions.size()];
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            int var = bdd.getVariable(i);
+            if (var >= 0 && var < refCount.length) {
+                refCount[var]++;
+            }
+        }
+
+        // Build mapping from old to new indices
+        int[] oldToNew = new int[conditions.size()];
+        List<Condition> newConditions = new ArrayList<>();
+        for (int i = 0; i < conditions.size(); i++) {
+            if (refCount[i] > 0) {
+                oldToNew[i] = newConditions.size();
+                newConditions.add(conditions.get(i));
+            } else {
+                oldToNew[i] = -1;
+            }
+        }
+
+        // No change needed
+        if (newConditions.size() == conditions.size()) {
+            return this;
+        }
+
+        // Remap BDD nodes
+        int[] newNodes = new int[bdd.getNodeCount() * 3];
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            int oldVar = bdd.getVariable(i);
+            newNodes[i * 3] = oldVar < 0 ? oldVar : oldToNew[oldVar];
+            newNodes[i * 3 + 1] = bdd.getHigh(i);
+            newNodes[i * 3 + 2] = bdd.getLow(i);
+        }
+
+        return builder()
+                .version(version)
+                .parameters(parameters)
+                .conditions(newConditions)
+                .results(results)
+                .bdd(new Bdd(bdd
+                        .getRootRef(), newConditions.size(), bdd.getResultCount(), bdd.getNodeCount(), newNodes))
+                .build();
+    }
+
+    /**
      * Gets the parameters for the endpoint rules.
      *
      * @return the parameters

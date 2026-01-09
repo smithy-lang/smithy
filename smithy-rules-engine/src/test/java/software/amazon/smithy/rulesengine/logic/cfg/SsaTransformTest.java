@@ -303,7 +303,6 @@ public class SsaTransformTest {
                 .map(Object::toString)
                 .orElse(null);
 
-
         // Both should have bindings (since they're used)
         assertEquals(true,
                 resultRule1.getConditions().get(0).getResult().isPresent(),

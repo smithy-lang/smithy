@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +16,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.rulesengine.analysis.BddCoverageChecker;
 import software.amazon.smithy.rulesengine.aws.s3.S3TreeRewriter;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
@@ -53,7 +52,6 @@ class S3BddTest {
     @Test
     void compileToBddWithOptimizations() {
         // Verify transforms preserve semantics by running all test cases
-        assertFalse(testCases.isEmpty(), "S3 model should have endpoint test cases");
         for (EndpointTestCase testCase : testCases) {
             TestEvaluator.evaluate(rules, testCase);
         }
@@ -77,23 +75,47 @@ class S3BddTest {
         CostOptimization cost = CostOptimization.builder().cfg(cfg).build();
         EndpointBddTrait optimizedTrait = cost.apply(siftedTrait);
         sb.append("After cost opt - nodes: ").append(optimizedTrait.getBdd().getNodeCount()).append("\n");
+        System.out.println("Unreferenced BDD conditions before dead condition elimination: "
+                + new BddCoverageChecker(optimizedTrait).getUnreferencedConditions());
+
+        EndpointBddTrait finalizedTrait = optimizedTrait.removeUnreferencedConditions();
+        System.out.println("Unreferenced BDD conditions after dead condition elimination: "
+                + new BddCoverageChecker(optimizedTrait).getUnreferencedConditions());
 
         // Print conditions for analysis
         sb.append("\n=== CONDITIONS ===\n");
-        for (int i = 0; i < trait.getConditions().size(); i++) {
-            sb.append(i).append(": ").append(trait.getConditions().get(i)).append("\n");
+        for (int i = 0; i < finalizedTrait.getConditions().size(); i++) {
+            sb.append(i).append(": ").append(finalizedTrait.getConditions().get(i)).append("\n");
         }
 
         // Print results (endpoints) for analysis
         sb.append("\n=== RESULTS ===\n");
-        for (int i = 0; i < trait.getResults().size(); i++) {
-            sb.append(i).append(": ").append(trait.getResults().get(i)).append("\n");
+        for (int i = 0; i < finalizedTrait.getResults().size(); i++) {
+            sb.append(i).append(": ").append(finalizedTrait.getResults().get(i)).append("\n");
         }
 
         System.out.println(sb);
 
+        // Verify transforms preserve semantics by running all test cases on the BDD -and- ensuring 100% coverage.
+        BddCoverageChecker coverageCheckerBdd = new BddCoverageChecker(finalizedTrait);
+        for (EndpointTestCase testCase : testCases) {
+            coverageCheckerBdd.evaluateTestCase(testCase);
+        }
+
+        if (coverageCheckerBdd.getConditionCoverage() < 100) {
+            throw new RuntimeException("Condition coverage < 100%: "
+                    + coverageCheckerBdd.getConditionCoverage()
+                    + " : " + coverageCheckerBdd.getUnevaluatedConditions());
+        }
+
+        if (coverageCheckerBdd.getResultCoverage() < 100) {
+            throw new RuntimeException("Result coverage < 100%: "
+                    + coverageCheckerBdd.getResultCoverage()
+                    + " : " + coverageCheckerBdd.getUnevaluatedResults());
+        }
+
         // Write model with BDD trait to build directory
-        writeModelWithBddTrait(optimizedTrait);
+        writeModelWithBddTrait(finalizedTrait);
     }
 
     private void writeModelWithBddTrait(EndpointBddTrait bddTrait) {
