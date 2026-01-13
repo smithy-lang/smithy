@@ -202,15 +202,21 @@ class CfgBuilderTest {
     }
 
     @Test
-    void createConditionReferenceDoesNotCanonicalizeWithoutDefault() {
-        // Test that booleanEquals(region, false) is not canonicalized (no default)
+    void createConditionReferenceCanonicalizesEvenWithoutDefault() {
+        // booleanEquals(X, false) -> booleanEquals(X, true) with negation is a valid
+        // algebraic transformation regardless of whether the parameter has a default
         Expression ref = Expression.getReference(Identifier.of("region"));
         Condition cond = Condition.builder().fn(BooleanEquals.ofExpressions(ref, false)).build();
 
         ConditionReference condRef = builder.createConditionReference(cond);
 
-        assertFalse(condRef.isNegated());
-        assertEquals(cond.getFunction(), condRef.getCondition().getFunction());
+        // Should be canonicalized to booleanEquals(region, true) with negation
+        assertTrue(condRef.isNegated());
+        assertInstanceOf(BooleanEquals.class, condRef.getCondition().getFunction());
+
+        BooleanEquals fn = (BooleanEquals) condRef.getCondition().getFunction();
+        assertEquals(ref, fn.getArguments().get(0));
+        assertEquals(Literal.booleanLiteral(true), fn.getArguments().get(1));
     }
 
     @Test

@@ -39,14 +39,13 @@ final class CoalesceTransform {
     private int cacheHits = 0;
     private int skippedNoZeroValue = 0;
     private int skippedMultipleUses = 0;
-    private final Set<String> skippedRecordTypes = new HashSet<>();
 
     static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
         CoalesceTransform transform = new CoalesceTransform();
 
         List<Rule> transformedRules = new ArrayList<>();
-        for (int i = 0; i < ruleSet.getRules().size(); i++) {
-            transformedRules.add(transform.transformRule(ruleSet.getRules().get(i), "root/rule[" + i + "]"));
+        for (Rule rule : ruleSet.getRules()) {
+            transformedRules.add(transform.transformRule(rule));
         }
 
         if (LOGGER.isLoggable(Level.INFO)) {
@@ -65,7 +64,7 @@ final class CoalesceTransform {
                 .build();
     }
 
-    private Rule transformRule(Rule rule, String rulePath) {
+    private Rule transformRule(Rule rule) {
         // Count local usage for THIS rule's conditions
         Map<String, Integer> localVarUsage = new HashMap<>();
         for (Condition condition : rule.getConditions()) {
@@ -82,10 +81,14 @@ final class CoalesceTransform {
 
         if (rule instanceof TreeRule) {
             TreeRule treeRule = (TreeRule) rule;
+            List<Rule> transformedNested = new ArrayList<>();
+            for (Rule nested : treeRule.getRules()) {
+                transformedNested.add(transformRule(nested));
+            }
             return TreeRule.builder()
                     .description(rule.getDocumentation().orElse(null))
                     .conditions(transformedConditions)
-                    .treeRule(TreeRewriter.transformNestedRules(treeRule, rulePath, this::transformRule));
+                    .treeRule(transformedNested);
         }
 
         // CoalesceTransform only modifies conditions, not endpoints/errors
@@ -144,7 +147,6 @@ final class CoalesceTransform {
 
         if (innerType instanceof RecordType) {
             skippedNoZeroValue++;
-            skippedRecordTypes.add(bind.getFunction().getName());
             return false;
         }
 
@@ -180,7 +182,7 @@ final class CoalesceTransform {
         Map<String, Expression> replacements = new HashMap<>();
         replacements.put(var, coalesced);
 
-        Expression replaced = TreeRewriter.forReplacements(replacements).rewrite(useExpr);
+        Expression replaced = TreeMapper.newReferenceReplacingMapper(replacements).expression(useExpr);
         LibraryFunction canonicalized = ((LibraryFunction) replaced).canonicalize();
 
         Condition.Builder builder = Condition.builder().fn(canonicalized);

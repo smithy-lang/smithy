@@ -23,6 +23,8 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.NoMatchRule;
@@ -95,6 +97,60 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
                 .conditions(compiler.getOrderedConditions())
                 .results(compiler.getIndexedResults())
                 .bdd(bdd)
+                .build();
+    }
+
+    /**
+     * Removes conditions that are not referenced by any BDD node and remaps indices.
+     *
+     * <p>This should be called after all BDD optimizations (sifting, cost optimization) are complete.
+     * A condition could become unreferenced if it is optimized away by the BDD compiler because hi==lo.
+     *
+     * @return a new trait with unreferenced conditions removed, or this trait if none were removed
+     */
+    public EndpointBddTrait removeUnreferencedConditions() {
+        // Find which conditions are actually referenced
+        int[] refCount = new int[conditions.size()];
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            int var = bdd.getVariable(i);
+            if (var >= 0 && var < refCount.length) {
+                refCount[var]++;
+            }
+        }
+
+        // Build mapping from old to new indices
+        int[] oldToNew = new int[conditions.size()];
+        List<Condition> newConditions = new ArrayList<>();
+        for (int i = 0; i < conditions.size(); i++) {
+            if (refCount[i] > 0) {
+                oldToNew[i] = newConditions.size();
+                newConditions.add(conditions.get(i));
+            } else {
+                oldToNew[i] = -1;
+            }
+        }
+
+        // No change needed
+        if (newConditions.size() == conditions.size()) {
+            return this;
+        }
+
+        // Remap BDD nodes
+        int[] newNodes = new int[bdd.getNodeCount() * 3];
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            int oldVar = bdd.getVariable(i);
+            newNodes[i * 3] = oldVar < 0 ? oldVar : oldToNew[oldVar];
+            newNodes[i * 3 + 1] = bdd.getHigh(i);
+            newNodes[i * 3 + 2] = bdd.getLow(i);
+        }
+
+        return builder()
+                .version(version)
+                .parameters(parameters)
+                .conditions(newConditions)
+                .results(results)
+                .bdd(new Bdd(bdd
+                        .getRootRef(), newConditions.size(), bdd.getResultCount(), bdd.getNodeCount(), newNodes))
                 .build();
     }
 
@@ -205,6 +261,16 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         List<Rule> results = new ArrayList<>();
         results.add(NoMatchRule.INSTANCE); // Always add no-match at index 0
         results.addAll(serializedResults);
+
+        // Validate that results have no conditions (all conditions are hoisted into the BDD)
+        for (int i = 1; i < results.size(); i++) {
+            Rule rule = results.get(i);
+            if (!rule.getConditions().isEmpty()) {
+                throw new IllegalArgumentException(
+                        "BDD result at index " + i + " has conditions, but BDD results must not have conditions. "
+                                + "All conditions should be hoisted into the BDD decision structure.");
+            }
+        }
 
         String nodesBase64 = obj.expectStringMember("nodes").getValue();
         int nodeCount = obj.expectNumberMember("nodeCount").getValue().intValue();
@@ -350,7 +416,21 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public EndpointBddTrait build() {
-            return new EndpointBddTrait(this);
+            EndpointBddTrait trait = new EndpointBddTrait(this);
+
+            // Type-check conditions and results so expression.type() works. Note that using a shared scope across
+            // each check is ok, because BDD evaluation always runs conditions in a fixed order and could in theory
+            // try every condition for a single path to a result.
+            Scope<Type> scope = new Scope<>();
+            trait.getParameters().writeToScope(scope);
+            for (Condition condition : trait.getConditions()) {
+                condition.typeCheck(scope);
+            }
+            for (Rule result : trait.getResults()) {
+                result.typeCheck(scope);
+            }
+
+            return trait;
         }
     }
 
