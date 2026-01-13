@@ -12,14 +12,13 @@ description = "This module contains support for generating API documentation bas
 extra["displayName"] = "Smithy :: DocGen"
 extra["moduleName"] = "software.amazon.smithy.docgen"
 
+tasks.compileJava {
+    options.release.set(17)
+}
+
 dependencies {
     implementation(project(":smithy-codegen-core"))
     implementation(project(":smithy-linters"))
 
     itImplementation(project(":smithy-aws-traits"))
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }

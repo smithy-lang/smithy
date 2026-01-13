@@ -124,7 +124,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             FromSourceLocation sourceLocation
     ) {
         Literal nameLiteral = authScheme.get(NAME);
-        if (nameLiteral == null || nameLiteral.asStringLiteral().isEmpty()) {
+        if (nameLiteral == null || !nameLiteral.asStringLiteral().isPresent()) {
             events.add(error(service,
                     sourceLocation,
                     String.format(
