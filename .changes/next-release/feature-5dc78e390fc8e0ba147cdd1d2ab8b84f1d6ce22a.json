@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added protocol test to test xml attribute members that are declared between non-attribute members.",
-  "pull_requests": [
-    "[#2870](https://github.com/smithy-lang/smithy/pull/2870)"
-  ]
-}

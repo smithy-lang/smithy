@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add CostOptimization for cost-based BDD sifting",
-  "pull_requests": [
-    "[#2889](https://github.com/smithy-lang/smithy/pull/2889)"
-  ]
-}
