@@ -153,7 +153,6 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
         sharedManifest.writeFile("snippets/snippets.json", IoUtils.readUtf8Url(SNIPPETS_FILE));
         execute(manifest, sharedManifest, settings);
         var operationDocs = manifest.expectFileString("/content/operations/PaginatedOperation.md");
-        System.out.println(operationDocs);
         assertThat(operationDocs,
                 containsString(
                         """
