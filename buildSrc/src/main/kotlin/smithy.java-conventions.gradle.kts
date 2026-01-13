@@ -26,12 +26,6 @@ val licenseSpec = copySpec {
     from("${project.rootDir}/NOTICE")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 tasks.compileJava {
     options.release.set(8)
 }
