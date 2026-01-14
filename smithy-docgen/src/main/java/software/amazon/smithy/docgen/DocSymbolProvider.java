@@ -210,7 +210,8 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
             builder.definitionFile(getDefinitionFile(serviceShape, operation));
             builder.putProperty(OPERATION_PROPERTY, operation);
             // Input and output structures should use the operation as its link_id
-            builder.putProperty(LINK_ID_PROPERTY, getLinkId(getShapeName(serviceShape, operation)));
+            String suffix = operation.getInputShape().equals(shape.getId()) ? "-request-members" : "-response-members";
+            builder.putProperty(LINK_ID_PROPERTY, getLinkId(getShapeName(serviceShape, operation)) + suffix);
         }
         return builder.build();
     }

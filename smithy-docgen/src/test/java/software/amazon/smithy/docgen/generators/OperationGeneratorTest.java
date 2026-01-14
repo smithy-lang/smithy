@@ -163,7 +163,7 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
 
                                 :::{important}
                                 This operation returns partial results in pages, whose maximum size may be
-                                configured with [pageSize](./PaginatedOperation.md#paginatedoperation-pagesize). Each request may return an [output token](./PaginatedOperation.md#paginatedoperation-nexttoken) that may be used as an [input token](./PaginatedOperation.md#paginatedoperation-nexttoken) in subsequent requests to fetch the next page of results. If the operation does not return an [output token](./PaginatedOperation.md#paginatedoperation-nexttoken), that means that there are no more results. If the operation returns a repeated [output token](./PaginatedOperation.md#paginatedoperation-nexttoken), there MAY be more results later.
+                                configured with [pageSize](./PaginatedOperation.md#paginatedoperation-request-members-pagesize). Each request may return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken) that may be used as an [input token](./PaginatedOperation.md#paginatedoperation-request-members-nexttoken) in subsequent requests to fetch the next page of results. If the operation does not return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), that means that there are no more results. If the operation returns a repeated [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), there MAY be more results later.
                                 :::
 
                                 (paginatedoperation-request-members)=
