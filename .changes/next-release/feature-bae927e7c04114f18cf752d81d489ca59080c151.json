@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added the shared file manifest to directed codegen interfaces so that it can be easily used by integrations.",
-  "pull_requests": [
-    "[#2893](https://github.com/smithy-lang/smithy/pull/2893)"
-  ]
-}

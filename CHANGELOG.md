@@ -1,5 +1,52 @@
 # Smithy Changelog
 
+## 1.66.0 (2026-01-13)
+
+### Features
+
+- Added protocol test to test xml attribute members that are declared between
+  non-attribute members.
+  ([#2870](https://github.com/smithy-lang/smithy/pull/2870))
+- Improve BDD sifting (2x speed, more reduction)
+  ([#2890](https://github.com/smithy-lang/smithy/pull/2890))
+- Added the shared file manifest to directed codegen interfaces so that it can
+  be easily used by integrations.
+  ([#2893](https://github.com/smithy-lang/smithy/pull/2893))
+- Add CostOptimization for cost-based BDD sifting
+  ([#2889](https://github.com/smithy-lang/smithy/pull/2889))
+- Added a `SnippetConfig` class to codgen-core that allows sharing doc snippets
+  that will be consumed by smithy-docgen.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Remove [] from toString on some rules engine types
+  ([#2904](https://github.com/smithy-lang/smithy/pull/2904))
+- Updated smithy-docgen to consume snippet files to generate example sections.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Added a generic evaluator/interpreter for JMESPath expressions.
+  ([#2878](https://github.com/smithy-lang/smithy/pull/2878))
+- Made `DefaultBuilderRef` public.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Implement rules engine ITE fn and S3 tree transform
+  ([#2903](https://github.com/smithy-lang/smithy/pull/2903))
+
+### Bug Fixes
+
+- Change generated union variant classes to public in trait codegen
+  ([#2887](https://github.com/smithy-lang/smithy/pull/2887))
+- Fix toBuilder not supplying cloudWatchNamespace in the aws.api#service trait
+  ([#2895](https://github.com/smithy-lang/smithy/pull/2895))
+
+### Documentation
+
+- Added a section to discuss recommendations for implementing Smithy clients.
+  Currently this section only includes information about HTTP interfaces, but it
+  will expand over time to cover more topics related to implementing clients.
+  ([#2868](https://github.com/smithy-lang/smithy/pull/2868))
+
+### Other
+
+- Make husky only work for files under /docs
+  ([#2916](https://github.com/smithy-lang/smithy/pull/2916))
+
 ## 1.65.0 (2025-12-09)
 
 ### Features

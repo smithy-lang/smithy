@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix toBuilder not supplying cloudWatchNamespace in the aws.api#service trait",
-  "pull_requests": [
-    "[#2895](https://github.com/smithy-lang/smithy/pull/2895)"
-  ]
-}
