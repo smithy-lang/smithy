@@ -124,7 +124,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             FromSourceLocation sourceLocation
     ) {
         Literal nameLiteral = authScheme.get(NAME);
-        if (nameLiteral == null) {
+        if (nameLiteral == null || !nameLiteral.asStringLiteral().isPresent()) {
             events.add(error(service,
                     sourceLocation,
                     String.format(
@@ -133,13 +133,14 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             return null;
         }
 
-        String name = nameLiteral.asStringLiteral().map(s -> s.expectLiteral()).orElse(null);
+        // Try to get the name as a literal string. If the template contains variables
+        // (e.g., from branchless transforms like "{s3e_auth}"), we can't statically validate.
+        String name = nameLiteral.asStringLiteral()
+                .filter(t -> t.isStatic())
+                .map(t -> t.expectLiteral())
+                .orElse(null);
         if (name == null) {
-            events.add(error(service,
-                    sourceLocation,
-                    String.format(
-                            "Expected `authSchemes` to have a `name` key with a string value but it did not: `%s`",
-                            authScheme)));
+            // String literal with template variables - skip static validation
             return null;
         }
 

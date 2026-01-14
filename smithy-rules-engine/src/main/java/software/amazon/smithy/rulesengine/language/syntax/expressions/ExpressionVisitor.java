@@ -4,10 +4,12 @@
  */
 package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
+import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Coalesce;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Ite;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -87,6 +89,18 @@ public interface ExpressionVisitor<R> {
     R visitStringEquals(Expression left, Expression right);
 
     /**
+     * Visits an if-then-else (ITE) function.
+     *
+     * @param condition the boolean condition expression.
+     * @param trueValue the value if condition is true.
+     * @param falseValue the value if condition is false.
+     * @return the value from the visitor.
+     */
+    default R visitIte(Expression condition, Expression trueValue, Expression falseValue) {
+        return visitLibraryFunction(Ite.getDefinition(), Arrays.asList(condition, trueValue, falseValue));
+    }
+
+    /**
      * Visits a library function.
      *
      * @param fn the library function to visit.
@@ -135,6 +149,11 @@ public interface ExpressionVisitor<R> {
 
         @Override
         public R visitStringEquals(Expression left, Expression right) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitIte(Expression condition, Expression trueValue, Expression falseValue) {
             return getDefault();
         }
 

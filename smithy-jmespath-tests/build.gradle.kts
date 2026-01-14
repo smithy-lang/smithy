@@ -11,9 +11,8 @@ description = "Compliance tests for JMESPath"
 extra["displayName"] = "Smithy :: JMESPath Tests"
 extra["moduleName"] = "software.amazon.smithy.jmespathtests"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+tasks.compileJava {
+    options.release.set(17)
 }
 
 dependencies {

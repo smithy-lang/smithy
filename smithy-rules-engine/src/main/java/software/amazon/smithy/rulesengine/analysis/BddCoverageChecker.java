@@ -138,6 +138,29 @@ public final class BddCoverageChecker {
         return relevantResults == 0 ? 100.0 : (100.0 * coveredRelevantResults / relevantResults);
     }
 
+    /**
+     * Returns conditions that exist in the conditions list but are not referenced by any BDD node.
+     *
+     * @return set of unreferenced conditions
+     */
+    public Set<Condition> getUnreferencedConditions() {
+        BitSet referencedByBdd = new BitSet(conditions.size());
+        for (int i = 0; i < bdd.getNodeCount(); i++) {
+            int varIdx = bdd.getVariable(i);
+            if (varIdx >= 0 && varIdx < conditions.size()) {
+                referencedByBdd.set(varIdx);
+            }
+        }
+
+        Set<Condition> unreferenced = new HashSet<>();
+        for (int i = 0; i < conditions.size(); i++) {
+            if (!referencedByBdd.get(i)) {
+                unreferenced.add(conditions.get(i));
+            }
+        }
+        return unreferenced;
+    }
+
     // Evaluator that tracks what gets visited during BDD evaluation.
     private final class TestEvaluator implements ConditionEvaluator {
         private final RuleEvaluator ruleEvaluator;

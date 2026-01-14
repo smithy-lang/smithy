@@ -26,12 +26,21 @@ public final class AwsConditionProbability implements ToDoubleFunction<Condition
 
         // Region is almost always provided
         if (s.contains("isSet(Region)")) {
-            return 0.95;
+            return 0.96;
         }
 
         // Endpoint override is rare
         if (s.contains("isSet(Endpoint)")) {
-            return 0.1;
+            return 0.2;
+        }
+
+        // S3 Express is rare (includes ITE variables from S3TreeRewriter)
+        if (s.contains("S3Express") || s.contains("--x-s3")
+                || s.contains("--xa-s3")
+                || s.contains("s3e_fips")
+                || s.contains("s3e_ds")
+                || s.contains("s3e_auth")) {
+            return 0.001;
         }
 
         // Most isSet checks on optional params succeed moderately
@@ -46,11 +55,6 @@ public final class AwsConditionProbability implements ToDoubleFunction<Condition
                 || s.contains("booleanEquals(UseGlobalEndpoint, true)")
                 || s.contains("booleanEquals(ForcePathStyle, true)")) {
             return 0.05;
-        }
-
-        // S3 Express is relatively rare
-        if (s.contains("S3Express") || s.contains("--x-s3") || s.contains("--xa-s3")) {
-            return 0.1;
         }
 
         // ARN-based buckets are uncommon

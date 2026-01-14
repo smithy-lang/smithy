@@ -26,17 +26,13 @@ val licenseSpec = copySpec {
     from("${project.rootDir}/NOTICE")
 }
 
-java {
-    toolchain {
-        setSourceCompatibility(8)
-        setTargetCompatibility(8)
-    }
+tasks.compileJava {
+    options.release.set(8)
 }
 
 // junit6 requires java 17
 tasks.compileTestJava {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+    options.release.set(17)
 }
 
 tasks {
