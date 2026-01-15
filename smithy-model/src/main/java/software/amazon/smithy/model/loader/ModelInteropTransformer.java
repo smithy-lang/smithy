@@ -127,7 +127,9 @@ final class ModelInteropTransformer {
             } else if (fileToVersion.apply(shape) == Version.VERSION_2_0 && shape.hasTrait(SparseTrait.ID)) {
                 MemberShape member = shape.getMember();
                 Shape target = model.getShape(member.getTarget()).orElse(null);
-                patchV2MemberForV1Support(member, target);
+                if (target != null) {
+                    patchV2MemberForV1Support(member, target);
+                }
             }
         }
     }
@@ -150,7 +152,9 @@ final class ModelInteropTransformer {
             } else if (fileToVersion.apply(shape) == Version.VERSION_2_0 && shape.hasTrait(SparseTrait.ID)) {
                 MemberShape member = shape.getValue();
                 Shape target = model.getShape(member.getTarget()).orElse(null);
-                patchV2MemberForV1Support(member, target);
+                if (target != null) {
+                    patchV2MemberForV1Support(member, target);
+                }
             }
         }
     }
