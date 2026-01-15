@@ -42,4 +42,11 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
 ENV JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 
+# Add a non-root user for security
+RUN useradd -m smithy
+USER smithy
+
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD /smithy/bin/smithy --version || exit 1
+
 ENTRYPOINT [ "/smithy/bin/smithy" ]
