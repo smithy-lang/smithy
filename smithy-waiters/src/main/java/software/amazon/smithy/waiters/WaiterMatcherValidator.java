@@ -16,6 +16,7 @@ import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.jmespath.node.ModelJmespathUtilities;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -166,9 +167,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
 
     // Lint using an ANY type or using the modeled shape as the starting data.
     private LiteralExpression createCurrentNodeFromShape(Shape shape) {
-        return shape == null
-                ? LiteralExpression.ANY
-                : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+        return ModelJmespathUtilities.sampleShapeValue(model, shape);
     }
 
     private void addJmespathEvent(String path, ExpressionProblem problem) {

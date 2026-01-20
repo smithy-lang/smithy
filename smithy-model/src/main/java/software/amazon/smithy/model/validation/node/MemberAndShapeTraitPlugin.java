@@ -4,45 +4,40 @@
  */
 package software.amazon.smithy.model.validation.node;
 
+import java.util.EnumSet;
+import java.util.function.BiPredicate;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.Trait;
 
-abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T extends Trait>
+public abstract class MemberAndShapeTraitPlugin<N extends Node, T extends Trait>
         implements NodeValidatorPlugin {
 
-    private final Class<S> targetShapeClass;
+    private final EnumSet<ShapeType> shapeTypes;
     private final Class<N> nodeClass;
     private final Class<T> traitClass;
 
-    MemberAndShapeTraitPlugin(Class<S> targetShapeClass, Class<N> nodeClass, Class<T> traitClass) {
-        this.targetShapeClass = targetShapeClass;
+    public MemberAndShapeTraitPlugin(EnumSet<ShapeType> shapeTypes, Class<N> nodeClass, Class<T> traitClass) {
+        this.shapeTypes = shapeTypes;
         this.nodeClass = nodeClass;
         this.traitClass = traitClass;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
-        if (nodeClass.isInstance(value)
-                && shape.getTrait(traitClass).isPresent()
-                && isMatchingShape(shape, context.model())) {
-            check(shape, shape.getTrait(traitClass).get(), (N) value, context, emitter);
-        }
+    public BiPredicate<Model, Shape> shapeMatcher() {
+        return new ShapeTypeFilter(shapeTypes);
     }
 
-    private boolean isMatchingShape(Shape shape, Model model) {
-        // Is the shape the expected shape type?
-        if (targetShapeClass.isInstance(shape)) {
-            return true;
+    @Override
+    @SuppressWarnings("unchecked")
+    public final void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
+        if (nodeClass.isInstance(value)
+                && shape.getTrait(traitClass).isPresent()) {
+            check(shape, shape.getTrait(traitClass).get(), (N) value, context, emitter);
         }
-
-        // Is the targeted member an instance of the expected shape?
-        return shape.asMemberShape()
-                .flatMap(member -> model.getShape(member.getTarget()))
-                .filter(targetShapeClass::isInstance)
-                .isPresent();
     }
 
     protected abstract void check(Shape shape, T trait, N value, Context context, Emitter emitter);

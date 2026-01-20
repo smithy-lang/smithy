@@ -6,6 +6,7 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -13,10 +14,10 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 /**
  * Validates the enum trait on string shapes.
  */
-final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
+public final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
 
-    StringEnumPlugin() {
-        super(StringShape.class, StringNode.class);
+    public StringEnumPlugin() {
+        super(ShapeType.STRING_TYPES, StringShape.class, StringNode.class);
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -31,6 +32,14 @@ public interface NodeValidatorPlugin {
     String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
+     * The shapes this plugin applies to.
+     * MemberShapes that target matching shapes are also considered matching.
+     */
+    default BiPredicate<Model, Shape> shapeMatcher() {
+        return (m, s) -> true;
+    }
+
+    /**
      * Applies the plugin to the given shape, node value, and model.
      *
      * @param shape Shape being checked.
@@ -38,7 +47,22 @@ public interface NodeValidatorPlugin {
      * @param context Evaluation context.
      * @param emitter Consumer to notify of validation event locations and messages.
      */
-    void apply(Shape shape, Node value, Context context, Emitter emitter);
+    default void apply(Shape shape, Node value, Context context, Emitter emitter) {
+        if (shapeMatcher().test(context.model(), shape)) {
+            applyMatching(shape, value, context, emitter);
+        }
+    }
+
+    /**
+     * Applies the plugin to the given shape, node value, and model.
+     * Requires the shape to match the shapeMatcher().
+     *
+     * @param shape Shape being checked.
+     * @param value Value being evaluated.
+     * @param context Evaluation context.
+     * @param emitter Consumer to notify of validation event locations and messages.
+     */
+    void applyMatching(Shape shape, Node value, Context context, Emitter emitter);
 
     /**
      * @return Gets the built-in Node validation plugins.

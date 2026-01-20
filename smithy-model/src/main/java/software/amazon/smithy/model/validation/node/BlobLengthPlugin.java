@@ -6,9 +6,10 @@ package software.amazon.smithy.model.validation.node;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.EnumSet;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -18,10 +19,10 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * Validates length trait on blob shapes and members that target blob shapes.
  */
 @SmithyInternalApi
-final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, StringNode, LengthTrait> {
+public final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<StringNode, LengthTrait> {
 
-    BlobLengthPlugin() {
-        super(BlobShape.class, StringNode.class, LengthTrait.class);
+    public BlobLengthPlugin() {
+        super(EnumSet.of(ShapeType.BLOB), StringNode.class, LengthTrait.class);
     }
 
     @Override

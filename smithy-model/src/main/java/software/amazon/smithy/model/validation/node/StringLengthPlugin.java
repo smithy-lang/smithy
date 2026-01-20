@@ -4,9 +4,10 @@
  */
 package software.amazon.smithy.model.validation.node;
 
+import java.util.EnumSet;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -14,10 +15,10 @@ import software.amazon.smithy.model.validation.Severity;
 /**
  * Validates the length trait on string shapes or members that target them.
  */
-final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, LengthTrait> {
+public final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringNode, LengthTrait> {
 
-    StringLengthPlugin() {
-        super(StringShape.class, StringNode.class, LengthTrait.class);
+    public StringLengthPlugin() {
+        super(EnumSet.of(ShapeType.STRING), StringNode.class, LengthTrait.class);
     }
 
     @Override

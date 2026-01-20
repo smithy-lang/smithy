@@ -43,6 +43,7 @@ Table of contents
     service-types
     mixins
     constraint-traits
+    contract-traits
     type-refinement-traits
     documentation-traits
     behavior-traits

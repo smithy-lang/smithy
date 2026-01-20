@@ -1,0 +1,4 @@
+[DANGER] smithy.example#BadConditions: Condition WrongType expression must return a boolean type, but this expression was statically determined to return a `string` type. | ConditionsTrait
+[DANGER] smithy.example#BadConditions: Condition WrongType2 expression must return a boolean type, but this expression was statically determined to return a `number` type. | ConditionsTrait
+[DANGER] smithy.example#BadConditions: Condition `MissingField`: Problem found in JMESPath expression (foo): Object field 'foo' does not exist in object with properties [string, string2, int] (1:1) | ConditionsTrait.JmespathProblem.JmespathEventDanger.MissingField
+[DANGER] smithy.example#BadConditions: Condition MissingField expression must return a boolean type, but this expression was statically determined to return a `null` type. | ConditionsTrait
