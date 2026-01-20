@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add @conditions contract trait",
+  "pull_requests": [
+    "[#2935](https://github.com/smithy-lang/smithy/pull/2935)"
+  ]
+}
