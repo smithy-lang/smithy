@@ -77,13 +77,13 @@ final class S3AzCanonicalizerTransform extends TreeMapper {
         return target instanceof Reference && ID_BUCKET.equals(((Reference) target).getName());
     }
 
-    // Creates: s3expressAvailabilityZoneId = split(Bucket, "--", 0)[1]
+    // Creates: s3expressAvailabilityZoneId = split(Bucket, "--", 0)[-2]
     private static Condition createCanonicalAzCondition(Condition original) {
         Split split = Split.ofExpressions(
                 Expression.getReference(ID_BUCKET),
                 Expression.of("--"),
                 Expression.of(0));
-        GetAttr azExpr = GetAttr.ofExpressions(split, "[1]");
+        GetAttr azExpr = GetAttr.ofExpressions(split, "[-2]");
         return original.toBuilder().fn(azExpr).build();
     }
 }
