@@ -7,7 +7,7 @@ use smithy.rules#endpointRuleSet
 use smithy.rules#staticContextParams
 
 @endpointRuleSet({
-    "version": "1.3",
+    "version": "1.1",
     "parameters": {
         "ParameterBar": {
             "type": "String",

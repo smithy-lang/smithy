@@ -58,7 +58,7 @@ use smithy.rules#endpointTests
       "type": "error"
     }
   ],
-  "version": "1.3"
+  "version": "1.1"
 })
 @endpointTests(
   version: "1.0",
