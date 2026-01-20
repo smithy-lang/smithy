@@ -102,6 +102,11 @@ final class CapturingTokenizer implements IdlTokenizer {
     }
 
     @Override
+    public byte[] getCurrentTokenBytes() {
+        return getToken().getByteContents();
+    }
+
+    @Override
     public Number getCurrentTokenNumberValue() {
         return getToken().getNumberValue();
     }

@@ -117,6 +117,12 @@
                     "traits": {
                         "smithy.api#default": 0
                     }
+                },
+                "t": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "Zm9v"
+                    }
                 }
             }
         },
