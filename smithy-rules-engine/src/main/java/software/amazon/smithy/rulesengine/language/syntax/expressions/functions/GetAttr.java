@@ -20,6 +20,7 @@ import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.ArrayType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.ArrayValue;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
@@ -100,10 +101,6 @@ public final class GetAttr extends LibraryFunction {
                 try {
                     String number = slicePart.substring(1, slicePart.length() - 1);
                     int slice = Integer.parseInt(number);
-                    if (slice < 0) {
-                        throw new InvalidRulesException("Invalid path component: slice index must be >= 0",
-                                sourceLocation);
-                    }
                     if (slicePartIndex > 0) {
                         result.add(Part.Key.of(component.substring(0, slicePartIndex)));
                     }
@@ -316,7 +313,8 @@ public final class GetAttr extends LibraryFunction {
 
             @Override
             public Value eval(Value container) {
-                return container.expectArrayValue().get(index);
+                ArrayValue values = container.expectArrayValue();
+                return index >= 0 ? values.get(index) : values.get(values.getValues().size() + index);
             }
 
             public int index() {

@@ -126,7 +126,9 @@ Parsing ``path`` strings
 Path strings for the `getAttr function`_ are composed of two components:
 
 #. Keys, e.g. ``scheme`` in ``uri#scheme``.
-#. Indexes, e.g. ``[2]`` in ``list[2]``.
+#. Indexes, e.g. ``[2]`` in ``list[2]``. Negative indexes are supported,
+   where ``[-1]`` returns the last element, ``[-2]`` returns the second-to-last,
+   and so on.
 
 An index MUST only occur at the end of a path, as indexes always return
 ``option`` values.
