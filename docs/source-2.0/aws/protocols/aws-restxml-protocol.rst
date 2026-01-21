@@ -192,6 +192,25 @@ that affect serialization:
     This protocol does not support document types.
 
 
+---------------------------
+Identification for claiming
+---------------------------
+
+Services that support this protocol MUST use the following characteristics to
+identify and claim requests:
+
+#. The pair of HTTP request method and HTTP request path matches the defined
+   method and path of an operation bound to the service.
+#. The ``Content-Type`` HTTP request header is set and contains a value that
+   matches :ref:`the operation’s input’s derived Content-Type <restXml-content-type>`
+   or is allowed to contain a custom ``Content-Type`` via the ``@httpHeader``
+   trait.
+
+   This defaults to ``application/xml``.
+
+
+.. _restXml-content-type:
+
 ------------
 Content-Type
 ------------

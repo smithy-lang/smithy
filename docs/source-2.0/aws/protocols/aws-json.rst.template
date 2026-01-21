@@ -25,6 +25,27 @@ that affect serialization:
         to services.
 
 
+---------------------------
+Identification for claiming
+---------------------------
+
+Services that support this protocol MUST use the following characteristics to
+identify and claim requests:
+
+#. The ``Content-Type`` HTTP request header is set and contains the value
+   |protocol content type|.
+#. The HTTP request method is ``POST``.
+#. The HTTP request path is ``/``.
+#. The ``X-Amz-Target`` HTTP request header is set and contains a value that
+   matches the form ``{serviceName}.{operationName}``.
+#. The ``{serviceName}`` segment in the ``X-Amz-Target`` HTTP request header
+   matches the :token:`shape name <smithy:Identifier>` of the service's
+   :ref:`shape-id` in the Smithy model.
+#. The ``{operationName}`` segment in the ``X-Amz-Target`` HTTP request header
+   matches a :token:`shape name <smithy:Identifier>` of an operation bound to
+   the service.
+
+
 ------------------
 Protocol Behaviors
 ------------------
