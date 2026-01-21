@@ -171,6 +171,25 @@ that affect serialization:
     This protocol does not support document types.
 
 
+---------------------------
+Identification for claiming
+---------------------------
+
+Services that support this protocol MUST use the following characteristics to
+identify and claim requests:
+
+#. The ``Content-Type`` HTTP request header is set and contains the value
+   ``application/x-www-form-urlencoded``.
+#. The HTTP request method is ``POST``.
+#. The HTTP request path is ``/``.
+#. The :token:`shape name <smithy:Identifier>` of the service's :ref:`shape-id`
+   in the Smithy model is ``AmazonEC2``.
+#. The HTTP request body contains a ``Version`` key with its value set to the
+   :ref:`"version" property of the service <service>`.
+#. The HTTP request body contains an ``Action`` key with a value that matches a
+   :token:`shape name <smithy:Identifier>` of an operation bound to the service.
+
+
 .. |quoted shape name| replace:: ``ec2Query``
 .. |name resolution text| replace:: See :ref:`aws.protocols#ec2QueryName-query-key-naming`
    for how to serialize a property using a custom name

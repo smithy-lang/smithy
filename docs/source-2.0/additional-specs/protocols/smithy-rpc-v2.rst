@@ -156,6 +156,25 @@ that affect serialization:
         to services.
 
 
+---------------------------
+Identification for claiming
+---------------------------
+
+Services that support this protocol MUST use the following characteristics to
+identify and claim requests:
+
+#. The Smithy-Protocol HTTP request header is set and contains the value
+   ``rpc-v2-cbor``.
+#. The HTTP request method is ``POST``.
+#. The HTTP request path matches the form ``{prefix?}/service/{serviceName}/operation/{operationName}``.
+#. The optional ``{prefix?}`` segment in the HTTP request path matches the
+   service’s runtime path prefix, if configured.
+#. The ``{serviceName}`` segment in the HTTP request path matches the :token:`shape name <smithy:Identifier>`
+   of the service's :ref:`shape-id` in the Smithy model.
+#. The ``{operationName}`` segment in the HTTP request path matches a :token:`shape name <smithy:Identifier>`
+   of an operation bound to the service.
+
+
 ------------------
 Protocol behaviors
 ------------------
