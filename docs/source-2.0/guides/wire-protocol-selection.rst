@@ -220,14 +220,14 @@ Server protocol selection in practice
   ``rpcv2Cbor`` and ``awsJson1_0`` protocols.
 - A CoffeeShop service generated with *LangAGenerator* that receives an input
   matching ``rpcv2Cbor`` will iterate through its supported protocols in
-  priority order.
+  precision order.
 
   - First, the service will attempt to identify the input as ``rpcv2Cbor``
     and succeed.
   - The service will not attempt to identify the input as ``awsJson1_0``.
 - A CoffeeShop service generated with *LangAGenerator* that receives an input
   matching ``awsJson1_0`` will iterate through its supported protocols in
-  priority order.
+  precision order.
 
   - First, the service will attempt to identify the input as ``rpcv2Cbor``
     and will fail to do so.
@@ -235,8 +235,8 @@ Server protocol selection in practice
   - Then, the service will attempt to identify the input as ``awsJson1_0``
     and succeed.
 - A CoffeeShop service generated with *LangAGenerator* that receives an input
-  matching ``awsJson1_1`` will iterate through its supported protocols in =
-  priority order.
+  matching ``awsJson1_1`` will iterate through its supported protocols in
+  precision order.
 
   - First, the service will attempt to identify the input as ``rpcv2Cbor``
     and will fail to do so.
@@ -248,7 +248,7 @@ Server protocol selection in practice
     the input.
 - A CoffeeShop service generated with *LangAGenerator* that receives an input not
   matching any known protocol will iterate through its supported protocols in
-  priority order.
+  precision order.
 
   - First, the service will attempt to identify the input as ``rpcv2Cbor``
     and will fail to do so.
