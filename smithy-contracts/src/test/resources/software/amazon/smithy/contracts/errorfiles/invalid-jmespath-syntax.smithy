@@ -4,12 +4,11 @@ namespace smithy.example
 
 use smithy.contracts#conditions
 
-@conditions([
-    {
-        id: "BadSyntax",
+@conditions({
+    BadSyntax: {
         expression: "||"
     }
-])
+})
 structure FooBar {
     int: Integer
 }

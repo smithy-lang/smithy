@@ -5,7 +5,6 @@
 package software.amazon.smithy.contracts;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,8 +20,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ConditionsTraitValidator extends AbstractValidator {
 
-    private static final String CONDITIONS_TRAIT = "ConditionsTrait";
-
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes()
@@ -35,37 +32,26 @@ public class ConditionsTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         ConditionsTrait conditions = shape.expectTrait(ConditionsTrait.class);
 
-        Map<String, List<Condition>> idsToConditions = new HashMap<>();
-        for (Condition condition : conditions.getConditions()) {
-            idsToConditions.computeIfAbsent(condition.getId(), id -> new ArrayList<>()).add(condition);
-            events.addAll(validateCondition(model, shape, condition));
+        for (Map.Entry<String, Condition> entry : conditions.getConditions().entrySet()) {
+            events.addAll(validateCondition(model, shape, entry.getKey(), entry.getValue()));
         }
-        for (Map.Entry<String, List<Condition>> entry : idsToConditions.entrySet()) {
-            if (entry.getValue().size() > 1) {
-                events.add(error(shape,
-                        String.format(
-                                "Conflicting `%s` conditions IDs found for ID `%s`",
-                                ConditionsTrait.ID,
-                                entry.getKey())));
-            }
-        }
-
         return events;
     }
 
-    private List<ValidationEvent> validateCondition(Model model, Shape shape, Condition condition) {
+    private List<
+            ValidationEvent> validateCondition(Model model, Shape shape, String conditionName, Condition condition) {
         List<ValidationEvent> events = new ArrayList<>();
 
         LinterResult result = ModelJmespathUtilities.lint(model, shape, condition.getParsedExpression());
         for (ExpressionProblem problem : result.getProblems()) {
-            addJmespathEvent(events, shape, condition, problem);
+            addJmespathEvent(events, shape, conditionName, condition, problem);
         }
         if (result.getReturnType() != RuntimeType.BOOLEAN) {
             events.add(danger(shape,
                     String.format(
                             "Condition %s expression must return a boolean type, but this expression was "
                                     + "statically determined to return a `%s` type.",
-                            condition.getId(),
+                            conditionName,
                             result.getReturnType())));
         }
 
@@ -75,6 +61,7 @@ public class ConditionsTraitValidator extends AbstractValidator {
     private void addJmespathEvent(
             List<ValidationEvent> events,
             Shape shape,
+            String conditionName,
             Condition condition,
             ExpressionProblem problem
     ) {
@@ -88,12 +75,12 @@ public class ConditionsTraitValidator extends AbstractValidator {
             case DANGER:
                 severity = Severity.DANGER;
                 eventId = getName() + "." + ModelJmespathUtilities.JMESPATH_PROBLEM + "."
-                        + ModelJmespathUtilities.JMES_PATH_DANGER + "." + condition.getId();
+                        + ModelJmespathUtilities.JMES_PATH_DANGER + "." + conditionName;
                 break;
             default:
                 severity = Severity.WARNING;
                 eventId = getName() + "." + ModelJmespathUtilities.JMESPATH_PROBLEM + "."
-                        + ModelJmespathUtilities.JMES_PATH_WARNING + "." + condition.getId();
+                        + ModelJmespathUtilities.JMES_PATH_WARNING + "." + conditionName;
                 break;
         }
 
@@ -101,6 +88,7 @@ public class ConditionsTraitValidator extends AbstractValidator {
         addEvent(events,
                 severity,
                 shape,
+                conditionName,
                 condition,
                 String.format("Problem found in JMESPath expression (%s): %s",
                         condition.getExpression(),
@@ -112,6 +100,7 @@ public class ConditionsTraitValidator extends AbstractValidator {
             List<ValidationEvent> events,
             Severity severity,
             Shape shape,
+            String conditionName,
             Condition condition,
             String message,
             String... eventIdParts
@@ -121,7 +110,7 @@ public class ConditionsTraitValidator extends AbstractValidator {
                 .shape(shape)
                 .sourceLocation(condition.getSourceLocation())
                 .severity(severity)
-                .message(String.format("Condition `%s`: %s", condition.getId(), message))
+                .message(String.format("Condition `%s`: %s", conditionName, message))
                 .build());
     }
 }

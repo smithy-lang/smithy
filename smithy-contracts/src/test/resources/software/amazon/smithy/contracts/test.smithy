@@ -12,13 +12,12 @@ operation FetchLogs {
     input: FetchLogsInput
 }
 
-@conditions([
-    {
-        id: "StartBeforeEnd",
+@conditions({
+    StartBeforeEnd: {
         description: "The start time must be strictly less than the end time",
         expression: "start < end"
     }
-])
+})
 structure FetchLogsInput {
     @required
     start: Timestamp
@@ -27,10 +26,9 @@ structure FetchLogsInput {
     end: Timestamp
 }
 
-@conditions([
-    {
-        id: "NoKeywords",
+@conditions({
+    NoKeywords: {
         expression: "!contains(@, 'id') && !contains(@, 'name')"
     }
-])
+})
 string Foo

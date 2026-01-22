@@ -4,25 +4,20 @@ namespace smithy.example
 
 use smithy.contracts#conditions
 
-@conditions([
-    {
-        id: "Good",
+@conditions({
+    Good: {
         expression: "length(string) < length(string2)"
     }
-    {
-        id: "WrongType",
+    WrongType: {
         expression: "string"
     }
-    {
-        id: "WrongType2",
+    WrongType2: {
         expression: "int"
     }
-    {
-        id: "MissingField",
+    MissingField: {
         expression: "foo"
     }
-
-])
+})
 structure BadConditions {
     string: String
     string2: String

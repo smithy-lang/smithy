@@ -4,12 +4,11 @@ namespace smithy.example
 
 use smithy.contracts#conditions
 
-@conditions([
-    {
-        id: "NonEmpty"
+@conditions({
+    NonEmpty: {
         expression: "min == null || max == null || min <= max"
     }
-])
+})
 @trait(selector: ":test(number, member > number)")
 structure range2 {
     min: BigDecimal

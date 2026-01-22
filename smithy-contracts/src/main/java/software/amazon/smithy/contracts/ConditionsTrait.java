@@ -4,11 +4,11 @@
  */
 package software.amazon.smithy.contracts;
 
-import java.util.ArrayList;
-import java.util.List;
-import software.amazon.smithy.model.node.ArrayNode;
+import java.util.Map;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -26,7 +26,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuilder<ConditionsTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.contracts#conditions");
 
-    private final List<Condition> conditions;
+    private final Map<String, Condition> conditions;
 
     private ConditionsTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -35,9 +35,9 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        ArrayNode.Builder builder = ArrayNode.builder();
-        for (Condition condition : conditions) {
-            builder.withValue(condition.toNode());
+        ObjectNode.Builder builder = ObjectNode.builder();
+        for (Map.Entry<String, Condition> entry : conditions.entrySet()) {
+            builder.withMember(entry.getKey(), entry.getValue().toNode());
         }
         return builder.sourceLocation(getSourceLocation()).build();
     }
@@ -51,17 +51,16 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
      */
     public static ConditionsTrait fromNode(Node node) {
         Builder builder = builder().sourceLocation(node);
-        List<Node> elements = node.expectArrayNode().getElements();
-        List<Condition> conditions = new ArrayList<>();
-        for (Node element : elements) {
-            Condition condition = Condition.fromNode(element);
-            conditions.add(condition);
+        Map<StringNode, Node> members = node.expectObjectNode().getMembers();
+        for (Map.Entry<StringNode, Node> entry : members.entrySet()) {
+            Condition condition = Condition.fromNode(entry.getValue());
+            String name = entry.getKey().expectStringNode().getValue();
+            builder.put(name, condition);
         }
-        builder.conditions(conditions);
         return builder.build();
     }
 
-    public List<Condition> getConditions() {
+    public Map<String, Condition> getConditions() {
         return conditions;
     }
 
@@ -70,7 +69,7 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
      */
     public SmithyBuilder<ConditionsTrait> toBuilder() {
         return builder().sourceLocation(getSourceLocation())
-                .conditions(getConditions());
+                .replace(getConditions());
     }
 
     public static Builder builder() {
@@ -81,28 +80,28 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
      * Builder for {@link ConditionsTrait}.
      */
     public static final class Builder extends AbstractTraitBuilder<ConditionsTrait, Builder> {
-        private final BuilderRef<List<Condition>> conditions = BuilderRef.forList();
+        private final BuilderRef<Map<String, Condition>> conditions = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
-        public Builder conditions(List<Condition> conditions) {
-            clearConditions();
-            this.conditions.get().addAll(conditions);
+        public Builder replace(Map<String, Condition> conditions) {
+            clear();
+            this.conditions.get().putAll(conditions);
             return this;
         }
 
-        public Builder clearConditions() {
+        public Builder clear() {
             this.conditions.get().clear();
             return this;
         }
 
-        public Builder addConditions(Condition value) {
-            this.conditions.get().add(value);
+        public Builder put(String name, Condition condition) {
+            this.conditions.get().put(name, condition);
             return this;
         }
 
-        public Builder removeConditions(Condition value) {
-            this.conditions.get().remove(value);
+        public Builder remove(String name) {
+            this.conditions.get().remove(name);
             return this;
         }
 

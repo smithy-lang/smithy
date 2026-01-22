@@ -20,14 +20,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 @SmithyGenerated
 public final class Condition implements ToNode, ToSmithyBuilder<Condition>, FromSourceLocation {
     private final SourceLocation sourceLocation;
-    private final String id;
     private final String expression;
     private final JmespathExpression parsedExpression;
     private final String description;
 
     private Condition(Builder builder) {
         this.sourceLocation = SmithyBuilder.requiredState("sourceLocation", builder.sourceLocation);
-        this.id = SmithyBuilder.requiredState("id", builder.id);
         this.expression = SmithyBuilder.requiredState("expression", builder.expression);
         try {
             this.parsedExpression = JmespathExpression.parse(expression);
@@ -42,7 +40,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember("id", Node.from(id))
                 .withMember("expression", Node.from(expression))
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .build();
@@ -58,7 +55,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     public static Condition fromNode(Node node) {
         Builder builder = builder().sourceLocation(node.getSourceLocation());
         node.expectObjectNode()
-                .expectStringMember("id", builder::id)
                 .expectStringMember("expression", builder::expression)
                 .getStringMember("description", builder::description);
         return builder.build();
@@ -67,15 +63,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     @Override
     public SourceLocation getSourceLocation() {
         return sourceLocation;
-    }
-
-    /**
-     * The identifier of the conditions.
-     * The provided `id` MUST match Smithy's `IDENTIFIER` ABNF.
-     * No two conditions can share the same ID.
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -101,7 +88,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
      */
     public SmithyBuilder<Condition> toBuilder() {
         return builder()
-                .id(id)
                 .expression(expression)
                 .description(description);
     }
@@ -115,7 +101,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
      */
     public static final class Builder implements SmithyBuilder<Condition> {
         private SourceLocation sourceLocation;
-        private String id;
         private String expression;
         private String description;
 
@@ -123,11 +108,6 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
 
         public Builder sourceLocation(SourceLocation sourceLocation) {
             this.sourceLocation = sourceLocation;
-            return this;
-        }
-
-        public Builder id(String id) {
-            this.id = id;
             return this;
         }
 

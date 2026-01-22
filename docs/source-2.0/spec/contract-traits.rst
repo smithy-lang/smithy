@@ -32,9 +32,9 @@ Trait selector
 
     *Any shape other than services, operations, and resources*
 Value type
-    ``list``
+    ``map``
 
-The ``conditions`` trait is a list of ``Condition`` structures that contain
+The ``conditions`` trait is a map from condition names to ``Condition`` structures that contain
 the following members:
 
 .. list-table::
@@ -44,11 +44,6 @@ the following members:
     * - Property
       - Type
       - Description
-    * - id
-      - ``string``
-      - The identifier of the conditions.
-        The provided ``id`` MUST match Smithy's :token:`smithy:Identifier` ABNF.
-        No two conditions on a single shape can share the same ID.
     * - expression
       - ``string``
       - JMESPath expression that must evaluate to true.
@@ -58,13 +53,12 @@ the following members:
 
 .. code-block:: smithy
 
-    @conditions([
-        {
-            id: "StartBeforeEnd",
+    @conditions({
+        StartBeforeEnd: {
             description: "The start time must be strictly less than the end time",
             expression: "start < end"
         }
-    ])
+    })
     structure FetchLogsInput {
         @required
         start: Timestamp
@@ -73,10 +67,9 @@ the following members:
         end: Timestamp
     }
 
-    @conditions([
-        {
-            id: "NoKeywords",
+    @conditions({
+        NoKeywords: {
             expression: "!contains(@, 'id') && !contains(@, 'name')"
         }
-    ])
+    })
     string Foo
