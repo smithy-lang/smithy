@@ -209,6 +209,9 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
             var operation = ioToOperation.get(shape.getId());
             builder.definitionFile(getDefinitionFile(serviceShape, operation));
             builder.putProperty(OPERATION_PROPERTY, operation);
+            // Input and output structures should use the operation as its link_id
+            String suffix = operation.getInputShape().equals(shape.getId()) ? "-request-members" : "-response-members";
+            builder.putProperty(LINK_ID_PROPERTY, getLinkId(getShapeName(serviceShape, operation)) + suffix);
         }
         return builder.build();
     }
@@ -230,15 +233,21 @@ public final class DocSymbolProvider extends ShapeVisitor.Default<Symbol> implem
 
     @Override
     public Symbol memberShape(MemberShape shape) {
-        var builder = getSymbolBuilder(shape)
-                .definitionFile(getDefinitionFile(serviceShape, model.expectShape(shape.getId().withoutMember())));
+        var builder = getSymbolBuilder(shape);
 
-        Optional<String> containerLinkId = model.expectShape(shape.getContainer())
+        ShapeId containerId = shape.getContainer();
+        Optional<String> containerLinkId = model.expectShape(containerId)
                 .accept(this)
                 .getProperty(LINK_ID_PROPERTY, String.class);
         if (containerLinkId.isPresent()) {
             var linkId = containerLinkId.get() + "-" + getLinkId(getShapeName(serviceShape, shape));
             builder.putProperty(LINK_ID_PROPERTY, linkId);
+        }
+        // Definition file of input / output structure members should be the operation file.
+        if (ioToOperation.containsKey(containerId)) {
+            builder.definitionFile(getDefinitionFile(serviceShape, ioToOperation.get(containerId)));
+        } else {
+            builder.definitionFile(getDefinitionFile(serviceShape, model.expectShape(shape.getId().withoutMember())));
         }
         return builder.build();
     }

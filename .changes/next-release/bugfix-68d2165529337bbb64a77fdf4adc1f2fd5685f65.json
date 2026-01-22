@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix incorrect links for operation input / output members in docgen",
+  "pull_requests": [
+    "[#2922](https://github.com/smithy-lang/smithy/pull/2922)"
+  ]
+}

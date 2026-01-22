@@ -142,4 +142,49 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
                 ```
                 :::"""));
     }
+
+    @Test
+    public void testPaginatedOperation(@TempDir Path tempDir) {
+        MockManifest manifest = new MockManifest();
+        FileManifest sharedManifest = FileManifest.create(tempDir);
+        ObjectNode settings = settings().toBuilder()
+                .withoutMember("snippetConfigs")
+                .build();
+        sharedManifest.writeFile("snippets/snippets.json", IoUtils.readUtf8Url(SNIPPETS_FILE));
+        execute(manifest, sharedManifest, settings);
+        var operationDocs = manifest.expectFileString("/content/operations/PaginatedOperation.md");
+        assertThat(operationDocs,
+                containsString(
+                        """
+                                (paginatedoperation)=
+                                # PaginatedOperation
+
+                                Placeholder documentation for `smithy.example#PaginatedOperation`
+
+                                :::{important}
+                                This operation returns partial results in pages, whose maximum size may be
+                                configured with [pageSize](./PaginatedOperation.md#paginatedoperation-request-members-pagesize). Each request may return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken) that may be used as an [input token](./PaginatedOperation.md#paginatedoperation-request-members-nexttoken) in subsequent requests to fetch the next page of results. If the operation does not return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), that means that there are no more results. If the operation returns a repeated [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), there MAY be more results later.
+                                :::
+
+                                (paginatedoperation-request-members)=
+                                ## Request Members
+
+                                **nextToken (String)**
+                                : Placeholder documentation for `smithy.example#PaginatedOperationInput$nextToken`
+
+                                **pageSize (Integer)**
+                                : Placeholder documentation for `smithy.example#PaginatedOperationInput$pageSize`
+
+
+                                (paginatedoperation-response-members)=
+                                ## Response Members
+
+                                **items (List\\<String\\>)**
+                                : Placeholder documentation for `smithy.example#PaginatedOperationOutput$items`
+
+                                **nextToken (String)**
+                                : Placeholder documentation for `smithy.example#PaginatedOperationOutput$nextToken`
+                                """));
+
+    }
 }

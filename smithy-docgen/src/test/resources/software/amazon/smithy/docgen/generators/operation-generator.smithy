@@ -6,6 +6,7 @@ service TestService {
     operations: [
         NoSnippets
         BasicOperation
+        PaginatedOperation
     ]
 }
 
@@ -82,4 +83,26 @@ operation NoSnippets {
 @error("client")
 structure BasicError {
     message: String
+}
+
+@paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize", items: "items")
+operation PaginatedOperation {
+    input: PaginatedOperationInput
+
+    output := {
+        items: Items
+
+        nextToken: String
+    }
+}
+
+@input
+structure PaginatedOperationInput {
+    nextToken: String
+
+    pageSize: Integer
+}
+
+list Items {
+    member: String
 }
