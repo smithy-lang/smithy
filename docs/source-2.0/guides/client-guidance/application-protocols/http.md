@@ -30,8 +30,8 @@ public interface HttpClient implements ClientTransport<HttpRequest, HttpResponse
 #### Context
 
 HTTP clients don't have many common [context](#typed-context) parameters, but
-they should check the context for a request timeout setting and use it if it's
-present.
+they should check the context for a request timeout setting and use it if that
+setting's value present.
 
 ```java
 /**
