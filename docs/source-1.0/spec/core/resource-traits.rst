@@ -33,42 +33,45 @@ client, making it appropriate to model in Smithy as a ``put`` lifecycle
 operation. However, ``UpdateTable`` is used to update a table and attempting
 to call ``CreateTable`` on a table that already exists will return an error.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @noReplace
-        resource Table {
-            put: CreateTable
-        }
+     @noReplace
+     resource Table {
+         put: CreateTable
+     }
 
-        @idempotent
-        operation CreateTable {
-            // ...
-        }
+     @idempotent
+     operation CreateTable {
+         // ...
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Table": {
-                    "type": "resource",
-                    "put": {
-                        "target": "smithy.example#CreateTable"
-                    },
-                    "traits": {
-                        "smithy.api#noReplace": {}
-                    }
-                },
-                "smithy.example#CreateTable": {
-                    "type": "operation",
-                    "traits": {
-                        "smithy.api#idempotent": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Table": {
+                 "type": "resource",
+                 "put": {
+                     "target": "smithy.example#CreateTable"
+                 },
+                 "traits": {
+                     "smithy.api#noReplace": {}
+                 }
+             },
+             "smithy.example#CreateTable": {
+                 "type": "operation",
+                 "traits": {
+                     "smithy.api#idempotent": {}
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#references
@@ -196,37 +199,35 @@ defined if needed. For example:
 
 The following example defines several references:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     @references([
+         {resource: Forecast},
+         {resource: ShapeName},
+         {resource: Meteorologist},
+         {
+             resource: com.foo.baz#Object,
+             service: com.foo.baz#Service,
+             ids: {bucket: "bucketName", object: "objectKey"},
+         ])
+     structure ForecastInformation {
+         someId: SomeShapeIdentifier,
 
-        @references([
-            {resource: Forecast},
-            {resource: ShapeName},
-            {resource: Meteorologist},
-            {
-                resource: com.foo.baz#Object,
-                service: com.foo.baz#Service,
-                ids: {bucket: "bucketName", object: "objectKey"},
-            ])
-        structure ForecastInformation {
-            someId: SomeShapeIdentifier,
+         @required
+         forecastId: ForecastId,
 
-            @required
-            forecastId: ForecastId,
+         @required
+         meteorologistId: MeteorologistId,
 
-            @required
-            meteorologistId: MeteorologistId,
+         @required
+         otherData: SomeOtherShape,
 
-            @required
-            otherData: SomeOtherShape,
+         @required
+         bucketName: BucketName,
 
-            @required
-            bucketName: BucketName,
-
-            @required
-            objectKey: ObjectKey,
-        }
+         @required
+         objectKey: ObjectKey,
+     }
 
 .. rubric:: References on string shapes
 

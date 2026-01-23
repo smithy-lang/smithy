@@ -491,75 +491,78 @@ trait associated with an operation can be properly deserialized.
 The following example defines a protocol compliance test for a JSON protocol
 that uses :ref:`HTTP binding traits <http-traits>`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use smithy.test#httpResponseTests
+     use smithy.test#httpResponseTests
 
-        @error("client")
-        @httpError(400)
-        @httpResponseTests([
-            {
-                id: "invalid_greeting",
-                protocol: exampleProtocol,
-                params: {foo: "baz", message: "Hi"},
-                code: 400,
-                headers: {"X-Foo": "baz"},
-                body: "{\"message\": \"Hi\"}",
-                bodyMediaType: "application/json",
-            }
-        ])
-        structure InvalidGreeting {
-            @httpHeader("X-Foo")
-            foo: String,
+     @error("client")
+     @httpError(400)
+     @httpResponseTests([
+         {
+             id: "invalid_greeting",
+             protocol: exampleProtocol,
+             params: {foo: "baz", message: "Hi"},
+             code: 400,
+             headers: {"X-Foo": "baz"},
+             body: "{\"message\": \"Hi\"}",
+             bodyMediaType: "application/json",
+         }
+     ])
+     structure InvalidGreeting {
+         @httpHeader("X-Foo")
+         foo: String,
 
-            message: String,
-        }
+         message: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#InvalidGreeting": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpHeader": "X-Foo"
-                            }
-                        },
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#error": "client",
-                        "smithy.api#httpError": 400,
-                        "smithy.test#httpResponseTests": [
-                            {
-                                "id": "invalid_greeting",
-                                "protocol": "smithy.example#exampleProtocol",
-                                "body": "{\"message\": \"Hi\"}",
-                                "bodyMediaType": "application/json",
-                                "headers": {
-                                    "X-Foo": "baz"
-                                },
-                                "params": {
-                                    "foo": "baz",
-                                    "message": "Hi"
-                                },
-                                "code": 400
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#InvalidGreeting": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#httpHeader": "X-Foo"
+                         }
+                     },
+                     "message": {
+                         "target": "smithy.api#String"
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#error": "client",
+                     "smithy.api#httpError": 400,
+                     "smithy.test#httpResponseTests": [
+                         {
+                             "id": "invalid_greeting",
+                             "protocol": "smithy.example#exampleProtocol",
+                             "body": "{\"message\": \"Hi\"}",
+                             "bodyMediaType": "application/json",
+                             "headers": {
+                                 "X-Foo": "baz"
+                             },
+                             "params": {
+                                 "foo": "baz",
+                                 "message": "Hi"
+                             },
+                             "code": 400
+                         }
+                     ]
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.test#httpMalformedRequestTests

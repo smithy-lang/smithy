@@ -59,20 +59,18 @@ supports the following members:
 The following example defines a simple resource that is also a CloudFormation
 resource:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     namespace smithy.example
 
-        namespace smithy.example
+     use aws.cloudformation#cfnResource
 
-        use aws.cloudformation#cfnResource
-
-        @cfnResource
-        resource Foo {
-            identifiers: {
-                fooId: String,
-            },
-        }
+     @cfnResource
+     resource Foo {
+         identifiers: {
+             fooId: String,
+         },
+     }
 
 
 Resources that have properties that cannot be :ref:`automatically derived
@@ -84,26 +82,24 @@ cannot be automatically converted to CloudFormation properties.
 The following example provides a ``name`` value and one structure shape in the
 ``additionalSchemas`` list.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     namespace smithy.example
 
-        namespace smithy.example
+     use aws.cloudformation#cfnResource
 
-        use aws.cloudformation#cfnResource
+     @cfnResource(
+         name: "Foo",
+         additionalSchemas: [AdditionalFooProperties])
+     resource FooResource {
+         identifiers: {
+             fooId: String,
+         },
+     }
 
-        @cfnResource(
-            name: "Foo",
-            additionalSchemas: [AdditionalFooProperties])
-        resource FooResource {
-            identifiers: {
-                fooId: String,
-            },
-        }
-
-        structure AdditionalFooProperties {
-            barProperty: String,
-        }
+     structure AdditionalFooProperties {
+         barProperty: String,
+     }
 
 
 .. _aws-cloudformation-property-deriviation:

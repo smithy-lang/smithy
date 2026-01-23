@@ -38,38 +38,41 @@ The ``deprecated`` trait is a structure that supports the following members:
       - Provides a plain text date or version for when a shape or member was
         deprecated.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @deprecated
-        string SomeString
+     @deprecated
+     string SomeString
 
-        @deprecated(message: "This shape is no longer used.", since: "1.3")
-        string OtherString
+     @deprecated(message: "This shape is no longer used.", since: "1.3")
+     string OtherString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SomeString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#deprecated": {}
-                    }
-                },
-                "smithy.example#OtherString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#deprecated": {
-                            "message": "This shape is no longer used.",
-                            "since": "1.3"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#SomeString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#deprecated": {}
+                 }
+             },
+             "smithy.example#OtherString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#deprecated": {
+                         "message": "This shape is no longer used.",
+                         "since": "1.3"
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#documentation
@@ -86,12 +89,10 @@ Trait selector
 Value type
     ``string``
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @documentation("This *is* documentation about the shape.")
-        string MyString
+     @documentation("This *is* documentation about the shape.")
+     string MyString
 
 
 .. rubric:: Effective documentation
@@ -105,52 +106,55 @@ process:
 
 For example, given the following model,
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure Foo {
-            @documentation("Member documentation")
-            baz: Baz,
+     structure Foo {
+         @documentation("Member documentation")
+         baz: Baz,
 
-            bar: Baz,
+         bar: Baz,
 
-            qux: String,
-        }
+         qux: String,
+     }
 
-        @documentation("Shape documentation")
-        string Baz
+     @documentation("Shape documentation")
+     string Baz
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Foo": {
-                    "type": "structure",
-                    "members": {
-                        "baz": {
-                            "target": "smithy.example#Baz",
-                            "traits": {
-                                "smithy.api#documentation": "Member documentation"
-                            }
-                        },
-                        "bar": {
-                            "target": "smithy.example#Baz"
-                        },
-                        "qux": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                },
-                "smithy.example#Baz": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#documentation": "Shape documentation"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Foo": {
+                 "type": "structure",
+                 "members": {
+                     "baz": {
+                         "target": "smithy.example#Baz",
+                         "traits": {
+                             "smithy.api#documentation": "Member documentation"
+                         }
+                     },
+                     "bar": {
+                         "target": "smithy.example#Baz"
+                     },
+                     "qux": {
+                         "target": "smithy.api#String"
+                     }
+                 }
+             },
+             "smithy.example#Baz": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#documentation": "Shape documentation"
+                 }
+             }
+         }
+     }
 
 the effective documentation of ``Foo$baz`` resolves to "Member documentation",
 ``Foo$bar`` resolves to "Shape documentation", ``Foo$qux`` is not documented,
@@ -209,49 +213,47 @@ These values use the same semantics and format as
 A value for ``output`` or ``error`` SHOULD be provided. However, both
 MUST NOT be defined for the same example.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     @readonly
+     operation MyOperation {
+         input: MyOperationInput,
+         output: MyOperationOutput,
+         errors: [MyOperationError]
+     }
 
-        @readonly
-        operation MyOperation {
-            input: MyOperationInput,
-            output: MyOperationOutput,
-            errors: [MyOperationError]
-        }
-
-        apply MyOperation @examples([
-            {
-                title: "Invoke MyOperation",
-                input: {
-                    tags: ["foo", "baz", "bar"],
-                },
-                output: {
-                    status: "PENDING",
-                }
-            },
-            {
-                title: "Another example for MyOperation",
-                input: {
-                    foo: "baz",
-                },
-                output: {
-                    status: "PENDING",
-                }
-            },
-            {
-                title: "Error example for MyOperation",
-                input: {
-                    foo: "!",
-                },
-                error: {
-                    shapeId: MyOperationError,
-                    content: {
-                        message: "Invalid 'foo'. Special character not allowed.",
-                    }
-                }
-            },
-        ])
+     apply MyOperation @examples([
+         {
+             title: "Invoke MyOperation",
+             input: {
+                 tags: ["foo", "baz", "bar"],
+             },
+             output: {
+                 status: "PENDING",
+             }
+         },
+         {
+             title: "Another example for MyOperation",
+             input: {
+                 foo: "baz",
+             },
+             output: {
+                 status: "PENDING",
+             }
+         },
+         {
+             title: "Error example for MyOperation",
+             input: {
+                 foo: "!",
+             },
+             error: {
+                 shapeId: MyOperationError,
+                 content: {
+                     message: "Invalid 'foo'. Special character not allowed.",
+                 }
+             }
+         },
+     ])
 
 
 .. _examples-ErrorExample-structure:
@@ -296,17 +298,15 @@ Value type
     ``map`` of ``string`` containing a name to ``string`` containing a valid
     URL.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @externalDocumentation(
-            "Homepage": "https://www.example.com/",
-            "API Reference": "https://www.example.com/api-ref",
-        )
-        service MyService {
-            version: "2006-03-01",
-        }
+     @externalDocumentation(
+         "Homepage": "https://www.example.com/",
+         "API Reference": "https://www.example.com/api-ref",
+     )
+     service MyService {
+         version: "2006-03-01",
+     }
 
 
 .. smithy-trait:: smithy.api#internal
@@ -330,16 +330,14 @@ includes features that are only available to internal customers within the
 same company, whereas clients for external customers could be built from a
 filtered version of the model.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     structure MyStructure {
+         foo: String,
 
-        structure MyStructure {
-            foo: String,
-
-            @internal
-            bar: String,
-        }
+         @internal
+         bar: String,
+     }
 
 
 .. smithy-trait:: smithy.api#recommended
@@ -405,12 +403,10 @@ Sensitive data MUST NOT be exposed in things like exception messages or log
 output. Application of this trait SHOULD NOT affect wire logging
 (i.e., logging of all data transmitted to and from servers or clients).
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @sensitive
-        string MyString
+     @sensitive
+     string MyString
 
 
 .. smithy-trait:: smithy.api#since
@@ -448,12 +444,10 @@ Tools can use these tags to filter shapes that should not be visible for a
 particular consumer of a model. The string values that can be provided to the
 tags trait are arbitrary and up to the model author.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @tags(["experimental", "public"])
-        string SomeStructure {}
+     @tags(["experimental", "public"])
+     string SomeStructure {}
 
 
 .. smithy-trait:: smithy.api#title
@@ -474,16 +468,14 @@ Trait selector
 Value type
     ``string``
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     namespace acme.example
 
-        namespace acme.example
-
-        @title("ACME Simple Image Service")
-        service MySimpleImageService {
-            version: "2006-03-01",
-        }
+     @title("ACME Simple Image Service")
+     service MySimpleImageService {
+         version: "2006-03-01",
+     }
 
 
 .. smithy-trait:: smithy.api#unstable
@@ -504,12 +496,10 @@ Trait selector
 Value type
     Annotation trait
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @unstable
-        string MyString
+     @unstable
+     string MyString
 
 
 .. _CommonMark: https://spec.commonmark.org/

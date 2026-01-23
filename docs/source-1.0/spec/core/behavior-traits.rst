@@ -265,58 +265,61 @@ inherited service setting.
 The following example defines a paginated operation that inherits some
 settings from a service.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                   pageSize: "maxResults")
-        service Example {
-            version: "2019-06-27",
-            operations: [GetFoos],
-        }
+     @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                pageSize: "maxResults")
+     service Example {
+         version: "2019-06-27",
+         operations: [GetFoos],
+     }
 
-        @readonly @paginated(items: "foos")
-        operation GetFoos {
-            input: GetFoosInput,
-            output: GetFoosOutput
-        }
+     @readonly @paginated(items: "foos")
+     operation GetFoos {
+         input: GetFoosInput,
+         output: GetFoosOutput
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Example": {
-                    "type": "service",
-                    "version": "2019-06-27",
-                    "traits": {
-                        "smithy.api#paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "nextToken",
-                            "pageSize": "maxResults"
-                        }
-                    }
-                },
-                "smithy.example#GetFoos": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetFoosInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetFoosOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#paginated": {
-                            "items": "foos"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Example": {
+                 "type": "service",
+                 "version": "2019-06-27",
+                 "traits": {
+                     "smithy.api#paginated": {
+                         "inputToken": "nextToken",
+                         "outputToken": "nextToken",
+                         "pageSize": "maxResults"
+                     }
+                 }
+             },
+             "smithy.example#GetFoos": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#GetFoosInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#GetFoosOutput"
+                 },
+                 "traits": {
+                     "smithy.api#readonly": {},
+                     "smithy.api#paginated": {
+                         "items": "foos"
+                     }
+                 }
+             }
+         }
+     }
 
 The values for ``outputToken`` and ``items`` are paths. :dfn:`Paths` are a series of
 identifiers separated by dots (``.``) where each identifier represents a
@@ -513,15 +516,13 @@ Value type
 See
     :rfc:`1864`
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @httpChecksumRequired
-        operation PutSomething {
-            input: PutSomethingInput,
-            output: PutSomethingOutput
-        }
+     @httpChecksumRequired
+     operation PutSomething {
+         input: PutSomethingInput,
+         output: PutSomethingOutput
+     }
 
 
 .. smithy-trait:: smithy.api#requestCompression

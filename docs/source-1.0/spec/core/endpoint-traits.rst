@@ -109,68 +109,71 @@ not immediately adjacent and do not have identical label names.
 
 Given the following operation,
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}-{bar}.data.")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
+     @readonly
+     @endpoint(hostPrefix: "{foo}-{bar}.data.")
+     operation GetStatus {
+         input: GetStatusInput,
+         output: GetStatusOutput
+     }
 
-        structure GetStatusInput {
-            @required
-            @hostLabel
-            foo: String
+     structure GetStatusInput {
+         @required
+         @hostLabel
+         foo: String
 
-            @required
-            @hostLabel
-            bar: String
-        }
+         @required
+         @hostLabel
+         bar: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}-{bar}.data."
-                        }
-                    }
-                },
-                "smithy.example#GetStatusInput": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        },
-                        "bar": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#GetStatus": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#GetStatusInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#GetStatusOutput"
+                 },
+                 "traits": {
+                     "smithy.api#readonly": {},
+                     "smithy.api#endpoint": {
+                         "hostPrefix": "{foo}-{bar}.data."
+                     }
+                 }
+             },
+             "smithy.example#GetStatusInput": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#required": {},
+                             "smithy.api#hostLabel": {}
+                         }
+                     },
+                     "bar": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#required": {},
+                             "smithy.api#hostLabel": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 and the following values provided for ``GetStatusInput``,
 
@@ -184,39 +187,42 @@ the expanded ``hostPrefix`` evaluates to ``abc-def.data.``.
 Labels MUST NOT be adjacent in a ``hostPrefix``. The following operation is
 invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}{bar}.data.")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
+     @readonly
+     @endpoint(hostPrefix: "{foo}{bar}.data.")
+     operation GetStatus {
+         input: GetStatusInput,
+         output: GetStatusOutput
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}{bar}.data."
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#GetStatus": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#GetStatusInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#GetStatusOutput"
+                 },
+                 "traits": {
+                     "smithy.api#readonly": {},
+                     "smithy.api#endpoint": {
+                         "hostPrefix": "{foo}{bar}.data."
+                     }
+                 }
+             }
+         }
+     }
 
 .. _endpoint-ClientBehavior:
 
@@ -244,64 +250,67 @@ logic of a member.
 
 Given the following operation,
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}.data.")
-        @http(method: "GET", uri: "/status")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
+     @readonly
+     @endpoint(hostPrefix: "{foo}.data.")
+     @http(method: "GET", uri: "/status")
+     operation GetStatus {
+         input: GetStatusInput,
+         output: GetStatusOutput
+     }
 
-        structure GetStatusInput {
-            @required
-            @hostLabel
-            @httpHeader("X-Foo")
-            foo: String
-        }
+     structure GetStatusInput {
+         @required
+         @hostLabel
+         @httpHeader("X-Foo")
+         foo: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}.data."
-                        },
-                        "smithy.api#http": {
-                            "method": "GET",
-                            "uri": "/status"
-                        }
-                    }
-                },
-                "smithy.example#GetStatusInput": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {},
-                                "smithy.api#httpHeader": "X-Foo"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#GetStatus": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#GetStatusInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#GetStatusOutput"
+                 },
+                 "traits": {
+                     "smithy.api#readonly": {},
+                     "smithy.api#endpoint": {
+                         "hostPrefix": "{foo}.data."
+                     },
+                     "smithy.api#http": {
+                         "method": "GET",
+                         "uri": "/status"
+                     }
+                 }
+             },
+             "smithy.example#GetStatusInput": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#required": {},
+                             "smithy.api#hostLabel": {},
+                             "smithy.api#httpHeader": "X-Foo"
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 and the following value provided for ``GetStatusInput``,
 
@@ -339,59 +348,62 @@ member named ``spam`` that is annotated with the ``hostLabel`` trait. Any
 ``hostLabel`` trait applied to a member that is not a top-level input member
 to an operation marked with the :ref:`endpoint-trait` will be ignored.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @readonly
-        @endpoint(hostPrefix: "{foo}.data.")
-        operation GetStatus {
-            input: GetStatusInput,
-            output: GetStatusOutput
-        }
+     @readonly
+     @endpoint(hostPrefix: "{foo}.data.")
+     operation GetStatus {
+         input: GetStatusInput,
+         output: GetStatusOutput
+     }
 
-        structure GetStatusInput {
-            @required
-            @hostLabel
-            foo: String
-        }
+     structure GetStatusInput {
+         @required
+         @hostLabel
+         foo: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#GetStatus": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#GetStatusInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#GetStatusOutput"
-                    },
-                    "traits": {
-                        "smithy.api#readonly": {},
-                        "smithy.api#endpoint": {
-                            "hostPrefix": "{foo}.data."
-                        }
-                    }
-                },
-                "smithy.example#GetStatusInput": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#required": {},
-                                "smithy.api#hostLabel": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#GetStatus": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#GetStatusInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#GetStatusOutput"
+                 },
+                 "traits": {
+                     "smithy.api#readonly": {},
+                     "smithy.api#endpoint": {
+                         "hostPrefix": "{foo}.data."
+                     }
+                 }
+             },
+             "smithy.example#GetStatusInput": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#required": {},
+                             "smithy.api#hostLabel": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _RFC 3986 Host: https://tools.ietf.org/html/rfc3986#section-3.2.2

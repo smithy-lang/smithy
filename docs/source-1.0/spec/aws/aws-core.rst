@@ -33,80 +33,86 @@ The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, ``cloudTrailEventSource`` and
 ``docId``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.0"
-        namespace aws.fooBaz
+     $version: "1.0"
+     namespace aws.fooBaz
 
-        use aws.api#service
+     use aws.api#service
 
-        @service(sdkId: "Some Value")
-        service FooBaz {
-            version: "2018-03-17",
-        }
+     @service(sdkId: "Some Value")
+     service FooBaz {
+         version: "2018-03-17",
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "aws.fooBaz#FooBaz": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "Some Value"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "aws.fooBaz#FooBaz": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "traits": {
+                     "aws.api#service": {
+                         "sdkId": "Some Value"
+                     }
+                 }
+             }
+         }
+     }
 
 The following example provides explicit values for all properties:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.0"
-        namespace aws.fooBaz
+     $version: "1.0"
+     namespace aws.fooBaz
 
-        use aws.api#service
+     use aws.api#service
 
-        @service(
-            sdkId: "Some Value",
-            cloudFormationName: "FooBaz",
-            arnNamespace: "myservice",
-            cloudTrailEventSource: "myservice.amazon.aws",
-            docId: "some-value-2018-03-17",
-            endpointPrefix: "my-endpoint"
-        )
-        service FooBaz {
-            version: "2018-03-17",
-        }
+     @service(
+         sdkId: "Some Value",
+         cloudFormationName: "FooBaz",
+         arnNamespace: "myservice",
+         cloudTrailEventSource: "myservice.amazon.aws",
+         docId: "some-value-2018-03-17",
+         endpointPrefix: "my-endpoint"
+     )
+     service FooBaz {
+         version: "2018-03-17",
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "aws.fooBaz#FooBaz": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "Some Value",
-                            "cloudFormationName": "FooBaz",
-                            "arnNamespace": "myservice",
-                            "docId": "some-value-2018-03-17",
-                            "cloudTrailEventSource": "myservice.amazon.aws"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "aws.fooBaz#FooBaz": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "traits": {
+                     "aws.api#service": {
+                         "sdkId": "Some Value",
+                         "cloudFormationName": "FooBaz",
+                         "arnNamespace": "myservice",
+                         "docId": "some-value-2018-03-17",
+                         "cloudTrailEventSource": "myservice.amazon.aws"
+                     }
+                 }
+             }
+         }
+     }
 
 .. _service-sdk-id:
 
@@ -401,60 +407,63 @@ label placeholders.
 
 For example, given the following service:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace aws.fooBaz
+     namespace aws.fooBaz
 
-        use aws.api#service
-        use aws.api#arn
+     use aws.api#service
+     use aws.api#arn
 
-        @service(sdkId: "Some Value")
-        service FooBaz {
-            version: "2018-03-17",
-            resources: [MyResource],
-        }
+     @service(sdkId: "Some Value")
+     service FooBaz {
+         version: "2018-03-17",
+         resources: [MyResource],
+     }
 
-        @arn(template: "myresource/{myId}")
-        resource MyResource {
-            identifiers: {myId: MyResourceId},
-        }
+     @arn(template: "myresource/{myId}")
+     resource MyResource {
+         identifiers: {myId: MyResourceId},
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#FooBaz": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "resources": [
-                        {
-                            "target": "smithy.example#MyResource"
-                        }
-                    ],
-                    "traits": {
-                        "aws.api#service": {
-                            "sdkId": "Some Value"
-                        }
-                    }
-                },
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "myId": {
-                            "target": "smithy.example#MyResourceId"
-                        }
-                    },
-                    "traits": {
-                        "aws.api#arn": {
-                            "template": "myresource/{myId}"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#FooBaz": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "resources": [
+                     {
+                         "target": "smithy.example#MyResource"
+                     }
+                 ],
+                 "traits": {
+                     "aws.api#service": {
+                         "sdkId": "Some Value"
+                     }
+                 }
+             },
+             "smithy.example#MyResource": {
+                 "type": "resource",
+                 "identifiers": {
+                     "myId": {
+                         "target": "smithy.example#MyResourceId"
+                     }
+                 },
+                 "traits": {
+                     "aws.api#arn": {
+                         "template": "myresource/{myId}"
+                     }
+                 }
+             }
+         }
+     }
 
 The ARN template assigned to ``MyResource`` when used with the ``FooBaz``
 service expands to ``arn:{AWS::partition}:myservice:{AWS::Region}:{AWS::AccountId}:myresource/{myId}``
@@ -472,51 +481,54 @@ its identifier, an absolute ARN template MUST be defined on the resource
 that uses a placeholder containing the name of the identifier of the
 resource.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.api#arn
-        use aws.api#arnReference
+     use aws.api#arn
+     use aws.api#arnReference
 
-        @arn(template: "{arn}", absolute: true)
-        resource MyResource {
-            identifiers: {arn: Arn}
-        }
+     @arn(template: "{arn}", absolute: true)
+     resource MyResource {
+         identifiers: {arn: Arn}
+     }
 
-        @arnReference(service: FooBaz, resource: MyResource)
-        string Arn
+     @arnReference(service: FooBaz, resource: MyResource)
+     string Arn
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyResource": {
-                    "type": "resource",
-                    "identifiers": {
-                        "arn": {
-                            "target": "smithy.example#Arn"
-                        }
-                    },
-                    "traits": {
-                        "aws.api#arn": {
-                            "template": "{arn}",
-                            "absolute": true
-                        }
-                    }
-                },
-                "smithy.example#Arn": {
-                    "type": "string",
-                    "traits": {
-                        "aws.api#arnReference": {
-                            "service": "FooBaz",
-                            "resource": "MyResource"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyResource": {
+                 "type": "resource",
+                 "identifiers": {
+                     "arn": {
+                         "target": "smithy.example#Arn"
+                     }
+                 },
+                 "traits": {
+                     "aws.api#arn": {
+                         "template": "{arn}",
+                         "absolute": true
+                     }
+                 }
+             },
+             "smithy.example#Arn": {
+                 "type": "string",
+                 "traits": {
+                     "aws.api#arnReference": {
+                         "service": "FooBaz",
+                         "resource": "MyResource"
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.api#arnReference
@@ -573,67 +585,73 @@ The CloudFormation name of the resource and the Smithy service and resource
 shape IDs are provided to give tooling additional information about the
 referenced resource.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.api#arnReference
+     use aws.api#arnReference
 
-        @arnReference(
-            type: "AWS::SomeService::SomeResource",
-            service: com.foo#SomeService,
-            resource: com.foo#SomeResource)
-        string SomeResourceId
+     @arnReference(
+         type: "AWS::SomeService::SomeResource",
+         service: com.foo#SomeService,
+         resource: com.foo#SomeResource)
+     string SomeResourceId
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SomeResourceId": {
-                    "type": "string",
-                    "traits": {
-                        "aws.api#arnReference": {
-                            "type": "AWS::SomeService::SomeResource",
-                            "service": "com.foo#SomeService",
-                            "resource": "com.foo#SomeResource"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#SomeResourceId": {
+                 "type": "string",
+                 "traits": {
+                     "aws.api#arnReference": {
+                         "type": "AWS::SomeService::SomeResource",
+                         "service": "com.foo#SomeService",
+                         "resource": "com.foo#SomeResource"
+                     }
+                 }
+             }
+         }
+     }
 
 The following example defines an ARN reference that doesn't provide an context
 about the referenced shape. While this is valid, it is not as useful as the
 previous example:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.0"
-        namespace smithy.example
+     $version: "1.0"
+     namespace smithy.example
 
-        use aws.api#arnReference
+     use aws.api#arnReference
 
-        @arnReference
-        string SomeResourceId
+     @arnReference
+     string SomeResourceId
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SomeResourceId": {
-                    "type": "string",
-                    "traits": {
-                        "aws.api#arnReference": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#SomeResourceId": {
+                 "type": "string",
+                 "traits": {
+                     "aws.api#arnReference": {}
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.api#data
@@ -656,56 +674,59 @@ Data classifications are resolved hierarchically: the data classification
 of a member inherits the effective data classification applied to a parent
 structure, union, or list unless overridden.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.api#data
+     use aws.api#data
 
-        @data("permissions")
-        structure MyStructure {
-            name: String,
+     @data("permissions")
+     structure MyStructure {
+         name: String,
 
-            @data("content")
-            content: String,
+         @data("content")
+         content: String,
 
-            tags: TagList,
-        }
+         tags: TagList,
+     }
 
-        @data("tagging")
-        list TagList {
-            member: String
-        }
+     @data("tagging")
+     list TagList {
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "content": {
-                            "target": "smithy.api#String",
-                            "aws.api#data": "content"
-                        },
-                        "tags": {
-                            "target": "smithy.example#TagList"
-                        },
-                        "name": {
-                            "target": "smithy.api#String",
-                        }
-                    }
-                },
-                "smithy.example#TagList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    },
-                    "aws.api#data": "tagging"
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "content": {
+                         "target": "smithy.api#String",
+                         "aws.api#data": "content"
+                     },
+                     "tags": {
+                         "target": "smithy.example#TagList"
+                     },
+                     "name": {
+                         "target": "smithy.api#String",
+                     }
+                 }
+             },
+             "smithy.example#TagList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String"
+                 },
+                 "aws.api#data": "tagging"
+             }
+         }
+     }
 
 The effective data classifications in the previous example are as follows:
 
@@ -792,37 +813,40 @@ operations bound within the shape are also considered part of the control
 plane unless an operation or resource is marked with the
 :ref:`aws.api#dataPlane-trait`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.api#controlPlane
+     use aws.api#controlPlane
 
-        @controlPlane
-        operation PutThings {
-            input: PutThingsInput,
-            output: PutThingsOutput
-        }
+     @controlPlane
+     operation PutThings {
+         input: PutThingsInput,
+         output: PutThingsOutput
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.api#controlPlane": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#PutThings": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#PutThingsInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#PutThingsOutput"
+                 },
+                 "traits": {
+                     "aws.api#controlPlane": {}
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.api#dataPlane
@@ -848,37 +872,40 @@ operations bound within the shape are also considered part of the data
 plane unless an operation or resource is marked with the
 :ref:`aws.api#controlPlane-trait`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.api#controlPlane
+     use aws.api#controlPlane
 
-        @dataPlane
-        operation PutThings {
-            input: PutThingsInput,
-            output: PutThingsOutput
-        }
+     @dataPlane
+     operation PutThings {
+         input: PutThingsInput,
+         output: PutThingsOutput
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.api#dataPlane": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#PutThings": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#PutThingsInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#PutThingsOutput"
+                 },
+                 "traits": {
+                     "aws.api#dataPlane": {}
+                 }
+             }
+         }
+     }
 
 
 .. _endpoint-discovery:

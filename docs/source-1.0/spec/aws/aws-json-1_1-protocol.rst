@@ -54,33 +54,36 @@ values are provided.
 
 The following example defines a service that uses ``aws.protocols#awsJson1_1``.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.protocols#awsJson1_1
+     use aws.protocols#awsJson1_1
 
-        @awsJson1_1
-        service MyService {
-            version: "2020-02-05"
-        }
+     @awsJson1_1
+     service MyService {
+         version: "2020-02-05"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2020-02-05",
-                    "traits": {
-                        "aws.protocols#awsJson1_1": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyService": {
+                 "type": "service",
+                 "version": "2020-02-05",
+                 "traits": {
+                     "aws.protocols#awsJson1_1": {}
+                 }
+             }
+         }
+     }
 
 The following example defines a service that requires the use of
 ``h2`` when using event streams.

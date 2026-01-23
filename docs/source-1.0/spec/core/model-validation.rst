@@ -194,16 +194,14 @@ Value type
 The following example suppresses the ``Foo`` and ``Bar`` validation events
 for the ``smithy.example#MyString`` shape:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     $version: "1.0"
 
-        $version: "1.0"
+     namespace smithy.example
 
-        namespace smithy.example
-
-        @suppress(["Foo", "Bar"])
-        string MyString
+     @suppress(["Foo", "Bar"])
+     string MyString
 
 
 .. _suppressions-metadata:
