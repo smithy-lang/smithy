@@ -116,6 +116,10 @@ parsed value of the ``foo`` parameter:
         ]
     }
 
+.. note::
+
+    Negative array indexing is available since 1.1.
+
 
 .. _rules-engine-standard-library-getAttr-path-strings:
 

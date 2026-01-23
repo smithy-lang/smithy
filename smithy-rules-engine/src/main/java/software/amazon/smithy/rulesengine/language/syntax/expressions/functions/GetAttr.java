@@ -14,6 +14,7 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.error.InvalidRulesException;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
@@ -78,6 +79,21 @@ public final class GetAttr extends LibraryFunction {
      */
     public static GetAttr ofExpressions(ToExpression arg1, String arg2) {
         return ofExpressions(arg1, Expression.of(arg2));
+    }
+
+    @Override
+    public RulesVersion availableSince() {
+        // Negative index only available since 1.1.
+        for (Part part : path) {
+            if (part instanceof Part.Index) {
+                Part.Index index = (Part.Index) part;
+                if (index.index < 0) {
+                    return RulesVersion.V1_1;
+                }
+            }
+        }
+
+        return RulesVersion.V1_0;
     }
 
     /**
