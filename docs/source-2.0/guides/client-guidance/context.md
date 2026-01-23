@@ -2,7 +2,7 @@
 # Context
 
 When implementing a Smithy client, you will almost certainly need to pass
-contextual information throughout the request lifecycle. **Context refers to
+contextual information throughout the request lifecycle. **Context** refers to
 data that needs to be shared and tracked across different stages of processing a
 single operation (such as retry counts, authentication tokens, or timing
 information).
