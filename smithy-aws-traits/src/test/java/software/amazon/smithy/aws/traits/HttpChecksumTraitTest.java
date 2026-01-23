@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -30,9 +29,8 @@ public class HttpChecksumTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
 
-        List<String> algorithms = new ArrayList<>(Arrays.asList("CRC64NVME", "CRC32C", "CRC32", "SHA1", "SHA256"));
         List<Node> responseAlgorithmNodes = new ArrayList<>();
-        for (String algorithm : algorithms) {
+        for (String algorithm : HttpChecksumTrait.CHECKSUM_ALGORITHMS) {
             responseAlgorithmNodes.add(Node.from(algorithm));
         }
 
@@ -54,11 +52,17 @@ public class HttpChecksumTraitTest {
         assertThat(checksumTrait.getRequestAlgorithmMember().get(), equalTo("ChecksumAlgorithm"));
         assertThat(checksumTrait.getRequestValidationModeMember().get(), equalTo("ChecksumMode"));
         assertThat(checksumTrait.getResponseAlgorithms(),
-                containsInRelativeOrder("CRC64NVME",
-                        "CRC32C",
+                containsInRelativeOrder(
                         "CRC32",
+                        "CRC32C",
+                        "CRC64NVME",
+                        "MD5",
                         "SHA1",
-                        "SHA256"));
+                        "SHA256",
+                        "SHA512",
+                        "XXHASH64",
+                        "XXHASH3",
+                        "XXHASH128"));
 
         assertThat(node.expectBooleanMember("requestChecksumRequired"), equalTo(BooleanNode.from(true)));
         assertThat(node.expectStringMember("requestAlgorithmMember"), equalTo(Node.from("ChecksumAlgorithm")));

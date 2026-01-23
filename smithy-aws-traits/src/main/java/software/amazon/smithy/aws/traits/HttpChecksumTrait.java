@@ -27,11 +27,17 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpChecksum");
     public static final String CHECKSUM_PREFIX = "x-amz-checksum-";
     // This list should be in sync with the trait definition in `aws.protocols.smithy`.
-    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of("CRC64NVME",
-            "CRC32C",
+    public static final List<String> CHECKSUM_ALGORITHMS = ListUtils.of(
             "CRC32",
+            "CRC32C",
+            "CRC64NVME",
+            "MD5",
             "SHA1",
-            "SHA256");
+            "SHA256",
+            "SHA512",
+            "XXHASH64",
+            "XXHASH3",
+            "XXHASH128");
     public static final List<String> VALIDATION_MODES = ListUtils.of("ENABLED");
 
     public static final String REQUEST_CHECKSUM_REQUIRED = "requestChecksumRequired";

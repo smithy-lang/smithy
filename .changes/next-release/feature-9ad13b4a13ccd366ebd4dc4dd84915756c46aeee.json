@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Update supported httpChecksum algorithms",
+  "pull_requests": [
+    "[#2943](https://github.com/smithy-lang/smithy/pull/2943)"
+  ]
+}
