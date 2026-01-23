@@ -1080,24 +1080,22 @@ When deserializing HTTP request query string parameters into members with the
 empty string values for keys which do not have values specified. For example,
 given the following model:
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     @http(method: "POST", uri: "/things")
+     operation PostThing {
+         input: PostThingInput
+     }
 
-        @http(method: "POST", uri: "/things")
-        operation PostThing {
-            input: PostThingInput
-        }
+     structure PostThingInput {
+         @httpQueryParams
+         tags: MapOfStrings
+     }
 
-        structure PostThingInput {
-            @httpQueryParams
-            tags: MapOfStrings
-        }
-
-        map MapOfStrings {
-            key: String,
-            value: String
-        }
+     map MapOfStrings {
+         key: String,
+         value: String
+     }
 
 
 And the following HTTP request:

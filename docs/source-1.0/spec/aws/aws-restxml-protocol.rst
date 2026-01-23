@@ -57,33 +57,36 @@ values are provided.
 
 The following example defines a service that uses ``aws.protocols#restXml``.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.protocols#restXml
+     use aws.protocols#restXml
 
-        @restXml
-        service MyService {
-            version: "2020-04-02"
-        }
+     @restXml
+     service MyService {
+         version: "2020-04-02"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2020-04-02",
-                    "traits": {
-                        "aws.protocols#restXml": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyService": {
+                 "type": "service",
+                 "version": "2020-04-02",
+                 "traits": {
+                     "aws.protocols#restXml": {}
+                 }
+             }
+         }
+     }
 
 The following example defines a service that requires the use of
 ``h2`` when using event streams.

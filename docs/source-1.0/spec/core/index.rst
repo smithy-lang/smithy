@@ -30,44 +30,47 @@ are written using the :ref:`Smithy interface definition language (IDL) <idl>`
 syntax. Complementary :ref:`JSON AST <json-ast>` examples are provided
 alongside Smithy IDL examples where appropriate. For example:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.0"
+     $version: "1.0"
 
-        metadata foo = "bar"
+     metadata foo = "bar"
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use smithy.other.namespace#MyString
+     use smithy.other.namespace#MyString
 
-        structure MyStructure {
-            @required
-            foo: MyString
-        }
+     structure MyStructure {
+         @required
+         foo: MyString
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "metadata": {
-                "foo": "bar"
-            },
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.other.namespace#MyString",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "metadata": {
+             "foo": "bar"
+         },
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.other.namespace#MyString",
+                         "traits": {
+                             "smithy.api#required": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 -----------------
 Table of contents

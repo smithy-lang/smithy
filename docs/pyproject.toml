@@ -17,9 +17,6 @@ dependencies = [
     "sphinx-inline-tabs==2025.12.21.14",
     "Sphinx-Substitution-Extensions==2026.1.12",
 
-    # Used by old docs
-    "sphinx-tabs>=3.4.7",
-
     "sphinx_copybutton==0.5.2",
     "sphinx-autobuild==2025.8.25",
 

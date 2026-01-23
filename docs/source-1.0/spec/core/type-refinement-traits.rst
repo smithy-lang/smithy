@@ -37,26 +37,29 @@ in Java, this might mean the value provided as the member of an aggregate
 shape can be set to null. In a language like Rust, this might mean the value
 is wrapped in an `Option type`_.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @box
-        integer BoxedInteger
+     @box
+     integer BoxedInteger
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#BoxedInteger": {
-                    "type": "integer",
-                    "traits": {
-                        "smithy.api#box": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#BoxedInteger": {
+                 "type": "integer",
+                 "traits": {
+                     "smithy.api#box": {}
+                 }
+             }
+         }
+     }
 
 The :ref:`prelude <prelude>` contains predefined simple shapes that can be
 used in all Smithy models, including boxed and unboxed shapes.
@@ -83,36 +86,30 @@ Conflicts with
 
 The following structure defines a throttling error.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @error("client")
-        structure ThrottlingError {}
+     @error("client")
+     structure ThrottlingError {}
 
 Note that this structure is lacking the ``retryable`` trait that generically
 lets clients know that the error is retryable.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @error("client")
-        @retryable
-        structure ThrottlingError {}
+     @error("client")
+     @retryable
+     structure ThrottlingError {}
 
 When using an HTTP-based protocol, it is recommended to add an
 :ref:`httpError-trait` to use an appropriate HTTP status code with
 the error.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @error("client")
-        @retryable
-        @httpError(429)
-        structure ThrottlingError {}
+     @error("client")
+     @retryable
+     @httpError(429)
+     structure ThrottlingError {}
 
 The ``message`` member of an error structure is special-cased. It contains
 the human-readable message that describes the error. If the ``message`` member
@@ -120,17 +117,15 @@ is not defined in the structure, code generated for the error may not provide
 an idiomatic way to access the error message (e.g., an exception message
 in Java).
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @error("client")
-        @retryable
-        @httpError(429)
-        structure ThrottlingError {
-            @required
-            message: String,
-        }
+     @error("client")
+     @retryable
+     @httpError(429)
+     structure ThrottlingError {
+         @required
+         message: String,
+     }
 
 
 .. smithy-trait:: smithy.api#input
@@ -210,63 +205,69 @@ Value type
 The following example defines a :ref:`list <list>` shape that MAY contain
 ``null`` values:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @sparse
-        list SparseList {
-            member: String
-        }
+     @sparse
+     list SparseList {
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SparseList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String",
-                    },
-                    "traits": {
-                        "smithy.api#sparse": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#SparseList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String",
+                 },
+                 "traits": {
+                     "smithy.api#sparse": {}
+                 }
+             }
+         }
+     }
 
 The following example defines a :ref:`map <map>` shape that MAY contain
 ``null`` values:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @sparse
-        map SparseMap {
-            key: String,
-            value: String
-        }
+     @sparse
+     map SparseMap {
+         key: String,
+         value: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#SparseMap": {
-                    "type": "map",
-                    "key": {
-                        "target": "smithy.api#String"
-                    },
-                    "value": {
-                        "target": "smithy.api#String"
-                    },
-                    "traits": {
-                        "smithy.api#sparse": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#SparseMap": {
+                 "type": "map",
+                 "key": {
+                     "target": "smithy.api#String"
+                 },
+                 "value": {
+                     "target": "smithy.api#String"
+                 },
+                 "traits": {
+                     "smithy.api#sparse": {}
+                 }
+             }
+         }
+     }
 
 .. _Option type: https://doc.rust-lang.org/std/option/enum.Option.html
