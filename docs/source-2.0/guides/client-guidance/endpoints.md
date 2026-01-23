@@ -143,9 +143,9 @@ operation, and any context available when resolving the endpoint.
  */
 public final class EndpointResolverParams {
     /**
-     * Get the model for the operation to resolve the endpoint for.
+     * Get the information for the operation to resolve the endpoint for.
      *
-     * @return the operation.
+     * @return information about the operation being invoked.
      */
     public ApiOperation<?, ?> operation() {
         return operation;
@@ -154,7 +154,7 @@ public final class EndpointResolverParams {
     /**
      * Input value for the client call the endpoint is being resolved for.
      *
-     * @return input.
+     * @return the input given to the operation.
      */
     public Object inputValue() {
         return inputValue;
@@ -163,7 +163,7 @@ public final class EndpointResolverParams {
     /**
      * Context available when resolving the endpoint.
      *
-     * @return context.
+     * @return the context for the operation invocation.
      */
     public Context context() {
         return context;
