@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>Rules engine standard library - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -254,6 +254,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/wire-protocol-selection.html">Wire protocol selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
@@ -547,12 +548,18 @@ parsed value of the <code class="docutils literal notranslate"><span class="pre"
 <span class="p">}</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Negative array indexing is available since 1.1.</p>
+</div>
 <section id="parsing-path-strings">
 <span id="rules-engine-standard-library-getattr-path-strings"></span><h3>Parsing <code class="docutils literal notranslate"><span class="pre">path</span></code> strings<a class="headerlink" href="#parsing-path-strings" title="Link to this heading">¶</a></h3>
 <p>Path strings for the <a class="reference internal" href="#getattr-function">getAttr function</a> are composed of two components:</p>
 <ol class="arabic simple">
 <li><p>Keys, e.g. <code class="docutils literal notranslate"><span class="pre">scheme</span></code> in <code class="docutils literal notranslate"><span class="pre">uri#scheme</span></code>.</p></li>
-<li><p>Indexes, e.g. <code class="docutils literal notranslate"><span class="pre">[2]</span></code> in <code class="docutils literal notranslate"><span class="pre">list[2]</span></code>.</p></li>
+<li><p>Indexes, e.g. <code class="docutils literal notranslate"><span class="pre">[2]</span></code> in <code class="docutils literal notranslate"><span class="pre">list[2]</span></code>. Negative indexes are supported,
+where <code class="docutils literal notranslate"><span class="pre">[-1]</span></code> returns the last element, <code class="docutils literal notranslate"><span class="pre">[-2]</span></code> returns the second-to-last,
+and so on.</p></li>
 </ol>
 <p>An index MUST only occur at the end of a path, as indexes always return
 <code class="docutils literal notranslate"><span class="pre">option</span></code> values.</p>
@@ -1253,8 +1260,8 @@ add the <a class="reference internal" href="../../aws/rules-engine/library-funct
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=60dbed4a"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>

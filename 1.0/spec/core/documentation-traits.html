@@ -7,12 +7,12 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>4. Documentation traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0abfef4d" />
     
@@ -379,15 +379,18 @@ deprecated.</p></td>
 </tbody>
 </table>
 </div>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@deprecated</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@deprecated</span>
 <span class="kd">string </span><span class="nc">SomeString</span>
 
 <span class="nt">@deprecated</span>(<span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is no longer used.&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">since</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.3&quot;</span>)
 <span class="kd">string </span><span class="nc">OtherString</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#SomeString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -409,7 +412,8 @@ deprecated.</p></td>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="documentation-trait">
 <span id="smithy-api-documentation-trait"></span><span id="id3"></span><h2><span class="section-number">4.2. </span><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait<a class="headerlink" href="#documentation-trait" title="Link to this heading">¶</a></h2>
@@ -421,12 +425,10 @@ deprecated.</p></td>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div></div>
 <p class="rubric">Effective documentation</p>
 <p>The <em>effective documentation trait</em> of a shape is resolved using the following
 process:</p>
@@ -436,8 +438,9 @@ process:</p>
 the shape targeted by the member, if present.</p></li>
 </ol>
 <p>For example, given the following model,</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@documentation</span>(<span class="s2">&quot;Member documentation&quot;</span>)
 <span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Baz</span><span class="p">,</span>
 
@@ -450,7 +453,9 @@ the shape targeted by the member, if present.</p></li>
 <span class="kd">string </span><span class="nc">Baz</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -480,7 +485,8 @@ the shape targeted by the member, if present.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>the effective documentation of <code class="docutils literal notranslate"><span class="pre">Foo$baz</span></code> resolves to &quot;Member documentation&quot;,
 <code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> resolves to &quot;Shape documentation&quot;, <code class="docutils literal notranslate"><span class="pre">Foo$qux</span></code> is not documented,
 <code class="docutils literal notranslate"><span class="pre">Baz</span></code> resolves to &quot;Shape documentation&quot;, and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> is not documented.</p>
@@ -544,8 +550,7 @@ These values use the same semantics and format as
 <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">custom trait values</span></a>.</p>
 <p>A value for <code class="docutils literal notranslate"><span class="pre">output</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code> SHOULD be provided. However, both
 MUST NOT be defined for the same example.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span><span class="p">,</span>
@@ -586,7 +591,6 @@ MUST NOT be defined for the same example.</p>
 ])
 </pre></div>
 </div>
-</div></div>
 <section id="errorexample-structure">
 <span id="examples-errorexample-structure"></span><h3><span class="section-number">4.3.1. </span><code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure<a class="headerlink" href="#errorexample-structure" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure defines an error example using the following
@@ -633,8 +637,7 @@ value of the member.</p></td>
 URL.</p>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@externalDocumentation</span>(
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@externalDocumentation</span>(
 <span class="w">    </span><span class="s2">&quot;Homepage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="s2">&quot;API Reference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/api-ref&quot;</span><span class="p">,</span>
 )
@@ -643,7 +646,6 @@ URL.</p>
 }
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="internal-trait">
 <span id="smithy-api-internal-trait"></span><span id="id6"></span><h2><span class="section-number">4.5. </span><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait<a class="headerlink" href="#internal-trait" title="Link to this heading">¶</a></h2>
@@ -661,8 +663,7 @@ that are not intended for external customers.</p>
 includes features that are only available to internal customers within the
 same company, whereas clients for external customers could be built from a
 filtered version of the model.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="nt">@internal</span>
@@ -670,7 +671,6 @@ filtered version of the model.</p>
 }
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="recommended-trait">
 <span id="smithy-api-recommended-trait"></span><span id="id7"></span><h2><span class="section-number">4.6. </span><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait<a class="headerlink" href="#recommended-trait" title="Link to this heading">¶</a></h2>
@@ -734,12 +734,10 @@ handled with care.</p>
 <p>Sensitive data MUST NOT be exposed in things like exception messages or log
 output. Application of this trait SHOULD NOT affect wire logging
 (i.e., logging of all data transmitted to and from servers or clients).</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sensitive</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sensitive</span>
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="since-trait">
 <span id="smithy-api-since-trait"></span><span id="id9"></span><h2><span class="section-number">4.8. </span><code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Link to this heading">¶</a></h2>
@@ -767,12 +765,10 @@ shapes in the model.</p>
 <p>Tools can use these tags to filter shapes that should not be visible for a
 particular consumer of a model. The string values that can be provided to the
 tags trait are arbitrary and up to the model author.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])
 <span class="kd">string </span><span class="nc">SomeStructure</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="title-trait">
 <span id="smithy-api-title-trait"></span><span id="id11"></span><h2><span class="section-number">4.10. </span><code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Link to this heading">¶</a></h2>
@@ -787,8 +783,7 @@ provide a user friendly name for services and resources.</p>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">acme.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">acme.example</span>
 
 <span class="nt">@title</span>(<span class="s2">&quot;ACME Simple Image Service&quot;</span>)
 <span class="kd">service </span><span class="nc">MySimpleImageService</span><span class="w"> </span>{
@@ -796,7 +791,6 @@ provide a user friendly name for services and resources.</p>
 }
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="unstable-trait">
 <span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><span class="section-number">4.11. </span><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Link to this heading">¶</a></h2>
@@ -811,12 +805,10 @@ when code generated from unstable features are used.</p>
 <dt>Value type</dt><dd><p>Annotation trait</p>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span>
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 </section>
 
@@ -909,11 +901,11 @@ when code generated from unstable features are used.</p>
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>
-    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

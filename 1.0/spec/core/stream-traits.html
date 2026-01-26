@@ -7,12 +7,12 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>10. Streaming Traits - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0abfef4d" />
     
@@ -424,13 +424,11 @@ of operation input structures.</p></li>
 </ul>
 </dd>
 </dl>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
 <span class="nt">@requiresLength</span>
 <span class="kd">blob </span><span class="nc">FiniteStreamingBlob</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="event-streams">
 <span id="id3"></span><h2><span class="section-number">10.3. </span>Event streams<a class="headerlink" href="#event-streams" title="Link to this heading">¶</a></h2>
@@ -670,8 +668,9 @@ are not marked with the <code class="docutils literal notranslate"><span class="
 protocol-specific document.</p>
 <p>The following example serializes the &quot;a&quot; and &quot;b&quot; members as event
 headers and the &quot;c&quot; member as the payload.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@eventHeader</span>
 <span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
@@ -683,7 +682,9 @@ headers and the &quot;c&quot; member as the payload.</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -713,19 +714,23 @@ headers and the &quot;c&quot; member as the payload.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following example serializes the &quot;a&quot;, &quot;b&quot;, and &quot;c&quot; members as the payload
 of the event using a protocol-specific document. For example, when using a JSON
 based protocol, the event payload is serialized as a JSON object:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 <span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 <span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -746,7 +751,8 @@ based protocol, the event payload is serialized as a JSON object:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="event-stream-traits">
 <h3><span class="section-number">10.3.5. </span>Event stream traits<a class="headerlink" href="#event-stream-traits" title="Link to this heading">¶</a></h3>
@@ -774,8 +780,9 @@ does not support custom message headers. It is a protocol-level concern
 as to if and how event stream headers are serialized.</p>
 </div>
 <p>The following example defines multiple event headers:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@eventHeader</span>
 <span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
@@ -784,7 +791,9 @@ as to if and how event stream headers are serialized.</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -808,7 +817,8 @@ as to if and how event stream headers are serialized.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="eventpayload-trait">
 <span id="smithy-api-eventpayload-trait"></span><span id="id9"></span><h4><span class="section-number">10.3.5.2. </span><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait<a class="headerlink" href="#eventpayload-trait" title="Link to this heading">¶</a></h4>
@@ -841,8 +851,9 @@ then all other members of the structure MUST be marked with the
 </ul>
 <p>The following example defines an event header and sends a blob as the payload
 of an event:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@eventPayload</span>
 <span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
@@ -851,7 +862,9 @@ of an event:</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -875,7 +888,8 @@ of an event:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following structure is <strong>invalid</strong> because the &quot;a&quot; member is bound to the
 <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code>, and the &quot;b&quot; member is not bound to an <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
@@ -989,11 +1003,11 @@ of an event:</p>
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>
-    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

@@ -24,47 +24,50 @@ The Smithy IDL is made up of 3, ordered sections, each of which is optional:
 
 The following example defines a model file with each section:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-            // (1) Control section
-            $version: "1.0"
+         // (1) Control section
+         $version: "1.0"
 
-            // (2) Metadata section
-            metadata foo = "bar"
+         // (2) Metadata section
+         metadata foo = "bar"
 
-            // (3) Shape section
-            namespace smithy.example
+         // (3) Shape section
+         namespace smithy.example
 
-            use smithy.other.namespace#MyString
+         use smithy.other.namespace#MyString
 
-            structure MyStructure {
-                @required
-                foo: MyString
-            }
+         structure MyStructure {
+             @required
+             foo: MyString
+         }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "metadata": {
-                "foo": "bar"
-            },
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.other.namespace#MyString",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "metadata": {
+             "foo": "bar"
+         },
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.other.namespace#MyString",
+                         "traits": {
+                             "smithy.api#required": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 
 -------------
@@ -318,34 +321,40 @@ adhere to the following ABNF:
 The following example sets the version to ``1``, meaning that tooling MUST
 support a version greater than or equal to ``1.0`` and less than ``2.0``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1"
+     $version: "1"
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1"
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1"
+     }
 
 A minor version SHOULD be provided when a model depends on a feature released
 in a minor update of the specification. The following example sets the
 version requirement of a file to ``1.1``, meaning that tooling MUST support a
 version greater than or equal to ``1.1`` and less than ``2.0``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        $version: "1.1"
+     $version: "1.1"
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.1"
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.1"
+     }
 
 .. rubric:: Version compatibility
 
@@ -368,22 +377,25 @@ consists of the metadata key to set, followed by ``=``, followed by the
 
 The following example defines metadata in the model:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        metadata greeting = "hello"
-        metadata "stringList" = ["a", "b", "c"]
+     metadata greeting = "hello"
+     metadata "stringList" = ["a", "b", "c"]
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "metadata": {
-                "greeting": "hello",
-                "stringList": ["a", "b", "c"]
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "metadata": {
+             "greeting": "hello",
+             "stringList": ["a", "b", "c"]
+         }
+     }
 
 Metadata is not defined within a namespace. Unquoted object property values
 are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
@@ -428,24 +440,27 @@ one namespace can appear per file.
 The following example defines a string shape named ``MyString`` in the
 ``smithy.example`` namespace:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        string MyString
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string"
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "string"
+             }
+         }
+     }
 
 
 .. _use-statement:
@@ -695,52 +710,58 @@ Simple shapes
 
 The following example defines a ``string`` shape:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        string MyString
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#String": {
-                    "type": "string"
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#String": {
+                 "type": "string"
+             }
+         }
+     }
 
 The following example defines an ``integer`` shape with a :ref:`range-trait`:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @range(min: 0, max: 1000)
-        integer MaxResults
+     @range(min: 0, max: 1000)
+     integer MaxResults
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MaxResults": {
-                    "type": "integer",
-                    "traits": {
-                        "smithy.api#range": {
-                            "min": 0,
-                            "max": 100
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MaxResults": {
+                 "type": "integer",
+                 "traits": {
+                     "smithy.api#range": {
+                         "min": 0,
+                         "max": 100
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _idl-list:
@@ -753,69 +774,75 @@ A :ref:`list <list>` shape is defined using a :token:`smithy:ListStatement`.
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        list MyList {
-            member: String
-        }
+     list MyList {
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 Traits can be applied to the list shape and its member:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @length(min: 3, max: 10)
-        list MyList {
-            @length(min: 1, max: 100)
-            member: String
-        }
+     @length(min: 3, max: 10)
+     list MyList {
+         @length(min: 1, max: 100)
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String",
-                        "traits": {
-                            "smithy.api#length": {
-                                "min": 1,
-                                "max": 100
-                            }
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#length": {
-                            "min": 3,
-                            "max": 10
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String",
+                     "traits": {
+                         "smithy.api#length": {
+                             "min": 1,
+                             "max": 100
+                         }
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#length": {
+                         "min": 3,
+                         "max": 10
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _idl-set:
@@ -827,63 +854,69 @@ A :ref:`set <set>` set shape is defined using a :token:`smithy:SetStatement`.
 
 The following example defines a set of strings:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        set StringSet {
-            member: String
-        }
+     set StringSet {
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#StringSet": {
+                 "type": "set",
+                 "member": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 Traits can be applied to the set shape and its members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @deprecated
-        set StringSet {
-            @pattern("\\w+")
-            member: String
-        }
+     @deprecated
+     set StringSet {
+         @pattern("\\w+")
+         member: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#StringSet": {
-                    "type": "set",
-                    "member": {
-                        "target": "smithy.api#String",
-                        "traits": {
-                            "smithy.api#pattern": "\\w+"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#deprecated": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#StringSet": {
+                 "type": "set",
+                 "member": {
+                     "target": "smithy.api#String",
+                     "traits": {
+                         "smithy.api#pattern": "\\w+"
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#deprecated": {}
+                 }
+             }
+         }
+     }
 
 
 .. _idl-map:
@@ -895,85 +928,91 @@ A :ref:`map <map>` shape is defined using a :token:`smithy:MapStatement`.
 
 The following example defines a map of strings to integers:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        map IntegerMap {
-            key: String,
-            value: Integer
-        }
+     map IntegerMap {
+         key: String,
+         value: Integer
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "type": "map",
-                "smithy.example#IntegerMap": {
-                    "key": {
-                        "target": "smithy.api#String"
-                    },
-                    "value": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "type": "map",
+             "smithy.example#IntegerMap": {
+                 "key": {
+                     "target": "smithy.api#String"
+                 },
+                 "value": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 Traits can be applied to the map shape and its members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @length(min: 0, max: 100)
-        map IntegerMap {
-            @length(min: 1, max: 10)
-            key: String,
+     @length(min: 0, max: 100)
+     map IntegerMap {
+         @length(min: 1, max: 10)
+         key: String,
 
-            @range(min: 1, max: 1000)
-            value: Integer
-        }
+         @range(min: 1, max: 1000)
+         value: Integer
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#IntegerMap": {
-                    "type": "map",
-                    "key": {
-                        "target": "smithy.api#String",
-                        "traits": {
-                            "smithy.api#length": {
-                                "min": 1,
-                                "max": 10
-                            }
-                        }
-                    },
-                    "value": {
-                        "target": "smithy.api#Integer",
-                        "traits": {
-                            "smithy.api#range": {
-                                "min": 1,
-                                "max": 1000
-                            }
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#length": {
-                            "min": 0,
-                            "max": 100
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#IntegerMap": {
+                 "type": "map",
+                 "key": {
+                     "target": "smithy.api#String",
+                     "traits": {
+                         "smithy.api#length": {
+                             "min": 1,
+                             "max": 10
+                         }
+                     }
+                 },
+                 "value": {
+                     "target": "smithy.api#Integer",
+                     "traits": {
+                         "smithy.api#range": {
+                             "min": 1,
+                             "max": 1000
+                         }
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#length": {
+                         "min": 0,
+                         "max": 100
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _idl-structure:
@@ -986,84 +1025,90 @@ A :ref:`structure <structure>` shape is defined using a
 
 The following example defines a structure with two members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        structure MyStructure {
-            foo: String,
-            baz: Integer,
-        }
+     structure MyStructure {
+         foo: String,
+         baz: Integer,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String"
-                        },
-                        "baz": {
-                            "target": "smithy.api#Integer"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String"
+                     },
+                     "baz": {
+                         "target": "smithy.api#Integer"
+                     }
+                 }
+             }
+         }
+     }
 
 Traits can be applied to structure members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        /// This is MyStructure.
-        structure MyStructure {
-            /// This is documentation for `foo`.
-            @required
-            foo: String,
+     /// This is MyStructure.
+     structure MyStructure {
+         /// This is documentation for `foo`.
+         @required
+         foo: String,
 
-            /// This is documentation for `baz`.
-            @deprecated
-            baz: Integer,
-        }
+         /// This is documentation for `baz`.
+         @deprecated
+         baz: Integer,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#documentation": "This is documentation for `foo`.",
-                                "smithy.api#required": {}
-                            }
-                        },
-                        "baz": {
-                            "target": "smithy.api#Integer",
-                            "traits": {
-                                "smithy.api#documentation": "This is documentation for `baz`.",
-                                "smithy.api#deprecated": {}
-                            }
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#documentation": "This is MyStructure."
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#documentation": "This is documentation for `foo`.",
+                             "smithy.api#required": {}
+                         }
+                     },
+                     "baz": {
+                         "target": "smithy.api#Integer",
+                         "traits": {
+                             "smithy.api#documentation": "This is documentation for `baz`.",
+                             "smithy.api#deprecated": {}
+                         }
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#documentation": "This is MyStructure."
+                 }
+             }
+         }
+     }
 
 
 .. _idl-union:
@@ -1075,46 +1120,49 @@ A :ref:`union <union>` shape is defined using a :token:`smithy:UnionStatement`.
 
 The following example defines a union shape with several members:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        union MyUnion {
-            i32: Integer,
+     union MyUnion {
+         i32: Integer,
 
-            @length(min: 1, max: 100)
-            string: String,
+         @length(min: 1, max: 100)
+         string: String,
 
-            time: Timestamp,
-        }
+         time: Timestamp,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyUnion": {
-                    "type": "union",
-                    "members": {
-                        "i32": {
-                            "target": "smithy.api#Integer"
-                        },
-                        "string": {
-                            "target": "smithy.api#String",
-                            "smithy.api#length": {
-                                "min": 1,
-                                "max": 100
-                            }
-                        },
-                        "time": {
-                            "target": "smithy.api#Timestamp"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyUnion": {
+                 "type": "union",
+                 "members": {
+                     "i32": {
+                         "target": "smithy.api#Integer"
+                     },
+                     "string": {
+                         "target": "smithy.api#String",
+                         "smithy.api#length": {
+                             "min": 1,
+                             "max": 100
+                         }
+                     },
+                     "time": {
+                         "target": "smithy.api#Timestamp"
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _idl-service:
@@ -1129,38 +1177,41 @@ A service shape is defined using a :token:`smithy:ServiceStatement` and the prov
 The following example defines a service named ``ModelRepository`` that binds
 a resource named ``Model`` and an operation named ``PingService``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        service ModelRepository {
-            version: "2020-07-13",
-            resources: [Model],
-            operations: [PingService]
-        }
+     service ModelRepository {
+         version: "2020-07-13",
+         resources: [Model],
+         operations: [PingService]
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ModelRepository": {
-                    "type": "service",
-                    "resources": [
-                        {
-                            "target": "smithy.example#Model"
-                        }
-                    ],
-                    "operations": [
-                        {
-                            "target": "smithy.example#PingService"
-                        }
-                    ]
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#ModelRepository": {
+                 "type": "service",
+                 "resources": [
+                     {
+                         "target": "smithy.example#Model"
+                     }
+                 ],
+                 "operations": [
+                     {
+                         "target": "smithy.example#PingService"
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _idl-operation:
@@ -1177,42 +1228,45 @@ structure named ``Input``, returns an output structure named ``Output``, and
 can potentially return the ``Unavailable`` or ``BadRequest``
 :ref:`error structures <error-trait>`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        operation PingService {
-            input: PingServiceInput,
-            output: PingServiceOutput,
-            errors: [UnavailableError, BadRequestError]
-        }
+     operation PingService {
+         input: PingServiceInput,
+         output: PingServiceOutput,
+         errors: [UnavailableError, BadRequestError]
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PingService": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PingServiceInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PingServiceOutput"
-                    },
-                    "errors": [
-                        {
-                            "target": "smithy.example#UnavailableError"
-                        },
-                        {
-                            "target": "smithy.example#BadRequestError"
-                        }
-                    ]
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#PingService": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#PingServiceInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#PingServiceOutput"
+                 },
+                 "errors": [
+                     {
+                         "target": "smithy.example#UnavailableError"
+                     },
+                     {
+                         "target": "smithy.example#BadRequestError"
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _idl-resource:
@@ -1227,37 +1281,40 @@ provided :token:`smithy:NodeObject` supports the same properties defined in the
 The following example defines a resource shape that has a single identifier,
 and defines a :ref:`read <read-lifecycle>` operation:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        resource SprocketResource {
-            identifiers: {
-                sprocketId: String,
-            },
-            read: GetSprocket,
-        }
+     resource SprocketResource {
+         identifiers: {
+             sprocketId: String,
+         },
+         read: GetSprocket,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Sprocket": {
-                    "type": "resource",
-                    "identifiers": {
-                        "sprocketId": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "read": {
-                        "target": "smithy.example#SprocketResource"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Sprocket": {
+                 "type": "resource",
+                 "identifiers": {
+                     "sprocketId": {
+                         "target": "smithy.api#String"
+                     }
+                 },
+                 "read": {
+                     "target": "smithy.example#SprocketResource"
+                 }
+             }
+         }
+     }
 
 
 .. _documentation-comment:
@@ -1364,33 +1421,36 @@ and the current namespace in exactly the same way as
 The following example applies the :ref:`length-trait` and
 :ref:`documentation-trait` to ``MyString``:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @length(min: 1, max: 100)
-        @documentation("Contains a string")
-        string MyString
+     @length(min: 1, max: 100)
+     @documentation("Contains a string")
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#documentation": "Contains a string",
-                        "smithy.api#length": {
-                            "min": 1,
-                            "max": 100
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#documentation": "Contains a string",
+                     "smithy.api#length": {
+                         "min": 1,
+                         "max": 100
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. _trait-values:
@@ -1445,46 +1505,49 @@ Omitting a value is allowed on ``list``, ``set``, ``map``, and ``structure``
 traits if the shapes have no ``length`` constraints or ``required`` members.
 The following applications of the ``foo`` trait are equivalent:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @trait
-        structure foo {}
+     @trait
+     structure foo {}
 
-        @foo
-        string MyString1
+     @foo
+     string MyString1
 
-        @foo()
-        string MyString2
+     @foo()
+     string MyString2
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#foo": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#trait": {}
-                    }
-                },
-                "smithy.example#MyString1": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#foo": {}
-                    }
-                },
-                "smithy.example#MyString2": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#foo": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#foo": {
+                 "type": "structure",
+                 "traits": {
+                     "smithy.api#trait": {}
+                 }
+             },
+             "smithy.example#MyString1": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#foo": {}
+                 }
+             },
+             "smithy.example#MyString2": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#foo": {}
+                 }
+             }
+         }
+     }
 
 
 List and set trait values
@@ -1522,32 +1585,35 @@ Traits can be applied to shapes outside of a shape's definition using an
 The following example applies the :ref:`documentation-trait` and
 :ref:`length-trait` to the ``smithy.example#MyString`` shape:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        apply MyString @documentation("This is my string!")
-        apply MyString @length(min: 1, max: 10)
+     apply MyString @documentation("This is my string!")
+     apply MyString @length(min: 1, max: 10)
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "apply",
-                    "traits": {
-                        "smithy.api#documentation": "This is my string!",
-                        "smithy.api#length": {
-                            "min": 1,
-                            "max": 10
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "apply",
+                 "traits": {
+                     "smithy.api#documentation": "This is my string!",
+                     "smithy.api#length": {
+                         "min": 1,
+                         "max": 10
+                     }
+                 }
+             }
+         }
+     }
 
 Traits can be applied to members too:
 

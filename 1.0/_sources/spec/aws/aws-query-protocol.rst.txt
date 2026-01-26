@@ -461,37 +461,40 @@ Value type
 See
     `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.protocols#awsQuery
+     use aws.protocols#awsQuery
 
-        @awsQuery
-        @xmlNamespace(uri: "http://foo.com")
-        service MyService {
-            version: "2020-02-05"
-        }
+     @awsQuery
+     @xmlNamespace(uri: "http://foo.com")
+     service MyService {
+         version: "2020-02-05"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2020-02-05",
-                    "traits": {
-                        "aws.protocols#awsQuery": {},
-                        "smithy.api#xmlNamespace": {
-                            "uri": "example.com"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyService": {
+                 "type": "service",
+                 "version": "2020-02-05",
+                 "traits": {
+                     "aws.protocols#awsQuery": {},
+                     "smithy.api#xmlNamespace": {
+                         "uri": "example.com"
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.protocols#awsQueryError
@@ -540,43 +543,46 @@ Value type
 The following example defines an error that uses a custom "Code" of
 "InvalidThing" and an HTTP status code of 400.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.protocols#awsQueryError
+     use aws.protocols#awsQueryError
 
-        @awsQueryError(
-            code: "InvalidThing",
-            httpResponseCode: 400,
-        )
-        @error("client")
-        structure InvalidThingException {
-            message: String
-        }
+     @awsQueryError(
+         code: "InvalidThing",
+         httpResponseCode: 400,
+     )
+     @error("client")
+     structure InvalidThingException {
+         message: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#InvalidThingException": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "aws.protocols#awsQueryError": {
-                            "code": "InvalidThing",
-                            "httpResponseCode": 400
-                        },
-                        "smithy.api#error": "client"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#InvalidThingException": {
+                 "type": "structure",
+                 "members": {
+                     "message": {
+                         "target": "smithy.api#String"
+                     }
+                 },
+                 "traits": {
+                     "aws.protocols#awsQueryError": {
+                         "code": "InvalidThing",
+                         "httpResponseCode": 400
+                     },
+                     "smithy.api#error": "client"
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.protocols#awsQueryCompatible

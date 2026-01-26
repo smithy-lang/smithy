@@ -54,61 +54,64 @@ MAY be used to influence how messages are serialized (for example,
 The following example defines a service that supports both the hypothetical
 ``jsonExample`` and ``xmlExample`` protocols.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        /// An example JSON protocol.
-        @protocolDefinition
-        @trait(selector: "service")
-        structure jsonExample {}
+     /// An example JSON protocol.
+     @protocolDefinition
+     @trait(selector: "service")
+     structure jsonExample {}
 
-        /// An example XML protocol.
-        @protocolDefinition
-        @trait(selector: "service")
-        structure xmlExample {}
+     /// An example XML protocol.
+     @protocolDefinition
+     @trait(selector: "service")
+     structure xmlExample {}
 
-        @jsonExample
-        @xmlExample
-        service WeatherService {
-            version: "2017-02-11",
-        }
+     @jsonExample
+     @xmlExample
+     service WeatherService {
+         version: "2017-02-11",
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#WeatherService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "traits": {
-                        "smithy.example#jsonExample": {},
-                        "smithy.example#xmlExample": {}
-                    }
-                },
-                "smithy.example#jsonExample": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#documentation": "An example JSON protocol."
-                        "smithy.api#protocolDefinition": {},
-                        "smithy.api#trait": {
-                            "selector": "service"
-                        }
-                    }
-                },
-                "smithy.example#xmlExample": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#documentation": "An example JSON protocol."
-                        "smithy.api#protocolDefinition": {},
-                        "smithy.api#trait": {
-                            "selector": "service"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#WeatherService": {
+                 "type": "service",
+                 "version": "2017-02-11",
+                 "traits": {
+                     "smithy.example#jsonExample": {},
+                     "smithy.example#xmlExample": {}
+                 }
+             },
+             "smithy.example#jsonExample": {
+                 "type": "structure",
+                 "traits": {
+                     "smithy.api#documentation": "An example JSON protocol."
+                     "smithy.api#protocolDefinition": {},
+                     "smithy.api#trait": {
+                         "selector": "service"
+                     }
+                 }
+             },
+             "smithy.example#xmlExample": {
+                 "type": "structure",
+                 "traits": {
+                     "smithy.api#documentation": "An example JSON protocol."
+                     "smithy.api#protocolDefinition": {},
+                     "smithy.api#trait": {
+                         "selector": "service"
+                     }
+                 }
+             }
+         }
+     }
 
 Because protocol definitions are just specialized shapes, they can also
 support configuration settings.
@@ -147,38 +150,41 @@ Value type
 
 Given the following structure definition,
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure MyStructure {
-            @jsonName("Foo")
-            foo: String,
+     structure MyStructure {
+         @jsonName("Foo")
+         foo: String,
 
-            bar: String,
-        }
+         bar: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#jsonName": "Foo"
-                            }
-                        },
-                        "bar": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#jsonName": "Foo"
+                         }
+                     },
+                     "bar": {
+                         "target": "smithy.api#String"
+                     }
+                 }
+             }
+         }
+     }
 
 and the following values provided for ``MyStructure``,
 
@@ -222,28 +228,31 @@ Value type
 
 The following example defines a ``video/quicktime`` blob:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @mediaType("video/quicktime")
-        blob VideoData
+     @mediaType("video/quicktime")
+     blob VideoData
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#VideoData": {
-                    "type": "blob",
-                    "traits": {
-                        "smithy.api#mediaType": "video/quicktime"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#VideoData": {
+                 "type": "blob",
+                 "traits": {
+                     "smithy.api#mediaType": "video/quicktime"
+                 }
+             }
+         }
+     }
 
 .. rubric:: Use cases
 

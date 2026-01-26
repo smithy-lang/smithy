@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>AWS JSON 1.1 protocol - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -254,6 +254,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/wire-protocol-selection.html">Wire protocol selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
@@ -594,6 +595,25 @@ to services.</p></td>
 </table>
 </div>
 </section>
+<section id="identification-for-claiming">
+<h2>Identification for claiming<a class="headerlink" href="#identification-for-claiming" title="Link to this heading">¶</a></h2>
+<p>Services that support this protocol MUST use the following characteristics to
+identify and claim requests:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> HTTP request header is set and contains the value
+<code class="docutils literal notranslate"><span class="pre">application/x-amz-json-1.1</span></code>.</p></li>
+<li><p>The HTTP request method is <code class="docutils literal notranslate"><span class="pre">POST</span></code>.</p></li>
+<li><p>The HTTP request path is <code class="docutils literal notranslate"><span class="pre">/</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">X-Amz-Target</span></code> HTTP request header is set and contains a value that
+matches the form <code class="docutils literal notranslate"><span class="pre">{serviceName}.{operationName}</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">{serviceName}</span></code> segment in the <code class="docutils literal notranslate"><span class="pre">X-Amz-Target</span></code> HTTP request header
+matches the <a class="reference internal" href="../../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the service's
+<a class="reference internal" href="../../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a> in the Smithy model.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">{operationName}</span></code> segment in the <code class="docutils literal notranslate"><span class="pre">X-Amz-Target</span></code> HTTP request header
+matches a <a class="reference internal" href="../../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of an operation bound to
+the service.</p></li>
+</ol>
+</section>
 <section id="protocol-behaviors">
 <h2>Protocol Behaviors<a class="headerlink" href="#protocol-behaviors" title="Link to this heading">¶</a></h2>
 <p>Every request for the <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code> protocol MUST be sent to the
@@ -906,6 +926,7 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
 <li><a class="reference internal" href="#">AWS JSON 1.1 protocol</a><ul>
 <li><a class="reference internal" href="#aws-protocols-awsjson1-1-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_1</span></code> trait</a></li>
 <li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
+<li><a class="reference internal" href="#identification-for-claiming">Identification for claiming</a></li>
 <li><a class="reference internal" href="#protocol-behaviors">Protocol Behaviors</a></li>
 <li><a class="reference internal" href="#default-value-serialization">Default value serialization</a></li>
 <li><a class="reference internal" href="#shape-serialization">Shape serialization</a><ul>
@@ -929,8 +950,8 @@ As a result, renaming will not resolve the conflicting shape IDs issue, and henc
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=60dbed4a"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>

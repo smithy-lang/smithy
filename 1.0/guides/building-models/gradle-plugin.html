@@ -7,12 +7,12 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>Smithy Gradle Plugin - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0abfef4d" />
     
@@ -348,13 +348,11 @@ of Smithy models.</p>
 <span id="plugin-install"></span><h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>The Smithy Gradle plugin is applied using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy</span></code> plugin.
 The following example configures a project to use the Smithy Gradle plugin:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="smithy-model-sources">
 <span id="id1"></span><h2>Smithy model sources<a class="headerlink" href="#smithy-model-sources" title="Link to this heading">¶</a></h2>
@@ -386,13 +384,11 @@ runs in a &quot;projection&quot; mode.</p></li>
 <span id="id3"></span><h2>Smithy extension properties<a class="headerlink" href="#smithy-extension-properties" title="Link to this heading">¶</a></h2>
 <p>This plugin is configured using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.gradle.SmithyExtension</span></code>
 extension:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-1-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;foo&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 <p>This extension supports the following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
@@ -459,8 +455,7 @@ build scripts, Smithy models are discovered using only the
 <code class="docutils literal notranslate"><span class="pre">compileClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">runtimeClasspath</span></code>.</p>
 <p>The following example <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> will build a Smithy model using a
 &quot;source&quot; build:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-2-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
@@ -483,7 +478,6 @@ build scripts, Smithy models are discovered using only the
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="generating-a-projection">
 <span id="generating-projection"></span><h3>Generating a projection<a class="headerlink" href="#generating-a-projection" title="Link to this heading">¶</a></h3>
@@ -498,8 +492,7 @@ prevents models discovered in the original model from appearing in the
 projected version of the model.</p>
 <p>The following example <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file will run a &quot;projection&quot;
 build that uses the &quot;external&quot; projection.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-3-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
@@ -542,12 +535,10 @@ build that uses the &quot;external&quot; projection.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 <p>Because the <code class="docutils literal notranslate"><span class="pre">projection</span></code> of the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code> was set to <code class="docutils literal notranslate"><span class="pre">external</span></code>, a
 <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file <strong>must</strong> be found that defines the <code class="docutils literal notranslate"><span class="pre">external</span></code>
 projection. For example:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;external&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -579,30 +570,25 @@ projection. For example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 <section id="projection-tags">
 <span id="id4"></span><h3>Projection tags<a class="headerlink" href="#projection-tags" title="Link to this heading">¶</a></h3>
 <p>Projections are meant to <em>project</em> and filter other models into another
 model. You need to specify which dependencies are being projected into your
 JAR by setting the <code class="docutils literal notranslate"><span class="pre">projectionSourceTags</span></code> property.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-5-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;external&quot;</span>
 <span class="w">      </span><span class="n">projectionSourceTags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">setOf</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;com.baz:bar&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 <p>Tags are used to logically group packages to make it easier to build
 projections. The <code class="docutils literal notranslate"><span class="pre">tags</span></code> property is used to add <code class="docutils literal notranslate"><span class="pre">Smithy-Tags</span></code> to a JAR.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-6-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">setOf</span><span class="p">(</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foobaz-model&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 <p>For example, if your service is made up of 10 packages, you can add the
 &quot;foobaz-model&quot; Smithy tag to each package so that the only value that needs
 to be provided for <code class="docutils literal notranslate"><span class="pre">tags</span></code> to correctly project your model is &quot;foobaz-model&quot;.</p>
@@ -616,8 +602,7 @@ be queried by group and artifact names in addition to custom tags.</p>
 <p>If a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is found at the root of the project, then it
 will be used to generate <a class="reference internal" href="build-config.html#projection-artifacts"><span class="std std-ref">artifacts</span></a> from the Smithy model.</p>
 <p>The following example generates an OpenAPI model from a Smithy model:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -627,11 +612,9 @@ will be used to generate <a class="reference internal" href="build-config.html#p
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 <p>The above Smithy plugin also requires a <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> dependency in
 <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-8-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// ...</span>
@@ -643,7 +626,6 @@ will be used to generate <a class="reference internal" href="build-config.html#p
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
 </section>
 </section>
 <section id="complete-examples">
@@ -740,11 +722,11 @@ creating a Smithy model and building it with the Smithy Gradle plugin.</p>
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>
-    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

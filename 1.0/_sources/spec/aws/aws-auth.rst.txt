@@ -35,43 +35,46 @@ Trait value
             NOT be empty. This value SHOULD match the ``arnNamespace`` property
             of the :ref:`aws.api#service-trait`.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace aws.fooBaz
+     namespace aws.fooBaz
 
-        use aws.api#service
-        use aws.auth#sigv4
-        use aws.protocols#restJson1
+     use aws.api#service
+     use aws.auth#sigv4
+     use aws.protocols#restJson1
 
-        @service(sdkId: "Some Value")
-        @sigv4(name: "foobaz")
-        @restJson1
-        service FooBaz {
-            version: "2018-03-17",
-        }
+     @service(sdkId: "Some Value")
+     @sigv4(name: "foobaz")
+     @restJson1
+     service FooBaz {
+         version: "2018-03-17",
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "aws.fooBaz#FooBaz": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.protocols#restJson1": {},
-                        "aws.api#service": {
-                            "sdkId": "Some Value"
-                        },
-                        "aws.auth#sigv4": {
-                            "name": "foobaz"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "aws.fooBaz#FooBaz": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "traits": {
+                     "aws.protocols#restJson1": {},
+                     "aws.api#service": {
+                         "sdkId": "Some Value"
+                     },
+                     "aws.auth#sigv4": {
+                         "name": "foobaz"
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.auth#unsignedPayload
@@ -97,37 +100,40 @@ payload of a request is not signed.
 The following example defines an operation that indicates the payload of the
 operation MUST NOT be used as part of the request signature calculation:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.auth#unsignedPayload
+     use aws.auth#unsignedPayload
 
-        @unsignedPayload
-        operation PutThings {
-            input: PutThingsInput,
-            output: PutThingsOutput
-        }
+     @unsignedPayload
+     operation PutThings {
+         input: PutThingsInput,
+         output: PutThingsOutput
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.auth#unsignedPayload": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#PutThings": {
+                 "type": "operation",
+                 "input": {
+                     "target": "smithy.example#PutThingsInput"
+                 },
+                 "output": {
+                     "target": "smithy.example#PutThingsOutput"
+                 },
+                 "traits": {
+                     "aws.auth#unsignedPayload": {}
+                 }
+             }
+         }
+     }
 
 
 Unsigned Payloads and signature version 4

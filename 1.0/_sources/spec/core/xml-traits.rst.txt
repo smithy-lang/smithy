@@ -69,49 +69,52 @@ An ``xmlName`` trait applied to a structure or union changes the element name
 of the serialized shape; however, it does not influence the serialization of
 members that target it. Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @xmlName("AStruct")
-        structure A {
-            b: B,
-        }
+     @xmlName("AStruct")
+     structure A {
+         b: B,
+     }
 
-        @xmlName("BStruct")
-        structure B {
-            hello: String,
-        }
+     @xmlName("BStruct")
+     structure B {
+         hello: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#A": {
-                    "type": "structure",
-                    "members": {
-                        "b": {
-                            "target": "smithy.example#B"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#xmlName": "AStruct"
-                    }
-                },
-                "smithy.example#B": {
-                    "type": "structure",
-                    "members": {
-                        "hello": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#xmlName": "BStruct"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#A": {
+                 "type": "structure",
+                 "members": {
+                     "b": {
+                         "target": "smithy.example#B"
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#xmlName": "AStruct"
+                 }
+             },
+             "smithy.example#B": {
+                 "type": "structure",
+                 "members": {
+                     "hello": {
+                         "target": "smithy.api#String"
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#xmlName": "BStruct"
+                 }
+             }
+         }
+     }
 
 The XML serialization of ``AStruct`` is:
 
@@ -240,43 +243,46 @@ The XML serialization of ``Foo`` is:
 The :ref:`xmlname-trait` can be applied to the member of a list or set to
 change the nested element name. For example, given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure Foo {
-            values: MyList
-        }
+     structure Foo {
+         values: MyList
+     }
 
-        list MyList {
-            @xmlName("Item")
-            member: String,
-        }
+     list MyList {
+         @xmlName("Item")
+         member: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Foo": {
-                    "type": "structure",
-                    "members": {
-                        "values": {
-                            "target": "smithy.example#MyList"
-                        }
-                    }
-                },
-                "smithy.example#MyList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String",
-                        "traits": {
-                            "smithy.api#xmlName": "Item"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Foo": {
+                 "type": "structure",
+                 "members": {
+                     "values": {
+                         "target": "smithy.example#MyList"
+                     }
+                 }
+             },
+             "smithy.example#MyList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String",
+                     "traits": {
+                         "smithy.api#xmlName": "Item"
+                     }
+                 }
+             }
+         }
+     }
 
 The XML serialization of ``Foo`` is:
 
@@ -453,47 +459,50 @@ Flattened map serialization
 The :ref:`xmlFlattened-trait` can be used to flatten the members of map
 into a containing structure/union. For example, given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure Bar {
-            @xmlFlattened
-            flatMap: MyMap
-        }
+     structure Bar {
+         @xmlFlattened
+         flatMap: MyMap
+     }
 
-        map MyMap {
-            key: String,
-            value: String,
-        }
+     map MyMap {
+         key: String,
+         value: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Bar": {
-                    "type": "structure",
-                    "members": {
-                        "flatMap": {
-                            "target": "smithy.example#MyMap",
-                            "traits": {
-                                "smithy.api#xmlFlattened": {}
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MyMap": {
-                    "type": "map",
-                    "key": {
-                        "target": "smithy.api#String"
-                    },
-                    "value": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Bar": {
+                 "type": "structure",
+                 "members": {
+                     "flatMap": {
+                         "target": "smithy.example#MyMap",
+                         "traits": {
+                             "smithy.api#xmlFlattened": {}
+                         }
+                     }
+                 }
+             },
+             "smithy.example#MyMap": {
+                 "type": "map",
+                 "key": {
+                     "target": "smithy.api#String"
+                 },
+                 "value": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 The XML serialization of ``Bar`` is:
 
@@ -613,38 +622,41 @@ Conflicts with
 By default, the serialized XML attribute name is the same as the structure
 member name. For example, given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure MyStructure {
-            @xmlAttribute
-            foo: String,
+     structure MyStructure {
+         @xmlAttribute
+         foo: String,
 
-            bar: String,
-        }
+         bar: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#xmlAttribute": {}
-                            }
-                        },
-                        "bar": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#xmlAttribute": {}
+                         }
+                     },
+                     "bar": {
+                         "target": "smithy.api#String"
+                     }
+                 }
+             }
+         }
+     }
 
 The XML serialization is:
 
@@ -657,35 +669,38 @@ The XML serialization is:
 The serialized attribute name can be changed using the :ref:`xmlname-trait`.
 Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure MyStructure {
-            @xmlAttribute
-            @xmlName("NotFoo")
-            foo: String
-        }
+     structure MyStructure {
+         @xmlAttribute
+         @xmlName("NotFoo")
+         foo: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#xmlAttribute": {},
-                                "smithy.api#xmlName": "NotFoo"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#xmlAttribute": {},
+                             "smithy.api#xmlName": "NotFoo"
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 The XML serialization is:
 
@@ -714,48 +729,51 @@ Value type
 
 Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure Foo {
-            @xmlFlattened
-            flat: MyList,
+     structure Foo {
+         @xmlFlattened
+         flat: MyList,
 
-            nested: MyList,
-        }
+         nested: MyList,
+     }
 
-        list MyList {
-            member: String,
-        }
+     list MyList {
+         member: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Foo": {
-                    "type": "structure",
-                    "members": {
-                        "flat": {
-                            "target": "smithy.example#MyList",
-                            "traits": {
-                                "smithy.api#xmlFlattened": {}
-                            }
-                        },
-                        "nested": {
-                            "target": "smithy.example#MyList"
-                        }
-                    }
-                },
-                "smithy.example#MyList": {
-                    "type": "list",
-                    "member": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Foo": {
+                 "type": "structure",
+                 "members": {
+                     "flat": {
+                         "target": "smithy.example#MyList",
+                         "traits": {
+                             "smithy.api#xmlFlattened": {}
+                         }
+                     },
+                     "nested": {
+                         "target": "smithy.example#MyList"
+                     }
+                 }
+             },
+             "smithy.example#MyList": {
+                 "type": "list",
+                 "member": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 The XML serialization of ``Foo`` is:
 
@@ -774,52 +792,55 @@ The XML serialization of ``Foo`` is:
 
 Maps can be flattened into structures too. Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure Foo {
-            @xmlFlattened
-            flat: MyMap,
+     structure Foo {
+         @xmlFlattened
+         flat: MyMap,
 
-            notFlat: MyMap,
-        }
+         notFlat: MyMap,
+     }
 
-        map MyMap {
-            key: String
-            value: String
-        }
+     map MyMap {
+         key: String
+         value: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Foo": {
-                    "type": "structure",
-                    "members": {
-                        "flat": {
-                            "target": "smithy.example#MyMap",
-                            "traits": {
-                                "smithy.api#xmlFlattened": {}
-                            }
-                        },
-                        "notFlat": {
-                            "target": "smithy.example#MyMap"
-                        }
-                    }
-                },
-                "smithy.example#MyMap": {
-                    "type": "map",
-                    "key": {
-                        "target": "smithy.api#String"
-                    },
-                    "value": {
-                        "target": "smithy.api#String"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Foo": {
+                 "type": "structure",
+                 "members": {
+                     "flat": {
+                         "target": "smithy.example#MyMap",
+                         "traits": {
+                             "smithy.api#xmlFlattened": {}
+                         }
+                     },
+                     "notFlat": {
+                         "target": "smithy.example#MyMap"
+                     }
+                 }
+             },
+             "smithy.example#MyMap": {
+                 "type": "map",
+                 "key": {
+                     "target": "smithy.api#String"
+                 },
+                 "value": {
+                     "target": "smithy.api#String"
+                 }
+             }
+         }
+     }
 
 The XML serialization is:
 
@@ -871,38 +892,41 @@ Value type
 By default, structure properties are serialized in attributes or nested
 elements using the same name as the structure member name. Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure MyStructure {
-            @xmlName("Foo")
-            foo: String,
+     structure MyStructure {
+         @xmlName("Foo")
+         foo: String,
 
-            bar: String,
-        }
+         bar: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#xmlName": "Foo"
-                            }
-                        },
-                        "bar": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#xmlName": "Foo"
+                         }
+                     },
+                     "bar": {
+                         "target": "smithy.api#String"
+                     }
+                 }
+             }
+         }
+     }
 
 The XML serialization is:
 
@@ -970,39 +994,42 @@ The ``xmlNamespace`` trait is a structure that contains the following members:
 
 Given the following:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @xmlNamespace(uri: "http://foo.com")
-        structure MyStructure {
-            foo: String,
-            bar: String,
-        }
+     @xmlNamespace(uri: "http://foo.com")
+     structure MyStructure {
+         foo: String,
+         bar: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.api#String"
-                        },
-                        "bar": {
-                            "target": "smithy.api#String"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#xmlNamespace": {
-                            "uri": "http://foo.com"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.api#String"
+                     },
+                     "bar": {
+                         "target": "smithy.api#String"
+                     }
+                 },
+                 "traits": {
+                     "smithy.api#xmlNamespace": {
+                         "uri": "http://foo.com"
+                     }
+                 }
+             }
+         }
+     }
 
 The XML serialization is:
 

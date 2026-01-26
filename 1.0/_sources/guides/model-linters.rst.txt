@@ -16,14 +16,12 @@ can be used to apply additional validation to Smithy models.
 The following example adds ``smithy-linters`` as a Gradle dependency
 to a ``build.gradle.kts`` file:
 
-.. tabs::
+.. code-block:: kotlin
 
-    .. code-tab:: kotlin
-
-        dependencies {
-            implementation("software.amazon.smithy:smithy-model:__smithy_version__")
-            implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
-        }
+     dependencies {
+         implementation("software.amazon.smithy:smithy-model:__smithy_version__")
+         implementation("software.amazon.smithy:smithy-linters:__smithy_version__")
+     }
 
 After the dependency is added and available on the Java classpath, validators
 defined in the package and registered using `Java SPI`_ are available for

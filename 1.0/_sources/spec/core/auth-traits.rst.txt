@@ -45,46 +45,49 @@ supported authentication schemes.
 The following example defines a service that supports both ``httpBasicAuth``
 and the hypothetical ``fooExample`` authentication scheme.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @authDefinition
-        @trait(selector: "service")
-        structure fooExample {}
+     @authDefinition
+     @trait(selector: "service")
+     structure fooExample {}
 
-        @fooExample
-        @httpBasicAuth
-        service WeatherService {
-            version: "2017-02-11",
-        }
+     @fooExample
+     @httpBasicAuth
+     service WeatherService {
+         version: "2017-02-11",
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#WeatherService": {
-                    "type": "service",
-                    "version": "2017-02-11",
-                    "traits": {
-                        "smithy.example#fooExample": {},
-                        "smithy.api#httpBasicAuth": {}
-                    }
-                },
-                "smithy.example#fooExample": {
-                    "type": "structure",
-                    "traits": {
-                        "smithy.api#authDefinition": {},
-                        "smithy.api#trait": {
-                            "selector": "service"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#WeatherService": {
+                 "type": "service",
+                 "version": "2017-02-11",
+                 "traits": {
+                     "smithy.example#fooExample": {},
+                     "smithy.api#httpBasicAuth": {}
+                 }
+             },
+             "smithy.example#fooExample": {
+                 "type": "structure",
+                 "traits": {
+                     "smithy.api#authDefinition": {},
+                     "smithy.api#trait": {
+                         "selector": "service"
+                     }
+                 }
+             }
+         }
+     }
 
 Because authentication scheme definitions are just specialized shapes, they
 can also support configuration settings.
@@ -329,122 +332,125 @@ to services and operations:
   * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @httpBasicAuth
-        @httpDigestAuth
-        @httpBearerAuth
-        service ServiceWithNoAuthTrait {
-            version: "2020-01-29",
-            operations: [
-                OperationA,
-                OperationB
-            ]
-        }
+     @httpBasicAuth
+     @httpDigestAuth
+     @httpBearerAuth
+     service ServiceWithNoAuthTrait {
+         version: "2020-01-29",
+         operations: [
+             OperationA,
+             OperationB
+         ]
+     }
 
-        // This operation does not have the @auth trait and is bound to a service
-        // without the @auth trait. The effective set of authentication schemes it
-        // supports are: httpBasicAuth, httpDigestAuth and httpBearerAuth
-        operation OperationA {}
+     // This operation does not have the @auth trait and is bound to a service
+     // without the @auth trait. The effective set of authentication schemes it
+     // supports are: httpBasicAuth, httpDigestAuth and httpBearerAuth
+     operation OperationA {}
 
-        // This operation does have the @auth trait and is bound to a service
-        // without the @auth trait. The effective set of authentication schemes it
-        // supports are: httpDigestAuth.
-        @auth([httpDigestAuth])
-        operation OperationB {}
+     // This operation does have the @auth trait and is bound to a service
+     // without the @auth trait. The effective set of authentication schemes it
+     // supports are: httpDigestAuth.
+     @auth([httpDigestAuth])
+     operation OperationB {}
 
-        @httpBasicAuth
-        @httpDigestAuth
-        @httpBearerAuth
-        @auth([httpBasicAuth, httpDigestAuth])
-        service ServiceWithAuthTrait {
-            version: "2020-01-29",
-            operations: [
-                OperationC,
-                OperationD
-            ]
-        }
+     @httpBasicAuth
+     @httpDigestAuth
+     @httpBearerAuth
+     @auth([httpBasicAuth, httpDigestAuth])
+     service ServiceWithAuthTrait {
+         version: "2020-01-29",
+         operations: [
+             OperationC,
+             OperationD
+         ]
+     }
 
-        // This operation does not have the @auth trait and is bound to a service
-        // with the @auth trait. The effective set of authentication schemes it
-        // supports are: httpBasicAuth, httpDigestAuth
-        operation OperationC {}
+     // This operation does not have the @auth trait and is bound to a service
+     // with the @auth trait. The effective set of authentication schemes it
+     // supports are: httpBasicAuth, httpDigestAuth
+     operation OperationC {}
 
-        // This operation has the @auth trait and is bound to a service
-        // with the @auth trait. The effective set of authentication schemes it
-        // supports are: httpBearerAuth
-        @auth([httpBearerAuth])
-        operation OperationD {}
+     // This operation has the @auth trait and is bound to a service
+     // with the @auth trait. The effective set of authentication schemes it
+     // supports are: httpBearerAuth
+     @auth([httpBearerAuth])
+     operation OperationD {}
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#OperationA": {
-                    "type": "operation"
-                },
-                "smithy.example#OperationB": {
-                    "type": "operation",
-                    "traits": {
-                        "smithy.api#auth": [
-                            "smithy.api#httpDigestAuth"
-                        ]
-                    }
-                },
-                "smithy.example#OperationC": {
-                    "type": "operation"
-                },
-                "smithy.example#OperationD": {
-                    "type": "operation",
-                    "traits": {
-                        "smithy.api#auth": [
-                            "smithy.api#httpBearerAuth"
-                        ]
-                    }
-                },
-                "smithy.example#ServiceWithAuthTrait": {
-                    "type": "service",
-                    "traits": {
-                        "smithy.api#auth": [
-                            "smithy.api#httpBasicAuth",
-                            "smithy.api#httpDigestAuth"
-                        ],
-                        "smithy.api#httpBasicAuth": {},
-                        "smithy.api#httpBearerAuth": {},
-                        "smithy.api#httpDigestAuth": {}
-                    },
-                    "version": "2020-01-29",
-                    "operations": [
-                        {
-                            "target": "smithy.example#OperationC"
-                        },
-                        {
-                            "target": "smithy.example#OperationD"
-                        }
-                    ]
-                },
-                "smithy.example#ServiceWithNoAuthTrait": {
-                    "type": "service",
-                    "traits": {
-                        "smithy.api#httpBasicAuth": {},
-                        "smithy.api#httpBearerAuth": {},
-                        "smithy.api#httpDigestAuth": {}
-                    },
-                    "version": "2020-01-29",
-                    "operations": [
-                        {
-                            "target": "smithy.example#OperationA"
-                        },
-                        {
-                            "target": "smithy.example#OperationB"
-                        }
-                    ]
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#OperationA": {
+                 "type": "operation"
+             },
+             "smithy.example#OperationB": {
+                 "type": "operation",
+                 "traits": {
+                     "smithy.api#auth": [
+                         "smithy.api#httpDigestAuth"
+                     ]
+                 }
+             },
+             "smithy.example#OperationC": {
+                 "type": "operation"
+             },
+             "smithy.example#OperationD": {
+                 "type": "operation",
+                 "traits": {
+                     "smithy.api#auth": [
+                         "smithy.api#httpBearerAuth"
+                     ]
+                 }
+             },
+             "smithy.example#ServiceWithAuthTrait": {
+                 "type": "service",
+                 "traits": {
+                     "smithy.api#auth": [
+                         "smithy.api#httpBasicAuth",
+                         "smithy.api#httpDigestAuth"
+                     ],
+                     "smithy.api#httpBasicAuth": {},
+                     "smithy.api#httpBearerAuth": {},
+                     "smithy.api#httpDigestAuth": {}
+                 },
+                 "version": "2020-01-29",
+                 "operations": [
+                     {
+                         "target": "smithy.example#OperationC"
+                     },
+                     {
+                         "target": "smithy.example#OperationD"
+                     }
+                 ]
+             },
+             "smithy.example#ServiceWithNoAuthTrait": {
+                 "type": "service",
+                 "traits": {
+                     "smithy.api#httpBasicAuth": {},
+                     "smithy.api#httpBearerAuth": {},
+                     "smithy.api#httpDigestAuth": {}
+                 },
+                 "version": "2020-01-29",
+                 "operations": [
+                     {
+                         "target": "smithy.example#OperationA"
+                     },
+                     {
+                         "target": "smithy.example#OperationB"
+                     }
+                 ]
+             }
+         }
+     }
 
 The following ``auth`` trait is invalid because it references an
 authentication scheme trait that is not applied to the service:

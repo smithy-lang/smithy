@@ -7,12 +7,12 @@
         <link rel="prefetch" href="../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>1. The Smithy model - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0abfef4d" />
     
@@ -723,8 +723,9 @@ simple type.</p>
 <p class="rubric">Simple shape examples</p>
 <p>The following example defines a shape for each simple type in the
 <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">blob </span><span class="nc">Blob</span>
 <span class="kd">boolean </span><span class="nc">Boolean</span>
@@ -741,7 +742,9 @@ simple type.</p>
 <span class="kd">document </span><span class="nc">Document</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#Blob&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -787,7 +790,8 @@ simple type.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>When defining shapes in the IDL, a namespace MUST first be declared.</p>
@@ -845,15 +849,18 @@ A list shape requires a single member named <code class="docutils literal notran
 in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.
 The following example defines a list with a string member from the
 <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -866,21 +873,25 @@ The following example defines a list with a string member from the
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">List member nullability</p>
 <p>Lists are considered <em>dense</em> by default, meaning they MAY NOT contain <code class="docutils literal notranslate"><span class="pre">null</span></code>
 values. A list MAY be made <em>sparse</em> by applying the <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.
 The <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> is not used to determine if a list is dense or sparse;
 a list with no <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait is always considered dense. The following
 example defines a sparse list:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
 <span class="kd">list </span><span class="nc">SparseList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#SparseList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -896,7 +907,8 @@ example defines a sparse list:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>If a client encounters a <code class="docutils literal notranslate"><span class="pre">null</span></code> value when deserializing a dense list
 returned from a service, the client MUST discard the <code class="docutils literal notranslate"><span class="pre">null</span></code> value. If a
 service receives a <code class="docutils literal notranslate"><span class="pre">null</span></code> value for a dense list from a client, it SHOULD
@@ -923,15 +935,18 @@ is accepted.</p>
 </div>
 <p>Sets are defined in the IDL using a <a class="reference internal" href="idl.html#idl-set"><span class="std std-ref">set_statement</span></a>. The
 following example defines a set of strings:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">set </span><span class="nc">StringSet</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#StringSet&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -944,7 +959,8 @@ following example defines a set of strings:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">Sets MUST NOT contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values</p>
 <p>The values contained in a set are not permitted to be <code class="docutils literal notranslate"><span class="pre">null</span></code>. <code class="docutils literal notranslate"><span class="pre">null</span></code> set
 values do not provide much, if any, utility, and set implementations across
@@ -972,8 +988,9 @@ keys to homogeneous values. A map requires a member named <code class="docutils 
 that MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape and a member named <code class="docutils literal notranslate"><span class="pre">value</span></code>.
 Maps are defined in the IDL using a <a class="reference internal" href="idl.html#idl-map"><span class="std std-ref">map_statement</span></a>.
 The following example defines a map of strings to integers:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">map </span><span class="nc">IntegerMap</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -981,7 +998,9 @@ The following example defines a map of strings to integers:</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -997,7 +1016,8 @@ The following example defines a map of strings to integers:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">Map keys MUST NOT be <code class="docutils literal notranslate"><span class="pre">null</span></code></p>
 <p>Map keys are not permitted to be <code class="docutils literal notranslate"><span class="pre">null</span></code>. Not all protocol serialization
 formats have a way to define <code class="docutils literal notranslate"><span class="pre">null</span></code> map keys, and map implementations
@@ -1008,15 +1028,18 @@ across programming languages often do not allow <code class="docutils literal no
 <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>. The <a class="reference internal" href="type-refinement-traits.html#box-trait"><span class="std std-ref">box trait</span></a> is not used to determine if a map
 is dense or sparse; a map with no <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait is always considered
 dense. The following example defines a sparse map:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio" /><label class="tab-label" for="tab-set--5-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
 <span class="kd">map </span><span class="nc">SparseMap</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio" /><label class="tab-label" for="tab-set--5-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#SparseMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1035,7 +1058,8 @@ dense. The following example defines a sparse map:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>If a client encounters a <code class="docutils literal notranslate"><span class="pre">null</span></code> map value when deserializing a dense map
 returned from a service, the client MUST discard the <code class="docutils literal notranslate"><span class="pre">null</span></code> entry. If a
 service receives a <code class="docutils literal notranslate"><span class="pre">null</span></code> map value for a dense map from a client, it
@@ -1056,8 +1080,9 @@ Structures are defined in the IDL using a
 <a class="reference internal" href="idl.html#idl-structure"><span class="std std-ref">structure_statement</span></a>.</p>
 <p>The following example defines a structure with two members, one of which
 is marked with the <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio" /><label class="tab-label" for="tab-set--6-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -1067,7 +1092,9 @@ is marked with the <a class="reference internal" href="constraint-traits.html#re
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio" /><label class="tab-label" for="tab-set--6-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1088,7 +1115,8 @@ is marked with the <a class="reference internal" href="constraint-traits.html#re
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">Applying traits</span></a> for a description of how to apply traits.</p>
@@ -1129,8 +1157,9 @@ values of each variant.</p>
 <p>Unions are defined in the IDL using a <a class="reference internal" href="idl.html#idl-union"><span class="std std-ref">union_statement</span></a>.
 A union shape MUST contain one or more named <a class="reference internal" href="#member"><span class="std std-ref">members</span></a>.
 The following example defines a union shape with several members:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--7-input--1" name="tab-set--7" type="radio" /><label class="tab-label" for="tab-set--7-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">union </span><span class="nc">MyUnion</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">i32</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
@@ -1142,7 +1171,9 @@ The following example defines a union shape with several members:</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio" /><label class="tab-label" for="tab-set--7-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyUnion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1167,7 +1198,8 @@ The following example defines a union shape with several members:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">Unit types in unions</p>
 <p>Some union members might not need any meaningful information beyond the
 tag itself. For these cases, union members MAY target Smithy's built-in
@@ -1263,8 +1295,9 @@ contain at least one path through its members that is not recursive
 or steps through a list, set, map, or optional structure member.</p></li>
 </ol>
 <p>The following recursive shape definition is <strong>valid</strong>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--8-input--1" name="tab-set--8" type="radio" /><label class="tab-label" for="tab-set--8-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">ValidList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">IntermediateStructure</span>
@@ -1275,7 +1308,9 @@ or steps through a list, set, map, or optional structure member.</p></li>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--8-input--2" name="tab-set--8" type="radio" /><label class="tab-label" for="tab-set--8-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ValidList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1296,17 +1331,21 @@ or steps through a list, set, map, or optional structure member.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following recursive shape definition is <strong>invalid</strong>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-9-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-9-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--9-input--1" name="tab-set--9" type="radio" /><label class="tab-label" for="tab-set--9-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">RecursiveList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveList</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--9-input--2" name="tab-set--9" type="radio" /><label class="tab-label" for="tab-set--9-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#RecursiveList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1319,7 +1358,8 @@ or steps through a list, set, map, or optional structure member.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following recursive shape definition is <strong>invalid</strong> due to mutual
 recursion and the <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -1439,15 +1479,18 @@ original shape ID name.</p></li>
 </table>
 </div>
 <p>The following example defines a service with no operations or resources.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-10-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-10-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--10-input--1" name="tab-set--10" type="radio" /><label class="tab-label" for="tab-set--10-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--10-input--2" name="tab-set--10" type="radio" /><label class="tab-label" for="tab-set--10-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1458,11 +1501,13 @@ original shape ID name.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following example defines a service shape that defines a set of errors
 that are common to every operation in the service:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-11-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-11-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-11-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-11-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-11-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-11-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--11-input--1" name="tab-set--11" type="radio" /><label class="tab-label" for="tab-set--11-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
@@ -1473,7 +1518,9 @@ that are common to every operation in the service:</p>
 <span class="kd">structure </span><span class="nc">SomeError</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-11-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-11-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--11-input--2" name="tab-set--11" type="radio" /><label class="tab-label" for="tab-set--11-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1495,15 +1542,17 @@ that are common to every operation in the service:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <section id="service-operations">
 <span id="id13"></span><h4><span class="section-number">1.6.1.1. </span>Service operations<a class="headerlink" href="#service-operations" title="Link to this heading">¶</a></h4>
 <p><a class="reference internal" href="#operation"><span class="std std-ref">Operation</span></a> shapes can be bound to a service by adding the
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
 that do not fit within a resource hierarchy.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-12-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-12-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-12-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-12-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-12-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-12-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--12-input--1" name="tab-set--12" type="radio" /><label class="tab-label" for="tab-set--12-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
@@ -1516,7 +1565,9 @@ that do not fit within a resource hierarchy.</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-12-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-12-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--12-input--2" name="tab-set--12" type="radio" /><label class="tab-label" for="tab-set--12-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1538,14 +1589,16 @@ that do not fit within a resource hierarchy.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="service-resources">
 <span id="id14"></span><h4><span class="section-number">1.6.1.2. </span>Service resources<a class="headerlink" href="#service-resources" title="Link to this heading">¶</a></h4>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-13-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-13-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-13-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-13-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-13-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-13-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--13-input--1" name="tab-set--13" type="radio" /><label class="tab-label" for="tab-set--13-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
@@ -1555,7 +1608,9 @@ shape ID of a resource to the <code class="docutils literal notranslate"><span c
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-13-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-13-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--13-input--2" name="tab-set--13" type="radio" /><label class="tab-label" for="tab-set--13-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1574,7 +1629,8 @@ shape ID of a resource to the <code class="docutils literal notranslate"><span c
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="service-closure">
 <span id="id15"></span><h4><span class="section-number">1.6.1.3. </span>Service closure<a class="headerlink" href="#service-closure" title="Link to this heading">¶</a></h4>
@@ -1853,8 +1909,9 @@ The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single identifier named <code class="docutils literal notranslate"><span class="pre">forecastId</span></code> that targets the <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code> shape:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-14-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-14-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-14-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-14-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-14-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-14-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--14-input--1" name="tab-set--14" type="radio" /><label class="tab-label" for="tab-set--14-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
@@ -1865,7 +1922,9 @@ single identifier named <code class="docutils literal notranslate"><span class="
 <span class="kd">string </span><span class="nc">ForecastId</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-14-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-14-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--14-input--2" name="tab-set--14" type="radio" /><label class="tab-label" for="tab-set--14-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#Forecast&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1883,7 +1942,8 @@ single identifier named <code class="docutils literal notranslate"><span class="
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>When a resource is bound as a child to another resource using the &quot;resources&quot;
 property, all of the identifiers of the parent resource MUST be repeated
 verbatim in the child resource, and the child resource MAY introduce any
@@ -1894,8 +1954,9 @@ operation bound as a child to a resource. <em class="dfn">Child identifiers</em>
 identifiers that a child resource contains that are not present in the parent
 identifiers.</p>
 <p>For example, given the following model,</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-15-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-15-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-15-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-15-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-15-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-15-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--15-input--1" name="tab-set--15" type="radio" /><label class="tab-label" for="tab-set--15-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}<span class="p">,</span>
@@ -1919,7 +1980,9 @@ identifiers.</p>
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-15-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-15-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--15-input--2" name="tab-set--15" type="radio" /><label class="tab-label" for="tab-set--15-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ResourceA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1969,14 +2032,16 @@ identifiers.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">ResourceB</span></code> is a valid child of <code class="docutils literal notranslate"><span class="pre">ResourceA</span></code> and contains a child
 identifier of &quot;b&quot;. <code class="docutils literal notranslate"><span class="pre">ResourceC</span></code> is a valid child of <code class="docutils literal notranslate"><span class="pre">ResourceB</span></code> and
 contains a child identifier of &quot;c&quot;.</p>
 <p>However, the following defines two <em>invalid</em> child resources that do not
 define an <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> property that is compatible with their parents:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-16-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-16-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-16-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-16-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-16-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-16-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--16-input--1" name="tab-set--16" type="radio" /><label class="tab-label" for="tab-set--16-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 <span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -2000,7 +2065,9 @@ define an <code class="docutils literal notranslate"><span class="pre">identifie
 }
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-16-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-16-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--16-input--2" name="tab-set--16" type="radio" /><label class="tab-label" for="tab-set--16-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ResourceA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2045,7 +2112,8 @@ define an <code class="docutils literal notranslate"><span class="pre">identifie
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <section id="binding-identifiers-to-operations">
 <span id="binding-identifiers"></span><h4><span class="section-number">1.6.4.1. </span>Binding identifiers to operations<a class="headerlink" href="#binding-identifiers-to-operations" title="Link to this heading">¶</a></h4>
 <p><em>Identifier bindings</em> indicate which top-level members of the input or output
@@ -2400,15 +2468,18 @@ trait is applied to a shape depends on the model file representation.</p>
 <p>Traits are applied to shapes in the IDL using <a class="reference internal" href="idl.html#grammar-token-smithy-TraitStatements"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:TraitStatements</span></code></a> that
 immediately precede a shape. The following example applies the
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> and <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-17-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-17-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-17-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-17-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--17-input--1" name="tab-set--17" type="radio" /><label class="tab-label" for="tab-set--17-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
 <span class="nt">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-17-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-17-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--17-input--2" name="tab-set--17" type="radio" /><label class="tab-label" for="tab-set--17-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2425,7 +2496,8 @@ immediately precede a shape. The following example applies the
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <ul class="simple">
 <li><p>Refer to the <a class="reference internal" href="idl.html#idl-applying-traits"><span class="std std-ref">IDL specification</span></a> for a
 description of how traits are applied in the IDL.</p></li>
@@ -2449,14 +2521,17 @@ defines the shapes and traits of the API, and a documentation team could
 own a model that applies documentation traits to the shapes.</p>
 <p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> and
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> to the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-18-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-18-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-18-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-18-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--18-input--1" name="tab-set--18" type="radio" /><label class="tab-label" for="tab-set--18-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">&quot;This is my string!&quot;</span>)
 <span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-18-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-18-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--18-input--2" name="tab-set--18" type="radio" /><label class="tab-label" for="tab-set--18-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2473,7 +2548,8 @@ own a model that applies documentation traits to the shapes.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the semantic model, applying traits outside of a shape definition is
@@ -2641,8 +2717,9 @@ a shape. This trait can only be applied to simple types, <code class="docutils l
 <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">union</span></code> shapes.</p>
 <p>The following example defines a trait with a <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> of
 <code class="docutils literal notranslate"><span class="pre">smithy.example#myTraitName</span></code> and applies it to <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-19-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-19-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-19-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-19-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--19-input--1" name="tab-set--19" type="radio" /><label class="tab-label" for="tab-set--19-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>)
 <span class="kd">structure </span><span class="nc">myTraitName</span><span class="w"> </span>{}
@@ -2651,7 +2728,9 @@ a shape. This trait can only be applied to simple types, <code class="docutils l
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-19-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-19-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--19-input--2" name="tab-set--19" type="radio" /><label class="tab-label" for="tab-set--19-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#myTraitName&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2672,7 +2751,8 @@ a shape. This trait can only be applied to simple types, <code class="docutils l
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">Trait properties</p>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2720,8 +2800,9 @@ marked with this trait.</p></td>
 </div>
 <p>The following example defines two custom traits: <code class="docutils literal notranslate"><span class="pre">beta</span></code> and
 <code class="docutils literal notranslate"><span class="pre">structuredTrait</span></code>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-20-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-20-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-20-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-20-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-20-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-20-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--20-input--1" name="tab-set--20" type="radio" /><label class="tab-label" for="tab-set--20-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="c">/// A trait that can be applied to a member.</span>
 <span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>)
@@ -2753,7 +2834,9 @@ marked with this trait.</p></td>
 <span class="kd">string </span><span class="nc">StringShape</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-20-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-20-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--20-input--2" name="tab-set--20" type="radio" /><label class="tab-label" for="tab-set--20-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#beta&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2815,7 +2898,8 @@ marked with this trait.</p></td>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p class="rubric">Prelude traits</p>
 <p>When using the IDL, built-in traits defined in the Smithy
 <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a> namespace, <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>, are automatically
@@ -2834,14 +2918,17 @@ a trait might start out as a simple annotation, but later might benefit
 from additional information. By defining an annotation trait rather than a
 boolean trait, the trait can safely add optional members over time as needed.</p>
 <p>The following example defines an annotation trait named <code class="docutils literal notranslate"><span class="pre">foo</span></code>:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-21-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-21-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-21-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-21-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-21-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-21-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--21-input--1" name="tab-set--21" type="radio" /><label class="tab-label" for="tab-set--21-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@trait</span>
 <span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-21-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-21-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--21-input--2" name="tab-set--21" type="radio" /><label class="tab-label" for="tab-set--21-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2854,13 +2941,15 @@ boolean trait, the trait can safely add optional members over time as needed.</p
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>A member can be safely added to an annotation trait if the member is not
 marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required</span></a>. The applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 trait in the previous example and the following example are all valid even
 after adding a member to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-22-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-22-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-22-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-22-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-22-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-22-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--22-input--1" name="tab-set--22" type="radio" /><label class="tab-label" for="tab-set--22-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@trait</span>
 <span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{
@@ -2871,7 +2960,9 @@ after adding a member to the <code class="docutils literal notranslate"><span cl
 <span class="kd">string </span><span class="nc">MyString4</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-22-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-22-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--22-input--2" name="tab-set--22" type="radio" /><label class="tab-label" for="tab-set--22-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2897,7 +2988,8 @@ after adding a member to the <code class="docutils literal notranslate"><span cl
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 </section>
 <section id="trait-breaking-change-rules">
 <span id="id30"></span><h4><span class="section-number">1.7.4.2. </span>Trait breaking change rules<a class="headerlink" href="#trait-breaking-change-rules" title="Link to this heading">¶</a></h4>
@@ -3220,11 +3312,14 @@ using a node value.</p></li>
 </div>
 </div>
 <p>The following example defines metadata using a node value:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-23-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-23-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-23-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-23-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-23-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-23-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">foo </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--23-input--1" name="tab-set--23" type="radio" /><label class="tab-label" for="tab-set--23-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">foo </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-23-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-23-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--23-input--2" name="tab-set--23" type="radio" /><label class="tab-label" for="tab-set--23-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span>
@@ -3232,16 +3327,20 @@ using a node value.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <p>The following example defines a trait using a node value:</p>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-24-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-24-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-24-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-24-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-24-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-24-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--24-input--1" name="tab-set--24" type="radio" /><label class="tab-label" for="tab-set--24-input--1">Smithy</label><div class="tab-content docutils">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-24-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-24-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+</div>
+<input class="tab-input" id="tab-set--24-input--2" name="tab-set--24" type="radio" /><label class="tab-label" for="tab-set--24-input--2">JSON</label><div class="tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -3257,7 +3356,8 @@ using a node value.</p></li>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></div>
+</div>
+</div>
 <section id="node-value-types">
 <h3><span class="section-number">1.9.1. </span>Node value types<a class="headerlink" href="#node-value-types" title="Link to this heading">¶</a></h3>
 <p>Node values have the same data model as JSON; they consist of the following
@@ -3482,11 +3582,11 @@ absolute shape IDs until <em>all</em> model files are loaded.</p>
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=6b89569b"></script>
-    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
     </body>
 </html>

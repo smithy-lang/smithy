@@ -57,49 +57,47 @@ The configuration file accepts the following properties:
 
 The following is an example ``smithy-build.json`` configuration:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "outputDirectory": "build/output",
-            "imports": ["foo.json", "some/directory"],
-            "projections": {
-                "my-abstract-projection": {
-                    "abstract": true
-                },
-                "projection-name": {
-                    "imports": ["projection-specific-imports/"],
-                    "transforms": [
-                        {
-                            "name": "excludeShapesByTag",
-                            "args": {
-                                "tags": ["internal", "beta", "..."]
-                            }
-                        },
-                        {
-                            "name": "excludeShapesByTrait",
-                            "args": {
-                                "traits": ["internal"]
-                            }
-                        }
-                    ],
-                    "plugins": {
-                        "plugin-name": {
-                            "plugin-config": "value"
-                        },
-                        "...": {}
-                    }
-                }
-            },
-            "plugins": {
-                "plugin-name": {
-                    "plugin-config": "value"
-                },
-                "...": {}
-            }
-        }
+     {
+         "version": "1.0",
+         "outputDirectory": "build/output",
+         "imports": ["foo.json", "some/directory"],
+         "projections": {
+             "my-abstract-projection": {
+                 "abstract": true
+             },
+             "projection-name": {
+                 "imports": ["projection-specific-imports/"],
+                 "transforms": [
+                     {
+                         "name": "excludeShapesByTag",
+                         "args": {
+                             "tags": ["internal", "beta", "..."]
+                         }
+                     },
+                     {
+                         "name": "excludeShapesByTrait",
+                         "args": {
+                             "traits": ["internal"]
+                         }
+                     }
+                 ],
+                 "plugins": {
+                     "plugin-name": {
+                         "plugin-config": "value"
+                     },
+                     "...": {}
+                 }
+             }
+         },
+         "plugins": {
+             "plugin-name": {
+                 "plugin-config": "value"
+             },
+             "...": {}
+         }
+     }
 
 
 .. _projections:
@@ -218,34 +216,32 @@ Applies the transforms defined in the given projection names.
         referenced projections are applied in the order provided.
         No cycles are allowed in ``apply``.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "my-abstract-projection": {
-                    "abstract": true,
-                    "transforms": [
-                        {"name": "foo"}
-                    ]
-                },
-                "projection-name": {
-                    "imports": ["projection-specific-imports/"],
-                    "transforms": [
-                        {"name": "baz"},
-                        {
-                            "name": "apply",
-                            "args": {
-                                "projections": ["my-abstract-projection"]
-                            }
-                        },
-                        {"name": "bar"}
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "my-abstract-projection": {
+                 "abstract": true,
+                 "transforms": [
+                     {"name": "foo"}
+                 ]
+             },
+             "projection-name": {
+                 "imports": ["projection-specific-imports/"],
+                 "transforms": [
+                     {"name": "baz"},
+                     {
+                         "name": "apply",
+                         "args": {
+                             "projections": ["my-abstract-projection"]
+                         }
+                     },
+                     {"name": "bar"}
+                 ]
+             }
+         }
+     }
 
 
 .. _changeStringEnumsToEnumShapes:
@@ -372,25 +368,23 @@ the :ref:`tags trait <tags-trait>`.
       - ``[string]``
       - The set of tags that causes shapes to be removed.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeShapesByTag",
-                            "args": {
-                                "tags": ["foo", "baz"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeShapesByTag",
+                         "args": {
+                             "tags": ["foo", "baz"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. note::
 
@@ -418,25 +412,23 @@ Removes shapes if they are marked with one or more specific traits.
         shape IDs are assumed to be in the ``smithy.api``
         :ref:`prelude <prelude>` namespace.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeShapesByTrait",
-                            "args": {
-                                "traits": ["internal"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeShapesByTrait",
+                         "args": {
+                             "traits": ["internal"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _includeShapesByTag-transform:
@@ -458,25 +450,23 @@ via the :ref:`tags trait <tags-trait>`.
       - ``[string]``
       - The set of tags that causes shapes to be retained in the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeShapesByTag",
-                            "args": {
-                                "tags": ["foo", "baz"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeShapesByTag",
+                         "args": {
+                             "tags": ["foo", "baz"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. note::
 
@@ -502,25 +492,23 @@ Note that this does not filter out traits based on namespaces.
       - ``[string]``
       - The namespaces to include in the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeNamespaces",
-                            "args": {
-                                "namespaces": ["com.foo.bar", "my.api"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeNamespaces",
+                         "args": {
+                             "namespaces": ["com.foo.bar", "my.api"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. note::
 
@@ -547,25 +535,23 @@ shape IDs.
       - The service shape IDs to include in the model. Each entry MUST be
         a valid service shape ID.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeServices",
-                            "args": {
-                                "services": ["my.api#MyService"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeServices",
+                         "args": {
+                             "services": ["my.api#MyService"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _excludeTags-transform:
@@ -587,25 +573,23 @@ provided ``tags``.
       - ``[string]``
       - The set of tags that are removed from the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeTags",
-                            "args": {
-                                "tags": ["tagA", "tagB"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeTags",
+                         "args": {
+                             "tags": ["tagA", "tagB"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _excludeTraits-transform:
@@ -635,50 +619,46 @@ orphaned shapes.
         shape IDs that are relative are assumed to be part of the
         ``smithy.api`` prelude namespace.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeTraits",
-                            "args": {
-                                "traits": ["since", "com.foo#customTrait"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeTraits",
+                         "args": {
+                             "traits": ["since", "com.foo#customTrait"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 You can exclude all of the traits in a namespace by ending one of the
 arguments with "#". For example, the following configuration excludes
 all traits in the "example.foo" namespace:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-    
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeTraits",
-                            "args": {
-                                "traits": ["example.foo#"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeTraits",
+                         "args": {
+                             "traits": ["example.foo#"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _excludeTraitsByTag-transform:
@@ -705,25 +685,23 @@ orphaned shapes.
       - ``[string]``
       - The list of tags that, if present, cause a trait to be removed.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeTraitsByTag",
-                            "args": {
-                                "tags": ["internal"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeTraitsByTag",
+                         "args": {
+                             "tags": ["internal"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. note::
 
@@ -800,139 +778,127 @@ and the :ref:`suppress-trait`.
 The following example removes suppressions that have no effect in the
 ``exampleProjection``:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "removeUnused": true
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "removeUnused": true
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 The following example removes suppressions from metadata that refer to
 deny-listed namespaces:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "namespaceDenyList": ["com.internal"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "namespaceDenyList": ["com.internal"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 The following example removes suppressions from metadata that refer to
 namespaces outside of the allow-listed namespaces:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "namespaceAllowList": ["com.external"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "namespaceAllowList": ["com.external"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 The following example removes suppressions that refer to deny-listed event IDs:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "eventIdDenyList": ["MyInternalValidator"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "eventIdDenyList": ["MyInternalValidator"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 The following example removes suppressions that refer to event IDs outside
 of the event ID allow list:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "eventIdAllowList": ["A", "B", "C"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "eventIdAllowList": ["A", "B", "C"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 The following example removes the ``reason`` property from metadata
 suppressions:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "filterSuppressions",
-                            "args": {
-                                "removeReasons": true
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "filterSuppressions",
+                         "args": {
+                             "removeReasons": true
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _includeTags-transform:
@@ -954,25 +920,23 @@ list.
       - ``[string]``
       - The set of tags that are retained in the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeTags",
-                            "args": {
-                                "tags": ["foo", "baz"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeTags",
+                         "args": {
+                             "tags": ["foo", "baz"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _includeTraits-transform:
@@ -1002,50 +966,46 @@ orphaned shapes.
         relative are assumed to be part of the ``smithy.api``
         prelude namespace.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeTraits",
-                            "args": {
-                                "traits": ["sensitive", "com.foo.baz#customTrait"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeTraits",
+                         "args": {
+                             "traits": ["sensitive", "com.foo.baz#customTrait"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 You can include all of the traits in a namespace by ending one of the
 arguments with "#". For example, the following configuration includes
 all traits in the "smithy.api" namespace:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeTraits",
-                            "args": {
-                                "traits": ["smithy.api#"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeTraits",
+                         "args": {
+                             "traits": ["smithy.api#"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _includeTraitsByTag-transform:
@@ -1073,25 +1033,23 @@ orphaned shapes.
       - The list of tags that must be present for a trait to be included
         in the filtered model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeTraitsByTag",
-                            "args": {
-                                "tags": ["public"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeTraitsByTag",
+                         "args": {
+                             "tags": ["public"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. note::
 
@@ -1117,25 +1075,23 @@ key is in the provided ``keys`` list.
       - ``[string]``
       - The set of metadata keys that are removed from the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "excludeMetadata",
-                            "args": {
-                                "keys": ["suppressions"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "excludeMetadata",
+                         "args": {
+                             "keys": ["suppressions"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _includeMetadata-transform:
@@ -1157,25 +1113,23 @@ key is not in the provided ``keys`` list.
       - ``[string]``
       - The set of metadata keys that are retained in the model.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "includeMetadata",
-                            "args": {
-                                "keys": ["authors"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "includeMetadata",
+                         "args": {
+                             "keys": ["authors"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. _flattenNamespaces:
 
@@ -1217,27 +1171,25 @@ them through the service shape's ``rename`` property. Shapes tagged with
 long as they don't conflict with a shape within the
 :ref:`service closure <service-closure>`.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "flattenNamespaces",
-                            "args": {
-                                "namespace": "ns.foo",
-                                "service": "ns.bar#MyService",
-                                "includeTagged": ["baz", "qux"]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "flattenNamespaces",
+                         "args": {
+                             "namespace": "ns.foo",
+                             "service": "ns.bar#MyService",
+                             "includeTagged": ["baz", "qux"]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 
 .. _removeTraitDefinitions-transform:
@@ -1266,28 +1218,26 @@ definition and adding the list of export tags in the ``exportTagged`` argument.
 The following example removes trait definitions but keeps the instances of the
 trait intact on shapes in the model:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "removeTraitDefinitions",
-                            "args": {
-                                "exportTagged": [
-                                    "export-tag1",
-                                    "another-export-tag"
-                                ]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "removeTraitDefinitions",
+                         "args": {
+                             "exportTagged": [
+                                 "export-tag1",
+                                 "another-export-tag"
+                             ]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. _removeUnusedShapes-transform:
 
@@ -1317,28 +1267,26 @@ the ``exportTagged`` argument.
 The following example removes shapes that are not connected to any service,
 but keeps the shape if it has any of the provided tags:
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "removeUnusedShapes",
-                            "args": {
-                                "exportTagged": [
-                                    "export-tag1",
-                                    "another-export-tag"
-                                ]
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "removeUnusedShapes",
+                         "args": {
+                             "exportTagged": [
+                                 "export-tag1",
+                                 "another-export-tag"
+                             ]
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. _renameShapes-transform:
 
@@ -1364,27 +1312,25 @@ shapes that are being renamed.
 The following example renames the ``ns.foo#Bar`` shape to ``ns.foo#Baz``.
 Any references to ``ns.foo#Bar`` on other shapes will also be updated.
 
-.. tabs::
+.. code-block:: json
 
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {
-                            "name": "renameShapes",
-                            "args": {
-                                "renamed": {
-                                    "ns.foo#Bar": "ns.foo#Baz"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        }
+     {
+         "version": "1.0",
+         "projections": {
+             "exampleProjection": {
+                 "transforms": [
+                     {
+                         "name": "renameShapes",
+                         "args": {
+                             "renamed": {
+                                 "ns.foo#Bar": "ns.foo#Baz"
+                             }
+                         }
+                     }
+                 ]
+             }
+         }
+     }
 
 .. _build_envars:
 

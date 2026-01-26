@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
-    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>AWS Core Specification - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -254,6 +254,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Linting Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/wire-protocol-selection.html">Wire protocol selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../guides/model-translations/index.html">Model Translations</a><input aria-label="Toggle navigation of Model Translations" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
@@ -1343,8 +1344,20 @@ validation.</p>
 <td><p>Defines a top-level operation input member that is used to configure
 request checksum behavior. The input member MUST target an <a class="reference internal" href="../spec/simple-types.html#enum"><span class="std std-ref">enum</span></a>
 shape. Each value in the enum represents a supported checksum
-algorithm. Algorithms MUST be one of the following supported values:
-&quot;CRC64NVME&quot;, &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;, or &quot;SHA256&quot;.</p></td>
+algorithm. Algorithms MUST be one of the following supported values:</p>
+<ul class="simple">
+<li><p>&quot;CRC32&quot;</p></li>
+<li><p>&quot;CRC32C&quot;</p></li>
+<li><p>&quot;CRC64NVME&quot;</p></li>
+<li><p>&quot;MD5&quot;</p></li>
+<li><p>&quot;SHA1&quot;</p></li>
+<li><p>&quot;SHA256&quot;</p></li>
+<li><p>&quot;SHA512&quot;</p></li>
+<li><p>&quot;XXHASH64&quot;</p></li>
+<li><p>&quot;XXHASH3&quot;</p></li>
+<li><p>&quot;XXHASH128&quot;</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td><p>requestChecksumRequired</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
@@ -1363,8 +1376,20 @@ member MUST target an <a class="reference internal" href="../spec/simple-types.h
 <td><p><code class="docutils literal notranslate"><span class="pre">set&lt;string&gt;</span></code></p></td>
 <td><p>Defines the checksum algorithms clients SHOULD look for when validating
 checksums returned in the HTTP response. Each algorithm must be one of
-the following supported values: &quot;CRC64NVME&quot;, &quot;CRC32C&quot;, &quot;CRC32&quot;, &quot;SHA1&quot;,
-or &quot;SHA256&quot;.</p></td>
+the following supported values:</p>
+<ul class="simple">
+<li><p>&quot;CRC32&quot;</p></li>
+<li><p>&quot;CRC32C&quot;</p></li>
+<li><p>&quot;CRC64NVME&quot;</p></li>
+<li><p>&quot;MD5&quot;</p></li>
+<li><p>&quot;SHA1&quot;</p></li>
+<li><p>&quot;SHA256&quot;</p></li>
+<li><p>&quot;SHA512&quot;</p></li>
+<li><p>&quot;XXHASH64&quot;</p></li>
+<li><p>&quot;XXHASH3&quot;</p></li>
+<li><p>&quot;XXHASH128&quot;</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1430,19 +1455,22 @@ behavior, will fail validation.</p>
 <span id="id9"></span><h3>Client behavior<a class="headerlink" href="#aws-protocols-httpchecksum-trait-behavior" title="Link to this heading">¶</a></h3>
 <section id="supported-checksum-algorithms">
 <h4>Supported checksum algorithms<a class="headerlink" href="#supported-checksum-algorithms" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>The following checksum algorithms MUST be supported by clients.</dt><dd><ul class="simple">
+<p>The following checksum algorithms MUST be supported by clients.</p>
+<ul class="simple">
 <li><p>CRC32</p></li>
 <li><p>SHA1</p></li>
 <li><p>SHA256</p></li>
 </ul>
-</dd>
-<dt>Additionally, the following checksum algorithms SHOULD be supported by clients.</dt><dd><ul class="simple">
-<li><p>CRC64NVME</p></li>
+<p>Additionally, the following checksum algorithms SHOULD be supported by clients.</p>
+<ul class="simple">
 <li><p>CRC32C</p></li>
+<li><p>CRC64NVME</p></li>
+<li><p>MD5</p></li>
+<li><p>SHA512</p></li>
+<li><p>XXHASH64</p></li>
+<li><p>XXHASH3</p></li>
+<li><p>XXHASH128</p></li>
 </ul>
-</dd>
-</dl>
 </section>
 <section id="http-request-checksums">
 <h4>HTTP request checksums<a class="headerlink" href="#http-request-checksums" title="Link to this heading">¶</a></h4>
@@ -2400,8 +2428,8 @@ existing AWS services.</p>
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=60dbed4a"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=6b89569b"></script>
