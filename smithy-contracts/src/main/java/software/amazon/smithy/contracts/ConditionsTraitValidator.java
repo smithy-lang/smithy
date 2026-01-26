@@ -17,6 +17,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ConditionsTraitValidator extends AbstractValidator {
 
@@ -39,7 +40,6 @@ public class ConditionsTraitValidator extends AbstractValidator {
         for (Map.Entry<String, Condition> entry : conditions.getConditions().entrySet()) {
             events.addAll(validateCondition(model, shape, entry.getKey(), entry.getValue()));
         }
-        return events;
     }
 
     private List<

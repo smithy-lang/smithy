@@ -55,7 +55,7 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
         for (Map.Entry<StringNode, Node> entry : members.entrySet()) {
             Condition condition = Condition.fromNode(entry.getValue());
             String name = entry.getKey().expectStringNode().getValue();
-            builder.put(name, condition);
+            builder.putCondition(name, condition);
         }
         return builder.build();
     }
@@ -69,7 +69,7 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
      */
     public SmithyBuilder<ConditionsTrait> toBuilder() {
         return builder().sourceLocation(getSourceLocation())
-                .replace(getConditions());
+                .conditions(getConditions());
     }
 
     public static Builder builder() {
