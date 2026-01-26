@@ -10,7 +10,7 @@ import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 
-public class ModelJmespathUtilities {
+public final class ModelJmespathUtilities {
 
     public static final String JMESPATH_PROBLEM = "JmespathProblem";
     public static final String JMES_PATH_DANGER = "JmespathEventDanger";

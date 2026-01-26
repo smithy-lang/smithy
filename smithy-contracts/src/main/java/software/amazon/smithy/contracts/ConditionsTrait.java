@@ -84,7 +84,7 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
 
         private Builder() {}
 
-        public Builder replace(Map<String, Condition> conditions) {
+        public Builder conditions(Map<String, Condition> conditions) {
             clear();
             this.conditions.get().putAll(conditions);
             return this;
@@ -95,12 +95,12 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
             return this;
         }
 
-        public Builder put(String name, Condition condition) {
+        public Builder putCondition(String name, Condition condition) {
             this.conditions.get().put(name, condition);
             return this;
         }
 
-        public Builder remove(String name) {
+        public Builder removeCondition(String name) {
             this.conditions.get().remove(name);
             return this;
         }

@@ -22,14 +22,18 @@ public class ConditionsTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                .filter(shape -> shape.hasTrait(ConditionsTrait.ID))
-                .flatMap(shape -> validateShape(model, shape).stream())
-                .collect(Collectors.toList());
+        if (!model.isTraitApplied(ConditionsTrait.class)) {
+            return ListUtils.of();
+        }
+        
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(ConditionsTrait.ID)) {
+            validateShape(model, shape, events);
+        }
+        return events;
     }
 
-    private List<ValidationEvent> validateShape(Model model, Shape shape) {
-        List<ValidationEvent> events = new ArrayList<>();
+    private void validateShape(Model model, Shape shape, List<ValidationEvent> events) {
         ConditionsTrait conditions = shape.expectTrait(ConditionsTrait.class);
 
         for (Map.Entry<String, Condition> entry : conditions.getConditions().entrySet()) {

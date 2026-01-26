@@ -3,7 +3,7 @@ $version: "2.0"
 namespace smithy.contracts
 
 /// Restricts shape values to those that satisfy one or more JMESPath expressions.
-/// Each expression must produce 'true'.
+/// Each expression must produce `true`.
 @trait(selector: ":not(:test(service, operation, resource))")
 map conditions {
     key: ConditionName
@@ -14,7 +14,7 @@ map conditions {
 string ConditionName
 
 structure Condition {
-    /// JMESPath expression that must evaluate to true.
+    /// JMESPath expression that must evaluate to `true`.
     @required
     expression: String
 

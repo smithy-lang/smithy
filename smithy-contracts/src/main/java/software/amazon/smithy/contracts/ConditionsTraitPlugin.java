@@ -16,7 +16,7 @@ import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.node.MemberAndShapeTraitPlugin;
 
-public class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node, ConditionsTrait> {
+public final class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node, ConditionsTrait> {
 
     public ConditionsTraitPlugin() {
         super(EnumSet.allOf(ShapeType.class), Node.class, ConditionsTrait.class);

@@ -1,8 +1,8 @@
 .. _contract-traits:
 
------------------
+---------------
 Contract traits
------------------
+---------------
 
 Contract traits are used to further constrain the valid values and behaviors of a model.
 Like constraint traits, contract traits are for validation only and SHOULD NOT
@@ -10,7 +10,7 @@ impact the types signatures of generated code.
 
 
 Contract trait enforcement
-============================
+==========================
 
 Contract traits SHOULD NOT be directly enforced by default when serializing or deserializing.
 These traits often express contracts using higher-level constructs and simpler but less efficient expressions.
@@ -46,7 +46,7 @@ the following members:
       - Description
     * - expression
       - ``string``
-      - JMESPath expression that must evaluate to true.
+      - **Required**. JMESPath expression that must evaluate to true.
     * - description
       - ``string``
       - Description of the condition. Used in error messages when violated.
