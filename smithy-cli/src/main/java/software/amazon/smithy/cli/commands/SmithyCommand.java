@@ -25,7 +25,7 @@ public final class SmithyCommand implements Command {
     public SmithyCommand(DependencyResolver.Factory dependencyResolverFactory) {
         Objects.requireNonNull(dependencyResolverFactory);
 
-        Command migrateCommand = new MigrateCommand(getName());
+        Command migrateCommand = new MigrateCommand(getName(), dependencyResolverFactory);
         Command deprecated1To2Command = MigrateCommand.createDeprecatedAlias(migrateCommand);
 
         commands = Arrays.asList(

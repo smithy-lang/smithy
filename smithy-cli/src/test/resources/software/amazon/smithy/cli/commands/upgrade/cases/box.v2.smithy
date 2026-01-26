@@ -7,6 +7,8 @@ integer BoxedInteger
 @default(0)
 integer NonBoxedInteger
 
+boolean BoxedBoolean
+
 structure StructureWithOptionalString {
     boxedTarget: BoxedInteger,
 
@@ -20,6 +22,7 @@ union BoxyUnion {
     boxedMember: NonBoxedInteger,
 }
 
+@sparse
 list BadSparseList {
     member: NonBoxedInteger,
 }
@@ -29,8 +32,15 @@ list BadSparseSet {
     member: NonBoxedInteger,
 }
 
+@sparse
 map BadSparseMap {
     key: String,
 
     value: NonBoxedInteger,
+}
+
+@sparse
+list GoodSparseList {
+
+    member: BoxedBoolean
 }

@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,8 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
+import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -41,11 +46,12 @@ public class MigrateCommandTest {
         Path expectedPath = parentDir.resolve(expectedFileName);
 
         Model model = Model.assembler().addImport(initialPath).assemble().unwrap();
-        String actual = new MigrateCommand("smithy").upgradeFile(model, initialPath);
+        String actual = createMigrateCommand()
+                .upgradeFile(model, initialPath);
         String expected = IoUtils.readUtf8File(expectedPath);
 
         if (!actual.equals(expected)) {
-            Assertions.fail("Expected models to be equal:\n\nActual:\n\n" + actual + "\n\nExpected:\n\n" + expected);
+            Assertions.fail("Expected models to be equal:\n\n== Actual:\n" + actual + "\n== Expected:\n" + expected);
         }
     }
 
@@ -108,7 +114,7 @@ public class MigrateCommandTest {
     @MethodSource("noopSource")
     public void testUpgradeV2Noop(Path noopTestFilePath, String name) {
         Model model = Model.assembler().addImport(noopTestFilePath).assemble().unwrap();
-        String actual = new MigrateCommand("smithy").upgradeFile(model, noopTestFilePath);
+        String actual = createMigrateCommand().upgradeFile(model, noopTestFilePath);
         String expected = IoUtils.readUtf8File(noopTestFilePath);
 
         if (!actual.equals(expected)) {
@@ -199,5 +205,22 @@ public class MigrateCommandTest {
 
         assertThat(result.code(), equalTo(0));
         assertThat(result.stderr(), containsString("upgrade-1-to-2 is deprecated"));
+    }
+
+    static MigrateCommand createMigrateCommand() {
+        return new MigrateCommand("smithy", (x, y) -> new MockDependencyResolver());
+    }
+
+    private static final class MockDependencyResolver implements DependencyResolver {
+        @Override
+        public void addRepository(MavenRepository repository) {}
+
+        @Override
+        public void addDependency(String coordinates) {}
+
+        @Override
+        public List<ResolvedArtifact> resolve() {
+            return Collections.emptyList();
+        }
     }
 }
