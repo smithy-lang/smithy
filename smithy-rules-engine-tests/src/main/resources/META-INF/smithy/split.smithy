@@ -467,7 +467,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part1"
+            assign: "part1_ssa_1"
         }
         {
             fn: "coalesce"
@@ -483,7 +483,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part2"
+            assign: "part2_ssa_1"
         }
         {
             fn: "coalesce"
@@ -499,7 +499,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part3"
+            assign: "part3_ssa_1"
         }
         {
             fn: "coalesce"
@@ -515,7 +515,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part4"
+            assign: "part4_ssa_1"
         }
         {
             fn: "coalesce"
@@ -531,7 +531,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part5"
+            assign: "part5_ssa_1"
         }
         {
             fn: "stringEquals"
@@ -565,7 +565,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part1"
+            assign: "part1_ssa_2"
         }
         {
             fn: "coalesce"
@@ -581,7 +581,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part2"
+            assign: "part2_ssa_2"
         }
         {
             fn: "coalesce"
@@ -597,7 +597,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part3"
+            assign: "part3_ssa_2"
         }
         {
             fn: "coalesce"
@@ -613,7 +613,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part4"
+            assign: "part4_ssa_2"
         }
         {
             fn: "coalesce"
@@ -629,7 +629,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part5"
+            assign: "part5_ssa_2"
         }
         {
             fn: "stringEquals"
@@ -663,7 +663,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part1"
+            assign: "part1_ssa_3"
         }
         {
             fn: "coalesce"
@@ -679,7 +679,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part2"
+            assign: "part2_ssa_3"
         }
         {
             fn: "coalesce"
@@ -695,7 +695,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part3"
+            assign: "part3_ssa_3"
         }
         {
             fn: "coalesce"
@@ -711,7 +711,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part4"
+            assign: "part4_ssa_3"
         }
         {
             fn: "coalesce"
@@ -727,7 +727,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part5"
+            assign: "part5_ssa_3"
         }
         {
             fn: "stringEquals"
@@ -761,7 +761,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part1"
+            assign: "part1_ssa_4"
         }
         {
             fn: "coalesce"
@@ -777,7 +777,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part2"
+            assign: "part2_ssa_4"
         }
         {
             fn: "coalesce"
@@ -793,7 +793,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part3"
+            assign: "part3_ssa_4"
         }
         {
             fn: "coalesce"
@@ -809,7 +809,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part4"
+            assign: "part4_ssa_4"
         }
         {
             fn: "coalesce"
@@ -825,7 +825,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part5"
+            assign: "part5_ssa_4"
         }
         {
             fn: "stringEquals"
@@ -859,7 +859,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part1"
+            assign: "part1_ssa_5"
         }
         {
             fn: "coalesce"
@@ -875,7 +875,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part2"
+            assign: "part2_ssa_5"
         }
         {
             fn: "coalesce"
@@ -891,7 +891,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part3"
+            assign: "part3_ssa_5"
         }
         {
             fn: "coalesce"
@@ -907,7 +907,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part4"
+            assign: "part4_ssa_5"
         }
         {
             fn: "coalesce"
@@ -923,7 +923,7 @@ use smithy.rules#endpointTests
                 }
                 "<null>"
             ]
-            assign: "part5"
+            assign: "part5_ssa_5"
         }
     ]
     results: [
@@ -932,7 +932,51 @@ use smithy.rules#endpointTests
             endpoint: {
                 url: "https://example.com"
                 properties: {
-                    splitResult: "p1={part1}; p2={part2}; p3={part3}; p4={part4}; p5={part5}"
+                    splitResult: "p1={part1_ssa_1}; p2={part2_ssa_1}; p3={part3_ssa_1}; p4={part4_ssa_1}; p5={part5_ssa_1}"
+                }
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+                properties: {
+                    splitResult: "p1={part1_ssa_2}; p2={part2_ssa_2}; p3={part3_ssa_2}; p4={part4_ssa_2}; p5={part5_ssa_2}"
+                }
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+                properties: {
+                    splitResult: "p1={part1_ssa_3}; p2={part2_ssa_3}; p3={part3_ssa_3}; p4={part4_ssa_3}; p5={part5_ssa_3}"
+                }
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+                properties: {
+                    splitResult: "p1={part1_ssa_4}; p2={part2_ssa_4}; p3={part3_ssa_4}; p4={part4_ssa_4}; p5={part5_ssa_4}"
+                }
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+                properties: {
+                    splitResult: "p1={part1_ssa_5}; p2={part2_ssa_5}; p3={part3_ssa_5}; p4={part4_ssa_5}; p5={part5_ssa_5}"
                 }
                 headers: {}
             }
@@ -947,7 +991,7 @@ use smithy.rules#endpointTests
     ]
     root: 2
     nodeCount: 36
-    nodes: "/////wAAAAH/////AAAAAAAAAAMAAAAJAAAAAQAAAAQAAAAJAAAAAgAAAAUAAAAJAAAAAwAAAAYAAAAJAAAABAAAAAcAAAAJAAAABQAAAAgAAAAJAAAABgX14QEAAAAJAAAABwAAAAoAAAAQAAAACAAAAAsAAAAQAAAACQAAAAwAAAAQAAAACgAAAA0AAAAQAAAACwAAAA4AAAAQAAAADAAAAA8AAAAQAAAADQX14QEAAAAQAAAADgAAABEAAAAXAAAADwAAABIAAAAXAAAAEAAAABMAAAAXAAAAEQAAABQAAAAXAAAAEgAAABUAAAAXAAAAEwAAABYAAAAXAAAAFAX14QEAAAAXAAAAFQAAABgAAAAeAAAAFgAAABkAAAAeAAAAFwAAABoAAAAeAAAAGAAAABsAAAAeAAAAGQAAABwAAAAeAAAAGgAAAB0AAAAeAAAAGwX14QEAAAAeAAAAHAAAAB8F9eECAAAAHQAAACAF9eECAAAAHgAAACEF9eECAAAAHwAAACIF9eECAAAAIAAAACMF9eECAAAAIQAAACQF9eECAAAAIgX14QEF9eEC"
+    nodes: "/////wAAAAH/////AAAAAAAAAAMAAAAJAAAAAQAAAAQAAAAJAAAAAgAAAAUAAAAJAAAAAwAAAAYAAAAJAAAABAAAAAcAAAAJAAAABQAAAAgAAAAJAAAABgX14QEAAAAJAAAABwAAAAoAAAAQAAAACAAAAAsAAAAQAAAACQAAAAwAAAAQAAAACgAAAA0AAAAQAAAACwAAAA4AAAAQAAAADAAAAA8AAAAQAAAADQX14QIAAAAQAAAADgAAABEAAAAXAAAADwAAABIAAAAXAAAAEAAAABMAAAAXAAAAEQAAABQAAAAXAAAAEgAAABUAAAAXAAAAEwAAABYAAAAXAAAAFAX14QMAAAAXAAAAFQAAABgAAAAeAAAAFgAAABkAAAAeAAAAFwAAABoAAAAeAAAAGAAAABsAAAAeAAAAGQAAABwAAAAeAAAAGgAAAB0AAAAeAAAAGwX14QQAAAAeAAAAHAAAAB8F9eEGAAAAHQAAACAF9eEGAAAAHgAAACEF9eEGAAAAHwAAACIF9eEGAAAAIAAAACMF9eEGAAAAIQAAACQF9eEGAAAAIgX14QUF9eEG"
 )
 @endpointTests(
     version: "1.0",
