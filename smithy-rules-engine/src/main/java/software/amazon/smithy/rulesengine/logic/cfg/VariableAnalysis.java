@@ -36,17 +36,20 @@ final class VariableAnalysis {
     private final Map<String, Integer> bindingCounts;
     private final Map<String, Integer> referenceCounts;
     private final Map<String, Map<String, String>> expressionMappings;
+    private final Set<String> variablesNeedingSsa;
 
     private VariableAnalysis(
             Set<String> inputParams,
             Map<String, Integer> bindingCounts,
             Map<String, Integer> referenceCounts,
-            Map<String, Map<String, String>> expressionMappings
+            Map<String, Map<String, String>> expressionMappings,
+            Set<String> variablesNeedingSsa
     ) {
         this.inputParams = inputParams;
         this.bindingCounts = bindingCounts;
         this.referenceCounts = referenceCounts;
         this.expressionMappings = expressionMappings;
+        this.variablesNeedingSsa = variablesNeedingSsa;
     }
 
     static VariableAnalysis analyze(EndpointRuleSet ruleSet) {
@@ -55,11 +58,17 @@ final class VariableAnalysis {
             visitor.visitRule(rule);
         }
 
+        Set<String> needsSsa = computeVariablesNeedingSsa(
+                visitor.bindings,
+                visitor.bindingCounts,
+                visitor.bindingReferences);
+
         return new VariableAnalysis(
                 extractInputParameters(ruleSet),
                 visitor.bindingCounts,
                 visitor.referenceCounts,
-                createExpressionMappings(visitor.bindings, visitor.bindingCounts));
+                createExpressionMappings(visitor.bindings, visitor.bindingCounts, needsSsa),
+                needsSsa);
     }
 
     Set<String> getInputParams() {
@@ -68,6 +77,14 @@ final class VariableAnalysis {
 
     Map<String, Map<String, String>> getExpressionMappings() {
         return expressionMappings;
+    }
+
+    /**
+     * Returns whether the variable needs SSA renaming due to multiple bindings with
+     * different expressions or transitive dependencies on other SSA-renamed variables.
+     */
+    boolean needsSsaRenaming(String variableName) {
+        return variablesNeedingSsa.contains(variableName);
     }
 
     int getReferenceCount(String variableName) {
@@ -84,13 +101,6 @@ final class VariableAnalysis {
     }
 
     boolean hasMultipleBindings(String variableName) {
-        // Check if variable is bound more than once, regardless of whether expressions are the same.
-        // This is important because SSA may rewrite references in the expressions, making originally
-        // identical expressions different after SSA. For example:
-        //   Branch A: outpostId = getAttr(parsed, ...)
-        //   Branch B: outpostId = getAttr(parsed, ...)
-        // If "parsed" is renamed to "parsed_ssa_1" in branch A and "parsed_ssa_2" in branch B,
-        // the expressions become different, but we've already decided not to rename "outpostId".
         Integer count = bindingCounts.get(variableName);
         return count != null && count > 1;
     }
@@ -109,35 +119,100 @@ final class VariableAnalysis {
 
     private static Map<String, Map<String, String>> createExpressionMappings(
             Map<String, Set<String>> bindings,
-            Map<String, Integer> bindingCounts
+            Map<String, Integer> bindingCounts,
+            Set<String> needsSsa
     ) {
         Map<String, Map<String, String>> result = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
             String varName = entry.getKey();
             Set<String> expressions = entry.getValue();
             int bindingCount = bindingCounts.getOrDefault(varName, 0);
-            result.put(varName, createMappingForVariable(varName, expressions, bindingCount));
+            result.put(varName,
+                    createMappingForVariable(varName,
+                            expressions,
+                            bindingCount,
+                            needsSsa.contains(varName)));
         }
         return result;
+    }
+
+    /**
+     * Computes which variables need SSA renaming using fixed-point iteration.
+     *
+     * <p>A variable needs SSA if:
+     * <ul>
+     *   <li>It has multiple bindings with different expression text, OR</li>
+     *   <li>It has multiple bindings and references a variable that needs SSA (transitive)</li>
+     * </ul>
+     *
+     * <p>The transitive case handles situations like:
+     * <pre>
+     *   Branch A: parts = split(input, delim, 0); part1 = coalesce(getAttr(parts, "[0]"), "")
+     *   Branch B: parts = split(input, delim, 1); part1 = coalesce(getAttr(parts, "[0]"), "")
+     * </pre>
+     * Here {@code part1} has identical expression text in both branches, but {@code parts} will be
+     * SSA-renamed, so {@code part1} must also be SSA-renamed to avoid shadowing in the flattened BDD.
+     */
+    private static Set<String> computeVariablesNeedingSsa(
+            Map<String, Set<String>> bindings,
+            Map<String, Integer> bindingCounts,
+            Map<String, Set<String>> bindingReferences
+    ) {
+        Set<String> needsSsa = new HashSet<>();
+
+        // Initial pass: variables with multiple bindings and different expressions need SSA.
+        for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
+            String varName = entry.getKey();
+            int bindingCount = bindingCounts.getOrDefault(varName, 0);
+            if (bindingCount > 1 && entry.getValue().size() > 1) {
+                needsSsa.add(varName);
+            }
+        }
+
+        // Fixed-point: propagate SSA requirement through reference chains.
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
+                String varName = entry.getKey();
+                if (needsSsa.contains(varName)) {
+                    continue;
+                }
+                int bindingCount = bindingCounts.getOrDefault(varName, 0);
+                if (bindingCount <= 1) {
+                    continue;
+                }
+                // If any referenced variable needs SSA, this one does too.
+                Set<String> refs = bindingReferences.get(varName);
+                if (refs != null) {
+                    for (String ref : refs) {
+                        if (needsSsa.contains(ref)) {
+                            needsSsa.add(varName);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return needsSsa;
     }
 
     private static Map<String, String> createMappingForVariable(
             String varName,
             Set<String> expressions,
-            int bindingCount
+            int bindingCount,
+            boolean needsSsa
     ) {
         Map<String, String> mapping = new HashMap<>();
 
-        if (bindingCount <= 1 || expressions.size() == 1) {
-            // Single binding or multiple bindings with the same expression: no SSA rename needed.
-            // When multiple bindings have the same expression text, references inside may get
-            // SSA-renamed differently in each scope, but that's fine: the resulting expressions
-            // will differ and be treated as distinct BDD conditions. The binding name being the
-            // same doesn't cause collisions since conditions are identified by their full content.
+        if (bindingCount <= 1 || !needsSsa) {
+            // Single binding, or multiple bindings that don't need SSA renaming.
             String expression = expressions.iterator().next();
             mapping.put(expression, varName);
         } else {
-            // Multiple bindings with different expressions: use SSA naming convention
+            // Multiple bindings that need SSA: assign unique names.
             List<String> sortedExpressions = new ArrayList<>(expressions);
             sortedExpressions.sort(String::compareTo);
             for (int i = 0; i < sortedExpressions.size(); i++) {
@@ -154,6 +229,8 @@ final class VariableAnalysis {
         final Map<String, Set<String>> bindings = new HashMap<>();
         final Map<String, Integer> bindingCounts = new HashMap<>();
         final Map<String, Integer> referenceCounts = new HashMap<>();
+        // Maps variable name -> set of variables referenced in its binding expressions
+        final Map<String, Set<String>> bindingReferences = new HashMap<>();
 
         void visitRule(Rule rule) {
             for (Condition condition : rule.getConditions()) {
@@ -165,6 +242,8 @@ final class VariableAnalysis {
                     bindings.computeIfAbsent(varName, k -> new HashSet<>()).add(expression);
                     // Track number of times variable is bound (not just unique expressions)
                     bindingCounts.merge(varName, 1, Integer::sum);
+                    // Track which variables this binding references (for transitive SSA detection)
+                    bindingReferences.computeIfAbsent(varName, k -> new HashSet<>()).addAll(fn.getReferences());
                 }
 
                 countReferences(condition.getFunction());

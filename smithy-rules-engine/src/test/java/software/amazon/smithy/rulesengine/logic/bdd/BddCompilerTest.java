@@ -274,4 +274,39 @@ class BddCompilerTest {
 
         Assertions.assertDoesNotThrow(bdd::toNode);
     }
+
+    @Test
+    public void doesNotFailOnSplitTest() {
+        // This test verifies that SSA transformation correctly handles transitive dependencies.
+        //
+        // The split.smithy model has 5 mutually exclusive branches (based on Limit being "0"-"4"),
+        // each containing:
+        //   parts = split(Input, Delimiter, <limit>)   // different expression per branch
+        //   part1 = coalesce(getAttr(parts, "[0]"), "<null>")  // same expression text in all branches
+        //   part2 = coalesce(getAttr(parts, "[1]"), "<null>")  // same expression text in all branches
+        //   ... etc
+        //
+        // The SSA transform must recognize that:
+        // 1. "parts" has different expressions per branch -> needs SSA renaming (parts_ssa_1, etc.)
+        // 2. "part1" has identical expression TEXT but references "parts" which gets renamed
+        //    -> after rewriting, expressions diverge -> also needs SSA renaming
+        //
+        // Without proper transitive dependency handling, all 5 "part1" bindings would get the same
+        // SSA name, causing the BDD validator to reject them as "shadowing" when it type-checks
+        // the flattened condition list.
+        Model model = Model.assembler()
+                .addImport(EndpointRuleSet.class.getResource("errorfiles/valid/split.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+
+        ServiceShape service = model.expectShape(
+                ShapeId.from("example#SplitTestService"),
+                ServiceShape.class);
+        EndpointRuleSetTrait trait = service.expectTrait(EndpointRuleSetTrait.class);
+        Cfg cfg = Cfg.from(trait.getEndpointRuleSet());
+        EndpointBddTrait bdd = EndpointBddTrait.from(cfg);
+
+        Assertions.assertDoesNotThrow(bdd::toNode);
+    }
 }

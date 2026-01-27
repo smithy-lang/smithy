@@ -56,6 +56,13 @@ final class SsaTransform extends TreeMapper {
     private final Deque<Map<String, String>> scopeStack = new ArrayDeque<>();
     private final VariableAnalysis analysis;
 
+    // Maps SSA name -> the rewritten expression string that was first assigned to it.
+    // Used to detect when same-text expressions diverge after reference rewriting.
+    private final Map<String, String> ssaNameToRewrittenExpr = new HashMap<>();
+
+    // Counter for generating unique SSA names when expressions diverge
+    private final Map<String, Integer> ssaCounters = new HashMap<>();
+
     private SsaTransform(VariableAnalysis analysis) {
         this.analysis = analysis;
         // Seed initial scope with input parameters.
@@ -97,11 +104,14 @@ final class SsaTransform extends TreeMapper {
 
         String uniqueBindingName = null;
         boolean needsUniqueBinding = false;
-        if (condition.getResult().isPresent()) {
-            String varName = condition.getResult().get().toString();
+        String varName = null;
 
-            // Only need SSA rename if variable has multiple bindings
-            if (analysis.hasMultipleBindings(varName)) {
+        if (condition.getResult().isPresent()) {
+            varName = condition.getResult().get().toString();
+
+            // Check if this variable needs SSA renaming (multiple bindings with different
+            // expressions, or transitive dependency on another SSA-renamed variable)
+            if (analysis.needsSsaRenaming(varName)) {
                 Map<String, String> expressionMap = analysis.getExpressionMappings().get(varName);
                 if (expressionMap != null) {
                     uniqueBindingName = expressionMap.get(fn.toString());
@@ -116,6 +126,23 @@ final class SsaTransform extends TreeMapper {
 
         LibraryFunction rewrittenFn = libraryFunction(fn);
         boolean fnChanged = rewrittenFn != fn;
+
+        // If we need a unique binding, check if the rewritten expression matches what we've
+        // seen before for this SSA name. If not, we need a fresh name.
+        if (needsUniqueBinding) {
+            String rewrittenExpr = rewrittenFn.toString();
+            String previousExpr = ssaNameToRewrittenExpr.get(uniqueBindingName);
+            if (previousExpr == null) {
+                ssaNameToRewrittenExpr.put(uniqueBindingName, rewrittenExpr);
+            } else if (!previousExpr.equals(rewrittenExpr)) { // note: compares rewritten expression strings
+                // Same original expression text but different after rewriting. Needs a fresh name.
+                do {
+                    int counter = ssaCounters.merge(varName, 1, Integer::sum);
+                    uniqueBindingName = varName + "_ssa_" + counter;
+                } while (ssaNameToRewrittenExpr.containsKey(uniqueBindingName));
+                ssaNameToRewrittenExpr.put(uniqueBindingName, rewrittenExpr);
+            }
+        }
 
         if (condition.getResult().isPresent() && uniqueBindingName != null) {
             bindVariable(condition.getResult().get().toString(), uniqueBindingName);

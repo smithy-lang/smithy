@@ -6,6 +6,9 @@ package software.amazon.smithy.rulesengine.logic.cfg;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -323,5 +326,104 @@ public class SsaTransformTest {
         assertEquals(false,
                 resultVar1.equals(resultVar2),
                 "SSA names should be unique: " + resultVar1 + " vs " + resultVar2);
+    }
+
+    @Test
+    void testTransitiveSsaDependencyGeneratesUniqueNames() {
+        // When variable A references variable B, and B gets SSA-renamed,
+        // A must also get unique names even if A's expression text is identical.
+        Parameter param = Parameter.builder().name("Input").type(ParameterType.STRING).required(true).build();
+
+        // Branch 1: base = uriEncode(Input), use base in endpoint
+        Condition base1 = Condition.builder()
+                .fn(UriEncode.ofExpressions(Expression.of("Input")))
+                .result("base")
+                .build();
+        EndpointRule rule1 = (EndpointRule) EndpointRule.builder()
+                .conditions(Collections.singletonList(base1))
+                .endpoint(Endpoint.builder()
+                        .url(Literal.stringLiteral(Template.fromString("https://{base}.branch1.com")))
+                        .build());
+
+        // Branch 2: base = uriEncode("other"), use base in endpoint
+        // Different expression for base -> needs SSA renaming
+        Condition base2 = Condition.builder()
+                .fn(UriEncode.ofExpressions(Expression.of("other")))
+                .result("base")
+                .build();
+        EndpointRule rule2 = (EndpointRule) EndpointRule.builder()
+                .conditions(Collections.singletonList(base2))
+                .endpoint(Endpoint.builder()
+                        .url(Literal.stringLiteral(Template.fromString("https://{base}.branch2.com")))
+                        .build());
+
+        EndpointRuleSet original = EndpointRuleSet.builder()
+                .parameters(Parameters.builder().addParameter(param).build())
+                .rules(Arrays.asList(rule1, rule2))
+                .version("1.1")
+                .build();
+
+        EndpointRuleSet result = SsaTransform.transform(original);
+
+        // Extract the "base" variable names from both branches
+        EndpointRule resultRule1 = (EndpointRule) result.getRules().get(0);
+        EndpointRule resultRule2 = (EndpointRule) result.getRules().get(1);
+        String baseVar1 = resultRule1.getConditions().get(0).getResult().map(Object::toString).orElse(null);
+        String baseVar2 = resultRule2.getConditions().get(0).getResult().map(Object::toString).orElse(null);
+
+        assertNotNull(baseVar1, "First base binding should exist");
+        assertNotNull(baseVar2, "Second base binding should exist");
+
+        assertNotEquals(baseVar1,
+                baseVar2,
+                "Base variables should have unique SSA names: " + baseVar1 + " vs " + baseVar2);
+
+        assertTrue(baseVar1.contains("_ssa_"), "First base should have SSA suffix, got: " + baseVar1);
+        assertTrue(baseVar2.contains("_ssa_"), "Second base should have SSA suffix, got: " + baseVar2);
+    }
+
+    @Test
+    void testSameExpressionSameRewrittenExpressionSharesSsaName() {
+        // When multiple bindings have the same expression AND the referenced variables
+        // don't get renamed, they should share the same SSA name.
+        Parameter param = Parameter.builder().name("Input").type(ParameterType.STRING).build();
+
+        // Both branches: result = uriEncode(Input)
+        // Since Input is a parameter and never renamed, both should get the same SSA name.
+        Condition cond1 = Condition.builder()
+                .fn(UriEncode.ofExpressions(Expression.of("Input")))
+                .result("result")
+                .build();
+        EndpointRule rule1 = (EndpointRule) EndpointRule.builder()
+                .conditions(Collections.singletonList(cond1))
+                .endpoint(Endpoint.builder()
+                        .url(Literal.stringLiteral(Template.fromString("https://{result}.branch1.com")))
+                        .build());
+
+        Condition cond2 = Condition.builder()
+                .fn(UriEncode.ofExpressions(Expression.of("Input")))
+                .result("result")
+                .build();
+        EndpointRule rule2 = (EndpointRule) EndpointRule.builder()
+                .conditions(Collections.singletonList(cond2))
+                .endpoint(Endpoint.builder()
+                        .url(Literal.stringLiteral(Template.fromString("https://{result}.branch2.com")))
+                        .build());
+
+        EndpointRuleSet original = EndpointRuleSet.builder()
+                .parameters(Parameters.builder().addParameter(param).build())
+                .rules(Arrays.asList(rule1, rule2))
+                .version("1.1")
+                .build();
+
+        EndpointRuleSet result = SsaTransform.transform(original);
+
+        EndpointRule resultRule1 = (EndpointRule) result.getRules().get(0);
+        EndpointRule resultRule2 = (EndpointRule) result.getRules().get(1);
+
+        String resultVar1 = resultRule1.getConditions().get(0).getResult().map(Object::toString).orElse(null);
+        String resultVar2 = resultRule2.getConditions().get(0).getResult().map(Object::toString).orElse(null);
+
+        assertEquals(resultVar1, resultVar2, "Same expression with same rewritten form should share SSA name");
     }
 }

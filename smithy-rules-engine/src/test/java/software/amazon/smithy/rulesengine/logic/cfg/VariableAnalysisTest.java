@@ -466,4 +466,102 @@ class VariableAnalysisTest {
         assertTrue(analysis.getInputParams().contains("Region"));
         assertEquals(0, analysis.getReferenceCount("Region"));
     }
+
+    @Test
+    void testTransitiveSsaDependency() {
+        // Tests that when variable A references variable B, and B needs SSA renaming,
+        // then A also needs SSA renaming even if A's expression text is identical across branches.
+        //
+        // Branch 1: parts = fn1(Input), derived = fn2(parts)
+        // Branch 2: parts = fn3(Input), derived = fn2(parts)  <- same expression text for derived
+        //
+        // After SSA: parts_ssa_1, parts_ssa_2, but derived must also get unique names
+        // because fn2(parts_ssa_1) != fn2(parts_ssa_2) after reference rewriting.
+
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Input").type(ParameterType.STRING).build())
+                .build();
+
+        // Branch 1: check isSet first, then parts = stringEquals(Input, "a"), derived = booleanEquals(parts, true)
+        Condition checkInput1 = Condition.builder().fn(TestHelpers.isSet("Input")).build();
+        Condition parts1 = Condition.builder()
+                .fn(StringEquals.ofExpressions(Expression.getReference(Identifier.of("Input")), Literal.of("a")))
+                .result(Identifier.of("parts"))
+                .build();
+        Condition derived1 = Condition.builder()
+                .fn(BooleanEquals.ofExpressions(Expression.getReference(Identifier.of("parts")), Literal.of(true)))
+                .result(Identifier.of("derived"))
+                .build();
+        Rule rule1 = EndpointRule.builder()
+                .conditions(checkInput1, parts1, derived1)
+                .endpoint(TestHelpers.endpoint("https://branch1.com"));
+
+        // Branch 2: check isSet first, then parts = stringEquals(Input, "b"), derived = booleanEquals(parts, true)
+        // Note: "derived" has the same expression text as branch 1, so we can't just rely on text uniqueness.
+        Condition checkInput2 = Condition.builder().fn(TestHelpers.isSet("Input")).build();
+        Condition parts2 = Condition.builder()
+                .fn(StringEquals.ofExpressions(Expression.getReference(Identifier.of("Input")), Literal.of("b")))
+                .result(Identifier.of("parts"))
+                .build();
+        Condition derived2 = Condition.builder()
+                .fn(BooleanEquals.ofExpressions(Expression.getReference(Identifier.of("parts")), Literal.of(true)))
+                .result(Identifier.of("derived"))
+                .build();
+        Rule rule2 = EndpointRule.builder()
+                .conditions(checkInput2, parts2, derived2)
+                .endpoint(TestHelpers.endpoint("https://branch2.com"));
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .rules(ListUtils.of(rule1, rule2))
+                .build();
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        // "parts" has multiple bindings with different expressions, so it needs SSA
+        assertTrue(analysis.hasMultipleBindings("parts"));
+        Map<String, String> partsMapping = analysis.getExpressionMappings().get("parts");
+        assertNotNull(partsMapping);
+        assertEquals(2, partsMapping.size(), "parts should have 2 different SSA names");
+
+        // "derived" has multiple bindings with same expression text
+        assertTrue(analysis.hasMultipleBindings("derived"));
+        Map<String, String> derivedMapping = analysis.getExpressionMappings().get("derived");
+        assertNotNull(derivedMapping);
+
+        // The expression text is identical, so there's only 1 entry in the mapping.
+        // (the SSA transform will later detect divergence at runtime when rewriting references)
+        assertEquals(1,
+                derivedMapping.size(),
+                "derived has same expression text, so 1 mapping entry (SSA transform handles divergence)");
+    }
+
+    @Test
+    void testMultipleBindingsSameExpressionNoSsaNeeded() {
+        // When multiple bindings have the same expression AND don't reference any
+        // SSA-renamed variables, they should map to the original variable name.
+        Parameters params = Parameters.builder()
+                .addParameter(Parameter.builder().name("Input").type(ParameterType.STRING).build())
+                .build();
+
+        // Both branches bind "result" to the same expression: isSet(Input)
+        // Since Input is a parameter (not SSA-renamed), no SSA renaming needed.
+        Condition cond1 = Condition.builder().fn(TestHelpers.isSet("Input")).result(Identifier.of("result")).build();
+        Rule rule1 = EndpointRule.builder().conditions(cond1).endpoint(TestHelpers.endpoint("https://branch1.com"));
+
+        Condition cond2 = Condition.builder().fn(TestHelpers.isSet("Input")).result(Identifier.of("result")).build();
+        Rule rule2 = EndpointRule.builder().conditions(cond2).endpoint(TestHelpers.endpoint("https://branch2.com"));
+
+        EndpointRuleSet ruleSet = EndpointRuleSet.builder()
+                .parameters(params)
+                .rules(ListUtils.of(rule1, rule2))
+                .build();
+        VariableAnalysis analysis = VariableAnalysis.analyze(ruleSet);
+
+        assertTrue(analysis.hasMultipleBindings("result"));
+        Map<String, String> mapping = analysis.getExpressionMappings().get("result");
+        assertNotNull(mapping);
+
+        assertEquals(1, mapping.size());
+        assertTrue(mapping.containsValue("result"), "Same expression should map to original variable name");
+    }
 }
