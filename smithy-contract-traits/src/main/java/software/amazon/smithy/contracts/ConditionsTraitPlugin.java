@@ -41,9 +41,8 @@ public final class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node,
             Context context,
             Emitter emitter
     ) {
-        JmespathExpression expression = JmespathExpression.parse(condition.getExpression());
         Evaluator<Node> evaluator = new Evaluator<>(value, NodeJmespathRuntime.INSTANCE);
-        Node result = evaluator.visit(expression);
+        Node result = evaluator.visit(condition.getExpression());
         if (!result.expectBooleanNode().getValue()) {
             emitter.accept(value,
                     getSeverity(context),

@@ -28,13 +28,13 @@ public class ConditionsTraitTest {
         ConditionsTrait trait = shape.expectTrait(ConditionsTrait.class);
         assertThat(trait.getConditions().size(), equalTo(1));
         Condition condition = trait.getConditions().get("StartBeforeEnd");
-        assertThat(condition.getParsedExpression(), isA(ComparatorExpression.class));
+        assertThat(condition.getExpression(), isA(ComparatorExpression.class));
 
         shape = result.expectShape(ShapeId.from("smithy.example#Name"));
         trait = shape.expectTrait(ConditionsTrait.class);
         assertThat(trait.getConditions().size(), equalTo(1));
         condition = trait.getConditions().get("NoKeywords");
-        assertThat(condition.getParsedExpression(), isA(AndExpression.class));
+        assertThat(condition.getExpression(), isA(AndExpression.class));
     }
 
 }
