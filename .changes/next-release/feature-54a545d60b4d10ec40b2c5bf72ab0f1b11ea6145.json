@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Fix SSA transform for transitive dependencies",
+  "pull_requests": [
+    "[#2946](https://github.com/smithy-lang/smithy/pull/2946)"
+  ]
+}
