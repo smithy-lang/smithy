@@ -2,6 +2,7 @@ $version: "2.0"
 
 namespace smithy.rules.tests
 
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 use smithy.rules#staticContextParams
@@ -46,6 +47,52 @@ use smithy.rules#operationContextParams
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        stringArrayParam: {
+            required: true
+            default: [
+                "defaultValue1"
+                "defaultValue2"
+            ]
+            documentation: "docs"
+            type: "stringArray"
+        }
+    }
+    conditions: [
+        {
+            fn: "getAttr"
+            argv: [
+                {
+                    ref: "stringArrayParam"
+                }
+                "[0]"
+            ]
+            assign: "arrayValue"
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com/{arrayValue}"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            documentation: "error fallthrough"
+            conditions: []
+            error: "no array values set"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 2
+    nodes: "/////wAAAAH/////AAAAAAX14QEF9eEC"
+)
 @endpointTests({
     "version": "1.0",
     "testCases": [

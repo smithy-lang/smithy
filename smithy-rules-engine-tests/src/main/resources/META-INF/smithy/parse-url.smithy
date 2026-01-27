@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -106,6 +107,124 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        Endpoint: {
+            required: false
+            documentation: "docs"
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "isSet"
+            argv: [
+                {
+                    ref: "Endpoint"
+                }
+            ]
+        }
+        {
+            fn: "parseURL"
+            argv: [
+                "{Endpoint}"
+            ]
+            assign: "url"
+        }
+        {
+            fn: "booleanEquals"
+            argv: [
+                true
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "url"
+                        }
+                        "isIp"
+                    ]
+                }
+            ]
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                "/port"
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "url"
+                        }
+                        "path"
+                    ]
+                }
+            ]
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                "/"
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "url"
+                        }
+                        "normalizedPath"
+                    ]
+                }
+            ]
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "{url#scheme}://{url#authority}{url#normalizedPath}is-ip-addr"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "{url#scheme}://{url#authority}/uri-with-port"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{url#scheme}-{url#authority}-nopath.example.com"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{url#scheme}-{url#authority}.example.com/path-is{url#path}"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            error: "endpoint was invalid"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 6
+    nodes: "/////wAAAAH/////AAAAAAAAAAMF9eEFAAAAAQAAAAQF9eEFAAAAAgX14QEAAAAFAAAAAwX14QIAAAAGAAAABAX14QMF9eEE"
+)
 @endpointTests(
     version: "1.0",
     testCases: [

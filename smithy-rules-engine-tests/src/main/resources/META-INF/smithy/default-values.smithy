@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -50,6 +51,52 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        bar: {
+            required: false
+            documentation: "docs"
+            type: "string"
+        }
+        baz: {
+            required: true
+            default: "baz"
+            documentation: "docs"
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "isSet"
+            argv: [
+                {
+                    ref: "bar"
+                }
+            ]
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com/{baz}"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            documentation: "error fallthrough"
+            conditions: []
+            error: "endpoint error"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 2
+    nodes: "/////wAAAAH/////AAAAAAX14QEF9eEC"
+)
 @endpointTests({
     "version": "1.0",
     "testCases": [

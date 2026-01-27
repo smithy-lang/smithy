@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -102,6 +103,106 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        TestCaseId: {
+            required: true
+            documentation: "Test case id used to select the test case to use"
+            type: "string"
+        }
+        Input: {
+            required: true
+            documentation: "the input used to test substring"
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "TestCaseId"
+                }
+                "1"
+            ]
+        }
+        {
+            fn: "substring"
+            argv: [
+                "{Input}"
+                0
+                4
+                false
+            ]
+            assign: "output_ssa_1"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "TestCaseId"
+                }
+                "2"
+            ]
+        }
+        {
+            fn: "substring"
+            argv: [
+                "{Input}"
+                0
+                4
+                true
+            ]
+            assign: "output_ssa_2"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "TestCaseId"
+                }
+                "3"
+            ]
+        }
+        {
+            fn: "substring"
+            argv: [
+                "{Input}"
+                1
+                3
+                false
+            ]
+            assign: "output_ssa_3"
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            error: "The value is: `{output_ssa_1}`"
+            type: "error"
+        }
+        {
+            conditions: []
+            error: "The value is: `{output_ssa_2}`"
+            type: "error"
+        }
+        {
+            conditions: []
+            error: "The value is: `{output_ssa_3}`"
+            type: "error"
+        }
+        {
+            documentation: "fallback when no tests match"
+            conditions: []
+            error: "No tests matched"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 7
+    nodes: "/////wAAAAH/////AAAAAAAAAAMAAAAEAAAAAQX14QEAAAAEAAAAAgAAAAUAAAAGAAAAAwX14QIAAAAGAAAABAAAAAcF9eEEAAAABQX14QMF9eEE"
+)
 @endpointTests(
     version: "1.0",
     testCases: [

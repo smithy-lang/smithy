@@ -1,8 +1,9 @@
 $version: "2.0"
 
-namespace smithy.tests.endpointrules.split
+namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -414,6 +415,540 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.3"
+    parameters: {
+        Input: {
+            required: true
+            documentation: "The input string to split"
+            type: "string"
+        }
+        Delimiter: {
+            required: true
+            documentation: "The delimiter to split by"
+            type: "string"
+        }
+        Limit: {
+            required: true
+            documentation: "The split limit as a string"
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "Limit"
+                }
+                "0"
+            ]
+        }
+        {
+            fn: "split"
+            argv: [
+                "{Input}"
+                "{Delimiter}"
+                0
+            ]
+            assign: "parts_ssa_1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_1"
+                        }
+                        "[0]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_1"
+                        }
+                        "[1]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_1"
+                        }
+                        "[2]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_1"
+                        }
+                        "[3]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_1"
+                        }
+                        "[4]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part5"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "Limit"
+                }
+                "1"
+            ]
+        }
+        {
+            fn: "split"
+            argv: [
+                "{Input}"
+                "{Delimiter}"
+                1
+            ]
+            assign: "parts_ssa_2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_2"
+                        }
+                        "[0]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_2"
+                        }
+                        "[1]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_2"
+                        }
+                        "[2]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_2"
+                        }
+                        "[3]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_2"
+                        }
+                        "[4]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part5"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "Limit"
+                }
+                "2"
+            ]
+        }
+        {
+            fn: "split"
+            argv: [
+                "{Input}"
+                "{Delimiter}"
+                2
+            ]
+            assign: "parts_ssa_3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_3"
+                        }
+                        "[0]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_3"
+                        }
+                        "[1]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_3"
+                        }
+                        "[2]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_3"
+                        }
+                        "[3]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_3"
+                        }
+                        "[4]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part5"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "Limit"
+                }
+                "3"
+            ]
+        }
+        {
+            fn: "split"
+            argv: [
+                "{Input}"
+                "{Delimiter}"
+                3
+            ]
+            assign: "parts_ssa_4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_4"
+                        }
+                        "[0]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_4"
+                        }
+                        "[1]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_4"
+                        }
+                        "[2]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_4"
+                        }
+                        "[3]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_4"
+                        }
+                        "[4]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part5"
+        }
+        {
+            fn: "stringEquals"
+            argv: [
+                {
+                    ref: "Limit"
+                }
+                "4"
+            ]
+        }
+        {
+            fn: "split"
+            argv: [
+                "{Input}"
+                "{Delimiter}"
+                4
+            ]
+            assign: "parts_ssa_5"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_5"
+                        }
+                        "[0]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part1"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_5"
+                        }
+                        "[1]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part2"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_5"
+                        }
+                        "[2]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part3"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_5"
+                        }
+                        "[3]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part4"
+        }
+        {
+            fn: "coalesce"
+            argv: [
+                {
+                    fn: "getAttr"
+                    argv: [
+                        {
+                            ref: "parts_ssa_5"
+                        }
+                        "[4]"
+                    ]
+                }
+                "<null>"
+            ]
+            assign: "part5"
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example.com"
+                properties: {
+                    splitResult: "p1={part1}; p2={part2}; p3={part3}; p4={part4}; p5={part5}"
+                }
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            documentation: "error fallthrough"
+            conditions: []
+            error: "endpoint error"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 36
+    nodes: "/////wAAAAH/////AAAAAAAAAAMAAAAJAAAAAQAAAAQAAAAJAAAAAgAAAAUAAAAJAAAAAwAAAAYAAAAJAAAABAAAAAcAAAAJAAAABQAAAAgAAAAJAAAABgX14QEAAAAJAAAABwAAAAoAAAAQAAAACAAAAAsAAAAQAAAACQAAAAwAAAAQAAAACgAAAA0AAAAQAAAACwAAAA4AAAAQAAAADAAAAA8AAAAQAAAADQX14QEAAAAQAAAADgAAABEAAAAXAAAADwAAABIAAAAXAAAAEAAAABMAAAAXAAAAEQAAABQAAAAXAAAAEgAAABUAAAAXAAAAEwAAABYAAAAXAAAAFAX14QEAAAAXAAAAFQAAABgAAAAeAAAAFgAAABkAAAAeAAAAFwAAABoAAAAeAAAAGAAAABsAAAAeAAAAGQAAABwAAAAeAAAAGgAAAB0AAAAeAAAAGwX14QEAAAAeAAAAHAAAAB8F9eECAAAAHQAAACAF9eECAAAAHgAAACEF9eECAAAAHwAAACIF9eECAAAAIAAAACMF9eECAAAAIQAAACQF9eECAAAAIgX14QEF9eEC"
+)
 @endpointTests(
     version: "1.0",
     testCases: [
@@ -856,4 +1391,4 @@ use smithy.rules#endpointTests
     Limit: {type: "string", documentation: "Split limit"}
 )
 @suppress(["UnstableTrait.smithy"])
-service FizzBuzz {}
+service SplitTest {}

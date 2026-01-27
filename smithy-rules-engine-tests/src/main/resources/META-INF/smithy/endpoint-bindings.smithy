@@ -2,6 +2,7 @@ $version: "2.0"
 
 namespace smithy.rules.tests
 
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 use smithy.rules#staticContextParams
@@ -153,6 +154,113 @@ use smithy.rules#operationContextParams
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        bar: {
+            required: false
+            documentation: "String parameter with no default value and client binding"
+            type: "string"
+        }
+        baz: {
+            required: true
+            default: "baz"
+            documentation: "String parameter with default value and client binding"
+            type: "string"
+        }
+        booleanParam: {
+            required: true
+            default: true
+            documentation: "Boolean parameter with default value and client binding"
+            type: "boolean"
+        }
+        Endpoint: {
+            builtIn: "SDK::Endpoint"
+            required: false
+            documentation: "Override the endpoint used to send this request"
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "isSet"
+            argv: [
+                {
+                    ref: "Endpoint"
+                }
+            ]
+        }
+        {
+            fn: "booleanEquals"
+            argv: [
+                {
+                    ref: "booleanParam"
+                }
+                true
+            ]
+        }
+        {
+            fn: "isSet"
+            argv: [
+                {
+                    ref: "bar"
+                }
+            ]
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: {
+                    ref: "Endpoint"
+                }
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{bar}.{baz}/set"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{baz}/set"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{bar}.{baz}/unset"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{baz}/unset"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+    ]
+    root: 2
+    nodeCount: 5
+    nodes: "/////wAAAAH/////AAAAAAX14QEAAAADAAAAAQAAAAUAAAAEAAAAAgX14QQF9eEFAAAAAgX14QIF9eED"
+)
 @endpointTests({
     "version": "1.0",
     "testCases": [

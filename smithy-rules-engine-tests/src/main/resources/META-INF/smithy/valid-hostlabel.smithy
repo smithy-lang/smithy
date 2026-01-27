@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -61,6 +62,65 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        Region: {
+            required: true
+            documentation: "The region to dispatch this request, eg. `us-east-1`."
+            type: "string"
+        }
+    }
+    conditions: [
+        {
+            fn: "isValidHostLabel"
+            argv: [
+                {
+                    ref: "Region"
+                }
+                false
+            ]
+        }
+        {
+            fn: "isValidHostLabel"
+            argv: [
+                {
+                    ref: "Region"
+                }
+                true
+            ]
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{Region}.amazonaws.com"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            conditions: []
+            endpoint: {
+                url: "https://{Region}-subdomains.amazonaws.com"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+        {
+            documentation: "Region was not a valid host label"
+            conditions: []
+            error: "Invalid hostlabel"
+            type: "error"
+        }
+    ]
+    root: 2
+    nodeCount: 3
+    nodes: "/////wAAAAH/////AAAAAAX14QEAAAADAAAAAQX14QIF9eED"
+)
 @endpointTests(
     version: "1.0",
     testCases: [

@@ -1,8 +1,9 @@
 $version: "2.0"
 
-namespace example
+namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
+use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -36,6 +37,44 @@ use smithy.rules#endpointTests
         }
     ]
 })
+@endpointBdd(
+    version: "1.1"
+    parameters: {
+        useFips: {
+            required: true
+            default: false
+            documentation: "Use FIPS endpoints"
+            type: "boolean"
+        }
+    }
+    conditions: [
+        {
+            fn: "ite"
+            argv: [
+                {
+                    ref: "useFips"
+                }
+                "-fips"
+                ""
+            ]
+            assign: "suffix"
+        }
+    ]
+    results: [
+        {
+            conditions: []
+            endpoint: {
+                url: "https://example{suffix}.com"
+                properties: {}
+                headers: {}
+            }
+            type: "endpoint"
+        }
+    ]
+    root: 2
+    nodeCount: 2
+    nodes: "/////wAAAAH/////AAAAAAX14QEF9eEA"
+)
 @endpointTests({
     "version": "1.0",
     "testCases": [
@@ -70,7 +109,7 @@ use smithy.rules#endpointTests
     ]
 })
 @suppress(["UnstableTrait.smithy"])
-service FizzBuzz {
+service IteTest {
     version: "2022-01-01",
     operations: [GetThing]
 }
