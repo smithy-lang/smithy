@@ -17,7 +17,7 @@ import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 /**
  * Validates the specific set of non-numeric values allowed for floats and doubles.
  */
-public final class NonNumericFloatValuesPlugin implements NodeValidatorPlugin {
+final class NonNumericFloatValuesPlugin implements NodeValidatorPlugin {
     private static final Set<String> NON_NUMERIC_FLOAT_VALUES = NonNumericFloat.stringRepresentations();
 
     @Override

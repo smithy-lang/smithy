@@ -13,24 +13,26 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 
 abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeValidatorPlugin {
+    // The set of ShapeTypes whose class is a subclass of the S type
     private final EnumSet<ShapeType> shapeTypes;
     private final Class<S> shapeClass;
     private final Class<N> nodeClass;
 
-    FilteredPlugin(EnumSet<ShapeType> shapeTypes, Class<S> shapeClass, Class<N> nodeClass) {
-        for (ShapeType shapeType : shapeTypes) {
-            if (!shapeClass.isAssignableFrom(shapeType.getShapeClass())) {
-                throw new IllegalArgumentException();
+    FilteredPlugin(Class<S> shapeClass, Class<N> nodeClass) {
+        this.shapeTypes = EnumSet.noneOf(ShapeType.class);
+        for (ShapeType shapeType : ShapeType.values()) {
+            if (shapeClass.isAssignableFrom(shapeType.getShapeClass())) {
+                this.shapeTypes.add(shapeType);
             }
         }
-        this.shapeTypes = shapeTypes;
         this.shapeClass = shapeClass;
         this.nodeClass = nodeClass;
     }
 
     @Override
     public BiPredicate<Model, Shape> shapeMatcher() {
-        // Only direct shapes, not member shapes pointing to them
+        // Only applies to direct shapes, not member shapes pointing to them,
+        // since the plugin only applies to subclasses of S.
         return new ShapeTypeFilter(shapeTypes, EnumSet.noneOf(ShapeType.class));
     }
 
@@ -38,6 +40,7 @@ abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeVa
     @SuppressWarnings("unchecked")
     public final void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
         if (nodeClass.isInstance(value)) {
+            // The cast to (S) is safe because of the ShapeType guard
             check((S) shape, (N) value, context, emitter);
         }
     }

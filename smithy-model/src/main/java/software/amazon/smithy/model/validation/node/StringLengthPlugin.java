@@ -15,9 +15,9 @@ import software.amazon.smithy.model.validation.Severity;
 /**
  * Validates the length trait on string shapes or members that target them.
  */
-public final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringNode, LengthTrait> {
+final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringNode, LengthTrait> {
 
-    public StringLengthPlugin() {
+    StringLengthPlugin() {
         super(EnumSet.of(ShapeType.STRING), StringNode.class, LengthTrait.class);
     }
 

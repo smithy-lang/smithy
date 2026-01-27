@@ -5,19 +5,17 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.ValidationUtils;
 
 /**
  * Validates NumberNodes against intEnum shapes' allowed enum values.
  */
-public final class IntEnumPlugin extends FilteredPlugin<IntEnumShape, NumberNode> {
+final class IntEnumPlugin extends FilteredPlugin<IntEnumShape, NumberNode> {
 
-    public IntEnumPlugin() {
-        super(EnumSet.of(ShapeType.INT_ENUM), IntEnumShape.class, NumberNode.class);
+    IntEnumPlugin() {
+        super(IntEnumShape.class, NumberNode.class);
     }
 
     @Override

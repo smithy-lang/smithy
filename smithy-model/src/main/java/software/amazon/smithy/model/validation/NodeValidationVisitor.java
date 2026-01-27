@@ -40,7 +40,6 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeTypeMap;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -73,14 +72,10 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return result;
     }
 
-    private static final ShapeTypeMap<NodeValidatorPlugin> PLUGINS_BY_SHAPE_TYPE = new ShapeTypeMap<>();
+    private static final CompositeNodeValidatorPlugin COMPOSITE_PLUGIN = new CompositeNodeValidatorPlugin();
     static {
-        BUILTIN.forEach(NodeValidationVisitor::addPlugin);
-        SPI_PLUGINS.forEach(NodeValidationVisitor::addPlugin);
-    }
-
-    private static void addPlugin(NodeValidatorPlugin plugin) {
-        PLUGINS_BY_SHAPE_TYPE.add(plugin.shapeMatcher(), plugin);
+        BUILTIN.forEach(COMPOSITE_PLUGIN::addChild);
+        SPI_PLUGINS.forEach(COMPOSITE_PLUGIN::addChild);
     }
 
     private final Model model;
@@ -537,13 +532,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                 (location, severity, message, additionalEventIdParts) -> events
                         .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
 
-        for (NodeValidatorPlugin plugin : PLUGINS_BY_SHAPE_TYPE.get(model, shape)) {
-            plugin.applyMatching(shape,
-                    value,
-                    validationContext,
-                    (location, severity, message, additionalEventIdParts) -> events
-                            .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
-        }
+        COMPOSITE_PLUGIN.apply(shape,
+                value,
+                validationContext,
+                (location, severity, message, additionalEventIdParts) -> events
+                        .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
 
         return events;
     }

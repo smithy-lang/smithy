@@ -34,6 +34,9 @@ public interface NodeValidatorPlugin {
     /**
      * The shapes this plugin applies to.
      * MemberShapes that target matching shapes are also considered matching.
+     *
+     * @return A {@link BiPredicate} that returns true if this plugin
+     *         has an effect on Node values of the given shape.
      */
     default BiPredicate<Model, Shape> shapeMatcher() {
         return (m, s) -> true;

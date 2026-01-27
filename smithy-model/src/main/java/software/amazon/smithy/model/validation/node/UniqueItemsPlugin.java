@@ -21,7 +21,7 @@ import software.amazon.smithy.model.traits.UniqueItemsTrait;
  */
 public final class UniqueItemsPlugin extends MemberAndShapeTraitPlugin<ArrayNode, UniqueItemsTrait> {
     public UniqueItemsPlugin() {
-        super(EnumSet.of(ShapeType.LIST, ShapeType.SET), ArrayNode.class, UniqueItemsTrait.class);
+        super(EnumSet.of(ShapeType.LIST), ArrayNode.class, UniqueItemsTrait.class);
     }
 
     @Override
