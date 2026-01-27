@@ -9,7 +9,7 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.jmespath.node.ModelJmespathUtilities;
+import software.amazon.smithy.model.jmespath.node.ModelJmespathUtils;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -29,7 +29,7 @@ public final class OperationContextParamsChecker {
     ) {
         JmespathExpression path = JmespathExpression.parse(paramDefinition.getPath());
         StructureShape input = OperationIndex.of(model).expectInputShape(operationShape);
-        return ModelJmespathUtilities.lint(model, input, path);
+        return ModelJmespathUtils.lint(model, input, path);
     }
 
     public static Optional<ParameterType> inferParameterType(

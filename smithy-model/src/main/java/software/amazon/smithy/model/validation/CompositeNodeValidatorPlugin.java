@@ -21,7 +21,7 @@ import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
  * A composite {@link NodeValidatorPlugin} that efficiently delegates to child plugins
  * based on the shape types they apply to.
  */
-class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
+final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
 
     private final EnumMap<ShapeType, List<NodeValidatorPlugin>> pluginsForDirectShapeTypes =
             new EnumMap<>(ShapeType.class);

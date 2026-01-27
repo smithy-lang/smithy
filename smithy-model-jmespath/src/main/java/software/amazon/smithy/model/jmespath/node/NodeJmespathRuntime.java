@@ -18,7 +18,10 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 
-public class NodeJmespathRuntime implements JmespathRuntime<Node> {
+/**
+ * A singleton implementation of the JmespathRuntime interface based on instances of the Node class.
+ */
+public final class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
     public static final NodeJmespathRuntime INSTANCE = new NodeJmespathRuntime();
 

@@ -12,7 +12,7 @@ import software.amazon.smithy.model.Model;
 /**
  * A simple shape filter based on shape types.
  */
-public class ShapeTypeFilter implements BiPredicate<Model, Shape> {
+public final class ShapeTypeFilter implements BiPredicate<Model, Shape> {
 
     private final EnumSet<ShapeType> directShapeTypes;
     private final EnumSet<ShapeType> targetShapeTypes;

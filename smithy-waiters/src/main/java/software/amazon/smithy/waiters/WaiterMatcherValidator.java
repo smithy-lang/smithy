@@ -16,7 +16,7 @@ import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.jmespath.node.ModelJmespathUtilities;
+import software.amazon.smithy.model.jmespath.node.ModelJmespathUtils;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -25,14 +25,15 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_DANGER;
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_WARNING;
+
 final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEvent>> {
 
     private static final String NON_SUPPRESSABLE_ERROR = "WaitableTrait";
     private static final String JMESPATH_PROBLEM = NON_SUPPRESSABLE_ERROR + "JmespathProblem";
     private static final String INVALID_ERROR_TYPE = NON_SUPPRESSABLE_ERROR + "InvalidErrorType";
     private static final String RETURN_TYPE_MISMATCH = "ReturnTypeMismatch";
-    private static final String JMES_PATH_DANGER = "JmespathEventDanger";
-    private static final String JMES_PATH_WARNING = "JmespathEventWarning";
 
     private final Model model;
     private final OperationShape operation;
@@ -167,7 +168,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
 
     // Lint using an ANY type or using the modeled shape as the starting data.
     private LiteralExpression createCurrentNodeFromShape(Shape shape) {
-        return ModelJmespathUtilities.sampleShapeValue(model, shape);
+        return ModelJmespathUtils.sampleShapeValue(model, shape);
     }
 
     private void addJmespathEvent(String path, ExpressionProblem problem) {

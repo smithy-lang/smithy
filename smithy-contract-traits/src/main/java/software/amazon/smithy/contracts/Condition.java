@@ -17,18 +17,18 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class Condition implements ToNode, ToSmithyBuilder<Condition>, FromSourceLocation {
     private final SourceLocation sourceLocation;
-    private final String expression;
-    private final JmespathExpression parsedExpression;
+    private final String expressionText;
+    private final JmespathExpression expression;
     private final String description;
 
     private Condition(Builder builder) {
         this.sourceLocation = SmithyBuilder.requiredState("sourceLocation", builder.sourceLocation);
-        this.expression = SmithyBuilder.requiredState("expression", builder.expression);
+        this.expressionText = SmithyBuilder.requiredState("expression", builder.expression);
         try {
-            this.parsedExpression = JmespathExpression.parse(expression);
+            this.expression = JmespathExpression.parse(expressionText);
         } catch (JmespathException e) {
             throw new SourceException(
-                    "Invalid condition JMESPath expression: `" + expression + "`. " + e.getMessage(),
+                    "Invalid condition JMESPath expression: `" + expressionText + "`. " + e.getMessage(),
                     builder.sourceLocation);
         }
         this.description = SmithyBuilder.requiredState("description", builder.description);
@@ -37,7 +37,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember("expression", Node.from(expression))
+                .withMember("expression", Node.from(expressionText))
                 .withMember("description", Node.from(description))
                 .build();
     }
@@ -65,15 +65,8 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     /**
      * JMESPath expression that must evaluate to true.
      */
-    public String getExpression() {
+    public JmespathExpression getExpression() {
         return expression;
-    }
-
-    /**
-     * The parsed expression that must evaluate to true.
-     */
-    public JmespathExpression getParsedExpression() {
-        return parsedExpression;
     }
 
     /**
@@ -88,10 +81,13 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
      */
     public SmithyBuilder<Condition> toBuilder() {
         return builder()
-                .expression(expression)
+                .expression(expressionText)
                 .description(description);
     }
 
+    /**
+     * Creates a builder used to build an equivalent {@link Condition}.
+     */
     public static Builder builder() {
         return new Builder();
     }
