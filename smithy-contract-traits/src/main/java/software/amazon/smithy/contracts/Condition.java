@@ -15,6 +15,9 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Defines an individual condition.
+ */
 public final class Condition implements ToNode, ToSmithyBuilder<Condition>, FromSourceLocation {
     private final SourceLocation sourceLocation;
     private final String expressionText;

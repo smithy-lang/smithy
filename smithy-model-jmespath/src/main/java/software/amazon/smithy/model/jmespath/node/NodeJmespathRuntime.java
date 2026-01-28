@@ -23,6 +23,9 @@ import software.amazon.smithy.model.node.StringNode;
  */
 public final class NodeJmespathRuntime implements JmespathRuntime<Node> {
 
+    /**
+     * Singleton instance of the runtime.
+     */
     public static final NodeJmespathRuntime INSTANCE = new NodeJmespathRuntime();
 
     @Override
