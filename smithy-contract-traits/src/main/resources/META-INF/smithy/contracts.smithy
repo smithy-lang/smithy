@@ -13,6 +13,7 @@ map conditions {
     value: Condition
 }
 
+/// A name of a condition.
 @pattern("^[A-Z]+[A-Za-z0-9]*$")
 string ConditionName
 
