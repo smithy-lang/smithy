@@ -2,7 +2,6 @@ $version: "2.0"
 
 namespace smithy.rules.tests
 
-use smithy.rules#endpointBdd
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 use smithy.rules#staticContextParams
