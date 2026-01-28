@@ -6,7 +6,6 @@ package software.amazon.smithy.contracts;
 
 import java.util.EnumSet;
 import java.util.Map;
-import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.jmespath.node.NodeJmespathRuntime;
 import software.amazon.smithy.model.node.Node;
@@ -47,10 +46,9 @@ public final class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node,
             emitter.accept(value,
                     getSeverity(context),
                     String.format(
-                            "Value provided for `%s` must match the %s condition expression: %s",
+                            "Value provided for `%s` must match the %s condition expression",
                             shape.getId(),
-                            conditionName,
-                            condition.getExpression()),
+                            conditionName),
                     conditionName);
         }
     }

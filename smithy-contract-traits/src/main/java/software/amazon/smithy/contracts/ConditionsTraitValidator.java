@@ -96,8 +96,8 @@ public final class ConditionsTraitValidator extends AbstractValidator {
                 shape,
                 conditionName,
                 condition,
-                String.format("Problem found in JMESPath expression (%s): %s",
-                        condition.getExpression(),
+                String.format("Problem found in JMESPath expression for condition %s: %s",
+                        conditionName,
                         problemMessage),
                 eventId);
     }

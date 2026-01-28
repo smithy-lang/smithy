@@ -12,12 +12,12 @@ impact the types signatures of generated code.
 Contract trait enforcement
 --------------------------
 
+Contract traits provide structured documentation of implicit API constraints,
+and are useful for generating tests or applying static analysis to client or service code.
+
 Contract traits SHOULD NOT be directly enforced by default when serializing or deserializing.
 These traits often express contracts using higher-level constructs and simpler but less efficient expressions.
 Services will usually check these contracts outside of service frameworks in more efficient ways.
-
-Contract traits are instead intended to be useful for generating tests
-or applying static analysis to client or service code.
 
 .. smithy-trait:: smithy.contracts#conditions
 .. _conditions-trait:
@@ -47,10 +47,12 @@ the following members:
       - Description
     * - expression
       - ``string``
-      - **Required**. JMESPath expression that must evaluate to true.
-    * - description
+      - **Required**. JMESPath_ expression that must evaluate to true.
+    * - documentation
       - ``string``
-      - **Required**. Description of the condition. Used in error messages when violated.
+      - **Required**. Documentation about the condition defined using CommonMark_.
+
+See the :ref:`JMESPath data model <waiter-jmespath-data-model>` for details on how Smithy types are mapped to JMESPath types.
 
 .. code-block:: smithy
 
@@ -75,3 +77,7 @@ the following members:
         }
     })
     string Name
+
+
+.. _CommonMark: https://spec.commonmark.org/
+.. _JMESPath: https://jmespath.org/

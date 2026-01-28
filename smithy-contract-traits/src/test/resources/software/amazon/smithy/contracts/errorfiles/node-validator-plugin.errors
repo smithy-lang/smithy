@@ -1,1 +1,1 @@
-[ERROR] smithy.example#Whoops: Error validating trait `smithy.example#range2`: Value provided for `smithy.example#range2` must match the MinNotGreaterThanMax condition expression: min == null || max == null || min <= max | TraitValue.MinNotGreaterThanMax
+[ERROR] smithy.example#Whoops: Error validating trait `smithy.example#range2`: Value provided for `smithy.example#range2` must match the MinNotGreaterThanMax condition expression | TraitValue.MinNotGreaterThanMax

@@ -4,6 +4,9 @@
  */
 package software.amazon.smithy.waiters;
 
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_DANGER;
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_WARNING;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,9 +27,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-
-import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_DANGER;
-import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_WARNING;
 
 final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEvent>> {
 

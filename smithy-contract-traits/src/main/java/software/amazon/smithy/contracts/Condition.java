@@ -19,7 +19,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     private final SourceLocation sourceLocation;
     private final String expressionText;
     private final JmespathExpression expression;
-    private final String description;
+    private final String documentation;
 
     private Condition(Builder builder) {
         this.sourceLocation = SmithyBuilder.requiredState("sourceLocation", builder.sourceLocation);
@@ -31,14 +31,14 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
                     "Invalid condition JMESPath expression: `" + expressionText + "`. " + e.getMessage(),
                     builder.sourceLocation);
         }
-        this.description = SmithyBuilder.requiredState("description", builder.description);
+        this.documentation = SmithyBuilder.requiredState("documentation", builder.documentation);
     }
 
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
                 .withMember("expression", Node.from(expressionText))
-                .withMember("description", Node.from(description))
+                .withMember("documentation", Node.from(documentation))
                 .build();
     }
 
@@ -53,7 +53,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
         Builder builder = builder().sourceLocation(node.getSourceLocation());
         node.expectObjectNode()
                 .expectStringMember("expression", builder::expression)
-                .expectStringMember("description", builder::description);
+                .expectStringMember("documentation", builder::documentation);
         return builder.build();
     }
 
@@ -64,16 +64,20 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
 
     /**
      * JMESPath expression that must evaluate to true.
+     *
+     * @return Return the JMESPath expression.
      */
     public JmespathExpression getExpression() {
         return expression;
     }
 
     /**
-     * Description of the condition. Used in error messages when violated.
+     * Documentation about the condition.
+     *
+     * @return Return the documentation.
      */
-    public String getDescription() {
-        return description;
+    public String getDocumentation() {
+        return documentation;
     }
 
     /**
@@ -82,7 +86,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     public SmithyBuilder<Condition> toBuilder() {
         return builder()
                 .expression(expressionText)
-                .description(description);
+                .documentation(documentation);
     }
 
     /**
@@ -98,7 +102,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
     public static final class Builder implements SmithyBuilder<Condition> {
         private SourceLocation sourceLocation;
         private String expression;
-        private String description;
+        private String documentation;
 
         private Builder() {}
 
@@ -112,8 +116,8 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
             return this;
         }
 
-        public Builder description(String description) {
-            this.description = description;
+        public Builder documentation(String documentation) {
+            this.documentation = documentation;
             return this;
         }
 

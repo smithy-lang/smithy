@@ -6,7 +6,7 @@ use smithy.contracts#conditions
 
 @conditions({
     MinNotGreaterThanMax: {
-        description: "min must not be more than max"
+        documentation: "min must not be more than max"
         expression: "min == null || max == null || min <= max"
     }
 })

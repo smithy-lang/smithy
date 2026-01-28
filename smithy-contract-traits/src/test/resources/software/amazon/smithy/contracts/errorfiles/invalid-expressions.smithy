@@ -6,19 +6,19 @@ use smithy.contracts#conditions
 
 @conditions({
     Good: {
-        description: "Good"
+        documentation: "Good"
         expression: "length(string) < length(string2)"
     }
     WrongType: {
-        description: "WrongType"
+        documentation: "WrongType"
         expression: "string"
     }
     WrongType2: {
-        description: "WrongType2"
+        documentation: "WrongType2"
         expression: "int"
     }
     MissingField: {
-        description: "MissingField"
+        documentation: "MissingField"
         expression: "foo"
     }
 })

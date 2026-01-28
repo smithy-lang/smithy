@@ -22,7 +22,7 @@ structure Condition {
     @required
     expression: String
 
-    /// Description of the condition. Used in error messages when violated.
+    /// Documentation about the condition. Can use CommonMark.
     @required
-    description: String
+    documentation: String
 }
