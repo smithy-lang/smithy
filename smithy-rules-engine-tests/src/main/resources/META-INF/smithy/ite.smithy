@@ -37,44 +37,6 @@ use smithy.rules#endpointTests
         }
     ]
 })
-@endpointBdd(
-    version: "1.1"
-    parameters: {
-        useFips: {
-            required: true
-            default: false
-            documentation: "Use FIPS endpoints"
-            type: "boolean"
-        }
-    }
-    conditions: [
-        {
-            fn: "ite"
-            argv: [
-                {
-                    ref: "useFips"
-                }
-                "-fips"
-                ""
-            ]
-            assign: "suffix"
-        }
-    ]
-    results: [
-        {
-            conditions: []
-            endpoint: {
-                url: "https://example{suffix}.com"
-                properties: {}
-                headers: {}
-            }
-            type: "endpoint"
-        }
-    ]
-    root: 2
-    nodeCount: 2
-    nodes: "/////wAAAAH/////AAAAAAX14QEF9eEA"
-)
 @endpointTests({
     "version": "1.0",
     "testCases": [

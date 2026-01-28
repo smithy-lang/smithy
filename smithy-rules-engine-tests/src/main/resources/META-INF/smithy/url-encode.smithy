@@ -52,55 +52,6 @@ use smithy.rules#endpointTests
         }
     ]
 })
-@endpointBdd(
-    version: "1.1"
-    parameters: {
-        TestCaseId: {
-            required: true
-            documentation: "Test case id used to select the test case to use"
-            type: "string"
-        }
-        Input: {
-            required: true
-            documentation: "The input used to test uriEncode"
-            type: "string"
-        }
-    }
-    conditions: [
-        {
-            fn: "stringEquals"
-            argv: [
-                {
-                    ref: "TestCaseId"
-                }
-                "1"
-            ]
-        }
-        {
-            fn: "uriEncode"
-            argv: [
-                "{Input}"
-            ]
-            assign: "output"
-        }
-    ]
-    results: [
-        {
-            conditions: []
-            error: "The value is: `{output}`"
-            type: "error"
-        }
-        {
-            documentation: "fallback when no tests match"
-            conditions: []
-            error: "No tests matched"
-            type: "error"
-        }
-    ]
-    root: 2
-    nodeCount: 3
-    nodes: "/////wAAAAH/////AAAAAAAAAAMF9eECAAAAAQX14QEF9eEC"
-)
 @endpointTests(
     version: "1.0",
     testCases: [
