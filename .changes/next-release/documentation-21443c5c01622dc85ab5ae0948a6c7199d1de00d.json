@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Add Wire Protocol Selection guide",
-  "pull_requests": [
-    "[#2938](https://github.com/smithy-lang/smithy/pull/2938)"
-  ]
-}
