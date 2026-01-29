@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Update smithy-rules-engine-tests with new std lib functions and bdd-based tests",
+  "pull_requests": [
+    "[#2945](https://github.com/smithy-lang/smithy/pull/2945)"
+  ]
+}
