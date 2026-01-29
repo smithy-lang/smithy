@@ -1,13 +1,10 @@
-coalesce.smithy
 default-values.smithy
 endpoint-bindings.smithy
 endpoints-string-array.smithy
 get-attr.smithy
 headers.smithy
-ite.smithy
 manifest
 parse-url.smithy
-split.smithy
 substring.smithy
 url-encode.smithy
 valid-hostlabel.smithy

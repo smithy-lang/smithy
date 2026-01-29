@@ -4,123 +4,133 @@ namespace smithy.rules.tests
 
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
-use smithy.rules#operationContextParams
 use smithy.rules#staticContextParams
+use smithy.rules#operationContextParams
 
 @suppress(["UnstableTrait"])
 @endpointRuleSet({
-    version: "1.0"
+    version: "1.0",
     parameters: {
         stringArrayParam: {
-            type: "stringArray"
-            required: true
-            default: ["defaultValue1", "defaultValue2"]
+            type: "stringArray",
+            required: true,
+            default: ["defaultValue1", "defaultValue2"],
             documentation: "docs"
         }
-    }
+    },
     rules: [
         {
-            documentation: "Template first array value into URI if set"
-            conditions: [
+            "documentation": "Template first array value into URI if set",
+            "conditions": [
                 {
-                    fn: "getAttr"
-                    argv: [
+                    "fn": "getAttr",
+                    "argv": [
                         {
-                            ref: "stringArrayParam"
-                        }
+                            "ref": "stringArrayParam"
+                        },
                         "[0]"
-                    ]
-                    assign: "arrayValue"
+                    ],
+                    "assign": "arrayValue"
                 }
-            ]
-            endpoint: { url: "https://example.com/{arrayValue}" }
-            type: "endpoint"
-        }
+            ],
+            "endpoint": {
+                "url": "https://example.com/{arrayValue}"
+            },
+            "type": "endpoint"
+        },
         {
-            conditions: []
-            documentation: "error fallthrough"
-            error: "no array values set"
-            type: "error"
+            "conditions": [],
+            "documentation": "error fallthrough",
+            "error": "no array values set",
+            "type": "error"
         }
     ]
 })
 @endpointTests({
-    version: "1.0"
-    testCases: [
+    "version": "1.0",
+    "testCases": [
         {
-            documentation: "Default array values used"
-            params: {}
-            expect: {
-                endpoint: { url: "https://example.com/defaultValue1" }
-            }
-            operationInputs: [
+            "documentation": "Default array values used"
+            "params": {}
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com/defaultValue1"
+                }
+            },
+            "operationInputs": [
                 {
-                    operationName: "NoBindingsOperation"
+                    "operationName": "NoBindingsOperation",
                 }
             ]
-        }
+        },
         {
-            documentation: "Empty array"
-            params: {
-                stringArrayParam: []
+            "documentation": "Empty array",
+            "params": {
+                "stringArrayParam": []
             }
-            expect: { error: "no array values set" }
-            operationInputs: [
+            "expect": {
+                "error": "no array values set"
+            },
+            "operationInputs": [
                 {
-                    operationName: "EmptyStaticContextOperation"
+                    "operationName": "EmptyStaticContextOperation",
                 }
             ]
-        }
+        },
         {
-            documentation: "Static value"
-            params: {
-                stringArrayParam: ["staticValue1"]
+            "documentation": "Static value",
+            "params": {
+                "stringArrayParam": ["staticValue1"]
             }
-            expect: {
-                endpoint: { url: "https://example.com/staticValue1" }
-            }
-            operationInputs: [
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com/staticValue1"
+                }
+            },
+            "operationInputs": [
                 {
-                    operationName: "StaticContextOperation"
+                    "operationName": "StaticContextOperation",
                 }
             ]
-        }
+        },
         {
-            documentation: "bound value from input"
-            params: {
-                stringArrayParam: ["key1"]
+            "documentation": "bound value from input",
+            "params": {
+                "stringArrayParam": ["key1"]
             }
-            expect: {
-                endpoint: { url: "https://example.com/key1" }
-            }
-            operationInputs: [
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com/key1"
+                }
+            },
+            "operationInputs": [
                 {
-                    operationName: "ListOfObjectsOperation"
-                    operationParams: {
-                        nested: {
-                            listOfObjects: [
-                                {
-                                    key: "key1"
-                                }
-                            ]
+                    "operationName": "ListOfObjectsOperation",
+                    "operationParams": {
+                        "nested": {
+                            "listOfObjects": [{"key": "key1"}]
+                        }
+                    },
+                },
+                {
+                    "operationName": "MapOperation",
+                    "operationParams": {
+                        "map": {
+                            "key1": "value1"
                         }
                     }
-                }
+                },
                 {
-                    operationName: "MapOperation"
-                    operationParams: {
-                        map: { key1: "value1" }
-                    }
-                }
-                {
-                    operationName: "ListOfUnionsOperation"
-                    operationParams: {
-                        listOfUnions: [
+                    "operationName": "ListOfUnionsOperation",
+                    "operationParams": {
+                        "listOfUnions": [
                             {
-                                string: "key1"
-                            }
+                                "string": "key1"
+                            },
                             {
-                                object: { key: "key2" }
+                                "object": {
+                                    "key": "key2"
+                                }
                             }
                         ]
                     }
@@ -130,26 +140,24 @@ use smithy.rules#staticContextParams
     ]
 })
 service EndpointStringArrayService {
-    version: "2022-01-01"
+    version: "2022-01-01",
     operations: [
-        NoBindingsOperation
-        EmptyStaticContextOperation
-        StaticContextOperation
-        ListOfObjectsOperation
-        ListOfUnionsOperation
+        NoBindingsOperation,
+        EmptyStaticContextOperation,
+        StaticContextOperation,
+        ListOfObjectsOperation,
+        ListOfUnionsOperation,
         MapOperation
     ]
 }
 
 operation NoBindingsOperation {
-    input := {}
+    input:= {}
 }
 
 @suppress(["UnstableTrait"])
 @staticContextParams(
-    stringArrayParam: {
-        value: []
-    }
+    "stringArrayParam": {value: []}
 )
 operation EmptyStaticContextOperation {
     input := {}
@@ -157,9 +165,7 @@ operation EmptyStaticContextOperation {
 
 @suppress(["UnstableTrait"])
 @staticContextParams(
-    stringArrayParam: {
-        value: ["staticValue1"]
-    }
+    "stringArrayParam": {value: ["staticValue1"]}
 )
 operation StaticContextOperation {
     input := {}
@@ -167,30 +173,30 @@ operation StaticContextOperation {
 
 @suppress(["UnstableTrait"])
 @operationContextParams(
-    stringArrayParam: { path: "nested.listOfObjects[*].key" }
+    "stringArrayParam": {path: "nested.listOfObjects[*].key"}
 )
 operation ListOfObjectsOperation {
-    input := {
+    input:= {
         nested: NestedStructure
     }
 }
 
 @suppress(["UnstableTrait"])
 @operationContextParams(
-    stringArrayParam: { path: "listOfUnions[*][string, object.key][]" }
+    "stringArrayParam": {path: "listOfUnions[*][string, object.key][]"}
 )
 operation ListOfUnionsOperation {
-    input := {
+input:= {
         listOfUnions: ListOfUnions
     }
 }
 
 @suppress(["UnstableTrait"])
 @operationContextParams(
-    stringArrayParam: { path: "keys(map)" }
+    "stringArrayParam": {path: "keys(map)"}
 )
 operation MapOperation {
-    input := {
+    input:= {
         map: Map
     }
 }
@@ -204,7 +210,7 @@ list ListOfObjects {
 }
 
 structure ObjectMember {
-    key: String
+    key: String,
 }
 
 list ListOfUnions {
@@ -212,11 +218,11 @@ list ListOfUnions {
 }
 
 union UnionMember {
-    string: String
+    string: String,
     object: ObjectMember
 }
 
 map Map {
-    key: String
+    key: String,
     value: String
 }
