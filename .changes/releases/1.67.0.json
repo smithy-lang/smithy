@@ -1,0 +1,48 @@
+{
+  "version": "1.67.0",
+  "changes": [
+    {
+      "type": "documentation",
+      "description": "Updated Sphinx to 9.1 and updated the tabs in the Smithy 1.0 docs to use the same tab library that 2.0 uses.",
+      "pull_requests": [
+        "[#2942](https://github.com/smithy-lang/smithy/pull/2942)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update supported httpChecksum algorithms",
+      "pull_requests": [
+        "[#2943](https://github.com/smithy-lang/smithy/pull/2943)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Fix SSA transform for transitive dependencies",
+      "pull_requests": [
+        "[#2946](https://github.com/smithy-lang/smithy/pull/2946)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add Wire Protocol Selection guide",
+      "pull_requests": [
+        "[#2938](https://github.com/smithy-lang/smithy/pull/2938)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for negative GetAttr indexing",
+      "pull_requests": [
+        "[#2937](https://github.com/smithy-lang/smithy/pull/2937)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix incorrect links for operation input / output members in docgen",
+      "pull_requests": [
+        "[#2922](https://github.com/smithy-lang/smithy/pull/2922)"
+      ]
+    }
+  ],
+  "date": "2026-01-28"
+}

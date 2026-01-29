@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Updated Sphinx to 9.1 and updated the tabs in the Smithy 1.0 docs to use the same tab library that 2.0 uses.",
-  "pull_requests": [
-    "[#2942](https://github.com/smithy-lang/smithy/pull/2942)"
-  ]
-}

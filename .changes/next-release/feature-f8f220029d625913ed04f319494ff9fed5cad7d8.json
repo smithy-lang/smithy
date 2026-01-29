@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add support for negative GetAttr indexing",
-  "pull_requests": [
-    "[#2937](https://github.com/smithy-lang/smithy/pull/2937)"
-  ]
-}

@@ -1,5 +1,29 @@
 # Smithy Changelog
 
+## 1.67.0 (2026-01-28)
+
+### Features
+
+- Update supported httpChecksum algorithms
+  ([#2943](https://github.com/smithy-lang/smithy/pull/2943))
+- Fix SSA transform for transitive dependencies
+  ([#2946](https://github.com/smithy-lang/smithy/pull/2946))
+- Add support for negative GetAttr indexing
+  ([#2937](https://github.com/smithy-lang/smithy/pull/2937))
+
+### Bug Fixes
+
+- Fix incorrect links for operation input / output members in docgen
+  ([#2922](https://github.com/smithy-lang/smithy/pull/2922))
+
+### Documentation
+
+- Updated Sphinx to 9.1 and updated the tabs in the Smithy 1.0 docs to use the
+  same tab library that 2.0 uses.
+  ([#2942](https://github.com/smithy-lang/smithy/pull/2942))
+- Add Wire Protocol Selection guide
+  ([#2938](https://github.com/smithy-lang/smithy/pull/2938))
+
 ## 1.66.0 (2026-01-13)
 
 ### Features
