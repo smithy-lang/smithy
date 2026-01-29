@@ -44,8 +44,12 @@ public final class ConditionsTraitValidator extends AbstractValidator {
         }
     }
 
-    private List<
-            ValidationEvent> validateCondition(Model model, Shape shape, String conditionName, Condition condition) {
+    private List<ValidationEvent> validateCondition(
+            Model model,
+            Shape shape,
+            String conditionName,
+            Condition condition
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
         LinterResult result = ModelJmespathUtils.lint(model, shape, condition.getExpression());
