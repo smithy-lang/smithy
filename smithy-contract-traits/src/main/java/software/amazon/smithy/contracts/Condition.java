@@ -83,10 +83,8 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
         return documentation;
     }
 
-    /**
-     * Creates a builder used to build a {@link Condition}.
-     */
-    public SmithyBuilder<Condition> toBuilder() {
+    @Override
+    public Builder toBuilder() {
         return builder()
                 .expression(expressionText)
                 .documentation(documentation);
@@ -94,6 +92,7 @@ public final class Condition implements ToNode, ToSmithyBuilder<Condition>, From
 
     /**
      * Creates a builder used to build an equivalent {@link Condition}.
+     * @return the builder.
      */
     public static Builder builder() {
         return new Builder();
