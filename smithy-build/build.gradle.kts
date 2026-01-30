@@ -15,6 +15,8 @@ extra["moduleName"] = "software.amazon.smithy.build"
 dependencies {
     api(project(":smithy-utils"))
     api(project(":smithy-model"))
+    api(project(":smithy-rules-engine"))
+    api(project(":smithy-aws-endpoints"))
 
     // Allows testing of annotation processor
     testImplementation(libs.compile.testing)

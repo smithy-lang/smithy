@@ -654,6 +654,29 @@ Only the following shape type changes are supported:
 
 .. seealso:: :ref:`changeStringEnumsToEnumShapes`
 
+.. _compileBddFromEndpointRuleSet-transform:
+
+compileBddFromEndpointRuleSet
+-----------------------------
+
+This transform compiles `Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_
+from service shape's :ref:`@endpointRuleSet <smithy.rules#endpointRuleSet-trait>` trait and attaches
+the compiled :ref:`@endpointBdd <smithy.rules#endpointBdd-trait>` trait to the service shape.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "compileBddFromEndpointRuleSet"
+                    }
+                ]
+            }
+        }
+    }
 
 .. _excludeShapesBySelector-transform:
 
