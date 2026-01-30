@@ -8,143 +8,103 @@ use smithy.rules#endpointTests
 
 @suppress(["UnstableTrait"])
 @endpointRuleSet({
-    "version": "1.0",
-    "parameters": {
-        "Region": {
-            "type": "string",
-            "required": true,
-            "documentation": "The region to dispatch this request, eg. `us-east-1`."
-        }
-    },
-    "rules": [
+    version: "1.0"
+    parameters: {
+        Region: { type: "string", required: true, documentation: "The region to dispatch this request, eg. `us-east-1`." }
+    }
+    rules: [
         {
-            "documentation": "Template the region into the URI when region is set",
-            "conditions": [
+            documentation: "Template the region into the URI when region is set"
+            conditions: [
                 {
-                    "fn": "isValidHostLabel",
-                    "argv": [
+                    fn: "isValidHostLabel"
+                    argv: [
                         {
-                            "ref": "Region"
-                        },
+                            ref: "Region"
+                        }
                         false
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://{Region}.amazonaws.com"
-            },
-            "type": "endpoint"
-        },
+            ]
+            endpoint: { url: "https://{Region}.amazonaws.com" }
+            type: "endpoint"
+        }
         {
-            "documentation": "Template the region into the URI when region is set",
-            "conditions": [
+            documentation: "Template the region into the URI when region is set"
+            conditions: [
                 {
-                    "fn": "isValidHostLabel",
-                    "argv": [
+                    fn: "isValidHostLabel"
+                    argv: [
                         {
-                            "ref": "Region"
-                        },
+                            ref: "Region"
+                        }
                         true
                     ]
                 }
-            ],
-            "endpoint": {
-                "url": "https://{Region}-subdomains.amazonaws.com"
-            },
-            "type": "endpoint"
-        },
+            ]
+            endpoint: { url: "https://{Region}-subdomains.amazonaws.com" }
+            type: "endpoint"
+        }
         {
-            "documentation": "Region was not a valid host label",
-            "conditions": [],
-            "error": "Invalid hostlabel",
-            "type": "error"
+            documentation: "Region was not a valid host label"
+            conditions: []
+            error: "Invalid hostlabel"
+            type: "error"
         }
     ]
 })
 @endpointTests(
-    version: "1.0",
+    version: "1.0"
     testCases: [
         {
-            "documentation": "standard region is a valid hostlabel",
-            "params": {
-                "Region": "us-east-1"
-            },
-            "expect": {
-                "endpoint": {
-                    "url": "https://us-east-1.amazonaws.com"
-                }
+            documentation: "standard region is a valid hostlabel"
+            params: { Region: "us-east-1" }
+            expect: {
+                endpoint: { url: "https://us-east-1.amazonaws.com" }
             }
-        },
+        }
         {
-            "documentation": "starting with a number is a valid hostlabel",
-            "params": {
-                "Region": "3aws4"
-            },
-            "expect": {
-                "endpoint": {
-                    "url": "https://3aws4.amazonaws.com"
-                }
+            documentation: "starting with a number is a valid hostlabel"
+            params: { Region: "3aws4" }
+            expect: {
+                endpoint: { url: "https://3aws4.amazonaws.com" }
             }
-        },
+        }
         {
-            "documentation": "when there are dots, only match if subdomains are allowed",
-            "params": {
-                "Region": "part1.part2"
-            },
-            "expect": {
-                "endpoint": {
-                    "url": "https://part1.part2-subdomains.amazonaws.com"
-                }
+            documentation: "when there are dots, only match if subdomains are allowed"
+            params: { Region: "part1.part2" }
+            expect: {
+                endpoint: { url: "https://part1.part2-subdomains.amazonaws.com" }
             }
-        },
+        }
         {
-            "documentation": "a space is never a valid hostlabel",
-            "params": {
-                "Region": "part1 part2"
-            },
-            "expect": {
-                "error": "Invalid hostlabel"
-            }
-        },
+            documentation: "a space is never a valid hostlabel"
+            params: { Region: "part1 part2" }
+            expect: { error: "Invalid hostlabel" }
+        }
         {
-            "documentation": "an empty string is not a valid hostlabel",
-            "params": {
-                "Region": ""
-            },
-            "expect": {
-                "error": "Invalid hostlabel"
-            }
-        },
+            documentation: "an empty string is not a valid hostlabel"
+            params: { Region: "" }
+            expect: { error: "Invalid hostlabel" }
+        }
         {
-            "documentation": "ending with a dot is not a valid hostlabel",
-            "params": {
-                "Region": "part1."
-            },
-            "expect": {
-                "error": "Invalid hostlabel"
-            }
-        },
+            documentation: "ending with a dot is not a valid hostlabel"
+            params: { Region: "part1." }
+            expect: { error: "Invalid hostlabel" }
+        }
         {
-            "documentation": "multiple consecutive dots are not allowed",
-            "params": {
-                "Region": "part1..part2"
-            },
-            "expect": {
-                "error": "Invalid hostlabel"
-            }
-        },
+            documentation: "multiple consecutive dots are not allowed"
+            params: { Region: "part1..part2" }
+            expect: { error: "Invalid hostlabel" }
+        }
         {
-            "documentation": "labels cannot start with a dash",
-            "params": {
-                "Region": "part1.-part2"
-            },
-            "expect": {
-                "error": "Invalid hostlabel"
-            }
+            documentation: "labels cannot start with a dash"
+            params: { Region: "part1.-part2" }
+            expect: { error: "Invalid hostlabel" }
         }
     ]
 )
 @clientContextParams(
-    Region: {type: "string", documentation: "docs"}
+    Region: { type: "string", documentation: "docs" }
 )
 service ValidHostLabelService {}
