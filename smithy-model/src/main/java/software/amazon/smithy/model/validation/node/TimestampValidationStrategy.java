@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -24,8 +22,8 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     FORMAT {
         @Override
-        public BiPredicate<Model, Shape> shapeMatcher() {
-            return new TimestampFormatPlugin().shapeMatcher();
+        public ShapeTypeFilter shapeTypeFilter() {
+            return new TimestampFormatPlugin().shapeTypeFilter();
         }
 
         @Override
@@ -40,7 +38,7 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     EPOCH_SECONDS {
         @Override
-        public BiPredicate<Model, Shape> shapeMatcher() {
+        public ShapeTypeFilter shapeTypeFilter() {
             return new ShapeTypeFilter(ShapeType.TIMESTAMP);
         }
 

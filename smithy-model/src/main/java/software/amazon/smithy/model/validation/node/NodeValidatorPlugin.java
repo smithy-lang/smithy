@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiPredicate;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.ListUtils;
@@ -32,13 +33,12 @@ public interface NodeValidatorPlugin {
     String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
-     * The shapes this plugin applies to.
-     * MemberShapes that target matching shapes are also considered matching.
+     * A filter expressing the shape types this plugin applies to.
      *
-     * @return A {@link BiPredicate} that returns true if this plugin
-     *         has an effect on Node values of the given shape.
+     * @return A {@link ShapeTypeFilter} that matches a {@link ShapeType}
+     *         if this plugin has an effect on shapes of that type.
      */
-    BiPredicate<Model, Shape> shapeMatcher();
+    ShapeTypeFilter shapeTypeFilter();
 
     /**
      * Applies the plugin to the given shape, node value, and model.
@@ -49,7 +49,7 @@ public interface NodeValidatorPlugin {
      * @param emitter Consumer to notify of validation event locations and messages.
      */
     default void apply(Shape shape, Node value, Context context, Emitter emitter) {
-        if (shapeMatcher().test(context.model(), shape)) {
+        if (shapeTypeFilter().test(context.model(), shape)) {
             applyMatching(shape, value, context, emitter);
         }
     }

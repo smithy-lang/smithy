@@ -6,8 +6,6 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.EnumSet;
 import java.util.Set;
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.shapes.Shape;
@@ -23,7 +21,7 @@ final class NonNumericFloatValuesPlugin implements NodeValidatorPlugin {
             new ShapeTypeFilter(EnumSet.of(ShapeType.FLOAT, ShapeType.DOUBLE), EnumSet.noneOf(ShapeType.class));
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 

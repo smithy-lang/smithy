@@ -5,8 +5,6 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.EnumSet;
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -27,7 +25,7 @@ final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringNode, Len
     }
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 

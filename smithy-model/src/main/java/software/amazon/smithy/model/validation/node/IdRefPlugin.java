@@ -5,9 +5,7 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.EnumSet;
-import java.util.function.BiPredicate;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
@@ -33,7 +31,7 @@ final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringNode, IdRefTrait
     }
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 

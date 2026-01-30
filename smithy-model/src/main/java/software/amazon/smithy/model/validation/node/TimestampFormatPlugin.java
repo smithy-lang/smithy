@@ -7,9 +7,7 @@ package software.amazon.smithy.model.validation.node;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.EnumSet;
-import java.util.function.BiPredicate;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -32,7 +30,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.TIMESTAMP));
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 

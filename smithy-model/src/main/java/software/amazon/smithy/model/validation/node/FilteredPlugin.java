@@ -5,8 +5,6 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.EnumSet;
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -34,7 +32,7 @@ abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeVa
     }
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return shapeTypeFilter;
     }
 

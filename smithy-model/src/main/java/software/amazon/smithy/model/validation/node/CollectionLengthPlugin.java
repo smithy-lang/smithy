@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -27,7 +25,7 @@ final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<ArrayNode, 
     }
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 

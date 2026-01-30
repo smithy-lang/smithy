@@ -9,8 +9,6 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiPredicate;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -29,7 +27,6 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
             new EnumMap<>(ShapeType.class);
     private final EnumMap<ShapeType, List<NodeValidatorPlugin>> pluginsForTargetShapeTypes =
             new EnumMap<>(ShapeType.class);
-    private final List<NodeValidatorPlugin> otherPlugins = new ArrayList<>();
 
     CompositeNodeValidatorPlugin() {
         for (ShapeType shapeType : ShapeType.values()) {
@@ -39,7 +36,7 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
     }
 
     @Override
-    public BiPredicate<Model, Shape> shapeMatcher() {
+    public ShapeTypeFilter shapeTypeFilter() {
         return SHAPE_TYPE_FILTER;
     }
 
@@ -48,18 +45,13 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
      * indexing it by the shape types it applies to according to its shape matcher predicate.
      */
     void addChild(NodeValidatorPlugin plugin) {
-        BiPredicate<Model, Shape> matcher = plugin.shapeMatcher();
+        ShapeTypeFilter filter = plugin.shapeTypeFilter();
 
-        if (matcher instanceof ShapeTypeFilter) {
-            ShapeTypeFilter filter = (ShapeTypeFilter) matcher;
-            for (ShapeType shapeType : filter.directShapeTypes()) {
-                pluginsForDirectShapeTypes.get(shapeType).add(plugin);
-            }
-            for (ShapeType shapeType : filter.targetShapeTypes()) {
-                pluginsForTargetShapeTypes.get(shapeType).add(plugin);
-            }
-        } else {
-            otherPlugins.add(plugin);
+        for (ShapeType shapeType : filter.directShapeTypes()) {
+            pluginsForDirectShapeTypes.get(shapeType).add(plugin);
+        }
+        for (ShapeType shapeType : filter.targetShapeTypes()) {
+            pluginsForTargetShapeTypes.get(shapeType).add(plugin);
         }
     }
 
@@ -79,12 +71,6 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
             for (NodeValidatorPlugin plugin : pluginsForDirectShapeTypes.get(shapeType)) {
                 plugin.applyMatching(shape, value, context, emitter);
             }
-        }
-
-        for (NodeValidatorPlugin plugin : otherPlugins) {
-            // We haven't already implicitly checked the shape matcher for this plugin,
-            // so call apply() rather than applyMatching().
-            plugin.apply(shape, value, context, emitter);
         }
     }
 }
