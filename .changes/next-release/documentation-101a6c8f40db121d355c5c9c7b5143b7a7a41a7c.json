@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Added Smithy Kotlin Quickstart and Client User Guide sections.",
+  "pull_requests": [
+    "[#2944](https://github.com/smithy-lang/smithy/pull/2944)"
+  ]
+}
