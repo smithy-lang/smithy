@@ -16,6 +16,8 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.ListUtils;
@@ -31,6 +33,14 @@ public interface NodeValidatorPlugin {
     String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
+     * A filter expressing the shape types this plugin applies to.
+     *
+     * @return A {@link ShapeTypeFilter} that matches a {@link ShapeType}
+     *         if this plugin has an effect on shapes of that type.
+     */
+    ShapeTypeFilter shapeTypeFilter();
+
+    /**
      * Applies the plugin to the given shape, node value, and model.
      *
      * @param shape Shape being checked.
@@ -38,7 +48,22 @@ public interface NodeValidatorPlugin {
      * @param context Evaluation context.
      * @param emitter Consumer to notify of validation event locations and messages.
      */
-    void apply(Shape shape, Node value, Context context, Emitter emitter);
+    default void apply(Shape shape, Node value, Context context, Emitter emitter) {
+        if (shapeTypeFilter().test(context.model(), shape)) {
+            applyMatching(shape, value, context, emitter);
+        }
+    }
+
+    /**
+     * Applies the plugin to the given shape, node value, and model.
+     * Requires the shape to match the shapeMatcher().
+     *
+     * @param shape Shape being checked.
+     * @param value Value being evaluated.
+     * @param context Evaluation context.
+     * @param emitter Consumer to notify of validation event locations and messages.
+     */
+    void applyMatching(Shape shape, Node value, Context context, Emitter emitter);
 
     /**
      * @return Gets the built-in Node validation plugins.

@@ -5,8 +5,9 @@
 package software.amazon.smithy.model.validation.node;
 
 import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -15,10 +16,17 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * target them.
  */
 @SmithyInternalApi
-final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
+final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<ArrayNode, LengthTrait> {
+
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(ShapeType.COLLECTION_TYPES);
 
     CollectionLengthPlugin() {
-        super(CollectionShape.class, ArrayNode.class, LengthTrait.class);
+        super(ArrayNode.class, LengthTrait.class);
+    }
+
+    @Override
+    public ShapeTypeFilter shapeTypeFilter() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

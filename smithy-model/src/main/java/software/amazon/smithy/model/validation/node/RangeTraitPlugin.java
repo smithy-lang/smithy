@@ -9,6 +9,8 @@ import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -16,13 +18,19 @@ import software.amazon.smithy.model.validation.Severity;
 /**
  * Validates the range trait on number shapes or members that target them.
  */
-class RangeTraitPlugin implements NodeValidatorPlugin {
+final class RangeTraitPlugin implements NodeValidatorPlugin {
     private static final String MEMBER = "Member";
     private static final String TARGET = "Target";
     private static final String INVALID_RANGE = "InvalidRange";
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(ShapeType.NUMBER_TYPES);
 
     @Override
-    public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
+    public ShapeTypeFilter shapeTypeFilter() {
+        return SHAPE_TYPE_FILTER;
+    }
+
+    @Override
+    public final void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
         if (shape.hasTrait(RangeTrait.ID)) {
             if (value.isNumberNode()) {
                 check(shape, context, shape.expectTrait(RangeTrait.class), value.expectNumberNode(), emitter);

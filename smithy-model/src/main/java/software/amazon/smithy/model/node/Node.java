@@ -203,7 +203,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @return Returns the created BooleanNode.
      */
     public static BooleanNode from(boolean value) {
-        return new BooleanNode(value, SourceLocation.none());
+        return value ? BooleanNode.NO_LOCATION_TRUE : BooleanNode.NO_LOCATION_FALSE;
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @return Returns the NullNode.
      */
     public static NullNode nullNode() {
-        return new NullNode(SourceLocation.none());
+        return NullNode.NO_LOCATION;
     }
 
     /**

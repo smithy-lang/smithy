@@ -6,10 +6,13 @@ package software.amazon.smithy.model.validation.node;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.EnumSet;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.validation.Severity;
@@ -24,9 +27,15 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final DateTimeFormatter HTTP_DATE = DateTimeFormatter.RFC_1123_DATE_TIME;
     private static final DateTimeFormatter DATE_TIME_Z = DateTimeFormatter.ISO_INSTANT;
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.TIMESTAMP));
 
     @Override
-    public void apply(Shape shape, Node value, Context context, Emitter emitter) {
+    public ShapeTypeFilter shapeTypeFilter() {
+        return SHAPE_TYPE_FILTER;
+    }
+
+    @Override
+    public void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
         if (shape instanceof TimestampShape) {
             // Don't validate the timestamp target if a referring member had the timestampFormat trait.
             boolean fromMemberWithTrait = context.getReferringMember()

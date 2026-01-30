@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -62,7 +63,20 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public final class NodeValidationVisitor implements ShapeVisitor<List<ValidationEvent>> {
 
-    private static final List<NodeValidatorPlugin> BUILTIN = NodeValidatorPlugin.getBuiltins();
+    private static final List<NodeValidatorPlugin> BUILTIN = NodeValidatorPlugin.getBuiltins(); // keep package-private
+    private static final List<NodeValidatorPlugin> SPI_PLUGINS = loadSpiPlugins();
+
+    private static List<NodeValidatorPlugin> loadSpiPlugins() {
+        List<NodeValidatorPlugin> result = new ArrayList<>();
+        ServiceLoader.load(NodeValidatorPlugin.class).forEach(result::add);
+        return result;
+    }
+
+    private static final CompositeNodeValidatorPlugin COMPOSITE_PLUGIN = new CompositeNodeValidatorPlugin();
+    static {
+        BUILTIN.forEach(COMPOSITE_PLUGIN::addChild);
+        SPI_PLUGINS.forEach(COMPOSITE_PLUGIN::addChild);
+    }
 
     private final Model model;
     private final TimestampValidationStrategy timestampValidationStrategy;
@@ -518,13 +532,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                 (location, severity, message, additionalEventIdParts) -> events
                         .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
 
-        for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape,
-                    value,
-                    validationContext,
-                    (location, severity, message, additionalEventIdParts) -> events
-                            .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
-        }
+        COMPOSITE_PLUGIN.apply(shape,
+                value,
+                validationContext,
+                (location, severity, message, additionalEventIdParts) -> events
+                        .add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
 
         return events;
     }

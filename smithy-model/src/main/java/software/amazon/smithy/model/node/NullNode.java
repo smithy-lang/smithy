@@ -13,6 +13,8 @@ import software.amazon.smithy.model.SourceLocation;
  */
 public final class NullNode extends Node {
 
+    static final NullNode NO_LOCATION = new NullNode(SourceLocation.NONE);
+
     public NullNode(SourceLocation sourceLocation) {
         super(sourceLocation);
     }

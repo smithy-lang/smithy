@@ -4,9 +4,11 @@
  */
 package software.amazon.smithy.model.validation.node;
 
+import java.util.EnumSet;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -14,10 +16,17 @@ import software.amazon.smithy.model.validation.Severity;
 /**
  * Validates the pattern trait on string shapes or members that target them.
  */
-final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, PatternTrait> {
+final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringNode, PatternTrait> {
+
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.STRING));
 
     PatternTraitPlugin() {
-        super(StringShape.class, StringNode.class, PatternTrait.class);
+        super(StringNode.class, PatternTrait.class);
+    }
+
+    @Override
+    public ShapeTypeFilter shapeTypeFilter() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

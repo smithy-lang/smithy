@@ -4,46 +4,50 @@
  */
 package software.amazon.smithy.model.validation.node;
 
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 
-abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T extends Trait>
+/**
+ * An abstract base class for plugins that apply only to shapes with a given applied trait.
+ *
+ * @param <N> The type of the subclass of {@link Node} this plugin applies to.
+ * @param <T> The type of the trait class this plugin applies to.
+ */
+public abstract class MemberAndShapeTraitPlugin<N extends Node, T extends Trait>
         implements NodeValidatorPlugin {
 
-    private final Class<S> targetShapeClass;
     private final Class<N> nodeClass;
     private final Class<T> traitClass;
 
-    MemberAndShapeTraitPlugin(Class<S> targetShapeClass, Class<N> nodeClass, Class<T> traitClass) {
-        this.targetShapeClass = targetShapeClass;
+    /**
+     * @param nodeClass The subclass of {@link Node} this plugin applies to.
+     * @param traitClass The trait class this plugin applies to.
+     */
+    public MemberAndShapeTraitPlugin(Class<N> nodeClass, Class<T> traitClass) {
         this.nodeClass = nodeClass;
         this.traitClass = traitClass;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
+    public final void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
         if (nodeClass.isInstance(value)
-                && shape.getTrait(traitClass).isPresent()
-                && isMatchingShape(shape, context.model())) {
+                && shape.getTrait(traitClass).isPresent()) {
             check(shape, shape.getTrait(traitClass).get(), (N) value, context, emitter);
         }
     }
 
-    private boolean isMatchingShape(Shape shape, Model model) {
-        // Is the shape the expected shape type?
-        if (targetShapeClass.isInstance(shape)) {
-            return true;
-        }
-
-        // Is the targeted member an instance of the expected shape?
-        return shape.asMemberShape()
-                .flatMap(member -> model.getShape(member.getTarget()))
-                .filter(targetShapeClass::isInstance)
-                .isPresent();
-    }
-
+    /**
+     * Validates the given node value.
+     * <p>
+     * Implementors can assume the given trait is applied to the given shape.
+     *
+     * @param shape The shape the given value is for.
+     * @param trait The applied trait on the given shape.
+     * @param value The {@link Node} value to validate.
+     * @param context The plugin validation context.
+     * @param emitter The emitter to emit any validation events that occur.
+     */
     protected abstract void check(Shape shape, T trait, N value, Context context, Emitter emitter);
 }
