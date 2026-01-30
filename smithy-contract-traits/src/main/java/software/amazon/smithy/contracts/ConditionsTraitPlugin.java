@@ -6,11 +6,14 @@ package software.amazon.smithy.contracts;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.jmespath.node.NodeJmespathRuntime;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.node.MemberAndShapeTraitPlugin;
@@ -21,8 +24,15 @@ import software.amazon.smithy.model.validation.node.MemberAndShapeTraitPlugin;
  */
 public final class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node, ConditionsTrait> {
 
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.allOf(ShapeType.class));
+
     public ConditionsTraitPlugin() {
-        super(EnumSet.allOf(ShapeType.class), Node.class, ConditionsTrait.class);
+        super(Node.class, ConditionsTrait.class);
+    }
+
+    @Override
+    public BiPredicate<Model, Shape> shapeMatcher() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

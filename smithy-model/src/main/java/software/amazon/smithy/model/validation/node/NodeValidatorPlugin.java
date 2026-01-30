@@ -38,9 +38,7 @@ public interface NodeValidatorPlugin {
      * @return A {@link BiPredicate} that returns true if this plugin
      *         has an effect on Node values of the given shape.
      */
-    default BiPredicate<Model, Shape> shapeMatcher() {
-        return (m, s) -> true;
-    }
+    BiPredicate<Model, Shape> shapeMatcher();
 
     /**
      * Applies the plugin to the given shape, node value, and model.

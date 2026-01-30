@@ -6,6 +6,7 @@ package software.amazon.smithy.model.validation;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -23,6 +24,7 @@ import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
  */
 final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
 
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.allOf(ShapeType.class));
     private final EnumMap<ShapeType, List<NodeValidatorPlugin>> pluginsForDirectShapeTypes =
             new EnumMap<>(ShapeType.class);
     private final EnumMap<ShapeType, List<NodeValidatorPlugin>> pluginsForTargetShapeTypes =
@@ -34,6 +36,11 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
             pluginsForDirectShapeTypes.put(shapeType, new ArrayList<>());
             pluginsForTargetShapeTypes.put(shapeType, new ArrayList<>());
         }
+    }
+
+    @Override
+    public BiPredicate<Model, Shape> shapeMatcher() {
+        return SHAPE_TYPE_FILTER;
     }
 
     /**

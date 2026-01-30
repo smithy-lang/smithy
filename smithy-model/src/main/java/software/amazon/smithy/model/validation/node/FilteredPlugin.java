@@ -14,26 +14,28 @@ import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 
 abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeValidatorPlugin {
     // The set of ShapeTypes whose class is a subclass of the S type
-    private final EnumSet<ShapeType> shapeTypes;
+    private final ShapeTypeFilter shapeTypeFilter;
     private final Class<S> shapeClass;
     private final Class<N> nodeClass;
 
     FilteredPlugin(Class<S> shapeClass, Class<N> nodeClass) {
-        this.shapeTypes = EnumSet.noneOf(ShapeType.class);
-        for (ShapeType shapeType : ShapeType.values()) {
-            if (shapeClass.isAssignableFrom(shapeType.getShapeClass())) {
-                this.shapeTypes.add(shapeType);
-            }
-        }
         this.shapeClass = shapeClass;
         this.nodeClass = nodeClass;
+
+        EnumSet<ShapeType> shapeTypes = EnumSet.noneOf(ShapeType.class);
+        for (ShapeType shapeType : ShapeType.values()) {
+            if (shapeClass.isAssignableFrom(shapeType.getShapeClass())) {
+                shapeTypes.add(shapeType);
+            }
+        }
+        // Only applies to direct shapes, not member shapes pointing to them,
+        // since the plugin only applies to subclasses of S.
+        shapeTypeFilter = new ShapeTypeFilter(shapeTypes, EnumSet.noneOf(ShapeType.class));
     }
 
     @Override
     public BiPredicate<Model, Shape> shapeMatcher() {
-        // Only applies to direct shapes, not member shapes pointing to them,
-        // since the plugin only applies to subclasses of S.
-        return new ShapeTypeFilter(shapeTypes, EnumSet.noneOf(ShapeType.class));
+        return shapeTypeFilter;
     }
 
     @Override

@@ -24,10 +24,11 @@ final class RangeTraitPlugin implements NodeValidatorPlugin {
     private static final String MEMBER = "Member";
     private static final String TARGET = "Target";
     private static final String INVALID_RANGE = "InvalidRange";
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(ShapeType.NUMBER_TYPES);
 
     @Override
     public BiPredicate<Model, Shape> shapeMatcher() {
-        return new ShapeTypeFilter(ShapeType.NUMBER_TYPES);
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

@@ -29,10 +29,11 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final DateTimeFormatter HTTP_DATE = DateTimeFormatter.RFC_1123_DATE_TIME;
     private static final DateTimeFormatter DATE_TIME_Z = DateTimeFormatter.ISO_INSTANT;
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.TIMESTAMP));
 
     @Override
     public BiPredicate<Model, Shape> shapeMatcher() {
-        return new ShapeTypeFilter(EnumSet.of(ShapeType.TIMESTAMP));
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

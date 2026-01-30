@@ -4,9 +4,12 @@
  */
 package software.amazon.smithy.model.validation.node;
 
+import java.util.function.BiPredicate;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -17,8 +20,15 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<ArrayNode, LengthTrait> {
 
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(ShapeType.COLLECTION_TYPES);
+
     CollectionLengthPlugin() {
-        super(ShapeType.COLLECTION_TYPES, ArrayNode.class, LengthTrait.class);
+        super(ArrayNode.class, LengthTrait.class);
+    }
+
+    @Override
+    public BiPredicate<Model, Shape> shapeMatcher() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

@@ -19,10 +19,12 @@ import software.amazon.smithy.model.shapes.ShapeTypeFilter;
  */
 final class NonNumericFloatValuesPlugin implements NodeValidatorPlugin {
     private static final Set<String> NON_NUMERIC_FLOAT_VALUES = NonNumericFloat.stringRepresentations();
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER =
+            new ShapeTypeFilter(EnumSet.of(ShapeType.FLOAT, ShapeType.DOUBLE), EnumSet.noneOf(ShapeType.class));
 
     @Override
     public BiPredicate<Model, Shape> shapeMatcher() {
-        return new ShapeTypeFilter(EnumSet.of(ShapeType.FLOAT, ShapeType.DOUBLE), EnumSet.noneOf(ShapeType.class));
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override

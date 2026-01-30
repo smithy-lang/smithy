@@ -5,9 +5,12 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.EnumSet;
+import java.util.function.BiPredicate;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -17,8 +20,15 @@ import software.amazon.smithy.model.validation.Severity;
  */
 final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringNode, PatternTrait> {
 
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.STRING));
+
     PatternTraitPlugin() {
-        super(EnumSet.of(ShapeType.STRING), StringNode.class, PatternTrait.class);
+        super(StringNode.class, PatternTrait.class);
+    }
+
+    @Override
+    public BiPredicate<Model, Shape> shapeMatcher() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override
