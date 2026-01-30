@@ -8,6 +8,7 @@ import static java.lang.String.format;
 import static software.amazon.smithy.model.validation.Severity.ERROR;
 import static software.amazon.smithy.model.validation.Validator.MODEL_ERROR;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -35,7 +37,7 @@ final class LoaderTraitMap {
     private static final String UNRESOLVED_TRAIT_SUFFIX = ".UnresolvedTrait";
 
     private final TraitFactory traitFactory;
-    private final Map<ShapeId, Map<ShapeId, Node>> traits = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, List<Node>>> traits = new HashMap<>();
     private final List<ValidationEvent> events;
     private final boolean allowUnknownTraits;
     private final Map<ShapeId, Map<ShapeId, Trait>> unclaimed = new HashMap<>();
@@ -48,7 +50,7 @@ final class LoaderTraitMap {
     }
 
     void applyTraitsToNonMixinsInShapeMap(LoaderShapeMap shapeMap, List<ShapeId> undefinedTraits) {
-        for (Map.Entry<ShapeId, Map<ShapeId, Node>> entry : traits.entrySet()) {
+        for (Map.Entry<ShapeId, Map<ShapeId, List<Node>>> entry : traits.entrySet()) {
             ShapeId target = entry.getKey();
             ShapeId root = target.withoutMember();
 
@@ -60,9 +62,10 @@ final class LoaderTraitMap {
                     ? shapeMap.get(root)
                     : Collections::emptyIterator;
 
-            for (Map.Entry<ShapeId, Node> traitEntry : entry.getValue().entrySet()) {
+            for (Map.Entry<ShapeId, List<Node>> traitEntry : entry.getValue().entrySet()) {
                 ShapeId traitId = traitEntry.getKey();
-                Node traitNode = traitEntry.getValue();
+                List<Node> traitNodes = traitEntry.getValue();
+                Node traitNode = mergeAllTraitValues(target, traitId, shapeMap.getShapeType(traitId), traitNodes);
                 Trait created = createTrait(target, traitId, traitNode);
                 validateTraitIsKnown(target, traitId, created, traitNode.getSourceLocation(), shapeMap);
                 validateTraitWithTraitDefinition(traitId, undefinedTraits);
@@ -147,7 +150,7 @@ final class LoaderTraitMap {
     }
 
     private void validateTraitWithTraitDefinition(ShapeId traitId, List<ShapeId> undefinedTraits) {
-        Map<ShapeId, Node> appliedTraits = traits.get(traitId);
+        Map<ShapeId, List<Node>> appliedTraits = traits.get(traitId);
         if (appliedTraits == null || !appliedTraits.containsKey(TraitDefinition.ID)) {
             undefinedTraits.add(traitId);
         }
@@ -202,9 +205,8 @@ final class LoaderTraitMap {
                         .message(message)
                         .build());
             } else {
-                Map<ShapeId, Node> current = traits.computeIfAbsent(operation.target, id -> new LinkedHashMap<>());
-                Node previous = current.get(operation.trait);
-                current.put(operation.trait, mergeTraits(operation.target, operation.trait, previous, operation.value));
+                Map<ShapeId, List<Node>> current = traits.computeIfAbsent(operation.target, id -> new LinkedHashMap<>());
+                current.computeIfAbsent(operation.trait, id -> new ArrayList<>()).add(operation.value);
             }
         }
     }
@@ -225,7 +227,15 @@ final class LoaderTraitMap {
                 && operation.target.getNamespace().equals(Prelude.NAMESPACE);
     }
 
-    private Node mergeTraits(ShapeId target, ShapeId traitId, Node previous, Node updated) {
+    private Node mergeAllTraitValues(ShapeId target, ShapeId traitId, ShapeType traitType, List<Node> nodes) {
+        Node result = null;
+        for (Node node : nodes) {
+            result = mergeTraits(target, traitId, traitType, result, node);
+        }
+        return result;
+    }
+
+    private Node mergeTraits(ShapeId target, ShapeId traitId, ShapeType traitType, Node previous, Node updated) {
         if (previous == null) {
             return updated;
         }
@@ -247,6 +257,10 @@ final class LoaderTraitMap {
         if (previous.isArrayNode() && updated.isArrayNode()) {
             // You can merge trait arrays.
             return previous.expectArrayNode().merge(updated.expectArrayNode());
+        } else if (ShapeType.MAP.equals(traitType)) {
+            // You can merge trait maps (if the trait type is known in the first place).
+            // TODO: validation events for any overlapping keys
+            return previous.expectObjectNode().merge(updated.expectObjectNode());
         } else if (previous.equals(updated)) {
             LOGGER.fine(() -> String.format("Ignoring duplicate %s trait value on %s", traitId, target));
             return previous;
