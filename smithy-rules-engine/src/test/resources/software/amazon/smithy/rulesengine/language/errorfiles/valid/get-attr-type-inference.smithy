@@ -6,7 +6,7 @@ use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 
 @endpointRuleSet({
-  "version": "1.3",
+  "version": "1.1",
   "parameters": {
     "Bucket": {
       "type": "string",

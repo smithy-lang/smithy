@@ -85,74 +85,77 @@ An *enum definition* is a structure that supports the following members:
 
 The following example defines an enum of valid string values for ``MyString``.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @enum([
-            {
-                value: "t2.nano",
-                name: "T2_NANO",
-                documentation: """
-                    T2 instances are Burstable Performance
-                    Instances that provide a baseline level of CPU
-                    performance with the ability to burst above the
-                    baseline.""",
-                tags: ["ebsOnly"]
-            },
-            {
-                value: "t2.micro",
-                name: "T2_MICRO",
-                documentation: """
-                    T2 instances are Burstable Performance
-                    Instances that provide a baseline level of CPU
-                    performance with the ability to burst above the
-                    baseline.""",
-                tags: ["ebsOnly"]
-            },
-            {
-                value: "m256.mega",
-                name: "M256_MEGA",
-                deprecated: true
-            }
-        ])
-        string MyString
+     @enum([
+         {
+             value: "t2.nano",
+             name: "T2_NANO",
+             documentation: """
+                 T2 instances are Burstable Performance
+                 Instances that provide a baseline level of CPU
+                 performance with the ability to burst above the
+                 baseline.""",
+             tags: ["ebsOnly"]
+         },
+         {
+             value: "t2.micro",
+             name: "T2_MICRO",
+             documentation: """
+                 T2 instances are Burstable Performance
+                 Instances that provide a baseline level of CPU
+                 performance with the ability to burst above the
+                 baseline.""",
+             tags: ["ebsOnly"]
+         },
+         {
+             value: "m256.mega",
+             name: "M256_MEGA",
+             deprecated: true
+         }
+     ])
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#enum": [
-                            {
-                                "value": "t2.nano",
-                                "name": "T2_NANO",
-                                "documentation": "T2 instances are ...",
-                                "tags": [
-                                    "ebsOnly"
-                                ]
-                            },
-                            {
-                                "value": "t2.micro",
-                                "name": "T2_MICRO",
-                                "documentation": "T2 instances are ...",
-                                "tags": [
-                                    "ebsOnly"
-                                ]
-                            },
-                            {
-                                "value": "m256.mega",
-                                "name": "M256_MEGA",
-                                "deprecated": true
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#enum": [
+                         {
+                             "value": "t2.nano",
+                             "name": "T2_NANO",
+                             "documentation": "T2 instances are ...",
+                             "tags": [
+                                 "ebsOnly"
+                             ]
+                         },
+                         {
+                             "value": "t2.micro",
+                             "name": "T2_MICRO",
+                             "documentation": "T2 instances are ...",
+                             "tags": [
+                                 "ebsOnly"
+                             ]
+                         },
+                         {
+                             "value": "m256.mega",
+                             "name": "M256_MEGA",
+                             "deprecated": true
+                         }
+                     ]
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#idRef
@@ -210,99 +213,105 @@ To illustrate an example, a custom trait named ``integerRef`` is defined.
 This trait can be attached to any shape, and the value of the trait MUST
 contain a valid shape ID that targets an integer shape in the model.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @trait
-        @idRef(failWhenMissing: true, selector: "integer")
-        string integerRef
+     @trait
+     @idRef(failWhenMissing: true, selector: "integer")
+     string integerRef
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#integerRef": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#trait": {},
-                        "smithy.api#idRef": {
-                            "failWhenMissing": true,
-                            "selector": "integer"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#integerRef": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#trait": {},
+                     "smithy.api#idRef": {
+                         "failWhenMissing": true,
+                         "selector": "integer"
+                     }
+                 }
+             }
+         }
+     }
 
 Given the following model,
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        @integerRef(NotFound)
-        string InvalidShape1
+     @integerRef(NotFound)
+     string InvalidShape1
 
-        @integerRef(String)
-        string InvalidShape2
+     @integerRef(String)
+     string InvalidShape2
 
-        @integerRef("invalid-shape-id!")
-        string InvalidShape3
+     @integerRef("invalid-shape-id!")
+     string InvalidShape3
 
-        @integerRef(Integer)
-        string ValidShape
+     @integerRef(Integer)
+     string ValidShape
 
-        @integerRef(MyShape)
-        string ValidShape2
+     @integerRef(MyShape)
+     string ValidShape2
 
-        integer MyShape
+     integer MyShape
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#InvalidShape1": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.example#integerRef": "NotFound"
-                    }
-                },
-                "smithy.example#InvalidShape2": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.example#integerRef": "String"
-                    }
-                },
-                "smithy.example#InvalidShape3": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.example#integerRef": "invalid-shape-id!"
-                    }
-                },
-                "smithy.example#ValidShape": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.example#integerRef": "Integer"
-                    }
-                },
-                "smithy.example#ValidShape2": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.example#integerRef": "smithy.example#MyShape"
-                    }
-                },
-                "smithy.example#MyShape": {
-                    "type": "integer"
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#InvalidShape1": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.example#integerRef": "NotFound"
+                 }
+             },
+             "smithy.example#InvalidShape2": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.example#integerRef": "String"
+                 }
+             },
+             "smithy.example#InvalidShape3": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.example#integerRef": "invalid-shape-id!"
+                 }
+             },
+             "smithy.example#ValidShape": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.example#integerRef": "Integer"
+                 }
+             },
+             "smithy.example#ValidShape2": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.example#integerRef": "smithy.example#MyShape"
+                 }
+             },
+             "smithy.example#MyShape": {
+                 "type": "integer"
+             }
+         }
+     }
 
 - ``InvalidShape1`` is invalid because the "NotFound" shape cannot be
   found in the model.
@@ -362,29 +371,32 @@ string       The number of `Unicode scalar values <https://www.unicode.org/gloss
 blob         The size of the blob in bytes
 ===========  =====================================
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @length(min: 1, max: 10)
-        string MyString
+     @length(min: 1, max: 10)
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#length": {
-                            "min": 1,
-                            "max": 10
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#length": {
+                         "min": 1,
+                         "max": 10
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#pattern
@@ -431,26 +443,29 @@ languages.
     For example, the regular expression ``^\w+$`` would be specified as
     ``@pattern("^\\w+$")``.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @pattern("\\w+")
-        string MyString
+     @pattern("\\w+")
+     string MyString
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyString": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#pattern": "\\w+"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyString": {
+                 "type": "string",
+                 "traits": {
+                     "smithy.api#pattern": "\\w+"
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#private
@@ -513,29 +528,32 @@ integers and real numbers. Real numbers may only be applied to float, double,
 or bigDecimal shapes. ``min`` and ``max`` MUST fall within the allowable range
 of the targeted numeric shape to which it is applied.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        @range(min: 1, max: 10)
-        integer MyInt
+     @range(min: 1, max: 10)
+     integer MyInt
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyInt": {
-                    "type": "integer",
-                    "traits": {
-                        "smithy.api#range": {
-                            "min": 1,
-                            "max": 10
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyInt": {
+                 "type": "integer",
+                 "traits": {
+                     "smithy.api#range": {
+                         "min": 1,
+                         "max": 10
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#required
@@ -562,33 +580,36 @@ operation. When a member that is part of the output of an operation or an
 error is marked as required, a service MUST provide a value for the member
 in a response.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure MyStructure {
-            @required
-            foo: FooString,
-        }
+     structure MyStructure {
+         @required
+         foo: FooString,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.example#FooString",
-                            "traits": {
-                                "smithy.api#required": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.example#FooString",
+                         "traits": {
+                             "smithy.api#required": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 .. seealso::
 
@@ -667,47 +688,50 @@ In the below example, the ``range`` trait applied to ``numberOfItems``
 takes precedence over the one applied to ``PositiveInteger``. The resolved
 minimum will be ``7``, and the maximum ``12``.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure ShoppingCart {
-            @range(min: 7, max:12)
-            numberOfItems: PositiveInteger
-        }
+     structure ShoppingCart {
+         @range(min: 7, max:12)
+         numberOfItems: PositiveInteger
+     }
 
-        @range(min: 1)
-        integer PositiveInteger
+     @range(min: 1)
+     integer PositiveInteger
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "foo": {
-                            "target": "smithy.example#PositiveInteger",
-                            "traits": {
-                                "smithy.api#range": {
-                                    "min": 7,
-                                    "max": 12
-                                }
-                            }
-                        }
-                    }
-                },
-                "smithy.example#PositiveInteger": {
-                    "type": "integer",
-                    "traits": {
-                        "smithy.api#range": {
-                            "min": 1
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStructure": {
+                 "type": "structure",
+                 "members": {
+                     "foo": {
+                         "target": "smithy.example#PositiveInteger",
+                         "traits": {
+                             "smithy.api#range": {
+                                 "min": 7,
+                                 "max": 12
+                             }
+                         }
+                     }
+                 }
+             },
+             "smithy.example#PositiveInteger": {
+                 "type": "integer",
+                 "traits": {
+                     "smithy.api#range": {
+                         "min": 1
+                     }
+                 }
+             }
+         }
+     }
 
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/

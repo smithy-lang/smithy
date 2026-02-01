@@ -100,13 +100,11 @@ Validation
     * ``requiresLength`` shapes can only be referenced from top-level members
       of operation input structures.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
-
-        @streaming
-        @requiresLength
-        blob FiniteStreamingBlob
+     @streaming
+     @requiresLength
+     blob FiniteStreamingBlob
 
 
 .. _event-streams:
@@ -399,87 +397,93 @@ protocol-specific document.
 The following example serializes the "a" and "b" members as event
 headers and the "c" member as the payload.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure ExampleEvent {
-            @eventHeader
-            a: String,
+     structure ExampleEvent {
+         @eventHeader
+         a: String,
 
-            @eventHeader
-            b: String,
+         @eventHeader
+         b: String,
 
-            @eventPayload
-            c: Blob,
-        }
+         @eventPayload
+         c: Blob,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ExampleEvent": {
-                    "type": "structure",
-                    "members": {
-                        "a": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventPayload": {}
-                            }
-                        },
-                        "b": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventPayload": {}
-                            }
-                        },
-                        "c": {
-                            "target": "smithy.api#Blob",
-                            "traits": {
-                                "smithy.api#eventPayload": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#ExampleEvent": {
+                 "type": "structure",
+                 "members": {
+                     "a": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventPayload": {}
+                         }
+                     },
+                     "b": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventPayload": {}
+                         }
+                     },
+                     "c": {
+                         "target": "smithy.api#Blob",
+                         "traits": {
+                             "smithy.api#eventPayload": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 The following example serializes the "a", "b", and "c" members as the payload
 of the event using a protocol-specific document. For example, when using a JSON
 based protocol, the event payload is serialized as a JSON object:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure ExampleEvent {
-            a: String,
-            b: String,
-            c: Blob,
-        }
+     structure ExampleEvent {
+         a: String,
+         b: String,
+         c: Blob,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ExampleEvent": {
-                    "type": "structure",
-                    "members": {
-                        "a": {
-                            "target": "smithy.api#String"
-                        },
-                        "b": {
-                            "target": "smithy.api#String"
-                        },
-                        "c": {
-                            "target": "smithy.api#Blob"
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#ExampleEvent": {
+                 "type": "structure",
+                 "members": {
+                     "a": {
+                         "target": "smithy.api#String"
+                     },
+                     "b": {
+                         "target": "smithy.api#String"
+                     },
+                     "c": {
+                         "target": "smithy.api#Blob"
+                     }
+                 }
+             }
+         }
+     }
 
 Event stream traits
 ===================
@@ -513,42 +517,45 @@ Conflicts with
 
 The following example defines multiple event headers:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure ExampleEvent {
-            @eventHeader
-            a: String,
+     structure ExampleEvent {
+         @eventHeader
+         a: String,
 
-            @eventHeader
-            b: String,
-        }
+         @eventHeader
+         b: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ExampleEvent": {
-                    "type": "structure",
-                    "members": {
-                        "a": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventHeader": {}
-                            }
-                        },
-                        "b": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventHeader": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#ExampleEvent": {
+                 "type": "structure",
+                 "members": {
+                     "a": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventHeader": {}
+                         }
+                     },
+                     "b": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventHeader": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: smithy.api#eventPayload
@@ -585,42 +592,45 @@ Event payload is serialized using the following logic:
 The following example defines an event header and sends a blob as the payload
 of an event:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        structure ExampleEvent {
-            @eventPayload
-            a: String,
+     structure ExampleEvent {
+         @eventPayload
+         a: String,
 
-            @eventHeader
-            b: String,
-        }
+         @eventHeader
+         b: String,
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#ExampleEvent": {
-                    "type": "structure",
-                    "members": {
-                        "a": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventPayload": {}
-                            }
-                        },
-                        "b": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#eventHeader": {}
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#ExampleEvent": {
+                 "type": "structure",
+                 "members": {
+                     "a": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventPayload": {}
+                         }
+                     },
+                     "b": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "smithy.api#eventHeader": {}
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 The following structure is **invalid** because the "a" member is bound to the
 ``eventPayload``, and the "b" member is not bound to an ``eventHeader``.

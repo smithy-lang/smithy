@@ -965,7 +965,17 @@ The ``httpChecksum`` trait is a structure that contains the following members:
         request checksum behavior. The input member MUST target an :ref:`enum`
         shape. Each value in the enum represents a supported checksum
         algorithm. Algorithms MUST be one of the following supported values:
-        "CRC64NVME", "CRC32C", "CRC32", "SHA1", or "SHA256".
+
+        - "CRC32"
+        - "CRC32C"
+        - "CRC64NVME"
+        - "MD5"
+        - "SHA1"
+        - "SHA256"
+        - "SHA512"
+        - "XXHASH64"
+        - "XXHASH3"
+        - "XXHASH128"
     * - requestChecksumRequired
       - ``boolean``
       - Indicates an operation requires a checksum in its HTTP request. If the
@@ -981,8 +991,18 @@ The ``httpChecksum`` trait is a structure that contains the following members:
       - ``set<string>``
       - Defines the checksum algorithms clients SHOULD look for when validating
         checksums returned in the HTTP response. Each algorithm must be one of
-        the following supported values: "CRC64NVME", "CRC32C", "CRC32", "SHA1",
-        or "SHA256".
+        the following supported values:
+
+        - "CRC32"
+        - "CRC32C"
+        - "CRC64NVME"
+        - "MD5"
+        - "SHA1"
+        - "SHA256"
+        - "SHA512"
+        - "XXHASH64"
+        - "XXHASH3"
+        - "XXHASH128"
 
 The ``httpChecksum`` trait MUST define at least one of the request checksumming
 behavior, by setting the ``requestAlgorithmMember`` or
@@ -1058,13 +1078,20 @@ Client behavior
 Supported checksum algorithms
 -----------------------------
 The following checksum algorithms MUST be supported by clients.
-    * CRC32
-    * SHA1
-    * SHA256
+
+- CRC32
+- SHA1
+- SHA256
 
 Additionally, the following checksum algorithms SHOULD be supported by clients.
-    * CRC64NVME
-    * CRC32C
+
+- CRC32C
+- CRC64NVME
+- MD5
+- SHA512
+- XXHASH64
+- XXHASH3
+- XXHASH128
 
 HTTP request checksums
 ----------------------

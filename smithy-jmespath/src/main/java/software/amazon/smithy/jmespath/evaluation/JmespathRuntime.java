@@ -116,6 +116,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
                     if (first) {
                         first = false;
                     } else {
+                        // The compliance tests actually require ',' rather than ", " :P
                         arrayStringBuilder.append(',');
                     }
                     arrayStringBuilder.append(toString(element));
@@ -158,6 +159,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // BOOLEANs
     ///////////////////////////////
 
+    /**
+     * Creates a BOOLEAN value.
+     */
     T createBoolean(boolean b);
 
     /**
@@ -170,6 +174,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // STRINGs
     ///////////////////////////////
 
+    /**
+     * Creates a STRING value.
+     */
     T createString(String string);
 
     /**
@@ -185,6 +192,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // NUMBERs
     ///////////////////////////////
 
+    /**
+     * Creates a NUMBER value.
+     */
     T createNumber(Number value);
 
     /**
@@ -203,8 +213,14 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // ARRAYs
     ///////////////////////////////
 
+    /**
+     * Creates a new ArrayBuilder.
+     */
     ArrayBuilder<T> arrayBuilder();
 
+    /**
+     * A builder interface for new ARRAY values.
+     */
     interface ArrayBuilder<T> {
 
         /**
@@ -219,6 +235,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
          */
         void addAll(T collection);
 
+        /**
+         * Builds the new ARRAY value being built.
+         */
         T build();
     }
 
@@ -264,8 +283,14 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // OBJECTs
     ///////////////////////////////
 
+    /**
+     * Creates a new ObjectBuilder.
+     */
     ObjectBuilder<T> objectBuilder();
 
+    /**
+     * A builder interface for new OBJECT values.
+     */
     interface ObjectBuilder<T> {
 
         /**
@@ -279,6 +304,9 @@ public interface JmespathRuntime<T> extends Comparator<T> {
          */
         void putAll(T object);
 
+        /**
+         * Builds the new OBJECT value being built.
+         */
         T build();
     }
 

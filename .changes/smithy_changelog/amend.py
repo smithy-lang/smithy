@@ -101,7 +101,7 @@ def amend(
             f'--type feature --description "{description}"\n```\n\n'
             "Make sure that the description is appropriate for a changelog entry and "
             "that the proper feature type is used. See [`./.changes/README`]("
-            f"{GITHUB_URL}/{repository}/tree/main/.changes/README) or run "
+            f"{GITHUB_URL}/{repository}/tree/main/.changes/README.md) or run "
             "`./.changes/new-change -h` for more information."
         )
         post_comment(

@@ -1,0 +1,5 @@
+[WARNING] example#TestService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait.smithy.rules#endpointRuleSet
+[WARNING] example#TestService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait.smithy.rules#endpointTests
+[WARNING] example#TestService: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait.smithy.rules#clientContextParams
+[ERROR] example#TestService: GetAttr requires rules engine version >= 1.1, but ruleset declares version 1.0 | RulesEngineVersion
+[ERROR] example#TestService: Split requires rules engine version >= 1.1, but ruleset declares version 1.0 | RulesEngineVersion

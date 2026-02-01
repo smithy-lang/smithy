@@ -14,12 +14,14 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.error.InvalidRulesException;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.ArrayType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.ArrayValue;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
@@ -79,6 +81,21 @@ public final class GetAttr extends LibraryFunction {
         return ofExpressions(arg1, Expression.of(arg2));
     }
 
+    @Override
+    public RulesVersion availableSince() {
+        // Negative index only available since 1.1.
+        for (Part part : path) {
+            if (part instanceof Part.Index) {
+                Part.Index index = (Part.Index) part;
+                if (index.index < 0) {
+                    return RulesVersion.V1_1;
+                }
+            }
+        }
+
+        return RulesVersion.V1_0;
+    }
+
     /**
      * Parses the path argument to getAttr.
      *
@@ -100,10 +117,6 @@ public final class GetAttr extends LibraryFunction {
                 try {
                     String number = slicePart.substring(1, slicePart.length() - 1);
                     int slice = Integer.parseInt(number);
-                    if (slice < 0) {
-                        throw new InvalidRulesException("Invalid path component: slice index must be >= 0",
-                                sourceLocation);
-                    }
                     if (slicePartIndex > 0) {
                         result.add(Part.Key.of(component.substring(0, slicePartIndex)));
                     }
@@ -218,6 +231,11 @@ public final class GetAttr extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 25;
+        }
+
+        @Override
         public List<Type> getArguments() {
             // First argument is array or record, so we need to use any here and typecheck it elsewhere.
             return ListUtils.of(Type.anyType(), Type.stringType());
@@ -311,7 +329,8 @@ public final class GetAttr extends LibraryFunction {
 
             @Override
             public Value eval(Value container) {
-                return container.expectArrayValue().get(index);
+                ArrayValue values = container.expectArrayValue();
+                return index >= 0 ? values.get(index) : values.get(values.getValues().size() + index);
             }
 
             public int index() {

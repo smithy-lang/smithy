@@ -15,7 +15,7 @@ jobs:
     name: Java ${{ matrix.java }} ${{ matrix.os }}
     strategy:
       matrix:
-        java: [17, 21]
+        java: [17, 21, 25]
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
@@ -40,7 +40,7 @@ jobs:
         if: matrix.java == 17
         run: ./gradlew integ -Plog-tests --stacktrace
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
@@ -86,7 +86,7 @@ jobs:
     - name: Build docs
       run: cd docs && make html
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         name: built-docs
         path: docs/build/html

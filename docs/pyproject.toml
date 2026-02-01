@@ -9,16 +9,13 @@ module-root = ""
 name = "smithy"
 version = "1.0.0"
 dependencies = [
-    "sphinx==8.2.3",
+    "sphinx==9.1.0",
     "pygments==2.19.2",
-    "furo==2025.9.25",
+    "furo==2025.12.19",
 
     # Used by new docs
-    "sphinx-inline-tabs==2023.4.21",
-    "Sphinx-Substitution-Extensions==2025.11.17",
-
-    # Used by old docs
-    "sphinx-tabs>=3.4.7",
+    "sphinx-inline-tabs==2025.12.21.14",
+    "Sphinx-Substitution-Extensions==2026.1.12",
 
     "sphinx_copybutton==0.5.2",
     "sphinx-autobuild==2025.8.25",
@@ -27,7 +24,7 @@ dependencies = [
     "standard-imghdr==3.13.0",
 
     # Allows writing docs in markdown
-    "myst-parser==4.0.1"
+    "myst-parser==5.0.0"
 ]
 
 [project.entry-points."pygments.lexers"]

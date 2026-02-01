@@ -22,6 +22,6 @@ public final class EmptyType extends AbstractType {
 
     @Override
     public String toString() {
-        return "EmptyType[]";
+        return "EmptyType";
     }
 }

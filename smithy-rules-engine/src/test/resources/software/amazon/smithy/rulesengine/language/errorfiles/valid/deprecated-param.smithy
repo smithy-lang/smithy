@@ -36,7 +36,7 @@ use smithy.rules#endpointRuleSet
       "type": "endpoint"
     }
   ],
-  "version": "1.3"
+  "version": "1.1"
 })
 @clientContextParams(
   Region: {type: "string", documentation: "docs"}

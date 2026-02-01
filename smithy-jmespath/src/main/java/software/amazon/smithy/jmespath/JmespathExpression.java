@@ -119,7 +119,7 @@ public abstract class JmespathExpression {
      * @return Returns the result of evaluating the expression.
      */
     public LiteralExpression evaluate(LiteralExpression currentNode) {
-        return evaluate(currentNode, new LiteralExpressionJmespathRuntime());
+        return evaluate(currentNode, LiteralExpressionJmespathRuntime.INSTANCE);
     }
 
     /**

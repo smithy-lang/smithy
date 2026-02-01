@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.Objects;
 import software.amazon.smithy.jmespath.RuntimeType;
 
+/**
+ * Functions that make evaluating JmespathExpressions or implementing the JmespathRuntime interface easier.
+ */
 public final class EvaluationUtils {
 
     private static final InheritingClassMap<NumberType> numberTypeForClass = InheritingClassMap.<NumberType>builder()

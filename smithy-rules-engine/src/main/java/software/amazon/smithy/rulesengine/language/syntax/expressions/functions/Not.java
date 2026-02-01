@@ -68,6 +68,11 @@ public final class Not extends LibraryFunction {
         }
 
         @Override
+        public int getCost() {
+            return 5;
+        }
+
+        @Override
         public List<Type> getArguments() {
             return Collections.singletonList(Type.booleanType());
         }

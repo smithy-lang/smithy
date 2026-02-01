@@ -14,6 +14,12 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.MappingIterable;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
+/**
+ * A singleton implementation of the JmespathRuntime interface based on instances of the LiteralExpression class.
+ * <p>
+ * Does not use values of the additional LiteralExpression.EXPREF or LiteralExpression.ANY types
+ * as they aren't necessary.
+ */
 public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<LiteralExpression> {
 
     public static final LiteralExpressionJmespathRuntime INSTANCE = new LiteralExpressionJmespathRuntime();

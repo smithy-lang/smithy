@@ -27,6 +27,6 @@ public final class AnyType extends AbstractType {
 
     @Override
     public String toString() {
-        return "AnyType[]";
+        return "AnyType";
     }
 }

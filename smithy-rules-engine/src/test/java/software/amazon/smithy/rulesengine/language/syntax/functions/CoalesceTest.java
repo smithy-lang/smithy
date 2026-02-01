@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -135,7 +136,7 @@ public class CoalesceTest {
 
         Scope<Type> scope = new Scope<>();
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> coalesce.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> coalesce.typeCheck(scope));
         assertTrue(ex.getMessage().contains("Type mismatch in coalesce"));
         assertTrue(ex.getMessage().contains("argument 2"));
     }
@@ -151,7 +152,7 @@ public class CoalesceTest {
 
         Scope<Type> scope = new Scope<>();
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> coalesce.typeCheck(scope));
+        RuleError ex = assertThrows(RuleError.class, () -> coalesce.typeCheck(scope));
         assertTrue(ex.getMessage().contains("Type mismatch in coalesce"));
         assertTrue(ex.getMessage().contains("argument 3"));
     }
@@ -160,8 +161,7 @@ public class CoalesceTest {
     void testCoalesceWithLessThanTwoArguments() {
         Expression single = Literal.of("only");
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> Coalesce.ofExpressions(single).typeCheck(new Scope<>()));
+        RuleError ex = assertThrows(RuleError.class, () -> Coalesce.ofExpressions(single).typeCheck(new Scope<>()));
         assertTrue(ex.getMessage().contains("at least 2 arguments"));
     }
 
@@ -214,5 +214,25 @@ public class CoalesceTest {
         Type resultType = coalesce.typeCheck(scope);
 
         assertEquals(Type.booleanType(), resultType);
+    }
+
+    @Test
+    void testTypeMethodReturnsInferredTypeAfterTypeCheck() {
+        // Verify that type() returns the correct inferred type after typeCheck()
+        Expression optional1 = Expression.getReference(Identifier.of("maybeValue1"));
+        Expression optional2 = Expression.getReference(Identifier.of("maybeValue2"));
+        Expression definite = Literal.of("default");
+        Coalesce coalesce = Coalesce.ofExpressions(optional1, optional2, definite);
+
+        Scope<Type> scope = new Scope<>();
+        scope.insert("maybeValue1", Type.optionalType(Type.stringType()));
+        scope.insert("maybeValue2", Type.optionalType(Type.stringType()));
+
+        // Call typeCheck to cache the type
+        coalesce.typeCheck(scope);
+
+        // Now type() should return the inferred type (non-optional since last arg is definite)
+        Type cachedType = coalesce.type();
+        assertEquals(Type.stringType(), cachedType);
     }
 }

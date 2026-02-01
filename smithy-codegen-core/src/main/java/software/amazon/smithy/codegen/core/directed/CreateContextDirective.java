@@ -7,6 +7,7 @@ package software.amazon.smithy.codegen.core.directed;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
@@ -29,7 +30,24 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
 
     private final SymbolProvider symbolProvider;
     private final FileManifest fileManifest;
+    private final FileManifest sharedFileManifest;
     private final List<I> integrations;
+
+    CreateContextDirective(
+            Model model,
+            S settings,
+            ServiceShape service,
+            SymbolProvider symbolProvider,
+            FileManifest fileManifest,
+            FileManifest sharedFileManifest,
+            List<I> integrations
+    ) {
+        super(model, settings, service);
+        this.symbolProvider = symbolProvider;
+        this.fileManifest = fileManifest;
+        this.sharedFileManifest = sharedFileManifest;
+        this.integrations = Collections.unmodifiableList(integrations);
+    }
 
     CreateContextDirective(
             Model model,
@@ -39,10 +57,7 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
             FileManifest fileManifest,
             List<I> integrations
     ) {
-        super(model, settings, service);
-        this.symbolProvider = symbolProvider;
-        this.fileManifest = fileManifest;
-        this.integrations = Collections.unmodifiableList(integrations);
+        this(model, settings, service, symbolProvider, fileManifest, null, integrations);
     }
 
     /**
@@ -57,6 +72,26 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
      */
     public FileManifest fileManifest() {
         return fileManifest;
+    }
+
+    /**
+     * Gets the FileManifest used to create files in the projection's shared file
+     * space.
+     *
+     * <p>All files written by a generator should either be written using this
+     * manifest or the generator's isolated manifest ({@link #fileManifest()}).
+     *
+     * <p>Files written to this manifest may be read or modified by other Smithy build
+     * plugins. Generators SHOULD NOT write files to this manifest unless they
+     * specifically intend for them to be consumed by other plugins. Files that are not
+     * intended to be shared should be written to the manifest from
+     * {@link #fileManifest()}.
+     *
+     * @return Gets the optional FileManifest used to create files in the projection's
+     *         shared file space.
+     */
+    public Optional<FileManifest> sharedFileManifest() {
+        return Optional.ofNullable(sharedFileManifest);
     }
 
     /**

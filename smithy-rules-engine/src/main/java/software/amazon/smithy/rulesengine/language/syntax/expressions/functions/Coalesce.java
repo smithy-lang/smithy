@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
+import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.OptionalType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -81,10 +82,10 @@ public final class Coalesce extends LibraryFunction {
     }
 
     @Override
-    public Type typeCheck(Scope<Type> scope) {
+    protected Type typeCheckLocal(Scope<Type> scope) throws InnerParseError {
         List<Expression> args = getArguments();
         if (args.size() < 2) {
-            throw new IllegalArgumentException("Coalesce requires at least 2 arguments, got " + args.size());
+            throw new InnerParseError("Coalesce requires at least 2 arguments, got " + args.size());
         }
 
         // Get the first argument's type as the baseline
@@ -98,7 +99,7 @@ public final class Coalesce extends LibraryFunction {
             Type innerType = getInnerType(argType);
 
             if (!innerType.equals(baseInnerType)) {
-                throw new IllegalArgumentException(String.format(
+                throw new InnerParseError(String.format(
                         "Type mismatch in coalesce at argument %d: expected %s but got %s",
                         i + 1,
                         baseInnerType,
@@ -124,6 +125,11 @@ public final class Coalesce extends LibraryFunction {
         @Override
         public String getId() {
             return ID;
+        }
+
+        @Override
+        public int getCost() {
+            return 10;
         }
 
         @Override

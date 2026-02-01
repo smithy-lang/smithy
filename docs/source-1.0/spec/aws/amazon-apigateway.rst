@@ -39,33 +39,36 @@ See also
 
 The following example sets the ``X-API-Key`` header as the API key source.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.apigateway#apiKeySource
+     use aws.apigateway#apiKeySource
 
-        @apiKeySource("HEADER")
-        service Weather {
-            version: "2018-03-17"
-        }
+     @apiKeySource("HEADER")
+     service Weather {
+         version: "2018-03-17"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Weather": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.apigateway#apiKeySource": "HEADER"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Weather": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "traits": {
+                     "aws.apigateway#apiKeySource": "HEADER"
+                 }
+             }
+         }
+     }
 
 .. note::
 
@@ -179,33 +182,31 @@ An *authorizer* definition is a structure that supports the following members:
         API Gateway will cache authorizer responses. If this field is not set,
         the default value is 300. The maximum value is 3600, or 1 hour.
 
-.. tabs::
+.. code-block:: smithy
 
-    .. code-tab:: smithy
+     namespace ns.foo
 
-        namespace ns.foo
+     use aws.apigateway#authorizer
+     use aws.apigateway#authorizers
+     use aws.auth#sigv4
+     use aws.protocols#restJson1
 
-        use aws.apigateway#authorizer
-        use aws.apigateway#authorizers
-        use aws.auth#sigv4
-        use aws.protocols#restJson1
-
-        @restJson1
-        @sigv4(name: "weather")
-        @authorizer("arbitrary-name")
-        @authorizers(
-            "arbitrary-name": {
-                scheme: sigv4,
-                type: "request",
-                uri: "arn:foo:baz",
-                credentials: "arn:foo:bar",
-                identitySource: "mapping.expression",
-                identityValidationExpression: "[A-Z]+",
-                resultTtlInSeconds: 100
-            })
-        service Weather {
-            version: "2018-03-17"
-        }
+     @restJson1
+     @sigv4(name: "weather")
+     @authorizer("arbitrary-name")
+     @authorizers(
+         "arbitrary-name": {
+             scheme: sigv4,
+             type: "request",
+             uri: "arn:foo:baz",
+             credentials: "arn:foo:bar",
+             identitySource: "mapping.expression",
+             identityValidationExpression: "[A-Z]+",
+             resultTtlInSeconds: 100
+         })
+     service Weather {
+         version: "2018-03-17"
+     }
 
 .. note::
 
@@ -277,33 +278,36 @@ See also
 
 Then following example enables request validation on a service:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.apigateway#requestValidator
+     use aws.apigateway#requestValidator
 
-        @requestValidator("full")
-        service Weather {
-            version: "2018-03-17"
-        }
+     @requestValidator("full")
+     service Weather {
+         version: "2018-03-17"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#Weather": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "traits": {
-                        "aws.apigateway#requestValidator": "full"
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#Weather": {
+                 "type": "service",
+                 "version": "2018-03-17",
+                 "traits": {
+                     "aws.apigateway#requestValidator": "full"
+                 }
+             }
+         }
+     }
 
 .. note::
 

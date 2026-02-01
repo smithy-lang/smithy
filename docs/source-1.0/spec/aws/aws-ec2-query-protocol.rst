@@ -32,33 +32,36 @@ Value type
     * This protocol does not support :ref:`HTTP binding traits <http-traits>`.
       HTTP binding traits MUST be ignored if they are present.
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        namespace smithy.example
+     namespace smithy.example
 
-        use aws.protocols#ec2Query
+     use aws.protocols#ec2Query
 
-        @ec2Query
-        service MyService {
-            version: "2020-02-05"
-        }
+     @ec2Query
+     service MyService {
+         version: "2020-02-05"
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2020-02-05",
-                    "traits": {
-                        "aws.protocols#ec2Query": {}
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyService": {
+                 "type": "service",
+                 "version": "2020-02-05",
+                 "traits": {
+                     "aws.protocols#ec2Query": {}
+                 }
+             }
+         }
+     }
 
 
 .. smithy-trait:: aws.protocols#ec2QueryName
@@ -84,35 +87,38 @@ Value type
 
 Given the following structure definition:
 
-.. tabs::
+.. tab:: Smithy
 
-    .. code-tab:: smithy
+    .. code-block:: smithy
 
-        use aws.protocols#ec2QueryName
+     use aws.protocols#ec2QueryName
 
-        structure MyStruct {
-            @ec2QueryName("foo")
-            bar: String
-        }
+     structure MyStruct {
+         @ec2QueryName("foo")
+         bar: String
+     }
 
-    .. code-tab:: json
 
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyStruct": {
-                    "type": "structure",
-                    "members": {
-                        "bar": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "aws.protocols#ec2QueryName": "foo"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.. tab:: JSON
+
+    .. code-block:: json
+
+     {
+         "smithy": "1.0",
+         "shapes": {
+             "smithy.example#MyStruct": {
+                 "type": "structure",
+                 "members": {
+                     "bar": {
+                         "target": "smithy.api#String",
+                         "traits": {
+                             "aws.protocols#ec2QueryName": "foo"
+                         }
+                     }
+                 }
+             }
+         }
+     }
 
 and the following values provided for ``MyStruct``,
 

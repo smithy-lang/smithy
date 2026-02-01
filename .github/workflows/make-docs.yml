@@ -70,7 +70,7 @@ jobs:
         rm $ARTIFACTS_DIR/objects.inv || true
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: smithy-docs
         path: ${{ env.ARTIFACTS_DIR }}
@@ -89,7 +89,7 @@ jobs:
         ref: 'gh-pages'
     - name: Download artifacts
       id: download
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: smithy-docs
         path: /tmp/smithy-docs

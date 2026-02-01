@@ -1,13 +1,88 @@
 # Smithy Changelog
 
-## 1.65.0 (2025-12-04)
+## 1.67.0 (2026-01-28)
 
 ### Features
 
-- restXml and restJson1 should support the httpChecksum trait
-  ([#2867](https://github.com/smithy-lang/smithy/pull/2867))
+- Update supported httpChecksum algorithms
+  ([#2943](https://github.com/smithy-lang/smithy/pull/2943))
+- Fix SSA transform for transitive dependencies
+  ([#2946](https://github.com/smithy-lang/smithy/pull/2946))
+- Add support for negative GetAttr indexing
+  ([#2937](https://github.com/smithy-lang/smithy/pull/2937))
+
+### Bug Fixes
+
+- Fix incorrect links for operation input / output members in docgen
+  ([#2922](https://github.com/smithy-lang/smithy/pull/2922))
+
+### Documentation
+
+- Updated Sphinx to 9.1 and updated the tabs in the Smithy 1.0 docs to use the
+  same tab library that 2.0 uses.
+  ([#2942](https://github.com/smithy-lang/smithy/pull/2942))
+- Add Wire Protocol Selection guide
+  ([#2938](https://github.com/smithy-lang/smithy/pull/2938))
+
+## 1.66.0 (2026-01-13)
+
+### Features
+
+- Added protocol test to test xml attribute members that are declared between
+  non-attribute members.
+  ([#2870](https://github.com/smithy-lang/smithy/pull/2870))
+- Improve BDD sifting (2x speed, more reduction)
+  ([#2890](https://github.com/smithy-lang/smithy/pull/2890))
+- Added the shared file manifest to directed codegen interfaces so that it can
+  be easily used by integrations.
+  ([#2893](https://github.com/smithy-lang/smithy/pull/2893))
+- Add CostOptimization for cost-based BDD sifting
+  ([#2889](https://github.com/smithy-lang/smithy/pull/2889))
+- Added a `SnippetConfig` class to codgen-core that allows sharing doc snippets
+  that will be consumed by smithy-docgen.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Remove [] from toString on some rules engine types
+  ([#2904](https://github.com/smithy-lang/smithy/pull/2904))
+- Updated smithy-docgen to consume snippet files to generate example sections.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Added a generic evaluator/interpreter for JMESPath expressions.
+  ([#2878](https://github.com/smithy-lang/smithy/pull/2878))
+- Made `DefaultBuilderRef` public.
+  ([#2894](https://github.com/smithy-lang/smithy/pull/2894))
+- Implement rules engine ITE fn and S3 tree transform
+  ([#2903](https://github.com/smithy-lang/smithy/pull/2903))
+
+### Bug Fixes
+
+- Change generated union variant classes to public in trait codegen
+  ([#2887](https://github.com/smithy-lang/smithy/pull/2887))
+- Fix toBuilder not supplying cloudWatchNamespace in the aws.api#service trait
+  ([#2895](https://github.com/smithy-lang/smithy/pull/2895))
+
+### Documentation
+
+- Added a section to discuss recommendations for implementing Smithy clients.
+  Currently this section only includes information about HTTP interfaces, but it
+  will expand over time to cover more topics related to implementing clients.
+  ([#2868](https://github.com/smithy-lang/smithy/pull/2868))
+
+### Other
+
+- Make husky only work for files under /docs
+  ([#2916](https://github.com/smithy-lang/smithy/pull/2916))
+
+## 1.65.0 (2025-12-09)
+
+### Features
+
+- Added CloudWatch Metric Namespace to AWS service trait.
+  ([#2877](https://github.com/smithy-lang/smithy/pull/2877))
 - Add a new package with tests for rule engine
   ([#2864](https://github.com/smithy-lang/smithy/pull/2864))
+- Fix null result handling in CFG terminal nodes
+  ([#2881](https://github.com/smithy-lang/smithy/pull/2881))
+- restXml and restJson1 should support the httpChecksum trait
+  ([#2867](https://github.com/smithy-lang/smithy/pull/2867))
 - Added a `NodeValidationVisitor` feature that enforces base64 encoding of blob
   values. ([#2838](https://github.com/smithy-lang/smithy/pull/2838))
 

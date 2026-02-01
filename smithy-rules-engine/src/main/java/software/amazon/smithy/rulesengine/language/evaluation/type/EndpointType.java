@@ -22,6 +22,6 @@ public final class EndpointType extends AbstractType {
 
     @Override
     public String toString() {
-        return "EndpointType[]";
+        return "EndpointType";
     }
 }

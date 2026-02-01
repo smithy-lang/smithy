@@ -58,4 +58,16 @@ public interface FunctionDefinition {
      * @return the created LibraryFunction implementation.
      */
     LibraryFunction createFunction(FunctionNode functionNode);
+
+    /**
+     * Returns the relative cost of evaluating this function.
+     *
+     * <p>Lower values indicate cheaper operations. This cost is used by BDD optimizations to prefer evaluating
+     * cheaper conditions earlier, enabling short-circuit evaluation to skip expensive operations when possible.
+     *
+     * @return the relative evaluation cost (default: 100)
+     */
+    default int getCost() {
+        return 100;
+    }
 }
