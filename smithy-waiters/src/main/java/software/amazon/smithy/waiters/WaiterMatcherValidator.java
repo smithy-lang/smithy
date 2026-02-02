@@ -4,6 +4,9 @@
  */
 package software.amazon.smithy.waiters;
 
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_DANGER;
+import static software.amazon.smithy.model.jmespath.node.ModelJmespathUtils.JMES_PATH_WARNING;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +19,7 @@ import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.jmespath.node.ModelJmespathUtils;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -30,8 +34,6 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
     private static final String JMESPATH_PROBLEM = NON_SUPPRESSABLE_ERROR + "JmespathProblem";
     private static final String INVALID_ERROR_TYPE = NON_SUPPRESSABLE_ERROR + "InvalidErrorType";
     private static final String RETURN_TYPE_MISMATCH = "ReturnTypeMismatch";
-    private static final String JMES_PATH_DANGER = "JmespathEventDanger";
-    private static final String JMES_PATH_WARNING = "JmespathEventWarning";
 
     private final Model model;
     private final OperationShape operation;
@@ -166,9 +168,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
 
     // Lint using an ANY type or using the modeled shape as the starting data.
     private LiteralExpression createCurrentNodeFromShape(Shape shape) {
-        return shape == null
-                ? LiteralExpression.ANY
-                : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+        return ModelJmespathUtils.sampleShapeValue(model, shape);
     }
 
     private void addJmespathEvent(String path, ExpressionProblem problem) {

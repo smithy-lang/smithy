@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a service provider interface for `NodeValidationVisitor` plugins, and optimized to index plugins by the `ShapeType` they apply to.",
+  "pull_requests": [
+    "[#2935](https://github.com/smithy-lang/smithy/pull/2935)"
+  ]
+}

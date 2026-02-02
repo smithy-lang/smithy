@@ -15,4 +15,5 @@ dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-utils"))
     api(project(":smithy-jmespath"))
+    api(project(":smithy-model-jmespath"))
 }
