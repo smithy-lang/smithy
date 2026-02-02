@@ -1,10 +1,18 @@
 package software.amazon.smithy.jmespath.type;
 
-import java.lang.reflect.Array;
+import software.amazon.smithy.jmespath.JmespathException;
 
 public interface Type {
 
-    boolean isArray();
+    static Type optional(Type type) {
+        return new UnionType(type, NullType.INSTANCE);
+    }
 
-    ArrayType expectArray();
+    default boolean isArray() {
+        return false;
+    }
+
+    default ArrayType expectArray() {
+        throw new JmespathException("not an array");
+    }
 }

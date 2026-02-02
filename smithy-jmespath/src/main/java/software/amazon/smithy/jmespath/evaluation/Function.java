@@ -13,7 +13,7 @@ interface Function {
 
     String name();
 
-    Type typeCheck(List<Type> arguments);
+//    Type typeCheck(List<Type> arguments);
 
     <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments);
 
