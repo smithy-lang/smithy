@@ -7,6 +7,7 @@ package software.amazon.smithy.model.jmespath.node;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.type.Type;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -48,5 +49,9 @@ public final class ModelJmespathUtils {
         return shape == null
                 ? LiteralExpression.ANY
                 : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+    }
+
+    public static Type typeForShape(Model model, Shape shape) {
+        return shape == null ? Type.anyType() : shape.accept(new ShapeTyper(model));
     }
 }

@@ -4,9 +4,9 @@ import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.EnumSet;
 
-public class NullType implements Type {
+public class NumberType implements Type {
 
-    public static final NullType INSTANCE = new NullType();
+    public static final NumberType INSTANCE = new NumberType();
 
     private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.NULL);
 
@@ -17,6 +17,6 @@ public class NullType implements Type {
 
     @Override
     public String toString() {
-        return "null";
+        return "number";
     }
 }

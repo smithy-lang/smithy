@@ -4,11 +4,11 @@ import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.EnumSet;
 
-public class NullType implements Type {
+public class StringType implements Type {
 
-    public static final NullType INSTANCE = new NullType();
+    public static final StringType INSTANCE = new StringType();
 
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.NULL);
+    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.STRING);
 
     @Override
     public EnumSet<RuntimeType> runtimeTypes() {
@@ -17,6 +17,6 @@ public class NullType implements Type {
 
     @Override
     public String toString() {
-        return "null";
+        return "string";
     }
 }

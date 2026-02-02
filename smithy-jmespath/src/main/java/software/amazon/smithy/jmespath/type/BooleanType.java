@@ -4,11 +4,11 @@ import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.EnumSet;
 
-public class NullType implements Type {
+public class BooleanType implements Type {
 
-    public static final NullType INSTANCE = new NullType();
+    public static final BooleanType INSTANCE = new BooleanType();
 
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.NULL);
+    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.BOOLEAN);
 
     @Override
     public EnumSet<RuntimeType> runtimeTypes() {
@@ -17,6 +17,6 @@ public class NullType implements Type {
 
     @Override
     public String toString() {
-        return "null";
+        return "boolean";
     }
 }
