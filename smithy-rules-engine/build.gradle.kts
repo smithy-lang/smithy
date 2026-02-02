@@ -13,6 +13,7 @@ extra["moduleName"] = "software.amazon.smithy.rulesengine"
 
 dependencies {
     api(project(":smithy-model"))
+    api(project(":smithy-build"))
     api(project(":smithy-utils"))
     api(project(":smithy-jmespath"))
 }

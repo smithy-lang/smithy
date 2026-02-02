@@ -2,7 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-package software.amazon.smithy.build.transforms;
+package software.amazon.smithy.rulesengine.aws.s3;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,9 +12,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
-import software.amazon.smithy.rulesengine.aws.s3.S3TreeRewriter;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.CostOptimization;
@@ -26,15 +24,12 @@ import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 
 /**
- * Compiles a Binary Decision Diagram (BDD) from a service's {@code @endpointRuleSet}
- * trait and attaches the compiled {@code @endpointBdd} trait to the service shape.
+ * A dedicated transform to compile Binary Decision Diagram (BDD) from S3.
  */
-public final class CompileBddFromEndpointRuleSet implements ProjectionTransformer {
-    private static final ShapeId S3_SERVICE_ID = ShapeId.from("com.amazonaws.s3#AmazonS3");
-
+public class CompileBddForS3 implements ProjectionTransformer {
     @Override
     public String getName() {
-        return "compileBddFromEndpointRuleSet";
+        return "compileBddForS3";
     }
 
     @Override
@@ -43,17 +38,12 @@ public final class CompileBddFromEndpointRuleSet implements ProjectionTransforme
         Collection<Shape> shapes = new HashSet<>();
         Set<ServiceShape> serviceShapes = model.getServiceShapes();
         for (ServiceShape serviceShape : serviceShapes) {
-            if (serviceShape.hasTrait(EndpointRuleSetTrait.ID)) {
-                EndpointRuleSetTrait endpointRuleSetTrait = serviceShape.expectTrait(EndpointRuleSetTrait.class);
-                EndpointRuleSet rules = endpointRuleSetTrait.getEndpointRuleSet();
-                // S3 has special tree transformations that dramatically improve the BDD compiled result
-                // both in size and performance
-                if (serviceShape.getId().equals(S3_SERVICE_ID)) {
-                    rules = transformRulesetForS3(rules, serviceShape.expectTrait(EndpointTestsTrait.class));
-                }
-                EndpointBddTrait bdd = compileBdd(rules);
-                shapes.add(serviceShape.toBuilder().addTrait(bdd).build());
-            }
+            EndpointRuleSetTrait endpointRuleSetTrait = serviceShape.expectTrait(EndpointRuleSetTrait.class);
+            EndpointRuleSet rules = endpointRuleSetTrait.getEndpointRuleSet();
+            EndpointRuleSet transformedRules = transformRulesetForS3(rules,
+                    serviceShape.expectTrait(EndpointTestsTrait.class));
+            EndpointBddTrait bdd = compileBdd(transformedRules);
+            shapes.add(serviceShape.toBuilder().addTrait(bdd).build());
         }
         return ModelTransformer.create().replaceShapes(model, shapes);
     }

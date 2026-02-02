@@ -1,7 +1,6 @@
 software.amazon.smithy.build.transforms.Apply
 software.amazon.smithy.build.transforms.ChangeStringEnumsToEnumShapes
 software.amazon.smithy.build.transforms.ChangeTypes
-software.amazon.smithy.build.transforms.CompileBddFromEndpointRuleSet
 software.amazon.smithy.build.transforms.ExcludeMetadata
 software.amazon.smithy.build.transforms.ExcludeShapesBySelector
 software.amazon.smithy.build.transforms.ExcludeShapesByTag
