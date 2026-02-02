@@ -4,12 +4,14 @@
  */
 package software.amazon.smithy.model.validation.node;
 
+import java.util.EnumSet;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -20,10 +22,17 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * matching the selector.
  */
 @SmithyInternalApi
-final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, IdRefTrait> {
+final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringNode, IdRefTrait> {
+
+    private static final ShapeTypeFilter SHAPE_TYPE_FILTER = new ShapeTypeFilter(EnumSet.of(ShapeType.STRING));
 
     IdRefPlugin() {
-        super(StringShape.class, StringNode.class, IdRefTrait.class);
+        super(StringNode.class, IdRefTrait.class);
+    }
+
+    @Override
+    public ShapeTypeFilter shapeTypeFilter() {
+        return SHAPE_TYPE_FILTER;
     }
 
     @Override
