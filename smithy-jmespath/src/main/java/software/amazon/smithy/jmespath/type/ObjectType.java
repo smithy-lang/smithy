@@ -5,6 +5,7 @@ import software.amazon.smithy.jmespath.RuntimeType;
 import java.util.EnumSet;
 import java.util.Map;
 
+// TODO: RecordType? StructureType?
 public class ObjectType implements Type {
 
     private final Map<String, Type> properties;
