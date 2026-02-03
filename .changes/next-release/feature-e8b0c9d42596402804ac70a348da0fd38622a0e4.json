@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "Add new build transform CompileBddFromEndpointRuleSet",
+  "description": "Add new transform compileBdd and compileBddForS3",
   "pull_requests": [
     "[#2953](https://github.com/smithy-lang/smithy/pull/2953)"
   ]
