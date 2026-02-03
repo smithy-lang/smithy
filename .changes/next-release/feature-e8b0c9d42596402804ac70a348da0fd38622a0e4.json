@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add new transform compileBdd and compileBddForAws",
+  "pull_requests": [
+    "[#2953](https://github.com/smithy-lang/smithy/pull/2953)"
+  ]
+}
