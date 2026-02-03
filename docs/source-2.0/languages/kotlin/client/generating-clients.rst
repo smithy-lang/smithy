@@ -48,30 +48,6 @@ and the `smithy-base <https://github.com/smithy-lang/smithy-gradle-plugin#smithy
    +    id("software.amazon.smithy.gradle.smithy-base") version "1.3.0"
    }
 
-Add a `version catalog <https://docs.gradle.org/current/userguide/version_catalogs.html>`_ to manage your dependencies and their versions:
-
-.. code-block:: toml
-    :caption: gradle/libs.versions.toml
-
-    smithy-kotlin-version="1.6.0"
-    coroutines-core-version="1.10.2"
-
-    smithy-kotlin-codegen = { module = "aws.smithy.kotlin:codegen", version.ref = "smithy-kotlin-version" }
-
-    smithy-kotlin-runtime-core = { module = "aws.smithy.kotlin:runtime-core", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-smithy-client = { module = "aws.smithy.kotlin:smithy-client", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-http-client = { module = "aws.smithy.kotlin:http-client", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-telemetry-api = { module = "aws.smithy.kotlin:telemetry-api", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-telemetry-defaults = { module = "aws.smithy.kotlin:telemetry-defaults", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-rpcv2-protocol = { module = "aws.smithy.kotlin:smithy-rpcv2-protocols", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-aws-protocol-core = { module = "aws.smithy.kotlin:aws-protocol-core", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-aws-signing-common = { module = "aws.smithy.kotlin:aws-signing-common", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-serde = { module = "aws.smithy.kotlin:serde", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-serde-cbor = { module = "aws.smithy.kotlin:serde-cbor", version.ref = "smithy-kotlin-version" }
-    smithy-kotlin-http-client-engine-default = { module = "aws.smithy.kotlin:http-client-engine-default", version.ref = "smithy-kotlin-version" }
-
-    kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-core-version" }
-
 Add the following dependencies to your project:
 
 .. code-block:: kotlin
@@ -95,6 +71,30 @@ Add the following dependencies to your project:
         implementation(libs.smithy.kotlin.http.client.engine.default)
         implementation(libs.kotlinx.coroutines.core)
     }
+
+Add a `version catalog <https://docs.gradle.org/current/userguide/version_catalogs.html>`_ to manage your dependencies and their versions:
+
+.. code-block:: toml
+    :caption: gradle/libs.versions.toml
+
+    smithy-kotlin-version="1.6.0"
+    coroutines-core-version="1.10.2"
+
+    smithy-kotlin-codegen = { module = "aws.smithy.kotlin:codegen", version.ref = "smithy-kotlin-version" }
+
+    smithy-kotlin-runtime-core = { module = "aws.smithy.kotlin:runtime-core", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-smithy-client = { module = "aws.smithy.kotlin:smithy-client", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-http-client = { module = "aws.smithy.kotlin:http-client", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-telemetry-api = { module = "aws.smithy.kotlin:telemetry-api", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-telemetry-defaults = { module = "aws.smithy.kotlin:telemetry-defaults", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-rpcv2-protocol = { module = "aws.smithy.kotlin:smithy-rpcv2-protocols", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-aws-protocol-core = { module = "aws.smithy.kotlin:aws-protocol-core", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-aws-signing-common = { module = "aws.smithy.kotlin:aws-signing-common", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-serde = { module = "aws.smithy.kotlin:serde", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-serde-cbor = { module = "aws.smithy.kotlin:serde-cbor", version.ref = "smithy-kotlin-version" }
+    smithy-kotlin-http-client-engine-default = { module = "aws.smithy.kotlin:http-client-engine-default", version.ref = "smithy-kotlin-version" }
+
+    kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-core-version" }
 
 Now, define a service model in a ``model/`` directory at the root of your project.
 The ``smithy-base`` Gradle plugin will automatically discover any models added to that directory.
@@ -160,7 +160,7 @@ Opt in to internal APIs
 
 Some of the code generated client APIs are public but marked with an `InternalApi <https://github.com/smithy-lang/smithy-kotlin/blob/main/runtime/runtime-core/common/src/aws/smithy/kotlin/runtime/Annotations.kt#L8-L31>`_
 annotation to discourage client end users from using them outside of generated code.
-To opt in to the InternalApi annotation, add the following to your Gradle build script:
+To opt in to the ``InternalApi`` annotation, add the following to your Gradle build script:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
