@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.rulesengine.transforms;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import software.amazon.smithy.build.ProjectionTransformer;
@@ -34,20 +33,24 @@ public final class CompileBdd implements ProjectionTransformer {
     @Override
     public Model transform(TransformContext transformContext) {
         Model model = transformContext.getModel();
-        Collection<Shape> shapes = new HashSet<>();
-        Set<ServiceShape> serviceShapes = model.getServiceShapes();
-        for (ServiceShape serviceShape : serviceShapes) {
-            if (serviceShape.hasTrait(EndpointRuleSetTrait.ID)) {
+        Set<Shape> shapes = new HashSet<>();
+        for (ServiceShape serviceShape : model.getServiceShapes()) {
+            if (serviceShape.hasTrait(EndpointRuleSetTrait.ID)
+                    && !serviceShape.hasTrait(EndpointBddTrait.ID)) {
                 EndpointRuleSetTrait endpointRuleSetTrait = serviceShape.expectTrait(EndpointRuleSetTrait.class);
-                EndpointRuleSet rules = endpointRuleSetTrait.getEndpointRuleSet();
-                EndpointBddTrait bdd = compileBdd(rules);
+                EndpointBddTrait bdd = compileBdd(endpointRuleSetTrait.getEndpointRuleSet());
                 shapes.add(serviceShape.toBuilder().addTrait(bdd).build());
             }
         }
         return ModelTransformer.create().replaceShapes(model, shapes);
     }
 
-    private EndpointBddTrait compileBdd(EndpointRuleSet rules) {
+    /**
+     * Compile endpointBdd trait from endpoint ruleset and return the optimized version.
+     *
+     * @param rules Endpoint ruleset from service shape.
+     */
+    public static EndpointBddTrait compileBdd(EndpointRuleSet rules) {
         // Create the CFG to start BDD compilation process.
         Cfg cfg = Cfg.from(rules);
         EndpointBddTrait unoptimizedTrait = EndpointBddTrait.from(cfg);

@@ -110,8 +110,9 @@ runtime performance and reduced artifact sizes.
 
    The ``endpointBdd`` trait can be generated from an ``endpointRuleSet`` trait through compilation.
    To generate the ``endpointBdd`` trait for a service, add the :ref:`compileBdd <compileBdd-transform>` transform
-   to the ``smithy-build.json`` file. Services may provide either trait, with ``endpointBdd`` preferred for
-   production use due to its performance characteristics.
+   to the ``smithy-build.json`` file.
+   Services may provide either trait, with ``endpointBdd`` preferred for production use due to
+   its performance characteristics.
 
 The ``endpointBdd`` structure has the following properties:
 

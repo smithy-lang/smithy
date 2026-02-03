@@ -684,8 +684,8 @@ the compiled :ref:`@endpointBdd <smithy.rules#endpointBdd-trait>` trait to the s
     }
 
 .. note::
-    ``S3`` has special tree transformations that dramatically improve the BDD compiled result both in size and
-    performance BDD compilation transform. To use it, please use the dedicated transform ``compileBddForS3`` and
+    AWS services like ``S3`` can have special tree transformations that dramatically improve the BDD compiled result
+    both in size and performance. To use them, please use the dedicated transform ``compileBddForAws`` and
     include the dependency of ``software.amazon.smithy:smithy-aws-endpoints:__smithy_version__``.
 
 .. _excludeShapesBySelector-transform:
