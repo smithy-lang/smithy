@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,13 +13,16 @@ import java.nio.file.Paths;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.rulesengine.analysis.BddCoverageChecker;
 import software.amazon.smithy.rulesengine.aws.s3.S3TreeRewriter;
+import software.amazon.smithy.rulesengine.aws.transforms.CompileBddForAws;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
 import software.amazon.smithy.rulesengine.logic.bdd.CostOptimization;
@@ -153,5 +158,15 @@ class S3BddTest {
         } catch (IOException e) {
             throw new RuntimeException("Failed to write S3 BDD model", e);
         }
+    }
+
+    @Test
+    void compileBddForS3AddedTrait() {
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .build();
+        Model result = new CompileBddForAws().transform(context);
+        Shape serviceShape = result.expectShape(S3_SERVICE_ID);
+        assertTrue(serviceShape.hasTrait(EndpointBddTrait.ID));
     }
 }

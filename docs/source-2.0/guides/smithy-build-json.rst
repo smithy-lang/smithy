@@ -654,6 +654,39 @@ Only the following shape type changes are supported:
 
 .. seealso:: :ref:`changeStringEnumsToEnumShapes`
 
+.. _compileBdd-transform:
+
+compileBdd
+-----------------------------
+
+This transform compiles `Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_
+from service shape's :ref:`@endpointRuleSet <smithy.rules#endpointRuleSet-trait>` trait and attaches
+the compiled :ref:`@endpointBdd <smithy.rules#endpointBdd-trait>` trait to the service shape.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "compileBdd"
+                    }
+                ]
+            }
+        },
+        "maven": {
+            "dependencies": [
+                "software.amazon.smithy:smithy-rules-engine:__smithy_version__"
+            ]
+        }
+    }
+
+.. note::
+    AWS services like ``S3`` can have special tree transformations that dramatically improve the BDD compiled result
+    both in size and performance. To use them, please use the dedicated transform ``compileBddForAws`` and
+    include the dependency of ``software.amazon.smithy:smithy-aws-endpoints:__smithy_version__``.
 
 .. _excludeShapesBySelector-transform:
 

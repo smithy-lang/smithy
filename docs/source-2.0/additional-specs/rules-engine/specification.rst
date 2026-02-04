@@ -94,7 +94,7 @@ on the scenario.
     This trait is experimental and subject to change.
 
 Summary
-    A Binary `Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_ representation of
+    A `Binary Decision Diagram (BDD) <https://en.wikipedia.org/wiki/Binary_decision_diagram>`_ representation of
     endpoint rules that is more compact and efficient at runtime than the decision-tree-based EndpointRuleSet trait.
 Trait selector
     ``service``
@@ -108,8 +108,11 @@ runtime performance and reduced artifact sizes.
 
 .. note::
 
-   The ``endpointBdd`` trait can be generated from an ``endpointRuleSet`` trait through compilation. Services may
-   provide either trait, with ``endpointBdd`` preferred for production use due to its performance characteristics.
+   The ``endpointBdd`` trait can be generated from an ``endpointRuleSet`` trait through compilation.
+   To generate the ``endpointBdd`` trait for a service, add the :ref:`compileBdd <compileBdd-transform>` transform
+   to the ``smithy-build.json`` file.
+   Services may provide either trait, with ``endpointBdd`` preferred for production use due to
+   its performance characteristics.
 
 The ``endpointBdd`` structure has the following properties:
 
