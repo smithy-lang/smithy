@@ -271,7 +271,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             // All required params from a ruleset must be present in all test cases.
             if (parameter.isRequired() && !parameter.getDefault().isPresent()
-                    && (!testSuiteHasParam || testSuiteParams.get(name).size() != trait.getTestCases().size())) {
+                    && (!testSuiteHasParam || testSuiteParams.get(name).size() < trait.getTestCases().size())) {
                 errors.add(parameterError(serviceShape,
                         parameter,
                         "TestCase.RequiredMissing",
