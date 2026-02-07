@@ -2,8 +2,8 @@ package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 public interface Type {
@@ -14,19 +14,39 @@ public interface Type {
 
     static Type anyType() { return AnyType.INSTANCE; }
 
+    static Type bottomType() {
+        return BottomType.INSTANCE;
+    }
+
     static Type nullType() { return NullType.INSTANCE; }
+
+    static Type booleanType() { return BooleanType.INSTANCE; }
+
+    static Type stringType() { return StringType.INSTANCE; }
+
+    static Type numberType() { return NumberType.INSTANCE; }
+
+    static Type arrayType(Type elementType) { return new ArrayType(elementType); }
+
+    static Type objectType() { return new ObjectType(null); }
 
     static Type unionType(Type ... types) {
         return new UnionType(types);
     }
 
+    <T> boolean isInstance(T value, JmespathRuntime<T> runtime);
+
     EnumSet<RuntimeType> runtimeTypes();
+
+    default Type elementType() {
+        return Type.nullType();
+    }
 
     default Type elementType(int index) {
         return Type.nullType();
     }
 
-    default Type valueType(String key) {
+    default Type valueType(Type key) {
         return Type.nullType();
     }
 

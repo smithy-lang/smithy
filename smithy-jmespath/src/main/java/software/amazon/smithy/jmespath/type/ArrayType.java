@@ -1,11 +1,11 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
-import java.util.stream.Collectors;
 
-public class ArrayType implements Type {
+public final class ArrayType implements Type {
 
     private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.ARRAY);
 
@@ -17,13 +17,48 @@ public class ArrayType implements Type {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ArrayType) {
+            ArrayType that = (ArrayType) obj;
+            return this.member.equals(that.member);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ArrayType.class.hashCode() + member.hashCode();
+    }
+
+    @Override
+    public <T> boolean isInstance(T array, JmespathRuntime<T> runtime) {
+        if (!runtime.is(array, RuntimeType.ARRAY)) {
+            return false;
+        }
+
+        for (T value : runtime.asIterable(array)) {
+            if (!member.isInstance(value, runtime)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    @Override
     public EnumSet<RuntimeType> runtimeTypes() {
         return TYPES;
     }
 
     @Override
     public Type elementType(int index) {
-        // TODO: make sure if member is any that this reduces to just any, not any | null
+        return elementType();
+    }
+
+    @Override
+    public Type elementType() {
         return Type.unionType(member, Type.nullType());
     }
 

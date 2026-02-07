@@ -144,8 +144,9 @@ final class ShapeTyper implements ShapeVisitor<Type> {
     @Override
     public Type mapShape(MapShape shape) {
         return withCopiedVisitors(() -> {
+            Type keyType = shape.getKey().accept(this);
             Type valueType = shape.getValue().accept(this);
-            return new MapType(valueType);
+            return new MapType(keyType, valueType);
         });
     }
 

@@ -6,8 +6,11 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.function.BiFunction;
+
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 /**
@@ -23,6 +26,10 @@ import software.amazon.smithy.jmespath.RuntimeType;
  * A runtime may or may not use a Java `null` value for this purpose.
  */
 public interface JmespathRuntime<T> extends Comparator<T> {
+
+    default boolean isConcrete() {
+        return true;
+    }
 
     ///////////////////////////////
     // General Operations
@@ -67,6 +74,10 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    default T ifThenElse(T condition, T then, T otherwise) {
+        return isTruthy(condition) ? then : otherwise;
     }
 
     /**
@@ -213,9 +224,21 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // ARRAYs
     ///////////////////////////////
 
+    // TODO MONADS BABY
+    // Could need finisher like Java stream
+    default T foldLeft(T init, JmespathExpression f, T array) {
+        T result = init;
+        for (T element : asIterable(array)) {
+            T input = arrayBuilder().add(result).add(element).build();
+            result = f.evaluate(input, this);
+        }
+        return result;
+    }
+
     /**
      * Creates a new ArrayBuilder.
      */
+    // TODO: Default implementation of wrapping an immutable array value and using toArray and concat?
     ArrayBuilder<T> arrayBuilder();
 
     /**
@@ -226,14 +249,14 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         /**
          * Adds the given value to the array being built.
          */
-        void add(T value);
+        ArrayBuilder<T> add(T value);
 
         /**
          * If the given value is an ARRAY, adds all the elements of the array.
          * If the given value is an OBJECT, adds all the keys of the object.
          * Otherwise, throws a JmespathException of type INVALID_TYPE.
          */
-        void addAll(T collection);
+        ArrayBuilder<T> addAll(T collection);
 
         /**
          * Builds the new ARRAY value being built.

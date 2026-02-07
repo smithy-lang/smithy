@@ -4,30 +4,37 @@ import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class AnyType implements Type {
+public class BottomType implements Type {
 
-    public static final AnyType INSTANCE = new AnyType();
+    public static final BottomType INSTANCE = new BottomType();
 
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.allOf(RuntimeType.class);
+    private static final EnumSet<RuntimeType> TYPES = EnumSet.noneOf(RuntimeType.class);
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof BooleanType;
+        return obj instanceof BottomType;
     }
 
     @Override
     public int hashCode() {
-        return BooleanType.class.hashCode();
+        return BottomType.class.hashCode();
     }
 
     @Override
     public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
-        return true;
+        return false;
     }
 
     @Override
     public EnumSet<RuntimeType> runtimeTypes() {
         return TYPES;
+    }
+
+    @Override
+    public String toString() {
+        return "bottom";
     }
 }

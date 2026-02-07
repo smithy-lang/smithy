@@ -137,12 +137,13 @@ public final class NodeJmespathRuntime implements JmespathRuntime<Node> {
         private final ArrayNode.Builder builder = ArrayNode.builder();
 
         @Override
-        public void add(Node value) {
+        public ArrayNodeBuilder add(Node value) {
             builder.withValue(value);
+            return this;
         }
 
         @Override
-        public void addAll(Node value) {
+        public ArrayNodeBuilder addAll(Node value) {
             if (value.isArrayNode()) {
                 builder.merge(value.expectArrayNode());
             } else {
@@ -150,6 +151,7 @@ public final class NodeJmespathRuntime implements JmespathRuntime<Node> {
                     builder.withValue(key);
                 }
             }
+            return this;
         }
 
         @Override

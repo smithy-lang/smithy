@@ -1,6 +1,7 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -20,6 +21,30 @@ public class UnionType implements Type {
         this.types = types;
         this.runtimeTypes = EnumSet.noneOf(RuntimeType.class);
         types.forEach(type -> runtimeTypes.addAll(type.runtimeTypes()));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UnionType)) {
+            return false;
+        }
+        UnionType other = (UnionType) obj;
+        return types.equals(other.types);
+    }
+
+    @Override
+    public int hashCode() {
+        return UnionType.class.hashCode() + types.hashCode();
+    }
+
+    @Override
+    public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
+        for (Type type : types) {
+            if (type.isInstance(value, runtime)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

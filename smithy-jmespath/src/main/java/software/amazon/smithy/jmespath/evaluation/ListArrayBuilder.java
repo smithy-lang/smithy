@@ -25,12 +25,13 @@ public class ListArrayBuilder<T> implements JmespathRuntime.ArrayBuilder<T> {
     }
 
     @Override
-    public void add(T value) {
+    public ListArrayBuilder<T> add(T value) {
         result.add(value);
+        return this;
     }
 
     @Override
-    public void addAll(T array) {
+    public ListArrayBuilder<T> addAll(T array) {
         Iterable<? extends T> iterable = runtime.asIterable(array);
         if (iterable instanceof Collection<?>) {
             result.addAll((Collection<? extends T>) iterable);
@@ -39,6 +40,7 @@ public class ListArrayBuilder<T> implements JmespathRuntime.ArrayBuilder<T> {
                 result.add(value);
             }
         }
+        return this;
     }
 
     @Override

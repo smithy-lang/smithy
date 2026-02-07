@@ -109,17 +109,19 @@ public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<L
         private final List<Object> result = new ArrayList<>();
 
         @Override
-        public void add(LiteralExpression value) {
+        public ArrayLiteralExpressionBuilder add(LiteralExpression value) {
             result.add(value.getValue());
+            return this;
         }
 
         @Override
-        public void addAll(LiteralExpression array) {
+        public ArrayLiteralExpressionBuilder addAll(LiteralExpression array) {
             if (array.isArrayValue()) {
                 result.addAll(array.expectArrayValue());
             } else {
                 result.addAll(array.expectObjectValue().keySet());
             }
+            return this;
         }
 
         @Override

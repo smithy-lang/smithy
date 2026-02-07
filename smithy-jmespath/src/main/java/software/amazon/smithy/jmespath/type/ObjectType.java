@@ -1,6 +1,7 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 // TODO: RecordType? StructureType?
 public class ObjectType implements Type {
 
+    // TODO: Optional keys as well (may not be present, but if so has type X)
+    // Not the same thing as always present but mapped to null
     private final Map<String, Type> properties;
 
     private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.OBJECT);
@@ -17,13 +20,42 @@ public class ObjectType implements Type {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ObjectType)) {
+            return false;
+        }
+
+        ObjectType other = (ObjectType) obj;
+        return properties.equals(other.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return properties.hashCode();
+    }
+
+    @Override
+    public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
+        if (!runtime.is(value, RuntimeType.OBJECT)){
+            return false;
+        }
+
+        if (properties != null) {
+            // TODO
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public EnumSet<RuntimeType> runtimeTypes() {
         return TYPES;
     }
 
     @Override
-    public Type valueType(String key) {
-        return properties == null ? Type.nullType() : properties.getOrDefault(key, Type.nullType());
+    public Type valueType(Type key) {
+        return properties == null ? Type.anyType() : properties.getOrDefault(key, Type.nullType());
     }
 
     @Override
