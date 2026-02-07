@@ -68,7 +68,11 @@ abstract class FunctionArgument<T> {
         }
 
         protected T expectType(RuntimeType runtimeType) {
-            if (runtime.is(value, runtimeType)) {
+            if (runtime.isAbstract()) {
+                return runtime.ifThenElse(runtime.abstractIs(value, runtimeType),
+                        value,
+                        runtime.error(JmespathExceptionType.INVALID_TYPE, "invalid-type"));
+            } else if (runtime.is(value, runtimeType)) {
                 return value;
             } else {
                 throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
@@ -76,6 +80,8 @@ abstract class FunctionArgument<T> {
         }
 
         public T expectAnyOf(Set<RuntimeType> types) {
+            // TODO: Handle abstract runtimes with a chained ifThenElse
+            // OR have abstract implementations of functions check types inline instead
             if (types.contains(runtime.typeOf(value))) {
                 return value;
             } else {

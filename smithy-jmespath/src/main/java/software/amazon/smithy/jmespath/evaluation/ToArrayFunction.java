@@ -18,12 +18,15 @@ class ToArrayFunction implements Function {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 
+        if (runtime.isAbstract()) {
+            T isArray = runtime.abstractIs(value, RuntimeType.ARRAY);
+            return runtime.ifThenElse(isArray, value, runtime.arrayBuilder().add(value).build());
+        }
+
         if (runtime.is(value, RuntimeType.ARRAY)) {
             return value;
         } else {
-            JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
-            builder.add(value);
-            return builder.build();
+            return runtime.arrayBuilder().add(value).build();
         }
     }
 }

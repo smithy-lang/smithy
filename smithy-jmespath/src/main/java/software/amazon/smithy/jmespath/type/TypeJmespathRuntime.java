@@ -1,22 +1,32 @@
 package software.amazon.smithy.jmespath.type;
 
+import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
 import java.util.Arrays;
-import java.util.function.BiFunction;
 
+// POC of an abstract runtime based on a semi-arbitrary Type value
 public class TypeJmespathRuntime implements JmespathRuntime<Type> {
+
+    @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
+    public JmespathException abstractException() {
+        return new JmespathException("TypeJmespathRuntime is abstract and does not support this operation");
+    }
+
     @Override
     public RuntimeType typeOf(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
     public Type ifThenElse(Type condition, Type then, Type otherwise) {
-        // TODO: If we have a LiteralType, we can sometimes determine the result is just then or otherwise
         return Type.unionType(then, otherwise);
     }
 
@@ -32,7 +42,7 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public boolean asBoolean(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
@@ -42,7 +52,7 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public String asString(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
@@ -52,12 +62,12 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public NumberType numberType(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
     public Number asNumber(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
@@ -78,7 +88,7 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
         @Override
         public ArrayBuilder<Type> addAll(Type collection) {
-            // TODO: what about map?
+            // TODO: what about map? Need keysOf operation on Type
             type = Type.unionType(type, collection);
             return this;
         }
@@ -129,12 +139,12 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public int length(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
     public Iterable<? extends Type> asIterable(Type value) {
-        throw new UnsupportedOperationException();
+        throw abstractException();
     }
 
     @Override
@@ -150,7 +160,7 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
         while (!result.equals(prevResult)) {
             Type fContextType = new TupleType(Arrays.asList(prevResult, array.elementType()));
             prevResult = result;
-            result = f.evaluate(fContextType, this);
+            result = Type.unionType(result, f.evaluate(fContextType, this));
         }
         return result;
     }

@@ -27,8 +27,9 @@ import software.amazon.smithy.jmespath.RuntimeType;
  */
 public interface JmespathRuntime<T> extends Comparator<T> {
 
-    default boolean isConcrete() {
-        return true;
+    // TODO: If true, you can't call the non-abstract versions blah blah
+    default boolean isAbstract() {
+        return false;
     }
 
     ///////////////////////////////
@@ -42,11 +43,19 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      */
     RuntimeType typeOf(T value);
 
+    default T abstractTypeOf(T value) {
+        return createString(typeOf(value).toString());
+    }
+
     /**
      * Shorthand for {@code typeOf(value).equals(type)}.
      */
     default boolean is(T value, RuntimeType type) {
         return typeOf(value).equals(type);
+    }
+
+    default T abstractIs(T value, RuntimeType type) {
+        return abstractEqual(abstractTypeOf(value), createString(type.toString()));
     }
 
     /**
@@ -91,6 +100,10 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         return EvaluationUtils.equals(this, a, b);
     }
 
+    default T abstractEqual(T a, T b) {
+        return createBoolean(equal(a, b));
+    }
+
     @Override
     default int compare(T a, T b) {
         if (is(a, RuntimeType.STRING) && is(b, RuntimeType.STRING)) {
@@ -100,6 +113,10 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         } else {
             throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
         }
+    }
+
+    default T abstractCompare(T a, T b) {
+        return createNumber(compare(a, b));
     }
 
     /**
@@ -153,6 +170,10 @@ public interface JmespathRuntime<T> extends Comparator<T> {
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    default T abstractToString(T value) {
+        return createString(toString(value));
     }
 
     ///////////////////////////////
@@ -224,21 +245,10 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     // ARRAYs
     ///////////////////////////////
 
-    // TODO MONADS BABY
-    // Could need finisher like Java stream
-    default T foldLeft(T init, JmespathExpression f, T array) {
-        T result = init;
-        for (T element : asIterable(array)) {
-            T input = arrayBuilder().add(result).add(element).build();
-            result = f.evaluate(input, this);
-        }
-        return result;
-    }
-
     /**
      * Creates a new ArrayBuilder.
      */
-    // TODO: Default implementation of wrapping an immutable array value and using toArray and concat?
+    // TODO: Default implementation of wrapping an immutable array value and using append and concat?
     ArrayBuilder<T> arrayBuilder();
 
     /**
@@ -309,6 +319,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     /**
      * Creates a new ObjectBuilder.
      */
+    // TODO: Default implementation of wrapping an immutable object value and using merge?
     ObjectBuilder<T> objectBuilder();
 
     /**
@@ -349,9 +360,35 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      */
     int length(T value);
 
+    default T abstractLength(T value) {
+        return createNumber(length(value));
+    }
+
     /**
      * Iterate over the elements of an ARRAY or the keys of an OBJECT.
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      */
     Iterable<? extends T> asIterable(T value);
+
+    // If ARRAY or OBJECT, then fold, else NULL
+    // TODO: more docs
+    // Could need finisher like Java stream
+    // TODO: Would error for other types be better?
+    default T foldLeft(T init, JmespathExpression f, T collection) {
+        T result = init;
+        for (T element : asIterable(collection)) {
+            T input = arrayBuilder().add(result).add(element).build();
+            result = f.evaluate(input, this);
+        }
+        return result;
+    }
+
+    ///////////////////////////////
+    // Errors
+    ///////////////////////////////
+
+    // TODO: "Abstract runtimes may return a value instead of immediately throwing
+    default T error(JmespathExceptionType errorType, String message) {
+        throw new JmespathException(errorType, message);
+    }
 }

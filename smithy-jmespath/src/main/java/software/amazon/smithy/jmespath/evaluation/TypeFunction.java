@@ -15,7 +15,6 @@ class TypeFunction implements Function {
     @Override
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
-        T value = functionArguments.get(0).expectValue();
-        return runtime.createString(runtime.typeOf(value).toString());
+        return runtime.abstractTypeOf(functionArguments.get(0).expectValue());
     }
 }
