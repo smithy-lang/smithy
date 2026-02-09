@@ -7,10 +7,12 @@ package software.amazon.smithy.rulesengine.aws.validators;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -52,28 +54,36 @@ public final class EndpointTestCasesParamsValidator extends AbstractValidator {
         });
 
         for (EndpointTestCase testCase : testsTrait.getTestCases()) {
-            if (testCase.getOperationInputs() == null
-                    || testCase.getOperationInputs()
-                            .stream()
-                            .allMatch(opInputs -> opInputs.getBuiltInParams() == null)) {
+            if (testCase.getOperationInputs() == null || testCase.getOperationInputs().isEmpty()) {
                 continue;
             }
             for (Entry<StringNode, Node> testCaseParam : testCase.getParams().getMembers().entrySet()) {
-                if (builtInParameters.containsKey(testCaseParam.getKey().getValue())) {
-                    testCase.getOperationInputs()
-                            .stream()
-                            .map(EndpointTestOperationInput::getBuiltInParams)
-                            .filter(builtInParams -> builtInParams
-                                    .containsMember(builtInParameters.get(testCaseParam.getKey().getValue())))
-                            .map(builtInParams -> builtInParams
-                                    .getMember(builtInParameters.get(testCaseParam.getKey().getValue())))
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .filter(value -> !value.equals(testCaseParam.getValue()))
-                            .forEach(inconsistentValue -> events.add(error(
-                                    serviceShape,
-                                    "Inconsistent testcase parameters: " + testCaseParam.getValue() + " and "
-                                            + inconsistentValue)));
+                if (!builtInParameters.containsKey(testCaseParam.getKey().getValue())) {
+                    continue;
+                }
+
+                for (EndpointTestOperationInput opInput : testCase.getOperationInputs()) {
+                    ObjectNode operationInputBuiltInParams = opInput.getBuiltInParams();
+                    if (operationInputBuiltInParams == null) {
+                        continue;
+                    }
+
+                    String builtInName = builtInParameters.get(testCaseParam.getKey().getValue());
+                    if (!operationInputBuiltInParams.containsMember(builtInName)) {
+                        continue;
+                    }
+
+                    Optional<Node> paramValue = operationInputBuiltInParams.getMember(builtInName);
+                    if (!paramValue.isPresent()) {
+                        continue;
+                    }
+
+                    if (!paramValue.get().equals(testCaseParam.getValue())) {
+                        events.add(error(
+                                serviceShape,
+                                "Inconsistent testcase parameters: " + testCaseParam.getValue()
+                                        + " and " + paramValue.get()));
+                    }
                 }
             }
         }
