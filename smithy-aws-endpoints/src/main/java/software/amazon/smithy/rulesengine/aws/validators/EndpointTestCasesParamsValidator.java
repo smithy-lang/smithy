@@ -24,7 +24,7 @@ import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 /**
  * Validator that the params used in endpoint test cases are valid.
  */
-public class EndpointTestCasesParamsValidator extends AbstractValidator {
+public final class EndpointTestCasesParamsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -44,7 +44,7 @@ public class EndpointTestCasesParamsValidator extends AbstractValidator {
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        HashMap<String, String> builtInParameters = new HashMap<>();
+        Map<String, String> builtInParameters = new HashMap<>();
         ruleSet.getParameters().forEach(parameter -> {
             if (parameter.getBuiltIn().isPresent()) {
                 builtInParameters.put(parameter.getName().getName().getValue(), parameter.getBuiltIn().get());
