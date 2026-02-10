@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -71,6 +75,7 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
         // be used frequently in downstream validation.
         List<Parameter> builtInParamsWithDefaults = new ArrayList<>();
         List<Parameter> builtInParamsWithoutDefaults = new ArrayList<>();
+        Map<String, String> builtInParameters = new HashMap<>();
 
         for (Parameter parameter : parameters) {
             if (parameter.isBuiltIn()) {
@@ -79,6 +84,7 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                 } else {
                     builtInParamsWithoutDefaults.add(parameter);
                 }
+                builtInParameters.put(parameter.getName().getName().getValue(), parameter.getBuiltIn().get());
             }
         }
 
@@ -109,6 +115,11 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                         events);
                 validateBuiltInsWithoutDefaultsHaveValues(serviceShape,
                         builtInParamsWithoutDefaults,
+                        testCase,
+                        testOperationInput,
+                        events);
+                validateBuiltInsUseInconsistentValues(serviceShape,
+                        builtInParameters,
                         testCase,
                         testOperationInput,
                         events);
@@ -149,12 +160,8 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
         for (Map.Entry<Parameter, Node> builtInParasWithNonDefaultValue : builtInParamsWithNonDefaultValues
                 .entrySet()) {
             String builtInName = builtInParasWithNonDefaultValue.getKey().getBuiltIn().get();
-            // Emit if either the built-in with a non-matching value isn't
-            // specified or the value set for it doesn't match.
-            if (!testOperationInput.getBuiltInParams().containsMember(builtInName)
-                    || !testOperationInput.getBuiltInParams()
-                            .expectMember(builtInName)
-                            .equals(builtInParasWithNonDefaultValue.getValue())) {
+            // Emit if the built-in with a non-matching value isn't specified.
+            if (!testOperationInput.getBuiltInParams().containsMember(builtInName)) {
                 events.add(error(serviceShape,
                         testOperationInput,
                         String.format("Test case does not supply the `%s` value for the `%s` parameter's "
@@ -182,6 +189,38 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                                 + "and the `%s` parameter does not set a default.",
                                 parameter.getBuiltIn().get(),
                                 parameter.getName())));
+            }
+        }
+    }
+
+    private void validateBuiltInsUseInconsistentValues(
+            ServiceShape serviceShape,
+            Map<String, String> builtInParameters,
+            EndpointTestCase testCase,
+            EndpointTestOperationInput testOperationInput,
+            List<ValidationEvent> events
+    ) {
+        for (Entry<StringNode, Node> testCaseParam : testCase.getParams().getMembers().entrySet()) {
+            if (!builtInParameters.containsKey(testCaseParam.getKey().getValue())) {
+                continue;
+            }
+
+            ObjectNode operationInputBuiltInParams = testOperationInput.getBuiltInParams();
+            String builtInName = builtInParameters.get(testCaseParam.getKey().getValue());
+            if (!operationInputBuiltInParams.containsMember(builtInName)) {
+                continue;
+            }
+
+            Optional<Node> paramValue = operationInputBuiltInParams.getMember(builtInName);
+            if (!paramValue.isPresent()) {
+                continue;
+            }
+
+            if (!paramValue.get().equals(testCaseParam.getValue())) {
+                events.add(error(
+                        serviceShape,
+                        "Inconsistent testcase parameters: " + testCaseParam.getValue()
+                                + " and " + paramValue.get()));
             }
         }
     }
