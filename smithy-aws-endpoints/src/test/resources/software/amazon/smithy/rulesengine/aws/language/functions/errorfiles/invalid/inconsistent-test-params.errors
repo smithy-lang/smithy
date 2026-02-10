@@ -1,5 +1,0 @@
-[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait.smithy.rules#endpointRuleSet
-[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait.smithy.rules#endpointTests
-[DANGER] example#FizzBuzz: The `AWS::Auth::AccountId` built-in used requires additional consideration of the rules that use it. | RuleSetAwsBuiltIn.AWS::Auth::AccountId
-[ERROR] example#FizzBuzz: Inconsistent testcase parameters: 123 and 012345678901 | EndpointTestCasesParams
-[ERROR] example#FizzBuzz: Inconsistent testcase parameters: us-west-2 and us-west-1 | EndpointTestCasesParams

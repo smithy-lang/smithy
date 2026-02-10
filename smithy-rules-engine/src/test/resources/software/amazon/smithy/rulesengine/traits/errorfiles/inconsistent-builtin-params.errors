@@ -1,0 +1,3 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait.smithy.rules#endpointRuleSet
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait.smithy.rules#endpointTests
+[ERROR] example#FizzBuzz: Inconsistent testcase parameters: https://another.example.com and https://custom.example.com | EndpointTestsTrait
