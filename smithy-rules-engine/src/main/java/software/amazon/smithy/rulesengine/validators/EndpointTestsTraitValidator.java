@@ -200,19 +200,12 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
             EndpointTestOperationInput testOperationInput,
             List<ValidationEvent> events
     ) {
-        if (testOperationInput == null) {
-            return;
-        }
         for (Entry<StringNode, Node> testCaseParam : testCase.getParams().getMembers().entrySet()) {
             if (!builtInParameters.containsKey(testCaseParam.getKey().getValue())) {
                 continue;
             }
 
             ObjectNode operationInputBuiltInParams = testOperationInput.getBuiltInParams();
-            if (operationInputBuiltInParams == null) {
-                continue;
-            }
-
             String builtInName = builtInParameters.get(testCaseParam.getKey().getValue());
             if (!operationInputBuiltInParams.containsMember(builtInName)) {
                 continue;
