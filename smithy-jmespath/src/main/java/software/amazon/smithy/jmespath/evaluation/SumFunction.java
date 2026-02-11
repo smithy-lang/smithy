@@ -10,7 +10,7 @@ import java.util.List;
 
 class SumFunction<T> implements Function<T> {
 
-    private static final JmespathExpression EXPRESSION = JmespathExpression.parse("fold_left(`0`, &add([0], [1]), [0])");
+    private static final JmespathExpression EXPRESSION = JmespathExpression.parse("fold_left(`0`, &add(acc, element), [0])");
 
     @Override
     public String name() {

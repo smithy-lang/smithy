@@ -339,13 +339,13 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         /**
          * Adds the given key/value pair to the object being built.
          */
-        void put(T key, T value);
+        ObjectBuilder<T> put(T key, T value);
 
         /**
          * If the given value is an OBJECT, adds all of its key/value pairs.
          * Otherwise, throws a JmespathException of type INVALID_TYPE.
          */
-        void putAll(T object);
+        ObjectBuilder<T> putAll(T object);
 
         /**
          * Builds the new OBJECT value being built.

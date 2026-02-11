@@ -179,13 +179,15 @@ public final class NodeJmespathRuntime implements JmespathRuntime<Node> {
         private final ObjectNode.Builder builder = ObjectNode.builder();
 
         @Override
-        public void put(Node key, Node value) {
+        public ObjectNodeBuilder put(Node key, Node value) {
             builder.withMember(key.expectStringNode(), value);
+            return this;
         }
 
         @Override
-        public void putAll(Node object) {
+        public ObjectNodeBuilder putAll(Node object) {
             builder.merge(object.expectObjectNode());
+            return this;
         }
 
         @Override

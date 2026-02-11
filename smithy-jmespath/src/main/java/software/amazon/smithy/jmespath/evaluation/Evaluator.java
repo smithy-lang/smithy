@@ -39,16 +39,20 @@ import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.abstrac
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
     private final JmespathRuntime<T> runtime;
-    private final FunctionRegistry<T> functions = new FunctionRegistry<>();
+    private final FunctionRegistry<T> functions;
 
     // We could make this state mutable instead of creating lots of sub-Evaluators.
     // This would make evaluation not thread-safe, but it's unclear how much that matters.
     private final T current;
 
     public Evaluator(T current, JmespathRuntime<T> runtime) {
+        this(current, runtime, new FunctionRegistry<>());
+    }
+
+    public Evaluator(T current, JmespathRuntime<T> runtime, FunctionRegistry<T> functions) {
         this.current = current;
         this.runtime = runtime;
-        functions.addBuiltins();
+        this.functions = functions;
     }
 
     public T visit(JmespathExpression expression) {

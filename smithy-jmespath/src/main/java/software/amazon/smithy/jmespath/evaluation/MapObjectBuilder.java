@@ -24,17 +24,19 @@ public class MapObjectBuilder<T> implements JmespathRuntime.ObjectBuilder<T> {
     }
 
     @Override
-    public void put(T key, T value) {
+    public MapObjectBuilder<T> put(T key, T value) {
         result.put(runtime.asString(key), value);
+        return this;
     }
 
     @Override
-    public void putAll(T object) {
+    public MapObjectBuilder<T> putAll(T object) {
         // A fastpath for when object is a Map doesn't quite work,
         // because you would need to know that it's specifically a Map<String, T>.
         for (T key : runtime.asIterable(object)) {
             result.put(runtime.asString(key), runtime.value(object, key));
         }
+        return this;
     }
 
     @Override

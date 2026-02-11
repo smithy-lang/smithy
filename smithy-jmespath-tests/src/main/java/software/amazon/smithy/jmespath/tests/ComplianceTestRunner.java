@@ -55,6 +55,10 @@ public class ComplianceTestRunner<T> {
         return testCases.stream().map(testCase -> new Object[] {testCase.name(), testCase});
     }
 
+    public <A> Stream<Object[]> parameterizedAbstractTestSource(JmespathRuntime<A> abstractRuntime, BiPredicate<T, A> abstractPredicate) {
+        return testCases.stream().map(testCase -> new Object[] {testCase.name(), (Runnable)() -> testCase.abstractRun(abstractRuntime, abstractPredicate)});
+    }
+
     private record TestCase<T>(
             JmespathRuntime<T> runtime,
             String testSuite,

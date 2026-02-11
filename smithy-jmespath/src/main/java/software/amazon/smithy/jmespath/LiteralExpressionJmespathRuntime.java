@@ -148,13 +148,15 @@ public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<L
         private final Map<String, Object> result = new HashMap<>();
 
         @Override
-        public void put(LiteralExpression key, LiteralExpression value) {
+        public ObjectLiteralExpressionBuilder put(LiteralExpression key, LiteralExpression value) {
             result.put(key.expectStringValue(), value.getValue());
+            return this;
         }
 
         @Override
-        public void putAll(LiteralExpression object) {
+        public ObjectLiteralExpressionBuilder putAll(LiteralExpression object) {
             result.putAll(object.expectObjectValue());
+            return this;
         }
 
         @Override

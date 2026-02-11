@@ -113,7 +113,7 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public ObjectBuilder<Type> objectBuilder() {
-        return null;
+        return new TypeObjectBuilder();
     }
 
     private static class TypeObjectBuilder implements ObjectBuilder<Type> {
@@ -122,15 +122,17 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
         private Type type = Type.objectType();
 
         @Override
-        public void put(Type key, Type value) {
+        public ObjectBuilder<Type> put(Type key, Type value) {
             // TODO: wrong
             type = Type.arrayType(Type.unionType(type.elementType(), value));
+            return this;
         }
 
         @Override
-        public void putAll(Type object) {
+        public ObjectBuilder<Type> putAll(Type object) {
             // TODO: wrong
             type = Type.unionType(type, object);
+            return this;
         }
 
         @Override
