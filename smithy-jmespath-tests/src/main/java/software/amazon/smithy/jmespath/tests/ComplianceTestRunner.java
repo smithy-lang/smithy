@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
@@ -138,6 +139,28 @@ public class ComplianceTestRunner<T> {
                                 + "Actual:    " + runtime.toString(result) + "\n"
                                 + "For query: " + expression + "\n");
                     }
+                }
+            } catch (JmespathException e) {
+                if (!e.getType().equals(expectedError)) {
+                    throw new AssertionError("Expected error does not match actual error. \n"
+                            + "Expected: " + (expectedError != null ? expectedError : "(no error)") + "\n"
+                            + "Actual: " + e.getType() + " - " + e.getMessage() + "\n"
+                            + "For query: " + expression + "\n", e);
+                }
+            }
+        }
+
+        public <A> void abstractRun(JmespathRuntime<A> abstractRuntime, BiPredicate<T, A> abstractPredicate) {
+            try {
+                var parsed = JmespathExpression.parse(expression);
+                var result = new Evaluator<>(given, runtime).visit(parsed);
+                // TODO: Faster way to do this?
+                var abstractedGiven = JmespathExpression.parseJson(runtime.toString(result), abstractRuntime);
+                var abstractResult = new Evaluator<>(abstractedGiven, abstractRuntime).visit(parsed);
+
+                if (abstractPredicate.test(result, abstractResult)) {
+                    throw new AssertionError("Expected " + result + " to be an instance of " + abstractResult + " but no error occurred. \n"
+                            + "For query: " + expression + "\n");
                 }
             } catch (JmespathException e) {
                 if (!e.getType().equals(expectedError)) {

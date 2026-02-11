@@ -4,6 +4,9 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +59,12 @@ public final class FunctionRegistry<T> {
         if (result != null) {
             return result;
         }
-        return functions.get(name);
+
+        result = functions.get(name);
+        if (result != null) {
+            return result;
+        }
+
+        throw new JmespathException(JmespathExceptionType.UNKNOWN_FUNCTION, "Unknown function: " + name);
     }
 }

@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.RuntimeType;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -18,6 +20,11 @@ class CeilFunction<T> implements Function<T> {
     public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
+
+        if (runtime.isAbstract()) {
+            return runtime.createAny(RuntimeType.NUMBER);
+        }
+
         Number number = runtime.asNumber(value);
 
         switch (runtime.numberType(value)) {
