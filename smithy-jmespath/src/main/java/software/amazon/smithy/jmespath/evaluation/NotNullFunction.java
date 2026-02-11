@@ -18,7 +18,7 @@ class NotNullFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         if (functionArguments.isEmpty()) {
             throw new JmespathException(JmespathExceptionType.INVALID_ARITY,
                     "Expected at least 1 argument, got 0");
@@ -29,7 +29,8 @@ class NotNullFunction<T> implements Function<T> {
             ListIterator<FunctionArgument<T>> iter = functionArguments.listIterator(functionArguments.size());
             while (iter.hasPrevious()) {
                 T value = iter.previous().expectValue();
-                result = runtime.ifThenElse(runtime.abstractIs(value, RuntimeType.NULL), result, value);
+                result = EvaluationUtils.abstractIfThenElse(runtime, functions,
+                        runtime.abstractIs(value, RuntimeType.NULL), result, value);
             }
             return result;
         }

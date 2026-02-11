@@ -11,13 +11,14 @@ public final class FunctionRegistry<T> {
 
     private final Map<String, Function<T>> functions = new HashMap<>();
 
-    private void registerFunction(Function<T> function) {
+    public void registerFunction(Function<T> function) {
         if (functions.put(function.name(), function) != null) {
             throw new IllegalArgumentException("Duplicate function name: " + function.name());
         }
     }
 
-    public FunctionRegistry() {
+    // TODO: Set up SPI
+    public void addBuiltins() {
         registerFunction(new AbsFunction<>());
         registerFunction(new AvgFunction<>());
         registerFunction(new CeilFunction<>());
@@ -46,7 +47,15 @@ public final class FunctionRegistry<T> {
         registerFunction(new ValuesFunction<>());
     }
 
-    Function<T> lookup(String name) {
+    public Function<T> lookup(String name) {
+        return functions.get(name);
+    }
+
+    public Function<T> lookup(JmespathRuntime<T> runtime, String name) {
+        Function<T> result = runtime.resolveFunction(name);
+        if (result != null) {
+            return result;
+        }
         return functions.get(name);
     }
 }

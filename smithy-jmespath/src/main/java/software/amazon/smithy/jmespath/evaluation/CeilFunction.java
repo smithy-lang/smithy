@@ -15,7 +15,7 @@ class CeilFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
         Number number = runtime.asNumber(value);

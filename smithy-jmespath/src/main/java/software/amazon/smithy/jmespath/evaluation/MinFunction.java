@@ -13,7 +13,7 @@ class MinFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
         if (runtime.length(array) == 0) {

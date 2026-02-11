@@ -6,8 +6,11 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+
+import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 /**
@@ -140,5 +143,19 @@ public final class EvaluationUtils {
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    // Helpers
+
+    public static <T> T abstractIfThenElse(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, T condition, T then, T otherwise) {
+        return functions.lookup(runtime, "if").apply(runtime, functions, condition, then, otherwise);
+    }
+
+    public static <T> T abstractFoldLeft(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, T init, JmespathExpression folder, T collection) {
+        return functions.lookup(runtime, "fold_left").apply(runtime, functions, Arrays.asList(
+                FunctionArgument.of(runtime, init),
+                FunctionArgument.of(runtime, folder),
+                FunctionArgument.of(runtime, collection)
+        ));
     }
 }

@@ -110,8 +110,6 @@ public abstract class JmespathExpression {
         return new LinterResult(result.getType(), problems);
     }
 
-//    public abstract Type typeCheck(Type currentType);
-
     /**
      * Evaluate the expression for the given current node.
      *

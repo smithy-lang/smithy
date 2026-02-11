@@ -14,7 +14,7 @@ class FoldLeftFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(3, functionArguments);
         T result = functionArguments.get(0).expectValue();
         JmespathExpression f = functionArguments.get(1).expectExpression();

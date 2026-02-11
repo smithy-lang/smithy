@@ -1,19 +1,22 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.JmespathException;
-import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
-import software.amazon.smithy.jmespath.ast.FunctionExpression;
-import software.amazon.smithy.jmespath.ast.ResolvedFunctionExpression;
 import software.amazon.smithy.jmespath.evaluation.Function;
+import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 // POC of an abstract runtime based on a semi-arbitrary Type value
 public class TypeJmespathRuntime implements JmespathRuntime<Type> {
+
+    private final FunctionRegistry<Type> overrides = new FunctionRegistry<>();
+
+    public TypeJmespathRuntime() {
+        overrides.registerFunction(new FoldLeftFunction());
+    }
 
     @Override
     public boolean isAbstract() {
@@ -178,9 +181,6 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
     @Override
     public Function<Type> resolveFunction(String name) {
-        if (name.equals("fold_left")) {
-            return new FoldLeftFunction();
-        }
-        return null;
+        return overrides.lookup(name);
     }
 }

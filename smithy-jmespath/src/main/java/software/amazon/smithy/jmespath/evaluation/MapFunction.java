@@ -14,7 +14,7 @@ class MapFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         JmespathExpression expression = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();

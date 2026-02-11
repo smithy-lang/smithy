@@ -15,6 +15,7 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.FunctionExpression;
 import software.amazon.smithy.jmespath.ast.ResolvedFunctionExpression;
+import software.amazon.smithy.jmespath.type.Type;
 
 /**
  * An interface to provide the operations needed for JMESPath expression evaluation
@@ -360,7 +361,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     ///////////////////////////////
     // Common collection operations for ARRAYs and OBJECTs
-    ///////////////////////////////
+    ///////////////////////////////34e
 
     /**
      * Returns the number of elements in an ARRAY or the number of keys in an OBJECT.
@@ -386,7 +387,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * Resolve a function expression.
      * The runtime can provide more optimized implementations of specific functions,
      * or more abstracted versions for abstract runtimes.
-     * It can also recognize runtime-native functions.
+     * It can also provide runtime-native functions.
      *
      * @return
      */
