@@ -9,14 +9,14 @@ import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 
-class SortByFunction implements Function {
+class SortByFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "sort_by";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         JmespathExpression expression = functionArguments.get(1).expectExpression();

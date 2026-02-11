@@ -5,15 +5,12 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.JmespathExpression;
-import software.amazon.smithy.jmespath.ast.IndexExpression;
-import software.amazon.smithy.jmespath.ast.FunctionExpression;
 
-import java.util.Arrays;
 import java.util.List;
 
-class SumFunction implements Function {
+class SumFunction<T> implements Function<T> {
 
-    private static final JmespathExpression FOLDER = JmespathExpression.parse("add([0], [1])");
+    private static final JmespathExpression EXPRESSION = JmespathExpression.parse("fold_left(`0`, &add([0], [1]), [0])");
 
     @Override
     public String name() {
@@ -21,12 +18,13 @@ class SumFunction implements Function {
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
 
         if (runtime.isAbstract()) {
-            return runtime.foldLeft(runtime.createNumber(0L), FOLDER, array);
+            T args = runtime.arrayBuilder().add(array).build();
+            return EXPRESSION.evaluate(args, runtime);
         }
 
         Number sum = 0L;

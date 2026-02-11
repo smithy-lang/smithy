@@ -7,14 +7,14 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.ArrayList;
 import java.util.List;
 
-class SortFunction implements Function {
+class SortFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "sort";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
 

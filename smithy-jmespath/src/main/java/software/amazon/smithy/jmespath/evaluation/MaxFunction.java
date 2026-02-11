@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class MaxFunction implements Function {
+class MaxFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "max";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
         if (runtime.length(array) == 0) {

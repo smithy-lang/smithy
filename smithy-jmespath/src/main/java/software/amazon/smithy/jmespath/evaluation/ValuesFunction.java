@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class ValuesFunction implements Function {
+class ValuesFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "values";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectObject();
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.jmespath.RuntimeType;
 
-class LengthFunction implements Function {
+class LengthFunction<T> implements Function<T> {
 
     private static final Set<RuntimeType> PARAMETER_TYPES = new HashSet<>();
     static {
@@ -24,10 +24,10 @@ class LengthFunction implements Function {
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectAnyOf(PARAMETER_TYPES);
 
-        return runtime.createNumber(runtime.length(value));
+        return runtime.abstractLength(value);
     }
 }

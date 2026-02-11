@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class JoinFunction implements Function {
+class JoinFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "join";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         String separator = runtime.asString(functionArguments.get(0).expectString());
         T array = functionArguments.get(1).expectArray();

@@ -14,7 +14,7 @@ import software.amazon.smithy.jmespath.JmespathExpression;
  *
  * @see <a href="https://jmespath.org/specification.html#functions-expressions">Function Expressions</a>
  */
-public final class FunctionExpression extends JmespathExpression {
+public class FunctionExpression extends JmespathExpression {
 
     public String name;
     public List<JmespathExpression> arguments;

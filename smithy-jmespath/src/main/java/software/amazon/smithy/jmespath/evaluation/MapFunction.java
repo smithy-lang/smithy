@@ -7,14 +7,14 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
 
-class MapFunction implements Function {
+class MapFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "map";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         JmespathExpression expression = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();

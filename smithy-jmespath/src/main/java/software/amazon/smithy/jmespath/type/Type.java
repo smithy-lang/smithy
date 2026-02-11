@@ -26,6 +26,8 @@ public interface Type {
 
     static Type numberType() { return NumberType.INSTANCE; }
 
+    static Type arrayType() { return new ArrayType(anyType()); }
+
     static Type arrayType(Type elementType) { return new ArrayType(elementType); }
 
     static Type objectType() { return new ObjectType(null); }

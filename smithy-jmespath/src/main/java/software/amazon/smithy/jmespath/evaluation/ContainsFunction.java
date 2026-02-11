@@ -8,14 +8,14 @@ import java.util.List;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 
-class ContainsFunction implements Function {
+class ContainsFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "contains";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T subject = functionArguments.get(0).expectValue();
         T search = functionArguments.get(1).expectValue();

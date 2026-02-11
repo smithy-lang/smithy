@@ -8,21 +8,18 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-class AppendFunction implements Function {
+class AppendFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "append";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         T value = functionArguments.get(1).expectValue();
 
-        JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
-        builder.addAll(array);
-        builder.add(value);
-        return builder.build();
+        return runtime.arrayBuilder().addAll(array).add(value).build();
     }
 }

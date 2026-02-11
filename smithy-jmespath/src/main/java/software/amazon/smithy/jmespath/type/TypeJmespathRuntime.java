@@ -3,10 +3,14 @@ package software.amazon.smithy.jmespath.type;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.ResolvedFunctionExpression;
+import software.amazon.smithy.jmespath.evaluation.Function;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 
 // POC of an abstract runtime based on a semi-arbitrary Type value
 public class TypeJmespathRuntime implements JmespathRuntime<Type> {
@@ -21,13 +25,13 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
-    public RuntimeType typeOf(Type value) {
-        throw abstractException();
+    public boolean is(Type value, RuntimeType type) {
+        return value.runtimeTypes().equals(EnumSet.of(type));
     }
 
     @Override
-    public Type ifThenElse(Type condition, Type then, Type otherwise) {
-        return Type.unionType(then, otherwise);
+    public RuntimeType typeOf(Type value) {
+        throw abstractException();
     }
 
     @Override
@@ -148,20 +152,35 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
-    public Type foldLeft(Type init, JmespathExpression f, Type array) {
-        // "evaluate" f in a typing context of [init, array.elementType()]
-        // and determine the fix point
-        // TODO: If `array` is more specific (say a @length limit) we may not need to do that.
-        // TODO: This may actually not terminate in some cases, say if init is a TupleType
-        // and f extends the tuple.
-        // But we could detect that and convert it to an ArrayType first, which won't grow in the same way.
-        Type result = init;
-        Type prevResult = null;
-        while (!result.equals(prevResult)) {
-            Type fContextType = new TupleType(Arrays.asList(prevResult, array.elementType()));
-            prevResult = result;
-            result = Type.unionType(result, f.evaluate(fContextType, this));
+    public Type createAny(RuntimeType runtimeType) {
+        switch (runtimeType) {
+            case STRING:
+                return Type.stringType();
+            case NUMBER:
+                return Type.numberType();
+            case BOOLEAN:
+                return Type.booleanType();
+            case NULL:
+                return Type.nullType();
+            case ARRAY:
+                return Type.arrayType();
+            case OBJECT:
+                return Type.objectType();
+            default:
+                throw new IllegalArgumentException("Unexpected runtime type: " + runtimeType);
         }
-        return result;
+    }
+
+    @Override
+    public Type either(Type left, Type right) {
+        return Type.unionType(left, right);
+    }
+
+    @Override
+    public Function<Type> resolveFunction(String name) {
+        if (name.equals("fold_left")) {
+            return new FoldLeftFunction();
+        }
+        return null;
     }
 }

@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class TypeFunction implements Function {
+class TypeFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "type";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         return runtime.abstractTypeOf(functionArguments.get(0).expectValue());
     }

@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class EndsWithFunction implements Function {
+class EndsWithFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "ends_with";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T subject = functionArguments.get(0).expectString();
         T suffix = functionArguments.get(1).expectString();

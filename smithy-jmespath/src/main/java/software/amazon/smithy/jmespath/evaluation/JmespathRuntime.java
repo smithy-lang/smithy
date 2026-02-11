@@ -6,12 +6,15 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.function.BiFunction;
 
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.ResolvedFunctionExpression;
 
 /**
  * An interface to provide the operations needed for JMESPath expression evaluation
@@ -85,10 +88,6 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         }
     }
 
-    default T ifThenElse(T condition, T then, T otherwise) {
-        return isTruthy(condition) ? then : otherwise;
-    }
-
     /**
      * Returns true iff the two given values are equal.
      * <p>
@@ -117,6 +116,14 @@ public interface JmespathRuntime<T> extends Comparator<T> {
 
     default T abstractCompare(T a, T b) {
         return createNumber(compare(a, b));
+    }
+
+    default T createAny(RuntimeType runtimeType) {
+        throw new UnsupportedOperationException("anyValue called on concrete runtime");
+    }
+
+    default T either(T left, T right) {
+        throw new UnsupportedOperationException("either called on concrete runtime");
     }
 
     /**
@@ -320,6 +327,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * Creates a new ObjectBuilder.
      */
     // TODO: Default implementation of wrapping an immutable object value and using merge?
+    // Don't want any concrete runtime to use that though.
     ObjectBuilder<T> objectBuilder();
 
     /**
@@ -370,25 +378,19 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      */
     Iterable<? extends T> asIterable(T value);
 
-    // If ARRAY or OBJECT, then fold, else NULL
-    // TODO: more docs
-    // Could need finisher like Java stream
-    // TODO: Would error for other types be better?
-    default T foldLeft(T init, JmespathExpression f, T collection) {
-        T result = init;
-        for (T element : asIterable(collection)) {
-            T input = arrayBuilder().add(result).add(element).build();
-            result = f.evaluate(input, this);
-        }
-        return result;
-    }
-
     ///////////////////////////////
-    // Errors
+    // Functions
     ///////////////////////////////
 
-    // TODO: "Abstract runtimes may return a value instead of immediately throwing
-    default T error(JmespathExceptionType errorType, String message) {
-        throw new JmespathException(errorType, message);
+    /**
+     * Resolve a function expression.
+     * The runtime can provide more optimized implementations of specific functions,
+     * or more abstracted versions for abstract runtimes.
+     * It can also recognize runtime-native functions.
+     *
+     * @return
+     */
+    default Function<T> resolveFunction(String name) {
+        return null;
     }
 }

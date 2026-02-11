@@ -6,14 +6,14 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 
-class MergeFunction implements Function {
+class MergeFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "merge";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         JmespathRuntime.ObjectBuilder<T> builder = runtime.objectBuilder();
 
         for (FunctionArgument<T> arg : functionArguments) {

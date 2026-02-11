@@ -8,14 +8,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-class FloorFunction implements Function {
+class FloorFunction<T> implements Function<T> {
     @Override
     public String name() {
         return "floor";
     }
 
     @Override
-    public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
+    public T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
         Number number = runtime.asNumber(value);

@@ -10,7 +10,7 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
-abstract class FunctionArgument<T> {
+public abstract class FunctionArgument<T> {
 
     protected final JmespathRuntime<T> runtime;
 
@@ -68,11 +68,7 @@ abstract class FunctionArgument<T> {
         }
 
         protected T expectType(RuntimeType runtimeType) {
-            if (runtime.isAbstract()) {
-                return runtime.ifThenElse(runtime.abstractIs(value, runtimeType),
-                        value,
-                        runtime.error(JmespathExceptionType.INVALID_TYPE, "invalid-type"));
-            } else if (runtime.is(value, runtimeType)) {
+            if (runtime.is(value, runtimeType)) {
                 return value;
             } else {
                 throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
