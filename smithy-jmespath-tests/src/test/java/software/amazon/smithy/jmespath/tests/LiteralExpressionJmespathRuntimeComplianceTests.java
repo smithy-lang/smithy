@@ -17,17 +17,7 @@ public class LiteralExpressionJmespathRuntimeComplianceTests {
         callable.run();
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("abstractSource")
-    public void abstractTestRunner(String filename, Runnable callable) throws Exception {
-        callable.run();
-    }
-
     public static Stream<?> source() {
-        return ComplianceTestRunner.defaultParameterizedTestSource(LiteralExpressionJmespathRuntime.INSTANCE);
-    }
-
-    public static Stream<?> abstractSource() {
-        return ComplianceTestRunner.defaultParameterizedTestSource(new TypeJmespathRuntime());
+        return ComplianceTestRunner.defaultParameterizedTestSource(LiteralExpressionJmespathRuntime.INSTANCE, new TypeJmespathRuntime());
     }
 }

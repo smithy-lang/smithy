@@ -46,7 +46,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     private final T current;
 
     public Evaluator(T current, JmespathRuntime<T> runtime) {
-        this(current, runtime, new FunctionRegistry<>());
+        this(current, runtime, FunctionRegistry.getSPIRegistry());
     }
 
     public Evaluator(T current, JmespathRuntime<T> runtime, FunctionRegistry<T> functions) {

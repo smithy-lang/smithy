@@ -123,15 +123,12 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
 
         @Override
         public ObjectBuilder<Type> put(Type key, Type value) {
-            // TODO: wrong
-            type = Type.arrayType(Type.unionType(type.elementType(), value));
+            // TODO: Try out record type
             return this;
         }
 
         @Override
         public ObjectBuilder<Type> putAll(Type object) {
-            // TODO: wrong
-            type = Type.unionType(type, object);
             return this;
         }
 

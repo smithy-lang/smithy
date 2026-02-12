@@ -30,4 +30,14 @@ public class AnyType implements Type {
     public EnumSet<RuntimeType> runtimeTypes() {
         return TYPES;
     }
+
+    @Override
+    public Type elementType() {
+        return INSTANCE;
+    }
+
+    @Override
+    public Type valueType(Type key) {
+        return INSTANCE;
+    }
 }

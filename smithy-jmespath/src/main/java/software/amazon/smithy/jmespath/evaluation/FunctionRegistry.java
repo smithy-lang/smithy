@@ -6,11 +6,23 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.JmespathExtension;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 public final class FunctionRegistry<T> {
+
+    public static <T> FunctionRegistry<T> getSPIRegistry() {
+        FunctionRegistry<T> result = new FunctionRegistry<>();
+
+        for (JmespathExtension extension : ServiceLoader.load(JmespathExtension.class, FunctionRegistry.class.getClassLoader())) {
+            extension.<T>getFunctions().forEach(result::registerFunction);
+        }
+
+        return result;
+    }
 
     private final Map<String, Function<T>> functions = new HashMap<>();
 
