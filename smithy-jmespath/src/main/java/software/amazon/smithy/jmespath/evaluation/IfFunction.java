@@ -9,16 +9,21 @@ class IfFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        T thenValue = functionArguments.get(1).expectValue();
+        T elseValue = functionArguments.get(2).expectValue();
+
+        // TODO: Have to pass on any error from the condition
+        return runtime.either(thenValue, elseValue);
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(3, functionArguments);
         T condition = functionArguments.get(0).expectValue();
         T thenValue = functionArguments.get(1).expectValue();
         // TODO: could be optional, defaulting to NULL or true?
         T elseValue = functionArguments.get(2).expectValue();
-
-        if (runtime.isAbstract()) {
-            return runtime.either(thenValue, elseValue);
-        }
 
         return runtime.isTruthy(condition) ? thenValue : elseValue;
     }

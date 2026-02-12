@@ -45,7 +45,7 @@ public interface Type {
     }
 
     default Type elementType(int index) {
-        return Type.nullType();
+        return elementType();
     }
 
     default Type valueType(Type key) {

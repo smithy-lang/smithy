@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
-import software.amazon.smithy.jmespath.type.Type;
 
 /**
  * Represents a JMESPath AST node.
@@ -43,7 +43,7 @@ public abstract class JmespathExpression {
      * @return Returns the parsed expression.
      * @throws JmespathException if the expression is invalid.
      */
-    public static <T> JmespathExpression parse(String text, JmespathRuntime<T> runtime) {
+    public static <T> JmespathExpression parse(String text, JmespathAbstractRuntime<T> runtime) {
         return Parser.parse(text, runtime);
     }
 
@@ -127,7 +127,7 @@ public abstract class JmespathExpression {
      * @param runtime The JmespathRuntime used to manipulate node values.
      * @return Returns the result of evaluating the expression.
      */
-    public <T> T evaluate(T currentNode, JmespathRuntime<T> runtime) {
+    public <T> T evaluate(T currentNode, JmespathAbstractRuntime<T> runtime) {
         return new Evaluator<>(currentNode, runtime).visit(this);
     }
 }

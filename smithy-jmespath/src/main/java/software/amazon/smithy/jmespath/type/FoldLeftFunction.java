@@ -4,6 +4,7 @@ import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.evaluation.Function;
 import software.amazon.smithy.jmespath.evaluation.FunctionArgument;
 import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.Arrays;
@@ -16,7 +17,12 @@ public class FoldLeftFunction implements Function<Type> {
     }
 
     @Override
-    public Type apply(JmespathRuntime<Type> runtime, FunctionRegistry<Type> functions, List<FunctionArgument<Type>> functionArguments) {
+    public Type abstractApply(JmespathAbstractRuntime<Type> runtime, FunctionRegistry<Type> functions, List<FunctionArgument<Type>> functionArguments) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Type concreteApply(JmespathRuntime<Type> runtime, FunctionRegistry<Type> functions, List<FunctionArgument<Type>> functionArguments) {
         Type init = functionArguments.get(0).expectValue();
         JmespathExpression f = functionArguments.get(1).expectExpression();
         Type array = functionArguments.get(2).expectArray();

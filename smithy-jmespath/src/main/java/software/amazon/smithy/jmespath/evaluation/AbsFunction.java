@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.RuntimeType;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -15,7 +17,12 @@ class AbsFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        return runtime.createAny(RuntimeType.NUMBER);
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectNumber();
         Number number = runtime.asNumber(value);

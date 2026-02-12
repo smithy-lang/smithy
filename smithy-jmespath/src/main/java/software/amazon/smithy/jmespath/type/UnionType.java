@@ -53,6 +53,15 @@ public class UnionType implements Type {
     }
 
     @Override
+    public Type elementType() {
+        return types.stream().map(Type::elementType).reduce(Type.bottomType(), Type::unionType);
+    }
+
+    public Type valueType(Type key) {
+        return types.stream().map(t -> t.valueType(key)).reduce(Type.bottomType(), Type::unionType);
+    }
+
+    @Override
     public String toString() {
         return types.stream().map(Type::toString).collect(Collectors.joining(" | "));
     }

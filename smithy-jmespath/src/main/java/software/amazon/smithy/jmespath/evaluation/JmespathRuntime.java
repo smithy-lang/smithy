@@ -29,12 +29,7 @@ import software.amazon.smithy.jmespath.type.Type;
  * refer to T value where typeOf(value) returns RuntimeType.NULL.
  * A runtime may or may not use a Java `null` value for this purpose.
  */
-public interface JmespathRuntime<T> extends Comparator<T> {
-
-    // TODO: If true, you can't call the non-abstract versions blah blah
-    default boolean isAbstract() {
-        return false;
-    }
+public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparator<T> {
 
     ///////////////////////////////
     // General Operations
@@ -47,6 +42,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      */
     RuntimeType typeOf(T value);
 
+    @Override
     default T abstractTypeOf(T value) {
         return createString(typeOf(value).toString());
     }
@@ -58,6 +54,7 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         return typeOf(value).equals(type);
     }
 
+    @Override
     default T abstractIs(T value, RuntimeType type) {
         return abstractEqual(abstractTypeOf(value), createString(type.toString()));
     }
@@ -119,10 +116,12 @@ public interface JmespathRuntime<T> extends Comparator<T> {
         return createNumber(compare(a, b));
     }
 
+    @Override
     default T createAny(RuntimeType runtimeType) {
         throw new UnsupportedOperationException("anyValue called on concrete runtime");
     }
 
+    @Override
     default T either(T left, T right) {
         throw new UnsupportedOperationException("either called on concrete runtime");
     }
@@ -185,24 +184,8 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     ///////////////////////////////
-    // NULLs
-    ///////////////////////////////
-
-    /**
-     * Returns `null`.
-     * <p>
-     * Runtimes may or may not use a Java null value to represent a JSON null value.
-     */
-    T createNull();
-
-    ///////////////////////////////
     // BOOLEANs
     ///////////////////////////////
-
-    /**
-     * Creates a BOOLEAN value.
-     */
-    T createBoolean(boolean b);
 
     /**
      * If the given value is a BOOLEAN, return it as a boolean.
@@ -213,11 +196,6 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     ///////////////////////////////
     // STRINGs
     ///////////////////////////////
-
-    /**
-     * Creates a STRING value.
-     */
-    T createString(String string);
 
     /**
      * If the given value is a STRING, return it as a String.
@@ -231,11 +209,6 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     ///////////////////////////////
     // NUMBERs
     ///////////////////////////////
-
-    /**
-     * Creates a NUMBER value.
-     */
-    T createNumber(Number value);
 
     /**
      * Returns the type of Number that asNumber() will produce for this value.
@@ -252,41 +225,6 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     ///////////////////////////////
     // ARRAYs
     ///////////////////////////////
-
-    /**
-     * Creates a new ArrayBuilder.
-     */
-    // TODO: Default implementation of wrapping an immutable array value and using append and concat?
-    ArrayBuilder<T> arrayBuilder();
-
-    /**
-     * A builder interface for new ARRAY values.
-     */
-    interface ArrayBuilder<T> {
-
-        /**
-         * Adds the given value to the array being built.
-         */
-        ArrayBuilder<T> add(T value);
-
-        /**
-         * If the given value is an ARRAY, adds all the elements of the array.
-         * If the given value is an OBJECT, adds all the keys of the object.
-         * Otherwise, throws a JmespathException of type INVALID_TYPE.
-         */
-        ArrayBuilder<T> addAll(T collection);
-
-        /**
-         * Builds the new ARRAY value being built.
-         */
-        T build();
-    }
-
-    /**
-     * If the given value is an ARRAY, returns the element at the given index.
-     * Otherwise, throws a JmespathException of type INVALID_TYPE.
-     */
-    T element(T array, int index);
 
     /**
      * If the given value is an ARRAY, returns the specified slice.
@@ -321,45 +259,6 @@ public interface JmespathRuntime<T> extends Comparator<T> {
     }
 
     ///////////////////////////////
-    // OBJECTs
-    ///////////////////////////////
-
-    /**
-     * Creates a new ObjectBuilder.
-     */
-    // TODO: Default implementation of wrapping an immutable object value and using merge?
-    // Don't want any concrete runtime to use that though.
-    ObjectBuilder<T> objectBuilder();
-
-    /**
-     * A builder interface for new OBJECT values.
-     */
-    interface ObjectBuilder<T> {
-
-        /**
-         * Adds the given key/value pair to the object being built.
-         */
-        ObjectBuilder<T> put(T key, T value);
-
-        /**
-         * If the given value is an OBJECT, adds all of its key/value pairs.
-         * Otherwise, throws a JmespathException of type INVALID_TYPE.
-         */
-        ObjectBuilder<T> putAll(T object);
-
-        /**
-         * Builds the new OBJECT value being built.
-         */
-        T build();
-    }
-
-    /**
-     * If the given value is an OBJECT, returns the value mapped to the given key.
-     * Otherwise, returns NULL.
-     */
-    T value(T object, T key);
-
-    ///////////////////////////////
     // Common collection operations for ARRAYs and OBJECTs
     ///////////////////////////////34e
 
@@ -378,20 +277,4 @@ public interface JmespathRuntime<T> extends Comparator<T> {
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      */
     Iterable<? extends T> asIterable(T value);
-
-    ///////////////////////////////
-    // Functions
-    ///////////////////////////////
-
-    /**
-     * Resolve a function expression.
-     * The runtime can provide more optimized implementations of specific functions,
-     * or more abstracted versions for abstract runtimes.
-     * It can also provide runtime-native functions.
-     *
-     * @return
-     */
-    default Function<T> resolveFunction(String name) {
-        return null;
-    }
 }

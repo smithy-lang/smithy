@@ -27,6 +27,7 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 /**
@@ -75,12 +76,12 @@ final class Parser {
     private final String expression;
     private final TokenIterator iterator;
 
-    private Parser(String expression, JmespathRuntime<?> runtime) {
+    private Parser(String expression, JmespathAbstractRuntime<?> runtime) {
         this.expression = expression;
         iterator = Lexer.tokenize(expression, runtime);
     }
 
-    static JmespathExpression parse(String expression, JmespathRuntime<?> runtime) {
+    static JmespathExpression parse(String expression, JmespathAbstractRuntime<?> runtime) {
         Parser parser = new Parser(expression, runtime);
         JmespathExpression result = parser.expression(0);
         parser.iterator.expect(TokenType.EOF);

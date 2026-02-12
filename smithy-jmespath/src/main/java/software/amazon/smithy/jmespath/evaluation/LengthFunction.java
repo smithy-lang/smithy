@@ -23,8 +23,14 @@ class LengthFunction<T> implements Function<T> {
         return "length";
     }
 
+
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        return runtime.createAny(RuntimeType.NUMBER);
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectAnyOf(PARAMETER_TYPES);
 

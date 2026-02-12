@@ -15,15 +15,19 @@ class ToArrayFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 
-        if (runtime.isAbstract()) {
-            T isArray = runtime.abstractIs(value, RuntimeType.ARRAY);
-            Function<T> ifFunction = runtime.resolveFunction("if");
-            return ifFunction.apply(runtime, functions, isArray, value, runtime.arrayBuilder().add(value).build());
-        }
+        T isArray = runtime.abstractIs(value, RuntimeType.ARRAY);
+        Function<T> ifFunction = runtime.resolveFunction("if");
+        return ifFunction.apply(runtime, functions, isArray, value, runtime.arrayBuilder().add(value).build());
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        checkArgumentCount(1, functionArguments);
+        T value = functionArguments.get(0).expectValue();
 
         if (runtime.is(value, RuntimeType.ARRAY)) {
             return value;

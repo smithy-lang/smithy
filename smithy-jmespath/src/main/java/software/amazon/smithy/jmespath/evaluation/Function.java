@@ -15,7 +15,19 @@ public interface Function<T> {
 
     String name();
 
-    T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> arguments);
+    default T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> arguments) {
+        if (runtime instanceof JmespathRuntime) {
+            return concreteApply((JmespathRuntime<T>)runtime, functions, arguments);
+        } else {
+            return abstractApply(runtime, functions, arguments);
+        }
+    }
+
+    T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> arguments);
+
+    default T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> arguments) {
+        return abstractApply(runtime, functions, arguments);
+    }
 
     // Helpers
 
@@ -26,17 +38,17 @@ public interface Function<T> {
         }
     }
 
-    default T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, T arg0) {
+    default T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T arg0) {
         return apply(runtime, functions, Collections.singletonList(FunctionArgument.of(runtime, arg0)));
     }
 
-    default T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, T arg0, T arg1) {
+    default T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T arg0, T arg1) {
         return apply(runtime, functions, Arrays.asList(
                 FunctionArgument.of(runtime, arg0),
                 FunctionArgument.of(runtime, arg1)));
     }
 
-    default T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, T arg0, T arg1, T arg2) {
+    default T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T arg0, T arg1, T arg2) {
         return apply(runtime, functions, Arrays.asList(
                 FunctionArgument.of(runtime, arg0),
                 FunctionArgument.of(runtime, arg1),

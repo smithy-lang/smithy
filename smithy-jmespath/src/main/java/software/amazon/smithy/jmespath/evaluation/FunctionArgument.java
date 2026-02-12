@@ -12,9 +12,9 @@ import software.amazon.smithy.jmespath.RuntimeType;
 
 public abstract class FunctionArgument<T> {
 
-    protected final JmespathRuntime<T> runtime;
+    protected final JmespathAbstractRuntime<T> runtime;
 
-    protected FunctionArgument(JmespathRuntime<T> runtime) {
+    protected FunctionArgument(JmespathAbstractRuntime<T> runtime) {
         this.runtime = runtime;
     }
 
@@ -46,18 +46,18 @@ public abstract class FunctionArgument<T> {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, JmespathExpression expression) {
+    public static <T> FunctionArgument<T> of(JmespathAbstractRuntime<T> runtime, JmespathExpression expression) {
         return new Expression<T>(runtime, expression);
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value) {
+    public static <T> FunctionArgument<T> of(JmespathAbstractRuntime<T> runtime, T value) {
         return new Value<T>(runtime, value);
     }
 
     static class Value<T> extends FunctionArgument<T> {
         T value;
 
-        public Value(JmespathRuntime<T> runtime, T value) {
+        public Value(JmespathAbstractRuntime<T> runtime, T value) {
             super(runtime);
             this.value = value;
         }
@@ -68,7 +68,7 @@ public abstract class FunctionArgument<T> {
         }
 
         protected T expectType(RuntimeType runtimeType) {
-            if (runtime.is(value, runtimeType)) {
+            if (JmespathAbstractRuntime.is(value, runtimeType)) {
                 return value;
             } else {
                 throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
@@ -109,7 +109,7 @@ public abstract class FunctionArgument<T> {
     static class Expression<T> extends FunctionArgument<T> {
         JmespathExpression expression;
 
-        public Expression(JmespathRuntime<T> runtime, JmespathExpression expression) {
+        public Expression(JmespathAbstractRuntime<T> runtime, JmespathExpression expression) {
             super(runtime);
             this.expression = expression;
         }

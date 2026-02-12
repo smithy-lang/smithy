@@ -36,7 +36,7 @@ public final class FunctionRegistry<T> {
         return functions.get(name);
     }
 
-    public Function<T> lookup(JmespathRuntime<T> runtime, String name) {
+    public Function<T> lookup(JmespathAbstractRuntime<T> runtime, String name) {
         Function<T> result = runtime.resolveFunction(name);
         if (result != null) {
             return result;

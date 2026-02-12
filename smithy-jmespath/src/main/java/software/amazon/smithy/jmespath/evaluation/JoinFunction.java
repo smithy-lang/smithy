@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.RuntimeType;
+
 import java.util.List;
 
 class JoinFunction<T> implements Function<T> {
@@ -13,7 +15,12 @@ class JoinFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        return runtime.createAny(RuntimeType.STRING);
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         String separator = runtime.asString(functionArguments.get(0).expectString());
         T array = functionArguments.get(1).expectArray();

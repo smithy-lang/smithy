@@ -136,7 +136,7 @@ public class ComplianceTestRunner<T, A extends Type> {
         public void run() {
             try {
                 var parsed = JmespathExpression.parse(expression);
-                var result = new Evaluator<>(given, runtime).visit(parsed);
+                var result = parsed.evaluate(given, runtime);
                 if (benchmark != null) {
                     // Benchmarks don't include expected results or errors
                     // TODO: Could still run these?
@@ -157,9 +157,10 @@ public class ComplianceTestRunner<T, A extends Type> {
                     if (abstractRuntime != null) {
                         // TODO: Faster way to do this?
                         var abstractedGiven = JmespathExpression.parseJson(runtime.toString(given), abstractRuntime);
-                        var abstractResult = new Evaluator<>(abstractedGiven, abstractRuntime).visit(parsed);
+                        var abstractResult = parsed.evaluate(abstractedGiven, abstractRuntime);
 
                         if (!abstractResult.isInstance(result, runtime)) {
+                            parsed.evaluate(abstractedGiven, abstractRuntime);
                             throw new AssertionError("Expected " + result + " to be an instance of " + abstractResult + ".\n"
                                     + "For query: " + expression + "\n");
                         }

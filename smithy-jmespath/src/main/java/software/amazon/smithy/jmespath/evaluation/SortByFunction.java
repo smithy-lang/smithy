@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.RuntimeType;
 
 class SortByFunction<T> implements Function<T> {
     @Override
@@ -16,7 +17,12 @@ class SortByFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        return runtime.createAny(RuntimeType.ARRAY);
+    }
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         JmespathExpression expression = functionArguments.get(1).expectExpression();
@@ -26,7 +32,7 @@ class SortByFunction<T> implements Function<T> {
             elements.add(element);
         }
 
-        Collections.sort(elements, (a, b) -> {
+        elements.sort((a, b) -> {
             T aValue = expression.evaluate(a, runtime);
             T bValue = expression.evaluate(b, runtime);
             return runtime.compare(aValue, bValue);

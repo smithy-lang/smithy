@@ -34,6 +34,16 @@ public class BottomType implements Type {
     }
 
     @Override
+    public Type elementType() {
+        return INSTANCE;
+    }
+
+    @Override
+    public Type valueType(Type key) {
+        return INSTANCE;
+    }
+
+    @Override
     public String toString() {
         return "bottom";
     }

@@ -4,13 +4,13 @@ import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.Function;
 import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
-import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.NumberType;
 
 import java.util.EnumSet;
 
 // POC of an abstract runtime based on a semi-arbitrary Type value
-public class TypeJmespathRuntime implements JmespathRuntime<Type> {
+public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     private final FunctionRegistry<Type> overrides = new FunctionRegistry<>();
 
@@ -19,22 +19,28 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
-    public boolean isAbstract() {
-        return true;
-    }
-
-    public JmespathException abstractException() {
-        return new JmespathException("TypeJmespathRuntime is abstract and does not support this operation");
+    public Type abstractTypeOf(Type value) {
+        return Type.stringType();
     }
 
     @Override
-    public boolean is(Type value, RuntimeType type) {
-        return value.runtimeTypes().equals(EnumSet.of(type));
+    public Type abstractIs(Type value, RuntimeType type) {
+        return Type.booleanType();
     }
 
     @Override
-    public RuntimeType typeOf(Type value) {
-        throw abstractException();
+    public Type abstractEqual(Type a, Type b) {
+        return Type.booleanType();
+    }
+
+    @Override
+    public Type abstractCompare(Type a, Type b) {
+        return Type.numberType();
+    }
+
+    @Override
+    public Type abstractToString(Type value) {
+        return Type.stringType();
     }
 
     @Override
@@ -48,33 +54,13 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
-    public boolean asBoolean(Type value) {
-        throw abstractException();
-    }
-
-    @Override
     public Type createString(String string) {
         return Type.stringType();
     }
 
     @Override
-    public String asString(Type value) {
-        throw abstractException();
-    }
-
-    @Override
     public Type createNumber(Number value) {
         return Type.stringType();
-    }
-
-    @Override
-    public NumberType numberType(Type value) {
-        throw abstractException();
-    }
-
-    @Override
-    public Number asNumber(Type value) {
-        throw abstractException();
     }
 
     @Override
@@ -112,6 +98,11 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
+    public Type slice(Type array, int start, int stop, int step) {
+        return null;
+    }
+
+    @Override
     public ObjectBuilder<Type> objectBuilder() {
         return new TypeObjectBuilder();
     }
@@ -144,13 +135,8 @@ public class TypeJmespathRuntime implements JmespathRuntime<Type> {
     }
 
     @Override
-    public int length(Type value) {
-        throw abstractException();
-    }
-
-    @Override
-    public Iterable<? extends Type> asIterable(Type value) {
-        throw abstractException();
+    public Type abstractLength(Type value) {
+        return Type.numberType();
     }
 
     @Override

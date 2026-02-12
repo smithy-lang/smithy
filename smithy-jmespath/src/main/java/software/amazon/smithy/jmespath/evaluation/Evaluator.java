@@ -38,18 +38,18 @@ import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.abstrac
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
-    private final JmespathRuntime<T> runtime;
+    private final JmespathAbstractRuntime<T> runtime;
     private final FunctionRegistry<T> functions;
 
     // We could make this state mutable instead of creating lots of sub-Evaluators.
     // This would make evaluation not thread-safe, but it's unclear how much that matters.
     private final T current;
 
-    public Evaluator(T current, JmespathRuntime<T> runtime) {
-        this(current, runtime, FunctionRegistry.getSPIRegistry());
+    public Evaluator(T current, JmespathAbstractRuntime<T> abstractRuntime) {
+        this(current, abstractRuntime, FunctionRegistry.getSPIRegistry());
     }
 
-    public Evaluator(T current, JmespathRuntime<T> runtime, FunctionRegistry<T> functions) {
+    public Evaluator(T current, JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions) {
         this.current = current;
         this.runtime = runtime;
         this.functions = functions;
@@ -130,19 +130,23 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
                     runtime.createNull());
         }
 
-        // Only lists can be flattened.
-        if (!runtime.is(value, RuntimeType.ARRAY)) {
-            return runtime.createNull();
-        }
-        JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
-        for (T val : runtime.asIterable(value)) {
-            if (runtime.is(val, RuntimeType.ARRAY)) {
-                flattened.addAll(val);
-            } else {
-                flattened.add(val);
+        if (runtime instanceof JmespathRuntime) {
+            JmespathRuntime<T> concreteRuntime = (JmespathRuntime<T>)runtime;
+
+            // Only lists can be flattened.
+            if (!concreteRuntime.is(value, RuntimeType.ARRAY)) {
+                return concreteRuntime.createNull();
             }
+            JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
+            for (T val : concreteRuntime.asIterable(value)) {
+                if (concreteRuntime.is(val, RuntimeType.ARRAY)) {
+                    flattened.addAll(val);
+                } else {
+                    flattened.add(val);
+                }
+            }
+            return flattened.build();
         }
-        return flattened.build();
     }
 
     @Override

@@ -5,6 +5,7 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.RuntimeType;
 
 import java.util.List;
 
@@ -18,14 +19,19 @@ class SumFunction<T> implements Function<T> {
     }
 
     @Override
-    public T apply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
         T array = functionArguments.get(0).expectArray();
 
-        if (runtime.isAbstract()) {
-            T args = runtime.arrayBuilder().add(array).build();
-            return EXPRESSION.evaluate(args, runtime);
-        }
+        T args = runtime.arrayBuilder().add(array).build();
+        return EXPRESSION.evaluate(args, runtime);
+    }
+
+
+    @Override
+    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        checkArgumentCount(1, functionArguments);
+        T array = functionArguments.get(0).expectArray();
 
         Number sum = 0L;
         for (T element : runtime.asIterable(array)) {

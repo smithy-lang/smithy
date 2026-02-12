@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 final class Lexer<T> {
 
     private static final int MAX_NESTING_LEVEL = 50;
 
-    private final JmespathRuntime<T> runtime;
+    private final JmespathAbstractRuntime<T> runtime;
     private final String expression;
     private final int length;
     private int position = 0;
@@ -25,7 +26,7 @@ final class Lexer<T> {
     private final List<Token> tokens = new ArrayList<>();
     private boolean currentlyParsingLiteral;
 
-    Lexer(String expression, JmespathRuntime<T> runtime) {
+    Lexer(String expression, JmespathAbstractRuntime<T> runtime) {
         this.runtime = Objects.requireNonNull(runtime, "runtime must not be null");
         this.expression = Objects.requireNonNull(expression, "expression must not be null");
         this.length = expression.length();
@@ -35,7 +36,7 @@ final class Lexer<T> {
         return tokenize(expression, LiteralExpressionJmespathRuntime.INSTANCE);
     }
 
-    static <T> TokenIterator tokenize(String expression, JmespathRuntime<T> runtime) {
+    static <T> TokenIterator tokenize(String expression, JmespathAbstractRuntime<T> runtime) {
         return new Lexer<>(expression, runtime).doTokenize();
     }
 
