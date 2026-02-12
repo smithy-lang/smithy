@@ -226,7 +226,7 @@ to have clear, actionable error messages.
             """,
             selector: """
                 operation -[input]-> $structure(*) > member
-                :test(> number:not([trait|range|min]):not([trait|range|max]))
+                :test(> number):not([trait|range|min]):not([trait|range|max])
                 """
         }
     },
@@ -242,7 +242,7 @@ to have clear, actionable error messages.
             """,
             selector: """
                 operation -[input]-> $structure(*) > member
-                :test(> number[trait|range]:not([trait|range|min]))
+                :test(> number)[trait|range]:not([trait|range|min])
                 """
         }
     },
@@ -258,7 +258,7 @@ to have clear, actionable error messages.
             """,
             selector: """
                 operation -[input]-> $structure(*) > member
-                :test(> number[trait|range]:not([trait|range|max]))
+                :test(> number)[trait|range]:not([trait|range|max])
                 """
         }
     }
