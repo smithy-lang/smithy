@@ -2,11 +2,12 @@ package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.FunctionArgument;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 
-public interface Type {
+public interface Type extends FunctionArgument<Type> {
 
     static Type optionalType(Type type) {
         return new UnionType(type, NullType.INSTANCE);

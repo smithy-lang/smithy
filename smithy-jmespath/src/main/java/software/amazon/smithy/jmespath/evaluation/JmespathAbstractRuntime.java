@@ -166,6 +166,10 @@ public interface JmespathAbstractRuntime<T> {
         return null;
     }
 
+    FunctionArgument<T> createFunctionArgument(T value);
+
+    FunctionArgument<T> createFunctionArgument(JmespathExpression expression);
+
     ///////////////////////////////
     // Errors
     ///////////////////////////////

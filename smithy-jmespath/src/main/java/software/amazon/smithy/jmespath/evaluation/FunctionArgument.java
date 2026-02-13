@@ -10,55 +10,50 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
-public abstract class FunctionArgument<T> {
+public interface FunctionArgument<T> {
 
-    protected final JmespathRuntime<T> runtime;
-
-    protected FunctionArgument(JmespathRuntime<T> runtime) {
-        this.runtime = runtime;
-    }
-
-    public T expectValue() {
+    default T expectValue() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public T expectString() {
+    default T expectString() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public T expectNumber() {
+    default T expectNumber() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public T expectArray() {
+    default T expectArray() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public T expectObject() {
+    default T expectObject() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public T expectAnyOf(Set<RuntimeType> types) {
+    default T expectAnyOf(Set<RuntimeType> types) {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public JmespathExpression expectExpression() {
+    default JmespathExpression expectExpression() {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, JmespathExpression expression) {
-        return new Expression<>(runtime, expression);
+    static <T> FunctionArgument<T> of(JmespathExpression expression) {
+        return new Expression<>( expression);
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value) {
+    static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value) {
         return new Value<>(runtime, value);
     }
 
-    static class Value<T> extends FunctionArgument<T> {
+    class Value<T> implements FunctionArgument<T> {
+        JmespathRuntime<T> runtime;
         T value;
 
         public Value(JmespathRuntime<T> runtime, T value) {
-            super(runtime);
+            this.runtime = runtime;
             this.value = value;
         }
 
@@ -106,11 +101,10 @@ public abstract class FunctionArgument<T> {
         }
     }
 
-    static class Expression<T> extends FunctionArgument<T> {
+    class Expression<T> implements FunctionArgument<T> {
         JmespathExpression expression;
 
-        public Expression(JmespathRuntime<T> runtime, JmespathExpression expression) {
-            super(runtime);
+        public Expression(JmespathExpression expression) {
             this.expression = expression;
         }
 

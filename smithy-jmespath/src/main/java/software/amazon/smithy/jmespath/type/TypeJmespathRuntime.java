@@ -4,6 +4,7 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.Function;
+import software.amazon.smithy.jmespath.evaluation.FunctionArgument;
 import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
 import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 
@@ -165,6 +166,16 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
     @Override
     public Function<Type> resolveFunction(String name) {
         return overrides.lookup(name);
+    }
+
+    @Override
+    public FunctionArgument<Type> createFunctionArgument(Type value) {
+        return null;
+    }
+
+    @Override
+    public FunctionArgument<Type> createFunctionArgument(JmespathExpression expression) {
+        return null;
     }
 
     @Override

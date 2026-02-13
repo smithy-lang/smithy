@@ -131,9 +131,9 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         List<FunctionArgument<T>> arguments = new ArrayList<>();
         for (JmespathExpression expr : functionExpression.getArguments()) {
             if (expr instanceof ExpressionTypeExpression) {
-                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression) expr).getExpression()));
+                arguments.add(runtime.createFunctionArgument(((ExpressionTypeExpression) expr).getExpression()));
             } else {
-                arguments.add(FunctionArgument.of(runtime, visit(expr)));
+                arguments.add(runtime.createFunctionArgument(visit(expr)));
             }
         }
         return resolved.apply(runtime, functions, arguments);

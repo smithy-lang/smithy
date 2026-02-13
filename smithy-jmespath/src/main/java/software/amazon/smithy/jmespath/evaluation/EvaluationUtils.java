@@ -154,9 +154,9 @@ public final class EvaluationUtils {
 
     public static <T> T foldLeft(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T init, JmespathExpression folder, T collection) {
         return functions.lookup(runtime, "fold_left").apply(runtime, functions, Arrays.asList(
-                FunctionArgument.of(runtime, init),
-                FunctionArgument.of(runtime, folder),
-                FunctionArgument.of(runtime, collection)
+                runtime.createFunctionArgument(init),
+                runtime.createFunctionArgument(folder),
+                runtime.createFunctionArgument(collection)
         ));
     }
 

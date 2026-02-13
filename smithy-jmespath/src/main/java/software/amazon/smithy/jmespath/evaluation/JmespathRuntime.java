@@ -279,6 +279,20 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
     Iterable<? extends T> asIterable(T value);
 
     ///////////////////////////////
+    // Functions
+    ///////////////////////////////
+
+    @Override
+    default FunctionArgument<T> createFunctionArgument(T value) {
+        return FunctionArgument.of(this, value);
+    }
+
+    @Override
+    default FunctionArgument<T> createFunctionArgument(JmespathExpression expression) {
+        return FunctionArgument.of(expression);
+    }
+
+    ///////////////////////////////
     // Errors
     ///////////////////////////////
 
