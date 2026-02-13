@@ -18,6 +18,7 @@ import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
+import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import software.amazon.smithy.jmespath.type.Type;
 import software.amazon.smithy.utils.IoUtils;
@@ -32,10 +33,10 @@ public class ComplianceTestRunner<T, A extends Type> {
     private static final String ERROR_MEMBER = "error";
     private static final String BENCH_MEMBER = "bench";
     private final JmespathRuntime<T> runtime;
-    private final JmespathRuntime<A> abstractRuntime;
+    private final JmespathAbstractRuntime<A> abstractRuntime;
     private final List<TestCase<T, A>> testCases = new ArrayList<>();
 
-    private ComplianceTestRunner(JmespathRuntime<T> runtime, JmespathRuntime<A> abstractRuntime) {
+    private ComplianceTestRunner(JmespathRuntime<T> runtime, JmespathAbstractRuntime<A> abstractRuntime) {
         this.runtime = runtime;
         this.abstractRuntime = abstractRuntime;
     }
@@ -44,7 +45,7 @@ public class ComplianceTestRunner<T, A extends Type> {
         return defaultParameterizedTestSource(runtime, null);
     }
 
-    public static <T, A extends Type> Stream<Object[]> defaultParameterizedTestSource(JmespathRuntime<T> runtime, JmespathRuntime<A> abstractRuntime) {
+    public static <T, A extends Type> Stream<Object[]> defaultParameterizedTestSource(JmespathRuntime<T> runtime, JmespathAbstractRuntime<A> abstractRuntime) {
         ComplianceTestRunner<T, A> runner = new ComplianceTestRunner<>(runtime, abstractRuntime);
         URL manifest = ComplianceTestRunner.class.getResource(DEFAULT_TEST_CASE_LOCATION + "/MANIFEST");
         try (var reader = new BufferedReader(new InputStreamReader(manifest.openStream(), StandardCharsets.UTF_8))) {
@@ -68,7 +69,7 @@ public class ComplianceTestRunner<T, A extends Type> {
 
     private record TestCase<T, A extends Type>(
             JmespathRuntime<T> runtime,
-            JmespathRuntime<A> abstractRuntime,
+            JmespathAbstractRuntime<A> abstractRuntime,
             String testSuite,
             String comment,
             T given,
@@ -77,7 +78,7 @@ public class ComplianceTestRunner<T, A extends Type> {
             JmespathExceptionType expectedError,
             String benchmark)
             implements Runnable {
-        public static <T, A extends Type> List<TestCase<T, A>> from(URL url, JmespathRuntime<T> runtime, JmespathRuntime<A> abstractRuntime) {
+        public static <T, A extends Type> List<TestCase<T, A>> from(URL url, JmespathRuntime<T> runtime, JmespathAbstractRuntime<A> abstractRuntime) {
             var path = url.getPath();
             var testSuiteName = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
             var testCases = new ArrayList<TestCase<T, A>>();

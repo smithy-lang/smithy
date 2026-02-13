@@ -97,6 +97,7 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
         return EvaluationUtils.equals(this, a, b);
     }
 
+    @Override
     default T abstractEqual(T a, T b) {
         return createBoolean(equal(a, b));
     }
@@ -112,8 +113,8 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
         }
     }
 
-    default T abstractCompare(T a, T b) {
-        return createNumber(compare(a, b));
+    default T abstractLessThan(T a, T b) {
+        return createBoolean(compare(a, b) < 0);
     }
 
     @Override
@@ -225,6 +226,15 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
     ///////////////////////////////
     // ARRAYs
     ///////////////////////////////
+
+    @Override
+    default T abstractElement(T array, T index) {
+        if (is(index, RuntimeType.NUMBER)) {
+            return element(array, asNumber(index).intValue());
+        } else {
+            return createError(JmespathExceptionType.INVALID_TYPE, "Expected number");
+        }
+    }
 
     /**
      * If the given value is an ARRAY, returns the specified slice.

@@ -53,7 +53,7 @@ public final class ArrayType implements Type {
     }
 
     @Override
-    public Type elementType(int index) {
+    public Type elementType(Type index) {
         return elementType();
     }
 

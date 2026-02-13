@@ -12,9 +12,13 @@ public interface JmespathAbstractRuntime<T> {
 
     T abstractEqual(T a, T b);
 
-    T abstractCompare(T a, T b);
+    T abstractLessThan(T a, T b);
 
     T abstractToString(T value);
+
+    ///////////////////////////////
+    // Arbitrary values
+    ///////////////////////////////
 
     T createAny(RuntimeType runtimeType);
 
@@ -97,13 +101,7 @@ public interface JmespathAbstractRuntime<T> {
      */
     T element(T array, int index);
 
-    /**
-     * If the given value is an ARRAY, returns the specified slice.
-     * Otherwise, throws a JmespathException of type INVALID_TYPE.
-     * <p>
-     * Start and stop will always be non-negative, and step will always be non-zero.
-     */
-    T slice(T array, int start, int stop, int step);
+    T abstractElement(T array, T index);
 
     ///////////////////////////////
     // OBJECTs
@@ -174,7 +172,9 @@ public interface JmespathAbstractRuntime<T> {
     // Errors
     ///////////////////////////////
 
+    // Throws the error immediately if the runtime is concrete
     T createError(JmespathExceptionType type, String message);
 
+    // Throws unsupported if the runtime is concrete
     T createExpression(JmespathExpression expression);
 }

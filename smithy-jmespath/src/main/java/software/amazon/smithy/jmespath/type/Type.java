@@ -45,7 +45,7 @@ public interface Type extends FunctionArgument<Type> {
         return Type.nullType();
     }
 
-    default Type elementType(int index) {
+    default Type elementType(Type index) {
         return elementType();
     }
 

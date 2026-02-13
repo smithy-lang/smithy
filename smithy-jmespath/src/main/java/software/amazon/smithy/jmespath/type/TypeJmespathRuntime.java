@@ -33,7 +33,7 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
     }
 
     @Override
-    public Type abstractCompare(Type a, Type b) {
+    public Type abstractLessThan(Type a, Type b) {
         return Type.numberType();
     }
 
@@ -93,11 +93,11 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     @Override
     public Type element(Type array, int index) {
-        return array.elementType(index);
+        return array.elementType(createNumber(index));
     }
 
     @Override
-    public Type slice(Type array, int start, int stop, int step) {
+    public Type abstractElement(Type array, Type index) {
         return null;
     }
 

@@ -152,6 +152,17 @@ public final class EvaluationUtils {
         return functions.lookup(runtime, "if").apply(runtime, functions, condition, then, otherwise);
     }
 
+    public static <T> T not(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T value) {
+        return ifThenElse(runtime, functions, value, runtime.createBoolean(false), runtime.createBoolean(true));
+    }
+
+    public static <T> T add(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T left, T right) {
+        return functions.lookup(runtime, "add").apply(runtime, functions, Arrays.asList(
+                runtime.createFunctionArgument(left),
+                runtime.createFunctionArgument(right)
+        ));
+    }
+
     public static <T> T foldLeft(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T init, JmespathExpression folder, T collection) {
         return functions.lookup(runtime, "fold_left").apply(runtime, functions, Arrays.asList(
                 runtime.createFunctionArgument(init),

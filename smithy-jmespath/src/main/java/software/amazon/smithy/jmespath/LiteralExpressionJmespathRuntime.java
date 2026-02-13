@@ -89,6 +89,11 @@ public final class LiteralExpressionJmespathRuntime implements JmespathRuntime<L
     }
 
     @Override
+    public LiteralExpression abstractElement(LiteralExpression array, LiteralExpression index) {
+        return element(array, index.expectNumberValue().intValue());
+    }
+
+    @Override
     public Iterable<LiteralExpression> asIterable(LiteralExpression array) {
         switch (array.getType()) {
             case ARRAY:

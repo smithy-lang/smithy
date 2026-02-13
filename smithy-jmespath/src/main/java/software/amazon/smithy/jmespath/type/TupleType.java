@@ -60,11 +60,9 @@ public class TupleType implements Type {
     }
 
     @Override
-    public Type elementType(int index) {
-        if (index < 0 || index > members.size()) {
-            return Type.nullType();
-        }
-        return members.get(index);
+    public Type elementType(Type index) {
+        // Can be more precise if we have literal types
+        return elementType();
     }
 
     @Override

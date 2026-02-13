@@ -32,9 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.add;
 import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.foldLeft;
 import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.ifThenElse;
+import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.not;
 
+// TODO: Consider whether "abstract" is confusing (since the class is not abstract, the interpretation is)
+// TODO: Difference between abstract meaning "can't read concrete java values from T values"
+// and abstract meaning "loses information and approximates".
+// Question is whether the former is useful without the latter (i.e. abstracting implies
+// multiple possible values implies can't read Java values)
 public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
 
     private final JmespathAbstractRuntime<T> runtime;
@@ -72,31 +79,14 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
                         runtime.createBoolean(true));
             // NOTE: Ordering operators >, >=, <, <= are only valid for numbers. All invalid
             // comparisons return null.
-            // TODO: Need abstract versions
             case LESS_THAN:
-                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
-                    return runtime.createBoolean(runtime.compare(left, right) < 0);
-                } else {
-                    return runtime.createNull();
-                }
+                return runtime.abstractLessThan(left, right);
             case LESS_THAN_EQUAL:
-                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
-                    return runtime.createBoolean(runtime.compare(left, right) <= 0);
-                } else {
-                    return runtime.createNull();
-                }
+                return not(runtime, functions, runtime.abstractLessThan(right, left));
             case GREATER_THAN:
-                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
-                    return runtime.createBoolean(runtime.compare(left, right) > 0);
-                } else {
-                    return runtime.createNull();
-                }
+                return runtime.abstractLessThan(right, left);
             case GREATER_THAN_EQUAL:
-                if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
-                    return runtime.createBoolean(runtime.compare(left, right) >= 0);
-                } else {
-                    return runtime.createNull();
-                }
+                return not(runtime, functions, runtime.abstractLessThan(left, right));
             default:
                 throw new IllegalArgumentException("Unsupported comparator: " + comparatorExpression.getComparator());
         }
@@ -146,19 +136,18 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitIndex(IndexExpression indexExpression) {
-        int index = indexExpression.getIndex();
-        if (!runtime.is(current, RuntimeType.ARRAY)) {
-            return runtime.createNull();
-        }
-        int length = runtime.length(current);
-        // Negative indices indicate reverse indexing in JMESPath
-        if (index < 0) {
-            index = length + index;
-        }
-        if (length <= index || index < 0) {
-            return runtime.createNull();
-        }
-        return runtime.element(current, index);
+        T index = runtime.createNumber(indexExpression.getIndex());
+        T length = runtime.abstractLength(current);
+        T adjustedIndex = ifThenElse(runtime, functions,
+                runtime.abstractLessThan(index, runtime.createNumber(0)),
+                add(runtime, functions, length, index),
+                index);
+        T result = runtime.abstractElement(current, adjustedIndex);
+
+        return ifThenElse(runtime, functions,
+                runtime.abstractIs(current, RuntimeType.ARRAY),
+                result,
+                runtime.createNull());
     }
 
     @Override
@@ -287,49 +276,15 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitSlice(SliceExpression sliceExpression) {
-        if (!runtime.is(current, RuntimeType.ARRAY)) {
-            return runtime.createNull();
-        }
-
-        int length = runtime.length(current);
-
-        int step = sliceExpression.getStep();
-        if (step == 0) {
-            throw new JmespathException(JmespathExceptionType.INVALID_VALUE, "invalid-value");
-        }
-
-        int start;
-        if (!sliceExpression.getStart().isPresent()) {
-            start = step > 0 ? 0 : length - 1;
-        } else {
-            start = sliceExpression.getStart().getAsInt();
-            if (start < 0) {
-                start = length + start;
-            }
-            if (start < 0) {
-                start = 0;
-            } else if (start > length - 1) {
-                start = length - 1;
-            }
-        }
-
-        int stop;
-        if (!sliceExpression.getStop().isPresent()) {
-            stop = step > 0 ? length : -1;
-        } else {
-            stop = sliceExpression.getStop().getAsInt();
-            if (stop < 0) {
-                stop = length + stop;
-            }
-
-            if (stop < 0) {
-                stop = -1;
-            } else if (stop > length) {
-                stop = length;
-            }
-        }
-
-        return runtime.slice(current, start, stop, step);
+        // Just abstract this as an arbitrary subset of array elements for simplicity
+        // A fully precise abstract implementation of the logic would be a real pain
+        // and not worth the extra precision.
+        return ifThenElse(runtime, functions, runtime.abstractIs(current, RuntimeType.ARRAY),
+                foldLeft(runtime, functions,
+                        runtime.arrayBuilder().build(),
+                        JmespathExpression.parse("append_if_not_null(acc, either(element, `null`))"),
+                        current),
+                runtime.createNull());
     }
 
     @Override
