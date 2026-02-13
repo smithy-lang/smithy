@@ -19,7 +19,7 @@ class ToStringFunction<T> implements Function<T> {
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 
-        return EvaluationUtils.abstractIfThenElse(runtime, functions,
+        return EvaluationUtils.ifThenElse(runtime, functions,
                 runtime.abstractIs(value, RuntimeType.STRING),
                 value,
                 runtime.abstractToString(value));

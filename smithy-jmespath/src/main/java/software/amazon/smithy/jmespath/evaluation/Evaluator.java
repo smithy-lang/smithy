@@ -4,59 +4,36 @@
  */
 package software.amazon.smithy.jmespath.evaluation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import software.amazon.smithy.jmespath.ExpressionVisitor;
+
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.ast.AndExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
-import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
-import software.amazon.smithy.jmespath.ast.FieldExpression;
 import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
 import software.amazon.smithy.jmespath.ast.FlattenExpression;
-import software.amazon.smithy.jmespath.ast.FunctionExpression;
 import software.amazon.smithy.jmespath.ast.IndexExpression;
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
 import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
 import software.amazon.smithy.jmespath.ast.NotExpression;
 import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
 import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
-import software.amazon.smithy.jmespath.ast.ResolvedFunctionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
-import software.amazon.smithy.jmespath.ast.Subexpression;
 
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.abstractFoldLeft;
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.abstractIfThenElse;
+public class Evaluator<T> extends AbstractEvaluator<T> {
 
-public class Evaluator<T> implements ExpressionVisitor<T> {
+    private final JmespathRuntime<T> runtime;
 
-    private final JmespathAbstractRuntime<T> runtime;
-    private final FunctionRegistry<T> functions;
-
-    // We could make this state mutable instead of creating lots of sub-Evaluators.
-    // This would make evaluation not thread-safe, but it's unclear how much that matters.
-    private final T current;
-
-    public Evaluator(T current, JmespathAbstractRuntime<T> abstractRuntime) {
+    public Evaluator(T current, JmespathRuntime<T> abstractRuntime) {
         this(current, abstractRuntime, FunctionRegistry.getSPIRegistry());
     }
 
-    public Evaluator(T current, JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions) {
-        this.current = current;
+    public Evaluator(T current, JmespathRuntime<T> runtime, FunctionRegistry<T> functions) {
+        super(current, runtime, functions);
         this.runtime = runtime;
-        this.functions = functions;
-    }
-
-    public T visit(JmespathExpression expression) {
-        return expression.accept(this);
     }
 
     @Override
@@ -67,17 +44,9 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             case EQUAL:
                 return runtime.abstractEqual(left, right);
             case NOT_EQUAL:
-                if (runtime.isAbstract()) {
-                    return abstractIfThenElse(runtime, functions,
-                            runtime.abstractEqual(left, right),
-                            runtime.createBoolean(false),
-                            runtime.createBoolean(true));
-                } else {
-                    return runtime.createBoolean(!runtime.equal(left, right));
-                }
+                return runtime.createBoolean(!runtime.equal(left, right));
             // NOTE: Ordering operators >, >=, <, <= are only valid for numbers. All invalid
             // comparisons return null.
-            // TODO: Need abstract versions
             case LESS_THAN:
                 if (runtime.is(left, RuntimeType.NUMBER) && runtime.is(right, RuntimeType.NUMBER)) {
                     return runtime.createBoolean(runtime.compare(left, right) < 0);
@@ -108,65 +77,22 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     }
 
     @Override
-    public T visitCurrentNode(CurrentExpression currentExpression) {
-        return current;
-    }
-
-    @Override
-    public T visitExpressionType(ExpressionTypeExpression expressionTypeExpression) {
-        return expressionTypeExpression.getExpression().accept(this);
-    }
-
-    @Override
     public T visitFlatten(FlattenExpression flattenExpression) {
         T value = visit(flattenExpression.getExpression());
 
-        if (runtime.isAbstract()) {
-            return abstractIfThenElse(runtime, functions, runtime.abstractIs(value, RuntimeType.ARRAY),
-                    abstractFoldLeft(runtime, functions,
-                            runtime.arrayBuilder().build(),
-                            JmespathExpression.parse("concat([0], to_array([1]))"),
-                            value),
-                    runtime.createNull());
+        // Only lists can be flattened.
+        if (!runtime.is(value, RuntimeType.ARRAY)) {
+            return runtime.createNull();
         }
-
-        if (runtime instanceof JmespathRuntime) {
-            JmespathRuntime<T> concreteRuntime = (JmespathRuntime<T>)runtime;
-
-            // Only lists can be flattened.
-            if (!concreteRuntime.is(value, RuntimeType.ARRAY)) {
-                return concreteRuntime.createNull();
-            }
-            JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
-            for (T val : concreteRuntime.asIterable(value)) {
-                if (concreteRuntime.is(val, RuntimeType.ARRAY)) {
-                    flattened.addAll(val);
-                } else {
-                    flattened.add(val);
-                }
-            }
-            return flattened.build();
-        }
-    }
-
-    @Override
-    public T visitFunction(FunctionExpression functionExpression) {
-        // TODO: Change API so we can resolve ahead of time once
-        Function<T> resolved = functions.lookup(runtime, functionExpression.getName());
-        List<FunctionArgument<T>> arguments = new ArrayList<>();
-        for (JmespathExpression expr : functionExpression.getArguments()) {
-            if (expr instanceof ExpressionTypeExpression) {
-                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression) expr).getExpression()));
+        JmespathRuntime.ArrayBuilder<T> flattened = runtime.arrayBuilder();
+        for (T val : runtime.asIterable(value)) {
+            if (runtime.is(val, RuntimeType.ARRAY)) {
+                flattened.addAll(val);
             } else {
-                arguments.add(FunctionArgument.of(runtime, visit(expr)));
+                flattened.add(val);
             }
         }
-        return resolved.apply(runtime, functions, arguments);
-    }
-
-    @Override
-    public T visitField(FieldExpression fieldExpression) {
-        return runtime.value(current, runtime.createString(fieldExpression.getName()));
+        return flattened.build();
     }
 
     @Override
@@ -184,35 +110,6 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
             return runtime.createNull();
         }
         return runtime.element(current, index);
-    }
-
-    @Override
-    public T visitLiteral(LiteralExpression literalExpression) {
-        // TODO: Handle when the literal is already wrapping a T
-        if (literalExpression.isStringValue()) {
-            return runtime.createString(literalExpression.expectStringValue());
-        } else if (literalExpression.isBooleanValue()) {
-            return runtime.createBoolean(literalExpression.expectBooleanValue());
-        } else if (literalExpression.isNumberValue()) {
-            return runtime.createNumber(literalExpression.expectNumberValue());
-        } else if (literalExpression.isArrayValue()) {
-            JmespathRuntime.ArrayBuilder<T> result = runtime.arrayBuilder();
-            for (Object item : literalExpression.expectArrayValue()) {
-                result.add(visit(LiteralExpression.from(item)));
-            }
-            return result.build();
-        } else if (literalExpression.isObjectValue()) {
-            JmespathRuntime.ObjectBuilder<T> result = runtime.objectBuilder();
-            for (Map.Entry<String, Object> entry : literalExpression.expectObjectValue().entrySet()) {
-                T key = runtime.createString(entry.getKey());
-                T value = visit(LiteralExpression.from(entry.getValue()));
-                result.put(key, value);
-            }
-            return result.build();
-        } else if (literalExpression.isNullValue()) {
-            return runtime.createNull();
-        }
-        throw new IllegalArgumentException(String.format("Unrecognized literal: %s", literalExpression));
     }
 
     @Override
@@ -246,11 +143,6 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T left = visit(andExpression.getLeft());
         T right = visit(andExpression.getRight());
 
-        if (runtime.isAbstract()) {
-            return abstractIfThenElse(runtime, functions,
-                    left, right, left);
-        }
-
         return runtime.isTruthy(left) ? right : left;
     }
 
@@ -259,22 +151,12 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         T left = visit(orExpression.getLeft());
         T right = visit(orExpression.getRight());
 
-        if (runtime.isAbstract()) {
-            return abstractIfThenElse(runtime, functions,
-                    left, left, right);
-        }
-
         return runtime.isTruthy(left) ? left : right;
     }
 
     @Override
     public T visitNot(NotExpression notExpression) {
         T output = visit(notExpression.getExpression());
-
-        if (runtime.isAbstract()) {
-            return abstractIfThenElse(runtime, functions,
-                    output, runtime.createBoolean(false), runtime.createBoolean(true));
-        }
 
         return runtime.createBoolean(!runtime.isTruthy(output));
     }
@@ -378,11 +260,5 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         }
 
         return runtime.slice(current, start, stop, step);
-    }
-
-    @Override
-    public T visitSubexpression(Subexpression subexpression) {
-        T left = visit(subexpression.getLeft());
-        return new Evaluator<>(left, runtime).visit(subexpression.getRight());
     }
 }

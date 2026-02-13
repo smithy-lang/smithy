@@ -1,13 +1,11 @@
 package software.amazon.smithy.jmespath.type;
 
-import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.Function;
 import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
 import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
-import software.amazon.smithy.jmespath.evaluation.NumberType;
-
-import java.util.EnumSet;
 
 // POC of an abstract runtime based on a semi-arbitrary Type value
 public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
@@ -167,5 +165,15 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
     @Override
     public Function<Type> resolveFunction(String name) {
         return overrides.lookup(name);
+    }
+
+    @Override
+    public Type createError(JmespathExceptionType type, String message) {
+        return new ErrorType(type);
+    }
+
+    @Override
+    public Type createExpression(JmespathExpression expression) {
+        return new ExpressionType(expression);
     }
 }

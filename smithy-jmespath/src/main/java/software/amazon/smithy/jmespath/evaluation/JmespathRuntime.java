@@ -277,4 +277,18 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
      * Otherwise, throws a JmespathException of type INVALID_TYPE.
      */
     Iterable<? extends T> asIterable(T value);
+
+    ///////////////////////////////
+    // Errors
+    ///////////////////////////////
+
+    @Override
+    default T createError(JmespathExceptionType type, String message) {
+        throw new UnsupportedOperationException("createError");
+    }
+
+    @Override
+    default T createExpression(JmespathExpression expression) {
+        throw new UnsupportedOperationException("createExpression");
+    }
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import software.amazon.smithy.jmespath.JmespathExpression;
@@ -147,11 +148,11 @@ public final class EvaluationUtils {
 
     // Helpers
 
-    public static <T> T abstractIfThenElse(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T condition, T then, T otherwise) {
+    public static <T> T ifThenElse(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T condition, T then, T otherwise) {
         return functions.lookup(runtime, "if").apply(runtime, functions, condition, then, otherwise);
     }
 
-    public static <T> T abstractFoldLeft(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T init, JmespathExpression folder, T collection) {
+    public static <T> T foldLeft(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, T init, JmespathExpression folder, T collection) {
         return functions.lookup(runtime, "fold_left").apply(runtime, functions, Arrays.asList(
                 FunctionArgument.of(runtime, init),
                 FunctionArgument.of(runtime, folder),
@@ -162,6 +163,7 @@ public final class EvaluationUtils {
     public static <T> T createAny(JmespathAbstractRuntime<T> runtime) {
         return Arrays.stream(RuntimeType.values())
                 .map(runtime::createAny)
-                .reduce();
+                .reduce(runtime::either)
+                .orElseThrow(NoSuchElementException::new);
     }
 }

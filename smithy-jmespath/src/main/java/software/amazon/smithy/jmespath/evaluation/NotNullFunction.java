@@ -23,7 +23,7 @@ class NotNullFunction<T> implements Function<T> {
         ListIterator<FunctionArgument<T>> iter = functionArguments.listIterator(functionArguments.size());
         while (iter.hasPrevious()) {
             T value = iter.previous().expectValue();
-            result = EvaluationUtils.abstractIfThenElse(runtime, functions,
+            result = EvaluationUtils.ifThenElse(runtime, functions,
                     runtime.abstractIs(value, RuntimeType.NULL), result, value);
         }
         return result;

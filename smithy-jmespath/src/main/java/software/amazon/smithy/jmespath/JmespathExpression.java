@@ -7,6 +7,7 @@ package software.amazon.smithy.jmespath;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.evaluation.AbstractEvaluator;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
@@ -127,7 +128,15 @@ public abstract class JmespathExpression {
      * @param runtime The JmespathRuntime used to manipulate node values.
      * @return Returns the result of evaluating the expression.
      */
-    public <T> T evaluate(T currentNode, JmespathAbstractRuntime<T> runtime) {
+    public <T> T evaluate(T currentNode, JmespathRuntime<T> runtime) {
         return new Evaluator<>(currentNode, runtime).visit(this);
+    }
+
+    public <T> T evaluate(T currentNode, JmespathAbstractRuntime<T> runtime) {
+        if (runtime instanceof JmespathRuntime) {
+            return evaluate(currentNode, (JmespathRuntime<T>)runtime);
+        } else {
+            return new AbstractEvaluator<>(currentNode, runtime).visit(this);
+        }
     }
 }

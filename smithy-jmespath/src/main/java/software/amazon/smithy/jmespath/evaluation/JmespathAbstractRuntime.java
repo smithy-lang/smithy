@@ -1,5 +1,7 @@
 package software.amazon.smithy.jmespath.evaluation;
 
+import software.amazon.smithy.jmespath.JmespathExceptionType;
+import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 public interface JmespathAbstractRuntime<T> {
@@ -163,4 +165,12 @@ public interface JmespathAbstractRuntime<T> {
     default Function<T> resolveFunction(String name) {
         return null;
     }
+
+    ///////////////////////////////
+    // Errors
+    ///////////////////////////////
+
+    T createError(JmespathExceptionType type, String message);
+
+    T createExpression(JmespathExpression expression);
 }

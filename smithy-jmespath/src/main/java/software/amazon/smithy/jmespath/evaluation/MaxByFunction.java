@@ -15,6 +15,7 @@ class MaxByFunction<T> implements Function<T> {
 
     @Override
     public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+        // TODO: Can do better via fold_left
         return EvaluationUtils.createAny(runtime);
     }
 

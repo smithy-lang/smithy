@@ -6,7 +6,6 @@ package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
 import software.amazon.smithy.jmespath.JmespathExpression;
-import software.amazon.smithy.jmespath.RuntimeType;
 
 class MapFunction<T> implements Function<T> {
     @Override
@@ -21,8 +20,9 @@ class MapFunction<T> implements Function<T> {
         T array = functionArguments.get(1).expectArray();
 
         T acc = runtime.arrayBuilder().build();
-        return EvaluationUtils.abstractFoldLeft(runtime, functions,
-                acc, JmespathExpression.parse("&append(acc, &(element)))"), array);
+        return EvaluationUtils.foldLeft(runtime, functions,
+                // TODO: need to insert the expression here
+                acc, JmespathExpression.parse("append(acc, apply(&<expression>, (element))))"), array);
     }
 
     @Override
