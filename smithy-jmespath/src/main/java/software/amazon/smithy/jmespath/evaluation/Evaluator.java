@@ -169,7 +169,7 @@ public class Evaluator<T> extends AbstractEvaluator<T> {
         }
         JmespathRuntime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
         for (T result : runtime.asIterable(resultList)) {
-            T projected = new Evaluator<T>(result, runtime).visit(projectionExpression.getRight());
+            T projected = new Evaluator<T>(result, runtime, functions).visit(projectionExpression.getRight());
             if (!runtime.typeOf(projected).equals(RuntimeType.NULL)) {
                 projectedResults.add(projected);
             }
@@ -185,9 +185,9 @@ public class Evaluator<T> extends AbstractEvaluator<T> {
         }
         JmespathRuntime.ArrayBuilder<T> results = runtime.arrayBuilder();
         for (T val : runtime.asIterable(left)) {
-            T output = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getComparison());
+            T output = new Evaluator<>(val, runtime, functions).visit(filterProjectionExpression.getComparison());
             if (runtime.isTruthy(output)) {
-                T result = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getRight());
+                T result = new Evaluator<>(val, runtime, functions).visit(filterProjectionExpression.getRight());
                 if (!runtime.is(result, RuntimeType.NULL)) {
                     results.add(result);
                 }
@@ -206,7 +206,7 @@ public class Evaluator<T> extends AbstractEvaluator<T> {
         for (T member : runtime.asIterable(resultObject)) {
             T memberValue = runtime.value(resultObject, member);
             if (!runtime.is(memberValue, RuntimeType.NULL)) {
-                T projectedResult = new Evaluator<>(memberValue, runtime).visit(objectProjectionExpression.getRight());
+                T projectedResult = new Evaluator<>(memberValue, runtime, functions).visit(objectProjectionExpression.getRight());
                 if (!runtime.is(projectedResult, RuntimeType.NULL)) {
                     projectedResults.add(projectedResult);
                 }

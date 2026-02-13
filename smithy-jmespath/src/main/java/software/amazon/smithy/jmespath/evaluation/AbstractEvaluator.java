@@ -290,6 +290,6 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitSubexpression(Subexpression subexpression) {
         T left = visit(subexpression.getLeft());
-        return new AbstractEvaluator<>(left, runtime).visit(subexpression.getRight());
+        return new AbstractEvaluator<>(left, runtime, functions).visit(subexpression.getRight());
     }
 }

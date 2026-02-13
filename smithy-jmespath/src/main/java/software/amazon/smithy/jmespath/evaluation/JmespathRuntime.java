@@ -270,7 +270,7 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
 
     ///////////////////////////////
     // Common collection operations for ARRAYs and OBJECTs
-    ///////////////////////////////34e
+    ///////////////////////////////
 
     /**
      * Returns the number of elements in an ARRAY or the number of keys in an OBJECT.
