@@ -98,7 +98,7 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     @Override
     public Type abstractElement(Type array, Type index) {
-        return null;
+        return array.elementType(index);
     }
 
     @Override
@@ -170,12 +170,12 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     @Override
     public FunctionArgument<Type> createFunctionArgument(Type value) {
-        return null;
+        return value;
     }
 
     @Override
     public FunctionArgument<Type> createFunctionArgument(JmespathExpression expression) {
-        return null;
+        return new ExpressionType(expression);
     }
 
     @Override

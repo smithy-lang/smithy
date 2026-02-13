@@ -279,7 +279,11 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
     int length(T value);
 
     default T abstractLength(T value) {
-        return createNumber(length(value));
+        if (is(value, RuntimeType.ARRAY) || is(value, RuntimeType.OBJECT) || is(value, RuntimeType.STRING)) {
+            return createNumber(length(value));
+        } else {
+            return createNull();
+        }
     }
 
     /**
