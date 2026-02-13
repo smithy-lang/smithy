@@ -59,4 +59,5 @@ Smithy clients should follow these tenets:
 
 application-protocols/index
 context
+retries
 ```

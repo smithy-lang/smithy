@@ -25,44 +25,20 @@ new cascading failure conditions are observed. The right interface reflecting
 the problem domain can make sure the right extension points are available for
 future expansion.
 
-## Retry behaviors
-
-The most basic retry behavior is a simple loop with no delays between attempts.
-This is the most likely behavior to contribute to retry storms, but a simple
-delay between attempts can be just as bad because it can result in spikes of
-requests from the same system.
-
-Instead of a fixed delay, using **exponential backoff** to produce delays that
-are longer each time balances the desire to get a quick success with the desire
-to give the service more time to recover. Adding some randomness to that delay
-(known as **jitter**) can result in a smoother request load. This strategy,
-called **exponential backoff with jitter**, is relatively common. In AWS SDKs
-this is the `standard` retry mode.
-
-More advanced retry behavior may be implemented by using a
-[token bucket](https://en.wikipedia.org/wiki/Token_bucket) on top of exponential
-backoff with jitter to dynamically adjust retry behavior in response to changing
-service conditions. In short: if an attempt succeeds, some fraction of a token
-is dropped in the bucket. If an attempt fails, a retry is only performed if a
-whole token can be removed from the bucket. This results in the total number of
-requests to a service dropping as the service degrades, improving its ability to
-recover. When the service recovers, the token bucket fills back up and load
-returns to normal. In AWS SDKs, this is the `adaptive` retry mode.
-
-These are only a few possible retry behaviors a client may have, but they
-demonstrate some of the potential needs of the retry system.
-
 ## Retry interfaces
 
-It is recommended to implement retry behavior in a `RetryStrategy` that produces
-`RetryToken`s to pass state between attempts. Passing state through tokens in
-this way allows the `RetryStrategy` implementation to be isolated from the state
-of an individual request.
+It is recommended to expose retry interfaces that aren't coupled to a particular
+implementation or protocol. It is recommended to have a `RetryStrategy` that is
+isolated from the state of individual requests alongside `RetryToken`s to
+capture that state and pass it between attempts.
 
 ### Retry token
 
-The retry token itself should indicate a delay to wait before the next attempt
-is made, but it may otherwise contain any state that is necessary for the retry
+A `RetryToken` is a bundle of state that is created and passed between attempts
+of a single request. It should indicate how long to wait until the next attempt,
+but should allow each implementation to include whatever state they find
+necessary. This could include the number of attempts that have been made, an
+identifier for the request, or anything else that is necessary for the retry
 strategy.
 
 ```java
@@ -70,19 +46,15 @@ public interface RetryToken {
     /**
      * @return the duration to wait until the next attempt is made.
      */
-    public Duration delay();
+    Duration delay();
 }
 ```
 
 ### Retry strategy
 
-The `RetryStrategy` creates and refreshes retry tokens. When an attempt fails,
-the retry strategy is passed the retry token for the attempt and given the
-exception raised by the attempt. If a failed attempt may be retried, the retry
-strategy will return a refreshed retry token to use for the next attempt. If a
-failed attempt may not be retried, it throws an exception. If a request
-succeeds, the retry strategy is given the token so that it may free up any
-resources it was using.
+A `RetryStrategy` is where the logic of computing delays and determining if a
+request should be retried lives. It encapsulates the state of a request in retry
+tokens, which it creates and refreshes.
 
 ```java
 public interface RetryStrategy {
@@ -115,6 +87,87 @@ public interface RetryStrategy {
 }
 ```
 
+:::{note}
+
+While the state of a request is intended to be included in the retry token, a
+retry strategy may still need to manage some state that is shared across the
+client. Be careful to ensure that access to that state is synchronized in order
+to prevent race conditions.
+:::
+
+#### Using retry strategies
+
+An initial retry token should be acquired at the beginning of a request, before
+the first attempt is made. If an initial token cannot be acquired, the client
+should still make an attempt.
+
+If an attempt fails, the retry strategy is passed the retry token for the
+attempt and given the exception raised by the attempt. If the retry strategy
+determines that the failed attempt may be retried, it will return a refreshed
+retry token to use for the next attempt. If the retry strategy determines that
+the failed attempt may not be retried, it throws an exception.
+
+If the request succeeds, the retry strategy is given the token so that it may
+free up any resources it was using.
+
+The following is a simplified example of what it looks like to use the
+`RetryStrategy` interface to implement a retryable request loop.
+
+```java
+/**
+ * A simplified example of what a retryable request loop looks like.
+ *
+ * @param serializedRequest a request that has been fully serialized and is
+ *     ready to send.
+ *
+ * @return a successful result.
+ */
+public Result request(SerializedRequest serializedRequest) {
+    // First acquire the initial retry token. If a token cannot be acquired,
+    // make only one attempt without retries.
+    RetryToken retryToken;
+    try {
+        retryToken = this.retryStrategy.acquireInitialToken();
+    } catch (TokenAcquisitionFailedException e) {
+        return send(serializedRequest);
+    }
+
+    // Make attempts until the request succeeds or the retry strategy throws
+    // an exception. Notably, each retry strategy is responsible for controlling
+    // the maximum number of attempts.
+    while (true) {
+
+        // Wait for the indicated delay duration. Even the initial token may
+        // include a delay.
+        if (retryToken.delay() != null) {
+            Thread.sleep(retryToken.delay());
+        }
+
+        Result result = null;
+        try {
+            result = send(serializedRequest);
+        } catch (Exception e) {
+            // If the request fails, attempt to refresh the retry token.
+            try {
+                retryToken = this.retryStrategy.refreshRetryToken(retryToken, e);
+            } catch (TokenAcquisitionFailedException retryError) {
+                // If the token can't be refreshed, the request fails, so the
+                // original exception needs to be propagated. Logging the reason
+                // the retry failed is advisable.
+                throw e;
+            }
+        }
+
+        // If the result was successful, inform the retry strategy. This allows
+        // it to free up any resources if necessary.
+        if (result != null) {
+            this.retryStrategy.recordSuccess(retryToken);
+            return result;
+        }
+    }
+}
+```
+
 ### Retryable errors
 
 Request attempts can throw many different types of exceptions and it is not
@@ -135,6 +188,9 @@ In particular, exceptions should indicate:
   returned by a service specifically to indicate that too many requests have
   been made recently. For HTTP protocols, for example, a `429` status code
   indicates this.
+* Whether they are a timeout error. That is, whether the error is a result of
+  the service not responding within the transport client's defined timeout
+  limit. For HTTP protocols, a `504` status code could also indicate this.
 * A minimum time to wait until the next request, if that information is
   available. For HTTP protocols, for example, this could be indicated by the
   [`Retry-After`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After)
@@ -162,7 +218,18 @@ public interface RetryInfo {
      *
      * @return the error type.
      */
-    boolean isThrottle();
+    default boolean isThrottle() {
+        return false;
+    }
+
+    /**
+     * Check if the error is a timeout error.
+     *
+     * @return the error type.
+     */
+    default boolean isTimeout() {
+        return false;
+    }
 
     /**
      * Get the amount of time to wait before retrying.
@@ -170,7 +237,9 @@ public interface RetryInfo {
      * @return the time to wait before retrying, or null if no hint for a
      *     retry-after was detected.
      */
-    Duration retryAfter();
+    default Duration retryAfter() {
+        return null;
+    }
 
     /**
      * Whether it's safe to retry.
@@ -251,7 +320,7 @@ public class RetryAfterException extends RuntimeException implements ErrorInfo, 
     private Duration retryAfter = null;
 
     public RetryAfterException(String message) {
-        super(message)
+        super(message);
         this.message = message;
     }
 
@@ -290,64 +359,208 @@ public class RetryAfterException extends RuntimeException implements ErrorInfo, 
 }
 ```
 
-## Example request loop
+## Retry behaviors
 
-The following is a simplified example of what it looks like to use a
-`RetryStrategy` to implement a retryable request loop.
+The most basic retry behavior is a simple loop with no delays between attempts.
+This is the most likely behavior to contribute to retry storms, but a simple
+delay between attempts can be just as bad because it can result in spikes of
+requests from the same system.
+
+Instead of a fixed delay, using **exponential backoff** to produce delays that
+are exponentially longer each time balances the desire to get a quick success
+with the desire to give the service more time to recover. In particular, making
+the backoff exponential instead of linear (for example, 1->2->4->8 instead of
+1->2->3->4) results in the first few attempts still happening relatively
+quickly. This means that temporary issues with the network won't delay requests
+much. If attempts keep failing, the exponentially increasing backoff gives a
+struggling service more time to recover.
+
+Exponential backoff doesn't solve all problems. If a large number of clients
+make a request at the same time, the service might struggle to respond to any of
+them. If they all retry at the same time, this might make the problem worse.
+Exponential backoff does not prevent this since all the clients will be using
+it, and so the problem will re-occur. To solve this problem, we add a random
+factor to the delay known as **jitter**. This results in a smoother load,
+preventing another flood of requests and making it easier for the service to
+recover.
+
+The combination of these strategies is known as **exponential backoff with
+jitter**, and is relatively common.
+
+More advanced retry behavior may be implemented by using a
+[token bucket](https://en.wikipedia.org/wiki/Token_bucket) on top of exponential
+backoff with jitter to dynamically adjust retry behavior in response to changing
+service conditions.
+
+In short: if an attempt fails, a retry is only performed if a whole token can be
+removed from the bucket. If an attempt succeeds, a fraction of a token is put
+into the bucket. When the bucket is empty, no retries will be performed. This
+means that the total number of requests to a service will drop significantly as
+the service degrades, improving its ability to recover. The bucket fills back up
+as the service failure rate goes down, once again allowing retries to be
+performed. In AWS SDKs, this is how the `standard` retry mode works.
+
+These are only a few possible retry behaviors a client may have, but they
+demonstrate some of the potential needs of a retry system.
+
+### Example retry strategy
+
+The following is an example retry strategy that implements exponential backoff
+with jitter alongside a token bucket. This strategy adds extra cost for timeout
+errors since they may indicate a more highly degraded service.
+
+Aside from delay, the retry token also tracks the number of attempts that have
+been made. This is necessary because this strategy imposes a maximum attempt
+count, and also because the delay is calculated in part based on how many
+attempts have been made.
 
 ```java
-/**
- * A simplified example of what a retryable request loop looks like.
- * 
- * @param serializedRequest a request that has been fully serialized and is
- *     ready to send.
- * 
- * @return a successful result.
- */
-public Result request(SerializedRequest serializedRequest) {
-    // First acquire the initial retry token. If a token cannot be acquired,
-    // make only one attempt without retries.
-    RetryToken retryToken;
-    try {
-        retryToken = this.retryStrategy.acquireInitialToken();
-    } catch (TokenAcquisitionFailedException e) {
-        return send(serializedRequest);
+public record AwsStandardRetryToken(int attempts, Duration delay) implements RetryToken {
+}
+```
+
+```java
+public final class AwsStandardRetryStrategy implements RetryStrategy {
+    // These values are not prescriptive. They are static in this example for the
+    // sake of simplicity, but making them configurable is ideal.
+    private static final int RETRY_COST = 5;
+    private static final int TIMEOUT_COST = 10;
+    private static final int SUCCESS_REFUND = 1;
+
+    private static final int MAX_ATTEMPTS = 5;
+    private static final int MAX_BACKOFF = 20;
+    private static final int MAX_CAPACITY = 500;
+
+    // The token bucket is integrated into this retry strategy in this example,
+    // but in a real client it may be better to have it be its own type so
+    // that it can be shared, and so that managing concurrency is simpler.
+    private int tokens = MAX_CAPACITY;
+
+    // Be careful to consider concurrency when designing retry strategies.
+    // When there are multiple threads accessing the token bucket, proper
+    // synchronization is essential to prevent race conditions.
+    private final Object tokensLock = new Object();
+
+    @Override
+    public RetryToken acquireInitialToken() {
+        // This returns successfully even if the token bucket is empty. This is
+        // because an initial attempt will always be performed anyway, and
+        // returning successfully here will ensure that the retry strategy is
+        // checked if that initial attempt fails. By that point, the token bucket
+        // may no longer be empty.
+        return new AwsStandardRetryToken(0, null);
     }
 
-    // Make attempts until the request succeeds or the retry strategy throws
-    // an exception. Notably, each retry strategy is responsible for controlling
-    // the maximum number of attempts.
-    while (true) {
-
-        // Wait for the indicated delay duration. Even the initial token may
-        // include a delay.
-        Thread.sleep(retryToken.delay());
-
-        Result result = null;
-        try {
-            result = send(serializedRequest);
-        } catch (Exception e) {
-            // Otherwise attempt to refresh the token.
-            try {
-                retryToken = this.retryStrategy.refreshRetryToken(retryToken, e);
-            } catch (TokenAcquisitionFailedException retryError) {
-                // If the token can't be acquired, the request fails, so the
-                // original exception needs to be propagated. Logging the reason
-                // the retry failed is advisable.
-                throw e;
-            }
+    @Override
+    public RetryToken refreshRetryToken(RetryToken token, Throwable failure) {
+        // First, ensure that the provided token is of the correct type.
+        if (!(token instanceof AwsStandardRetryToken standardToken)) {
+            throw new IllegalArgumentException("Invalid token provided for refresh.");
         }
 
-        // If the result was successful, inform the retry strategy. This allows
-        // it to free up any resources if necessary.
-        if (result != null) {
-            this.retryStrategy.recordSuccess(retryToken);
-            return result;
+        // Next, check to see if the maximum number of attempts has already
+        // been exceeded.
+        if (standardToken.attempts >= MAX_ATTEMPTS) {
+            throw new TokenAcquisitionFailedException("Max attempts exhausted.");
+        }
+
+        // Examine the exception thrown by the operation to determine an
+        // appropriate delay, if any.
+        return switch (failure) {
+            // If the exception thrown by the operation includes retryability
+            // information, use that to inform retry behavior.
+            case RetryInfo retryInfo when retryInfo.isRetrySafe() != RetrySafety.NO -> {
+                // Attempt to consume tokens from the token bucket to "pay"
+                // for the retry.
+                consumeTokens(retryInfo.isTimeout());
+                yield backoff(standardToken, retryInfo.retryAfter());
+            }
+
+            // If the exception does not have retry info, but does have more
+            // general error info, that can also be used. This assumes that
+            // a server error is likely retryable and that a client error
+            // likely is not.
+            case ErrorInfo errorInfo when errorInfo.fault() == ErrorFault.SERVER -> {
+                consumeTokens(false);
+                yield backoff(standardToken);
+            }
+            default -> throw new TokenAcquisitionFailedException("Exception not retryable.");
+        };
+    }
+
+    /**
+     * Consumes tokens to "pay" for a retry.
+     *
+     * @param isTimeout whether the retry is in response to a timeout error,
+     *     which will require more tokens.
+     *
+     * @throws TokenAcquisitionFailedException if there are not enough tokens
+     *     in the bucket to pay for the retry.
+     */
+    private void consumeTokens(boolean isTimeout) {
+        synchronized (tokensLock) {
+            int cost = isTimeout ? TIMEOUT_COST : RETRY_COST;
+
+            if (this.tokens < cost) {
+                throw new TokenAcquisitionFailedException("Token bucket exhausted.");
+            }
+
+            this.tokens -= cost;
+        }
+    }
+
+    /**
+     * Computes a backoff with exponential backoff and jitter, capped at 20 seconds.
+     *
+     * @param token the previous token.
+     */
+    private AwsStandardRetryToken backoff(AwsStandardRetryToken token) {
+        return new AwsStandardRetryToken(token.attempts + 1, computeDelay(token.attempts));
+    }
+
+    /**
+     * Computes a backoff with exponential backoff and jitter, capped at 20 seconds.
+     *
+     * @param token the previous token.
+     * @param suggested the delay suggested by the service, which will serve as
+     *     the minimum delay.
+     */
+    private AwsStandardRetryToken backoff(AwsStandardRetryToken token, Duration suggested) {
+        // Compute the backoff as normal. If it is longer than the suggested
+        // backoff from the service, use it. Otherwise, use the suggested
+        // backoff.
+        Duration computedDelay = computeDelay(token.attempts);
+        Duration finalDelay = computedDelay.toMillis() < suggested.toMillis() ? suggested : computedDelay;
+        return new AwsStandardRetryToken(token.attempts + 1, finalDelay);
+    }
+
+    /**
+     * Computes the delay with exponential backoff and jitter, capped at 20 seconds.
+     *
+     * @param attempts the number of attempts made so far.
+     * @return the computed delay duration.
+     */
+    private Duration computeDelay(int attempts) {
+        // First compute the exponential backoff.
+        double backoff = Math.pow(2, attempts);
+
+        // Next, cap it at 20 seconds.
+        backoff = Math.min(backoff, MAX_BACKOFF);
+
+        // Finally, add jitter and expand to milliseconds.
+        double backoffMillis = Math.random() * backoff * 1000;
+        return Duration.ofMilliseconds((long) backoffMillis);
+    }
+
+    @Override
+    public void recordSuccess(RetryToken token) {
+        synchronized (tokensLock) {
+            // When a successful request is made, refill the token bucket unless it
+            // is already at maximum capacity.
+            if (this.tokens < MAX_CAPACITY) {
+                this.tokens += SUCCESS_REFUND;
+            }
         }
     }
 }
 ```
-
-Note that this code does not attempt to inspect the exceptions. It instead
-passes them directly to the retry strategy, which then handles any information
-in the exception that is relevant to it.
