@@ -7,6 +7,7 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class ExpressionType implements Type {
 
@@ -40,7 +41,7 @@ public class ExpressionType implements Type {
     }
 
     @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
+    public Type expectAnyOf(Set<RuntimeType> types) {
+        return new ErrorType(JmespathExceptionType.INVALID_TYPE);
     }
 }

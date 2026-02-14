@@ -5,9 +5,7 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 
-public final class ArrayType implements Type {
-
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.ARRAY);
+public final class ArrayType extends AbstractType {
 
     // Never null - array is equivalent to array<any>
     private final Type member;
@@ -32,6 +30,11 @@ public final class ArrayType implements Type {
     }
 
     @Override
+    protected RuntimeType runtimeType() {
+        return RuntimeType.ARRAY;
+    }
+
+    @Override
     public <T> boolean isInstance(T array, JmespathRuntime<T> runtime) {
         if (!runtime.is(array, RuntimeType.ARRAY)) {
             return false;
@@ -44,12 +47,6 @@ public final class ArrayType implements Type {
         }
 
         return true;
-    }
-
-
-    @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
     }
 
     @Override

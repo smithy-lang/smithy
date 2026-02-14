@@ -6,12 +6,13 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class UnionType implements Type {
 
     private final List<Type> types;
-    private final EnumSet<RuntimeType> runtimeTypes;
 
     public UnionType(Type ... types) {
         this(Arrays.asList(types));
@@ -19,8 +20,6 @@ public class UnionType implements Type {
 
     public UnionType(List<Type> types) {
         this.types = types;
-        this.runtimeTypes = EnumSet.noneOf(RuntimeType.class);
-        types.forEach(type -> runtimeTypes.addAll(type.runtimeTypes()));
     }
 
     @Override
@@ -48,17 +47,26 @@ public class UnionType implements Type {
     }
 
     @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return runtimeTypes;
-    }
-
-    @Override
     public Type elementType() {
-        return types.stream().map(Type::elementType).reduce(Type.bottomType(), Type::unionType);
+        return map(Type::elementType);
     }
 
     public Type valueType(Type key) {
-        return types.stream().map(t -> t.valueType(key)).reduce(Type.bottomType(), Type::unionType);
+        return map(t -> t.valueType(key));
+    }
+
+    public Type expectType(RuntimeType type) {
+        return map(t -> t.expectType(type));
+    }
+
+    @Override
+    public Type expectAnyOf(Set<RuntimeType> runtimeTypes) {
+        return map(t -> t.expectAnyOf(runtimeTypes));
+    }
+
+    private Type map(Function<Type, Type> f) {
+        return new UnionType(types.stream().map(f).collect(Collectors.toList()));
+
     }
 
     @Override

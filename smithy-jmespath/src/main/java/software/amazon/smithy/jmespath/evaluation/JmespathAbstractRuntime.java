@@ -6,6 +6,10 @@ import software.amazon.smithy.jmespath.RuntimeType;
 
 public interface JmespathAbstractRuntime<T> {
 
+    ///////////////////////////////
+    // General Operations
+    ///////////////////////////////
+
     T abstractTypeOf(T value);
 
     T abstractIs(T value, RuntimeType type);
@@ -20,8 +24,10 @@ public interface JmespathAbstractRuntime<T> {
     // Arbitrary values
     ///////////////////////////////
 
+    // Throws unsupported if the runtime is concrete
     T createAny(RuntimeType runtimeType);
 
+    // Throws unsupported if the runtime is concrete
     T either(T left, T right);
 
     ///////////////////////////////

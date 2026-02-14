@@ -162,6 +162,7 @@ public class ComplianceTestRunner<T, A extends Type> {
 
                         if (!abstractResult.isInstance(result, runtime)) {
                             parsed.evaluate(abstractedGiven, abstractRuntime);
+                            abstractResult.isInstance(result, runtime);
                             throw new AssertionError("Expected " + result + " to be an instance of " + abstractResult + ".\n"
                                     + "For query: " + expression + "\n");
                         }

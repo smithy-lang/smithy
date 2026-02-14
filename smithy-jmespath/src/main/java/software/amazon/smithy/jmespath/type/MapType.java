@@ -6,12 +6,10 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 import java.util.EnumSet;
 import java.util.Map;
 
-public class MapType implements Type {
+public class MapType extends AbstractType {
 
     private final Type keyType;
     private final Type valueType;
-
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.OBJECT);
 
     public MapType(Type keyType, Type valueType) {
         this.keyType = keyType;
@@ -33,6 +31,11 @@ public class MapType implements Type {
     }
 
     @Override
+    protected RuntimeType runtimeType() {
+        return RuntimeType.OBJECT;
+    }
+
+    @Override
     public <T> boolean isInstance(T object, JmespathRuntime<T> runtime) {
         if (!runtime.is(object, RuntimeType.OBJECT)) {
             return false;
@@ -48,11 +51,6 @@ public class MapType implements Type {
         }
 
         return true;
-    }
-
-    @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
     }
 
     @Override

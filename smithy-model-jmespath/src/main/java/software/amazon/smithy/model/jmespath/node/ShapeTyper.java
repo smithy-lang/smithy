@@ -4,13 +4,9 @@
  */
 package software.amazon.smithy.model.jmespath.node;
 
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.type.ArrayType;
-import software.amazon.smithy.jmespath.type.BooleanType;
 import software.amazon.smithy.jmespath.type.MapType;
-import software.amazon.smithy.jmespath.type.NumberType;
 import software.amazon.smithy.jmespath.type.ObjectType;
-import software.amazon.smithy.jmespath.type.StringType;
 import software.amazon.smithy.jmespath.type.Type;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -26,7 +22,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -37,14 +32,9 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.LengthTrait;
-import software.amazon.smithy.model.traits.RangeTrait;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -63,52 +53,52 @@ final class ShapeTyper implements ShapeVisitor<Type> {
 
     @Override
     public Type blobShape(BlobShape shape) {
-        return StringType.INSTANCE;
+        return Type.stringType();
     }
 
     @Override
     public Type booleanShape(BooleanShape shape) {
-        return BooleanType.INSTANCE;
+        return Type.booleanType();
     }
 
     @Override
     public Type byteShape(ByteShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type shortShape(ShortShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type integerShape(IntegerShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type longShape(LongShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type floatShape(FloatShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type doubleShape(DoubleShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type bigIntegerShape(BigIntegerShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
     public Type bigDecimalShape(BigDecimalShape shape) {
-        return NumberType.INSTANCE;
+        return Type.numberType();
     }
 
     @Override
@@ -118,7 +108,7 @@ final class ShapeTyper implements ShapeVisitor<Type> {
 
     @Override
     public Type stringShape(StringShape shape) {
-        return StringType.INSTANCE;
+        return Type.stringType();
     }
 
     @Override
@@ -189,7 +179,7 @@ final class ShapeTyper implements ShapeVisitor<Type> {
 
     @Override
     public Type timestampShape(TimestampShape shape) {
-        return new NumberType();
+        return Type.numberType();
     }
 
     @Override

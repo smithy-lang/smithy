@@ -34,7 +34,7 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     @Override
     public Type abstractLessThan(Type a, Type b) {
-        return Type.numberType();
+        return Type.unionType(Type.booleanType(), Type.nullType());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TypeJmespathRuntime implements JmespathAbstractRuntime<Type> {
 
     @Override
     public Type createNumber(Number value) {
-        return Type.stringType();
+        return Type.numberType();
     }
 
     @Override

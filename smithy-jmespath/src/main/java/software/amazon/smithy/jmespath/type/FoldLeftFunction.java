@@ -19,12 +19,7 @@ public class FoldLeftFunction implements Function<Type> {
     }
 
     @Override
-    public Type abstractApply(AbstractEvaluator<Type> runtime, List<FunctionArgument<Type>> functionArguments) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Type concreteApply(Evaluator<Type> evaluator, List<FunctionArgument<Type>> functionArguments) {
+    public Type abstractApply(AbstractEvaluator<Type> evaluator, List<FunctionArgument<Type>> functionArguments) {
         Type init = functionArguments.get(0).expectValue();
         JmespathExpression f = functionArguments.get(1).expectExpression();
         Type array = functionArguments.get(2).expectArray();

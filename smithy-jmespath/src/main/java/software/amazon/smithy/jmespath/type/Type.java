@@ -1,17 +1,15 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.FunctionArgument;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 public interface Type extends FunctionArgument<Type> {
-
-    static Type optionalType(Type type) {
-        return new UnionType(type, NullType.INSTANCE);
-    }
 
     static Type anyType() { return AnyType.INSTANCE; }
 
@@ -19,13 +17,13 @@ public interface Type extends FunctionArgument<Type> {
         return BottomType.INSTANCE;
     }
 
-    static Type nullType() { return NullType.INSTANCE; }
+    static Type nullType() { return new JustRuntimeType(RuntimeType.NULL); }
 
-    static Type booleanType() { return BooleanType.INSTANCE; }
+    static Type booleanType() { return new JustRuntimeType(RuntimeType.BOOLEAN); }
 
-    static Type stringType() { return StringType.INSTANCE; }
+    static Type stringType() { return new JustRuntimeType(RuntimeType.STRING); }
 
-    static Type numberType() { return NumberType.INSTANCE; }
+    static Type numberType() { return new JustRuntimeType(RuntimeType.NUMBER); }
 
     static Type arrayType() { return new ArrayType(anyType()); }
 
@@ -38,8 +36,6 @@ public interface Type extends FunctionArgument<Type> {
     }
 
     <T> boolean isInstance(T value, JmespathRuntime<T> runtime);
-
-    EnumSet<RuntimeType> runtimeTypes();
 
     default Type elementType() {
         return Type.nullType();
@@ -57,7 +53,13 @@ public interface Type extends FunctionArgument<Type> {
         return false;
     }
 
-    default ArrayType expectArray() {
-        throw new JmespathException("not an array");
+    @Override
+    default Type expectValue() {
+        return expectAnyOf(RuntimeType.valueTypes());
+    }
+
+    @Override
+    default Type expectType(RuntimeType type) {
+        return expectAnyOf(EnumSet.of(type));
     }
 }

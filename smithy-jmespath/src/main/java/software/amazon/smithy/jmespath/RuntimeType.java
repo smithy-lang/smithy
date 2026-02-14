@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.jmespath;
 
+import java.util.EnumSet;
 import java.util.Locale;
 import software.amazon.smithy.jmespath.ast.ComparatorType;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
@@ -150,4 +151,8 @@ public enum RuntimeType {
             LiteralExpression right,
             ComparatorType comparator
     );
+
+    public static EnumSet<RuntimeType> valueTypes() {
+        return EnumSet.complementOf(EnumSet.of(EXPRESSION, ANY));
+    }
 }

@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TupleType implements Type {
-
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.ARRAY);
+public class TupleType extends AbstractType {
 
     // Never null - array is equivalent to array<any>
     private final List<Type> members;
@@ -34,6 +32,11 @@ public class TupleType implements Type {
     }
 
     @Override
+    protected RuntimeType runtimeType() {
+        return RuntimeType.ARRAY;
+    }
+
+    @Override
     public <T> boolean isInstance(T array, JmespathRuntime<T> runtime) {
         if (!runtime.is(array, RuntimeType.ARRAY)) {
             return false;
@@ -52,11 +55,6 @@ public class TupleType implements Type {
             }
         }
         return !memberIter.hasNext();
-    }
-
-    @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
     }
 
     @Override

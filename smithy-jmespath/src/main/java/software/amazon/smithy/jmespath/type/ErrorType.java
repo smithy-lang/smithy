@@ -6,6 +6,7 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class ErrorType implements Type {
 
@@ -40,7 +41,8 @@ public class ErrorType implements Type {
     }
 
     @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
+    public Type expectAnyOf(Set<RuntimeType> types) {
+        // We're already an error :)
+        return this;
     }
 }

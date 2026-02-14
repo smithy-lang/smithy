@@ -7,13 +7,11 @@ import java.util.EnumSet;
 import java.util.Map;
 
 // TODO: RecordType? StructureType?
-public class ObjectType implements Type {
+public class ObjectType extends AbstractType {
 
     // TODO: Optional keys as well (may not be present, but if so has type X)
     // Not the same thing as always present but mapped to null
     private final Map<String, Type> properties;
-
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.OBJECT);
 
     public ObjectType(Map<String, Type> properties) {
         this.properties = properties;
@@ -35,6 +33,11 @@ public class ObjectType implements Type {
     }
 
     @Override
+    protected RuntimeType runtimeType() {
+        return RuntimeType.OBJECT;
+    }
+
+    @Override
     public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
         if (!runtime.is(value, RuntimeType.OBJECT)){
             return false;
@@ -46,11 +49,6 @@ public class ObjectType implements Type {
         } else {
             return true;
         }
-    }
-
-    @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
     }
 
     @Override

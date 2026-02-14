@@ -16,7 +16,8 @@ class AvgFunction<T> implements Function<T> {
 
     @Override
     public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
-        return evaluator.runtime().createAny(RuntimeType.NUMBER);
+        JmespathAbstractRuntime<T> runtime = evaluator.runtime();
+        return runtime.either(runtime.createAny(RuntimeType.NUMBER), runtime.createNull());
     }
 
     @Override

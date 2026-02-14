@@ -4,31 +4,25 @@ import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 public class AnyType implements Type {
 
     public static final AnyType INSTANCE = new AnyType();
 
-    private static final EnumSet<RuntimeType> TYPES = EnumSet.allOf(RuntimeType.class);
-
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof BooleanType;
+        return obj instanceof AnyType;
     }
 
     @Override
     public int hashCode() {
-        return BooleanType.class.hashCode();
+        return AnyType.class.hashCode();
     }
 
     @Override
     public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
         return true;
-    }
-
-    @Override
-    public EnumSet<RuntimeType> runtimeTypes() {
-        return TYPES;
     }
 
     @Override
@@ -39,5 +33,10 @@ public class AnyType implements Type {
     @Override
     public Type valueType(Type key) {
         return INSTANCE;
+    }
+
+    @Override
+    public Type expectAnyOf(Set<RuntimeType> types) {
+        return this;
     }
 }

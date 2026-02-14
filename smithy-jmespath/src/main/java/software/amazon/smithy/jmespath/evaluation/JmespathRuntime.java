@@ -303,7 +303,7 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
 
     @Override
     default FunctionArgument<T> createFunctionArgument(JmespathExpression expression) {
-        return FunctionArgument.of(expression);
+        return FunctionArgument.of(this, expression);
     }
 
     ///////////////////////////////
