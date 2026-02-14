@@ -101,7 +101,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitExpressionType(ExpressionTypeExpression expressionTypeExpression) {
-        return expressionTypeExpression.getExpression().accept(this);
+        return runtime.createExpression(expressionTypeExpression.getExpression());
     }
 
     @Override
@@ -327,7 +327,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
     }
 
     public T createAny() {
-        return Arrays.stream(RuntimeType.values())
+        return RuntimeType.valueTypes().stream()
                 .map(runtime::createAny)
                 .reduce(runtime::either)
                 .orElseThrow(NoSuchElementException::new);

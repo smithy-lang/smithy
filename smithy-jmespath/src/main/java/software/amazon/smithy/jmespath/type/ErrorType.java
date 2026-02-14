@@ -45,4 +45,9 @@ public class ErrorType implements Type {
         // We're already an error :)
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "error[" + errorType + "]";
+    }
 }

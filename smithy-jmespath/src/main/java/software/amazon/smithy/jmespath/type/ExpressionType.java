@@ -9,7 +9,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class ExpressionType implements Type {
+public class ExpressionType extends AbstractType {
 
     private static final EnumSet<RuntimeType> TYPES = EnumSet.of(RuntimeType.EXPRESSION);
 
@@ -35,6 +35,11 @@ public class ExpressionType implements Type {
     }
 
     @Override
+    protected RuntimeType runtimeType() {
+        return RuntimeType.EXPRESSION;
+    }
+
+    @Override
     public <T> boolean isInstance(T value, JmespathRuntime<T> runtime) {
         // Expressions are not actually runtime values
         return false;
@@ -43,5 +48,10 @@ public class ExpressionType implements Type {
     @Override
     public Type expectAnyOf(Set<RuntimeType> types) {
         return new ErrorType(JmespathExceptionType.INVALID_TYPE);
+    }
+
+    @Override
+    public JmespathExpression expectExpression() {
+        return expression;
     }
 }

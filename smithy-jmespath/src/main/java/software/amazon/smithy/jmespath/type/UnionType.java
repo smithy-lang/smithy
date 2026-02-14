@@ -4,7 +4,9 @@ import software.amazon.smithy.jmespath.RuntimeType;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -12,14 +14,25 @@ import java.util.stream.Collectors;
 
 public class UnionType implements Type {
 
-    private final List<Type> types;
+    private final Set<Type> types;
 
     public UnionType(Type ... types) {
-        this(Arrays.asList(types));
+        this(new HashSet<>(Arrays.asList(types)));
     }
 
-    public UnionType(List<Type> types) {
-        this.types = types;
+    public UnionType(Collection<? extends Type> types) {
+        this.types = new HashSet<>();
+        // TODO: Extract out of constructor, so we can collapse to a non-union type sometimes
+        for (Type type : types) {
+            if (type == null) {
+                throw new NullPointerException();
+            }
+            if (type instanceof UnionType) {
+                this.types.addAll(((UnionType)type).types);
+            } else {
+                this.types.add(type);
+            }
+        }
     }
 
     @Override
@@ -65,7 +78,7 @@ public class UnionType implements Type {
     }
 
     private Type map(Function<Type, Type> f) {
-        return new UnionType(types.stream().map(f).collect(Collectors.toList()));
+        return new UnionType(types.stream().map(f).collect(Collectors.toSet()));
 
     }
 

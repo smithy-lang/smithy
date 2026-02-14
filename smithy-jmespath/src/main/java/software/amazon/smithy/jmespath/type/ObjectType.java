@@ -5,15 +5,16 @@ import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Objects;
 
 // TODO: RecordType? StructureType?
 public class ObjectType extends AbstractType {
 
     // TODO: Optional keys as well (may not be present, but if so has type X)
     // Not the same thing as always present but mapped to null
-    private final Map<String, Type> properties;
+    private final Map<Type, Type> properties;
 
-    public ObjectType(Map<String, Type> properties) {
+    public ObjectType(Map<Type, Type> properties) {
         this.properties = properties;
     }
 
@@ -24,12 +25,12 @@ public class ObjectType extends AbstractType {
         }
 
         ObjectType other = (ObjectType) obj;
-        return properties.equals(other.properties);
+        return Objects.equals(properties, other.properties);
     }
 
     @Override
     public int hashCode() {
-        return properties.hashCode();
+        return Objects.hashCode(properties);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ObjectType extends AbstractType {
 
         StringBuilder builder = new StringBuilder();
         builder.append("object<");
-        for (Map.Entry<String, Type> entry : properties.entrySet()) {
+        for (Map.Entry<Type, Type> entry : properties.entrySet()) {
             builder.append(entry.getKey()).append(": ").append(entry.getValue()).append(", ");
         }
         builder.append('>');

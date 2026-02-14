@@ -145,4 +145,34 @@ public final class EvaluationUtils {
                 throw new IllegalStateException();
         }
     }
+
+    public static <T, R> R convert(JmespathRuntime<T> fromRuntime, T value, JmespathAbstractRuntime<R> toRuntime) {
+        RuntimeType type = fromRuntime.typeOf(value);
+        switch (type) {
+            case NULL:
+                return toRuntime.createNull();
+            case BOOLEAN:
+                return toRuntime.createBoolean(fromRuntime.asBoolean(value));
+            case NUMBER:
+                return toRuntime.createNumber(fromRuntime.asNumber(value));
+            case STRING:
+                return toRuntime.createString(fromRuntime.asString(value));
+            case ARRAY:
+                JmespathAbstractRuntime.ArrayBuilder<R> arrayBuilder = toRuntime.arrayBuilder();
+                for (T element : fromRuntime.asIterable(value)) {
+                    arrayBuilder.add(convert(fromRuntime, element, toRuntime));
+                }
+                return arrayBuilder.build();
+            case OBJECT:
+                JmespathAbstractRuntime.ObjectBuilder<R> objectBuilder = toRuntime.objectBuilder();
+                for (T key : fromRuntime.asIterable(value)) {
+                    objectBuilder.put(
+                            convert(fromRuntime, key, toRuntime),
+                            convert(fromRuntime, fromRuntime.value(value, key), toRuntime));
+                }
+                return objectBuilder.build();
+            default:
+                throw new IllegalArgumentException("Unknown runtime type: " + type);
+        }
+    }
 }

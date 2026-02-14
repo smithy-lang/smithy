@@ -41,8 +41,10 @@ public class CoreExtension implements JmespathExtension {
         // TODO: Separate extension?
         result.add(new AddFunction<>());
         result.add(new AppendFunction<>());
+        result.add(new AppendIfNotNullFunction<>());
         result.add(new ConcatFunction<>());
         result.add(new EvalFunction<>());
+        result.add(new EitherFunction<>());
         result.add(new IfFunction<>());
         result.add(new FoldLeftFunction<>());
         result.add(new OneNotNullFunction<>());

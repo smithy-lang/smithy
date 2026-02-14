@@ -8,7 +8,7 @@ class AppendIfNotNullFunction<T> implements Function<T> {
 
     @Override
     public String name() {
-        return "add_if_not_null";
+        return "append_if_not_null";
     }
 
     @Override

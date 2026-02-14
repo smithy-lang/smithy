@@ -17,6 +17,7 @@ import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.EvaluationUtils;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.jmespath.evaluation.JmespathAbstractRuntime;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
@@ -156,8 +157,7 @@ public class ComplianceTestRunner<T, A extends Type> {
                     }
 
                     if (abstractRuntime != null) {
-                        // TODO: Faster way to do this?
-                        var abstractedGiven = JmespathExpression.parseJson(runtime.toString(given), abstractRuntime);
+                        var abstractedGiven = EvaluationUtils.convert(runtime, given, abstractRuntime);
                         var abstractResult = parsed.evaluate(abstractedGiven, abstractRuntime);
 
                         if (!abstractResult.isInstance(result, runtime)) {
