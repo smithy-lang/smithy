@@ -9,6 +9,7 @@ import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.SubstitutionVisitor;
 import software.amazon.smithy.jmespath.ast.AndExpression;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.CurrentExpression;
@@ -230,41 +231,55 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         return ifThenElse(output, runtime.createBoolean(false), runtime.createBoolean(true));
     }
 
+    private static final JmespathExpression PROJECTION_FOLDER_TEMPLATE =
+            JmespathExpression.parse("append_if_not_null(acc, eval('rightExpr', element))");
+
     @Override
     public T visitProjection(ProjectionExpression projectionExpression) {
         T left = visit(projectionExpression.getLeft());
         JmespathExpression rightExpr = projectionExpression.getRight();
+        JmespathExpression folder = substitute(LiteralExpression.from("rightExpr"), rightExpr, PROJECTION_FOLDER_TEMPLATE);
 
         return ifThenElse(
                 runtime.abstractIs(left, RuntimeType.ARRAY),
                 foldLeft(runtime.arrayBuilder().build(),
-                        JmespathExpression.parse("append_if_not_null(acc, eval(<rightExpr>, element))"),
+                        folder,
                         left),
                 runtime.createNull());
     }
+
+    private static final JmespathExpression FILTER_PROJECTION_FOLDER_TEMPLATE =
+            JmespathExpression.parse("append_if_not_null(acc, if(eval('condExpr', element), eval('rightExpr', element), null))");
 
     @Override
     public T visitFilterProjection(FilterProjectionExpression filterProjectionExpression) {
         T left = visit(filterProjectionExpression.getLeft());
         JmespathExpression condExpr = filterProjectionExpression.getComparison();
         JmespathExpression rightExpr = filterProjectionExpression.getRight();
+        JmespathExpression folder = substitute(
+                LiteralExpression.from("rightExpr"), rightExpr,
+                LiteralExpression.from("condExpr"), condExpr,
+                PROJECTION_FOLDER_TEMPLATE);
 
         return ifThenElse(runtime.abstractIs(left, RuntimeType.ARRAY),
-               foldLeft(runtime.arrayBuilder().build(),
-                        JmespathExpression.parse("append_if_not_null(acc, if(eval(<condExpr>, element), eval(<rightExpr>, element), null))"),
-                        left),
+               foldLeft(runtime.arrayBuilder().build(), folder, left),
                runtime.createNull());
     }
+
+    private static final JmespathExpression OBJECT_PROJECTION_FOLDER_TEMPLATE =
+            JmespathExpression.parse("append_if_not_null(acc, if(value('left', element) != null, eval('rightExpr', value('left', element)), null))");
 
     @Override
     public T visitObjectProjection(ObjectProjectionExpression objectProjectionExpression) {
         T left = visit(objectProjectionExpression.getLeft());
         JmespathExpression rightExpr = objectProjectionExpression.getRight();
+        JmespathExpression folder = substitute(
+                LiteralExpression.from("left"), LiteralExpression.from(left),
+                LiteralExpression.from("rightExpr"), rightExpr,
+                PROJECTION_FOLDER_TEMPLATE);
 
         return ifThenElse(runtime.abstractIs(left, RuntimeType.ARRAY),
-                foldLeft(runtime.arrayBuilder().build(),
-                        JmespathExpression.parse("append_if_not_null(acc, if(value(<left>, element) != null, eval(<rightExpr>, value(<left>, element)), null))"),
-                        left),
+                foldLeft(runtime.arrayBuilder().build(), folder, left),
                 runtime.createNull());
     }
 
@@ -316,5 +331,30 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
                 .map(runtime::createAny)
                 .reduce(runtime::either)
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    JmespathExpression substitute(JmespathExpression from, JmespathExpression to, JmespathExpression expression) {
+        return expression.accept(new SubstitutionVisitor(e -> {
+            if (e.equals(from)) {
+                return to;
+            }
+            return null;
+        }));
+    }
+
+    JmespathExpression substitute(JmespathExpression from1, JmespathExpression to1, JmespathExpression from2, JmespathExpression to2, JmespathExpression expression) {
+        return expression.accept(new SubstitutionVisitor(e -> {
+            if (e.equals(from1)) {
+                return to1;
+            }
+            if (e.equals(from2)) {
+                return to2;
+            }
+            return null;
+        }));
+    }
+
+    JmespathExpression substitute(Map<JmespathExpression, JmespathExpression> substitutions, JmespathExpression expression) {
+        return expression.accept(new SubstitutionVisitor(substitutions::get));
     }
 }

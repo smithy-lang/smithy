@@ -5,9 +5,15 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
+import java.util.Map;
+
 import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
 
 class MapFunction<T> implements Function<T> {
+
+    private static final JmespathExpression FOLDER_TEMPLATE = JmespathExpression.parse("append(acc, eval('mapper', element))");
+
     @Override
     public String name() {
         return "map";
@@ -17,13 +23,12 @@ class MapFunction<T> implements Function<T> {
     public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         JmespathAbstractRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(2, functionArguments);
-        JmespathExpression expression = functionArguments.get(0).expectExpression();
+        JmespathExpression mapper = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();
 
         T acc = runtime.arrayBuilder().build();
-        return evaluator.foldLeft(
-                // TODO: need to insert the expression here
-                acc, JmespathExpression.parse("append(acc, eval(&<expression>, element))"), array);
+        JmespathExpression folder = evaluator.substitute(LiteralExpression.from("mapper"), mapper, FOLDER_TEMPLATE);
+        return evaluator.foldLeft(acc, folder, array);
     }
 
     @Override

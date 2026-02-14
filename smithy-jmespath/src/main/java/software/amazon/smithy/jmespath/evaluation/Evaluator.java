@@ -22,6 +22,7 @@ import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
 import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
+import software.amazon.smithy.jmespath.ast.Subexpression;
 
 public class Evaluator<T> extends AbstractEvaluator<T> {
 
@@ -264,5 +265,11 @@ public class Evaluator<T> extends AbstractEvaluator<T> {
         }
 
         return runtime.slice(current, start, stop, step);
+    }
+
+    @Override
+    public T visitSubexpression(Subexpression subexpression) {
+        T left = visit(subexpression.getLeft());
+        return new Evaluator<>(left, runtime, functions).visit(subexpression.getRight());
     }
 }
