@@ -14,19 +14,19 @@ class OneNotNullFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        T result = runtime.createNull();
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        T result = evaluator.runtime().createNull();
         ListIterator<FunctionArgument<T>> iter = functionArguments.listIterator(functionArguments.size());
         while (iter.hasPrevious()) {
             T value = iter.previous().expectValue();
-            result = EvaluationUtils.ifThenElse(runtime, functions,
-                    runtime.abstractIs(value, RuntimeType.NULL), result, value);
+            result = evaluator.ifThenElse(
+                    evaluator.runtime().abstractIs(value, RuntimeType.NULL), result, value);
         }
         return result;
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         if (functionArguments.isEmpty()) {
             throw new JmespathException(JmespathExceptionType.INVALID_ARITY,
                     "Expected at least 1 argument, got 0");
@@ -35,14 +35,14 @@ class OneNotNullFunction<T> implements Function<T> {
         boolean found = false;
         for (FunctionArgument<T> arg : functionArguments) {
             T value = arg.expectValue();
-            if (!runtime.is(value, RuntimeType.NULL)) {
+            if (!evaluator.runtime().is(value, RuntimeType.NULL)) {
                 if (found) {
-                    return runtime.createBoolean(false);
+                    return evaluator.runtime().createBoolean(false);
                 } else {
                     found = true;
                 }
             }
         }
-        return runtime.createBoolean(found);
+        return evaluator.runtime().createBoolean(found);
     }
 }

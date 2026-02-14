@@ -1,6 +1,8 @@
 package software.amazon.smithy.jmespath.type;
 
 import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.evaluation.AbstractEvaluator;
+import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.jmespath.evaluation.Function;
 import software.amazon.smithy.jmespath.evaluation.FunctionArgument;
 import software.amazon.smithy.jmespath.evaluation.FunctionRegistry;
@@ -17,12 +19,12 @@ public class FoldLeftFunction implements Function<Type> {
     }
 
     @Override
-    public Type abstractApply(JmespathAbstractRuntime<Type> runtime, FunctionRegistry<Type> functions, List<FunctionArgument<Type>> functionArguments) {
+    public Type abstractApply(AbstractEvaluator<Type> runtime, List<FunctionArgument<Type>> functionArguments) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Type concreteApply(JmespathRuntime<Type> runtime, FunctionRegistry<Type> functions, List<FunctionArgument<Type>> functionArguments) {
+    public Type concreteApply(Evaluator<Type> evaluator, List<FunctionArgument<Type>> functionArguments) {
         Type init = functionArguments.get(0).expectValue();
         JmespathExpression f = functionArguments.get(1).expectExpression();
         Type array = functionArguments.get(2).expectArray();
@@ -38,7 +40,8 @@ public class FoldLeftFunction implements Function<Type> {
         while (!result.equals(prevResult)) {
             Type fContextType = new TupleType(Arrays.asList(prevResult, array.elementType()));
             prevResult = result;
-            result = runtime.either(result, f.evaluate(fContextType, runtime));
+            // TODO: Not passing along the function registry
+            result = evaluator.runtime().either(result, f.evaluate(fContextType, evaluator.runtime()));
         }
         return result;
     }

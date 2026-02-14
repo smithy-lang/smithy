@@ -13,8 +13,8 @@ class TypeFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(1, functionArguments);
-        return runtime.abstractTypeOf(functionArguments.get(0).expectValue());
+        return evaluator.runtime().abstractTypeOf(functionArguments.get(0).expectValue());
     }
 }

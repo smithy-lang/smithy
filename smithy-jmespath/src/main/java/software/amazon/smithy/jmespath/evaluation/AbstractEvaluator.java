@@ -29,13 +29,10 @@ import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.add;
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.foldLeft;
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.ifThenElse;
-import static software.amazon.smithy.jmespath.evaluation.EvaluationUtils.not;
+import java.util.NoSuchElementException;
 
 // TODO: Consider whether "abstract" is confusing (since the class is not abstract, the interpretation is)
 // TODO: Difference between abstract meaning "can't read concrete java values from T values"
@@ -61,6 +58,10 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         this.functions = functions;
     }
 
+    public JmespathAbstractRuntime<T> runtime() {
+        return runtime;
+    }
+
     public T visit(JmespathExpression expression) {
         return expression.accept(this);
     }
@@ -73,7 +74,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
             case EQUAL:
                 return runtime.abstractEqual(left, right);
             case NOT_EQUAL:
-                return ifThenElse(runtime, functions,
+                return ifThenElse(
                         runtime.abstractEqual(left, right),
                         runtime.createBoolean(false),
                         runtime.createBoolean(true));
@@ -82,11 +83,11 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
             case LESS_THAN:
                 return runtime.abstractLessThan(left, right);
             case LESS_THAN_EQUAL:
-                return not(runtime, functions, runtime.abstractLessThan(right, left));
+                return not(runtime.abstractLessThan(right, left));
             case GREATER_THAN:
                 return runtime.abstractLessThan(right, left);
             case GREATER_THAN_EQUAL:
-                return not(runtime, functions, runtime.abstractLessThan(left, right));
+                return not(runtime.abstractLessThan(left, right));
             default:
                 throw new IllegalArgumentException("Unsupported comparator: " + comparatorExpression.getComparator());
         }
@@ -106,10 +107,9 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
     public T visitFlatten(FlattenExpression flattenExpression) {
         T value = visit(flattenExpression.getExpression());
 
-        return ifThenElse(runtime, functions, runtime.abstractIs(value, RuntimeType.ARRAY),
-                foldLeft(runtime, functions,
-                        runtime.arrayBuilder().build(),
-                        JmespathExpression.parse("concat([0], to_array([1]))"),
+        return ifThenElse(runtime.abstractIs(value, RuntimeType.ARRAY),
+                foldLeft(runtime.arrayBuilder().build(),
+                        JmespathExpression.parse("concat(acc, to_array(element))"),
                         value),
                 runtime.createNull());
     }
@@ -126,7 +126,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
                 arguments.add(runtime.createFunctionArgument(visit(expr)));
             }
         }
-        return resolved.apply(runtime, functions, arguments);
+        return resolved.apply(this, arguments);
     }
 
     @Override
@@ -138,13 +138,13 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
     public T visitIndex(IndexExpression indexExpression) {
         T index = runtime.createNumber(indexExpression.getIndex());
         T length = runtime.abstractLength(current);
-        T adjustedIndex = ifThenElse(runtime, functions,
+        T adjustedIndex = ifThenElse(
                 runtime.abstractLessThan(index, runtime.createNumber(0)),
-                add(runtime, functions, length, index),
+                add(length, index),
                 index);
         T result = runtime.abstractElement(current, adjustedIndex);
 
-        return ifThenElse(runtime, functions,
+        return ifThenElse(
                 runtime.abstractIs(current, RuntimeType.ARRAY),
                 result,
                 runtime.createNull());
@@ -187,7 +187,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         }
         T result = output.build();
 
-        return ifThenElse(runtime, functions,
+        return ifThenElse(
                 runtime.abstractIs(current, RuntimeType.NULL),
                 current,
                 result);
@@ -201,7 +201,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         }
         T result = output.build();
 
-        return ifThenElse(runtime, functions,
+        return ifThenElse(
                 runtime.abstractIs(current, RuntimeType.NULL),
                 current,
                 result);
@@ -212,8 +212,7 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         T left = visit(andExpression.getLeft());
         T right = visit(andExpression.getRight());
 
-        return ifThenElse(runtime, functions,
-                left, right, left);
+        return ifThenElse(left, right, left);
     }
 
     @Override
@@ -221,16 +220,14 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         T left = visit(orExpression.getLeft());
         T right = visit(orExpression.getRight());
 
-        return ifThenElse(runtime, functions,
-                left, left, right);
+        return ifThenElse(left, left, right);
     }
 
     @Override
     public T visitNot(NotExpression notExpression) {
         T output = visit(notExpression.getExpression());
 
-        return ifThenElse(runtime, functions,
-                output, runtime.createBoolean(false), runtime.createBoolean(true));
+        return ifThenElse(output, runtime.createBoolean(false), runtime.createBoolean(true));
     }
 
     @Override
@@ -238,10 +235,9 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         T left = visit(projectionExpression.getLeft());
         JmespathExpression rightExpr = projectionExpression.getRight();
 
-        return ifThenElse(runtime, functions,
+        return ifThenElse(
                 runtime.abstractIs(left, RuntimeType.ARRAY),
-                foldLeft(runtime, functions,
-                        runtime.arrayBuilder().build(),
+                foldLeft(runtime.arrayBuilder().build(),
                         JmespathExpression.parse("append_if_not_null(acc, eval(<rightExpr>, element))"),
                         left),
                 runtime.createNull());
@@ -253,9 +249,8 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         JmespathExpression condExpr = filterProjectionExpression.getComparison();
         JmespathExpression rightExpr = filterProjectionExpression.getRight();
 
-        return ifThenElse(runtime, functions, runtime.abstractIs(left, RuntimeType.ARRAY),
-               foldLeft(runtime, functions,
-                        runtime.arrayBuilder().build(),
+        return ifThenElse(runtime.abstractIs(left, RuntimeType.ARRAY),
+               foldLeft(runtime.arrayBuilder().build(),
                         JmespathExpression.parse("append_if_not_null(acc, if(eval(<condExpr>, element), eval(<rightExpr>, element), null))"),
                         left),
                runtime.createNull());
@@ -266,9 +261,8 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         T left = visit(objectProjectionExpression.getLeft());
         JmespathExpression rightExpr = objectProjectionExpression.getRight();
 
-        return ifThenElse(runtime, functions, runtime.abstractIs(left, RuntimeType.ARRAY),
-                foldLeft(runtime, functions,
-                        runtime.arrayBuilder().build(),
+        return ifThenElse(runtime.abstractIs(left, RuntimeType.ARRAY),
+                foldLeft(runtime.arrayBuilder().build(),
                         JmespathExpression.parse("append_if_not_null(acc, if(value(<left>, element) != null, eval(<rightExpr>, value(<left>, element)), null))"),
                         left),
                 runtime.createNull());
@@ -279,9 +273,8 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
         // Just abstract this as an arbitrary subset of array elements for simplicity
         // A fully precise abstract implementation of the logic would be a real pain
         // and not worth the extra precision.
-        return ifThenElse(runtime, functions, runtime.abstractIs(current, RuntimeType.ARRAY),
-                foldLeft(runtime, functions,
-                        runtime.arrayBuilder().build(),
+        return ifThenElse(runtime.abstractIs(current, RuntimeType.ARRAY),
+                foldLeft(runtime.arrayBuilder().build(),
                         JmespathExpression.parse("append_if_not_null(acc, either(element, `null`))"),
                         current),
                 runtime.createNull());
@@ -291,5 +284,37 @@ public class AbstractEvaluator<T> implements ExpressionVisitor<T> {
     public T visitSubexpression(Subexpression subexpression) {
         T left = visit(subexpression.getLeft());
         return new AbstractEvaluator<>(left, runtime, functions).visit(subexpression.getRight());
+    }
+
+    // Helpers
+
+    public T ifThenElse(T condition, T then, T otherwise) {
+        return functions.lookup(runtime, "if").apply(this, condition, then, otherwise);
+    }
+
+    public T not(T value) {
+        return ifThenElse(value, runtime.createBoolean(false), runtime.createBoolean(true));
+    }
+
+    public T add(T left, T right) {
+        return functions.lookup(runtime, "add").apply(this, Arrays.asList(
+                runtime.createFunctionArgument(left),
+                runtime.createFunctionArgument(right)
+        ));
+    }
+
+    public T foldLeft(T init, JmespathExpression folder, T collection) {
+        return functions.lookup(runtime, "fold_left").apply(this, Arrays.asList(
+                runtime.createFunctionArgument(init),
+                runtime.createFunctionArgument(folder),
+                runtime.createFunctionArgument(collection)
+        ));
+    }
+
+    public T createAny() {
+        return Arrays.stream(RuntimeType.values())
+                .map(runtime::createAny)
+                .reduce(runtime::either)
+                .orElseThrow(NoSuchElementException::new);
     }
 }

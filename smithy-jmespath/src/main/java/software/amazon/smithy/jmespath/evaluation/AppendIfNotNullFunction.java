@@ -12,27 +12,27 @@ class AppendIfNotNullFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         T value = functionArguments.get(1).expectValue();
 
-        return EvaluationUtils.ifThenElse(runtime, functions,
-                runtime.abstractIs(value, RuntimeType.NULL),
+        return evaluator.ifThenElse(
+                evaluator.runtime().abstractIs(value, RuntimeType.NULL),
                 array,
-                runtime.arrayBuilder().addAll(array).add(value).build());
+                evaluator.runtime().arrayBuilder().addAll(array).add(value).build());
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         T value = functionArguments.get(1).expectValue();
 
-        if (runtime.is(value, RuntimeType.NULL)) {
+        if (evaluator.runtime().is(value, RuntimeType.NULL)) {
             return array;
         } else {
-            return runtime.arrayBuilder().addAll(array).add(value).build();
+            return evaluator.runtime().arrayBuilder().addAll(array).add(value).build();
         }
     }
 }

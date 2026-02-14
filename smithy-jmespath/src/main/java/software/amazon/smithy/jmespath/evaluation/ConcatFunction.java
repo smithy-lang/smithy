@@ -10,16 +10,16 @@ class ConcatFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        return apply(runtime, functions, functionArguments);
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        return apply(evaluator, functionArguments);
     }
 
     @Override
-    public T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T apply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T left = functionArguments.get(0).expectArray();
         T right = functionArguments.get(1).expectArray();
 
-        return runtime.arrayBuilder().addAll(left).addAll(right).build();
+        return evaluator.runtime().arrayBuilder().addAll(left).addAll(right).build();
     }
 }

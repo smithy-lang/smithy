@@ -15,18 +15,20 @@ class ToStringFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathAbstractRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 
-        return EvaluationUtils.ifThenElse(runtime, functions,
+        return evaluator.ifThenElse(
                 runtime.abstractIs(value, RuntimeType.STRING),
                 value,
                 runtime.abstractToString(value));
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(1, functionArguments);
         T value = functionArguments.get(0).expectValue();
 

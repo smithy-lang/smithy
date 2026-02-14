@@ -14,30 +14,30 @@ class MinByFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         // TODO: Can do better via fold_left
-        return EvaluationUtils.createAny(runtime);
+        return evaluator.createAny();
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         JmespathExpression expression = functionArguments.get(1).expectExpression();
-        if (runtime.length(array) == 0) {
-            return runtime.createNull();
+        if (evaluator.runtime().length(array) == 0) {
+            return evaluator.runtime().createNull();
         }
 
         T min = null;
         T minBy = null;
         boolean first = true;
-        for (T element : runtime.asIterable(array)) {
-            T by = expression.evaluate(element, runtime);
+        for (T element : evaluator.runtime().asIterable(array)) {
+            T by = expression.evaluate(element, evaluator.runtime());
             if (first) {
                 first = false;
                 min = element;
                 minBy = by;
-            } else if (runtime.compare(by, minBy) < 0) {
+            } else if (evaluator.runtime().compare(by, minBy) < 0) {
                 min = element;
                 minBy = by;
             }

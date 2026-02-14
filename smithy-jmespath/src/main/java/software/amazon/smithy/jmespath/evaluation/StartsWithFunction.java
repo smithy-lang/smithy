@@ -15,19 +15,19 @@ class StartsWithFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        return runtime.createAny(RuntimeType.BOOLEAN);
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        return evaluator.runtime().createAny(RuntimeType.BOOLEAN);
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T subject = functionArguments.get(0).expectString();
         T prefix = functionArguments.get(1).expectString();
 
-        String subjectStr = runtime.asString(subject);
-        String prefixStr = runtime.asString(prefix);
+        String subjectStr = evaluator.runtime().asString(subject);
+        String prefixStr = evaluator.runtime().asString(prefix);
 
-        return runtime.createBoolean(subjectStr.startsWith(prefixStr));
+        return evaluator.runtime().createBoolean(subjectStr.startsWith(prefixStr));
     }
 }

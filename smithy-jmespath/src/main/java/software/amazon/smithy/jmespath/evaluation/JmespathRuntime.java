@@ -312,7 +312,7 @@ public interface JmespathRuntime<T> extends JmespathAbstractRuntime<T>, Comparat
 
     @Override
     default T createError(JmespathExceptionType type, String message) {
-        throw new UnsupportedOperationException("createError");
+        throw new JmespathException(type, message);
     }
 
     @Override

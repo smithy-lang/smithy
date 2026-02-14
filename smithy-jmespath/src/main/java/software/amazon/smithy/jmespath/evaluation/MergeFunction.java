@@ -13,13 +13,13 @@ class MergeFunction<T> implements Function<T> {
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        return abstractApply(runtime, functions, functionArguments);
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        return abstractApply(evaluator, functionArguments);
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        JmespathRuntime.ObjectBuilder<T> builder = runtime.objectBuilder();
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathRuntime.ObjectBuilder<T> builder = evaluator.runtime().objectBuilder();
 
         for (FunctionArgument<T> arg : functionArguments) {
             T object = arg.expectObject();

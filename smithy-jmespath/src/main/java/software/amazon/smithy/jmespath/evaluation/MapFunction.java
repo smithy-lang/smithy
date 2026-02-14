@@ -14,19 +14,21 @@ class MapFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathAbstractRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(2, functionArguments);
         JmespathExpression expression = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();
 
         T acc = runtime.arrayBuilder().build();
-        return EvaluationUtils.foldLeft(runtime, functions,
+        return evaluator.foldLeft(
                 // TODO: need to insert the expression here
-                acc, JmespathExpression.parse("append(acc, apply(&<expression>, (element))))"), array);
+                acc, JmespathExpression.parse("append(acc, eval(&<expression>, element))"), array);
     }
 
     @Override
-    public T concreteApply(JmespathRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(2, functionArguments);
         JmespathExpression expression = functionArguments.get(0).expectExpression();
         T array = functionArguments.get(1).expectArray();

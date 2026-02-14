@@ -17,16 +17,17 @@ class AppendFunction<T> implements Function<T> {
     }
 
     @Override
-    public T abstractApply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
-        return apply(runtime, functions, functionArguments);
-    }
-
-    @Override
-    public T apply(JmespathAbstractRuntime<T> runtime, FunctionRegistry<T> functions, List<FunctionArgument<T>> functionArguments) {
+    public T abstractApply(AbstractEvaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        JmespathAbstractRuntime<T> runtime = evaluator.runtime();
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
         T value = functionArguments.get(1).expectValue();
 
         return runtime.arrayBuilder().addAll(array).add(value).build();
+    }
+
+    @Override
+    public T concreteApply(Evaluator<T> evaluator, List<FunctionArgument<T>> functionArguments) {
+        return abstractApply(evaluator, functionArguments);
     }
 }

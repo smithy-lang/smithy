@@ -36,6 +36,10 @@ public class Evaluator<T> extends AbstractEvaluator<T> {
         this.runtime = runtime;
     }
 
+    public JmespathRuntime<T> runtime() {
+        return runtime;
+    }
+
     @Override
     public T visitComparator(ComparatorExpression comparatorExpression) {
         T left = visit(comparatorExpression.getLeft());
