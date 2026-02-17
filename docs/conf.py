@@ -24,6 +24,12 @@ todo_include_todos = False
 smartquotes = False
 nitpicky = True
 
+# -- Markdown configuration -----------------------------------------------
+
+myst_enable_extensions = [
+    "colon_fence"
+]
+
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "furo"

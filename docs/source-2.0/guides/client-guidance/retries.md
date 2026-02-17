@@ -61,6 +61,11 @@ public interface RetryStrategy {
     /**
      * Invoked before the first request attempt.
      *
+     * <p>An initial request will be made even if a token cannot be acquired.
+     * It is recommended to always return a token so that the retry strategy
+     * may continue to track each request and be informed when they succeed or
+     * fail.
+     *
      * @throws TokenAcquisitionFailedException if a token cannot be acquired.
      */
     RetryToken acquireInitialToken();
@@ -99,7 +104,9 @@ to prevent race conditions.
 
 An initial retry token should be acquired at the beginning of a request, before
 the first attempt is made. If an initial token cannot be acquired, the client
-should still make an attempt.
+should still make an attempt. This initial attempt is always made because the
+purpose of the retry strategy is to manage retries, not to gate access to a
+service entirely.
 
 If an attempt fails, the retry strategy is passed the retry token for the
 attempt and given the exception raised by the attempt. If the retry strategy
@@ -407,7 +414,7 @@ demonstrate some of the potential needs of a retry system.
 
 The following is an example retry strategy that implements exponential backoff
 with jitter alongside a token bucket. This strategy adds extra cost for timeout
-errors since they may indicate a more highly degraded service.
+errors since they may indicate a more degraded service.
 
 Aside from delay, the retry token also tracks the number of attempts that have
 been made. This is necessary because this strategy imposes a maximum attempt
@@ -557,7 +564,7 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
         synchronized (tokensLock) {
             // When a successful request is made, refill the token bucket unless it
             // is already at maximum capacity.
-            if (this.tokens < MAX_CAPACITY) {
+            if (this.tokens <= MAX_CAPACITY - SUCCESS_REFUND) {
                 this.tokens += SUCCESS_REFUND;
             }
         }
