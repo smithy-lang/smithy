@@ -1,5 +1,5 @@
 [versions]
-junit = "6.0.2"
+junit = "6.0.3"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
@@ -9,7 +9,7 @@ assertj = "3.27.7"
 prettier4j = "0.3.0"
 maven-resolver-provider = "3.9.12"
 # TODO: upgrade major version
-maven-resolver = "1.9.25"
+maven-resolver = "1.9.26"
 slf4j = "1.7.36"
 mockserver = "5.15.0"
 compile-testing = "0.23.0"
