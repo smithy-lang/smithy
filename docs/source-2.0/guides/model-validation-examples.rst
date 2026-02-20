@@ -219,9 +219,9 @@ to have clear, actionable error messages.
         id: "RawIntegerWithoutRange",
         configuration: {
             messageTemplate: """
-            This number shape in member `@{id}` of the operation input `@{var|structure}` \
+            This number shape targeted by the member `@{id}` of the operation input `@{var|structure}` \
             does not have a range constraint on both its minimum or maximum value. \
-            Add the `@@range` trait to this integer shape and provide both minimum and maximum values. \
+            Add the `@@range` trait to the targeted integer shape and provide both minimum and maximum values. \
             For example, `@@range(min: 1, max: 500)`.
             """,
             selector: """
@@ -235,9 +235,9 @@ to have clear, actionable error messages.
         id: "RawIntegerWithoutRangeMin",
         configuration: {
             messageTemplate: """
-            This number shape in member `@{id}` of the operation input `@{var|structure}` \
+            This number shape targeted by the member `@{id}` of the operation input `@{var|structure}` \
             does not have a maximum range constraint. \
-            Add a minimum value to the `@@range` trait on this shape. \
+            Add a minimum value to the `@@range` trait on this shape's target. \
             For example, `@@range(>>> min: 1 <<<, max: 500)`.
             """,
             selector: """
@@ -251,9 +251,9 @@ to have clear, actionable error messages.
         id: "RawIntegerWithoutRangeMax",
         configuration: {
             messageTemplate: """
-            This number shape in member `@{id}` of the operation input `@{var|structure}` \
+            This number shape targeted by the member `@{id}` of the operation input `@{var|structure}` \
             does not have a maximum range constraint. \
-            Add a maximum value to the `@@range` trait on this shape. \
+            Add a maximum value to the `@@range` trait on this shape's target. \
             For example, `@@range(min: 1, >>> max: 500 <<<)`.
             """,
             selector: """
