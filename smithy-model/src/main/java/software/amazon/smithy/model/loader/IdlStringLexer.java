@@ -4,16 +4,28 @@
  */
 package software.amazon.smithy.model.loader;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import software.amazon.smithy.utils.MapUtils;
 
 final class IdlStringLexer {
 
-    private IdlStringLexer() {}
+    private static final Map<Character, Character> STANDARD_ESCAPE_CHARACTERS = MapUtils.ofEntries(
+            MapUtils.entry('"', '"'),
+            MapUtils.entry('\\', '\\'),
+            MapUtils.entry('/', '/'),
+            MapUtils.entry('b', '\b'),
+            MapUtils.entry('f', '\f'),
+            MapUtils.entry('n', '\n'),
+            MapUtils.entry('r', '\r'),
+            MapUtils.entry('t', '\t'));
 
-    private enum State {
-        NORMAL, AFTER_ESCAPE, UNICODE
-    }
+    private IdlStringLexer() {}
 
     // Use the original lexeme of a string when possible, but creates a new string when escapes are used.
     private static final class StringBuilderProxy {
@@ -57,88 +69,135 @@ final class IdlStringLexer {
         //StringBuilder result = new StringBuilder(lexeme.length());
         StringBuilderProxy result = new StringBuilderProxy(lexeme);
 
-        State state = State.NORMAL;
-        int hexCount = 0;
-        int unicode = 0;
-
-        // Skip quotes from the start and end.
         for (int i = 0; i < lexeme.length(); i++) {
             char c = lexeme.charAt(i);
-            switch (state) {
-                case NORMAL:
-                    if (c == '\\') {
-                        state = State.AFTER_ESCAPE;
-                        result.capture();
-                    } else if (isValidNormalCharacter(c, scanningTextBlock)) {
-                        result.append(c);
-                    } else {
-                        throw new RuntimeException("Invalid string character: `" + c + "`");
-                    }
-                    break;
-                case AFTER_ESCAPE:
-                    state = State.NORMAL;
-                    switch (c) {
-                        case '"':
-                            result.append('"');
-                            continue;
-                        case '\\':
-                            result.append('\\');
-                            break;
-                        case '/':
-                            result.append('/');
-                            break;
-                        case 'b':
-                            result.append('\b');
-                            break;
-                        case 'f':
-                            result.append('\f');
-                            break;
-                        case 'n':
-                            result.append('\n');
-                            break;
-                        case 'r':
-                            result.append('\r');
-                            break;
-                        case 't':
-                            result.append('\t');
-                            break;
-                        case 'u':
-                            state = State.UNICODE;
-                            break;
-                        case '\n':
-                            // Skip writing the escaped new line.
-                            break;
-                        default:
-                            throw new RuntimeException("Invalid escape found in string: `\\" + c + "`");
-                    }
-                    break;
-                case UNICODE:
-                    if (c >= '0' && c <= '9') {
-                        unicode = (unicode << 4) | (c - '0');
-                    } else if (c >= 'a' && c <= 'f') {
-                        unicode = (unicode << 4) | (10 + c - 'a');
-                    } else if (c >= 'A' && c <= 'F') {
-                        unicode = (unicode << 4) | (10 + c - 'A');
-                    } else {
-                        throw new RuntimeException("Invalid unicode escape character: `" + c + "`");
-                    }
 
-                    if (++hexCount == 4) {
-                        result.append((char) unicode);
-                        hexCount = 0;
-                        state = State.NORMAL;
-                    }
-                    break;
-                default:
-                    throw new IllegalStateException("Unreachable");
+            if (c == '\\') {
+                result.capture();
+
+                // Next character is guaranteed to exist
+                i += 1;
+                char escapeChar = lexeme.charAt(i);
+
+                if (STANDARD_ESCAPE_CHARACTERS.containsKey(escapeChar)) {
+                    result.append(STANDARD_ESCAPE_CHARACTERS.get(escapeChar));
+                    continue;
+                }
+
+                switch (escapeChar) {
+                    case 'u':
+                        if (i + 5 > lexeme.length()) {
+                            throw new RuntimeException("Invalid unclosed unicode escape found in string");
+                        }
+
+                        result.append((char) parseHex(lexeme, i + 1, i + 5));
+                        i += 4;
+                        break;
+
+                    case '\n':
+                        // Skip writing the escaped new line.
+                        break;
+
+                    default:
+                        throw new RuntimeException("Invalid escape found in string: `\\" + escapeChar + "`");
+                }
+
+            } else if (isValidNormalCharacter(c, scanningTextBlock)) {
+                result.append(c);
+            } else {
+                throw new RuntimeException("Invalid string character: `" + c + "`");
             }
         }
 
-        if (state == State.UNICODE) {
-            throw new RuntimeException("Invalid unclosed unicode escape found in string");
+        return result.getResult();
+    }
+
+    static byte[] scanByteStringContents(CharSequence lexeme, boolean scanningByteTextBlock) {
+        lexeme = normalizeLineEndings(lexeme);
+
+        // Format the byte text block and remove incidental whitespace.
+        if (scanningByteTextBlock) {
+            lexeme = formatTextBlock(lexeme);
         }
 
-        return result.getResult();
+        ByteArrayOutputStream result = new ByteArrayOutputStream(lexeme.length());
+        try (OutputStreamWriter resultWriter = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+
+            // The lexeme length will be close to the required final byte array length unless it contains a significant
+            // portion of Unicode codepoints.
+            int spanStart = 0;
+
+            for (int i = 0; i < lexeme.length(); i++) {
+                char c = lexeme.charAt(i);
+
+                if (c == '\\') {
+                    // Delay encoding a standard span until an escaped value is encountered
+                    if (spanStart != i) {
+                        resultWriter.append(lexeme, spanStart, i);
+                    }
+
+                    // Next character is guaranteed to exist
+                    i += 1;
+                    char escapeChar = lexeme.charAt(i);
+
+                    if (STANDARD_ESCAPE_CHARACTERS.containsKey(escapeChar)) {
+                        resultWriter.append(STANDARD_ESCAPE_CHARACTERS.get(escapeChar));
+
+                    } else {
+                        switch (escapeChar) {
+                            case 'u':
+                                if (i + 5 > lexeme.length()) {
+                                    throw new RuntimeException("Invalid unclosed unicode escape found in string");
+                                }
+
+                                resultWriter.append((char) parseHex(lexeme, i + 1, i + 5));
+
+                                i += 4;
+                                break;
+
+                            case '0':
+                                // Flush writer prior to attempting to write bytes to the underlying stream
+                                resultWriter.flush();
+
+                                result.write((byte) 0);
+                                break;
+
+                            case 'x':
+                                if (i + 3 > lexeme.length()) {
+                                    throw new RuntimeException("Invalid unclosed hex escape found in string");
+                                }
+
+                                // Flush writer prior to attempting to write bytes to the underlying stream
+                                resultWriter.flush();
+
+                                result.write((byte) parseHex(lexeme, i + 1, i + 3));
+                                i += 2;
+                                break;
+
+                            case '\n':
+                                // Skip writing the escaped new line.
+                                break;
+
+                            default:
+                                throw new RuntimeException("Invalid escape found in string: `\\" + escapeChar + "`");
+                        }
+                    }
+
+                    spanStart = i + 1;
+
+                } else if (!isValidNormalCharacter(c, scanningByteTextBlock)) {
+                    throw new RuntimeException("Invalid string character: `" + c + "`");
+                }
+            }
+
+            if (spanStart != lexeme.length()) {
+                resultWriter.append(lexeme, spanStart, lexeme.length());
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unreachable", e);
+        }
+
+        return result.toByteArray();
     }
 
     // New lines in strings are normalized from CR (u000D) and CRLF (u000Du000A) to
@@ -279,8 +338,37 @@ final class IdlStringLexer {
                 || c == '\n'
                 || c == '\r'
                 || (c >= 0x20 && c <= 0x21) // space - "!"
-                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
+                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block and byte_text_block
                 || (c >= 0x23 && c <= 0x5b) // "#" - "["
                 || c >= 0x5d; // "]"+
+    }
+
+    /**
+     * Parses up to 8 hex characters, passing a subsequence larger than 8 characters will result in incorrect output
+     *
+     * @param lexeme source character sequence
+     * @param start position in the sequence to start at
+     * @param end position in the sequence to stop at
+     * @return the parsed hex value
+     */
+    private static int parseHex(CharSequence lexeme, int start, int end) {
+        int hex = 0;
+
+        for (int i = start; i < end; i++) {
+            char c = lexeme.charAt(i);
+            hex <<= 4;
+
+            if (c >= '0' && c <= '9') {
+                hex |= c - '0';
+            } else if (c >= 'a' && c <= 'f') {
+                hex |= 10 + c - 'a';
+            } else if (c >= 'A' && c <= 'F') {
+                hex |= 10 + c - 'A';
+            } else {
+                throw new RuntimeException("Invalid hex character: `" + c + "`");
+            }
+        }
+
+        return hex;
     }
 }

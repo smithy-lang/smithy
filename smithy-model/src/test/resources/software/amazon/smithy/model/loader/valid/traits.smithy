@@ -29,6 +29,9 @@ string D
 @documentation("Hello!")
 string E
 
+@documentation(b"Hello!")
+string ZB
+
 // Multiple lines and escapes
 @documentation("
 Hello! This is a test.
@@ -38,6 +41,15 @@ Ignore these tokens: {}[](),:->$version//<> +10 -10 =
 Is it working? Is \"This\" the 'expected' result?
 Is this a backslash? \"\\\".")
 string F
+
+@documentation(b"
+Hello! This is a test.
+
+Ignore these tokens: {}[](),:->$version//<> +10 -10 =
+
+Is it working? Is \"This\" the 'expected' result?
+Is this a backslash? \"\\\".")
+string ZC
 
 // Unquoted string resolves to a shape ID
 
@@ -129,6 +141,18 @@ string T
     many
     lines.""")
 string U
+
+@documentation(b"""
+    This is a
+    string defined on multiple lines.
+    It \
+    can \
+    span
+    a
+    great
+    many
+    lines.""")
+string ZD
 
 apply E @deprecated
 

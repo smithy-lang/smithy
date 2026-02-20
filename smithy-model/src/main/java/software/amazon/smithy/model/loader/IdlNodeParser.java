@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.model.loader;
 
+import java.util.Base64;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -53,7 +54,9 @@ final class IdlNodeParser {
     static Node expectAndSkipNode(IdlModelLoader loader, SourceLocation location) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
         IdlToken token = tokenizer.expect(IdlToken.STRING,
+                IdlToken.BYTE_STRING,
                 IdlToken.TEXT_BLOCK,
+                IdlToken.BYTE_TEXT_BLOCK,
                 IdlToken.NUMBER,
                 IdlToken.IDENTIFIER,
                 IdlToken.LBRACE,
@@ -61,17 +64,26 @@ final class IdlNodeParser {
 
         switch (token) {
             case STRING:
-            case TEXT_BLOCK:
-                Node result = new StringNode(tokenizer.getCurrentTokenStringSlice().toString(), location);
+            case TEXT_BLOCK: {
+                String value = tokenizer.getCurrentTokenStringSlice().toString();
                 tokenizer.next();
-                return result;
-            case IDENTIFIER:
+                return new StringNode(value, location);
+            }
+            case BYTE_STRING:
+            case BYTE_TEXT_BLOCK: {
+                String value = Base64.getEncoder().encodeToString(tokenizer.getCurrentTokenBytes());
+                tokenizer.next();
+                return new StringNode(value, location);
+            }
+            case IDENTIFIER: {
                 String shapeId = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
                 return createIdentifier(loader, shapeId, location);
-            case NUMBER:
-                Number number = tokenizer.getCurrentTokenNumberValue();
+            }
+            case NUMBER: {
+                Number value = tokenizer.getCurrentTokenNumberValue();
                 tokenizer.next();
-                return new NumberNode(number, location);
+                return new NumberNode(value, location);
+            }
             case LBRACE:
                 return parseObjectNode(loader, location);
             case LBRACKET:
@@ -191,7 +203,9 @@ final class IdlNodeParser {
         ObjectNode.Builder builder = ObjectNode.builder().sourceLocation(location);
 
         while (tokenizer.hasNext()) {
-            if (tokenizer.expect(IdlToken.RBRACE, IdlToken.STRING, IdlToken.IDENTIFIER) == IdlToken.RBRACE) {
+            IdlToken token =
+                    tokenizer.expect(IdlToken.RBRACE, IdlToken.STRING, IdlToken.BYTE_STRING, IdlToken.IDENTIFIER);
+            if (token == IdlToken.RBRACE) {
                 break;
             }
 

@@ -21,6 +21,7 @@ class DefaultTokenizer implements IdlTokenizer {
     private int currentTokenColumn = -1;
     private Number currentTokenNumber;
     private CharSequence currentTokenStringSlice;
+    private byte[] currentTokenBytes;
     private String currentTokenError;
 
     DefaultTokenizer(String filename, CharSequence model) {
@@ -98,6 +99,17 @@ class DefaultTokenizer implements IdlTokenizer {
     }
 
     @Override
+    public final byte[] getCurrentTokenBytes() {
+        getCurrentToken();
+        if (currentTokenBytes == null) {
+            throw syntax("The current token must be a byte string but found: "
+                    + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
+        }
+
+        return currentTokenBytes;
+    }
+
+    @Override
     public final Number getCurrentTokenNumberValue() {
         getCurrentToken();
         if (currentTokenNumber == null) {
@@ -125,6 +137,7 @@ class DefaultTokenizer implements IdlTokenizer {
     @Override
     public IdlToken next() {
         currentTokenStringSlice = null;
+        currentTokenBytes = null;
         currentTokenNumber = null;
         currentTokenColumn = parser.column();
         currentTokenLine = parser.line();
@@ -175,6 +188,11 @@ class DefaultTokenizer implements IdlTokenizer {
                 return parseString();
             case '/':
                 return parseComment();
+            case 'b':
+                if (parser.peek(1) == '"') {
+                    return parseByteString();
+                }
+                return parseIdentifier();
             case '-':
             case '0':
             case '1':
@@ -215,7 +233,6 @@ class DefaultTokenizer implements IdlTokenizer {
             case 'Z':
             case '_':
             case 'a':
-            case 'b':
             case 'c':
             case 'd':
             case 'e':
@@ -388,6 +405,35 @@ class DefaultTokenizer implements IdlTokenizer {
         }
     }
 
+    private IdlToken parseByteString() {
+        parser.expect('b');
+        parser.expect('"'); // skip first quote.
+
+        if (parser.peek() == '"') {
+            parser.skip(); // skip second quote.
+            if (parser.peek() == '"') { // A third consecutive quote is a BYTE_TEXT_BLOCK.
+                parser.skip();
+                return parseByteTextBlock();
+            } else {
+                // Empty byte string.
+                currentTokenEnd = parser.position();
+                currentTokenBytes = new byte[0];
+                return currentTokenType = IdlToken.BYTE_STRING;
+            }
+        }
+
+        try {
+            // Parse the contents of a byte string.
+            currentTokenBytes = parseByteStringAndTextBlock(false);
+            currentTokenEnd = parser.position();
+            return currentTokenType = IdlToken.BYTE_STRING;
+        } catch (RuntimeException e) {
+            currentTokenEnd = parser.position();
+            currentTokenError = "Error parsing byte string: " + e.getMessage();
+            return currentTokenType = IdlToken.ERROR;
+        }
+    }
+
     private IdlToken parseTextBlock() {
         try {
             currentTokenStringSlice = parseQuotedTextAndTextBlock(true);
@@ -400,14 +446,26 @@ class DefaultTokenizer implements IdlTokenizer {
         }
     }
 
-    // Parses both quoted_text and text_block
+    private IdlToken parseByteTextBlock() {
+        try {
+            currentTokenBytes = parseByteStringAndTextBlock(true);
+            currentTokenEnd = parser.position();
+            return currentTokenType = IdlToken.BYTE_TEXT_BLOCK;
+        } catch (RuntimeException e) {
+            currentTokenEnd = parser.position();
+            currentTokenError = "Error parsing byte text block: " + e.getMessage();
+            return currentTokenType = IdlToken.ERROR;
+        }
+    }
+
+    // Parses quoted_text and text_block body
     private CharSequence parseQuotedTextAndTextBlock(boolean triple) {
         int start = parser.position();
 
         while (!parser.eof()) {
             char next = parser.peek();
             if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
-                // Found closing quotes of quoted_text and/or text_block
+                // Found closing quotes
                 break;
             }
             parser.skip();
@@ -426,5 +484,33 @@ class DefaultTokenizer implements IdlTokenizer {
         }
 
         return IdlStringLexer.scanStringContents(result, triple);
+    }
+
+    // Parses quoted_text and text_block body
+    private byte[] parseByteStringAndTextBlock(boolean triple) {
+        int start = parser.position();
+
+        while (!parser.eof()) {
+            char next = parser.peek();
+            if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
+                // Found closing quotes
+                break;
+            }
+            parser.skip();
+            if (next == '\\') {
+                parser.skip();
+            }
+        }
+
+        // Strip the ending '"'.
+        CharSequence result = parser.borrowSliceFrom(start);
+        parser.expect('"');
+
+        if (triple) {
+            parser.expect('"');
+            parser.expect('"');
+        }
+
+        return IdlStringLexer.scanByteStringContents(result, triple);
     }
 }

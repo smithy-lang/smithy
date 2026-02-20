@@ -117,13 +117,15 @@ string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
     ControlSection   :*(`ControlStatement`)
-    ControlStatement :"$" `NodeObjectKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
+    ControlStatement :"$" `ControlKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
+    ControlKey       :`QuotedText` / `Identifier`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     MetadataSection   :*(`MetadataStatement`)
-    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
+    MetadataStatement :%s"metadata" `SP` `MetadataKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
+    MetadataKey       :`QuotedText` / `Identifier`
 
 .. rubric:: Node values
 
@@ -136,7 +138,7 @@ string support defined in :rfc:`7405`.
     NodeArray           :"[" [`WS`] *(`NodeValue` [`WS`]) "]"
     NodeObject          :"{" [`WS`] [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] [`WS`] "}"
     NodeObjectKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
-    NodeObjectKey       :`QuotedText` / `Identifier`
+    NodeObjectKey       :`QuotedText` / `ByteString` / `Identifier`
     Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
     DecimalPoint        :%x2E ; .
     DigitOneToNine      :%x31-39 ; 1-9
@@ -148,7 +150,8 @@ string support defined in :rfc:`7405`.
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
     NodeKeyword         :%s"true" / %s"false" / %s"null"
-    NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
+    NodeStringValue     :`ShapeId` / `TextBlock` / `ByteTextBlock` / `QuotedText` / `ByteString`
+    ByteString          :"b" `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
     QuotedChar          :%x09        ; tab
                         :/ %x20-21     ; space - "!"
@@ -162,6 +165,7 @@ string support defined in :rfc:`7405`.
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
     Escape              :%x5C ; backslash
+    ByteTextBlock       : "b" `TextBlock`
     TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
@@ -2397,5 +2401,69 @@ example is interpreted as ``Foo\nBaz Bam``:
     Foo
     Baz \
     Bam"""
+
+Byte Strings
+============
+
+The byte string and byte text block productions are used to encode binary
+values as human readable strings.  These offer an alternative to having to
+embed opaque base64 strings in places where binary values are required.
+
+Byte strings follow the same high-level parsing logic as standard strings.
+The escape sequences, line normalization, and incidental whitespace behaviors
+that exists in standard strings also work the same way in byte strings.
+Converting a valid standard string into a byte string is equivalent to encoding
+the original string into its UTF-8 bytes and then base64 encoding those bytes.
+
+The following values are all logically equivalent after parsing:
+
+.. tab:: Smithy
+
+    .. code-block:: smithy
+
+        version: "2"
+        metadata foo = {
+            byteString: b"Hello\nWorld"
+            byteTextBlock: b"""
+                Hello
+                World"""
+            string: "SGVsbG8KV29ybGQ="
+            textBlock: """
+                SGVsbG8KV29ybGQ="""
+        }
+
+.. tab:: JSON
+
+    .. code-block:: json
+
+        {
+            "smithy": "2",
+            "metadata": {
+                "foo": {
+                    "byteString": "SGVsbG8KV29ybGQ=",
+                    "byteTextBlock": "SGVsbG8KV29ybGQ=",
+                    "string": "SGVsbG8KV29ybGQ=",
+                    "textBlock": "SGVsbG8KV29ybGQ="
+                }
+            }
+        }
+
+In addition to the :ref:`string escape characters <string-escape-characters>`,
+byte strings support additional escape characters to make encoding arbitrary
+byte sequences possible:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 30 50
+
+    * - Byte value
+      - Escape
+      - Meaning
+    * - ``00``
+      - ``\0``
+      - NULL byte
+    * - ``HH``
+      - ``\xHH``
+      - 2-digit hexadecimal byte value
 
 .. _CommonMark: https://spec.commonmark.org/

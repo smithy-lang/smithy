@@ -33,6 +33,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
     private final int endColumn;
     private final CharSequence lexeme;
     private final String stringContents;
+    private final byte[] byteContents;
     private final String errorMessage;
     private final Number numberValue;
 
@@ -46,6 +47,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             int endColumn,
             CharSequence lexeme,
             String stringContents,
+            byte[] byteContents,
             Number numberValue,
             String errorMessage
     ) {
@@ -57,9 +59,11 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         this.startColumn = startColumn;
         this.endLine = endLine;
         this.endColumn = endColumn;
+        this.byteContents = byteContents;
 
         if (stringContents == null
-                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING || token == IdlToken.TEXT_BLOCK)) {
+                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING
+                        || token == IdlToken.TEXT_BLOCK)) {
             this.stringContents = lexeme.toString();
         } else {
             this.stringContents = stringContents;
@@ -92,6 +96,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         private int endColumn;
         private CharSequence lexeme;
         private String stringContents;
+        private byte[] byteContents;
         private String errorMessage;
         private Number numberValue;
 
@@ -109,6 +114,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                     endColumn,
                     lexeme,
                     stringContents,
+                    byteContents,
                     numberValue,
                     errorMessage);
         }
@@ -158,6 +164,11 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             return this;
         }
 
+        public Builder byteContents(byte[] byteContents) {
+            this.byteContents = byteContents;
+            return this;
+        }
+
         public Builder errorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
             return this;
@@ -197,9 +208,13 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .endLine(tokenizer.getLine())
                 .endColumn(tokenizer.getColumn())
                 .lexeme(tokenizer.getCurrentTokenLexeme())
-                .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
-                        ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
-                        : null)
+                .stringContents(tok == IdlToken.STRING
+                        || tok == IdlToken.TEXT_BLOCK
+                        || tok == IdlToken.IDENTIFIER
+                                ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
+                                : null)
+                .byteContents(tok == IdlToken.BYTE_STRING
+                        || tok == IdlToken.BYTE_TEXT_BLOCK ? tokenizer.getCurrentTokenBytes() : null)
                 .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
                 .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
                 .build();
@@ -218,7 +233,8 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .lexeme(lexeme)
                 .errorMessage(errorMessage)
                 .numberValue(numberValue)
-                .stringContents(stringContents);
+                .stringContents(stringContents)
+                .byteContents(byteContents);
     }
 
     /**
@@ -279,6 +295,15 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
      */
     public String getStringContents() {
         return stringContents;
+    }
+
+    /**
+     * Get the associated byte[] contents of the token if it's a byte string or byte text block.
+     *
+     * @return Returns the byte contents of the lexeme, or null if not a byte string|byte text block.
+     */
+    public byte[] getByteContents() {
+        return byteContents;
     }
 
     /**
