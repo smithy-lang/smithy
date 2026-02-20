@@ -5,6 +5,7 @@ namespace com.example
 @default(0)
 integer NonBoxedInteger
 
+@sparse
 list SparseList {
     member: NonBoxedInteger,
 }
