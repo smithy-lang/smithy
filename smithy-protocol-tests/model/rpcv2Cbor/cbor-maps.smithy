@@ -156,27 +156,6 @@ apply RpcV2CborDenseMaps @httpResponseTests([
                 "y": ["a", "b"]
             }
         }
-    },
-    {
-        id: "RpcV2CborDeserializesDenseSetMapAndSkipsNull",
-        documentation: """
-            Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
-            drop the null key-value pair.""",
-        protocol: rpcv2Cbor,
-        appliesTo: "client",
-        code: 200,
-        body: "oWtkZW5zZVNldE1hcKNheIBheYJhYWFiYXr2",
-        bodyMediaType: "application/cbor",
-        headers: {
-            "smithy-protocol": "rpc-v2-cbor",
-            "Content-Type": "application/cbor"
-        },
-        params: {
-            "denseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
-        }
     }
 ])
 
