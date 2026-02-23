@@ -2,6 +2,6 @@
   "type": "break",
   "description": "Remove RpcV2CborDeserializesDenseSetMapAndSkipsNull and RestJsonDeserializesDenseSetMapAndSkipsNull protocol tests",
   "pull_requests": [
-    "[#2944](https://github.com/smithy-lang/smithy/pull/2944)"
+    "[#2972](https://github.com/smithy-lang/smithy/pull/2972)"
   ]
 }
