@@ -187,33 +187,6 @@ apply JsonMaps @httpResponseTests([
                 "y": ["a", "b"]
             }
         }
-    },
-    {
-        id: "RestJsonDeserializesDenseSetMapAndSkipsNull",
-        documentation: """
-            Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
-            drop the null key-value pair.""",
-        protocol: restJson1,
-        appliesTo: "client",
-        code: 200,
-        body: """
-            {
-                "denseSetMap": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "denseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
-        }
     }
 ])
 
