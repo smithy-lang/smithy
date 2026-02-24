@@ -1,6 +1,6 @@
 {
   "type": "other",
-  "description": "Remove RpcV2CborDeserializesDenseSetMapAndSkipsNull and RestJsonDeserializesDenseSetMapAndSkipsNull protocol tests",
+  "description": "Removed protocol tests for skipping null values in dense collections. This behavior can silently drop data. SDKs that cannot preserve null values should raise an exception instead",
   "pull_requests": [
     "[#2972](https://github.com/smithy-lang/smithy/pull/2972)"
   ]
