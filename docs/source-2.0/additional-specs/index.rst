@@ -13,6 +13,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     ai-traits
     contract-traits
     http-protocol-compliance-tests
+    event-stream-protocol-compliance-tests
     smoke-tests
     waiters
     mqtt
