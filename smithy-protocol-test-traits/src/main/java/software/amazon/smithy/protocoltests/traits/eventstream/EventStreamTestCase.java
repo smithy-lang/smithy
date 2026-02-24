@@ -33,6 +33,7 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
     private final ShapeId vendorParamsShape;
     private final String documentation;
     private final AppliesTo appliesTo;
+    private final List<String> tags;
 
     private EventStreamTestCase(Builder builder) {
         this.id = SmithyBuilder.requiredState("id", builder.id);
@@ -49,6 +50,7 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
         this.vendorParamsShape = builder.vendorParamsShape;
         this.documentation = builder.documentation;
         this.appliesTo = builder.appliesTo;
+        this.tags = builder.tags.copy();
     }
 
     /**
@@ -166,6 +168,13 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
     }
 
     /**
+     * @return Returns the tags associated with the test case.
+     */
+    public List<String> getTags() {
+        return tags;
+    }
+
+    /**
      * @return Returns the test case as a builder
      */
     @Override
@@ -253,6 +262,7 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
         private ShapeId vendorParamsShape;
         private String documentation;
         private AppliesTo appliesTo;
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         @Override
         public EventStreamTestCase build() {
@@ -332,6 +342,12 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
 
         public Builder appliesTo(AppliesTo appliesTo) {
             this.appliesTo = appliesTo;
+            return this;
+        }
+
+        public Builder tags(List<String> tags) {
+            this.tags.clear();
+            this.tags.get().addAll(tags);
             return this;
         }
     }

@@ -391,6 +391,9 @@ structure EventStreamTestCase {
     /// testing edge cases of clients and servers that are impossible or
     /// undesirable to test in *both* client and server implementations.
     appliesTo: AppliesTo
+
+    /// Applies a list of tags to the test.
+    tags: NonEmptyStringList
 }
 
 /// A structure defining http request shapes for initial requests.
