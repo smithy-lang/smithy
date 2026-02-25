@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Add client guidance for context types.",
-  "pull_requests": [
-    "[#2924](https://github.com/smithy-lang/smithy/pull/2924)"
-  ]
-}

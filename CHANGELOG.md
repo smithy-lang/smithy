@@ -1,5 +1,46 @@
 # Smithy Changelog
 
+## 1.68.0 (2026-02-25)
+
+### Features
+
+- Added new ERROR event to EndpointTestsTraitValidator when builtin params are
+  inconsistent ([#2955](https://github.com/smithy-lang/smithy/pull/2955))
+- Update smithy-rules-engine-tests with new std lib functions and bdd-based
+  tests ([#2945](https://github.com/smithy-lang/smithy/pull/2945))
+- Add new transform compileBdd and compileBddForAws
+  ([#2953](https://github.com/smithy-lang/smithy/pull/2953))
+- Added the `@smithy.contracts#conditions` trait, available in the new
+  `smithy-contract-traits` package. This trait defines restrictions on shape
+  values using JMESPath expressions.
+  ([#2935](https://github.com/smithy-lang/smithy/pull/2935))
+- Added a tags property to eventStreamTests to allow filtering individual cases
+  in the same way that http protocol tests can be.
+  ([#2973](https://github.com/smithy-lang/smithy/pull/2973))
+- Added a service provider interface for `NodeValidationVisitor` plugins, and
+  optimized to index plugins by the `ShapeType` they apply to.
+  ([#2935](https://github.com/smithy-lang/smithy/pull/2935))
+
+### Documentation
+
+- Tweak wording of integers with ranges message
+  ([#2971](https://github.com/smithy-lang/smithy/pull/2971))
+- Added Smithy Kotlin Quickstart and Client User Guide sections.
+  ([#2944](https://github.com/smithy-lang/smithy/pull/2944))
+- Added documentation for eventStreamTests
+  ([#2973](https://github.com/smithy-lang/smithy/pull/2973))
+- Add client guidance for context types.
+  ([#2924](https://github.com/smithy-lang/smithy/pull/2924))
+- Added client guidance documentation for endpoint resolution.
+  ([#2941](https://github.com/smithy-lang/smithy/pull/2941))
+
+### Other
+
+- Removed protocol tests for skipping null values in dense collections. This
+  behavior can silently drop data. SDKs that cannot preserve null values should
+  raise an exception instead
+  ([#2972](https://github.com/smithy-lang/smithy/pull/2972))
+
 ## 1.67.0 (2026-01-28)
 
 ### Features

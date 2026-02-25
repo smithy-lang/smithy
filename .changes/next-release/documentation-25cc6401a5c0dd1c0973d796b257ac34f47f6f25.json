@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Tweak wording of integers with ranges message",
-  "pull_requests": [
-    "[#2971](https://github.com/smithy-lang/smithy/pull/2971)"
-  ]
-}

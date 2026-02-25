@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added the `@smithy.contracts#conditions` trait, available in the new `smithy-contract-traits` package. This trait defines restrictions on shape values using JMESPath expressions." ,
-  "pull_requests": [
-    "[#2935](https://github.com/smithy-lang/smithy/pull/2935)"
-  ]
-}
