@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a tags property to eventStreamTests to allow filtering individual cases in the same way that http protocol tests can be.",
-  "pull_requests": [
-    "[#2973](https://github.com/smithy-lang/smithy/pull/2973)"
-  ]
-}

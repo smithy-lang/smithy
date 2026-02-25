@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Added documentation for eventStreamTests",
-  "pull_requests": [
-    "[#2973](https://github.com/smithy-lang/smithy/pull/2973)"
-  ]
-}

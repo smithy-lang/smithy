@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Added client guidance documentation for endpoint resolution.",
-  "pull_requests": [
-    "[#2941](https://github.com/smithy-lang/smithy/pull/2941)"
-  ]
-}

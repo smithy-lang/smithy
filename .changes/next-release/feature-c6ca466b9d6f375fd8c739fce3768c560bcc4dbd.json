@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added new ERROR event to EndpointTestsTraitValidator when builtin params are inconsistent",
-  "pull_requests": [
-    "[#2955](https://github.com/smithy-lang/smithy/pull/2955)"
-  ]
-}

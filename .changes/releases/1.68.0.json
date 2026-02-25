@@ -1,0 +1,90 @@
+{
+  "version": "1.68.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added new ERROR event to EndpointTestsTraitValidator when builtin params are inconsistent",
+      "pull_requests": [
+        "[#2955](https://github.com/smithy-lang/smithy/pull/2955)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Tweak wording of integers with ranges message",
+      "pull_requests": [
+        "[#2971](https://github.com/smithy-lang/smithy/pull/2971)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added Smithy Kotlin Quickstart and Client User Guide sections.",
+      "pull_requests": [
+        "[#2944](https://github.com/smithy-lang/smithy/pull/2944)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update smithy-rules-engine-tests with new std lib functions and bdd-based tests",
+      "pull_requests": [
+        "[#2945](https://github.com/smithy-lang/smithy/pull/2945)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Removed protocol tests for skipping null values in dense collections. This behavior can silently drop data. SDKs that cannot preserve null values should raise an exception instead",
+      "pull_requests": [
+        "[#2972](https://github.com/smithy-lang/smithy/pull/2972)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add new transform compileBdd and compileBddForAws",
+      "pull_requests": [
+        "[#2953](https://github.com/smithy-lang/smithy/pull/2953)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@smithy.contracts#conditions` trait, available in the new `smithy-contract-traits` package. This trait defines restrictions on shape values using JMESPath expressions.",
+      "pull_requests": [
+        "[#2935](https://github.com/smithy-lang/smithy/pull/2935)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a tags property to eventStreamTests to allow filtering individual cases in the same way that http protocol tests can be.",
+      "pull_requests": [
+        "[#2973](https://github.com/smithy-lang/smithy/pull/2973)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added documentation for eventStreamTests",
+      "pull_requests": [
+        "[#2973](https://github.com/smithy-lang/smithy/pull/2973)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Add client guidance for context types.",
+      "pull_requests": [
+        "[#2924](https://github.com/smithy-lang/smithy/pull/2924)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added client guidance documentation for endpoint resolution.",
+      "pull_requests": [
+        "[#2941](https://github.com/smithy-lang/smithy/pull/2941)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added a service provider interface for `NodeValidationVisitor` plugins, and optimized to index plugins by the `ShapeType` they apply to.",
+      "pull_requests": [
+        "[#2935](https://github.com/smithy-lang/smithy/pull/2935)"
+      ]
+    }
+  ],
+  "date": "2026-02-25"
+}
