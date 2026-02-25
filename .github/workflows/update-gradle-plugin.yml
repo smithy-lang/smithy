@@ -55,6 +55,7 @@ jobs:
             --title "[Automation] smithy-gradle-plugin Version Bump - \`${{ steps.fetch-latest.outputs.latestSmithyGradle }}\`" \
             --body "Automated pull request to bump smithy gradle plugin version from ${{ steps.get-current.outputs.smithyGradleVersion }} to ${{ steps.fetch-latest.outputs.latestSmithyGradle }}" \
             --base main
+            --label no-changelog-needed
           echo "PR Created for version bump to ${{ steps.fetch-latest.outputs.latestSmithyGradle }}"
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
