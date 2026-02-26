@@ -58,4 +58,7 @@ Smithy clients should follow these tenets:
 :maxdepth: 1
 
 application-protocols/index
+context
+retries
+endpoints
 ```

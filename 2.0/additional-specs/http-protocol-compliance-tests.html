@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Smoke Tests" href="smoke-tests.html"><link rel="prev" title="Smithy AI Traits" href="ai-traits.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Event Stream Protocol Compliance Tests" href="event-stream-protocol-compliance-tests.html"><link rel="prev" title="Contract traits" href="contract-traits.html">
         <link rel="prefetch" href="../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
@@ -279,6 +279,9 @@
 <li class="toctree-l4"><a class="reference internal" href="../guides/client-guidance/application-protocols/http.html">HTTP</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -290,7 +293,9 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Additional specs</a><input aria-label="Toggle navigation of Additional specs" checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="ai-traits.html">Smithy AI Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contract-traits.html">Contract traits</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-stream-protocol-compliance-tests.html">Event Stream Protocol Compliance Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mqtt.html">MQTT Protocol Bindings</a></li>
@@ -380,14 +385,21 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><input aria-label="Toggle navigation of Kotlin" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../languages/kotlin/quickstart.html">Kotlin Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../languages/kotlin/client/index.html">Client User Guide</a><input aria-label="Toggle navigation of Client User Guide" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../languages/kotlin/client/generating-clients.html">Generating Clients</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples/tree/main/smithy-kotlin-examples">Smithy Kotlin Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin/tree/main/docs/design">Smithy Kotlin Design Docs</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/golang/index.html">GoLang</a><input aria-label="Toggle navigation of GoLang" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/scala/index.html">Scala</a><input aria-label="Toggle navigation of Scala" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
 </ul>
@@ -1066,7 +1078,7 @@ in length. One test permutation is generated for each index the
 parameter lists. For example, parameters with 5 values for each key
 will generate 5 tests in total.</p>
 <p>Parameter values are substituted using the conventions described by
-the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.67.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.68.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
 parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
 formatters.</p>
 <div class="admonition note">
@@ -1314,23 +1326,23 @@ specific types of malformed values.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="smoke-tests.html">
+          <a class="next-page" href="event-stream-protocol-compliance-tests.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Smoke Tests</div>
+                <div class="title">Event Stream Protocol Compliance Tests</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="ai-traits.html">
+          <a class="prev-page" href="contract-traits.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Smithy AI Traits</div>
+                <div class="title">Contract traits</div>
                 
               </div>
             </a>
