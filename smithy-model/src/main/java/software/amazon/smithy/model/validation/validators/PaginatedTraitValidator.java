@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -84,19 +85,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
         // Validate input.
         events.addAll(validateMember(opIndex, model, null, operation, trait, new InputTokenValidator()));
-        PageSizeValidator pageSizeValidator = new PageSizeValidator();
-        events.addAll(validateMember(opIndex, model, null, operation, trait, pageSizeValidator));
-        pageSizeValidator.getMember(model, opIndex, operation, trait)
-                .filter(MemberShape::isRequired)
-                .ifPresent(member -> events.add(warning(
-                        operation,
-                        trait,
-                        String.format(
-                                "paginated trait `%s` member `%s` should not be required",
-                                pageSizeValidator.propertyName(),
-                                member.getMemberName()),
-                        SHOULD_NOT_BE_REQUIRED,
-                        pageSizeValidator.propertyName())));
+        events.addAll(validateMember(opIndex, model, null, operation, trait, new PageSizeValidator()));
 
         // Validate output.
         events.addAll(validateMember(opIndex, model, null, operation, trait, new OutputTokenValidator()));
@@ -161,14 +150,38 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        if (validator.mustBeOptional() && member.isRequired()) {
-            events.add(error(operation,
-                    trait,
-                    String.format(
-                            "%spaginated trait `%s` member `%s` must not be required",
-                            prefix,
-                            validator.propertyName(),
-                            member.getMemberName())));
+        if (member.isRequired()) {
+            switch (validator.optionality()) {
+                case MUST:
+                    events.add(error(
+                            operation,
+                            trait,
+                            String.format(
+                                    "%spaginated trait `%s` member `%s` must not be required",
+                                    prefix,
+                                    validator.propertyName(),
+                                    member.getMemberName())));
+                    break;
+                case SHOULD:
+                    // Page size historically was a warning, so we want to keep it that way.
+                    // In other cases this will be used when we lower severity from error,
+                    // so it's best to only lower one step to danger.
+                    Severity severity = validator instanceof PageSizeValidator ? Severity.WARNING : Severity.DANGER;
+                    events.add(createEvent(
+                            severity,
+                            operation,
+                            trait,
+                            String.format(
+                                    "%spaginated trait `%s` member `%s` should not be required",
+                                    prefix,
+                                    validator.propertyName(),
+                                    member.getMemberName()),
+                            SHOULD_NOT_BE_REQUIRED,
+                            validator.propertyName()));
+                    break;
+                default:
+                    break;
+            }
         }
 
         Shape target = model.getShape(member.getTarget()).orElse(null);
@@ -221,8 +234,25 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         return events;
     }
 
+    private enum Optionality {
+        /**
+         * The property MUST be optional. It MUST NOT have the required trait.
+         */
+        MUST,
+
+        /**
+         * The property SHOULD be optional. It SHOULD NOT have the required trait.
+         */
+        SHOULD,
+
+        /**
+         * The property MAY be required or optional.
+         */
+        MAY;
+    }
+
     private abstract static class PropertyValidator {
-        abstract boolean mustBeOptional();
+        abstract Optionality optionality();
 
         abstract boolean isRequiredToBePresent();
 
@@ -274,8 +304,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private static final class InputTokenValidator extends PropertyValidator {
-        boolean mustBeOptional() {
-            return true;
+        Optionality optionality() {
+            return Optionality.MUST;
         }
 
         boolean isRequiredToBePresent() {
@@ -310,8 +340,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private static final class OutputTokenValidator extends OutputPropertyValidator {
-        boolean mustBeOptional() {
-            return true;
+        Optionality optionality() {
+            return Optionality.SHOULD;
         }
 
         boolean isRequiredToBePresent() {
@@ -336,8 +366,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private static final class PageSizeValidator extends PropertyValidator {
-        boolean mustBeOptional() {
-            return false;
+        Optionality optionality() {
+            return Optionality.SHOULD;
         }
 
         boolean isRequiredToBePresent() {
@@ -372,8 +402,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private static final class ItemValidator extends OutputPropertyValidator {
-        boolean mustBeOptional() {
-            return false;
+        Optionality optionality() {
+            return Optionality.MAY;
         }
 
         boolean isRequiredToBePresent() {
