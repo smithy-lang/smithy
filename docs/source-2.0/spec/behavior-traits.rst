@@ -210,8 +210,8 @@ The ``paginated`` trait is a structure that contains the following members:
         operation output, it indicates that there are more results to retrieve.
         To get the next page of results, the client passes the received output
         continuation token to the input continuation token of the next request.
-        This output member MUST NOT be marked as ``required`` and SHOULD target
-        a string shape. It can, but SHOULD NOT target a map shape.
+        This output member SHOULD NOT be marked as ``required`` and SHOULD
+        target a string shape. It can, but SHOULD NOT target a map shape.
 
         When contained within a service, a paginated operation MUST either
         configure ``outputToken`` on the operation itself or inherit it from

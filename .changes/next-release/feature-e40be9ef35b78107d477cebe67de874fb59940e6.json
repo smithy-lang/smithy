@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Relaxed the optionality constraint on pagination output tokens to report a DANGER when the output token is required instead of ERROR.",
+  "pull_requests": [
+    "[#2983](https://github.com/smithy-lang/smithy/pull/2983)"
+  ]
+}
