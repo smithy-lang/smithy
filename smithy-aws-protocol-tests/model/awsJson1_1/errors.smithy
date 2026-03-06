@@ -145,7 +145,7 @@ apply FooError @httpResponseTests([
         protocol: awsJson1_1,
         code: 500,
         headers: {
-            "X-Amzn-Errortype": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
+            "X-Amzn-Errortype": "aws.protocoltests.json#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
         appliesTo: "client",
     },
@@ -181,7 +181,7 @@ apply FooError @httpResponseTests([
         },
         body: """
               {
-                  "code": "aws.protocoltests.restjson#FooError"
+                  "code": "aws.protocoltests.json#FooError"
               }""",
         bodyMediaType: "application/json",
         appliesTo: "client",
@@ -199,7 +199,7 @@ apply FooError @httpResponseTests([
         },
         body: """
               {
-                  "code": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+                  "code": "aws.protocoltests.json#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
         appliesTo: "client",
@@ -231,7 +231,7 @@ apply FooError @httpResponseTests([
         },
         body: """
               {
-                  "__type": "aws.protocoltests.restjson#FooError"
+                  "__type": "aws.protocoltests.json#FooError"
               }""",
         bodyMediaType: "application/json",
         appliesTo: "client",
@@ -249,7 +249,7 @@ apply FooError @httpResponseTests([
         },
         body: """
               {
-                  "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+                  "__type": "aws.protocoltests.json#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
         appliesTo: "client",
@@ -269,7 +269,7 @@ apply FooError @httpResponseTests([
         },
         body: """
               {
-                  "__type": "aws.protocoltests.restjson#FooError",
+                  "__type": "aws.protocoltests.json#FooError",
                   "ErrorDetails": [
                     {
                         "__type": "com.amazon.internal#ErrorDetails",
