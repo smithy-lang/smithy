@@ -18,7 +18,8 @@ final class DocumentationTraitInterceptor implements CodeInterceptor<JavaDocSect
 
     @Override
     public void write(TraitCodegenWriter writer, String previousText, JavaDocSection section) {
-        writer.write(section.shape().expectTrait(DocumentationTrait.class).getValue());
+        String docs = section.shape().expectTrait(DocumentationTrait.class).getValue();
+        writer.write(escapeAt(docs));
 
         if (!previousText.isEmpty()) {
             // Add spacing if tags have been added to the javadoc
@@ -35,5 +36,27 @@ final class DocumentationTraitInterceptor implements CodeInterceptor<JavaDocSect
     @Override
     public boolean isIntercepted(JavaDocSection section) {
         return section.shape().hasTrait(DocumentationTrait.ID);
+    }
+
+    // Escapes '@' at the beginning of a line to prevent javac from interpreting
+    // it as a Javadoc block tag.
+    private static String escapeAt(String docs) {
+        StringBuilder result = new StringBuilder(docs.length());
+        boolean lineStart = true;
+        for (int i = 0; i < docs.length(); i++) {
+            char current = docs.charAt(i);
+            if (current == '@' && lineStart) {
+                if (i + 1 < docs.length() && docs.charAt(i + 1) == '@') {
+                    result.append("@@");
+                    i++;
+                } else {
+                    result.append("{@literal @}");
+                }
+            } else {
+                result.append(current);
+            }
+            lineStart = current == '\n';
+        }
+        return result.toString();
     }
 }
