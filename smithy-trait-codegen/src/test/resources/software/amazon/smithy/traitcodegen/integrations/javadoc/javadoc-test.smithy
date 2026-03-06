@@ -3,6 +3,11 @@ $version: "2"
 namespace com.example.javadoc
 
 /// Basic class-level documentation
+/// @foo
+/// {@code}
+/// abc@example.com
+/// @@foo
+/// @foo and @bar
 @trait
 structure DocumentationWrapping {
     /// This is a long long docstring that should be wrapped. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

@@ -53,6 +53,11 @@ public class JavadocTest {
         String fileContents = getFileContentsFromShapeName("DocumentationWrapping", true);
         String expected = "/**\n" +
                 " * Basic class-level documentation\n" +
+                " * {@literal @}foo\n" +
+                " * {@code}\n" +
+                " * abc@example.com\n" +
+                " * @@foo\n" +
+                " * {@literal @}foo and @bar\n" +
                 " */\n" +
                 "@SmithyGenerated\n" +
                 "public final class DocumentationWrappingTrait extends AbstractTrait implements ToSmithyBuilder<DocumentationWrappingTrait> {";
