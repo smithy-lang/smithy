@@ -174,8 +174,8 @@ All of the following error values resolve to ``FooError``:
 
 * ``FooError``
 * ``FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
-* ``smithy.example#FooError``
-* ``smithy.example#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
+* ``aws.protocoltests.restjson#FooError``
+* ``aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
 
 
 -----------------------------------------------------
