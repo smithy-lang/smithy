@@ -210,7 +210,7 @@ apply SimpleInputParams @httpRequestTests([
         requireHeaders: [
             "Content-Length"
         ],
-        body: "Action=SimpleInputParams&Version=2020-01-08&QueryName=value1&QueryAndXmlName=value2&XmlNameOnly=value3",
+        body: "Action=SimpleInputParams&Version=2020-01-08&QueryName=value1&queryAndXmlName=value2&XmlNameOnly=value3",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             DistinctQueryName: "value1",
@@ -303,13 +303,13 @@ structure SimpleInputParamsInput {
     @ec2QueryName("QueryName")
     DistinctQueryName: String,
 
-    // Serializes as "QueryAndXmlName" (from @ec2QueryName trait, takes precedence over @xmlName)
-    @ec2QueryName("QueryAndXmlName")
+    // Serializes as "queryAndXmlName" (from @ec2QueryName trait, takes precedence over @xmlName)
+    @ec2QueryName("queryAndXmlName")
     @xmlName("xmlAndQueryName")
     DistinctQueryAndXmlName: String,
 
     // Serializes as "XmlNameOnly" (from @xmlName trait, no @ec2QueryName specified)
-    @xmlName("XmlNameOnly")
+    @xmlName("xmlNameOnly")
     DistinctXmlName: String,
 
 }
