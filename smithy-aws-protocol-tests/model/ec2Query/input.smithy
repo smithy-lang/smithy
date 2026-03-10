@@ -199,6 +199,27 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
+        id: "Ec2QueryNameDistinctFromXmlNameAndMemberName",
+        documentation: "ec2QueryName trait takes precedence when xmlName, default name, and ec2QueryName all have distinct values.",
+        protocol: ec2Query,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        body: "Action=SimpleInputParams&Version=2020-01-08&DistinctQueryName=value1&DistinctQueryAndXmlName=value2&DistinctXmlName=value3",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            DistinctQueryName: "value1",
+            DistinctQueryAndXmlName: "value2",
+            DistinctXmlName: "value3",
+        },
+        tags: ["skip-legacy-conversion"]
+    },
+    {
         id: "Ec2QuerySupportsNaNFloatInputs",
         documentation: "Supports handling NaN float values.",
         protocol: ec2Query,
@@ -276,6 +297,18 @@ structure SimpleInputParamsInput {
 
     @xmlName("usesXmlName")
     UsesXmlName: String,
+
+    // Edge case: memberName, xmlName, and ec2QueryName all distinct
+    @ec2QueryName("QueryName")
+    DistinctQueryName: String,
+
+    @ec2QueryName("QueryAndXmlName")
+    @xmlName("xmlAndQueryName")
+    DistinctQueryAndXmlName: String,
+
+    @xmlName("xmlNameOnly")
+    DistinctXmlName: String,
+
 }
 
 /// This test serializes timestamps.
