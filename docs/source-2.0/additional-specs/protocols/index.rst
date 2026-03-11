@@ -8,3 +8,4 @@ Protocols
     :maxdepth: 1
 
     smithy-rpc-v2
+    smithy-rpc-v2-json
