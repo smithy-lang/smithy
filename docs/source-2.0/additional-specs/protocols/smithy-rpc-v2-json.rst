@@ -1,31 +1,29 @@
-.. _smithy-rpc-v2-cbor:
+.. _smithy-rpc-v2-json:
 
 ===========================
-Smithy RPC v2 CBOR protocol
+Smithy RPC v2 JSON protocol
 ===========================
 
-This specification defines the ``smithy.protocols#rpcv2Cbor`` protocol. This
-protocol is used to expose services that serialize RPC payloads as CBOR.
+This specification defines the ``smithy.protocols#rpcv2Json`` protocol. This
+protocol is used to expose services that serialize RPC payloads as JSON.
 
-.. smithy-trait:: smithy.protocols#rpcv2Cbor
-.. _smithy.protocols#rpcv2Cbor-trait:
+.. smithy-trait:: smithy.protocols#rpcv2Json
+.. _smithy.protocols#rpcv2Json-trait:
 
 
 ------------------------------------
-``smithy.protocols#rpcv2Cbor`` trait
+``smithy.protocols#rpcv2Json`` trait
 ------------------------------------
 
 Summary
     Adds support for an RPC-based protocol over HTTP that sends requests and
-    responses with CBOR payloads.
+    responses with JSON payloads.
 Trait selector
     ``service``
 Value type
     Structure
-See
-    `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-protocol-tests/model/rpcv2Cbor>`_
 
-``smithy.protocols#rpcv2Cbor`` is a structure that supports the following
+``smithy.protocols#rpcv2Json`` is a structure that supports the following
 members:
 
 .. list-table::
@@ -56,7 +54,7 @@ values are provided.
 Event streaming uses the :ref:`amazon-eventstream` format.
 
 The following example defines a service that uses
-``smithy.protocols#rpcv2Cbor``.
+``smithy.protocols#rpcv2Json``.
 
 .. code-block:: smithy
 
@@ -64,9 +62,9 @@ The following example defines a service that uses
 
     namespace smithy.example
 
-    use smithy.protocols#rpcv2Cbor
+    use smithy.protocols#rpcv2Json
 
-    @rpcv2Cbor
+    @rpcv2Json
     service MyService {
         version: "2020-07-02"
     }
@@ -80,9 +78,9 @@ The following example defines a service that requires the use of
 
     namespace smithy.example
 
-    use smithy.protocols#rpcv2Cbor
+    use smithy.protocols#rpcv2Json
 
-    @rpcv2Cbor(
+    @rpcv2Json(
         http: ["h2", "http/1.1"],
         eventStreamHttp: ["h2"]
     )
@@ -100,9 +98,9 @@ preferred over ``http/1.1``.
 
     namespace smithy.example
 
-    use smithy.protocols#rpcv2Cbor
+    use smithy.protocols#rpcv2Json
 
-    @rpcv2Cbor(
+    @rpcv2Json(
         http: ["h2", "http/1.1"],
         eventStreamHttp: ["h2", "http/1.1"]
     )
@@ -119,9 +117,9 @@ The following example defines a service that requires the use of
 
     namespace smithy.example
 
-    use smithy.protocols#rpcv2Cbor
+    use smithy.protocols#rpcv2Json
 
-    @rpcv2Cbor(http: ["h2"])
+    @rpcv2Json(http: ["h2"])
     service MyService {
         version: "2020-02-05"
     }
@@ -131,7 +129,7 @@ The following example defines a service that requires the use of
 Supported traits
 ----------------
 
-The ``smithy.protocols#rpcv2Cbor`` protocol supports the following traits
+The ``smithy.protocols#rpcv2Json`` protocol supports the following traits
 that affect serialization:
 
 .. list-table::
@@ -164,11 +162,11 @@ Services that support this protocol MUST use the following characteristics to
 identify and claim requests:
 
 #. The Smithy-Protocol HTTP request header is set and contains the value
-   ``rpc-v2-cbor``.
+   ``rpc-v2-json``.
 #. The HTTP request method is ``POST``.
 #. The HTTP request path matches the form ``{prefix?}/service/{serviceName}/operation/{operationName}``.
 #. The optional ``{prefix?}`` segment in the HTTP request path matches the
-   service’s runtime path prefix, if configured.
+   service's runtime path prefix, if configured.
 #. The ``{serviceName}`` segment in the HTTP request path matches the :token:`shape name <smithy:Identifier>`
    of the service's :ref:`shape-id` in the Smithy model.
 #. The ``{operationName}`` segment in the HTTP request path matches a :token:`shape name <smithy:Identifier>`
@@ -179,74 +177,70 @@ identify and claim requests:
 Protocol behaviors
 ------------------
 
-Implementations of the ``smithy.protocols#rpcv2Cbor`` protocol comply with the
+Implementations of the ``smithy.protocols#rpcv2Json`` protocol comply with the
 following rules:
 
 ~~~~~~~~
 Requests
 ~~~~~~~~
- 
-Every request for the ``rpcv2Cbor`` protocol MUST contain a ``Smithy-Protocol``
-header with the value of ``rpc-v2-cbor``.
 
-Every request for the ``rpcv2Cbor`` protocol MUST be sent using the HTTP
+Every request for the ``rpcv2Json`` protocol MUST contain a ``Smithy-Protocol``
+header with the value of ``rpc-v2-json``.
+
+Every request for the ``rpcv2Json`` protocol MUST be sent using the HTTP
 ``POST`` method. :ref:`HTTP binding traits <http-traits>` MUST be ignored when
-building ``rpcv2Cbor`` requests if they are present.
+building ``rpcv2Json`` requests if they are present.
 
-Every request for the ``rpcv2Cbor`` protocol MUST be sent to a URL with the
+Every request for the ``rpcv2Json`` protocol MUST be sent to a URL with the
 following form: ``{prefix?}/service/{serviceName}/operation/{operationName}``
 
-* The Smithy RPCv2 CBOR protocol will only use the last four segments of the
+* The Smithy RPCv2 JSON protocol will only use the last four segments of the
     URL when routing requests. For example, a service could use a ``v1`` prefix
     in the URL path, which would not affect the operation a request is routed
     to: ``v1/service/FooService/operation/BarOperation``
 * The ``serviceName`` segment MUST be replaced by the :token:`shape name <smithy:Identifier>`
     of the service's :ref:`shape-id` in the Smithy model. The ``serviceName``
     produced by client implementations MUST NOT contain the namespace of the
-    ``service`` shape. Service implementations SHOULD accept an absolute shape
-    ID as the content of this segment with the ``#`` character replaced with a
-    ``.`` character, routing it the same as if only the name was specified. For
-    example, if the ``service``'s absolute shape ID is
-    ``com.example#TheService``, a service should accept both ``TheService`` and
-    ``com.example.TheService`` as values for the ``serviceName`` segment.
+    ``service`` shape. Service implementations MUST NOT accept an absolute
+    shape ID as the content of this segment.
 * The ``operationName`` segment MUST be replaced by the name of the ``operation``
     shape in the Smithy. The ``operationName`` produced by client
     implementations MUST NOT contain the namespace of the ``operation`` shape.
     Service implementations MUST NOT accept an absolute shape ID as the content
     of this segment.
 
-Requests for the ``rpcv2Cbor`` protocol MUST use the following behavior for
+Requests for the ``rpcv2Json`` protocol MUST use the following behavior for
 setting a ``Content-Type`` header:
 
 * Buffered RPC requests: the value of the ``Content-Type`` header MUST be
-    ``application/cbor``.
+    ``application/json``.
 * Event streaming requests: the value of the ``Content-Type`` header MUST be
     ``application/vnd.amazon.eventstream``.
 * Requests for operations with no defined input type (as in, they target the
     ``Unit`` shape) MUST NOT contain bodies in their HTTP requests. The
     ``Content-Type`` for the serialization format MUST NOT be set.
 
-Requests for the ``rpcv2Cbor`` protocol MUST NOT contain an ``X-Amz-Target`` or
-``X-Amzn-Target`` header. An ``rpcv2Cbor`` request is malformed if it contains
+Requests for the ``rpcv2Json`` protocol MUST NOT contain an ``X-Amz-Target`` or
+``X-Amzn-Target`` header. An ``rpcv2Json`` request is malformed if it contains
 either of these headers. Server-side implementations MUST reject such requests
 for security reasons.
 
-Buffered RPC requests for the ``rpcv2Cbor`` protocol SHOULD include a
+Buffered RPC requests for the ``rpcv2Json`` protocol SHOULD include a
 ``Content-Length`` header. Event streaming requests MUST NOT specify a content
 length (instead using ``Transfer-Encoding: chunked`` on HTTP/1.1).
 
-Requests for the ``rpcv2Cbor`` protocol MUST use the following behavior for
+Requests for the ``rpcv2Json`` protocol MUST use the following behavior for
 setting an ``Accept`` header:
 
 * For requests with event streaming responses: the value of the ``Accept``
     header MUST be ``application/vnd.amazon.eventstream``.
 * For requests with all other response types: the value of the ``Accept``
-    header MUST be ``application/cbor``.
+    header MUST be ``application/json``.
 
 Other forms of content streaming MAY be added in the future, utilizing
 different values for ``Accept``.
 
-In summary, the ``rpcv2Cbor`` protocol defines behavior for the following
+In summary, the ``rpcv2Json`` protocol defines behavior for the following
 headers for requests:
 
 .. list-table::
@@ -258,10 +252,10 @@ headers for requests:
       - Description
     * - ``Smithy-Protocol``
       - Required
-      - The value of ``rpc-v2-cbor``.
+      - The value of ``rpc-v2-json``.
     * - ``Content-Type``
       - Required with request bodies
-      - The value of ``application/cbor``. For event streaming requests, this
+      - The value of ``application/json``. For event streaming requests, this
         is ``application/vnd.amazon.eventstream``.
     * - ``Content-Length``
       - Conditional
@@ -269,7 +263,7 @@ headers for requests:
         For event streaming requests, this MUST NOT be set.
     * - ``Accept``
       - Required
-      - The value of ``application/cbor``. For requests with event streaming
+      - The value of ``application/json``. For requests with event streaming
         responses, this is ``application/vnd.amazon.eventstream``.
 
 
@@ -277,9 +271,9 @@ headers for requests:
 Responses
 ~~~~~~~~~
 
-The status code for successful ``rpcv2Cbor`` responses MUST be ``200``.
- 
-The status code for error ``rpcv2Cbor`` MUST be determined by the following
+The status code for successful ``rpcv2Json`` responses MUST be ``200``.
+
+The status code for error ``rpcv2Json`` MUST be determined by the following
 steps:
 
 1. If the :ref:`httpError <httpError-trait>` trait is set on the error shape,
@@ -288,31 +282,31 @@ steps:
    MUST be ``500``.
 3. Otherwise, the value MUST be ``400``.
 
-Every response for the ``rpcv2Cbor`` protocol MUST contain a ``Smithy-Protocol``
-header with the value of ``rpc-v2-cbor``. The response MUST match the value of
+Every response for the ``rpcv2Json`` protocol MUST contain a ``Smithy-Protocol``
+header with the value of ``rpc-v2-json``. The response MUST match the value of
 the ``Smithy-Protocol`` header from the request.
 
-Responses for the ``rpcv2Cbor`` protocol MUST use the following behavior for
+Responses for the ``rpcv2Json`` protocol MUST use the following behavior for
 setting a ``Content-Type`` header:
 
 * Buffered RPC responses: the value of the ``Content-Type`` header MUST be
-  ``application/cbor``.
+  ``application/json``.
 * Event streaming responses: the value of the ``Content-Type`` header MUST be
   ``application/vnd.amazon.eventstream``.
 * Responses for operations with no defined output type (as in, they target the
   ``Unit`` shape) MUST NOT contain bodies in their HTTP responses. The
   ``Content-Type`` for the serialization format MUST NOT be set.
 
-Buffered RPC responses for the ``rpcv2Cbor`` protocol SHOULD include a
+Buffered RPC responses for the ``rpcv2Json`` protocol SHOULD include a
 ``Content-Length`` header. Event streaming responses SHOULD NOT specify a
 content length (instead using ``Transfer-Encoding: chunked`` on HTTP/1.1).
 
-Responses for the ``rpcv2Cbor`` protocol SHOULD NOT contain the
+Responses for the ``rpcv2Json`` protocol SHOULD NOT contain the
 ``X-Amzn-ErrorType`` header. Type information is always serialized in the
 payload. Clients MUST ignore this header. See `Operation error serialization`_
 for information on the serialization of error responses.
 
-In summary, the ``rpcv2Cbor`` protocol defines behavior for the following
+In summary, the ``rpcv2Json`` protocol defines behavior for the following
 headers for responses:
 
 .. list-table::
@@ -324,10 +318,10 @@ headers for responses:
       - Description
     * - ``Smithy-Protocol``
       - Required
-      - The value of ``rpc-v2-cbor``.
+      - The value of ``rpc-v2-json``.
     * - ``Content-Type``
       - Required with response bodies
-      - The value of ``application/cbor``. For event streaming responses, this
+      - The value of ``application/json``. For event streaming responses, this
         is ``application/vnd.amazon.eventstream``.
     * - ``Content-Length``
       - Conditional
@@ -339,7 +333,7 @@ headers for responses:
 Shape serialization
 -------------------
 
-The ``smithy.protocols#rpcv2Cbor`` protocol serializes all shapes into a CBOR
+The ``smithy.protocols#rpcv2Json`` protocol serializes all shapes into a JSON
 document body with no HTTP bindings supported. The following table shows how
 to convert each shape type:
 
@@ -348,113 +342,97 @@ to convert each shape type:
     :widths: 25 75
 
     * - Smithy type
-      - CBOR representation
+      - JSON type
     * - ``blob``
-      - :rfc:`Major type 2 (byte string) <8949#section-3.1-2.5>`
+      - JSON ``string`` value that is base64 encoded.
     * - ``boolean``
-      - :rfc:`Major type 7 (simple) <8949#section-3.1-2.15>`
+      - JSON boolean
     * - ``byte``
-      - :rfc:`Major type 0 (unsigned integer) <8949#section-3.1-2.1>` or
-        :rfc:`major type 1 (negative integer) <8949#section-3.1-2.3>`
+      - JSON number
     * - ``short``
-      - :rfc:`Major type 0 (unsigned integer) <8949#section-3.1-2.1>` or
-        :rfc:`major type 1 (negative integer) <8949#section-3.1-2.3>`
+      - JSON number
     * - ``integer``
-      - :rfc:`Major type 0 (unsigned integer) <8949#section-3.1-2.1>` or
-        :rfc:`major type 1 (negative integer) <8949#section-3.1-2.3>`
+      - JSON number
     * - ``long``
-      - :rfc:`Major type 0 (unsigned integer) <8949#section-3.1-2.1>` or
-        :rfc:`major type 1 (negative integer) <8949#section-3.1-2.3>`
+      - JSON number
     * - ``float``
-      - :rfc:`Major type 7 (float) <8949#section-3.1-2.15>`
+      - JSON number for numeric values. JSON strings for ``NaN``,
+        ``Infinity``, and ``-Infinity``.
     * - ``double``
-      - :rfc:`Major type 7 (float) <8949#section-3.1-2.15>`
-    * - ``bigInteger``
-      - :rfc:`Major type 6 <8949#section-3.1-2.13>`, value
-        :rfc:`tags 2 (unsigned bignum) or 3 (negative bignum) <8949#section-3.4>`
+      - JSON number for numeric values. JSON strings for ``NaN``,
+        ``Infinity``, and ``-Infinity``
     * - ``bigDecimal``
-      - :rfc:`Major type 6 <8949#section-3.1-2.13>`, value
-        :rfc:`tag 4 (decimal fraction) <8949#section-3.4>`
+      - JSON ``string`` value containing the value at its arbitrary precision.
+    * - ``bigInteger``
+      - JSON ``string`` value containing the value at its arbitrary precision.
     * - ``string``
-      - :rfc:`Major type 3 (text string) <8949#section-3.1-2.7>`
+      - JSON string
     * - ``timestamp``
-      - See `Timestamp type serialization`_.
+      - JSON number (default). This protocol uses ``epoch-seconds``, also
+        known as Unix timestamps, in JSON payloads represented as a double.
+        The :ref:`timestampFormat <timestampFormat-trait>` MUST NOT be
+        respected to customize timestamp serialization.
     * - ``document``
-      - Document types are not currently supported in this protocol.
+      - Any JSON value
     * - ``list``
-      - :rfc:`Major type 4 (array of data items) <8949#section-3.1-2.9>`
+      - JSON array
     * - ``map``
-      - :rfc:`Major type 5 (map of pairs of data items) <8949#section-3.1-2.11>`,
-        each key/value pair is a pair in the type
+      - JSON object
     * - ``structure``
-      - :rfc:`Major type 5 (map of pairs of data items) <8949#section-3.1-2.11>`,
-        each member is the key to a pair in the type
+      - JSON object. Each member value provided for the structure is
+        serialized as a JSON property where the property name is the same
+        as the member name.
     * - ``union``
-      - :rfc:`Major type 5 (map of pairs of data items) <8949#section-3.1-2.11>`,
-        each member is the key to a pair in the type.
-
-        A union is serialized identically as a ``structure``
+      - JSON object. A union is serialized identically as a ``structure``
         shape, but only a single member can be set to a non-null value.
-        Deserializers MUST ignore an unrecognized ``__type`` member if present.
+        Deserializers MUST ignore an unrecognized ``__type`` member
+        if present.
 
 Values that are ``null`` MUST be omitted from wire contents where not subject
 to `default value serialization`_ rules.
 
 If an implementation does not support arbitrary precision (``bigInteger`` and
-``bigDecimal`` Smithy types), it MUST fail when attempting to deserialize a
-value of that type.
-
-.. note::
-    The ``undefined`` CBOR value, CBOR :rfc:`major type 7 <8949#section-3.1-2.15>`
-    :rfc:`value 23 <8949#section-3.3>`, is not supported. Clients SHOULD NOT
-    serialize to this CBOR value and SHOULD deserialize this CBOR value to
-    ``null``. Servers MUST NOT serialize to this CBOR value and MUST
-    deserialize this CBOR value to ``null``.
+``bigDecimal`` Smithy types), it SHOULD fail when generating code. If it cannot,
+it MUST fail when attempting to deserialize a value of that type.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Numeric type serialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-Numeric types (``byte``, ``short``, ``integer``, ``long``, ``float``, and ``double``)
-SHOULD be serialized into the smallest possible CBOR type representation that
-can contain its value. For example, a field modeled as a ``long`` with a value of
-1 should be sent in a single byte.
 
-Floating-point numeric types (``float`` and ``double``) MAY be serialized into
-non-floating-point numeric types (``byte``, ``short``, ``integer``, and ``long``) if
-and only if the conversion would not cause a loss of precision. For example, a
-field modeled as a ``float`` with a value of 256 may be sent as an integer.
+The ``bigInteger`` and ``bigDecimal`` Smithy types are serialized as JSON
+strings whose contents MUST conform to the grammars defined below. These
+grammars are specified using Augmented Backus-Naur Form (ABNF) :rfc:`5234`
+notation and share the following definition:
 
-As support for half-precision floating-point values is inconsistent across
-implementations, floating-point numeric types SHOULD NOT serialize into a
-half-precision (16 bit) numeric CBOR values. Implementations MUST be capable of
-deserializing half-precision numeric CBOR values (including -Infinity,
-Infinity, and NAN) into their Smithy type representation.
+.. productionlist:: rpc-v2-json-numeric-types
+    DIGIT          :%x30-39 ; 0-9
+    NON-ZERO-DIGIT :%x31-39 ; 1-9
 
-Numeric types MUST be deserialized into their Smithy type representation. For
-example, a field modeled as a ``long`` with a single byte value of 1 must be
-deserialized into a long.
+``bigInteger`` string format
+----------------------------
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Timestamp type serialization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The JSON string value for a ``bigInteger`` type MUST conform to the following
+grammar. The string representation consists of an optional minus sign followed
+by either a single zero or a non-zero digit and zero or more additional digits.
+No whitespace, decimal points, or exponent indicators are permitted.
 
-Timestamps are serialized as :rfc:`major type 6 <8949#section-3.1-2.13>`, value
-:rfc:`tag 1 (epoch-based date/time) <8949#section-3.4>` to indicate the tagged
-value is an epoch timestamp. Values are either :rfc:`major type 0 (unsigned integer) <8949#section-3.1-2.1>`
-or :rfc:`major type 1 (negative integer) <8949#section-3.1-2.3>` for integer
-values or :rfc:`major type 7 <8949#section-3.1-2.15>`,
-:rfc:`value 25 (half-precision float), 26 (single-precision float), or 27 (double-precision float) <8949#section-3.3>`
-for floating-point values.
+.. productionlist:: rpc-v2-json-numeric-types
+    big-integer :["-"] ("0" / NON-ZERO-DIGIT *DIGIT)
 
-As support for half-precision floating-point values is inconsistent across
-implementations, timestamp types SHOULD NOT serialize into a half-precision
-(16 bit) numeric CBOR value for the tagged value.
+``bigDecimal`` string format
+----------------------------
 
-This protocol uses ``epoch-seconds``, also known as Unix timestamps, with
-millisecond (1/1000th of a second) resolution. The :ref:`timestampFormat <timestampFormat-trait>`
-MUST NOT be respected to customize timestamp serialization.
+The JSON string value for a ``bigDecimal`` type MUST conform to the following
+grammar. The string representation is a ``big-integer``` value optionally
+followed by a decimal point and one or more fractional digits, optionally
+followed by an exponent. The exponent consists of ``e`` or ``E`` followed by an
+optional minus sign and one or more digits. No whitespace is permitted.
 
+.. productionlist:: rpc-v2-json-numeric-types
+    big-decimal        :big-integer ["." fraction-part] [exponent]
+    fraction-part      :1*DIGIT
+    exponent           :exponent-indicator ["-"] 1*DIGIT
+    exponent-indicator :"e" / "E"
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Default value serialization
@@ -471,7 +449,7 @@ server is in error.
 ----------------------------------
 Operation response deserialization
 ----------------------------------
- 
+
 Clients MUST use the following rules to interpret responses and determine how
 to deserialize them:
 
@@ -490,10 +468,10 @@ to deserialize them:
 Operation error serialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Error responses in the ``rpcv2Cbor`` protocol MUST be serialized identically to
+Error responses in the ``rpcv2Json`` protocol MUST be serialized identically to
 standard responses with one additional component to distinguish which error is
 contained: a body field named ``__type``. This value of this component MUST
-contain the error’s absolute :ref:`shape-id`.
+contain the error's absolute :ref:`shape-id`.
 
 By default, all error shapes have a ``message`` field containing an
 error-specific message meant for human consumers of API errors. Services MUST

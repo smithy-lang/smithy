@@ -6,6 +6,7 @@ use smithy.api#cors
 use smithy.api#endpoint
 use smithy.api#hostLabel
 use smithy.api#httpError
+use smithy.api#requestCompression
 
 /// An RPC-based protocol that serializes CBOR payloads.
 @trait(selector: "service")
@@ -14,6 +15,7 @@ use smithy.api#httpError
     endpoint
     hostLabel
     httpError
+    requestCompression
 ])
 @traitValidators(
     "rpcv2Cbor.NoDocuments": {
@@ -23,6 +25,24 @@ use smithy.api#httpError
     }
 )
 structure rpcv2Cbor {
+    /// Priority ordered list of supported HTTP protocol versions.
+    http: StringList
+
+    /// Priority ordered list of supported HTTP protocol versions
+    /// that are required when using event streams.
+    eventStreamHttp: StringList
+}
+
+/// An RPC-based protocol that serializes JSON payloads.
+@trait(selector: "service")
+@protocolDefinition(traits: [
+    cors
+    endpoint
+    hostLabel
+    httpError
+    requestCompression
+])
+structure rpcv2Json {
     /// Priority ordered list of supported HTTP protocol versions.
     http: StringList
 

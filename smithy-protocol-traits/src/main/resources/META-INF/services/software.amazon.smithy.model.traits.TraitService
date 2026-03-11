@@ -1,1 +1,2 @@
 software.amazon.smithy.protocol.traits.Rpcv2CborTrait$Provider
+software.amazon.smithy.protocol.traits.Rpcv2JsonTrait$Provider

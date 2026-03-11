@@ -1,1 +1,2 @@
 software.amazon.smithy.protocol.traits.Rpcv2CborTraitValidator
+software.amazon.smithy.protocol.traits.Rpcv2JsonTraitValidator
