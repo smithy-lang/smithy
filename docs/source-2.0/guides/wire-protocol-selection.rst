@@ -85,6 +85,7 @@ AWS services will use the following precision ordering for protocols they
 support:
 
 #. ``rpcv2Cbor``
+#. ``rpcv2Json``
 #. ``awsJson1_0``
 #. ``awsJson1_1``
 #. ``awsQuery``
