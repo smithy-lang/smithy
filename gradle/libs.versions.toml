@@ -7,7 +7,7 @@ spotless = "8.3.0"
 smithy-gradle = "1.4.0"
 assertj = "3.27.7"
 prettier4j = "0.3.0"
-maven-resolver-provider = "3.9.12"
+maven-resolver-provider = "3.9.13"
 # TODO: upgrade major version
 maven-resolver = "1.9.27"
 slf4j = "1.7.36"
