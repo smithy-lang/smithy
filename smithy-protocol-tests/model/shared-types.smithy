@@ -16,6 +16,7 @@ metadata validators = [
         namespaces: [
             // Overall protocol test suites.
             "smithy.protocoltests.rpcv2Cbor"
+            "smithy.protocoltests.rpcv2Json"
         ]
         configuration: {
             "selector": "operation :not(< service)"
@@ -26,7 +27,7 @@ metadata validators = [
 namespace smithy.protocoltests.shared
 
 list StringList {
-    member: String,
+    member: String
 }
 
 @sparse
@@ -36,113 +37,113 @@ list SparseStringList {
 
 @uniqueItems
 list StringSet {
-    member: String,
+    member: String
 }
 
 map StringMap {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 map StringListMap {
-    key: String,
+    key: String
     value: StringList
 }
 
 @sparse
 map SparseStringMap {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 /// A list of lists of strings.
 list NestedStringList {
-    member: StringList,
+    member: StringList
 }
 
 list ShortList {
-    member: Short,
+    member: Short
 }
 
 list IntegerList {
-    member: Integer,
+    member: Integer
 }
 
 @uniqueItems
 list IntegerSet {
-    member: Integer,
+    member: Integer
 }
 
 list FloatList {
-    member: Float,
+    member: Float
 }
 
 list DoubleList {
-    member: Double,
+    member: Double
 }
 
 list BooleanList {
-    member: Boolean,
+    member: Boolean
 }
 
 @uniqueItems
 list BooleanSet {
-    member: Boolean,
+    member: Boolean
 }
 
 list TimestampList {
-    member: Timestamp,
+    member: Timestamp
 }
 
 list BlobList {
-    member: Blob,
+    member: Blob
 }
 
 @uniqueItems
 list BlobSet {
-    member: Blob,
+    member: Blob
 }
 
 list ByteList {
-    member: Byte,
+    member: Byte
 }
 
 @uniqueItems
 list ByteSet {
-    member: Byte,
+    member: Byte
 }
 @uniqueItems
 list ShortSet {
-    member: Short,
+    member: Short
 }
 
 @uniqueItems
 list LongList {
-    member: Long,
+    member: Long
 }
 
 @uniqueItems
 list LongSet {
-    member: Long,
+    member: Long
 }
 
 @uniqueItems
 list TimestampSet {
-    member: Timestamp,
+    member: Timestamp
 }
 
 list DateTimeList {
-    member: DateTime,
+    member: DateTime
 }
 
 @uniqueItems
 list DateTimeSet {
-    member: DateTime,
+    member: DateTime
 }
 
 @uniqueItems
 list HttpDateSet {
-    member: HttpDate,
+    member: HttpDate
 }
 
 @uniqueItems
@@ -174,17 +175,17 @@ enum FooEnum {
 }
 
 list FooEnumList {
-    member: FooEnum,
+    member: FooEnum
 }
 
 @uniqueItems
 list FooEnumSet {
-    member: FooEnum,
+    member: FooEnum
 }
 
 map FooEnumMap {
-    key: String,
-    value: FooEnum,
+    key: String
+    value: FooEnum
 }
 
 @timestampFormat("date-time")
@@ -226,6 +227,6 @@ list IntegerEnumSet {
 }
 
 map IntegerEnumMap {
-    key: String,
+    key: String
     value: IntegerEnum
 }
