@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Run container as non-root user",
+  "pull_requests": [
+    "[#2934](https://github.com/smithy-lang/smithy/pull/2934)"
+  ]
+}
