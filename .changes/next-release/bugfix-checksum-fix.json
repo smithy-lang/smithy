@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Fixed CLI checksum verification by adding `appendFileNameToChecksum` to generate `sha256sum -c` compatible checksum files. Previously, the `.sha256` files contained only the raw hash without a filename, causing verification to fail.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#2999](https://github.com/smithy-lang/smithy/pull/2999)"
+  ]
 }
