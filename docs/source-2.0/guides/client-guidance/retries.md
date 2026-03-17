@@ -68,7 +68,7 @@ public interface RetryStrategy {
      *
      * @throws TokenAcquisitionFailedException if a token cannot be acquired.
      */
-    RetryToken acquireInitialToken();
+    RetryToken acquireInitialToken(ApiOperation<?, ?> operation);
 
     /**
      * Invoked before each subsequent (non-first) request attempt.
@@ -100,6 +100,13 @@ client. Be careful to ensure that access to that state is synchronized in order
 to prevent race conditions.
 :::
 
+:::{admonition} TODO - Define ApiOperation
+:class: note
+
+`ApiOperation` will be defined later in a separate document. At a minimum, it
+should contain the operation's ID.
+:::
+
 #### Using retry strategies
 
 An initial retry token should be acquired at the beginning of a request, before
@@ -129,12 +136,12 @@ The following is a simplified example of what it looks like to use the
  *
  * @return a successful result.
  */
-public Result request(SerializedRequest serializedRequest) {
+public Result request(ApiOperation<?, ?> operation, SerializedRequest serializedRequest) {
     // First acquire the initial retry token. If a token cannot be acquired,
     // make only one attempt without retries.
     RetryToken retryToken;
     try {
-        retryToken = this.retryStrategy.acquireInitialToken();
+        retryToken = this.retryStrategy.acquireInitialToken(operation);
     } catch (TokenAcquisitionFailedException e) {
         return send(serializedRequest);
     }
@@ -413,16 +420,25 @@ demonstrate some of the potential needs of a retry system.
 ### Example retry strategy
 
 The following is an example retry strategy that implements exponential backoff
-with jitter alongside a token bucket. This strategy adds extra cost for timeout
-errors since they may indicate a more degraded service.
+with jitter alongside a token bucket. This strategy has a reduced cost for
+throttling errors as they indicate that the service is actively managing
+retries.
 
 Aside from delay, the retry token also tracks the number of attempts that have
-been made. This is necessary because this strategy imposes a maximum attempt
-count, and also because the delay is calculated in part based on how many
-attempts have been made.
+been made as well as if the operation is a long-polling operation. The attempt
+count is necessary because this strategy imposes a maximum attempt count, and
+also because the delay is calculated in part based on how many attempts have
+been made.
+
+For long-polling operations, the strategy will sleep if the bucket is found
+to be empty.
 
 ```java
-public record AwsStandardRetryToken(int attempts, Duration delay) implements RetryToken {
+public record AwsStandardRetryToken(
+        int attempts,
+        Duration delay,
+        boolean isLongPoll
+) implements RetryToken {
 }
 ```
 
@@ -430,8 +446,8 @@ public record AwsStandardRetryToken(int attempts, Duration delay) implements Ret
 public final class AwsStandardRetryStrategy implements RetryStrategy {
     // These values are not prescriptive. They are static in this example for the
     // sake of simplicity, but making them configurable is ideal.
-    private static final int RETRY_COST = 5;
-    private static final int TIMEOUT_COST = 10;
+    private static final int RETRY_COST = 14;
+    private static final int THROTTLING_RETRY_COST = 5;
     private static final int SUCCESS_REFUND = 1;
 
     private static final int MAX_ATTEMPTS = 5;
@@ -449,13 +465,14 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
     private final Object tokensLock = new Object();
 
     @Override
-    public RetryToken acquireInitialToken() {
+    public RetryToken acquireInitialToken(ApiOperation<?, ?> operation) {
         // This returns successfully even if the token bucket is empty. This is
         // because an initial attempt will always be performed anyway, and
         // returning successfully here will ensure that the retry strategy is
         // checked if that initial attempt fails. By that point, the token bucket
         // may no longer be empty.
-        return new AwsStandardRetryToken(0, null);
+        boolean isLongPoll = operation.schema().hasTrait(TraitKey.get(LongPollTrait.class));
+        return new AwsStandardRetryToken(0, null, isLongPoll);
     }
 
     @Override
@@ -477,10 +494,9 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
             // If the exception thrown by the operation includes retryability
             // information, use that to inform retry behavior.
             case RetryInfo retryInfo when retryInfo.isRetrySafe() != RetrySafety.NO -> {
-                // Attempt to consume tokens from the token bucket to "pay"
-                // for the retry.
-                consumeTokens(retryInfo.isTimeout());
-                yield backoff(standardToken, retryInfo.retryAfter());
+                var resultToken = backoff(standardToken, retryInfo.retryAfter(), retryInfo.isThrottle());
+                payForRetry(retryInfo.isThrottle(), resultToken);
+                yield resultToken;
             }
 
             // If the exception does not have retry info, but does have more
@@ -488,8 +504,9 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
             // a server error is likely retryable and that a client error
             // likely is not.
             case ErrorInfo errorInfo when errorInfo.fault() == ErrorFault.SERVER -> {
-                consumeTokens(false);
-                yield backoff(standardToken);
+                var resultToken = backoff(standardToken);
+                payForRetry(false, resultToken);
+                yield resultToken;
             }
             default -> throw new TokenAcquisitionFailedException("Exception not retryable.");
         };
@@ -498,21 +515,41 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
     /**
      * Consumes tokens to "pay" for a retry.
      *
-     * @param isTimeout whether the retry is in response to a timeout error,
-     *     which will require more tokens.
+     * @param isThrottle whether the retry is in response to a throttling error,
+     *     which will require fewer tokens.
+     * @param resultCandidate The candidate RetryToken that needs to be paid for.
      *
      * @throws TokenAcquisitionFailedException if there are not enough tokens
      *     in the bucket to pay for the retry.
      */
-    private void consumeTokens(boolean isTimeout) {
-        synchronized (tokensLock) {
-            int cost = isTimeout ? TIMEOUT_COST : RETRY_COST;
+    private void payForRetry(boolean isThrottle, AwsStandardRetryToken resultCandidate) {
+        int cost = isThrottle ? THROTTLING_RETRY_COST : RETRY_COST;
+        if (!consumeTokens(cost)) {
+            if (resultCandidate.isLongPoll) {
+                try {
+                    Thread.sleep(resultCandidate.delay());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            throw new TokenAcquisitionFailedException("Token bucket exhausted.");
+        }
+    }
 
+    /**
+     * Attempts to consume a specified amount of tokens.
+     *
+     * @param cost The amount of tokens to attempt to consume.
+     * @return Returns whether the tokens were able to be consumed.
+     */
+    private boolean consumeTokens(int cost) {
+        synchronized (tokensLock) {
             if (this.tokens < cost) {
-                throw new TokenAcquisitionFailedException("Token bucket exhausted.");
+                return false;
             }
 
             this.tokens -= cost;
+            return true;
         }
     }
 
@@ -522,41 +559,51 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
      * @param token the previous token.
      */
     private AwsStandardRetryToken backoff(AwsStandardRetryToken token) {
-        return new AwsStandardRetryToken(token.attempts + 1, computeDelay(token.attempts));
+        return new AwsStandardRetryToken(
+            token.attempts + 1, computeDelay(token.attempts, false), token.isLongPoll);
     }
 
     /**
      * Computes a backoff with exponential backoff and jitter, capped at 20 seconds.
      *
      * @param token the previous token.
+     * @param isThrottle whether the triggering error was a throttle.
      * @param suggested the delay suggested by the service, which will serve as
      *     the minimum delay.
      */
-    private AwsStandardRetryToken backoff(AwsStandardRetryToken token, Duration suggested) {
+    private AwsStandardRetryToken backoff(AwsStandardRetryToken token, Duration suggested, boolean isThrottle) {
         // Compute the backoff as normal. If it is longer than the suggested
         // backoff from the service, use it. Otherwise, use the suggested
         // backoff.
-        Duration computedDelay = computeDelay(token.attempts);
-        Duration finalDelay = computedDelay.toMillis() < suggested.toMillis() ? suggested : computedDelay;
-        return new AwsStandardRetryToken(token.attempts + 1, finalDelay);
+        Duration finalDelay = computeDelay(token.attempts, isThrottle);
+        if (suggested != null && finalDelay.toMillis() < suggested.toMillis()) {
+            finalDelay = suggested;
+        }
+        return new AwsStandardRetryToken(token.attempts + 1, finalDelay, token.isLongPoll);
     }
 
     /**
      * Computes the delay with exponential backoff and jitter, capped at 20 seconds.
      *
      * @param attempts the number of attempts made so far.
+     * @param isThrottle whether the triggering error was a throttle.
      * @return the computed delay duration.
      */
-    private Duration computeDelay(int attempts) {
+    private Duration computeDelay(int attempts, boolean isThrottle) {
         // First compute the exponential backoff.
         double backoff = Math.pow(2, attempts);
+
+        // Try to recover faster from non-throttling errors.
+        if (!isThrottle) {
+            backoff = backoff * 0.05;
+        }
 
         // Next, cap it at 20 seconds.
         backoff = Math.min(backoff, MAX_BACKOFF);
 
         // Finally, add jitter and expand to milliseconds.
         double backoffMillis = Math.random() * backoff * 1000;
-        return Duration.ofMilliseconds((long) backoffMillis);
+        return Duration.ofMillis((long) backoffMillis);
     }
 
     @Override
