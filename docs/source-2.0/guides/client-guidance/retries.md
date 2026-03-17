@@ -528,13 +528,12 @@ public final class AwsStandardRetryStrategy implements RetryStrategy {
         synchronized (tokensLock) {
             int cost = isThrottle ? THROTTLE_RETRY_COST : RETRY_COST;
 
-            // Long-polling operations will always backoff. If the bucket doesn't have
-            // enough tokens, it will just be emptied.
-            if (isLongPoll) {
-                cost = Math.min(cost, this.tokens);
-            }
-
             if (this.tokens < cost) {
+                // Long-polling operations will always back off, even if the bucket
+                // is empty.
+                if (isLongPoll) {
+                  return;
+                }
                 throw new TokenAcquisitionFailedException("Token bucket exhausted.");
             }
 
