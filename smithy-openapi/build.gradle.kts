@@ -17,4 +17,5 @@ dependencies {
     api(project(":smithy-jsonschema"))
     api(project(":smithy-aws-traits"))
     api(project(":smithy-openapi-traits"))
+    api(project(":smithy-protocol-traits"))
 }

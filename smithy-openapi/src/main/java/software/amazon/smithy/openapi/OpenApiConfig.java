@@ -98,6 +98,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private boolean syncCorsPreflightIntegration = false;
     private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
+    private boolean useStringsForArbitraryPrecision = false;
 
     public OpenApiConfig() {
         super();
@@ -373,6 +374,20 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setOnErrorStatusConflict(ErrorStatusConflictHandlingStrategy onErrorStatusConflict) {
         this.onErrorStatusConflict = Objects.requireNonNull(onErrorStatusConflict);
+    }
+
+    public boolean getUseStringsForArbitraryPrecision() {
+        return useStringsForArbitraryPrecision;
+    }
+
+    /**
+     * Set to true to use JSON strings instead of numbers to maintain arbitrary precision
+     * in cases where parsers don't handle it properly with numbers.
+     *
+     * @param useStringsForArbitraryPrecision True to use JSON strings for arbitrary precision numbers.
+     */
+    public void setUseStringsForArbitraryPrecision(boolean useStringsForArbitraryPrecision) {
+        this.useStringsForArbitraryPrecision = useStringsForArbitraryPrecision;
     }
 
     /**

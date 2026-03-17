@@ -51,9 +51,24 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             builder.putExtension("deprecated", Node.from(true));
         }
 
-        boolean useOpenApiIntegerType = config instanceof OpenApiConfig
-                && ((OpenApiConfig) config).getUseIntegerType()
+        boolean configIsOpenApi = config instanceof OpenApiConfig;
+        boolean useOpenApiIntegerType = configIsOpenApi
+                && config.getUseIntegerType()
                 && !((OpenApiConfig) config).getDisableIntegerFormat();
+
+        // Force a string type for arbitrary precision numbers if the
+        // setting is configured.
+        // https://www.speakeasy.com/docs/sdks/customize/data-model/complex-numbers#preserve-precision-when-serializing
+        if ((shape.isBigDecimalShape() || shape.isBigIntegerShape()) && configIsOpenApi
+                && ((OpenApiConfig) config).getUseStringsForArbitraryPrecision()) {
+            builder.type("string");
+            // Set the appropriate format for the serialized string.
+            if (shape.isBigDecimalShape()) {
+                builder.format("decimal");
+            } else {
+                builder.format("bigint");
+            }
+        }
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {
@@ -68,7 +83,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 updateFloatFormat(builder, config, "float");
             } else if (shape.isDoubleShape()) {
                 updateFloatFormat(builder, config, "double");
-            } else if (shape.isBlobShape() && config instanceof OpenApiConfig) {
+            } else if (shape.isBlobShape() && configIsOpenApi) {
                 handleFormatKeyword(builder, (OpenApiConfig) config);
                 return builder;
             } else if (shape.isTimestampShape()) {
@@ -83,7 +98,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         // Remove unsupported JSON Schema keywords.
-        if (config instanceof OpenApiConfig) {
+        if (configIsOpenApi) {
             OpenApiConfig openApiConfig = (OpenApiConfig) config;
             openApiConfig.getVersion().getUnsupportedKeywords().forEach(builder::disableProperty);
         }

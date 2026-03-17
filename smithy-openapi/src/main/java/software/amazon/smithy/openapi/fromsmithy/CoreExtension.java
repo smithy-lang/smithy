@@ -16,6 +16,7 @@ import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.SpecificationExtensionsMapper;
 import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraits;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJson1Protocol;
+import software.amazon.smithy.openapi.fromsmithy.protocols.RpcV2JsonProtocolConverter;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4Converter;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpApiKeyAuthConverter;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBasicConverter;
@@ -39,7 +40,7 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
 
     @Override
     public List<OpenApiProtocol<? extends Trait>> getProtocols() {
-        return ListUtils.of(new AwsRestJson1Protocol());
+        return ListUtils.of(new AwsRestJson1Protocol(), new RpcV2JsonProtocolConverter());
     }
 
     @Override
