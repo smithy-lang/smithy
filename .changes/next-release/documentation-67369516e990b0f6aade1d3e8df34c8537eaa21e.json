@@ -1,0 +1,5 @@
+{
+  "type": "documentation",
+  "description": "Updated the example retry strategy in client guidance and updated the initial token method to take information about the operation.",
+  "pull_requests": []
+}
