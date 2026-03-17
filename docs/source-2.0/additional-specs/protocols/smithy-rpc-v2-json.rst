@@ -423,16 +423,18 @@ No whitespace, decimal points, or exponent indicators are permitted.
 ----------------------------
 
 The JSON string value for a ``bigDecimal`` type MUST conform to the following
-grammar. The string representation is a ``big-integer``` value optionally
+grammar. The string representation is a ``big-integer`` value optionally
 followed by a decimal point and one or more fractional digits, optionally
 followed by an exponent. The exponent consists of ``e`` or ``E`` followed by an
-optional minus sign and one or more digits. No whitespace is permitted.
+optional sign (``+`` or ``-``) and one or more digits. No whitespace is
+permitted.
 
 .. productionlist:: rpc-v2-json-numeric-types
     big-decimal        :big-integer ["." fraction-part] [exponent]
     fraction-part      :1*DIGIT
-    exponent           :exponent-indicator ["-"] 1*DIGIT
+    exponent           :exponent-indicator [sign] 1*DIGIT
     exponent-indicator :"e" / "E"
+    sign               :"+" / "-"
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Default value serialization
