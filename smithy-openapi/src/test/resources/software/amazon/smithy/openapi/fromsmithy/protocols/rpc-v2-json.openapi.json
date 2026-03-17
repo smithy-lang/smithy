@@ -1,0 +1,158 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2018-05-10"
+    },
+    "paths": {
+        "/service/MyService/operation/beer": {
+            "post": {
+                "operationId": "beer",
+                "requestBody": {
+                    "description": "Request Object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/beerRequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Response Object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/beerResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/service/MyService/operation/echo": {
+            "post": {
+                "operationId": "echo",
+                "requestBody": {
+                    "description": "Request Object",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/echoRequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Response Object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/echoResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Response Object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DefaultClientExceptionCodeErrorContent"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Response Object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomExceptionCodeErrorContent"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Response Object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DefaultServerExceptionCodeErrorContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CustomExceptionCodeErrorContent": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DefaultClientExceptionCodeErrorContent": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DefaultServerExceptionCodeErrorContent": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "beerRequestContent": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    }
+                }
+            },
+            "beerResponseContent": {
+                "type": "object",
+                "properties": {
+                    "bigInteger": {
+                        "type": "string",
+                        "format": "bigint"
+                    },
+                    "bigDecimal": {
+                        "type": "string",
+                        "format": "decimal"
+                    }
+                }
+            },
+            "echoRequestContent": {
+                "type": "object",
+                "properties": {
+                    "rank": {
+                        "type": "number"
+                    }
+                }
+            },
+            "echoResponseContent": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
