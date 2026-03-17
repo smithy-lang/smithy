@@ -5,7 +5,9 @@
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -86,11 +88,24 @@ final class CreateDedicatedInputAndOutput {
             updates.add(builder.build());
         }
 
-        // Remove no longer referenced shapes.
-        Model result = transformer.removeShapes(model, toRemove);
-
         // Replace the operations and add new shapes.
-        return transformer.replaceShapes(result, updates);
+        Model result = transformer.replaceShapes(model, updates);
+
+        // Make sure that we don't remove any of the shapes that we just added.
+        Set<ShapeId> updated = new HashSet<>();
+        for (Shape update : updates) {
+            ShapeId shapeId = update.toShapeId();
+            updated.add(shapeId);
+        }
+        List<Shape> toRemoveUpdated = new ArrayList<>();
+        for (Shape shape : toRemove) {
+            if (!updated.contains(shape.toShapeId())) {
+                toRemoveUpdated.add(shape);
+            }
+        }
+
+        // Remove no longer referenced shapes.
+        return transformer.removeShapes(result, toRemoveUpdated);
     }
 
     private StructureShape createdUpdatedInput(
