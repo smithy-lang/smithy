@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Fix issues handling high-precision numbers",
+  "pull_requests": [
+    "[#3004](https://github.com/smithy-lang/smithy/pull/3004)"
+  ]
+}
