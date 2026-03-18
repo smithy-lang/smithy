@@ -5,9 +5,7 @@
 package software.amazon.smithy.model.transform;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -57,6 +55,8 @@ final class CreateDedicatedInputAndOutput {
             }
 
             OperationShape.Builder builder = operation.toBuilder();
+            boolean removeInput = false;
+            boolean removeOutput = false;
             if (inputChanged) {
                 LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
                         operation.getId(),
@@ -67,7 +67,7 @@ final class CreateDedicatedInputAndOutput {
                 // If the ID changed and the original is no longer referenced, then remove it.
                 boolean idChanged = !input.getId().equals(updatedInput.getId());
                 if (idChanged && isSingularReference(reverse, input, operation)) {
-                    toRemove.add(input);
+                    removeInput = true;
                     LOGGER.fine("Removing now unused input shape " + input.getId());
                 }
             }
@@ -81,9 +81,21 @@ final class CreateDedicatedInputAndOutput {
                 // If the ID changed and the original is no longer referenced, then remove it.
                 boolean idChanged = !output.getId().equals(updatedOutput.getId());
                 if (idChanged && isSingularReference(reverse, output, operation)) {
-                    toRemove.add(output);
+                    removeOutput = true;
                     LOGGER.fine("Removing now unused output shape " + output.getId());
                 }
+            }
+            // Handle a corner case when the operation uses the same structure for input and output and
+            // it is named as expected for one of them, e.g., GetFoo with input and output GetFooInput
+            // In that case we don't want to delete it or the newly introduced input as will be deleted
+            // as well.
+            if (removeInput && removeOutput) {
+                toRemove.add(input);
+                toRemove.add(output);
+            } else if (removeInput && !input.getId().equals(updatedOutput.getId())) {
+                toRemove.add(input);
+            } else if (removeOutput && !output.getId().equals(updatedInput.getId())) {
+                toRemove.add(output);
             }
             updates.add(builder.build());
         }
@@ -91,21 +103,8 @@ final class CreateDedicatedInputAndOutput {
         // Replace the operations and add new shapes.
         Model result = transformer.replaceShapes(model, updates);
 
-        // Make sure that we don't remove any of the shapes that we just added.
-        Set<ShapeId> updated = new HashSet<>();
-        for (Shape update : updates) {
-            ShapeId shapeId = update.toShapeId();
-            updated.add(shapeId);
-        }
-        List<Shape> toRemoveUpdated = new ArrayList<>();
-        for (Shape shape : toRemove) {
-            if (!updated.contains(shape.toShapeId())) {
-                toRemoveUpdated.add(shape);
-            }
-        }
-
         // Remove no longer referenced shapes.
-        return transformer.removeShapes(result, toRemoveUpdated);
+        return transformer.removeShapes(result, toRemove);
     }
 
     private StructureShape createdUpdatedInput(
