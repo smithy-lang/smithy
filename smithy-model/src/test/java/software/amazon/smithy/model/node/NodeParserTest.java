@@ -6,9 +6,11 @@ package software.amazon.smithy.model.node;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,9 +71,47 @@ public class NodeParserTest {
         Node result = Node.parse("1.5");
 
         assertThat(result.isNumberNode(), is(true));
+        assertThat(result.expectNumberNode().getValue(), is(instanceOf(Double.class)));
         assertThat(result.expectNumberNode().getValue(), equalTo(1.5));
         assertThat(result.getSourceLocation().getLine(), is(1));
         assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesDoublePrecisionIncompatibleNumberAsBigDecimal() {
+        // 2^53 + 1 with a decimal triggers the float path but loses precision as a double.
+        Node result = Node.parse("9007199254740993.0");
+        assertThat(result.isNumberNode(), is(true));
+
+        NumberNode numberNode = result.expectNumberNode();
+        assertThat(numberNode.getValue(), is(instanceOf(BigDecimal.class)));
+        assertThat(numberNode.getValue().toString(), equalTo("9007199254740993.0"));
+        assertThat(numberNode.getSourceLocation().getLine(), is(1));
+        assertThat(numberNode.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesOverflowPositiveDoubleAsBigDecimal() {
+        // 1e309 overflows Double to +Infinity, but is a valid BigDecimal.
+        Node result = Node.parse("1e309");
+
+        NumberNode numberNode = result.expectNumberNode();
+        assertThat(numberNode.getValue(), is(instanceOf(BigDecimal.class)));
+        assertThat(numberNode.getValue(), equalTo(new BigDecimal("1e309")));
+        assertThat(numberNode.getSourceLocation().getLine(), is(1));
+        assertThat(numberNode.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesOverflowNegativeDoubleAsBigDecimal() {
+        // -1e309 overflows Double to -Infinity, but is a valid BigDecimal.
+        Node result = Node.parse("-1e309");
+
+        NumberNode numberNode = result.expectNumberNode();
+        assertThat(numberNode.getValue(), is(instanceOf(BigDecimal.class)));
+        assertThat(numberNode.getValue(), equalTo(new BigDecimal("-1e309")));
+        assertThat(numberNode.getSourceLocation().getLine(), is(1));
+        assertThat(numberNode.getSourceLocation().getColumn(), is(1));
     }
 
     @Test

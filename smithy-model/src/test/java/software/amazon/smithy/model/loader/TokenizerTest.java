@@ -6,6 +6,7 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 import java.util.NoSuchElementException;
@@ -197,6 +198,49 @@ public class TokenizerTest {
 
         assertThat(tokenizer.next(), is(IdlToken.NUMBER));
         assertThat(tokenizer.getCurrentTokenNumberValue(), equalTo(10L));
+    }
+
+    @Test
+    public void parsesDoublePrecisionCompatibleFloat() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("1.5");
+
+        assertThat(tokenizer.next(), is(IdlToken.NUMBER));
+        Number value = tokenizer.getCurrentTokenNumberValue();
+        assertThat(value, instanceOf(Double.class));
+        assertThat(value.doubleValue(), equalTo(1.5));
+    }
+
+    @Test
+    public void parsesDoublePrecisionIncompatibleFloatAsBigDecimal() {
+        // 2^53 + 1 with a decimal triggers the float path but loses precision as a double.
+        IdlTokenizer tokenizer = IdlTokenizer.create("9007199254740993.0");
+
+        assertThat(tokenizer.next(), is(IdlToken.NUMBER));
+        Number value = tokenizer.getCurrentTokenNumberValue();
+        assertThat(value, instanceOf(java.math.BigDecimal.class));
+        assertThat(value.toString(), equalTo("9007199254740993.0"));
+    }
+
+    @Test
+    public void parsesOverflowPositiveDoubleAsBigDecimal() {
+        // 1e309 overflows Double to +Infinity, but is a valid BigDecimal.
+        IdlTokenizer tokenizer = IdlTokenizer.create("1e309");
+
+        assertThat(tokenizer.next(), is(IdlToken.NUMBER));
+        Number value = tokenizer.getCurrentTokenNumberValue();
+        assertThat(value, instanceOf(java.math.BigDecimal.class));
+        assertThat(value, equalTo(new java.math.BigDecimal("1e309")));
+    }
+
+    @Test
+    public void parsesOverflowNegativeDoubleAsBigDecimal() {
+        // -1e309 overflows Double to -Infinity, but is a valid BigDecimal.
+        IdlTokenizer tokenizer = IdlTokenizer.create("-1e309");
+
+        assertThat(tokenizer.next(), is(IdlToken.NUMBER));
+        Number value = tokenizer.getCurrentTokenNumberValue();
+        assertThat(value, instanceOf(java.math.BigDecimal.class));
+        assertThat(value, equalTo(new java.math.BigDecimal("-1e309")));
     }
 
     @Test

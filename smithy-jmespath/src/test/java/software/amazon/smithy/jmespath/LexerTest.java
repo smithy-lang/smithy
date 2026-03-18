@@ -10,8 +10,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -540,6 +542,49 @@ public class LexerTest {
         assertThat(tokens.get(2).type, equalTo(TokenType.EOF));
         assertThat(tokens.get(2).line, equalTo(1));
         assertThat(tokens.get(2).column, equalTo(25));
+    }
+
+    @Test
+    public void parsesDoublePrecisionCompatibleNumber() {
+        List<Token> tokens = tokenize("1.5");
+
+        assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
+        Number value = tokens.get(0).value.expectNumberValue();
+        assertThat(value, is(instanceOf(Double.class)));
+        assertThat(value.doubleValue(), equalTo(1.5));
+    }
+
+    @Test
+    public void parsesDoublePrecisionIncompatibleNumberAsBigDecimal() {
+        // 2^53 + 1 with a decimal triggers the float path but loses precision as a double.
+        List<Token> tokens = tokenize("9007199254740993.0");
+
+        assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
+        Number value = tokens.get(0).value.expectNumberValue();
+        assertThat(value, is(instanceOf(BigDecimal.class)));
+        assertThat(value.toString(), equalTo("9007199254740993.0"));
+    }
+
+    @Test
+    public void parsesOverflowPositiveDoubleAsBigDecimal() {
+        // 1e309 overflows Double to +Infinity, but is a valid BigDecimal.
+        List<Token> tokens = tokenize("1e309");
+
+        assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
+        Number value = tokens.get(0).value.expectNumberValue();
+        assertThat(value, is(instanceOf(BigDecimal.class)));
+        assertThat(value, equalTo(new BigDecimal("1e309")));
+    }
+
+    @Test
+    public void parsesOverflowNegativeDoubleAsBigDecimal() {
+        // -1e309 overflows Double to -Infinity, but is a valid BigDecimal.
+        List<Token> tokens = tokenize("-1e309");
+
+        assertThat(tokens.get(0).type, equalTo(TokenType.NUMBER));
+        Number value = tokens.get(0).value.expectNumberValue();
+        assertThat(value, is(instanceOf(BigDecimal.class)));
+        assertThat(value, equalTo(new BigDecimal("-1e309")));
     }
 
     @Test

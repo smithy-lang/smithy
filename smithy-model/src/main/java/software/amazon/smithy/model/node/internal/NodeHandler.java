@@ -6,8 +6,6 @@ package software.amazon.smithy.model.node.internal;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -16,6 +14,7 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.NumberUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -69,21 +68,7 @@ public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode
 
     @Override
     void endNumber(String string, SourceLocation location) {
-        if (string.contains("e") || string.contains("E") || string.contains(".")) {
-            double doubleValue = Double.parseDouble(string);
-            if (Double.isFinite(doubleValue)) {
-                value = new NumberNode(doubleValue, location);
-            } else {
-                value = new NumberNode(new BigDecimal(string), location);
-            }
-        } else {
-            try {
-                value = new NumberNode(Long.parseLong(string), location);
-            } catch (NumberFormatException e) {
-                value = new NumberNode(new BigInteger(string), location);
-            }
-
-        }
+        value = new NumberNode(NumberUtils.parseNumber(string), location);
     }
 
     @Override

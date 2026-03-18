@@ -4,10 +4,9 @@
  */
 package software.amazon.smithy.model.loader;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.NoSuchElementException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.NumberUtils;
 import software.amazon.smithy.utils.SimpleParser;
 
 class DefaultTokenizer implements IdlTokenizer {
@@ -318,22 +317,7 @@ class DefaultTokenizer implements IdlTokenizer {
 
     private IdlToken parseNumber() {
         try {
-            String lexeme = ParserUtils.parseNumber(parser);
-            if (lexeme.contains("e") || lexeme.contains("E") || lexeme.contains(".")) {
-                double value = Double.parseDouble(lexeme);
-                if (Double.isFinite(value)) {
-                    currentTokenNumber = value;
-                } else {
-                    currentTokenNumber = new BigDecimal(lexeme);
-                }
-            } else {
-                try {
-                    currentTokenNumber = Long.parseLong(lexeme);
-                } catch (NumberFormatException e) {
-                    currentTokenNumber = new BigInteger(lexeme);
-                }
-            }
-
+            currentTokenNumber = NumberUtils.parseNumber(ParserUtils.parseNumber(parser));
             currentTokenEnd = parser.position();
             return currentTokenType = IdlToken.NUMBER;
         } catch (RuntimeException e) {
