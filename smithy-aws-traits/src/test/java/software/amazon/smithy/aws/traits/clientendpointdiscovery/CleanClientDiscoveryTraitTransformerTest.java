@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -139,6 +141,25 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .get();
 
         assertTrue(id.hasTrait(ClientEndpointDiscoveryIdTrait.ID));
+    }
 
+    @Test
+    public void clientDiscoveryTraitIsPreservedAfterCreateDedicatedInputAndOutputTransform() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("test-model.json"))
+                .assemble()
+                .unwrap();
+        Model actualResult = ModelTransformer.create().createDedicatedInputAndOutput(model, "Request", "Response");
+        Model expectedResult = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("test-model-dedicated-input-and-output.json"))
+                .assemble()
+                .unwrap();
+
+        Node actualNode = ModelSerializer.builder().build().serialize(actualResult);
+        Node expectedNode = ModelSerializer.builder().build().serialize(expectedResult);
+
+        Node.assertEquals(actualNode, expectedNode);
     }
 }

@@ -55,6 +55,8 @@ final class CreateDedicatedInputAndOutput {
             }
 
             OperationShape.Builder builder = operation.toBuilder();
+            boolean removeInput = false;
+            boolean removeOutput = false;
             if (inputChanged) {
                 LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
                         operation.getId(),
@@ -65,7 +67,7 @@ final class CreateDedicatedInputAndOutput {
                 // If the ID changed and the original is no longer referenced, then remove it.
                 boolean idChanged = !input.getId().equals(updatedInput.getId());
                 if (idChanged && isSingularReference(reverse, input, operation)) {
-                    toRemove.add(input);
+                    removeInput = true;
                     LOGGER.fine("Removing now unused input shape " + input.getId());
                 }
             }
@@ -79,18 +81,29 @@ final class CreateDedicatedInputAndOutput {
                 // If the ID changed and the original is no longer referenced, then remove it.
                 boolean idChanged = !output.getId().equals(updatedOutput.getId());
                 if (idChanged && isSingularReference(reverse, output, operation)) {
-                    toRemove.add(output);
+                    removeOutput = true;
                     LOGGER.fine("Removing now unused output shape " + output.getId());
                 }
+            }
+            // Handle a corner case when the operation uses the same structure for input and output and
+            // it is named as expected for one of them, e.g., GetFoo with input and output GetFooInput
+            // In that case we don't want to delete it or the newly introduced input will be deleted as well.
+            if (removeInput && removeOutput) {
+                toRemove.add(input);
+                toRemove.add(output);
+            } else if (removeInput && !input.getId().equals(updatedOutput.getId())) {
+                toRemove.add(input);
+            } else if (removeOutput && !output.getId().equals(updatedInput.getId())) {
+                toRemove.add(output);
             }
             updates.add(builder.build());
         }
 
-        // Remove no longer referenced shapes.
-        Model result = transformer.removeShapes(model, toRemove);
-
         // Replace the operations and add new shapes.
-        return transformer.replaceShapes(result, updates);
+        Model result = transformer.replaceShapes(model, updates);
+
+        // Remove no longer referenced shapes.
+        return transformer.removeShapes(result, toRemove);
     }
 
     private StructureShape createdUpdatedInput(
