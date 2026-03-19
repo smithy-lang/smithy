@@ -87,8 +87,7 @@ final class CreateDedicatedInputAndOutput {
             }
             // Handle a corner case when the operation uses the same structure for input and output and
             // it is named as expected for one of them, e.g., GetFoo with input and output GetFooInput
-            // In that case we don't want to delete it or the newly introduced input as will be deleted
-            // as well.
+            // In that case we don't want to delete it or the newly introduced input will be deleted as well.
             if (removeInput && removeOutput) {
                 toRemove.add(input);
                 toRemove.add(output);
