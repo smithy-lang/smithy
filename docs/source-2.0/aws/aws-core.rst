@@ -245,10 +245,10 @@ purposes. Additionally, this value can be used to attempt to resolve endpoints.
 
 .. _service-cloudwatch-metric-namespace:
 
-``cloudWatchMetricNamespace``
-=============================
+``cloudWatchNamespace``
+=======================
 
-The ``cloudWatchMetricNamespace`` property is a ``string`` value that defines
+The ``cloudWatchNamespace`` property is a ``string`` value that defines
 the `AWS customer-facing metric namespace`_ of most metrics emitted by the
 service.
 

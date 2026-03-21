@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Fix aws.api#service docs to use correct property name cloudWatchNamespace instead of cloudWatchMetricNamespace. Also correct a typo in CONTRIBUTING.md.",
+  "pull_requests": [
+    "[#3008](https://github.com/smithy-lang/smithy/pull/3008)"
+  ]
+}

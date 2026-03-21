@@ -42,7 +42,7 @@ To send us a pull request, please:
 3. Follow the same coding style as the rest of the project.
 4. Add new test cases that exercise the change and covers all non-trivial branches.
 5. Ensure that running `./gradlew clean build` completes successfully.
-6. Write a changelog entry using [`./changes/new-change`](.changes/README.md).
+6. Write a changelog entry using [`./.changes/new-change`](.changes/README.md).
 7. Commit to your fork using clear commit messages by following the guidance at
    [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/).
 8. Send us a pull request, answering any default questions in the pull request interface.
