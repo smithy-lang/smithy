@@ -21,7 +21,10 @@ html2:
 build-landing-page:
 	cd landing-page && npm run build
 
-html: html2 html1 build-landing-page merge-versions 
+llms-txt: html2
+	python3 generate_llms_txt.py
+
+html: html2 html1 build-landing-page merge-versions llms-txt
 
 serve: 
 	npx http-server build/html
