@@ -24,7 +24,7 @@ build-landing-page:
 llms-txt: html2
 	@source build/venv/bin/activate && python3 generate_llms_txt.py
 
-html: html2 html1 build-landing-page llms-txt merge-versions 
+html: html2 html1 build-landing-page merge-versions llms-txt
 
 serve: 
 	npx http-server build/html
