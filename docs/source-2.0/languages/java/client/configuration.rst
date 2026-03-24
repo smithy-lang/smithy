@@ -52,7 +52,7 @@ To configure the client plugin with a default protocol, add the protocol’s ful
     :caption: smithy-build.json
 
     "plugins": {
-        "java-client-codegen": {
+        "java-codegen": {
           // Set the default protocol for the client.
           "protocol": "smithy.protocols#rpcv2Cbor",
           // ... additional settings
@@ -126,7 +126,7 @@ As a reminder, make sure the custom protocol trait is applied to the service sha
 
 Codec‘s are used by client and server protocols for generic (de)serialization of types into wire data, such as JSON
 Protocols SHOULD use an appropriate codec for (de)serialization where possible.
-Smithy Java provides XML, JSON, and CBOR codecs.
+Smithy Java provides CBOR, JSON, and XML codecs.
 
 When writing a custom protocol, we recommend writing compliance tests, which are used to validate the protocol across
 multiple language implementations. The ``protocol-test-harness`` package provides a `JUnit5 <https://junit.org/junit5/>`_
@@ -167,7 +167,7 @@ To set a default transport, add the following to your :ref:`smithy-build.json <s
 .. code-block:: json
     :caption: smithy-build.json
 
-    "java-client-codegen": {
+    "java-codegen": {
         //...
         "transport": {
             "http-java": {}
@@ -348,7 +348,7 @@ Or, we could create a custom resolver that resolves the ``ApiKeyIdentity`` from 
         }
 
         @Override
-        public CompletableFuture<IdentityResult<AwsCredentialsIdentity>> resolveIdentity(AuthProperties requestProperties) {
+        public IdentityResult<AwsCredentialsIdentity> resolveIdentity(Context requestProperties) {
             String apiKey = System.getenv(API_KEY_PROPERTY);
 
             if (apiKey == null || apiKey.isEmpty())
@@ -357,7 +357,7 @@ Or, we could create a custom resolver that resolves the ``ApiKeyIdentity`` from 
                 );
             }
 
-            return CompletableFuture.completedFuture(IdentityResult.of(ApiKeyIdentity.create(apiKey)));
+            return IdentityResult.of(ApiKeyIdentity.create(apiKey));
         }
 
 Smithy Java also allows identity resolvers to be chained together if we want to check multiple locations for the client:
@@ -440,7 +440,7 @@ A client setting can then be added to our generated clients using the defaultSet
 .. code-block:: json
     :caption: smithy-build.json
 
-    "java-client-codegen": {
+    "java-codegen": {
         //...
         "defaultSettings": [
             "com.example.settings.CustomSetting"

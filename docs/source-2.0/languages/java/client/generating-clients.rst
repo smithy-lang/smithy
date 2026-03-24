@@ -2,7 +2,7 @@
 Generating Clients
 ==================
 
-The Smithy Java :ref:`build plugin <plugins>`, ``java-client-codegen``, generates Java clients from Smithy models,
+The Smithy Java :ref:`build plugin <plugins>`, ``java-codegen``, generates Java clients from Smithy models,
 and can be executed with `Gradle <https://gradle.org/>`_ (recommended) or the :ref:`Smithy CLI <smithy-cli>`.
 
 .. admonition:: Important
@@ -61,7 +61,7 @@ Add the following dependencies to your project:
 
     dependencies {
         // Add the code generation plugins to the smithy build classpath
-        smithyBuild("software.amazon.smithy.java:client-codegen:__smithy_java_version__")
+        smithyBuild("software.amazon.smithy.java:codegen-plugin:__smithy_java_version__")
 
         // Add the client-core dependency needed by the generated code
         implementation("software.amazon.smithy.java:client-core:__smithy_java_version__")
@@ -78,7 +78,7 @@ The ``smithy-base``` Gradle plugin will automatically discover any models added 
 Configuring code generation
 ---------------------------
 
-In order to execute code generation, the ``java-client-codegen`` plugin must be added to
+In order to execute code generation, the ``java-codegen`` plugin must be added to
 your :ref:`smithy-build <smithy-build>` config:
 
 .. code-block:: diff
@@ -87,10 +87,11 @@ your :ref:`smithy-build <smithy-build>` config:
    {
      "version": "1.0",
      "plugins": {
-   +    "java-client-codegen": {
+   +    "java-codegen": {
    +      "service": "com.example#CoffeeShop", // <- Replace with your service's ID
    +      // Generated Java code will use this as the root package namespace
    +      "namespace": "com.example.cafe"
+   +      "modes": ["client"]
    +    }
      }
    }
@@ -110,7 +111,7 @@ Gradle build script:
     // Add generated Java sources to the main sourceSet so they are compiled alongside
     // any other Java code in your package
     afterEvaluate {
-        val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), "java-client-codegen")
+        val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), "java-codegen")
         sourceSets {
             main {
                 java {
@@ -136,7 +137,7 @@ To generate and compile your client code, run a build from the root of your Grad
     ./gradlew clean build
 
 Building the project will generate code in the
-``build/smithy-projections/<project-name>/source/java-client-codegen/`` directory.
+``build/smithy-projections/<project-name>/source/java-codegen/`` directory.
 
 ----------------
 Complete example
@@ -155,7 +156,7 @@ Gradle project to generate a Smithy Java client:
 
     dependencies {
         // Add the code generation plugin to the smithy build dependencies
-        smithyBuild("software.amazon.smithy.java.codegen:client:__smithy_java_version__")
+        smithyBuild("software.amazon.smithy.java:codegen-plugin:__smithy_java_version__")
 
         // Add any smithy model dependencies as `implementation` dependencies here.
         // For example, you might add additional trait packages here.
@@ -172,7 +173,7 @@ Gradle project to generate a Smithy Java client:
     // Add generated Java sources to the main sourceSet so they are compiled alongside
     // any other java code in your package
     afterEvaluate {
-        val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), "java-client-codegen")
+        val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), "java-codegen")
         sourceSets {
             main {
                 java {
@@ -198,7 +199,7 @@ Gradle project to generate a Smithy Java client:
     {
       "version": "1.0",
       "plugins": {
-        "java-client-codegen": {
+        "java-codegen": {
           "service": "com.example#CoffeeShop",
           "namespace": "com.example.cafe",
           // Default protocol for the client. Must have a corresponding trait in the
@@ -206,6 +207,7 @@ Gradle project to generate a Smithy Java client:
           "protocol": "aws.protocols#restJson1",
           // Adds a common header to all generated files
           "headerFile": "license.txt"
+          "modes": ["client"]
         }
       }
     }

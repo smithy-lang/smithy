@@ -6,10 +6,6 @@ The dynamic client is used to interact with services without a code-generated cl
 The dynamic client loads Smithy models at runtime, converting them to a schema-based client.
 Users can call a modeled service using document types as input and output.
 
-.. warning::
-
-    The dynamic client does not currently support streaming or event streaming.
-
 Usage
 -----
 
@@ -31,7 +27,9 @@ Then, load a Smithy model:
     ...
 
     var model = Model.assembler()
-        .addImport("/path/to/model.json")
+        // The assambler can read Smithy IDL files or Smithy AST JSON files
+        .addImport("/path/to/model.smithy")
+        .addImport("/path/to/common.json")
         .assemble()
         .unwrap();
 
