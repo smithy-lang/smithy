@@ -27,7 +27,7 @@ Then, load a Smithy model:
     ...
 
     var model = Model.assembler()
-        // The assambler can read Smithy IDL files or Smithy AST JSON files
+        // The assembler can read Smithy IDL files or Smithy AST JSON files
         .addImport("/path/to/model.smithy")
         .addImport("/path/to/common.json")
         .assemble()
