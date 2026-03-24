@@ -118,5 +118,5 @@ def generate(source_dir, output_path):
 if __name__ == "__main__":
     docs_dir = os.path.dirname(os.path.abspath(__file__))
     source = os.path.join(docs_dir, SOURCE_DIR)
-    output = sys.argv[1] if len(sys.argv) > 1 else os.path.join(docs_dir, "build", "2.0", "html", "llms.txt")
+    output = sys.argv[1] if len(sys.argv) > 1 else os.path.join(docs_dir, "build", "html", "2.0", "llms.txt")
     generate(source, output)
