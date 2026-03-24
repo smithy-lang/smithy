@@ -354,7 +354,6 @@
 <li class="toctree-l3"><a class="reference internal" href="customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic-client.html">Dynamic Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -494,7 +493,7 @@ to configure a protocol at runtime.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;java-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// Set the default protocol for the client.</span>
 <span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.protocols#rpcv2Cbor&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// ... additional settings</span>
@@ -581,7 +580,7 @@ Once you have defined your factory, add it’s fully qualified name to the servi
 As a reminder, make sure the custom protocol trait is applied to the service shape.</p>
 <p>Codec‘s are used by client and server protocols for generic (de)serialization of types into wire data, such as JSON
 Protocols SHOULD use an appropriate codec for (de)serialization where possible.
-Smithy Java provides XML, JSON, and CBOR codecs.</p>
+Smithy Java provides CBOR, JSON, and XML codecs.</p>
 <p>When writing a custom protocol, we recommend writing compliance tests, which are used to validate the protocol across
 multiple language implementations. The <code class="docutils literal notranslate"><span class="pre">protocol-test-harness</span></code> package provides a <a class="reference external" href="https://junit.org/junit5/">JUnit5</a>
 test harness for running protocol compliance tests with Smithy Java.</p>
@@ -610,7 +609,7 @@ from the discoverable transport implementations.</p>
 <p>To set a default transport, add the following to your <a class="reference internal" href="../../../guides/smithy-build-json.html#smithy-build"><span class="std std-ref">smithy-build.json</span></a>:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
 <span class="w">    </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;http-java&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
@@ -776,7 +775,7 @@ For testing purposes we will provide a static resolver as follows:</p>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">AwsCredentialsIdentity</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">resolveIdentity</span><span class="p">(</span><span class="n">AuthProperties</span><span class="w"> </span><span class="n">requestProperties</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">AwsCredentialsIdentity</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolveIdentity</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">requestProperties</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">apiKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">getenv</span><span class="p">(</span><span class="n">API_KEY_PROPERTY</span><span class="p">);</span>
 
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">apiKey</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">apiKey</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span>
@@ -785,7 +784,7 @@ For testing purposes we will provide a static resolver as follows:</p>
 <span class="w">            </span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">completedFuture</span><span class="p">(</span><span class="n">IdentityResult</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">ApiKeyIdentity</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">apiKey</span><span class="p">)));</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">IdentityResult</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">ApiKeyIdentity</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">apiKey</span><span class="p">));</span>
 <span class="w">    </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -857,7 +856,7 @@ The <code class="docutils literal notranslate"><span class="pre">ClientSetting</
 <p>A client setting can then be added to our generated clients using the defaultSettings setting in the smithy-build.json file:</p>
 <div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
 <span class="w">    </span><span class="nt">&quot;defaultSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="s2">&quot;com.example.settings.CustomSetting&quot;</span>

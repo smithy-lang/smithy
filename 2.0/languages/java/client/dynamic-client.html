@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="Codegen Integrations" href="codegen-integrations.html"><link rel="prev" title="Client Plugins" href="plugins.html">
+<link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="TypeScript" href="../../typescript/index.html"><link rel="prev" title="Client Plugins" href="plugins.html">
         <link rel="prefetch" href="../../../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../../../_static/smithy-dark.svg" as="image">
 
@@ -354,7 +354,6 @@
 <li class="toctree-l3"><a class="reference internal" href="customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Dynamic Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -458,10 +457,6 @@
 <p>The dynamic client is used to interact with services without a code-generated client.
 The dynamic client loads Smithy models at runtime, converting them to a schema-based client.
 Users can call a modeled service using document types as input and output.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The dynamic client does not currently support streaming or event streaming.</p>
-</div>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <p>Add the dynamic-client module as a dependency of your project:</p>
@@ -479,7 +474,9 @@ Users can call a modeled service using document types as input and output.</p>
 <span class="p">...</span>
 
 <span class="kd">var</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Model</span><span class="p">.</span><span class="na">assembler</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">addImport</span><span class="p">(</span><span class="s">&quot;/path/to/model.json&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// The assembler can read Smithy IDL files or Smithy AST JSON files</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addImport</span><span class="p">(</span><span class="s">&quot;/path/to/model.smithy&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addImport</span><span class="p">(</span><span class="s">&quot;/path/to/common.json&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">assemble</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">unwrap</span><span class="p">();</span>
 </pre></div>
@@ -530,12 +527,12 @@ transports, auth schemes, and endpoint resolvers:</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="codegen-integrations.html">
+          <a class="next-page" href="../../typescript/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Codegen Integrations</div>
+                <div class="title">TypeScript</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

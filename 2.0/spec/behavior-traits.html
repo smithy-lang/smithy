@@ -354,7 +354,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -647,8 +646,8 @@ continuation token. When this value is present and not empty in
 operation output, it indicates that there are more results to retrieve.
 To get the next page of results, the client passes the received output
 continuation token to the input continuation token of the next request.
-This output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD target
-a string shape. It can, but SHOULD NOT target a map shape.</p>
+This output member SHOULD NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and SHOULD
+target a string shape. It can, but SHOULD NOT target a map shape.</p>
 <p>When contained within a service, a paginated operation MUST either
 configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
 the service that contains the operation.</p>

@@ -354,7 +354,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/customization.html">Customizing Client Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../languages/java/client/codegen-integrations.html">Codegen Integrations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
@@ -474,7 +473,7 @@ generate AWS SDK client classes and the namespace used in ARNs.</p>
 <li><p><a class="reference internal" href="#service-cloudtrail-event-source"><span class="std std-ref">cloudTrailEventSource</span></a></p></li>
 <li><p><a class="reference internal" href="#service-doc-id"><span class="std std-ref">docId</span></a></p></li>
 <li><p><a class="reference internal" href="#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a></p></li>
-<li><p><a class="reference internal" href="#service-cloudwatch-metric-namespace"><span class="std std-ref">cloudWatchMetricNamespace</span></a></p></li>
+<li><p><a class="reference internal" href="#service-cloudwatch-namespace"><span class="std std-ref">cloudWatchNamespace</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -651,9 +650,9 @@ it MUST NOT be used for client naming or for any other purpose that requires
 a static, unique identifier. <a class="reference internal" href="#service-sdk-id"><span class="std std-ref">sdkId</span></a> should be used for those
 purposes. Additionally, this value can be used to attempt to resolve endpoints.</p>
 </section>
-<section id="cloudwatchmetricnamespace">
-<span id="service-cloudwatch-metric-namespace"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudWatchMetricNamespace</span></code><a class="headerlink" href="#cloudwatchmetricnamespace" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">cloudWatchMetricNamespace</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines
+<section id="cloudwatchnamespace">
+<span id="service-cloudwatch-namespace"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudWatchNamespace</span></code><a class="headerlink" href="#cloudwatchnamespace" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">cloudWatchNamespace</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines
 the <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Namespace">AWS customer-facing metric namespace</a> of most metrics emitted by the
 service.</p>
 <p>This value is not unique across services. Some services may emit metrics under
@@ -2370,7 +2369,7 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
 <li><a class="reference internal" href="#docid"><code class="docutils literal notranslate"><span class="pre">docId</span></code></a></li>
 <li><a class="reference internal" href="#endpointprefix"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
-<li><a class="reference internal" href="#cloudwatchmetricnamespace"><code class="docutils literal notranslate"><span class="pre">cloudWatchMetricNamespace</span></code></a></li>
+<li><a class="reference internal" href="#cloudwatchnamespace"><code class="docutils literal notranslate"><span class="pre">cloudWatchNamespace</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>

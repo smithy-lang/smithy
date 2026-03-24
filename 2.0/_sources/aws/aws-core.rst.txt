@@ -27,7 +27,7 @@ Value type
     * :ref:`service-cloudtrail-event-source`
     * :ref:`service-doc-id`
     * :ref:`service-endpoint-prefix`
-    * :ref:`service-cloudwatch-metric-namespace`
+    * :ref:`service-cloudwatch-namespace`
 
 The following example defines an AWS service that uses the default values of
 ``cloudFormationService``, ``arnNamespace``, ``cloudTrailEventSource`` and
@@ -243,12 +243,12 @@ a static, unique identifier. :ref:`service-sdk-id` should be used for those
 purposes. Additionally, this value can be used to attempt to resolve endpoints.
 
 
-.. _service-cloudwatch-metric-namespace:
+.. _service-cloudwatch-namespace:
 
-``cloudWatchMetricNamespace``
-=============================
+``cloudWatchNamespace``
+=======================
 
-The ``cloudWatchMetricNamespace`` property is a ``string`` value that defines
+The ``cloudWatchNamespace`` property is a ``string`` value that defines
 the `AWS customer-facing metric namespace`_ of most metrics emitted by the
 service.
 

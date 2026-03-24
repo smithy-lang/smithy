@@ -81,7 +81,7 @@ The added agent header has the form:
       - Example
       - Description
     * - ``smithy``
-      - ``0.0.1``
+      - ``__smithy_java_version__``
       - Smithy Java version in use by client in SemVer format.
     * - ``ua``
       - ``2.1``
