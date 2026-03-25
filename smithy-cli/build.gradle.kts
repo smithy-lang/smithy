@@ -287,6 +287,7 @@ tasks {
     val checksumImages by registering(Checksum::class) {
         dependsOn(runtimeZip)
         checksumAlgorithm = Checksum.Algorithm.SHA256
+        appendFileNameToChecksum.set(true)
         outputDirectory = runtime.imageDir
         inputFiles.setFrom(imageZips)
     }
