@@ -114,7 +114,7 @@ fully qualified name to the ``defaultPlugins`` setting to your :ref`smithy-build
 .. code-block:: json
     :caption: smithy-build.json
 
-    "java-client-codegen": {
+    "java-codegen": {
          // ...
          "defaultPlugins": [
             "fully.qualified.plugin.name.MyPlugin"
