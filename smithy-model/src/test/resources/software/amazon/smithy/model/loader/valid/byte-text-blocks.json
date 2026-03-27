@@ -1,0 +1,77 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#DiscardLastLineOffset": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGVsbG8KVGhlcmUKT2sK"
+            }
+        },
+        "smithy.example#EmbeddedQuotesTextBlock": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "IkhpIg=="
+            }
+        },
+        "smithy.example#EmptyLinesAreIncidentalWs": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGVsbG8KCnRoZXJlCg=="
+            }
+        },
+        "smithy.example#EmptyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": ""
+            }
+        },
+        "smithy.example#EscapedNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkgdGhlcmUgYnll"
+            }
+        },
+        "smithy.example#NewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Cg=="
+            }
+        },
+        "smithy.example#NoTrailingNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGVsbG8="
+            }
+        },
+        "smithy.example#SingleCharacterTextBlock": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Zg=="
+            }
+        },
+        "smithy.example#TrailingNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGVsbG8K"
+            }
+        },
+        "smithy.example#WithHex": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkgdGhlcmUK"
+            }
+        },
+        "smithy.example#WithNullByte": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkACg=="
+            }
+        },
+        "smithy.example#WithUnicode": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "SGkg7oGaLgo="
+            }
+        }
+    }
+}
