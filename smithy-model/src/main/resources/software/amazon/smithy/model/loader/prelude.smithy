@@ -659,6 +659,22 @@ structure streaming {}
 )
 structure requiresLength {}
 
+/// Indicates that the service may not respond immediately to requests for the targeted
+/// operation. This can allow services more time to prepare more detailed responses or
+/// allow them to hold the request open as it waits for information to become
+/// available.
+///
+/// When making requests for an operation targeted by this trait, clients should extend
+/// any timeouts they have for the service to respond. If set, they should wait for the
+/// amount of time indicated by the `timeoutMillis` member.
+@trait(
+    selector: "operation"
+)
+structure longPoll {
+    /// The amount of time in milliseconds that a client should wait for a response.
+    timeoutMillis: Integer
+}
+
 /// Tags a shape with arbitrary tag names that can be used to filter and
 /// group shapes in the model.
 @trait
