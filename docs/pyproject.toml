@@ -10,7 +10,7 @@ name = "smithy"
 version = "1.0.0"
 dependencies = [
     "sphinx==9.1.0",
-    "pygments==2.19.2",
+    "pygments==2.20.0",
     "furo==2025.12.19",
 
     # Used by new docs
