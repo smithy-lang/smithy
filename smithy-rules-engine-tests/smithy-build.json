@@ -1,0 +1,12 @@
+{
+    "version": "1.0",
+    "projections": {
+        "transformed": {
+            "transforms": [
+                {
+                    "name": "compileBdd"
+                }
+            ]
+        }
+    }
+}
