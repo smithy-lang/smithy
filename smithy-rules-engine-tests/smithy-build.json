@@ -1,7 +1,7 @@
 {
     "version": "1.0",
     "projections": {
-        "transformed": {
+        "bddSource": {
             "transforms": [
                 {
                     "name": "compileBdd"
