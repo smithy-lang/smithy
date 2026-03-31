@@ -770,6 +770,22 @@ string pattern
 )
 structure required {}
 
+/// Defines values which are specifically allowed and/or disallowed for a shape.
+@trait(
+    selector: ":test(number, string, blob, structure, list, map, member)"
+)
+structure shapeExamples {
+  allowed: ShapeExampleList
+  disallowed: ShapeExampleList
+}
+
+@private
+@length(min: 1)
+@sparse
+list ShapeExampleList {
+  member: Document
+}
+
 /// Configures a structure member's resource property mapping behavior.
 @trait(
     selector: "structure > member"

@@ -44,6 +44,7 @@ software.amazon.smithy.model.validation.validators.ServiceAuthDefinitionsValidat
 software.amazon.smithy.model.validation.validators.ServiceBoundResourceOperationValidator
 software.amazon.smithy.model.validation.validators.ServiceValidator
 software.amazon.smithy.model.validation.validators.SetValidator
+software.amazon.smithy.model.validation.validators.ShapeExamplesTraitValidator
 software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator
 software.amazon.smithy.model.validation.validators.ShapeRecursionValidator
 software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator
