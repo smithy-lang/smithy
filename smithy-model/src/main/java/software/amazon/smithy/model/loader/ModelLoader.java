@@ -71,7 +71,9 @@ final class ModelLoader {
                     return loadParsedNode(Node.parse(inputStream, filename), operationConsumer);
                 }
             } else {
-                LOGGER.warning(() -> "Ignoring unrecognized Smithy model file: " + filename);
+                if (!filename.endsWith("manifest")) {
+                    LOGGER.warning(() -> "Ignoring unrecognized Smithy model file: " + filename);
+                }
                 return false;
             }
         } catch (IOException e) {
