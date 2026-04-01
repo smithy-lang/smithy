@@ -1,4 +1,5 @@
 software.amazon.smithy.model.validation.validators.AuthTraitValidator
+software.amazon.smithy.model.validation.validators.CodegenMetadataValidator
 software.amazon.smithy.model.validation.validators.DefaultValueInUpdateValidator
 software.amazon.smithy.model.validation.validators.DefaultTraitValidator
 software.amazon.smithy.model.validation.validators.DeprecatedTraitValidator
@@ -54,6 +55,7 @@ software.amazon.smithy.model.validation.validators.TraitBreakingChangesValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator
+software.amazon.smithy.model.validation.validators.TypedMetadataValidator
 software.amazon.smithy.model.validation.validators.UnionValidator
 software.amazon.smithy.model.validation.validators.UnitTypeValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator

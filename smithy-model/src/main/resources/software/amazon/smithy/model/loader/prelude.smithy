@@ -1265,3 +1265,13 @@ structure requestCompression {
     @required
     encodings: RequestCompressionEncodingsList
 }
+
+structure Codegen {
+    includeNamespaces: NamespaceList
+    includeBySelector: String
+}
+
+@private
+list NamespaceList {
+    member: String
+}

@@ -1,0 +1,2 @@
+[ERROR] smithy.api#Codegen: `not a namespace` is not a valid namespace. | CodegenMetadata.InvalidNamespace
+[ERROR] -: Syntax error at line 1 column 4, near ` a selector`: Unknown shape type: not; expression: not a selector | Model

@@ -1,0 +1,2 @@
+[ERROR] -: `__type__` must be a valid shape id. | MetadataType.InvalidShapeId
+[ERROR] test#Missing: Shape `test#Missing` not found. | MetadataType.ShapeNotFound

@@ -1,0 +1,3 @@
+[ERROR] smithy.api#String: Metadata type must be a structure shape, but `smithy.api#String` is a string. | MetadataType.InvalidShapeType
+[ERROR] test#TestMetadata: foo: Expected number value for integer shape, `smithy.api#Integer`; found string value, `bar` | MetadataType
+[WARNING] test#TestMetadata: Member `__type__` does not exist in `test#TestMetadata` | MetadataType.UnknownMember.test#TestMetadata.__type__
