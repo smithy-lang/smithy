@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Added client guidance for interceptors.",
+  "pull_requests": [
+    "[#2992](https://github.com/smithy-lang/smithy/pull/2992)"
+  ]
+}
