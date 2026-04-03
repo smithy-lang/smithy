@@ -1597,6 +1597,52 @@ if applicable.
         shape.
 
 
+.. smithy-trait:: aws.api#awsChunked
+.. _aws.api#awsChunked-trait:
+
+-------------------------------
+``aws.api#awsChunked`` trait
+-------------------------------
+
+Summary
+    Indicates that the streaming blob supports aws-chunked content encoding.
+    When present, SDKs MUST aws-chunk encode the underlying data stream.
+    aws-chunked encoding is a series of data blocks followed by a final block
+    that contains metadata about the content transferred, such as checksums.
+Trait selector
+    ``blob[trait|streaming]``
+
+    *A blob shape marked with the streaming trait*
+Value type
+    Annotation trait
+
+aws-chunked encoding is a mechanism to collect metadata about a data stream
+while streaming it, instead of paying an up-front cost. For example, when
+calculating a checksum, an SDK would normally consume the entire stream to
+compute it. With aws-chunked encoding, a running checksum is updated as
+chunks of data are streamed, and the full checksum is sent as a trailing
+header.
+
+If an SDK knows the information that will be included in the trailer headers
+ahead of time (e.g., the modeled checksum), SDKs MUST NOT use aws-chunked
+encoding. The encoding would be unnecessary overhead in the request.
+
+If a data stream has both the ``awsChunked`` trait and the
+:ref:`requiresLength-trait`, SDKs MUST set the header
+``x-amz-decoded-Content-Length`` to the length of the unencoded content, and
+MUST NOT set the header ``Content-Length``.
+
+aws-chunked MUST be applied after other content encodings such as gzip. When
+the :ref:`requestCompression-trait` is specified, compression MUST occur
+before the stream content encoding.
+
+.. code-block:: smithy
+
+    @streaming
+    @awsChunked
+    blob StreamingBlob
+
+
 --------
 Appendix
 --------

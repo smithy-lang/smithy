@@ -70,6 +70,17 @@ structure arnReference {
     service: String
 }
 
+/// Indicates that the streaming blob supports aws-chunked content encoding.
+///
+/// When present, SDKs MUST aws-chunk encode the underlying data stream.
+/// aws-chunked encoding is a series of data blocks followed by a final block
+/// that contains metadata about the content transferred (e.g., checksums).
+@trait(
+    selector: "blob[trait|streaming]"
+    breakingChanges: [{change: "remove"}]
+)
+structure awsChunked {}
+
 /// Indicates that the target operation should use the client's endpoint
 /// discovery logic.
 @trait(selector: "operation")
