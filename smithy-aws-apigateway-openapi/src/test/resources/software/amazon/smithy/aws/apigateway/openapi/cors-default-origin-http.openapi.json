@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyService",
+    "version": "2024-01-01"
+  },
+  "paths": {
+    "/foo": {
+      "get": {
+        "operationId": "GetFoo",
+        "responses": {
+          "200": {
+            "description": "GetFoo 200 response"
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "payloadFormatVersion": "1.0",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:GetFoo/invocations"
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "aws.auth.sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
+      }
+    }
+  },
+  "security": [
+    {
+      "aws.auth.sigv4": []
+    }
+  ],
+  "x-amazon-apigateway-cors": {
+    "allowOrigins": [
+      "*"
+    ],
+    "maxAge": 600,
+    "allowMethods": [
+      "*"
+    ],
+    "exposeHeaders": [
+      "*"
+    ],
+    "allowHeaders": [
+      "*"
+    ]
+  }
+}

@@ -76,4 +76,25 @@ public class CorsHttpIntegrationTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void usesDefaultWildcardOriginForHttpApis() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-default-origin.smithy"))
+                .assemble()
+                .unwrap();
+
+        OpenApiConfig config = new OpenApiConfig();
+        ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
+        apiGatewayConfig.setApiGatewayType(ApiGatewayConfig.ApiType.HTTP);
+        config.putExtensions(apiGatewayConfig);
+        config.setService(ShapeId.from("example.smithy#MyService"));
+
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-default-origin-http.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }

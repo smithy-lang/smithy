@@ -88,12 +88,21 @@ public final class CorsHttpIntegration implements ApiGatewayMapper {
             return openapi;
         }
 
+        ApiGatewayConfig apiGatewayConfig = context.getConfig().getExtensions(ApiGatewayConfig.class);
+        if (apiGatewayConfig.getCorsOriginKey() != null) {
+            LOGGER.warning("The `corsOriginKey` setting is ignored for HTTP APIs, which natively support "
+                    + "multiple origins. All values from the `origins` map will be used.");
+        }
+
         Set<String> allowedMethodsInService = getMethodsUsedInApi(context, openapi);
         Set<String> allowedRequestHeaders = getAllowedHeaders(context, trait, openapi);
         Set<String> exposedHeaders = getExposedHeaders(context, trait, openapi);
 
         ObjectNode.Builder corsObjectBuilder = Node.objectNodeBuilder()
-                .withMember("allowOrigins", Node.fromStrings(trait.getOrigin()))
+                .withMember("allowOrigins",
+                        Node.fromStrings(trait.getOrigins().isEmpty()
+                                ? ListUtils.of(trait.resolveOrigin(null))
+                                : trait.getOrigins().values()))
                 .withMember("maxAge", trait.getMaxAge())
                 .withMember("allowMethods", Node.fromStrings(allowedMethodsInService))
                 .withMember("exposeHeaders", Node.fromStrings(exposedHeaders))

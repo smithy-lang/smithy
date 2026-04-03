@@ -28,8 +28,8 @@ import software.amazon.smithy.utils.Pair;
  * Access-Control-Expose-Headers CORS headers that contains every header
  * exposed by the integration, and Access-Control-Allow-Credentials header
  * if the operation uses a security scheme that needs it, and
- * Access-Control-Allow-Origin header that is the result of
- * {@link CorsTrait#getOrigin()}.
+ * Access-Control-Allow-Origin header resolved from the {@code cors} trait
+ * using {@link CorsHeader#resolveRestOrigin}.
  */
 final class AddCorsToRestIntegrations implements ApiGatewayMapper {
 
@@ -99,7 +99,9 @@ final class AddCorsToRestIntegrations implements ApiGatewayMapper {
         }
 
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
-        corsHeaders.put(CorsHeader.ALLOW_ORIGIN, cors.getOrigin());
+        corsHeaders.put(CorsHeader.ALLOW_ORIGIN,
+                CorsHeader.resolveRestOrigin(cors,
+                        context.getConfig().getExtensions(ApiGatewayConfig.class)));
         if (context.usesHttpCredentials()) {
             corsHeaders.put(CorsHeader.ALLOW_CREDENTIALS, "true");
         }

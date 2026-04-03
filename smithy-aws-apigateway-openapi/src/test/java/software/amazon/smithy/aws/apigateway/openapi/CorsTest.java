@@ -156,4 +156,20 @@ public class CorsTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void usesDefaultWildcardOriginWhenNotSpecified() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cors-default-origin.smithy"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("cors-default-origin-rest.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }
