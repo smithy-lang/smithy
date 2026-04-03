@@ -1722,6 +1722,38 @@ headers will be omitted.
     }
 
 
+.. _generate-openapi-apigateway-setting-corsOriginKey:
+
+corsOriginKey (``string``)
+--------------------------
+
+Sets the key to select from the ``origins`` map of the ``cors`` trait when
+generating a REST API. REST APIs only support a single
+``Access-Control-Allow-Origin`` value per response. When the ``cors`` trait
+uses the ``origins`` map, this setting is required to select which entry to
+use by its key name.
+
+This setting is ignored for HTTP APIs, which natively support multiple
+origins through the ``allowOrigins`` array in the
+``x-amazon-apigateway-cors`` extension.
+
+An error is raised if the ``origins`` map is used without this setting, or
+if the specified key is not found in the map.
+
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "corsOriginKey": "prod"
+            }
+        }
+    }
+
+
 .. _generate-openapi-apigateway-setting-syncCorsPreflightIntegration:
 
 syncCorsPreflightIntegration (``boolean``)

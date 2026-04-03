@@ -4,11 +4,13 @@
  */
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ResponseObject;
@@ -53,5 +55,23 @@ enum CorsHeader {
         }
 
         return result;
+    }
+
+    static String resolveRestOrigin(CorsTrait cors, ApiGatewayConfig config) {
+        // The origins map requires a corsOriginKey to select which entry to use,
+        // since REST APIs only support a single Access-Control-Allow-Origin value.
+        String key = config.getCorsOriginKey();
+        Map<String, String> origins = cors.getOrigins();
+        if (!origins.isEmpty() && key == null) {
+            throw new OpenApiException(
+                    "The `corsOriginKey` setting is required when the cors trait uses the `origins` map "
+                            + "with a REST API. Available keys: " + origins.keySet());
+        }
+
+        try {
+            return cors.resolveOrigin(key);
+        } catch (RuntimeException e) {
+            throw new OpenApiException(e);
+        }
     }
 }
