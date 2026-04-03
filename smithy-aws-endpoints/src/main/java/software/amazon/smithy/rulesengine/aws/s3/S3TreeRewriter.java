@@ -57,14 +57,19 @@ public final class S3TreeRewriter {
 
     private S3TreeRewriter() {}
 
+    private static final Set<Transform> DEFAULT_TRANSFORMS = EnumSet.of(
+            Transform.AZ_CANONICALIZATION,
+            Transform.S3EXPRESS_ENDPOINTS);
+
     /**
-     * Transforms the given endpoint rule set by applying all S3 canonicalization transforms.
+     * Transforms the given endpoint rule set by applying the default S3 canonicalization transforms
+     * (AZ canonicalization and S3Express endpoints).
      *
      * @param ruleSet Rules to transform.
      * @return the transformed rule set.
      */
     public static EndpointRuleSet transform(EndpointRuleSet ruleSet) {
-        return transform(ruleSet, EnumSet.allOf(Transform.class));
+        return transform(ruleSet, DEFAULT_TRANSFORMS);
     }
 
     /**
