@@ -5,16 +5,19 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<CorsTrait> {
@@ -24,6 +27,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     private static final int DEFAULT_MAX_AGE = 600;
 
     private final String origin;
+    private final Map<String, String> origins;
     private final int maxAge;
     private final Set<String> additionalAllowedHeaders;
     private final Set<String> additionalExposedHeaders;
@@ -31,13 +35,18 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     private CorsTrait(Builder builder) {
         super(ID, builder.sourceLocation);
         origin = builder.origin;
+        origins = builder.origins.copy();
         maxAge = builder.maxAge;
-        additionalAllowedHeaders = SetUtils.copyOf(builder.additionalAllowedHeaders);
-        additionalExposedHeaders = SetUtils.copyOf(builder.additionalExposedHeaders);
+        additionalAllowedHeaders = builder.additionalAllowedHeaders.copy();
+        additionalExposedHeaders = builder.additionalExposedHeaders.copy();
     }
 
     public String getOrigin() {
         return origin;
+    }
+
+    public Map<String, String> getOrigins() {
+        return origins;
     }
 
     public int getMaxAge() {
@@ -57,6 +66,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         return builder()
                 .sourceLocation(getSourceLocation())
                 .origin(origin)
+                .origins(origins)
                 .maxAge(maxAge)
                 .additionalAllowedHeaders(additionalAllowedHeaders)
                 .additionalExposedHeaders(additionalExposedHeaders);
@@ -69,6 +79,10 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
                         Optional.of(origin)
                                 .filter(val -> !val.equals(DEFAULT_ORIGIN))
                                 .map(Node::from))
+                .withOptionalMember("origins",
+                        Optional.of(origins)
+                                .filter(FunctionalUtils.not(Map::isEmpty))
+                                .map(ObjectNode::fromStringMap))
                 .withOptionalMember("maxAge",
                         Optional.of(maxAge)
                                 .filter(val -> !val.equals(DEFAULT_MAX_AGE))
@@ -93,6 +107,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         } else {
             CorsTrait trait = (CorsTrait) other;
             return origin.equals(trait.origin)
+                    && origins.equals(trait.origins)
                     && maxAge == trait.maxAge
                     && additionalAllowedHeaders.equals(trait.additionalAllowedHeaders)
                     && additionalExposedHeaders.equals(trait.additionalExposedHeaders);
@@ -101,7 +116,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
     @Override
     public int hashCode() {
-        return Objects.hash(toShapeId(), origin, maxAge, additionalAllowedHeaders, additionalExposedHeaders);
+        return Objects.hash(toShapeId(), origin, origins, maxAge, additionalAllowedHeaders, additionalExposedHeaders);
     }
 
     public static Builder builder() {
@@ -111,14 +126,23 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     public static final class Builder extends AbstractTraitBuilder<CorsTrait, Builder> {
 
         private String origin = DEFAULT_ORIGIN;
+        private final BuilderRef<Map<String, String>> origins = BuilderRef.forOrderedMap();
         private int maxAge = DEFAULT_MAX_AGE;
-        private Set<String> additionalAllowedHeaders = SetUtils.of();
-        private Set<String> additionalExposedHeaders = SetUtils.of();
+        private final BuilderRef<Set<String>> additionalAllowedHeaders =
+                BuilderRef.forSortedSet(String.CASE_INSENSITIVE_ORDER);
+        private final BuilderRef<Set<String>> additionalExposedHeaders =
+                BuilderRef.forSortedSet(String.CASE_INSENSITIVE_ORDER);
 
         private Builder() {}
 
         public Builder origin(String origin) {
             this.origin = Objects.requireNonNull(origin);
+            return this;
+        }
+
+        public Builder origins(Map<String, String> origins) {
+            this.origins.clear();
+            this.origins.get().putAll(origins);
             return this;
         }
 
@@ -128,12 +152,14 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         }
 
         public Builder additionalAllowedHeaders(Set<String> additionalAllowedHeaders) {
-            this.additionalAllowedHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedHeaders);
+            this.additionalAllowedHeaders.clear();
+            this.additionalAllowedHeaders.get().addAll(additionalAllowedHeaders);
             return this;
         }
 
         public Builder additionalExposedHeaders(Set<String> additionalExposedHeaders) {
-            this.additionalExposedHeaders = SetUtils.caseInsensitiveCopyOf(additionalExposedHeaders);
+            this.additionalExposedHeaders.clear();
+            this.additionalExposedHeaders.get().addAll(additionalExposedHeaders);
             return this;
         }
 
@@ -154,6 +180,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode()
                     .getStringMember("origin", builder::origin)
+                    .getObjectMember("origins", o -> builder.origins(stringMapFromNode(o)))
                     .getNumberMember("maxAge", n -> builder.maxAge(n.intValue()))
                     .getMember("additionalAllowedHeaders",
                             Node::expectArrayNode,
@@ -163,6 +190,14 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
                             a -> builder.additionalExposedHeaders(stringSetFromNode(a)));
             CorsTrait result = builder.build();
             result.setNodeCache(value);
+            return result;
+        }
+
+        private static Map<String, String> stringMapFromNode(ObjectNode node) {
+            Map<String, String> result = new LinkedHashMap<>(node.size());
+            for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
+                result.put(entry.getKey().getValue(), entry.getValue().expectStringNode().getValue());
+            }
             return result;
         }
 
