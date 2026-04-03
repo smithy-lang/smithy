@@ -49,6 +49,7 @@ public final class ApiGatewayConfig {
     private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
     private Set<String> additionalAllowedCorsHeaders = Collections.emptySet();
+    private String corsOriginKey;
     private ApiGatewayDefaults apiGatewayDefaults;
 
     /**
@@ -109,6 +110,33 @@ public final class ApiGatewayConfig {
      */
     public void setAdditionalAllowedCorsHeaders(Collection<String> additionalAllowedCorsHeaders) {
         this.additionalAllowedCorsHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedCorsHeaders);
+    }
+
+    /**
+     * Gets the key to select from the {@code origins} map of the {@code cors}
+     * trait when generating a REST API.
+     *
+     * <p>REST APIs only support a single {@code Access-Control-Allow-Origin}
+     * value. When the {@code cors} trait uses the {@code origins} map, this
+     * setting is required to select which entry to use by key.
+     *
+     * <p>This setting is ignored for HTTP APIs, which natively support
+     * multiple origins.
+     *
+     * @return the configured origin key, or null if not set.
+     */
+    public String getCorsOriginKey() {
+        return corsOriginKey;
+    }
+
+    /**
+     * Sets the key to select from the {@code origins} map of the {@code cors}
+     * trait when generating a REST API.
+     *
+     * @param corsOriginKey The origin key to select.
+     */
+    public void setCorsOriginKey(String corsOriginKey) {
+        this.corsOriginKey = corsOriginKey;
     }
 
     public ApiGatewayDefaults getApiGatewayDefaults() {

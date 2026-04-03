@@ -91,7 +91,9 @@ final class AddCorsToGatewayResponses implements ApiGatewayMapper {
             ObjectNode gatewayResponses
     ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
-        corsHeaders.put(CorsHeader.ALLOW_ORIGIN, trait.getOrigin());
+        corsHeaders.put(CorsHeader.ALLOW_ORIGIN,
+                CorsHeader.resolveRestOrigin(trait,
+                        context.getConfig().getExtensions(ApiGatewayConfig.class)));
 
         // Include an 'Access-Control-Allow-Credentials' header if any security scheme requires
         // browser-managed credentials.

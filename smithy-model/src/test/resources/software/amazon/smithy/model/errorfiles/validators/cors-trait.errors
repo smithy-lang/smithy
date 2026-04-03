@@ -1,0 +1,1 @@
+[ERROR] ns.foo#InvalidService: The `origin` and `origins` members of the `cors` trait are mutually exclusive. | CorsTrait

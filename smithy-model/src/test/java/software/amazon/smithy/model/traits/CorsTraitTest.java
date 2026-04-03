@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,8 +72,71 @@ public class CorsTraitTest {
         ObjectNode serialized = ((CorsTrait) trait.get()).createNode().expectObjectNode();
 
         assertFalse(serialized.getMember("origin").isPresent());
+        assertFalse(serialized.getMember("origins").isPresent());
         assertFalse(serialized.getMember("maxAge").isPresent());
         assertFalse(serialized.getMember("additionalAllowedHeaders").isPresent());
         assertFalse(serialized.getMember("additionalExposedHeaders").isPresent());
+    }
+
+    @Test
+    public void loadsOriginsMap() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        ObjectNode originsNode = Node.objectNode()
+                .withMember("prod", Node.from("https://api.example.com"))
+                .withMember("beta", Node.from("https://beta.example.com"));
+        ObjectNode node = Node.objectNode()
+                .withMember("origins", originsNode);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#cors"), ShapeId.from("ns.qux#foo"), node);
+        assertTrue(trait.isPresent());
+        CorsTrait cors = (CorsTrait) trait.get();
+
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("prod", "https://api.example.com");
+        expected.put("beta", "https://beta.example.com");
+        assertThat(cors.getOrigins(), equalTo(expected));
+    }
+
+    @Test
+    public void originsDefaultsToEmptyMap() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#cors"),
+                ShapeId.from("ns.qux#foo"),
+                Node.objectNode());
+        assertTrue(trait.isPresent());
+        CorsTrait cors = (CorsTrait) trait.get();
+
+        assertThat(cors.getOrigins(), equalTo(Collections.emptyMap()));
+    }
+
+    @Test
+    public void originsRoundTripsViaBuilder() {
+        Map<String, String> originsMap = new LinkedHashMap<>();
+        originsMap.put("local", "http://localhost:8080");
+        originsMap.put("prod", "https://api.example.com");
+
+        CorsTrait trait = CorsTrait.builder()
+                .origins(originsMap)
+                .build();
+
+        CorsTrait rebuilt = trait.toBuilder().build();
+        assertThat(rebuilt.getOrigins(), equalTo(originsMap));
+        assertThat(rebuilt, equalTo(trait));
+    }
+
+    @Test
+    public void originsSerializedWhenNonEmpty() {
+        Map<String, String> originsMap = new LinkedHashMap<>();
+        originsMap.put("prod", "https://api.example.com");
+
+        CorsTrait trait = CorsTrait.builder()
+                .origins(originsMap)
+                .build();
+
+        ObjectNode serialized = trait.createNode().expectObjectNode();
+        assertTrue(serialized.getMember("origins").isPresent());
+        assertThat(
+                serialized.getObjectMember("origins").get().getStringMember("prod").get().getValue(),
+                equalTo("https://api.example.com"));
     }
 }

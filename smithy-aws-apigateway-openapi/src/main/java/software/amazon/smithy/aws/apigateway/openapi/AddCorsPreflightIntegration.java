@@ -104,7 +104,9 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
     ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
         corsHeaders.put(CorsHeader.MAX_AGE, String.valueOf(corsTrait.getMaxAge()));
-        corsHeaders.put(CorsHeader.ALLOW_ORIGIN, corsTrait.getOrigin());
+        corsHeaders.put(CorsHeader.ALLOW_ORIGIN,
+                CorsHeader.resolveRestOrigin(corsTrait,
+                        context.getConfig().getExtensions(ApiGatewayConfig.class)));
         corsHeaders.put(CorsHeader.ALLOW_METHODS, getAllowMethods(pathItem));
 
         if (context.usesHttpCredentials()) {
