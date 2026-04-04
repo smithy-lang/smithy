@@ -725,6 +725,27 @@ modified conflicting errors are then added to the combined response object.
         }
     }
 
+.. _generate-openapi-setting-useStringsForArbitraryPrecision:
+
+useStringsForArbitraryPrecision (``boolean``)
+=============================================
+
+Set to ``true`` to use JSON strings instead of numbers to maintain arbitrary
+precision in cases where parsers don't handle it properly with numbers.
+
+.. code-block:: json
+    :caption: smithy-build.json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "openapi": {
+                "service": "example.weather#Weather",
+                "useStringsForArbitraryPrecision": true
+            }
+        }
+    }
+
 ----------------------------------
 JSON schema configuration settings
 ----------------------------------

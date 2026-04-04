@@ -51,9 +51,17 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             builder.putExtension("deprecated", Node.from(true));
         }
 
-        boolean useOpenApiIntegerType = config instanceof OpenApiConfig
+        boolean configIsOpenApi = config instanceof OpenApiConfig;
+        boolean useOpenApiIntegerType = configIsOpenApi
                 && ((OpenApiConfig) config).getUseIntegerType()
                 && !((OpenApiConfig) config).getDisableIntegerFormat();
+
+        // Force a string type for arbitrary precision numbers if the
+        // setting is configured.
+        if ((shape.isBigDecimalShape() || shape.isBigIntegerShape()) && configIsOpenApi
+                && ((OpenApiConfig) config).getUseStringsForArbitraryPrecision()) {
+            builder.type("string");
+        }
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {
@@ -68,7 +76,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 updateFloatFormat(builder, config, "float");
             } else if (shape.isDoubleShape()) {
                 updateFloatFormat(builder, config, "double");
-            } else if (shape.isBlobShape() && config instanceof OpenApiConfig) {
+            } else if (shape.isBlobShape() && configIsOpenApi) {
                 handleFormatKeyword(builder, (OpenApiConfig) config);
                 return builder;
             } else if (shape.isTimestampShape()) {
@@ -83,7 +91,7 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         // Remove unsupported JSON Schema keywords.
-        if (config instanceof OpenApiConfig) {
+        if (configIsOpenApi) {
             OpenApiConfig openApiConfig = (OpenApiConfig) config;
             openApiConfig.getVersion().getUnsupportedKeywords().forEach(builder::disableProperty);
         }
