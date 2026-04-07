@@ -108,8 +108,8 @@ Value type
     ``structure``
 
 When making requests for an operation targeted by this trait, clients should
-extend any timeouts they have for the service to respond. If set, they should
-wait for the amount of time indicated by the ``timeoutMillis`` member.
+extend any timeouts they have for the service to respond. They should wait for
+at least the amount of time indicated by the ``timeoutMillis`` member.
 
 The ``longPoll`` trait is a structure that contains the following members:
 
@@ -122,8 +122,8 @@ The ``longPoll`` trait is a structure that contains the following members:
       - Description
     * - timeoutMillis
       - ``integer``
-      - The amount of time in milliseconds that a client should wait for a
-        response.
+      - **Required**. The amount of time in milliseconds that a client should
+        wait for a response.
 
 .. code-block:: smithy
 

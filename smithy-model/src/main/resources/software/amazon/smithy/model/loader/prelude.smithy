@@ -665,13 +665,14 @@ structure requiresLength {}
 /// available.
 ///
 /// When making requests for an operation targeted by this trait, clients should extend
-/// any timeouts they have for the service to respond. If set, they should wait for the
+/// any timeouts they have for the service to respond. They should wait for at least the
 /// amount of time indicated by the `timeoutMillis` member.
 @trait(
     selector: "operation"
 )
 structure longPoll {
     /// The amount of time in milliseconds that a client should wait for a response.
+    @required
     timeoutMillis: Integer
 }
 

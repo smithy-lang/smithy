@@ -5,9 +5,9 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.Objects;
-import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -18,11 +18,11 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class LongPollTrait extends AbstractTrait implements ToSmithyBuilder<LongPollTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#longPoll");
 
-    private final Integer timeoutMillis;
+    private final int timeoutMillis;
 
     private LongPollTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        this.timeoutMillis = builder.timeoutMillis;
+        this.timeoutMillis = SmithyBuilder.requiredState("timeoutMillis", builder.timeoutMillis);
     }
 
     /**
@@ -30,8 +30,8 @@ public final class LongPollTrait extends AbstractTrait implements ToSmithyBuilde
      *
      * @return Returns the optional timeout in milliseconds.
      */
-    public Optional<Integer> getTimeoutMillis() {
-        return Optional.ofNullable(timeoutMillis);
+    public int getTimeoutMillis() {
+        return timeoutMillis;
     }
 
     @Override
@@ -45,7 +45,7 @@ public final class LongPollTrait extends AbstractTrait implements ToSmithyBuilde
     protected Node createNode() {
         return Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
-                .withOptionalMember("timeoutMillis", getTimeoutMillis().map(Node::from))
+                .withMember("timeoutMillis", getTimeoutMillis())
                 .build();
     }
 
@@ -109,7 +109,7 @@ public final class LongPollTrait extends AbstractTrait implements ToSmithyBuilde
          * @param timeoutMillis The timeout in milliseconds.
          * @return Returns the builder.
          */
-        public Builder timeoutMillis(Integer timeoutMillis) {
+        public Builder timeoutMillis(int timeoutMillis) {
             this.timeoutMillis = timeoutMillis;
             return this;
         }
