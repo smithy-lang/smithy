@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add llms.txt generation to docs build",
-  "pull_requests": [
-    "[#3010](https://github.com/smithy-lang/smithy/pull/3010)"
-  ]
-}

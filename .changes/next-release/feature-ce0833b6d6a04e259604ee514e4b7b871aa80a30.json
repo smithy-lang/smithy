@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a trait to indicate an operation is a long-poll operation.",
-  "pull_requests": [
-    "[#3019](https://github.com/smithy-lang/smithy/pull/3019)"
-  ]
-}

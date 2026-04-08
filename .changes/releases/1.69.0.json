@@ -1,0 +1,97 @@
+{
+  "version": "1.69.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed CLI checksum verification by adding `appendFileNameToChecksum` to generate `sha256sum -c` compatible checksum files. Previously, the `.sha256` files contained only the raw hash without a filename, causing verification to fail.",
+      "pull_requests": [
+        "[#2999](https://github.com/smithy-lang/smithy/pull/2999)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `smithy.api#longPoll` trait to indicate an operation is a long-poll operation.",
+      "pull_requests": [
+        "[#3019](https://github.com/smithy-lang/smithy/pull/3019)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `aws.api#awsChunked` trait.",
+      "pull_requests": [
+        "[#3033](https://github.com/smithy-lang/smithy/pull/3033)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added BDD auto generatrion in rules-engine-tests.",
+      "pull_requests": [
+        "[#3027](https://github.com/smithy-lang/smithy/pull/3027)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added multi-origin support to the CORS trait.",
+      "pull_requests": [
+        "[#3035](https://github.com/smithy-lang/smithy/pull/3035)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Added ec2QueryName, xmlName distinction edge test cases.",
+      "pull_requests": [
+        "[#2993](https://github.com/smithy-lang/smithy/pull/2993)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Fixed `aws.api#service` docs to use correct property name cloudWatchNamespace instead of cloudWatchMetricNamespace. Also corrected a typo in CONTRIBUTING.md.",
+      "pull_requests": [
+        "[#3008](https://github.com/smithy-lang/smithy/pull/3008)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated IDL serializer to quote unresolvable idRef values.",
+      "pull_requests": [
+        "[#3038](https://github.com/smithy-lang/smithy/pull/3038)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added llms.txt generation to docs build.",
+      "pull_requests": [
+        "[#3010](https://github.com/smithy-lang/smithy/pull/3010)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Fixed issues handling high-precision numbers when loading models.",
+      "pull_requests": [
+        "[#3004](https://github.com/smithy-lang/smithy/pull/3004)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Relaxed the optionality constraint on pagination output tokens to report a DANGER when the output token is required instead of ERROR.",
+      "pull_requests": [
+        "[#2983](https://github.com/smithy-lang/smithy/pull/2983)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Corrected outdated Smithy-Java documentation.",
+      "pull_requests": [
+        "[#3009](https://github.com/smithy-lang/smithy/pull/3009)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added node reversal optimization to `compileBdd`.",
+      "pull_requests": [
+        "[#3045](https://github.com/smithy-lang/smithy/pull/3045)"
+      ]
+    }
+  ],
+  "date": "2026-04-08"
+}

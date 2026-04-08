@@ -1,5 +1,49 @@
 # Smithy Changelog
 
+## 1.69.0 (2026-04-08)
+
+### Features
+
+- Added the `smithy.api#longPoll` trait to indicate an operation is a long-poll
+  operation. ([#3019](https://github.com/smithy-lang/smithy/pull/3019))
+- Added `aws.api#awsChunked` trait.
+  ([#3033](https://github.com/smithy-lang/smithy/pull/3033))
+- Added BDD auto generatrion in rules-engine-tests.
+  ([#3027](https://github.com/smithy-lang/smithy/pull/3027))
+- Added multi-origin support to the CORS trait.
+  ([#3035](https://github.com/smithy-lang/smithy/pull/3035))
+- Updated IDL serializer to quote unresolvable idRef values.
+  ([#3038](https://github.com/smithy-lang/smithy/pull/3038))
+- Added llms.txt generation to docs build.
+  ([#3010](https://github.com/smithy-lang/smithy/pull/3010))
+- Fixed issues handling high-precision numbers when loading models.
+  ([#3004](https://github.com/smithy-lang/smithy/pull/3004))
+- Relaxed the optionality constraint on pagination output tokens to report a
+  DANGER when the output token is required instead of ERROR.
+  ([#2983](https://github.com/smithy-lang/smithy/pull/2983))
+- Added node reversal optimization to `compileBdd`.
+  ([#3045](https://github.com/smithy-lang/smithy/pull/3045))
+
+### Bug Fixes
+
+- Fixed CLI checksum verification by adding `appendFileNameToChecksum` to
+  generate `sha256sum -c` compatible checksum files. Previously, the `.sha256`
+  files contained only the raw hash without a filename, causing verification to
+  fail. ([#2999](https://github.com/smithy-lang/smithy/pull/2999))
+
+### Documentation
+
+- Fixed `aws.api#service` docs to use correct property name cloudWatchNamespace
+  instead of cloudWatchMetricNamespace. Also corrected a typo in
+  CONTRIBUTING.md. ([#3008](https://github.com/smithy-lang/smithy/pull/3008))
+- Corrected outdated Smithy-Java documentation.
+  ([#3009](https://github.com/smithy-lang/smithy/pull/3009))
+
+### Other
+
+- Added ec2QueryName, xmlName distinction edge test cases.
+  ([#2993](https://github.com/smithy-lang/smithy/pull/2993))
+
 ## 1.68.0 (2026-02-25)
 
 ### Features
@@ -4376,3 +4420,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+

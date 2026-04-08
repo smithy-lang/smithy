@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Correct outdated Smithy-Java documentation",
-  "pull_requests": [
-    "[#3009](https://github.com/smithy-lang/smithy/pull/3009)"
-  ]
-}

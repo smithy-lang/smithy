@@ -1,7 +1,0 @@
-{
-  "type": "other",
-  "description": "test(ec2Query): add ec2QueryName, xmlName distinction edge case",
-  "pull_requests": [
-    "[#2993](https://github.com/smithy-lang/smithy/pull/2993)"
-  ]
-}

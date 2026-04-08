@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add multi-origin support to the CORS trait",
-  "pull_requests": [
-    "[#3035](https://github.com/smithy-lang/smithy/pull/3035)"
-  ]
-}
