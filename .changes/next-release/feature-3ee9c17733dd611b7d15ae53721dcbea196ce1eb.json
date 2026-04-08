@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add BDD auto generatrion in rules-engine-tests",
-  "pull_requests": [
-    "[#3027](https://github.com/smithy-lang/smithy/pull/3027)"
-  ]
-}
