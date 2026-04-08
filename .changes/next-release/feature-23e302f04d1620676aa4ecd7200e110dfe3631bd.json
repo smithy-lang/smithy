@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Quote unresolvable idRef values in IDL serializer",
+  "pull_requests": [
+    "[#3038](https://github.com/smithy-lang/smithy/pull/3038)"
+  ]
+}
