@@ -670,6 +670,7 @@ structure requiresLength {}
 @trait(
     selector: "operation"
 )
+@unstable
 structure longPoll {
     /// The amount of time in milliseconds that a client should wait for a response.
     @required
