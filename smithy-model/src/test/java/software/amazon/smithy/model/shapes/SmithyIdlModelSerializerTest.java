@@ -369,4 +369,27 @@ public class SmithyIdlModelSerializerTest {
         assertFalse(modelResult.contains("@documentation"));
         assertTrue(modelResult.contains("/// hello"));
     }
+
+    @Test
+    public void unresolvableIdRefSerializedAsQuotedString() {
+        String stringModel = "$version: \"2.0\"\n"
+                + "namespace ns.foo\n"
+                + "@trait\n"
+                + "structure myTrait {\n"
+                + "    ref: MyRef\n"
+                + "}\n"
+                + "@idRef\n"
+                + "string MyRef\n"
+                + "@myTrait(ref: \"ns.foo#DoesNotExist\")\n"
+                + "string MyTarget\n";
+        Model model = Model.assembler().addUnparsedModel("test.smithy", stringModel).assemble().unwrap();
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder().build().serialize(model);
+        String modelResult = reserialized.get(Paths.get("ns.foo.smithy"));
+
+        // Re-assemble the serialized output. On unfixed code, this fails because the
+        // serializer renders the unresolvable idRef as a bare shape ID (DoesNotExist)
+        // which the parser rejects as a syntactic shape ID that doesn't resolve.
+        Model model2 = Model.assembler().addUnparsedModel("test.smithy", modelResult).assemble().unwrap();
+        assertThat(model2, equalTo(model));
+    }
 }

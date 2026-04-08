@@ -950,8 +950,10 @@ public final class SmithyIdlModelSerializer {
          */
         private void serialize(Node node, Shape shape) {
             // ShapeIds are represented differently than strings, so if a shape looks like it's
-            // representing a shapeId we need to serialize it without quotes.
-            if (isShapeId(shape)) {
+            // representing a shapeId we need to serialize it without quotes. However, if the
+            // shape ID doesn't resolve to a shape in the model, it must be quoted to ensure
+            // valid IDL output (the target may not exist when @idRef failWhenMissing is false).
+            if (isShapeId(shape) && isResolvableShapeId(node)) {
                 serializeShapeId(node.expectStringNode());
                 return;
             }
@@ -980,6 +982,18 @@ public final class SmithyIdlModelSerializer {
                 return false;
             }
             return shape.getMemberTrait(model, IdRefTrait.class).isPresent();
+        }
+
+        private boolean isResolvableShapeId(Node node) {
+            if (!node.isStringNode()) {
+                return false;
+            }
+            try {
+                ShapeId id = ShapeId.from(node.expectStringNode().getValue());
+                return model.getShape(id).isPresent();
+            } catch (ShapeIdSyntaxException e) {
+                return false;
+            }
         }
 
         private void serializeString(StringNode node) {
