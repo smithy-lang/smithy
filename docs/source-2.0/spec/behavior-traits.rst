@@ -107,6 +107,9 @@ Trait selector
 Value type
     ``structure``
 
+.. warning::
+    This trait is unstable and MAY change in the future.
+
 When making requests for an operation targeted by this trait, clients should
 extend any timeouts they have for the service to respond. They should wait for
 at least the amount of time indicated by the ``timeoutMillis`` member.
