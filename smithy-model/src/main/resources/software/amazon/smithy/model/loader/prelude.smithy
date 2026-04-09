@@ -664,9 +664,14 @@ structure requiresLength {}
 /// allow them to hold the request open as it waits for information to become
 /// available.
 ///
-/// When making requests for an operation targeted by this trait, clients should extend
-/// any timeouts they have for the service to respond. They should wait for at least the
-/// amount of time indicated by the `timeoutMillis` member.
+/// When making requests for an operation targeted by this trait, clients should
+/// wait for at least the amount of time indicated by the `timeoutMillis` member.
+/// If the client's default timeout is longer, it may use the longer value.
+///
+/// Clients may allow users to configure timeouts. If a user configures a timeout
+/// value on a client, the client must use the user-configured value regardless of
+/// whether it is greater or less than `timeoutMillis`. Similarly, if the user
+/// configures a timeout value for a request, clients must use that value.
 @trait(
     selector: "operation"
 )
@@ -674,6 +679,7 @@ structure requiresLength {}
 structure longPoll {
     /// The amount of time in milliseconds that a client should wait for a response.
     @required
+    @range(min: 1)
     timeoutMillis: Integer
 }
 

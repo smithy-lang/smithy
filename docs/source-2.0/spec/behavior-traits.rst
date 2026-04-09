@@ -111,8 +111,13 @@ Value type
     This trait is unstable and MAY change in the future.
 
 When making requests for an operation targeted by this trait, clients should
-extend any timeouts they have for the service to respond. They should wait for
-at least the amount of time indicated by the ``timeoutMillis`` member.
+wait for at least the amount of time indicated by the ``timeoutMillis`` member.
+If the client's default timeout is longer, it may use the longer value.
+
+Clients may allow users to configure timeouts. If a user configures a timeout
+value on a client, the client must use the user-configured value regardless of
+whether it is greater or less than timeoutMillis. Similarly, if the user
+configures a timeout value for a request, clients must use that value.
 
 The ``longPoll`` trait is a structure that contains the following members:
 
@@ -126,7 +131,7 @@ The ``longPoll`` trait is a structure that contains the following members:
     * - timeoutMillis
       - ``integer``
       - **Required**. The amount of time in milliseconds that a client should
-        wait for a response.
+        wait for a response. This must be greater than 0.
 
 .. code-block:: smithy
 
