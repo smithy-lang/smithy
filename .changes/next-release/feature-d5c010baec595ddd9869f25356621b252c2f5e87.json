@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add node reversal optimization to compileBdd",
+  "pull_requests": [
+    "[#3045](https://github.com/smithy-lang/smithy/pull/3045)"
+  ]
+}
