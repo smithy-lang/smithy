@@ -1,1 +1,5 @@
 [WARNING] smithy.example#LongPollWithTimeout: This shape applies a trait that is unstable: smithy.api#longPoll | UnstableTrait.smithy.api#longPoll
+[WARNING] smithy.example#LongPollWithZeroTimeout: This shape applies a trait that is unstable: smithy.api#longPoll | UnstableTrait.smithy.api#longPoll
+[WARNING] smithy.example#LongPollWithNegativeTimeout: This shape applies a trait that is unstable: smithy.api#longPoll | UnstableTrait.smithy.api#longPoll
+[ERROR] smithy.example#LongPollWithZeroTimeout: Error validating trait `longPoll`.timeoutMillis: Value provided for `smithy.api#longPoll$timeoutMillis` must be greater than or equal to 1, but found 0 | TraitValue.Member.InvalidRange
+[ERROR] smithy.example#LongPollWithNegativeTimeout: Error validating trait `longPoll`.timeoutMillis: Value provided for `smithy.api#longPoll$timeoutMillis` must be greater than or equal to 1, but found -1 | TraitValue.Member.InvalidRange
