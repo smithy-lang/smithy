@@ -14,6 +14,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.logic.bdd.CostOptimization;
+import software.amazon.smithy.rulesengine.logic.bdd.NodeReversal;
 import software.amazon.smithy.rulesengine.logic.bdd.SiftingOptimization;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
@@ -61,7 +62,10 @@ public final class CompileBdd implements ProjectionTransformer {
         // "cost optimize" the BDD to ensure cheap conditions come first with up to 10% size impact.
         EndpointBddTrait costOptimizedTrait = CostOptimization.builder().cfg(cfg).build().apply(siftedTrait);
 
+        // Reverses the node ordering in a BDD for better cache locality.
+        EndpointBddTrait reversedTrait = new NodeReversal().apply(costOptimizedTrait);
+
         // Remove unreferenced conditions. This is destructive and further optimizations cannot be applied after this.
-        return costOptimizedTrait.removeUnreferencedConditions();
+        return reversedTrait.removeUnreferencedConditions();
     }
 }
