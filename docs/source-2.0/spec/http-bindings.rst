@@ -1415,6 +1415,16 @@ The ``cors`` trait is a structure that supports the following members:
       - ``string``
       - The origin from which browser script-originating requests will be
         allowed. Defaults to ``*``.
+
+        The ``origin`` and ``origins`` members are mutually exclusive.
+    * - origins
+      - ``map<string, string>``
+      - A map of named origins from which browser script-originating requests
+        will be allowed. Each key is a user-defined name for the origin, and
+        each value is the origin URL. This allows for environment-aware origin
+        selection (e.g., selecting an origin based on a deployment stage).
+
+        The ``origin`` and ``origins`` members are mutually exclusive.
     * - maxAge
       - ``integer``
       - The maximum number of seconds for which browsers are allowed to cache
