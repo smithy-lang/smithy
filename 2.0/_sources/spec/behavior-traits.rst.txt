@@ -91,6 +91,65 @@ Conflicts with
     idempotent.
 
 
+.. smithy-trait:: smithy.api#longPoll
+.. _longPoll-trait:
+
+``longPoll`` trait
+------------------
+
+Summary
+    Indicates that the service may not respond immediately to requests for the
+    targeted operation. This can allow services more time to prepare more
+    detailed responses or allow them to hold the request open as it waits for
+    information to become available.
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+
+.. warning::
+    This trait is unstable and MAY change in the future.
+
+When making requests for an operation targeted by this trait, clients should
+wait for at least the amount of time indicated by the ``timeoutMillis`` member.
+If the client's default timeout is longer, it may use the longer value.
+
+Clients may allow users to configure timeouts. If a user configures a timeout
+value on a client, the client must use the user-configured value regardless of
+whether it is greater or less than timeoutMillis. Similarly, if the user
+configures a timeout value for a request, clients must use that value.
+
+The ``longPoll`` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - timeoutMillis
+      - ``integer``
+      - **Required**. The amount of time in milliseconds that a client should
+        wait for a response. This must be greater than 0.
+
+.. code-block:: smithy
+
+    @longPoll
+    operation WaitForUpdate {
+        input: WaitForUpdateInput
+        output: WaitForUpdateOutput
+    }
+
+.. code-block:: smithy
+
+    @longPoll(timeoutMillis: 70000)
+    operation WaitForUpdate {
+        input: WaitForUpdateInput
+        output: WaitForUpdateOutput
+    }
+
+
 .. smithy-trait:: smithy.api#readonly
 .. _readonly-trait:
 

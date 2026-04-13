@@ -357,7 +357,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1900,16 +1900,27 @@ and is simply ignored.</p>
 <tr class="row-even"><td><p>origin</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>The origin from which browser script-originating requests will be
-allowed. Defaults to <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p></td>
+allowed. Defaults to <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">origin</span></code> and <code class="docutils literal notranslate"><span class="pre">origins</span></code> members are mutually exclusive.</p>
+</td>
 </tr>
-<tr class="row-odd"><td><p>maxAge</p></td>
+<tr class="row-odd"><td><p>origins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></p></td>
+<td><p>A map of named origins from which browser script-originating requests
+will be allowed. Each key is a user-defined name for the origin, and
+each value is the origin URL. This allows for environment-aware origin
+selection (e.g., selecting an origin based on a deployment stage).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">origin</span></code> and <code class="docutils literal notranslate"><span class="pre">origins</span></code> members are mutually exclusive.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>maxAge</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">integer</span></code></p></td>
 <td><p>The maximum number of seconds for which browsers are allowed to cache
 the results of a preflight <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> request. Defaults to <code class="docutils literal notranslate"><span class="pre">600</span></code>, the
 maximum age permitted by several browsers. Set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> to disable
 caching entirely.</p></td>
 </tr>
-<tr class="row-even"><td><p>additionalAllowedHeaders</p></td>
+<tr class="row-odd"><td><p>additionalAllowedHeaders</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p></td>
 <td><p>The names of headers that should be included in the
 <code class="docutils literal notranslate"><span class="pre">Access-Control-Allow-Headers</span></code> header in responses to preflight
@@ -1918,7 +1929,7 @@ all request headers bound to an input data member via the
 <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>, as well as any headers required by the protocol
 or authentication scheme.</p></td>
 </tr>
-<tr class="row-odd"><td><p>additionalExposedHeaders</p></td>
+<tr class="row-even"><td><p>additionalExposedHeaders</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p></td>
 <td><p>The names of headers that should be included in the
 <code class="docutils literal notranslate"><span class="pre">Access-Control-Expose-Headers</span></code> header in all responses sent by the

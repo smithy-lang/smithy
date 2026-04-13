@@ -357,7 +357,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1959,6 +1959,42 @@ shape.</p></td>
 </div>
 </section>
 </section>
+<section id="aws-api-awschunked-trait">
+<span id="aws-api-awschunked-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#awsChunked</span></code> trait<a class="headerlink" href="#aws-api-awschunked-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Summary</dt><dd><p>Indicates that the streaming blob supports aws-chunked content encoding.
+When present, SDKs MUST aws-chunk encode the underlying data stream.
+aws-chunked encoding is a series of data blocks followed by a final block
+that contains metadata about the content transferred, such as checksums.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">blob[trait|streaming]</span></code></p>
+<p><em>A blob shape marked with the streaming trait</em></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
+</dl>
+<p>aws-chunked encoding is a mechanism to collect metadata about a data stream
+while streaming it, instead of paying an up-front cost. For example, when
+calculating a checksum, an SDK would normally consume the entire stream to
+compute it. With aws-chunked encoding, a running checksum is updated as
+chunks of data are streamed, and the full checksum is sent as a trailing
+header.</p>
+<p>If an SDK knows the information that will be included in the trailer headers
+ahead of time (e.g., the modeled checksum), SDKs MUST NOT use aws-chunked
+encoding. The encoding would be unnecessary overhead in the request.</p>
+<p>If a data stream has both the <code class="docutils literal notranslate"><span class="pre">awsChunked</span></code> trait and the
+<a class="reference internal" href="../spec/streaming.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a>, SDKs MUST set the header
+<code class="docutils literal notranslate"><span class="pre">x-amz-decoded-Content-Length</span></code> to the length of the unencoded content, and
+MUST NOT set the header <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code>.</p>
+<p>aws-chunked MUST be applied after other content encodings such as gzip. When
+the <a class="reference internal" href="../spec/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression trait</span></a> is specified, compression MUST occur
+before the stream content encoding.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
+<span class="nt">@awsChunked</span>
+<span class="kd">blob </span><span class="nc">StreamingBlob</span>
+</pre></div>
+</div>
+</section>
 <section id="appendix">
 <h2>Appendix<a class="headerlink" href="#appendix" title="Link to this heading">¶</a></h2>
 <section id="appendix-a-example-sdk-service-ids">
@@ -2423,6 +2459,7 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#taggable-resource-api-config-structure">Taggable resource API config structure</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#aws-api-awschunked-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#awsChunked</span></code> trait</a></li>
 <li><a class="reference internal" href="#appendix">Appendix</a><ul>
 <li><a class="reference internal" href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></li>
 </ul>

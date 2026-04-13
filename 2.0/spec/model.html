@@ -357,7 +357,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/0.0.3/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -2345,6 +2345,30 @@ namespace using a relative shape ID.</p>
 )
 <span class="kd">structure </span><span class="nc">requiresLength</span><span class="w"> </span>{}
 
+<span class="c">/// Indicates that the service may not respond immediately to requests for the targeted</span>
+<span class="c">/// operation. This can allow services more time to prepare more detailed responses or</span>
+<span class="c">/// allow them to hold the request open as it waits for information to become</span>
+<span class="c">/// available.</span>
+<span class="c">///</span>
+<span class="c">/// When making requests for an operation targeted by this trait, clients should</span>
+<span class="c">/// wait for at least the amount of time indicated by the `timeoutMillis` member.</span>
+<span class="c">/// If the client&#39;s default timeout is longer, it may use the longer value.</span>
+<span class="c">///</span>
+<span class="c">/// Clients may allow users to configure timeouts. If a user configures a timeout</span>
+<span class="c">/// value on a client, the client must use the user-configured value regardless of</span>
+<span class="c">/// whether it is greater or less than `timeoutMillis`. Similarly, if the user</span>
+<span class="c">/// configures a timeout value for a request, clients must use that value.</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
+)
+<span class="nt">@unstable</span>
+<span class="kd">structure </span><span class="nc">longPoll</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The amount of time in milliseconds that a client should wait for a response.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="w">    </span><span class="py">timeoutMillis</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
+
 <span class="c">/// Tags a shape with arbitrary tag names that can be used to filter and</span>
 <span class="c">/// group shapes in the model.</span>
 <span class="nt">@trait</span>
@@ -2710,7 +2734,17 @@ namespace using a relative shape ID.</p>
 <span class="kd">structure </span><span class="nc">cors</span><span class="w"> </span>{
 <span class="w">    </span><span class="c">/// The origin from which browser script-originating requests will be</span>
 <span class="w">    </span><span class="c">/// allowed.</span>
+<span class="w">    </span><span class="c">///</span>
+<span class="w">    </span><span class="c">/// The `origin` and `origins` members are mutually exclusive.</span>
 <span class="w">    </span><span class="py">origin</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+
+<span class="w">    </span><span class="c">/// A map of named origins from which browser script-originating requests</span>
+<span class="w">    </span><span class="c">/// will be allowed. Each key is a user-defined name for the origin, and</span>
+<span class="w">    </span><span class="c">/// each value is the origin URL. This allows for environment-aware origin</span>
+<span class="w">    </span><span class="c">/// selection (e.g., selecting an origin based on a deployment stage).</span>
+<span class="w">    </span><span class="c">///</span>
+<span class="w">    </span><span class="c">/// The `origin` and `origins` members are mutually exclusive.</span>
+<span class="w">    </span><span class="py">origins</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyStringMap</span>
 
 <span class="w">    </span><span class="c">/// The maximum number of seconds for which browsers are allowed to cache</span>
 <span class="w">    </span><span class="c">/// the results of a preflight OPTIONS request.</span>
