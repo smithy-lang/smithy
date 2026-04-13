@@ -58,7 +58,7 @@ See the :ref:`JMESPath data model <waiter-jmespath-data-model>` for details on h
 
     @conditions({
         StartBeforeEnd: {
-            description: "The start time must be strictly less than the end time",
+            documentation: "The start time must be strictly less than the end time",
             expression: "start < end"
         }
     })
@@ -72,7 +72,7 @@ See the :ref:`JMESPath data model <waiter-jmespath-data-model>` for details on h
 
     @conditions({
         NoKeywords: {
-            description: "The name cannot contain either 'id' or 'name', as these are reserved keywords"
+            documentation: "The name cannot contain either 'id' or 'name', as these are reserved keywords"
             expression: "!contains(@, 'id') && !contains(@, 'name')"
         }
     })
