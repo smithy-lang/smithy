@@ -935,7 +935,7 @@ The following two expressions are equivalent:
 
 Summary
     Defines endpoint test cases for validating a client's endpoint rule-set.
-    Test cases assert that given a set of parameter values, the rule set
+    Test cases assert that, given a set of parameter values, the rule set
     resolves to an expected endpoint or error.
 Trait selector
     ``service :is([trait|smithy.rules#endpointRuleSet], [trait|smithy.rules#endpointBdd])``
