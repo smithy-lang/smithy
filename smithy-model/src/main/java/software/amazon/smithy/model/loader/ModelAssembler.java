@@ -393,18 +393,28 @@ public final class ModelAssembler {
     }
 
     /**
-     * Discovers models by merging in all models returns by {@link ModelDiscovery}
+     * Discovers models by merging in all models returned by {@link ModelDiscovery}
      * manifests using the provided {@code ClassLoader}.
+     *
+     * <p>This method also configures the assembler to use the provided
+     * {@code ClassLoader} for discovering trait and validator service
+     * providers if they have not already been explicitly configured.
      *
      * @param loader Class loader to use to discover models.
      * @return Returns the model assembler.
      */
     public ModelAssembler discoverModels(ClassLoader loader) {
+        if (traitFactory == null) {
+            traitFactory = TraitFactory.createServiceFactory(loader);
+        }
+        if (validatorFactory == null) {
+            validatorFactory = ValidatorFactory.createServiceFactory(loader);
+        }
         return addDiscoveredModels(ModelDiscovery.findModels(loader));
     }
 
     /**
-     * Discovers models by merging in all models returns by {@link ModelDiscovery}
+     * Discovers models by merging in all models returned by {@link ModelDiscovery}
      * manifests using the thread context {@code ClassLoader}.
      *
      * @return Returns the model assembler.
