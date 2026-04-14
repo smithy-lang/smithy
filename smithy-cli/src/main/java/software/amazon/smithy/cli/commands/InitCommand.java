@@ -81,6 +81,17 @@ final class InitCommand implements Command {
         boolean isLocalRepo = isLocalRepo(options.repositoryUrl);
         Path templateRepoDirPath = getTemplateRepoDirPath(options.repositoryUrl, isLocalRepo);
 
+        // If the cache directory exists but is not a valid git repo, remove it so it can be re-cloned.
+        // Do this only for the external repo, as a non-git local repo is allowed.
+        //
+        // This case is guarded because the remote checkout is done in a temp directory, subject
+        // to system level cleanup, that can leave it in an inconsistent state for init's use.
+        if (!isLocalRepo
+                && Files.exists(templateRepoDirPath)
+                && !Files.exists(templateRepoDirPath.resolve(".git"))) {
+            IoUtils.rmdir(templateRepoDirPath);
+        }
+
         // If the cache directory does not exist, create it
         if (!Files.exists(templateRepoDirPath)) {
             try (ProgressTracker t = new ProgressTracker(env,
