@@ -1,5 +1,12 @@
 $version: "2.0"
 
+metadata suppressions = [
+    {
+        id: "UnstableTrait",
+        namespace: "smithy.rules.tests"
+    }
+]
+
 namespace smithy.rules.tests
 
 use smithy.rules#clientContextParams
@@ -9,7 +16,6 @@ use smithy.rules#endpointTests
 use smithy.rules#operationContextParams
 use smithy.rules#staticContextParams
 
-@suppress(["UnstableTrait"])
 @clientContextParams(
     bar: { type: "string", documentation: "a client string parameter" }
     baz: { type: "string", documentation: "another client string parameter" }
@@ -232,7 +238,6 @@ operation NoBindingsOperation {
     input := {}
 }
 
-@suppress(["UnstableTrait"])
 @staticContextParams(
     bar: { value: "static-context" }
     booleanParam: { value: false }

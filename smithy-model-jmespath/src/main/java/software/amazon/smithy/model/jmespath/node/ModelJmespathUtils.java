@@ -42,7 +42,7 @@ public final class ModelJmespathUtils {
 
     /**
      * Creates a sample {@link LiteralExpression} value that is a valid value
-     * of the given shape, or {@link LiteralExpression.ANY} if the shape is null.
+     * of the given shape, or {@link LiteralExpression#ANY} if the shape is null.
      */
     public static LiteralExpression sampleShapeValue(Model model, Shape shape) {
         return shape == null
