@@ -921,5 +921,181 @@ The following two expressions are equivalent:
         ]
     }
 
+
+.. smithy-trait:: smithy.rules#endpointTests
+.. _smithy.rules#endpointTests-trait:
+
+------------------------------------
+``smithy.rules#endpointTests`` trait
+------------------------------------
+
+.. warning:: Experimental
+
+    This trait is experimental and subject to change.
+
+Summary
+    Defines endpoint test cases for validating a client's endpoint rule-set.
+    Test cases assert that, given a set of parameter values, the rule set
+    resolves to an expected endpoint or error.
+Trait selector
+    ``service :is([trait|smithy.rules#endpointRuleSet], [trait|smithy.rules#endpointBdd])``
+
+    *A service with the :ref:`endpointRuleSet <smithy.rules#endpointRuleSet-trait>`
+    or :ref:`endpointBdd <smithy.rules#endpointBdd-trait>` trait.*
+Value type
+    ``structure``
+
+The ``endpointTests`` trait is a structure that supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - version
+      - ``string``
+      - **Required**. The endpoint tests schema version.
+    * - testCases
+      - ``[`` `EndpointTest object`_ ``]``
+      - A list of endpoint test case definitions.
+
+The following example defines an endpoint test that expects an endpoint URL
+to be based on configured region parameter.
+
+.. code-block:: smithy
+
+    @endpointTests(
+        version: "1.0"
+        testCases: [
+            {
+                "params": {
+                    "Region": "north-america-1"
+                }
+                "expect": {
+                    "endpoint": {
+                        "url": "https://north-america-1.example.com"
+                    }
+                }
+            }
+        ]
+    )
+
+
+.. _rules-engine-endpoint-test:
+
+EndpointTest object
+-------------------
+
+An endpoint test case describes a set of inputs and the expected outcome of
+evaluating the rule set. The ``EndpointTest`` object supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - documentation
+      - ``string``
+      - A description of the test case.
+    * - params
+      - ``document``
+      - Defines rule-set parameter names and their values to use when
+        evaluating the rule set.
+    * - operationInputs
+      - ``[`` `OperationInput object`_ ``]``
+      - A list of service operation configurations used for testing the
+        rules engine. Each entry describes an operation invocation whose
+        input is used to bind parameter values.
+    * - expect
+      - `EndpointTestExpectation union`_
+      - **Required**. The expected outcome of evaluating the rule set with
+        the given parameters.
+
+
+.. _rules-engine-endpoint-test-operation-input:
+
+OperationInput object
+---------------------
+
+An ``OperationInput`` object describes a service operation and the input used
+to verify an endpoint rule-set test case. It supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - operationName
+      - ``string``
+      - **Required**. The name of the service operation targeted by the test.
+    * - operationParams
+      - ``document``
+      - Input parameters used to generate the operation request. These
+        parameters MUST be compatible with the input of the operation.
+    * - builtInParams
+      - ``document``
+      - Rule-set built-in values and their corresponding values to be set.
+    * - clientParams
+      - ``document``
+      - Client configuration parameters to be set.
+
+
+.. _rules-engine-endpoint-test-expectation:
+
+EndpointTestExpectation union
+-----------------------------
+
+The ``EndpointTestExpectation`` union describes the expected outcome of a test
+case. Exactly one member MUST be set:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - error
+      - ``string``
+      - A test case expectation resulting in an error. The value is the
+        expected error message.
+    * - endpoint
+      - `EndpointExpectation object`_
+      - A test case expectation resulting in a resolved endpoint.
+
+
+.. _rules-engine-endpoint-test-endpoint-expectation:
+
+EndpointExpectation object
+--------------------------
+
+The ``EndpointExpectation`` object describes the expected endpoint resolved for
+a test case. It supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 30 60
+
+    * - Property name
+      - Type
+      - Description
+    * - url
+      - ``string``
+      - The expected endpoint URL.
+    * - headers
+      - ``map<string, [string]>``
+      - A map of expected transport header names to their values.
+    * - properties
+      - ``map<string, document>``
+      - The expected properties for the endpoint.
+
+
 .. _Javadocs: https://smithy.io/javadoc/__smithy_version__/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
