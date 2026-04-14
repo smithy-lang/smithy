@@ -453,16 +453,24 @@ final class FormatVisitor {
             }
 
             case TEXT_BLOCK: {
+                CapturedToken textBlockToken = cursor.getTree()
+                        .tokens()
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"));
+
+                // Tagged text blocks (e.g., #re """...""") are preserved as-is since their
+                // string contents have been transformed and can't be used to rebuild the block.
+                CharSequence lexeme = textBlockToken.getLexeme();
+                if (lexeme.length() > 0 && lexeme.charAt(0) == '#') {
+                    return Doc.text(tree.concatTokens());
+                }
+
                 // Dispersing the lines of the text block preserves any indentation applied from formatting parent
                 // nodes.
 
                 // We need to rebuild the text block to remove any incidental leading whitespace. The easiest way to
                 // do that is to use the already parsed and resolved value from the lexer.
-                String stringValue = cursor.getTree()
-                        .tokens()
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
-                        .getStringContents();
+                String stringValue = textBlockToken.getStringContents();
 
                 // If the last character is a newline, then the closing triple quote must be on the next line.
                 boolean endQuoteOnNextLine = stringValue.endsWith("\n") || stringValue.endsWith("\r");
