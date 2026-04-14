@@ -641,6 +641,35 @@ public class ModelAssemblerTest {
         assertTrue(reloadedModel.getShape(ShapeId.from("smithy.test#test")).isPresent());
     }
 
+    // Regression test for https://github.com/smithy-lang/smithy/issues/2596.
+    // When discoverModels(ClassLoader) is called without first configuring a
+    // traitFactory, the assembler should use the provided classloader for trait
+    // SPI discovery so that traits resolve to their concrete classes rather
+    // than falling back to DynamicTrait.
+    @Test
+    public void discoverModelsWithClassLoaderConfiguresTraitFactory() {
+        URL jar = getClass().getResource("jar-traits-import.jar");
+        URL file = getClass().getResource("loads-jar-traits.smithy");
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {jar});
+
+        // Use a plain Model.assembler() call (not Model.assembler(classLoader))
+        // to reproduce the scenario where no explicit traitFactory is set.
+        Model model = Model.assembler()
+                .discoverModels(urlClassLoader)
+                .addImport(file)
+                .assemble()
+                .unwrap();
+
+        ShapeId traitId = ShapeId.from("smithy.test#test");
+        assertTrue(model.getShape(traitId).isPresent());
+
+        // The trait definition shape itself should be present and not a DynamicTrait
+        // on the service that uses it.
+        Shape weatherService = model.expectShape(ShapeId.from("ns.test#Weather"));
+        assertTrue(weatherService.hasTrait(traitId));
+        assertThat(weatherService.findTrait(traitId).get(), not(instanceOf(DynamicTrait.class)));
+    }
+
     @Test
     public void canDisableValidation() {
         String document = "namespace foo.baz\n"
