@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Fix minor issues logged during builds",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3050](https://github.com/smithy-lang/smithy/pull/3050)"
+  ]
 }
