@@ -8,7 +8,7 @@ use smithy.rules#endpointTests
 
 @suppress(["UnstableTrait", "RuleSetParameter.TestCase.Unused"])
 @clientContextParams(
-    TestCaseId: { type: "string", required: true, documentation: "Test case id used to select the test case to use" }
+    TestCaseId: { type: "string", documentation: "Test case id used to select the test case to use" }
     req1: { type: "string", documentation: "docs" }
     req2: { type: "string", documentation: "docs" }
     opt1: { type: "string", documentation: "always Some" }
