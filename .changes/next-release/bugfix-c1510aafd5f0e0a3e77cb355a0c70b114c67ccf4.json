@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix init failure on corrupted template cache",
+  "pull_requests": []
+}
