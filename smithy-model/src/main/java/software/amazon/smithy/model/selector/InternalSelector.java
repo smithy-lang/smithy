@@ -111,6 +111,19 @@ interface InternalSelector {
     }
 
     /**
+     * Returns true if this selector's output is independent of the input shape passed to {@link #push}.
+     *
+     * <p>Selectors like {@link RootSelector} always emit the same set of shapes regardless of the input shape,
+     * because they draw from a pre-computed root result. This allows optimizations in selector chaining to avoid
+     * redundant evaluations when an input-independent selector appears downstream of a multi-emitting selector.
+     *
+     * @return Returns true if the selector ignores the input shape parameter.
+     */
+    default boolean isInputShapeIndependent() {
+        return false;
+    }
+
+    /**
      * Receives shapes from an InternalSelector.
      */
     interface Receiver {
