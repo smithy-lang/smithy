@@ -45,16 +45,19 @@ afterEvaluate {
             title = "Smithy API ${version}"
             setDestinationDir(layout.buildDirectory.dir("docs/javadoc/latest").get().asFile)
 
+            // Only include subprojects that apply the java plugin (excludes java-platform projects like the BOM).
+            val javaSubprojects = subprojects.filter { it.plugins.hasPlugin("java") }
+
             // Add an explicit dependencies on the compilation of each subproject because we need
             // the compile classpath, which we can only get after the compile task has completed.
-            dependsOn(subprojects.map { it.tasks.named("compileJava") })
+            dependsOn(javaSubprojects.map { it.tasks.named("compileJava") })
             classpath = files(provider {
-                subprojects.flatMap { subproject ->
+                javaSubprojects.flatMap { subproject ->
                     subproject.configurations.getByName("compileClasspath").resolve()
                 }
             })
 
-            source(provider { subprojects.map { project -> project.sourceSets.main.get().allJava } })
+            source(provider { javaSubprojects.map { project -> project.sourceSets.main.get().allJava } })
 
             (options as StandardJavadocDocletOptions).apply {
                 addStringOption("Xdoclint:-html", "-quiet")
