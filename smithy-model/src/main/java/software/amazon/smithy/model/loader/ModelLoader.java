@@ -4,10 +4,12 @@
  */
 package software.amazon.smithy.model.loader;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -118,7 +120,18 @@ final class ModelLoader {
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
 
-        for (URL model : ModelDiscovery.findModels(manifestUrl)) {
+        List<URL> models;
+        try {
+            models = ModelDiscovery.findModels(manifestUrl);
+        } catch (ModelManifestException e) {
+            if (e.getCause() instanceof FileNotFoundException) {
+                LOGGER.info(() -> "Ignoring JAR without Smithy manifest: " + filename);
+                return;
+            }
+            throw e;
+        }
+
+        for (URL model : models) {
             try {
                 URLConnection connection = model.openConnection();
 

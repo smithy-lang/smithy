@@ -1348,6 +1348,16 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void ignoresJarWithoutSmithyManifest() throws URISyntaxException, IOException {
+        Path jar = JarUtils.createJarFromDir(
+                Paths.get(getClass().getResource("assembler-no-manifest-jar").toURI()));
+
+        ValidatedResult<Model> result = Model.assembler().addImport(jar).assemble();
+
+        assertFalse(result.isBroken());
+    }
+
+    @Test
     public void doesNotThrowOnInvalidSuppression() {
         ObjectNode node = Node.objectNode()
                 .withMember("smithy", "1.0")
