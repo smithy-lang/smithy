@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Ignore JARs without a Smithy manifest to allow Smithy model packages to have non-Smithy dependencies",
+  "pull_requests": []
+}
