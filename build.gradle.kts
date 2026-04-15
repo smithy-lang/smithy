@@ -56,6 +56,7 @@ afterEvaluate {
 
             source(provider { subprojects.map { project -> project.sourceSets.main.get().allJava } })
 
+            options.encoding = "UTF-8"
             (options as StandardJavadocDocletOptions).apply {
                 addStringOption("Xdoclint:-html", "-quiet")
             }
