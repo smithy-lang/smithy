@@ -50,7 +50,21 @@ final class AndSelector {
 
         @Override
         public Response push(Context ctx, Shape shape, Receiver next) {
+            // When the right selector is input-shape-independent (e.g., RootSelector), its
+            // output is the same regardless of which shape is pushed into it. Check if the
+            // left emits anything, and if so, call the right selector exactly once.
+            if (rightSelector.isInputShapeIndependent()) {
+                if (ctx.receivedShapes(shape, leftSelector)) {
+                    return rightSelector.push(ctx, shape, next);
+                }
+                return Response.CONTINUE;
+            }
             return leftSelector.push(ctx, shape, (c, s) -> rightSelector.push(c, s, next));
+        }
+
+        @Override
+        public boolean isInputShapeIndependent() {
+            return leftSelector.isInputShapeIndependent() && rightSelector.isInputShapeIndependent();
         }
 
         @Override

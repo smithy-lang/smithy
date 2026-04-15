@@ -39,4 +39,9 @@ final class RootSelector implements InternalSelector {
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return context.getRootResult(id).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public boolean isInputShapeIndependent() {
+        return true;
+    }
 }

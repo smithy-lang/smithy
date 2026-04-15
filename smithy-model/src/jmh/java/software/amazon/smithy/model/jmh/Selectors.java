@@ -37,6 +37,7 @@ public class Selectors {
         public Model model;
         public Selector suboptimalHttpBindingSelector = createSuboptimalHttpBindingIncompatibilitySelector();
         public Selector httpBindingSelector = createHttpBindingIncompatibilitySelector();
+        public Selector doubleRootSelector = createDoubleRootSelector();
         public String testIdlModelLocation = "test-model.smithy";
         public String testJsonModelLocation = "test-model.json";
 
@@ -63,6 +64,10 @@ public class Selectors {
                     + ":test(${operations}[trait|http])\n"
                     + "${operations}\n"
                     + ":not([trait|http])");
+        }
+
+        private Selector createDoubleRootSelector() {
+            return Selector.parse(":root(*):root(*)");
         }
     }
 
@@ -127,5 +132,11 @@ public class Selectors {
             return operations.stream().filter(shape -> !shape.hasTrait(HttpTrait.ID));
         })
                 .collect(Collectors.toSet());
+    }
+
+    // Benchmarks evaluating the :root(*):root(*) selector against the model.
+    @Benchmark
+    public Set<Shape> evaluateDoubleRootSelector(SelectorState state) {
+        return state.doubleRootSelector.select(state.model);
     }
 }

@@ -1153,6 +1153,30 @@ public class SelectorTest {
     }
 
     @Test
+    public void chainedRootsDoNotCauseExponentialBlowup() {
+        // Regression test for https://github.com/smithy-lang/smithy/issues/2701
+        // Chaining :root selectors previously caused a cross-product blowup (N^(K+1) operations).
+        // With the fix, this completes in linear time.
+        Selector selector = Selector.parse(":root(*):root(*):root(*)");
+        Set<Shape> result = selector.select(resourceModel);
+
+        assertThat(result, equalTo(resourceModel.toSet()));
+    }
+
+    @Test
+    public void chainedRootsWithDifferentFilters() {
+        // :root(string):root(integer) should produce only integer shapes (the right root's result),
+        // because :root ignores its input shape and emits its pre-computed result.
+        Selector selector = Selector.parse(":root(string):root(integer)");
+        Set<Shape> result = selector.select(resourceModel);
+
+        Selector integerOnly = Selector.parse(":root(integer)");
+        Set<Shape> expected = integerOnly.select(resourceModel);
+
+        assertThat(result, equalTo(expected));
+    }
+
+    @Test
     public void inDoesNotSupportMoreThanOneSelector() {
         Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":in(*, *)"));
     }

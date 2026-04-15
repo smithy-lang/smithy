@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Optimize chained :root selector evaluation by updating IntermediateAndSelector to only push to input-independent selectors one time",
+  "pull_requests": [
+    "[#3054](https://github.com/smithy-lang/smithy/pull/3054)"
+  ]
+}
