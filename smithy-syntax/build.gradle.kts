@@ -12,6 +12,10 @@ description = "Provides a parse tree and formatter for Smithy models."
 extra["displayName"] = "Smithy :: Syntax"
 extra["moduleName"] = "software.amazon.smithy.syntax"
 
+configurePublishing {
+    customComponent = components["shadow"]
+}
+
 dependencies {
     api(project(":smithy-utils"))
     api(project(":smithy-model"))

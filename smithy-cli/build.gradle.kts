@@ -22,6 +22,10 @@ description = "This module implements the Smithy command line interface."
 extra["displayName"] = "Smithy :: CLI"
 extra["moduleName"] = "software.amazon.smithy.cli"
 
+configurePublishing {
+    customComponent = components["shadow"]
+}
+
 val imageJreVersion = "17"
 val correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-$imageJreVersion"
 
