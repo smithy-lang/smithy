@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Adds a Bill of Materials (BOM) for all Smithy packagees",
+  "pull_requests": [
+    "[#3056](https://github.com/smithy-lang/smithy/pull/3056)"
+  ]
+}

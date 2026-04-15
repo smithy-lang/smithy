@@ -1,7 +1,14 @@
-
 plugins {
     `maven-publish`
     signing
+}
+
+interface PublishingConfigExtension {
+    var customComponent: SoftwareComponent?
+}
+
+val extension = project.extensions.create<PublishingConfigExtension>("configurePublishing").apply {
+    customComponent = null
 }
 
 publishing {
@@ -14,21 +21,16 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("mavenJava") {
-            if (components.names.contains("shadow")) {
-                // Use the shadow component if its exists
-                from(components["shadow"])
-            } else {
-                // Otherwise, use the standard java component
-                from(components["java"])
-            }
+        afterEvaluate {
+            create<MavenPublication>("mavenJava") {
+                from(extension.customComponent ?: components["java"])
 
-            // Ship the source and javadoc jars.
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+                // Platform projects don't produce source or javadoc jars.
+                if (!components.names.contains("javaPlatform")) {
+                    artifact(tasks["sourcesJar"])
+                    artifact(tasks["javadocJar"])
+                }
 
-            // Include extra information in the POMs.
-            afterEvaluate {
                 pom {
                     name.set(project.ext["displayName"].toString())
                     description.set(project.description)
@@ -58,13 +60,16 @@ publishing {
     }
 
     // Don't sign the artifacts if we didn't get a key and password to use.
-    if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
-        signing {
-            useInMemoryPgpKeys(
-                project.property("signingKey").toString(),
-                project.property("signingPassword").toString()
-            )
-            sign(publishing.publications["mavenJava"])
+    // Deferred to afterEvaluate because the "mavenJava" publication is created there.
+    afterEvaluate {
+        if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
+            signing {
+                useInMemoryPgpKeys(
+                    project.property("signingKey").toString(),
+                    project.property("signingPassword").toString()
+                )
+                sign(publishing.publications["mavenJava"])
+            }
         }
     }
 }
