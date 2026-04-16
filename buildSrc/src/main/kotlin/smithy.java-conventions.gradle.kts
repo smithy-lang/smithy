@@ -44,6 +44,7 @@ tasks {
     }
 
     javadoc {
+        options.encoding = "UTF-8"
         // Disable HTML doclint to work around heading tag sequence validation
         // inconsistencies between JDK15 and earlier Java versions.
         (options as StandardJavadocDocletOptions).apply {
