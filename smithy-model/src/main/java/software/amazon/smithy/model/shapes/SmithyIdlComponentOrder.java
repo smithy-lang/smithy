@@ -10,13 +10,18 @@ import java.util.Map;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines how shapes, traits, and metadata are sorted when serializing a model with {@link SmithyIdlModelSerializer}.
+ *
+ * <p>This enum provides the built-in orderings. For custom ordering logic, implement
+ * {@link SmithyIdlSerializationOrder} directly and pass it to
+ * {@link SmithyIdlModelSerializer.Builder#componentOrder(SmithyIdlSerializationOrder)}.
  */
-public enum SmithyIdlComponentOrder {
+public enum SmithyIdlComponentOrder implements SmithyIdlSerializationOrder {
     /**
      * Sort shapes, traits, and metadata alphabetically. Member order, however, is not sorted.
      */
@@ -46,22 +51,18 @@ public enum SmithyIdlComponentOrder {
      */
     PREFERRED;
 
-    Comparator<Shape> shapeComparator() {
+    @Override
+    public Comparator<Shape> shapeComparator() {
         return this == PREFERRED ? new PreferredShapeComparator() : toShapeIdComparator();
     }
 
-    <T extends FromSourceLocation & ToShapeId> Comparator<T> toShapeIdComparator() {
-        switch (this) {
-            case PREFERRED:
-            case ALPHA_NUMERIC:
-                return Comparator.comparing(ToShapeId::toShapeId);
-            case SOURCE_LOCATION:
-            default:
-                return new SourceComparator<>();
-        }
+    @Override
+    public Comparator<Trait> traitComparator() {
+        return toShapeIdComparator();
     }
 
-    Comparator<Map.Entry<String, Node>> metadataComparator() {
+    @Override
+    public Comparator<Map.Entry<String, Node>> metadataComparator() {
         switch (this) {
             case ALPHA_NUMERIC:
             case PREFERRED:
@@ -69,6 +70,17 @@ public enum SmithyIdlComponentOrder {
             case SOURCE_LOCATION:
             default:
                 return new MetadataComparator();
+        }
+    }
+
+    private <T extends FromSourceLocation & ToShapeId> Comparator<T> toShapeIdComparator() {
+        switch (this) {
+            case PREFERRED:
+            case ALPHA_NUMERIC:
+                return Comparator.comparing(ToShapeId::toShapeId);
+            case SOURCE_LOCATION:
+            default:
+                return new SourceComparator<>();
         }
     }
 

@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add support for custom comparators for sorting IDL serialization output",
+  "pull_requests": []
+}
