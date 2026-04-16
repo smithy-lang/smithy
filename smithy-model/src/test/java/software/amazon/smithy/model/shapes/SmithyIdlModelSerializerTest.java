@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -37,6 +38,8 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -391,5 +394,109 @@ public class SmithyIdlModelSerializerTest {
         // which the parser rejects as a syntactic shape ID that doesn't resolve.
         Model model2 = Model.assembler().addUnparsedModel("test.smithy", modelResult).assemble().unwrap();
         assertThat(model2, equalTo(model));
+    }
+
+    @Test
+    public void usesCustomComponentOrderConfig() {
+        // Build a simple model with multiple shapes to verify custom ordering.
+        Model model = Model.builder()
+                .addShape(StringShape.builder().id("com.example#Zebra").build())
+                .addShape(StringShape.builder().id("com.example#Alpha").build())
+                .addShape(StructureShape.builder().id("com.example#Middle").build())
+                .build();
+
+        // Custom config that reverses the default alphabetical shape order.
+        SmithyIdlSerializationOrder reverseOrder = new SmithyIdlSerializationOrder() {
+            @Override
+            public Comparator<Shape> shapeComparator() {
+                return Comparator.comparing(Shape::toShapeId).reversed();
+            }
+        };
+
+        Map<Path, String> serialized = SmithyIdlModelSerializer.builder()
+                .componentOrder(reverseOrder)
+                .build()
+                .serialize(model);
+        String result = serialized.values().iterator().next();
+
+        // Verify shapes appear in reverse alphabetical order: Zebra, Middle, Alpha.
+        int zebraPos = result.indexOf("Zebra");
+        int middlePos = result.indexOf("Middle");
+        int alphaPos = result.indexOf("Alpha");
+        assertTrue(zebraPos < middlePos, "Zebra should appear before Middle in reverse order");
+        assertTrue(middlePos < alphaPos, "Middle should appear before Alpha in reverse order");
+    }
+
+    @Test
+    public void usesCustomTraitComparator() {
+        // Use two annotation traits (not documentation) whose relative order is observable.
+        Model model = Model.builder()
+                .addShape(StructureShape.builder()
+                        .id("com.example#MyStruct")
+                        .addTrait(new RequiredTrait())
+                        .addTrait(new SensitiveTrait())
+                        .build())
+                .build();
+
+        // Reversed trait comparator: sensitive (s) should appear before required (r) alphabetically,
+        // but reversed means required comes first.
+        SmithyIdlSerializationOrder customOrder = new SmithyIdlSerializationOrder() {
+            @Override
+            public Comparator<Shape> shapeComparator() {
+                return SmithyIdlSerializationOrder.ALPHABETICAL;
+            }
+
+            @Override
+            public Comparator<Trait> traitComparator() {
+                return Comparator.comparing(Trait::toShapeId).reversed();
+            }
+        };
+
+        Map<Path, String> serialized = SmithyIdlModelSerializer.builder()
+                .componentOrder(customOrder)
+                .build()
+                .serialize(model);
+        String result = serialized.get(Paths.get("com.example.smithy"));
+
+        // In reversed order, sensitive (s) comes before required (r).
+        int sensitivePos = result.indexOf("@sensitive");
+        int requiredPos = result.indexOf("@required");
+        assertTrue(sensitivePos < requiredPos,
+                "@sensitive should appear before @required in reversed trait order");
+    }
+
+    @Test
+    public void usesCustomMetadataComparator() {
+        // Use two metadata keys whose relative order is observable.
+        Model model = Model.builder()
+                .addShape(StringShape.builder().id("com.example#Placeholder").build())
+                .putMetadataProperty("zeta", Node.from("z"))
+                .putMetadataProperty("alpha", Node.from("a"))
+                .build();
+
+        // Reversed metadata comparator: alpha (a) should appear before zeta (z) alphabetically,
+        // but reversed means zeta comes first.
+        SmithyIdlSerializationOrder customOrder = new SmithyIdlSerializationOrder() {
+            @Override
+            public Comparator<Shape> shapeComparator() {
+                return SmithyIdlSerializationOrder.ALPHABETICAL;
+            }
+
+            @Override
+            public Comparator<Map.Entry<String, Node>> metadataComparator() {
+                return Map.Entry.<String, Node>comparingByKey().reversed();
+            }
+        };
+
+        Map<Path, String> serialized = SmithyIdlModelSerializer.builder()
+                .componentOrder(customOrder)
+                .build()
+                .serialize(model);
+        String result = serialized.get(Paths.get("metadata.smithy"));
+
+        // In reversed order, zeta (z) comes before alpha (a).
+        int zetaPos = result.indexOf("zeta");
+        int alphaPos = result.indexOf("alpha");
+        assertTrue(zetaPos < alphaPos, "zeta should appear before alpha in reversed metadata order");
     }
 }

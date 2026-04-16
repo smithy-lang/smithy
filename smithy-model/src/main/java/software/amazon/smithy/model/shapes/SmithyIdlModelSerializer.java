@@ -60,7 +60,7 @@ public final class SmithyIdlModelSerializer {
     private final Predicate<Trait> traitFilter;
     private final Function<Shape, Path> shapePlacer;
     private final Path basePath;
-    private final SmithyIdlComponentOrder componentOrder;
+    private final SmithyIdlSerializationOrder componentOrder;
     private final String inlineInputSuffix;
     private final String inlineOutputSuffix;
     private final boolean inferInlineIoSuffixes;
@@ -382,7 +382,7 @@ public final class SmithyIdlModelSerializer {
         private Function<Shape, Path> shapePlacer = SmithyIdlModelSerializer::placeShapesByNamespace;
         private Path basePath = null;
         private boolean serializePrelude = false;
-        private SmithyIdlComponentOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
+        private SmithyIdlSerializationOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
         private String inlineInputSuffix = DEFAULT_INLINE_INPUT_SUFFIX;
         private String inlineOutputSuffix = DEFAULT_INLINE_OUTPUT_SUFFIX;
         private boolean inferInlineIoSuffixes = false;
@@ -478,6 +478,21 @@ public final class SmithyIdlModelSerializer {
         }
 
         /**
+         * Defines how components are sorted in the model using a custom ordering configuration.
+         *
+         * <p>Implement {@link SmithyIdlSerializationOrder} to provide custom comparators for shapes,
+         * traits, and metadata. The built-in orderings are available as constants on
+         * {@link SmithyIdlComponentOrder}.
+         *
+         * @param componentOrder Custom component ordering configuration.
+         * @return Returns the builder.
+         */
+        public Builder componentOrder(SmithyIdlSerializationOrder componentOrder) {
+            this.componentOrder = Objects.requireNonNull(componentOrder);
+            return this;
+        }
+
+        /**
          * Defines what suffixes are checked on operation input shapes to determine whether
          * inline syntax should be used.
          *
@@ -556,7 +571,7 @@ public final class SmithyIdlModelSerializer {
         private final Predicate<Trait> traitFilter;
         private final Model model;
         private final Set<ShapeId> inlineableShapes;
-        private final SmithyIdlComponentOrder componentOrder;
+        private final SmithyIdlSerializationOrder componentOrder;
 
         ShapeSerializer(
                 SmithyCodeWriter codeWriter,
@@ -564,7 +579,7 @@ public final class SmithyIdlModelSerializer {
                 Predicate<Trait> traitFilter,
                 Model model,
                 Set<ShapeId> inlineableShapes,
-                SmithyIdlComponentOrder componentOrder
+                SmithyIdlSerializationOrder componentOrder
         ) {
             this.codeWriter = codeWriter;
             this.nodeSerializer = nodeSerializer;
@@ -703,7 +718,7 @@ public final class SmithyIdlModelSerializer {
                 }
             }
 
-            Comparator<Trait> traitComparator = componentOrder.toShapeIdComparator();
+            Comparator<Trait> traitComparator = componentOrder.traitComparator();
 
             traits.values()
                     .stream()
