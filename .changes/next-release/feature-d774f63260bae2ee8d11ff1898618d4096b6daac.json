@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Add support for custom comparators for sorting IDL serialization output",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3058](https://github.com/smithy-lang/smithy/pull/3058)"
+  ]
 }
