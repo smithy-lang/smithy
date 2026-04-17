@@ -1,5 +1,5 @@
 {
-    "smithy": "2.0",
+    "smithy": "2.1",
     "shapes": {
         "smithy.example#BoxedBoolean": {
             "type": "boolean"
