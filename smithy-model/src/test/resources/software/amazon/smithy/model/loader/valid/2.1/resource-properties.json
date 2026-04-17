@@ -1,0 +1,58 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#Widget": {
+            "type": "resource",
+            "identifiers": {
+                "widgetId": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "properties": {
+                "name": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "read": {
+                "target": "smithy.example#GetWidget"
+            }
+        },
+        "smithy.example#GetWidget": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.example#GetWidgetInput"
+            },
+            "output": {
+                "target": "smithy.example#GetWidgetOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {}
+            }
+        },
+        "smithy.example#GetWidgetInput": {
+            "type": "structure",
+            "members": {
+                "widgetId": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.example#GetWidgetOutput": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        }
+    }
+}

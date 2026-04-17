@@ -1,0 +1,78 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#MyString": {
+            "type": "string"
+        },
+        "smithy.example#MyBoolean": {
+            "type": "boolean"
+        },
+        "smithy.example#MyBlob": {
+            "type": "blob"
+        },
+        "smithy.example#MyShort": {
+            "type": "short"
+        },
+        "smithy.example#MyByte": {
+            "type": "byte"
+        },
+        "smithy.example#MyInteger": {
+            "type": "integer"
+        },
+        "smithy.example#MyLong": {
+            "type": "long"
+        },
+        "smithy.example#MyFloat": {
+            "type": "float"
+        },
+        "smithy.example#MyDouble": {
+            "type": "double"
+        },
+        "smithy.example#MyBigDecimal": {
+            "type": "bigDecimal"
+        },
+        "smithy.example#MyBigInteger": {
+            "type": "bigInteger"
+        },
+        "smithy.example#MyTimestamp": {
+            "type": "timestamp"
+        },
+        "smithy.example#MyList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#MyMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#MyStruct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                },
+                "bar": {
+                    "target": "smithy.api#Integer"
+                }
+            }
+        },
+        "smithy.example#MyUnion": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                },
+                "b": {
+                    "target": "smithy.api#Integer"
+                }
+            }
+        }
+    }
+}
