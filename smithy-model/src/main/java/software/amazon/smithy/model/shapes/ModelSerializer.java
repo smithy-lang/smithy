@@ -162,7 +162,7 @@ public final class ModelSerializer {
         private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
         private boolean includePrelude = false;
         private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
-        private String version = "2.0";
+        private String version = "2.1";
 
         private Builder() {}
 
@@ -225,7 +225,7 @@ public final class ModelSerializer {
          *
          * <p>Version "1.0" serialization cannot be used with {@link #includePrelude}.
          *
-         * @param version IDL version to set. Can be "1", "1.0", "2", or "2.0".
+         * @param version IDL version to set. Can be "1", "1.0", "2", "2.0", or "2.1".
          *                "1" and "2" are normalized to "1.0" and "2.0".
          * @return Returns the builder.
          */
@@ -234,6 +234,9 @@ public final class ModelSerializer {
                 case "2":
                 case "2.0":
                     this.version = "2.0";
+                    break;
+                case "2.1":
+                    this.version = "2.1";
                     break;
                 case "1":
                 case "1.0":

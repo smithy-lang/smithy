@@ -161,27 +161,50 @@ enum Version {
         }
 
         @Override
-        @SuppressWarnings("deprecation")
         ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
-            if (traitId.equals(BoxTrait.ID)) {
-                return ValidationEvent.builder()
-                        .id(Validator.MODEL_ERROR)
-                        .severity(Severity.ERROR)
-                        .shapeId(target)
-                        .sourceLocation(value)
-                        .message("@box is not supported in Smithy IDL 2.0")
-                        .build();
-            } else if (traitId.equals(EnumTrait.ID)) {
-                return ValidationEvent.builder()
-                        .id(Validator.MODEL_DEPRECATION)
-                        .severity(Severity.WARNING)
-                        .shapeId(target)
-                        .sourceLocation(value)
-                        .message("The enum trait is deprecated. Smithy 2.0 models should use the enum shape.")
-                        .build();
-            }
+            return validateV2VersionedTrait(target, traitId, value, this);
+        }
+    },
 
-            return null;
+    VERSION_2_1 {
+        @Override
+        public String toString() {
+            return "2.1";
+        }
+
+        @Override
+        boolean supportsMixins() {
+            return true;
+        }
+
+        @Override
+        boolean supportsInlineOperationIO() {
+            return true;
+        }
+
+        @Override
+        boolean supportsTargetElision() {
+            return true;
+        }
+
+        @Override
+        boolean isDefaultSupported() {
+            return true;
+        }
+
+        @Override
+        boolean isShapeTypeSupported(ShapeType shapeType) {
+            return shapeType != ShapeType.SET;
+        }
+
+        @Override
+        boolean isDeprecated() {
+            return false;
+        }
+
+        @Override
+        ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            return validateV2VersionedTrait(target, traitId, value, this);
         }
     };
 
@@ -200,6 +223,8 @@ enum Version {
             case "2":
             case "2.0":
                 return VERSION_2_0;
+            case "2.1":
+                return VERSION_2_1;
             default:
                 return null;
         }
@@ -211,7 +236,39 @@ enum Version {
      * @return Returns true if this version supports resource properties.
      */
     boolean supportsResourceProperties() {
-        return this == VERSION_2_0;
+        return this == VERSION_2_0 || this == VERSION_2_1;
+    }
+
+    /**
+     * Shared trait validation logic for Smithy 2.x versions.
+     */
+    @SuppressWarnings("deprecation")
+    private static ValidationEvent validateV2VersionedTrait(
+            ShapeId target,
+            ShapeId traitId,
+            Node value,
+            Version version
+    ) {
+        if (traitId.equals(BoxTrait.ID)) {
+            return ValidationEvent.builder()
+                    .id(Validator.MODEL_ERROR)
+                    .severity(Severity.ERROR)
+                    .shapeId(target)
+                    .sourceLocation(value)
+                    .message("@box is not supported in Smithy IDL " + version)
+                    .build();
+        } else if (traitId.equals(EnumTrait.ID)) {
+            return ValidationEvent.builder()
+                    .id(Validator.MODEL_DEPRECATION)
+                    .severity(Severity.WARNING)
+                    .shapeId(target)
+                    .sourceLocation(value)
+                    .message("The enum trait is deprecated. Smithy " + version
+                            + " models should use the enum shape.")
+                    .build();
+        }
+
+        return null;
     }
 
     /**
@@ -243,7 +300,7 @@ enum Version {
 
     /**
      * Checks if the default trait is supported.
-     * @return Returns true if supported (i.e., IDL 2.0 or UNKNOWN).
+     * @return Returns true if supported (i.e., IDL 2.0+, or UNKNOWN).
      */
     abstract boolean isDefaultSupported();
 

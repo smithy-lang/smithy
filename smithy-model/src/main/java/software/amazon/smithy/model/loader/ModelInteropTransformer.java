@@ -83,7 +83,8 @@ final class ModelInteropTransformer {
                             upgradeV1Member(member, target);
                         });
                     }
-                } else if (fileToVersion.apply(struct) == Version.VERSION_2_0) {
+                } else if (fileToVersion.apply(struct) == Version.VERSION_2_0
+                        || fileToVersion.apply(struct) == Version.VERSION_2_1) {
                     // Patch v2 based members with the box trait when necessary in order for v1 based tooling to
                     // correctly interpret a v2 model.
                     for (MemberShape member : struct.getAllMembers().values()) {
@@ -201,7 +202,7 @@ final class ModelInteropTransformer {
                 DefaultTrait syntheticDefault = new DefaultTrait(defaultZeroValue);
                 builder.addTrait(syntheticDefault);
             }
-        } else if (defineShape.version == Version.VERSION_2_0) {
+        } else if (defineShape.version == Version.VERSION_2_0 || defineShape.version == Version.VERSION_2_1) {
             // Add the box trait to root level shapes not marked with the default trait, or that are marked with
             // the default trait, and it isn't set to the zero value of a v1 type.
             Trait defaultTrait = builder.getAllTraits().get(DefaultTrait.ID);
