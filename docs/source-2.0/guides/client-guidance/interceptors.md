@@ -31,6 +31,9 @@ to only the properties that are relevant to that hook. This makes each hook
 easier to reason about, and helps to ensure that a change in execution order
 doesn't result in different behavior.
 
+Hooks are intended to be lightweight, so blocking operations should not be
+supported.
+
 ### Hook sequence
 
 The following is an ordered list of recommended hooks. It is also recommended to
@@ -86,24 +89,28 @@ protocols, these are HTTP requests and HTTP responses.
 8. **readAfterExecution** *(immutable)* — The last thing called during an
    execution.
 
-### Error behavior
+### Error handling
 
-Errors raised in hooks are handled consistently. The behavior depends on where
-in the pipeline the hook is called:
+Error handling behavior depends on where in the pipeline the hook is called and
+whether or not the hook is mutable.
 
-- **Hooks called once per execution** (`readBeforeExecution`,
-  `readAfterExecution`): Errors are collected across all interceptors before any
-  further action is taken. If multiple interceptors raise errors, the last error
-  wins and earlier ones are logged and dropped.
+#### Error accumulation
 
-- **Most other hooks**: An error immediately jumps execution to
-  `modifyBeforeAttemptCompletion` (if inside the retry loop) or
-  `modifyBeforeCompletion` (if outside), with the error set as the result.
+When an immutable hook is being executed, all interceptors are always invoked
+and any errors thrown by those interceptors are accumulated before any further
+action is taken. The last error thrown by an interceptor is re-thrown. If the
+language supports suppressed errors, the other errors should be suppressed. If
+not, the other errors should be logged and dropped. The may also be attached to
+the raised error as metadata.
 
-- **`readAfterAttempt`**: Errors are collected the same way as
-  `readBeforeExecution`. After all interceptors have been called, the
-  [retry strategy](#client-guidance-retries) decides whether to retry or proceed
-  to `modifyBeforeCompletion`.
+When a mutable hook is being executed, the first error thrown is immediately
+forwarded on and no other interceptors are invoked.
+
+#### Control flow
+
+When an error is raised in a hook outside the retry loop, execution immediately
+jumps to `modifyBeforeCompletion`. When an error is raised outside the retry
+loop, execution immediately jumps to `modifyBeforeAttemptCompletion`.
 
 ## Interfaces
 
@@ -138,7 +145,22 @@ public class ResponseHook<I, O, RequestT, ResponseT> extends RequestHook<I, O, R
 // Available from readAfterDeserialization and modifyBeforeAttemptCompletion onward.
 // Adds the deserialized output (may be null if the attempt failed).
 public class OutputHook<I, O, RequestT, ResponseT> extends ResponseHook<I, O, RequestT, ResponseT> {
-    public O output() { ... }
+    public Optional<O> output() { ... }
+
+    public Optional<RuntimeException> error() { ... }
+    
+    /**
+     * If an exception {@code e} is provided, throw it, otherwise return the output value.
+     *
+     * @param e Error to potentially rethrow.
+     * @return the output value.
+     */
+    public O forward(RuntimeException e) {
+        if (e != null) {
+            throw e;
+        }
+        return output;
+    }
 }
 ```
 
@@ -213,6 +235,19 @@ public interface Interceptor {
 }
 ```
 
+:::{admonition} Error modeling
+:class: important
+
+In these interfaces, errors are provided separately from the `OutputHook` type.
+This is a minor optimization that eliminates the need to allocate new `OutputHook`
+instances when errors are thrown.
+
+In languages that have a native union type (such as Python) or a native `Result`
+type (such as Rust), the usability benefits of integrating the error into the
+`OutputHook` may be preferrable.
+
+:::
+
 ## Example
 
 The following interceptor adds a tracing header to HTTP requests when running
@@ -222,7 +257,7 @@ cause the signature to include the header. That would be fine, but this
 particular header is added after signing in practice.
 
 ```java
-public class AddTraceHeader implements ClientInterceptor {
+public class AddTraceHeader implements Interceptor {
     private final String traceId;
 
     public AddTraceHeader(String traceId) {
