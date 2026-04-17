@@ -1,12 +1,12 @@
 # Identity and Authentication
 
 Operations supported by a Smithy service generally require a mechanism for
-authenticating the client's identity. This section describes how to model the
+authenticating the caller's identity. This section describes how to model the
 workflow of identity retrieval and request authentication in Smithy clients.
 
 ## Identity
 
-An Identity is an entity representing **who the caller is**. Abstractly, the
+An `Identity` is an entity representing **who the caller is**. Abstractly, the
 caller's identity could be anonymous, a token, a public/private key, etc.
 
 Identity types in the client runtime should typically extend from a base
@@ -34,9 +34,9 @@ public interface SigV4CredentialIdentity extends Identity {
 
 ## IdentityResolver
 
-An IdentityResolver implements the retrieval of a single type of identity.
+An `IdentityResolver` implements the retrieval of a single type of identity.
 
-The IdentityResolver interface should be modeled as follows:
+The `IdentityResolver` interface should be modeled as follows:
 
 ```java
 public interface IdentityResolver<TIdentity extends Identity> {
@@ -45,12 +45,12 @@ public interface IdentityResolver<TIdentity extends Identity> {
 ```
 
 There may be multiple valid implementations of an identity resolver for a given
-type. For example, one implementation of an IdentityResolver<BearerTokenIdentity>
+type. For example, one implementation of an `IdentityResolver<BearerTokenIdentity>`
 may source the bearer token from the system environment, while another may
 source the token from in-code configuration.
 
 The client configuration for a service should typically include a field that
-allows configuration of an IdentityResolver for every auth scheme supported by
+allows configuration of an `IdentityResolver` for every auth scheme supported by
 the service.
 
 ```java
@@ -64,17 +64,16 @@ public class MyServiceClientConfig {
 
 ## Signer
 
-A Signer is an entity representing **a way to generate a signature for a
+A `Signer` is an entity representing **a way to generate a signature for a
 request**. A signature is metadata attached to a request that will be sent to
-the service in order to allow the service to authenticate the Smithy client
-caller's identity.
+the service in order to allow the service to authenticate the caller's identity.
 
 For example, an operation that uses a bearer token for
-identification would "sign" an outgoing HTTP request by presenting the value of
-the token in the Authorization header.
+identification would sign an outgoing HTTP request by presenting the value of
+the token in the `Authorization` header.
 
 All signers require, at a minimum, a request to sign and an identity with which
-to sign. A Signer should be modeled like so:
+to sign. A `Signer` should be modeled like so:
 
 ```java
 // This example interface modifies the transport message in-place with the
@@ -88,7 +87,7 @@ public interface Signer<TIdentity extends Identity, TMessage extends Message> {
 
 ## AuthScheme
 
-An AuthScheme self-describes a single flow (combination of an identity resolver
+An `AuthScheme` self-describes a single flow (combination of an identity resolver
 and signer) through which a Smithy client authenticates a request:
 
 ```java
@@ -101,7 +100,7 @@ public interface AuthScheme<TIdentity extends Identity, TMessage extends Message
 
     /**
      * Provides an Identity Resolver for this authentication scheme.
-     * This API can return a nullish value indicating that an identity
+     * This API can return a null value indicating that an identity
      * resolver of this scheme's type is not available in the current client
      * environment.
      */
@@ -120,9 +119,9 @@ public interface IdentityResolverConfig {
 }
 ```
 
-A list of supported AuthSchemes should be configurable by the end-user of the
+A list of supported `AuthScheme`s should be configurable by the end-user of the
 Smithy client. The default "constructor" for a Smithy client should typically
-pre-load a list of supported AuthSchemes on client configuration.
+pre-load a list of supported `AuthScheme`s on client configuration.
 
 ```java
 // in this example, the service supports some combination of
@@ -141,10 +140,10 @@ public MyServiceClientConfig defaultConfig() {
 
 ## AuthSchemeResolver
 
-The Smithy IDL allows clients to model operations which support **multiple**
+Smithy allows clients to model operations which support **multiple**
 authentication schemes. Correspondingly, a Smithy client may be loaded with
-multiple AuthSchemes at runtime. The AuthSchemeResolver is the entity through
-which the appropriate AuthScheme is selected and employed for a given operation
+multiple `AuthScheme`s at runtime. The `AuthSchemeResolver` is the entity through
+which the appropriate `AuthScheme` is selected and employed for a given operation
 call.
 
 Like the client's EndpointResolver, an AuthSchemeResolver and its inputs are
@@ -233,7 +232,7 @@ public void resolveAuthScheme(OperationContext ctx) {
 private void selectAuthScheme(OperationContext ctx, List<AuthSchemeOption> options) {
     MyServiceClientConfig config = ctx.clientConfig();
 
-    for (AuthScheme option : options) {
+    for (AuthSchemeOption option : options) {
         // condition 1: the client has an auth scheme with an id matching the
         // one of this option
         AuthScheme<?, ?> found = ctx.getAuthSchemes().stream()
@@ -247,7 +246,7 @@ private void selectAuthScheme(OperationContext ctx, List<AuthSchemeOption> optio
         //
         // note that we are only checking whether there IS an identity resolver, not whether
         // it can actually provide an identity
-        IdentityResolver resolver = scheme.getIdentityResolver(config);
+        IdentityResolver resolver = found.get().getIdentityResolver(config);
         if (resolver == null) {
             continue;
         }
@@ -291,11 +290,11 @@ The Smithy client should conduct the auth flow in an operation call as follows:
 
 ### Wow, this seems like a lot. Do I really need all of these abstractions just to decide how to set an Authorization header?
 
-The example set of interfaces provided in this listing represents the most
-rigorous possible solution for implementing Identity & Auth. These interfaces
+The example set of interfaces provided in this listing represents a
+rigorous solution for implementing Identity & Auth. These interfaces
 support multiple authentication schemes, _across_ multiple identity types and
 transport message types. The Smithy client implementor is free to simplify
-along any of those dimensions as fits their service needs.
+along any of those dimensions as fits their needs.
 
 As always, APIs should be designed or future-proofed with respect to backwards
 compatibility of future client releases at the implementor's discretion.
