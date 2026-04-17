@@ -1,0 +1,74 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#Suit": {
+            "type": "enum",
+            "members": {
+                "CLUB": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "CLUB"
+                    }
+                },
+                "DIAMOND": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "DIAMOND"
+                    }
+                },
+                "HEART": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "HEART"
+                    }
+                },
+                "SPADE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "SPADE"
+                    }
+                }
+            }
+        },
+        "smithy.example#SuitWithValues": {
+            "type": "enum",
+            "members": {
+                "CLUB": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "clubs"
+                    }
+                },
+                "DIAMOND": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "diamonds"
+                    }
+                }
+            }
+        },
+        "smithy.example#Priority": {
+            "type": "intEnum",
+            "members": {
+                "LOW": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                },
+                "MEDIUM": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 2
+                    }
+                },
+                "HIGH": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 3
+                    }
+                }
+            }
+        }
+    }
+}

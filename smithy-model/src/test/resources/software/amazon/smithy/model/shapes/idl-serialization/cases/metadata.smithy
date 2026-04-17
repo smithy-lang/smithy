@@ -1,4 +1,4 @@
-$version: "2.0"
+$version: "2.1"
 
 metadata CaseSensitive = true
 metadata bool2 = false
