@@ -37,16 +37,33 @@ public final class FileCacheResolver implements DependencyResolver {
     private final DependencyResolver delegate;
     private final File location;
     private final long referenceTimeInMillis;
+    private final int configHash;
+
+    /**
+     * @param location The location to the cache.
+     * @param referenceTimeInMillis Invalidate cache items if this time is newer than the cache item time.
+     * @param configHash A hash of the dependency configuration (artifacts and repositories) used to detect
+     *                   when different configs share the same cache file location. A value of 0 disables
+     *                   hash-based invalidation (used by the deprecated constructor for backward compatibility).
+     * @param delegate Resolver to delegate to when dependencies aren't cached.
+     */
+    public FileCacheResolver(File location, long referenceTimeInMillis, int configHash, DependencyResolver delegate) {
+        this.location = location;
+        this.referenceTimeInMillis = referenceTimeInMillis;
+        this.configHash = configHash;
+        this.delegate = delegate;
+    }
 
     /**
      * @param location The location to the cache.
      * @param referenceTimeInMillis Invalidate cache items if this time is newer than the cache item time.
      * @param delegate Resolver to delegate to when dependencies aren't cached.
+     * @deprecated Use {@link #FileCacheResolver(File, long, int, DependencyResolver)} to include a config hash
+     *             for correct cache invalidation when different configs share the same output directory.
      */
+    @Deprecated
     public FileCacheResolver(File location, long referenceTimeInMillis, DependencyResolver delegate) {
-        this.location = location;
-        this.referenceTimeInMillis = referenceTimeInMillis;
-        this.delegate = delegate;
+        this(location, referenceTimeInMillis, 0, delegate);
     }
 
     @Override
@@ -111,6 +128,18 @@ public final class FileCacheResolver implements DependencyResolver {
             return Collections.emptyList();
         }
 
+        // Invalidate if the config hash (dependencies + repositories) has changed, which happens
+        // when different --config files resolve to the same output directory.
+        if (configHash != 0) {
+            int cachedHash = node.getNumberMemberOrDefault("configHash", 0).intValue();
+            if (cachedHash != configHash) {
+                LOGGER.fine("Invalidating dependency cache: config hash mismatch (cached: "
+                        + cachedHash + ", current: " + configHash + ")");
+                invalidate();
+                return Collections.emptyList();
+            }
+        }
+
         ObjectNode artifactNode = node.expectObjectMember("artifacts");
         List<ResolvedArtifact> result = new ArrayList<>(artifactNode.getStringMap().size());
         for (Map.Entry<String, Node> entry : artifactNode.getStringMap().entrySet()) {
@@ -139,6 +168,7 @@ public final class FileCacheResolver implements DependencyResolver {
             Files.createDirectories(parent);
             ObjectNode.Builder builder = Node.objectNodeBuilder();
             builder.withMember("version", CURRENT_CACHE_FILE_VERSION);
+            builder.withMember("configHash", configHash);
             ObjectNode.Builder artifactNodeBuilder = Node.objectNodeBuilder();
             for (ResolvedArtifact artifact : result) {
                 artifactNodeBuilder.withMember(artifact.getCoordinates(), artifact.toNode());
