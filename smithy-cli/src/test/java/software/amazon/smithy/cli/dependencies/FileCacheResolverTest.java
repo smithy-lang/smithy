@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.MavenRepository;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -129,6 +131,81 @@ public class FileCacheResolverTest {
 
         // The cache will be invalidated here and reloaded from source, resulting in an empty result.
         assertThat(cachingResolver.resolve(), empty());
+    }
+
+    @Test
+    public void usesCacheWhenConfigHashMatches() throws IOException {
+        File cache = File.createTempFile("classpath", ".json");
+        File jar = File.createTempFile("foo", ".jar");
+        Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
+
+        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        List<ResolvedArtifact> result = new ArrayList<>();
+        result.add(artifact);
+
+        int hash = 12345;
+        Mock mock = new Mock(result);
+        DependencyResolver cachingResolver = new FileCacheResolver(cache, jar.lastModified(), hash, mock);
+        List<ResolvedArtifact> resolved = cachingResolver.resolve();
+
+        assertThat(resolved, contains(artifact));
+        ObjectNode cacheNode = Node.parse(IoUtils.readUtf8File(cache.toPath())).expectObjectNode();
+        assertThat(cacheNode.expectNumberMember("configHash").getValue().intValue(), is(hash));
+
+        // Clear the mock so a cache miss would return empty.
+        result.clear();
+
+        // A second resolver with the same hash should get a cache hit.
+        DependencyResolver secondResolver = new FileCacheResolver(cache, jar.lastModified(), hash, new Mock(result));
+        assertThat(secondResolver.resolve(), contains(artifact));
+    }
+
+    @Test
+    public void invalidatesCacheWhenConfigHashDiffers() throws IOException {
+        File cache = File.createTempFile("classpath", ".json");
+        File jar = File.createTempFile("foo", ".jar");
+        Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
+
+        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        List<ResolvedArtifact> result = new ArrayList<>();
+        result.add(artifact);
+
+        // Write the cache with hash A.
+        Mock mock = new Mock(result);
+        DependencyResolver firstResolver = new FileCacheResolver(cache, jar.lastModified(), 111, mock);
+        assertThat(firstResolver.resolve(), contains(artifact));
+
+        // A second resolver with hash B should invalidate and re-resolve via its delegate.
+        List<ResolvedArtifact> secondResult = new ArrayList<>();
+        Mock secondMock = new Mock(secondResult);
+        DependencyResolver secondResolver = new FileCacheResolver(cache, jar.lastModified(), 222, secondMock);
+        assertThat(secondResolver.resolve(), empty());
+    }
+
+    @Test
+    public void invalidatesCacheWhenOldCacheFileLacksConfigHash() throws IOException {
+        File cache = File.createTempFile("classpath", ".json");
+        File jar = File.createTempFile("foo", ".jar");
+        Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
+
+        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        List<ResolvedArtifact> result = new ArrayList<>();
+        result.add(artifact);
+
+        // Write the cache using the deprecated constructor (configHash=0), simulating an old cache file.
+        Mock mock = new Mock(result);
+        DependencyResolver oldResolver = new FileCacheResolver(cache, jar.lastModified(), mock);
+        assertThat(oldResolver.resolve(), contains(artifact));
+
+        // The cache file should have configHash 0.
+        ObjectNode cacheNode = Node.parse(IoUtils.readUtf8File(cache.toPath())).expectObjectNode();
+        assertThat(cacheNode.expectNumberMember("configHash").getValue().intValue(), is(0));
+
+        // A new resolver with a non-zero hash should invalidate the old cache.
+        List<ResolvedArtifact> newResult = new ArrayList<>();
+        Mock newMock = new Mock(newResult);
+        DependencyResolver newResolver = new FileCacheResolver(cache, jar.lastModified(), 99999, newMock);
+        assertThat(newResolver.resolve(), empty());
     }
 
     @Test

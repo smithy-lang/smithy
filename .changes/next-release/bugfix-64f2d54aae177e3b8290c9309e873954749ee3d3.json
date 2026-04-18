@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix CLI dependency cache for multiple configs building to the same directory",
+  "pull_requests": []
+}
