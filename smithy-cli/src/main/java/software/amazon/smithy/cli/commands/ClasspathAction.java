@@ -124,18 +124,22 @@ class ClasspathAction implements CommandAction {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
-        DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
-                lastModified,
-                delegate);
 
         Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
+        int configHash = ConfigurationUtils.configHash(maven.getDependencies(), repositories);
+
+        DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
+                lastModified,
+                configHash,
+                delegate);
+
         repositories.forEach(resolver::addRepository);
 
         // Use the pinned lockfile dependencies if a lockfile exists otherwise use the configured dependencies
         Optional<LockFile> lockFileOptional = LockFile.load();
         if (lockFileOptional.isPresent()) {
             LockFile lockFile = lockFileOptional.get();
-            if (lockFile.getConfigHash() != ConfigurationUtils.configHash(maven.getDependencies(), repositories)) {
+            if (lockFile.getConfigHash() != configHash) {
                 throw new CliError(
                         "`smithy-lock.json` does not match configured dependencies. "
                                 + "Re-lock dependencies using the `lock` command or revert changes.");
