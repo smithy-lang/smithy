@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Bumped the IDL version to 2.1.",
+  "pull_requests": [
+    "[#3059](https://github.com/smithy-lang/smithy/pull/3059)"
+  ]
+}
