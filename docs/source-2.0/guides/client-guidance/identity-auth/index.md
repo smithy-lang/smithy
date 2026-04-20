@@ -9,10 +9,10 @@ workflow of identity retrieval and request authentication in Smithy clients.
 An `Identity` is an entity representing **who the caller is**. Abstractly, the
 caller's identity could be anonymous, a token, a public/private key, etc.
 
-Identity types in the client runtime should typically extend from a base
-interface that exposes a single value: the expiration time of the identity. The
-API should then branch per auth scheme. Sometimes an Identity type may be
-re-used across multiple schemes.
+Identity types in the client runtime should extend from a base `Identity`
+interface so that other auth components can reference it generically. The API
+should then branch per auth scheme. Sometimes an `Identity` type may be re-used
+across multiple schemes.
 
 ```java
 public interface Identity {
@@ -272,19 +272,18 @@ record SelectedAuthScheme(
 
 The Smithy client should conduct the auth flow in an operation call as follows:
 
-1. Auth scheme resolution (AuthSchemeResolver::resolveAuthScheme) is called
-   **within** the retry loop. The selected auth scheme and identity / signer
-   properties are stored in operation context for future use.
-1. (Endpoint resolution)[TODO: NEED ANCHOR] is called. The signer properties
-   from the resolved endpoint are **merged** into the ones sourced from auth
+1. Resolve the auth scheme (`AuthSchemeResolver::resolveAuthScheme`) **within**
+   the retry loop. Store the selected auth scheme and identity / signer
+   properties in operation context for future use.
+1. Resolve the endpoint [TODO: NEED ANCHOR]. **Merge** the signer properties
+   from the resolved endpoint into the ones sourced from auth scheme resolution.
+1. Retrieve the `IdentityResolver` from the previously-resolved `AuthScheme`
+   (`AuthScheme::identityResolver`). Resolve the identity
+   (`IdentityResolver::resolve`) with the identity properties sourced from
    scheme resolution.
-1. Retrieve the IdentityResolver from the previously-resolved AuthScheme
-   (AuthScheme::identityResolver). Identity resolution
-   (IdentityResolver::resolve) is called with the identity properties sourced from
-   scheme resolution.
-1. Retrieve the Signer from the previously-resolved AuthScheme
-   (AuthScheme::signer). Request signing (Signer::sign) is called with the
-   merged signer properties from scheme and endpoint resolution.
+1. Retrieve the `Signer` from the previously-resolved `AuthScheme`
+   (`AuthScheme::signer`). Sign the request (`Signer::sign`) with the merged
+   signer properties from scheme and endpoint resolution.
 
 ## FAQ
 
@@ -301,11 +300,23 @@ compatibility of future client releases at the implementor's discretion.
 
 ### What about operations with no authentication?
 
-"Anonymous" (no authentication) is explicitly modeled via `@smithy.api#noAuth`.
-If you treat it as such (just like any other auth scheme) it does not typically
-require much special-casing. Its Identity implementation can simply model no
-additional properties, its IdentityResolver can return a static "anonymous"
-identity, and its Signer can be a no-op.
+"Anonymous" (no authentication) is not an explicitly modeled auth scheme.
+Rather, it is a consequence of an operation having an empty
+[`@auth`](https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-auth-trait)
+trait list (`@auth([])`), or of using the
+[`@optionalAuth`](https://smithy.io/2.0/spec/authentication-traits.html#optionalauth-trait)
+trait. In the auth scheme knowledge index, this is represented as the synthetic
+`smithy.api#noAuth` scheme ID.
+
+If you treat anonymous auth as a first-class auth scheme (just like any other)
+it does not typically require much special-casing. Its `Identity` implementation
+can simply model no additional properties, its `IdentityResolver` can return a
+static "anonymous" identity, and its `Signer` can be a no-op.
+
+Operations with `@optionalAuth` support both authenticated and anonymous
+access. The client should include anonymous auth as a candidate in the auth
+scheme resolution for these operations, typically as the lowest-priority
+option.
 
 We do recommend you avoid exposing configuration for "anonymous" identity
 resolvers and signers, since doing so provides no additional value to the
