@@ -284,7 +284,7 @@ public class ModelSerializerTest {
                 .build();
         Model model = Model.builder().addShape(shape).build();
         Node node = ModelSerializer.builder().build().serialize(model);
-        Node expectedNode = Node.parse("{\"smithy\":\"2.0\",\"shapes\":{\"ns.foo#Bar\":" +
+        Node expectedNode = Node.parse("{\"smithy\":\"2.1\",\"shapes\":{\"ns.foo#Bar\":" +
                 "{\"type\":\"resource\",\"properties\":{\"fooProperty\":{\"target\":\"ns.foo#Shape\"}}}}}");
         Node.assertEquals(node, expectedNode);
     }
