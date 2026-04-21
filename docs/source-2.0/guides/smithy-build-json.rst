@@ -131,6 +131,26 @@ The following is an example ``smithy-build.json`` configuration:
     the end of the file is considered a comment and ignored when parsing.
 
 
+.. _smithy-build-json-schema:
+
+JSON Schema
+-----------
+
+A `JSON Schema`_ is available for ``smithy-build.json`` that can be used to
+validate configuration files and to enable autocompletion and inline
+documentation in editors that support JSON Schema. To use it, add a
+``$schema`` property to the top of your configuration file:
+
+.. code-block:: json
+
+    {
+        "$schema": "https://smithy.io/2.0/_static/smithy-build-schema.json",
+        "version": "1.0"
+    }
+
+.. _JSON Schema: https://smithy.io/2.0/_static/smithy-build-schema.json
+
+
 .. _plugin-id:
 
 Plugin ID and artifact names
@@ -270,6 +290,9 @@ the following configuration:
     * - Property
       - Type
       - Description
+    * - id
+      - ``string``
+      - An optional identifier for the repository.
     * - url
       - ``string``
       - The URL of the repository (for example, ``https://repo.maven.apache.org/maven2``).
