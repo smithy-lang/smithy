@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed selector parsing to properly handle extraneous BREAK_TOKENS (',', ']', ')') in a selector. This manifested in silently dropping contents in the comma case (\"structure, string\" was effectively just \"structure\"). For the closing brace/paren, the characters were silently ignored as seen in the additional fixed tests.",
+  "pull_requests": []
+}
