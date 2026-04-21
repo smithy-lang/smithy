@@ -21,10 +21,15 @@ class DefaultTokenizer implements IdlTokenizer {
     private Number currentTokenNumber;
     private CharSequence currentTokenStringSlice;
     private String currentTokenError;
+    private Version version;
 
     DefaultTokenizer(String filename, CharSequence model) {
         this.filename = filename;
         this.parser = new SimpleParser(model, 64);
+    }
+
+    void setVersion(Version version) {
+        this.version = version;
     }
 
     @Override
@@ -165,7 +170,7 @@ class DefaultTokenizer implements IdlTokenizer {
             case ')':
                 return singleCharToken(IdlToken.RPAREN);
             case '#':
-                return singleCharToken(IdlToken.POUND);
+                return parsePoundOrTaggedLiteral();
             case '=':
                 return singleCharToken(IdlToken.EQUAL);
             case ':':
@@ -342,6 +347,117 @@ class DefaultTokenizer implements IdlTokenizer {
         }
         currentTokenEnd = parser.position();
         return currentTokenType;
+    }
+
+    private IdlToken parsePoundOrTaggedLiteral() {
+        // Tagged string literals require IDL version 2.1 or later.
+        if (version == null || !version.supportsTaggedLiterals()) {
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Save state in case we need to revert to a plain POUND token.
+        int savedPos = parser.position();
+        int savedLine = parser.line();
+        int savedCol = parser.column();
+
+        parser.skip(); // skip '#'
+
+        // Check if the next characters form a known tag identifier.
+        if (!ParserUtils.isIdentifierStart(parser.peek())) {
+            currentTokenEnd = parser.position();
+            return currentTokenType = IdlToken.POUND;
+        }
+
+        int tagStart = parser.position();
+        parser.consumeWhile(ParserUtils::isValidIdentifierCharacter);
+        String tag = parser.sliceFrom(tagStart);
+
+        if (!TaggedStringLiteral.hasHandler(tag)) {
+            // Not a known tag — rewind and emit POUND.
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Skip optional spaces between tag and string.
+        parser.consumeWhile(c -> c == ' ' || c == '\t');
+
+        if (parser.peek() != '"') {
+            // Tag not followed by a string — rewind and emit POUND.
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Parse the string with the tag-specific handler.
+        return parseTaggedString(tag);
+    }
+
+    private IdlToken parseTaggedString(String tag) {
+        parser.skip(); // skip first quote.
+        boolean isTextBlock = false;
+
+        if (parser.peek() == '"') {
+            parser.skip(); // skip second quote.
+            if (parser.peek() == '"') {
+                parser.skip(); // skip third quote — it's a text block.
+                isTextBlock = true;
+            } else {
+                // Empty string.
+                currentTokenEnd = parser.position();
+                return applyTagResult(tag, TaggedStringLiteral.scan(tag, "", false), false);
+            }
+        }
+
+        try {
+            CharSequence rawContent = parseRawStringContents(isTextBlock);
+            TaggedStringLiteral.Result result = TaggedStringLiteral.scan(tag, rawContent, isTextBlock);
+            currentTokenEnd = parser.position();
+            return applyTagResult(tag, result, isTextBlock);
+        } catch (RuntimeException e) {
+            currentTokenEnd = parser.position();
+            currentTokenError = "Error parsing tagged string #" + tag + ": " + e.getMessage();
+            return currentTokenType = IdlToken.ERROR;
+        }
+    }
+
+    private IdlToken applyTagResult(String tag, TaggedStringLiteral.Result result, boolean isTextBlock) {
+        switch (result.token) {
+            case NUMBER:
+                currentTokenNumber = result.numberValue;
+                return currentTokenType = IdlToken.NUMBER;
+            case STRING:
+            default:
+                currentTokenStringSlice = result.stringValue;
+                return currentTokenType = isTextBlock ? IdlToken.TEXT_BLOCK : IdlToken.STRING;
+        }
+    }
+
+    /**
+     * Reads the raw content between quotes without applying escape processing.
+     * This is used by tagged string literals that handle their own escape logic.
+     */
+    private CharSequence parseRawStringContents(boolean triple) {
+        int start = parser.position();
+
+        while (!parser.eof()) {
+            char next = parser.peek();
+            if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
+                break;
+            }
+            parser.skip();
+            if (next == '\\') {
+                parser.skip();
+            }
+        }
+
+        CharSequence result = parser.borrowSliceFrom(start);
+        parser.expect('"');
+
+        if (triple) {
+            parser.expect('"');
+            parser.expect('"');
+        }
+
+        return result;
     }
 
     private IdlToken parseString() {

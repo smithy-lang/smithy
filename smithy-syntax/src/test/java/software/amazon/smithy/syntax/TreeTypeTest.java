@@ -1868,8 +1868,47 @@ public class TreeTypeTest {
         }
     }
 
+    @Test
+    public void taggedStringLiteralQuotedText() {
+        String tagged = "#re \"^\\\\d{5}$\"";
+        TokenTree tree = getTreeV21(TreeType.NODE_VALUE, tagged);
+        assertTreeIsValid(tree);
+        rootAndChildTypesEqual(tree,
+                TreeType.NODE_VALUE,
+                TreeType.NODE_STRING_VALUE);
+    }
+
+    @Test
+    public void taggedStringLiteralTextBlock() {
+        String tagged = "#re \"\"\"\n    ^\\\\d{5}$\n    \"\"\"";
+        TokenTree tree = getTreeV21(TreeType.NODE_VALUE, tagged);
+        assertTreeIsValid(tree);
+        rootAndChildTypesEqual(tree,
+                TreeType.NODE_VALUE,
+                TreeType.NODE_STRING_VALUE);
+    }
+
+    @Test
+    public void taggedBinaryLiteral() {
+        String tagged = "#b \"\\\\x48\\\\x69\"";
+        TokenTree tree = getTreeV21(TreeType.NODE_VALUE, tagged);
+        assertTreeIsValid(tree);
+        rootAndChildTypesEqual(tree,
+                TreeType.NODE_VALUE,
+                TreeType.NODE_STRING_VALUE);
+    }
+
     private static TokenTree getTree(TreeType type, String forText) {
         IdlTokenizer tokenizer = IdlTokenizer.create(forText);
         return TokenTree.of(tokenizer, type);
+    }
+
+    private static TokenTree getTreeV21(TreeType type, String forText) {
+        IdlTokenizer tokenizer = IdlTokenizer.create("$version: \"2.1\"\n" + forText);
+        CapturingTokenizer capturingTokenizer = new CapturingTokenizer(tokenizer);
+        // Skip past the control section tokens to get to the actual content.
+        TreeType.CONTROL_SECTION.parse(capturingTokenizer);
+        type.parse(capturingTokenizer);
+        return capturingTokenizer.getRoot().getChildren().get(1);
     }
 }

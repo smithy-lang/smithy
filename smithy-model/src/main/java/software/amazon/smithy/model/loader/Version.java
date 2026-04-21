@@ -57,6 +57,11 @@ enum Version {
         }
 
         @Override
+        boolean supportsTaggedLiterals() {
+            return true;
+        }
+
+        @Override
         ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             return null;
         }
@@ -183,6 +188,54 @@ enum Version {
 
             return null;
         }
+    },
+
+    VERSION_2_1 {
+        @Override
+        public String toString() {
+            return "2.1";
+        }
+
+        @Override
+        boolean supportsMixins() {
+            return true;
+        }
+
+        @Override
+        boolean supportsInlineOperationIO() {
+            return true;
+        }
+
+        @Override
+        boolean supportsTargetElision() {
+            return true;
+        }
+
+        @Override
+        boolean isDefaultSupported() {
+            return true;
+        }
+
+        @Override
+        boolean isShapeTypeSupported(ShapeType shapeType) {
+            return shapeType != ShapeType.SET;
+        }
+
+        @Override
+        boolean isDeprecated() {
+            return false;
+        }
+
+        @Override
+        boolean supportsTaggedLiterals() {
+            return true;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            return VERSION_2_0.validateVersionedTrait(target, traitId, value);
+        }
     };
 
     /**
@@ -200,9 +253,38 @@ enum Version {
             case "2":
             case "2.0":
                 return VERSION_2_0;
+            case "2.1":
+                return VERSION_2_1;
             default:
                 return null;
         }
+    }
+
+    /**
+     * Detects the IDL version from model text by scanning for the $version control statement.
+     *
+     * @param model Model text to scan.
+     * @return Returns the detected version, or null if not found.
+     */
+    static Version detectFromModel(CharSequence model) {
+        String text = model.toString();
+        int idx = text.indexOf("$version:");
+        if (idx == -1) {
+            idx = text.indexOf("$version :");
+        }
+        if (idx == -1) {
+            return null;
+        }
+        int colon = text.indexOf(':', idx);
+        int quote1 = text.indexOf('"', colon);
+        if (quote1 == -1) {
+            return null;
+        }
+        int quote2 = text.indexOf('"', quote1 + 1);
+        if (quote2 == -1) {
+            return null;
+        }
+        return fromString(text.substring(quote1 + 1, quote2));
     }
 
     /**
@@ -211,7 +293,16 @@ enum Version {
      * @return Returns true if this version supports resource properties.
      */
     boolean supportsResourceProperties() {
-        return this == VERSION_2_0;
+        return this == VERSION_2_0 || this == VERSION_2_1;
+    }
+
+    /**
+     * Checks if this version of the IDL supports tagged string literals.
+     *
+     * @return Returns true if this version supports tagged string literals.
+     */
+    boolean supportsTaggedLiterals() {
+        return false;
     }
 
     /**
