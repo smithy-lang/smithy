@@ -31,9 +31,9 @@ val correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-$image
 
 dependencies {
     constraints {
-        implementation("org.codehaus.plexus:plexus-utils:3.6.1") {
+        implementation("org.codehaus.plexus:plexus-utils:4.0.3") {
             because(
-                "CVE-2025-67030: directory traversal in Expand.extractFile (CVSS 8.8), fixed in 3.6.1 via https://github.com/codehaus-plexus/plexus-utils/pull/304",
+                "CVE-2025-67030: directory traversal in Expand.extractFile (CVSS 8.8), fixed in 4.0.3 via https://github.com/codehaus-plexus/plexus-utils/pull/304",
             )
         }
     }
