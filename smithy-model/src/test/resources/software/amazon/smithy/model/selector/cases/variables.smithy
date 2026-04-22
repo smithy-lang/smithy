@@ -26,7 +26,7 @@ metadata selectorTests = [
         ~>
         operation
         [trait|auth]
-        :not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}]))
+        :not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}])
         """
         matches: [
             smithy.example#HasDigestAuth
