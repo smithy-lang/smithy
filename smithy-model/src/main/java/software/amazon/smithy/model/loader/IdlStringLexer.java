@@ -46,12 +46,16 @@ final class IdlStringLexer {
         }
     }
 
-    static CharSequence scanStringContents(CharSequence lexeme, boolean scanningTextBlock) {
+    static CharSequence scanStringContents(
+            CharSequence lexeme,
+            StringBuilder textBlockContents
+    ) {
+        boolean scanningTextBlock = textBlockContents != null;
         lexeme = normalizeLineEndings(lexeme);
 
         // Format the text block and remove incidental whitespace.
         if (scanningTextBlock) {
-            lexeme = formatTextBlock(lexeme);
+            lexeme = formatTextBlock(lexeme, textBlockContents);
         }
 
         //StringBuilder result = new StringBuilder(lexeme.length());
@@ -176,14 +180,13 @@ final class IdlStringLexer {
         return false;
     }
 
-    private static CharSequence formatTextBlock(CharSequence lexeme) {
+    private static CharSequence formatTextBlock(CharSequence lexeme, StringBuilder buffer) {
         if (lexeme.length() == 0) {
             throw new RuntimeException("Text block is empty");
         } else if (lexeme.charAt(0) != '\n') {
             throw new RuntimeException("Text block must start with a new line");
         }
 
-        StringBuilder buffer = new StringBuilder();
         int longestPadding = Integer.MAX_VALUE;
         List<CharSequence> lines = lines(lexeme);
 

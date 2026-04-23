@@ -86,3 +86,16 @@ string ExtraTrailingNewlines
     """
 )
 string EmptyTextBlock
+
+// Ensure that the escaped new lines are preserved and the contents are aligned with the opening quote.
+@pattern(
+    """
+    ^[a-z\
+    A-Z]+\
+    [a-z\
+    A-Z\
+    0-9]+\
+    $
+    """
+)
+string identifier
