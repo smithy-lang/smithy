@@ -97,6 +97,11 @@ final class CapturingTokenizer implements IdlTokenizer {
     }
 
     @Override
+    public CharSequence getCurrentTextBlockContents() {
+        return getToken().getTextBlockContents();
+    }
+
+    @Override
     public CharSequence getCurrentTokenStringSlice() {
         return getToken().getStringContents();
     }

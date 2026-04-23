@@ -462,7 +462,7 @@ final class FormatVisitor {
                         .tokens()
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("TEXT_BLOCK cursor does not have an IDL token"))
-                        .getStringContents();
+                        .getTextBlockContents();
 
                 // If the last character is a newline, then the closing triple quote must be on the next line.
                 boolean endQuoteOnNextLine = stringValue.endsWith("\n") || stringValue.endsWith("\r");

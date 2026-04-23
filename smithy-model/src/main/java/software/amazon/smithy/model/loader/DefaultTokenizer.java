@@ -20,6 +20,7 @@ class DefaultTokenizer implements IdlTokenizer {
     private int currentTokenColumn = -1;
     private Number currentTokenNumber;
     private CharSequence currentTokenStringSlice;
+    private CharSequence currentTextBlockContents;
     private String currentTokenError;
 
     DefaultTokenizer(String filename, CharSequence model) {
@@ -97,6 +98,17 @@ class DefaultTokenizer implements IdlTokenizer {
     }
 
     @Override
+    public final CharSequence getCurrentTextBlockContents() {
+        getCurrentToken();
+        if (currentTextBlockContents != null) {
+            return currentTextBlockContents;
+        } else {
+            throw syntax("The current token must be text block: "
+                    + currentTokenType.getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
+        }
+    }
+
+    @Override
     public final Number getCurrentTokenNumberValue() {
         getCurrentToken();
         if (currentTokenNumber == null) {
@@ -124,6 +136,7 @@ class DefaultTokenizer implements IdlTokenizer {
     @Override
     public IdlToken next() {
         currentTokenStringSlice = null;
+        currentTextBlockContents = null;
         currentTokenNumber = null;
         currentTokenColumn = parser.column();
         currentTokenLine = parser.line();
@@ -362,7 +375,7 @@ class DefaultTokenizer implements IdlTokenizer {
 
         try {
             // Parse the contents of a quoted string.
-            currentTokenStringSlice = parseQuotedTextAndTextBlock(false);
+            currentTokenStringSlice = parseQuotedTextAndTextBlock(null);
             currentTokenEnd = parser.position();
             return currentTokenType = IdlToken.STRING;
         } catch (RuntimeException e) {
@@ -374,7 +387,9 @@ class DefaultTokenizer implements IdlTokenizer {
 
     private IdlToken parseTextBlock() {
         try {
-            currentTokenStringSlice = parseQuotedTextAndTextBlock(true);
+            StringBuilder builder = new StringBuilder();
+            currentTextBlockContents = builder;
+            currentTokenStringSlice = parseQuotedTextAndTextBlock(builder);
             currentTokenEnd = parser.position();
             return currentTokenType = IdlToken.TEXT_BLOCK;
         } catch (RuntimeException e) {
@@ -385,8 +400,9 @@ class DefaultTokenizer implements IdlTokenizer {
     }
 
     // Parses both quoted_text and text_block
-    private CharSequence parseQuotedTextAndTextBlock(boolean triple) {
+    private CharSequence parseQuotedTextAndTextBlock(StringBuilder textBlockContents) {
         int start = parser.position();
+        boolean triple = textBlockContents != null;
 
         while (!parser.eof()) {
             char next = parser.peek();
@@ -409,6 +425,6 @@ class DefaultTokenizer implements IdlTokenizer {
             parser.expect('"');
         }
 
-        return IdlStringLexer.scanStringContents(result, triple);
+        return IdlStringLexer.scanStringContents(result, textBlockContents);
     }
 }
