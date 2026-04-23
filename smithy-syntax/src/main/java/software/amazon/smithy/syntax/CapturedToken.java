@@ -47,7 +47,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             int endColumn,
             CharSequence lexeme,
             String stringContents,
-            String formattedTextBlockContents,
+            String textBlockContents,
             Number numberValue,
             String errorMessage
     ) {
@@ -66,7 +66,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         } else {
             this.stringContents = stringContents;
         }
-        this.textBlockContents = formattedTextBlockContents;
+        this.textBlockContents = textBlockContents;
 
         if (errorMessage == null && token == IdlToken.ERROR) {
             this.errorMessage = "";
@@ -95,7 +95,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         private int endColumn;
         private CharSequence lexeme;
         private String stringContents;
-        private String formattedTextBlockContents;
+        private String textBlockContents;
         private String errorMessage;
         private Number numberValue;
 
@@ -113,7 +113,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                     endColumn,
                     lexeme,
                     stringContents,
-                    formattedTextBlockContents,
+                    textBlockContents,
                     numberValue,
                     errorMessage);
         }
@@ -164,7 +164,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         }
 
         public Builder textBlockContents(String formattedTextBlockContents) {
-            this.formattedTextBlockContents = formattedTextBlockContents;
+            this.textBlockContents = formattedTextBlockContents;
             return this;
         }
 
@@ -291,7 +291,6 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
      *
      * @return Returns the string contents of the lexeme, or null if not a string|text block|identifier.
      */
-    // Can we capture the formatted block as well?
     public String getStringContents() {
         return stringContents;
     }
