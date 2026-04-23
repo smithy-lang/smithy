@@ -33,6 +33,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
     private final int endColumn;
     private final CharSequence lexeme;
     private final String stringContents;
+    private final String textBlockContents;
     private final String errorMessage;
     private final Number numberValue;
 
@@ -46,6 +47,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             int endColumn,
             CharSequence lexeme,
             String stringContents,
+            String textBlockContents,
             Number numberValue,
             String errorMessage
     ) {
@@ -64,6 +66,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         } else {
             this.stringContents = stringContents;
         }
+        this.textBlockContents = textBlockContents;
 
         if (errorMessage == null && token == IdlToken.ERROR) {
             this.errorMessage = "";
@@ -92,6 +95,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         private int endColumn;
         private CharSequence lexeme;
         private String stringContents;
+        private String textBlockContents;
         private String errorMessage;
         private Number numberValue;
 
@@ -109,6 +113,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                     endColumn,
                     lexeme,
                     stringContents,
+                    textBlockContents,
                     numberValue,
                     errorMessage);
         }
@@ -158,6 +163,11 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
             return this;
         }
 
+        public Builder textBlockContents(String formattedTextBlockContents) {
+            this.textBlockContents = formattedTextBlockContents;
+            return this;
+        }
+
         public Builder errorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
             return this;
@@ -200,6 +210,9 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
                         ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
                         : null)
+                .textBlockContents(tok == IdlToken.TEXT_BLOCK
+                        ? stringTable.apply(tokenizer.getCurrentTextBlockContents())
+                        : null)
                 .numberValue(tok == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null)
                 .errorMessage(tok == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null)
                 .build();
@@ -218,7 +231,8 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .lexeme(lexeme)
                 .errorMessage(errorMessage)
                 .numberValue(numberValue)
-                .stringContents(stringContents);
+                .stringContents(stringContents)
+                .textBlockContents(textBlockContents);
     }
 
     /**
@@ -279,6 +293,16 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
      */
     public String getStringContents() {
         return stringContents;
+    }
+
+    /**
+     * Get the String contents of a TEXT_BLOCK token already with any incidental leading whitespace
+     * already removed.
+     *
+     * @return Returns the string contents of a TEXT_BLOCK lexeme, or null if not a text block.
+     */
+    public String getTextBlockContents() {
+        return textBlockContents;
     }
 
     /**

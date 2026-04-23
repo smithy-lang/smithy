@@ -152,6 +152,17 @@ public interface IdlTokenizer extends Iterator<IdlToken> {
     CharSequence getCurrentTokenStringSlice();
 
     /**
+     * If the current token is a text block, get the formatted content as a CharSequence.
+     * with any incidental leading whitespace already removed.
+     *
+     * @return Returns the parsed string content associated with the current token.
+     * @throws ModelSyntaxException if the current token is not a text block.
+     */
+    default CharSequence getCurrentTextBlockContents() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * If the current token is a number, get the associated parsed number.
      *
      * @return Returns the parsed number associated with the current token.
