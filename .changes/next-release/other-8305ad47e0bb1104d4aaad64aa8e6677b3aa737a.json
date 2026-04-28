@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Fixed some errors in event stream protocol tests.",
+  "pull_requests": [
+    "[#3069](https://github.com/smithy-lang/smithy/pull/3069)"
+  ]
+}
