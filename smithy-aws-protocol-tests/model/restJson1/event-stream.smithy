@@ -503,13 +503,14 @@ structure ErrorEvent {
                 }
                 headers: {
                     ":message-type": { blob: "ZXZlbnQ=" }
+                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUGAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ95dXDSw=="
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUGAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifVwdfzU="
             }
         ]
         expectation: {
@@ -532,14 +533,13 @@ structure ErrorEvent {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUHAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ9riy0Gg=="
             }
         ]
         expectation: {
@@ -937,7 +937,7 @@ operation InputStream {
         protocol: restJson1
         events: [
             {
-                type: "request"
+                type: "response"
                 headers: {
                     ":message-type": { string: "error" }
                     ":error-code": { string: "internal-error" }
@@ -1025,14 +1025,13 @@ operation InputStream {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUHAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ9riy0Gg=="
             }
         ]
         expectation: {
@@ -1529,13 +1528,14 @@ structure ServiceUnavailableError {
                 }
                 headers: {
                     ":message-type": { blob: "ZXZlbnQ=" }
+                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUGAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ95dXDSw=="
+                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUGAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifVwdfzU="
             }
         ]
         expectation: {
@@ -1558,14 +1558,13 @@ structure ServiceUnavailableError {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUHAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ9riy0Gg=="
             }
         ]
         expectation: {
@@ -1953,7 +1952,7 @@ structure ServiceUnavailableError {
         protocol: restJson1
         events: [
             {
-                type: "request"
+                type: "response"
                 headers: {
                     ":message-type": { string: "error" }
                     ":error-code": { string: "internal-error" }
@@ -2041,14 +2040,13 @@ structure ServiceUnavailableError {
                 }
                 headers: {
                     ":message-type": { string: "event" }
-                    ":event-type": { string: "headersAndExplicitPayload" }
                     ":content-type": { string: "application/json" }
                     header: { string: "foo" }
                 }
                 body: """
                     {"structureMember":"bar"}"""
                 bodyMediaType: "application/json"
-                bytes: "AAAAlQAAAGw4wFp6DTptZXNzYWdlLXR5cGUHAAVldmVudAs6ZXZlbnQtdHlwZQcAGWhlYWRlcnNBbmRFeHBsaWNpdFBheWxvYWQNOmNvbnRlbnQtdHlwZQcAEGFwcGxpY2F0aW9uL2pzb24GaGVhZGVyBwADZm9veyJzdHJ1Y3R1cmVNZW1iZXIiOiJiYXIifTafKXs="
+                bytes: "AAAAbQAAAER1MekcDTptZXNzYWdlLXR5cGUHAAVldmVudA06Y29udGVudC10eXBlBwAQYXBwbGljYXRpb24vanNvbgZoZWFkZXIHAANmb297InN0cnVjdHVyZU1lbWJlciI6ImJhciJ9riy0Gg=="
             }
         ]
         expectation: {
@@ -2154,7 +2152,7 @@ operation InputStreamWithInitialRequest {
         initialResponseParams: { initialResponseMember: "foo" }
         initialResponse: {
             code: 200
-            headers: { "initial-request-member": "foo" }
+            headers: { "initial-response-member": "foo" }
         }
         initialResponseShape: InitialHttpResponse
     }
@@ -2233,7 +2231,7 @@ operation OutputStreamWithInitialResponse {
         initialResponseParams: { initialResponseMember: "foo" }
         initialResponse: {
             code: 200
-            headers: { "initial-request-member": "foo" }
+            headers: { "initial-response-member": "foo" }
         }
         initialResponseShape: InitialHttpResponse
     }
