@@ -44,7 +44,9 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShortShape;
+import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -75,6 +77,9 @@ public final class Model implements ToSmithyBuilder<Model> {
 
     /** A cache of shapes of a specific type. */
     private final Map<Class<? extends Shape>, Set<? extends Shape>> cachedTypes = new ConcurrentHashMap<>();
+
+    /** A cache of shapes of a specific category. */
+    private final Map<ShapeType.Category, Set<? extends Shape>> cachedCategories = new ConcurrentHashMap<>();
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
     private final Map<String, KnowledgeIndex> blackboard = new ConcurrentSkipListMap<>();
@@ -751,6 +756,31 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
         return toSet(shapeType).stream();
+    }
+
+    /**
+     * Gets an immutable Set of shapes of a specific category.
+     *
+     * @param shapeCategory The category of shape to get a set of.
+     * @return Returns an unmodifiable set of shapes.
+     */
+    public Set<? extends Shape> toSet(ShapeType.Category shapeCategory) {
+        switch (shapeCategory) {
+            case SIMPLE:
+                return toSet(SimpleShape.class);
+            case MEMBER:
+                return toSet(MemberShape.class);
+            default:
+                return cachedCategories.computeIfAbsent(shapeCategory, c -> {
+                    Set<Shape> result = new HashSet<>();
+                    for (Shape shape : shapeMap.values()) {
+                        if (shape.getType().getCategory() == shapeCategory) {
+                            result.add(shape);
+                        }
+                    }
+                    return Collections.unmodifiableSet(result);
+                });
+        }
     }
 
     /**

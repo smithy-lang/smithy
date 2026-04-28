@@ -74,6 +74,16 @@ Shapes can be matched by type using the following tokens:
         ``double``, ``bigDecimal``, and ``bigInteger`` shapes
     * - ``simpleType``
       - Matches all :ref:`simple types <simple-types>`
+    * - ``aggregateType``
+      - Matches all :ref:`aggregate types <aggregate-types>` (``list``,
+        ``map``, ``structure``, and ``union``)
+    * - ``dataType``
+      - Matches all :ref:`simple types <simple-types>` and
+        :ref:`aggregate types <aggregate-types>`. This is an alias of
+        ``:is(simpleType, aggregateType)``.
+    * - ``serviceType``
+      - Matches all :ref:`service types <service-types>` (``service``,
+        ``operation``, and ``resource``)
     * - ``collection``
       - Deprecated: An alias of ``list``. Also matches ``set`` shapes in Smithy IDL 1.0.
     * - ``blob``
