@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
-import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SimpleParser;
 
@@ -133,9 +133,17 @@ final class SelectorParser extends SimpleParser {
                         case "number":
                             return new ShapeTypeCategorySelector(NumberShape.class);
                         case "simpleType":
-                            return new ShapeTypeCategorySelector(SimpleShape.class);
+                            return new ShapeTypeCategoryEnumSelector(ShapeType.Category.SIMPLE);
                         case "collection":
                             return new ShapeTypeCategorySelector(CollectionShape.class);
+                        case "aggregateType":
+                            return new ShapeTypeCategoryEnumSelector(ShapeType.Category.AGGREGATE);
+                        case "serviceType":
+                            return new ShapeTypeCategoryEnumSelector(ShapeType.Category.SERVICE);
+                        case "dataType":
+                            return IsSelector.of(Arrays.asList(
+                                    new ShapeTypeCategoryEnumSelector(ShapeType.Category.SIMPLE),
+                                    new ShapeTypeCategoryEnumSelector(ShapeType.Category.AGGREGATE)));
                         default:
                             ShapeType shape = ShapeType.fromString(identifier)
                                     .orElseThrow(() -> syntax("Unknown shape type: " + identifier));
