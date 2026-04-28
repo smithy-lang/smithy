@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixed a bug in the formatter that was removing newlines escapes",
-  "pull_requests": [
-    "[#3068](https://github.com/smithy-lang/smithy/pull/3068)"
-  ]
-}
