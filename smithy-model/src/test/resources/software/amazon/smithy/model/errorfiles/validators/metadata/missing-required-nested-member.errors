@@ -1,0 +1,1 @@
+[ERROR] -: metadata.auditLevel.0: Missing required structure member `namespace` for `smithy.example#NamespaceAuditLevel` | TypedMetadata.auditLevel

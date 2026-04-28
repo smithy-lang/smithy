@@ -7,6 +7,8 @@ package software.amazon.smithy.model.neighbor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
@@ -27,7 +29,7 @@ public class UnreferencedShapesTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(UnreferencedShapesTest.class.getResource("unreferenced-test.json"))
+                .addImport(UnreferencedShapesTest.class.getResource("unreferenced-test.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -52,6 +54,13 @@ public class UnreferencedShapesTest {
                 containsInAnyOrder(
                         ShapeId.from("ns.foo#Exclude1"),
                         ShapeId.from("ns.foo#Exclude2")));
+    }
+
+    @Test
+    public void doesNotCheckShapesThatAreMetadataDefinitions() {
+        UnreferencedShapes unref = new UnreferencedShapes();
+        Set<ShapeId> result = unref.compute(model).stream().map(Shape::getId).collect(Collectors.toSet());
+        assertThat(result, not(hasItems(ShapeId.from("ns.foo#MetadataConfig"), ShapeId.from("ns.foo#AuditLevel"))));
     }
 
     @Test
