@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Add JSON Schema for smithy-build.json",
-  "pull_requests": [
-    "[#3062](https://github.com/smithy-lang/smithy/pull/3062)"
-  ]
-}
