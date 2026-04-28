@@ -1,73 +1,5 @@
 # Smithy Changelog
 
-## 1.70.0 (2026-04-28)
-
-### Features
-
-- Add JSON Schema for smithy-build.json
-  ([#3062](https://github.com/smithy-lang/smithy/pull/3062))
-
-- Added three new shape type selectors
-
-  - `aggregateType` selects lists, structures, unions, and maps.
-  - `serviceType` selects services, resources, and operations.
-  - `dataType` selects aggregate types and simple types.
-    ([#3070](https://github.com/smithy-lang/smithy/pull/3070))
-
-- Adds a Bill of Materials (BOM) for all Smithy packagees
-  ([#3056](https://github.com/smithy-lang/smithy/pull/3056))
-
-- Add Smithy RPC v2 JSON protocol
-  ([#3006](https://github.com/smithy-lang/smithy/pull/3006))
-
-- Add node reversal optimization to compileBdd
-  ([#3045](https://github.com/smithy-lang/smithy/pull/3045))
-
-- Add support for custom comparators for sorting IDL serialization output
-  ([#3058](https://github.com/smithy-lang/smithy/pull/3058))
-
-- Ignore JARs without a Smithy manifest to allow Smithy model packages to have
-  non-Smithy dependencies
-  ([#3055](https://github.com/smithy-lang/smithy/pull/3055))
-
-### Bug Fixes
-
-- Fix init failure on corrupted template cache
-  ([#3051](https://github.com/smithy-lang/smithy/pull/3051))
-- Fix CLI dependency cache for multiple configs building to the same directory
-  ([#3061](https://github.com/smithy-lang/smithy/pull/3061))
-- Fix trait/validator loading with discoverModels
-  ([#3049](https://github.com/smithy-lang/smithy/pull/3049))
-- Optimize chained :root selector evaluation by updating IntermediateAndSelector
-  to only push to input-independent selectors one time
-  ([#3054](https://github.com/smithy-lang/smithy/pull/3054))
-- Fix minor issues logged during builds
-  ([#3050](https://github.com/smithy-lang/smithy/pull/3050))
-- Fixed selector parsing to properly handle extraneous BREAK_TOKENS (',', '\]',
-  ')') in a selector. This manifested in silently dropping contents in the comma
-  case ("structure, string" was effectively just "structure"). For the closing
-  brace/paren, the characters were silently ignored as seen in the additional
-  fixed tests. ([#3063](https://github.com/smithy-lang/smithy/pull/3063))
-- Fixed a bug in the formatter that was removing newlines escapes
-  ([#3068](https://github.com/smithy-lang/smithy/pull/3068))
-
-### Documentation
-
-- Updated the example retry strategy in client guidance and updated the initial
-  token method to take information about the operation.
-  ([#3000](https://github.com/smithy-lang/smithy/pull/3000))
-- Added docs for the endpointTests trait.
-  ([#3048](https://github.com/smithy-lang/smithy/pull/3048))
-
-### Other
-
-- Fixed some errors in event stream protocol tests.
-  ([#3069](https://github.com/smithy-lang/smithy/pull/3069))
-- Run container as non-root user
-  ([#2934](https://github.com/smithy-lang/smithy/pull/2934))
-- Ensures javadoc uses UTF-8 encoding
-  ([#3057](https://github.com/smithy-lang/smithy/pull/3057))
-
 ## 1.69.0 (2026-04-08)
 
 ### Features
@@ -4488,3 +4420,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+
