@@ -1,0 +1,3 @@
+[ERROR] smithy.example#Suppressions: The metadata key `suppressions` has been reserved by Smithy and may not be defined elsewhere. | MetadataTrait
+[ERROR] smithy.example#Validators: The metadata key `validators` has been reserved by Smithy and may not be defined elsewhere. | MetadataTrait
+[ERROR] smithy.example#SeverityOverrides: The metadata key `severityOverrides` has been reserved by Smithy and may not be defined elsewhere. | MetadataTrait

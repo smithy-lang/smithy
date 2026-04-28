@@ -1,0 +1,1 @@
+[ERROR] -: metadata.auditLevel: String value provided for `smithy.example#AuditLevel` must be one of the following values: `HIGH`, `LOW`, `MEDIUM` | TypedMetadata.auditLevel
