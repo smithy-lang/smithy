@@ -58,8 +58,34 @@ public enum ShapeType {
     RESOURCE("resource", ResourceShape.class, Category.SERVICE),
     OPERATION("operation", OperationShape.class, Category.SERVICE);
 
+    /**
+     * Top-level grouping of {@link ShapeType} values as defined in the Smithy specification.
+     *
+     * <p>Categories are useful when a piece of code needs to distinguish between broad kinds
+     * of shapes without enumerating each individual type.
+     */
     public enum Category {
-        SIMPLE, AGGREGATE, SERVICE, MEMBER
+        /**
+         * Simple types that model basic data values.
+         */
+        SIMPLE,
+
+        /**
+         * Aggregate types that compose other shapes (lists, maps, structures, and unions).
+         *
+         * <p>The deprecated {@code set} type also falls into this category.
+         */
+        AGGREGATE,
+
+        /**
+         * Service types that define a service-level interface (services, resources, and operations).
+         */
+        SERVICE,
+
+        /**
+         * The special {@code member} type, which references another shape from inside an aggregate shape.
+         */
+        MEMBER
     }
 
     private final String stringValue;
@@ -87,8 +113,9 @@ public enum ShapeType {
     }
 
     /**
-     * Returns the category of the shape type, as defined in the Smithy
-     * specification (one of SIMPLE, AGGREGATE, or SERVICE).
+     * Returns the category of the shape type, as defined in the Smithy specification
+     * (one of {@link Category#SIMPLE}, {@link Category#AGGREGATE}, {@link Category#SERVICE},
+     * or {@link Category#MEMBER}).
      *
      * @return Returns the category of the type.
      */
