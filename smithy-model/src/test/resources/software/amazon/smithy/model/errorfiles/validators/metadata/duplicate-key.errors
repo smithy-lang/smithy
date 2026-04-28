@@ -1,0 +1,2 @@
+[ERROR] smithy.example#AuditLevelA: A type has already been defined for the metadata key `auditLevel`. Conflicts with: [smithy.example#AuditLevelB] | MetadataTrait
+[ERROR] smithy.example#AuditLevelB: A type has already been defined for the metadata key `auditLevel`. Conflicts with: [smithy.example#AuditLevelA] | MetadataTrait
