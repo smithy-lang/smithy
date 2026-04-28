@@ -234,6 +234,29 @@ public class ModelTest {
     }
 
     @Test
+    public void toSetWithCategoryReturnsShapesOfCategory() {
+        StringShape string = StringShape.builder().id("ns.foo#Str").build();
+        IntegerShape integer = IntegerShape.builder().id("ns.foo#Int").build();
+        ListShape list = ListShape.builder()
+                .id("ns.foo#List")
+                .member(string.getId())
+                .build();
+        StructureShape structure = StructureShape.builder().id("ns.foo#Struct").build();
+        OperationShape operation = OperationShape.builder().id("ns.foo#Op").build();
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Service")
+                .version("1")
+                .addOperation(operation)
+                .build();
+        Model model = Model.builder().addShapes(string, integer, list, structure, operation, service).build();
+
+        assertThat(model.toSet(ShapeType.Category.SIMPLE), containsInAnyOrder(string, integer));
+        assertThat(model.toSet(ShapeType.Category.AGGREGATE), containsInAnyOrder(list, structure));
+        assertThat(model.toSet(ShapeType.Category.SERVICE), containsInAnyOrder(service, operation));
+        assertThat(model.toSet(ShapeType.Category.MEMBER), containsInAnyOrder(list.getMember()));
+    }
+
+    @Test
     public void addsMembersAutomatically() {
         StringShape string = StringShape.builder().id("ns.foo#a").build();
         ListShape list = ListShape.builder()
