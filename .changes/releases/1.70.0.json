@@ -1,0 +1,139 @@
+{
+  "version": "1.70.0",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fix init failure on corrupted template cache",
+      "pull_requests": [
+        "[#3051](https://github.com/smithy-lang/smithy/pull/3051)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add JSON Schema for smithy-build.json",
+      "pull_requests": [
+        "[#3062](https://github.com/smithy-lang/smithy/pull/3062)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated the example retry strategy in client guidance and updated the initial token method to take information about the operation.",
+      "pull_requests": [
+        "[#3000](https://github.com/smithy-lang/smithy/pull/3000)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added three new shape type selectors\n\n* `aggregateType` selects lists, structures, unions, and maps.\n* `serviceType` selects services, resources, and operations.\n* `dataType` selects aggregate types and simple types.",
+      "pull_requests": [
+        "[#3070](https://github.com/smithy-lang/smithy/pull/3070)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix CLI dependency cache for multiple configs building to the same directory",
+      "pull_requests": [
+        "[#3061](https://github.com/smithy-lang/smithy/pull/3061)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Adds a Bill of Materials (BOM) for all Smithy packagees",
+      "pull_requests": [
+        "[#3056](https://github.com/smithy-lang/smithy/pull/3056)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix trait/validator loading with discoverModels",
+      "pull_requests": [
+        "[#3049](https://github.com/smithy-lang/smithy/pull/3049)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Optimize chained :root selector evaluation by updating IntermediateAndSelector to only push to input-independent selectors one time",
+      "pull_requests": [
+        "[#3054](https://github.com/smithy-lang/smithy/pull/3054)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add Smithy RPC v2 JSON protocol",
+      "pull_requests": [
+        "https://github.com/smithy-lang/smithy/pull/3006"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add node reversal optimization to compileBdd",
+      "pull_requests": [
+        "https://github.com/smithy-lang/smithy/pull/3045"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Fixed some errors in event stream protocol tests.",
+      "pull_requests": [
+        "[#3069](https://github.com/smithy-lang/smithy/pull/3069)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Add support for custom comparators for sorting IDL serialization output",
+      "pull_requests": [
+        "[#3058](https://github.com/smithy-lang/smithy/pull/3058)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Run container as non-root user",
+      "pull_requests": [
+        "[#2934](https://github.com/smithy-lang/smithy/pull/2934)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix minor issues logged during builds",
+      "pull_requests": [
+        "[#3050](https://github.com/smithy-lang/smithy/pull/3050)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added docs for the endpointTests trait.",
+      "pull_requests": [
+        "[#3048](https://github.com/smithy-lang/smithy/pull/3048)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed selector parsing to properly handle extraneous BREAK_TOKENS (',', ']', ')') in a selector. This manifested in silently dropping contents in the comma case (\"structure, string\" was effectively just \"structure\"). For the closing brace/paren, the characters were silently ignored as seen in the additional fixed tests.",
+      "pull_requests": [
+        "[#3063](https://github.com/smithy-lang/smithy/pull/3063)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Ignore JARs without a Smithy manifest to allow Smithy model packages to have non-Smithy dependencies",
+      "pull_requests": [
+        "[#3055](https://github.com/smithy-lang/smithy/pull/3055)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Ensures javadoc uses UTF-8 encoding",
+      "pull_requests": [
+        "[#3057](https://github.com/smithy-lang/smithy/pull/3057)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed a bug in the formatter that was removing newlines escapes",
+      "pull_requests": [
+        "[#3068](https://github.com/smithy-lang/smithy/pull/3068)"
+      ]
+    }
+  ],
+  "date": "2026-04-29"
+}

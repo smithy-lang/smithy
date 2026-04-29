@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix trait/validator loading with discoverModels",
-  "pull_requests": [
-    "[#3049](https://github.com/smithy-lang/smithy/pull/3049)"
-  ]
-}

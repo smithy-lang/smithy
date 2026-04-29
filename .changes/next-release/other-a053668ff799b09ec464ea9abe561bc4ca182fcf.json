@@ -1,7 +1,0 @@
-{
-  "type": "other",
-  "description": "Ensures javadoc uses UTF-8 encoding",
-  "pull_requests": [
-    "[#3057](https://github.com/smithy-lang/smithy/pull/3057)"
-  ]
-}
