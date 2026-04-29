@@ -240,6 +240,46 @@ Value type
     customers.
 
 
+.. smithy-trait:: aws.apigateway#minimumCompressionSize
+.. _aws.apigateway#minimumCompressionSize-trait:
+
+-------------------------------------------------
+``aws.apigateway#minimumCompressionSize`` trait
+-------------------------------------------------
+
+Summary
+    Defines the minimum payload size in bytes at which compression is applied
+    on an API Gateway REST API.
+Trait selector
+    ``service``
+Value type
+    ``integer`` value between 0 and 10485760 (10MB).
+See also
+    - `Payload compression for REST APIs`_ for more information
+    - `x-amazon-apigateway-minimum-compression-size`_ for how this relates
+      to OpenAPI
+
+The following example sets the minimum compression size to 10240 bytes:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#minimumCompressionSize
+
+    @minimumCompressionSize(10240)
+    service Weather {
+        version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
 .. smithy-trait:: aws.apigateway#requestValidator
 .. _aws.apigateway#requestValidator-trait:
 
@@ -891,3 +931,5 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _Payload compression for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-gzip-compression-decompression.html
+.. _x-amazon-apigateway-minimum-compression-size: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html
