@@ -2189,6 +2189,54 @@ The following Smithy model enables API Gateway's API key usage plans on the
     operation OperationA {}
 
 
+.. _apigateway-api-tls-policy:
+
+API TLS policy
+==============
+
+The TLS security policy and endpoint access mode for an API Gateway REST
+API can be set using the :ref:`aws.apigateway#apiTlsPolicy-trait`. Smithy
+writes the ``securityPolicy`` value to the
+`x-amazon-apigateway-security-policy`_ extension and the optional
+``endpointAccessMode`` value to the
+`x-amazon-apigateway-endpoint-access-mode`_ extension in the generated
+OpenAPI document.
+
+The following Smithy model sets the TLS policy to ``TLS_1_2`` with a
+``STRICT`` endpoint access mode:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#apiTlsPolicy
+    use aws.protocols#restJson1
+
+    @restJson1
+    @apiTlsPolicy(
+        securityPolicy: "TLS_1_2"
+        endpointAccessMode: "STRICT"
+    )
+    service Example {
+      version: "2019-06-17"
+    }
+
+Is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "x-amazon-apigateway-security-policy": "TLS_1_2",
+        "x-amazon-apigateway-endpoint-access-mode": "STRICT"
+    }
+
+
 .. _other-traits:
 
 Other traits that influence API Gateway
@@ -2292,3 +2340,5 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _x-amazon-apigateway-security-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html
+.. _x-amazon-apigateway-endpoint-access-mode: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html
