@@ -876,18 +876,18 @@ integration response to two ``header`` parameters of the method response.
 
 
 .. _Enable Request Validation in API Gateway: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html
-.. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.requestValidator.html
+.. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _Granting Permissions Using a Resource Policy: https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#intro-permission-model-access-policy
-.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior
-.. _VpcLink: https://docs.aws.amazon.com/apigateway/api-reference/resource/vpc-link/
+.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html#passthroughBehavior
+.. _VpcLink: https://docs.aws.amazon.com/apigateway/latest/api/API_VpcLink.html
 .. _x-amazon-apigateway-integration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
-.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _x-amazon-apigateway-authtype: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authtype.html
 .. _Create and Use Usage Plans with API Keys: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _Choose an API Key Source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
-.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
+.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/latest/api/API_IntegrationResponse.html
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format

@@ -1,0 +1,5 @@
+{
+  "type": "documentation",
+  "description": "Fix stale and mismatched AWS API Gateway reference link targets",
+  "pull_requests": []
+}
