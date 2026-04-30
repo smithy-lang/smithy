@@ -63,6 +63,7 @@ structure Unit {}
 // --- Shapes below are traits and the private shapes that define them.
 
 /// Makes a shape a trait.
+@root
 @trait(
     selector: ":is(simpleType, list, map, structure, union)"
     breakingChanges: [
@@ -155,6 +156,22 @@ enum StructurallyExclusive {
     /// this trait.
     TARGET = "target"
 }
+
+/// Marks a trait as a rooting trait.
+///
+/// Shapes targeted by a rooting trait are considered root shapes. Root shapes
+/// and shapes transitively connected to them are never considered to be
+/// unreferenced.
+@trait(
+    selector: "[trait|trait]"
+    breakingChanges: [
+        {
+            change: "presence"
+            severity: "DANGER"
+        }
+    ]
+)
+structure root {}
 
 /// Marks a shape or member as deprecated.
 @trait

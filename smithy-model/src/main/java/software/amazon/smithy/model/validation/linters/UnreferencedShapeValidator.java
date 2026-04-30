@@ -81,6 +81,7 @@ public final class UnreferencedShapeValidator extends AbstractValidator {
         for (Shape shape : new UnreferencedShapes(config.rootShapeSelector).compute(model)) {
             events.add(note(shape,
                     "This shape is unreferenced. It has no modeled connections to shapes "
+                            + "targeted by a root trait or shapes "
                             + "that match the following selector: `" + config.rootShapeSelector + "`"));
         }
 

@@ -98,4 +98,27 @@ public class UnreferencedShapesTest {
                         ShapeId.from("com.foo#Referenced"),
                         ShapeId.from("com.foo#Unconnected")));
     }
+
+    @Test
+    public void rootTraitMarksTargetedShapesAsConnected() {
+        Model m = Model.assembler()
+                .addUnparsedModel("test.smithy",
+                        "$version: \"2.0\"\n"
+                                + "namespace ns.foo\n"
+                                + "@root\n"
+                                + "@trait\n"
+                                + "structure myRoot {}\n"
+                                + "@myRoot\n"
+                                + "string Rooted\n"
+                                + "string Unconnected\n")
+                .assemble()
+                .unwrap();
+
+        Set<ShapeId> ids = new UnreferencedShapes().compute(m)
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(ids, containsInAnyOrder(ShapeId.from("ns.foo#Unconnected")));
+    }
 }

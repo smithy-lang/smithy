@@ -1,0 +1,1 @@
+[ERROR] smithy.example#NotATrait: Trait `root` cannot be applied to `smithy.example#NotATrait`. This trait may only be applied to shapes that match the following selector: [trait|trait] | TraitTarget
