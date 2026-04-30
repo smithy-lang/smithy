@@ -75,4 +75,33 @@ public class FormatCommandTest {
                             + "string MyString2%n")));
         });
     }
+
+    @Test
+    public void checkFormattedFile() {
+        // Format the files first, then run --check on the same project copy.
+        IntegUtils.withProject("bad-formatting", path -> {
+            RunResult formatResult = IntegUtils.run(path, ListUtils.of("format", "model"));
+            assertThat(formatResult.getExitCode(), equalTo(0));
+
+            RunResult checkResult = IntegUtils.run(path, ListUtils.of("format", "--check", "model"));
+            assertThat(checkResult.getExitCode(), equalTo(0));
+        });
+    }
+
+    @Test
+    public void checkUnformattedFile() {
+        IntegUtils.run("bad-formatting", ListUtils.of("format", "--check", "model"), result -> {
+            assertThat(result.getExitCode(), equalTo(2));
+            assertThat(result.getOutput(), containsString("not formatted"));
+        });
+    }
+
+    @Test
+    public void checkNoArgs() {
+        IntegUtils.run("bad-formatting", ListUtils.of("format", "--check"), result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+            assertThat(result.getOutput(),
+                    containsString("No .smithy model or directory was provided as a positional argument"));
+        });
+    }
 }
