@@ -1,7 +1,0 @@
-{
-  "type": "documentation",
-  "description": "Added docs for the endpointTests trait.",
-  "pull_requests": [
-    "[#3048](https://github.com/smithy-lang/smithy/pull/3048)"
-  ]
-}
