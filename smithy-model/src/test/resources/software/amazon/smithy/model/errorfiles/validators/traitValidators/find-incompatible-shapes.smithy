@@ -10,7 +10,7 @@ namespace com.amazonaws.simple
         message: "Document types are not supported"
     }
     "com.amazonaws.simple.myProtocol.NoEventStreams": {
-        selector: "~> operation -[input, output]-> :test(> member > union [trait|streaming])"
+        selector: "~> operation -[input, output]-> :test(> member > union [trait|streaming]))"
         message: "Event streams are not supported"
     }
     "com.amazonaws.simple.myProtocol.NoErrors": {

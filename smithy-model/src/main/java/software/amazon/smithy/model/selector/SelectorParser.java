@@ -47,12 +47,7 @@ final class SelectorParser extends SimpleParser {
     }
 
     List<InternalSelector> parse() {
-        List<InternalSelector> result = recursiveParse();
-        ws();
-        if (!eof()) {
-            throw syntax("Unexpected selector character: " + peek());
-        }
-        return result;
+        return recursiveParse();
     }
 
     private List<InternalSelector> recursiveParse() {
