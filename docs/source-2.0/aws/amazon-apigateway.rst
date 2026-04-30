@@ -584,6 +584,75 @@ The following example defines an operation that uses a mock integration.
     This trait should be considered internal-only and not exposed to your
     customers.
 
+
+.. smithy-trait:: aws.apigateway#resourcePolicy
+.. _aws.apigateway#resourcePolicy-trait:
+
+-------------------------------------------
+``aws.apigateway#resourcePolicy`` trait
+-------------------------------------------
+
+Summary
+    Defines a resource policy for an API Gateway REST API. A resource
+    policy is a JSON policy document attached to an API that controls
+    whether a specified principal (typically an IAM role or group) can
+    invoke the API.
+Trait selector
+    ``service``
+Value type
+    ``document``
+See also
+    - `Resource policies for REST APIs`_ for more information
+    - `x-amazon-apigateway-policy`_ for how this relates to OpenAPI
+
+.. note::
+
+    Smithy does not validate the contents of the resource policy document.
+    The policy is passed through to API Gateway, which validates it at
+    import time.
+
+The following example defines a resource policy that allows any principal to
+invoke the API except for requests from the specified source IP address block:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#resourcePolicy
+
+    @resourcePolicy({
+        "Version": "2012-10-17"
+        "Statement": [
+            {
+                "Effect": "Allow"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+            }
+            {
+                "Effect": "Deny"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+                "Condition": {
+                    "IpAddress": {
+                        "aws:SourceIp": "192.0.2.0/24"
+                    }
+                }
+            }
+        ]
+    })
+    service Weather {
+      version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
 -----------------------
 Shared trait data types
 -----------------------
@@ -891,3 +960,5 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _Resource policies for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-resource-policies.html
+.. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html
