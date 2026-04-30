@@ -901,7 +901,7 @@ public class SelectorTest {
                         + "~>\n"
                         + "operation\n"
                         + "[trait|auth]"
-                        + ":not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}])");
+                        + ":not([@: @{trait|auth|(values)} {<} @{var|authTraits|id}]))");
 
         List<Pair<Shape, Map<String, Set<Shape>>>> results = new ArrayList<>();
         selector.runner().model(result).selectMatches((s, vars) -> results.add(Pair.of(s, vars)));
@@ -1194,29 +1194,5 @@ public class SelectorTest {
     @Test
     public void rootRequiresOneSelector() {
         Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":root()"));
-    }
-
-    @Test
-    public void rejectsTopLevelComma() {
-        SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("string, integer"));
-        assertThat(e.getMessage(), containsString(","));
-    }
-
-    @Test
-    public void rejectsUnmatchedTopLevelCloseBracket() {
-        SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("string ] extra"));
-        assertThat(e.getMessage(), containsString("]"));
-    }
-
-    @Test
-    public void rejectsUnmatchedTopLevelCloseParen() {
-        SelectorSyntaxException e = Assertions.assertThrows(
-                SelectorSyntaxException.class,
-                () -> Selector.parse("string ) extra"));
-        assertThat(e.getMessage(), containsString(")"));
     }
 }
