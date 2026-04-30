@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Added a new `metadata` trait that allows model authors to declare types for metadata keys that will be automatically validated when building models.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3078](https://github.com/smithy-lang/smithy/pull/3078)"
+  ]
 }
