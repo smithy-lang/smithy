@@ -16,7 +16,12 @@
                 "aws.apigateway#integration": {
                     "type": "http",
                     "uri": "arn:foo",
-                    "httpMethod": "POST"
+                    "httpMethod": "POST",
+                    "tlsConfig": {
+                        "insecureSkipVerification": true
+                    },
+                    "responseTransferMode": "STREAM",
+                    "integrationTarget": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/net/my-nlb/abc123/def456"
                 }
             }
         },

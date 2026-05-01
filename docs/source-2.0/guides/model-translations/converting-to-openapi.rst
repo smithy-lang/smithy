@@ -1883,6 +1883,30 @@ resources inherit the applied integration. If either trait is applied to an
 operation, then the operation uses a specific integration that overrides any
 integration inherited from a resource or service.
 
+The following ``aws.apigateway#integration`` trait fields map directly to
+``x-amazon-apigateway-integration`` OpenAPI extension fields:
+
+tlsConfig
+    Maps to ``x-amazon-apigateway-integration.tlsConfig`` in the OpenAPI
+    output. Contains the ``insecureSkipVerification`` boolean member. When
+    set to ``true``, API Gateway skips verification that the certificate for
+    an integration endpoint is issued by a supported certificate authority.
+    Supported only for HTTP and HTTP_PROXY integration types.
+
+responseTransferMode
+    Maps to ``x-amazon-apigateway-integration.responseTransferMode`` in the
+    OpenAPI output. Specifies how the response payload is transferred between
+    the integration and the caller. Valid values are ``BUFFERED`` and
+    ``STREAM``.
+
+integrationTarget
+    Maps to ``x-amazon-apigateway-integration.integrationTarget`` in the
+    OpenAPI output. The ARN of an `Application Load Balancer (ALB)`_ or
+    `Network Load Balancer (NLB)`_ listener for private integrations using
+    `VPC Links V2`_. Values containing ``${...}`` syntax are automatically
+    wrapped in an `Fn::Sub`_ intrinsic function for CloudFormation
+    substitution. See :ref:`openapi-cfn-substitutions`.
+
 
 CORS functionality
 ==================
@@ -2122,6 +2146,7 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 - ``paths/*/*/x-amazon-apigateway-integration/connectionId``
 - ``paths/*/*/x-amazon-apigateway-integration/credentials``
 - ``paths/*/*/x-amazon-apigateway-integration/uri``
+- ``paths/*/*/x-amazon-apigateway-integration/integrationTarget``
 
 .. note::
 
@@ -2279,7 +2304,10 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
 .. _intrinsic functions: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
-.. _`Fn::Sub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html
+.. _`Fn::Sub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/intrinsic-function-reference-sub.html
+.. _Application Load Balancer (ALB): https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html
+.. _Network Load Balancer (NLB): https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html
+.. _VPC Links V2: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-vpc-links-v2.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
 .. _OpenAPI tags: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject
 .. _OpenAPI Data types: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types
