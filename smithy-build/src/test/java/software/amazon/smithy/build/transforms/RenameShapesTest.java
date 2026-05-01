@@ -6,8 +6,10 @@ package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
+import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,12 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 public class RenameShapesTest {
@@ -108,6 +116,32 @@ public class RenameShapesTest {
                 .settings(config)
                 .build();
         Assertions.assertThrows(SmithyBuildException.class, () -> new RenameShapes().transform(context));
+    }
+
+    @Test
+    public void renameShapesUsesContextTransformer() {
+        ShapeId from = ShapeId.from("ns.foo#MyString");
+        ShapeId to = ShapeId.from("ns.foo#NewString");
+        StringShape stringShape = StringShape.builder()
+                .id(from)
+                .addTrait(DeprecatedTrait.builder().build())
+                .build();
+        Model model = Model.builder().addShape(stringShape).build();
+
+        ClassLoader empty = new URLClassLoader(new java.net.URL[] {}, null);
+        ModelTransformer customTransformer = ModelTransformer.createWithServiceProviders(empty);
+
+        ObjectNode renamed = Node.objectNode().withMember(from.toString(), to.toString());
+        ObjectNode config = Node.objectNode().withMember("renamed", renamed);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(config)
+                .transformer(customTransformer)
+                .build();
+
+        Model result = new RenameShapes().transform(context);
+        Trait raw = result.expectShape(to).getAllTraits().get(DeprecatedTrait.ID);
+        assertThat(raw.getClass().getName(), equalTo(DynamicTrait.class.getName()));
     }
 
     @Test
