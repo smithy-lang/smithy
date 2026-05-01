@@ -1916,6 +1916,10 @@ attach to authentication schemes defined on a service. Authorizers are
 first defined on a service, and then attached to the service, resources,
 or operations using the ``aws.apigateway#authorizer-trait``.
 
+When an authorizer definition includes ``providerARNs``, the list of
+Amazon Cognito user pool ARNs is included in the generated
+``x-amazon-apigateway-authorizer`` extension.
+
 The following Smithy model:
 
 .. code-block:: smithy

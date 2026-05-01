@@ -186,6 +186,15 @@ structure AuthorizerDefinition {
     /// If enabled, authorizer returns a boolean. Used only by HTTP APIs.
     /// Only supported when authorizerPayloadFormatVersion is set to 2.0.
     enableSimpleResponses: Boolean
+
+    /// A list of the Amazon Cognito user pool ARNs for the
+    /// COGNITO_USER_POOLS authorizer.
+    providerARNs: ProviderARNs
+}
+
+@private
+list ProviderARNs {
+    member: String
 }
 
 /// Defines a response and specifies parameter mappings.

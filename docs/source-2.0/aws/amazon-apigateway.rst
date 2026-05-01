@@ -176,6 +176,10 @@ An *authorizer* definition is a structure that supports the following members:
         Boolean value or an IAM policy. Supported only for authorizers
         with an ``authorizerPayloadFormatVersion`` of 2.0. If enabled, the
         Lambda authorizer function returns a Boolean value.
+    * - providerARNs
+      - ``list`` of ``string``
+      - A list of the Amazon Cognito user pool ARNs for the
+        ``COGNITO_USER_POOLS`` authorizer.
 
 .. code-block:: smithy
 
