@@ -584,6 +584,75 @@ The following example defines an operation that uses a mock integration.
     This trait should be considered internal-only and not exposed to your
     customers.
 
+
+.. smithy-trait:: aws.apigateway#endpointConfiguration
+.. _aws.apigateway#endpointConfiguration-trait:
+
+---------------------------------------------------
+``aws.apigateway#endpointConfiguration`` trait
+---------------------------------------------------
+
+Summary
+    Defines the endpoint configuration for an API Gateway REST API,
+    including the endpoint type, VPC endpoint IDs, and whether the
+    default execute-api endpoint is disabled.
+Trait selector
+    ``service``
+Value type
+    ``structure``
+See also
+    - `API endpoint types for REST APIs`_ for more information on
+      endpoint types
+    - `x-amazon-apigateway-endpoint-configuration`_ for the related
+      OpenAPI extension
+
+The ``aws.apigateway#endpointConfiguration`` trait is a structure that
+supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - types
+      - ``list`` of ``string`` **required**
+      - The endpoint types for the API. Valid values are ``EDGE``,
+        ``REGIONAL``, and ``PRIVATE``.
+    * - vpcEndpointIds
+      - ``list`` of ``string``
+      - A list of VPC endpoint IDs for ``PRIVATE`` endpoint type APIs.
+    * - disableExecuteApiEndpoint
+      - ``boolean``
+      - Whether clients can invoke the API using the default
+        ``execute-api`` endpoint.
+
+The following example configures a private API with a VPC endpoint and
+disables the default endpoint:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#endpointConfiguration
+
+    @endpointConfiguration(
+        types: ["PRIVATE"]
+        vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
+        disableExecuteApiEndpoint: true
+    )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
 -----------------------
 Shared trait data types
 -----------------------
@@ -891,3 +960,5 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
+.. _API endpoint types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html
