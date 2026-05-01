@@ -240,6 +240,73 @@ Value type
     customers.
 
 
+.. smithy-trait:: aws.apigateway#authorizationScopes
+.. _aws.apigateway#authorizationScopes-trait:
+
+-------------------------------------------------
+``aws.apigateway#authorizationScopes`` trait
+-------------------------------------------------
+
+Summary
+    Defines the list of OAuth scopes required for an API Gateway operation
+    that uses a Cognito authorizer. Applied alongside the
+    :ref:`aws.apigateway#authorizer-trait` to specify which scopes the
+    caller must have.
+Trait selector
+    ``operation[trait|aws.apigateway#authorizer]``
+
+    *An operation with the aws.apigateway#authorizer trait applied*
+Value type
+    ``list`` of ``string``
+See also
+    - `Control access using Cognito user pools`_ for more information on
+      how scopes work with Cognito authorizers
+
+.. note::
+
+    Authorization scopes are only supported with ``COGNITO_USER_POOLS``
+    authorizers. API Gateway validates the scope values at import time.
+
+The following example requires the ``email`` and ``profile`` scopes on an
+operation that uses a Cognito authorizer:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#authorizer
+    use aws.apigateway#authorizers
+    use aws.apigateway#authorizationScopes
+    use aws.auth#sigv4
+
+    @sigv4(name: "service")
+    @authorizer("my-cognito-auth")
+    @authorizers(
+        "my-cognito-auth": {
+            scheme: "aws.auth#sigv4"
+            type: "cognito_user_pools"
+        }
+    )
+    service MyService {
+      version: "2024-01-01"
+      operations: [GetUserProfile]
+    }
+
+    @authorizer("my-cognito-auth")
+    @authorizationScopes(["email", "profile"])
+    operation GetUserProfile {
+        input := {}
+        output := {}
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
 .. smithy-trait:: aws.apigateway#requestValidator
 .. _aws.apigateway#requestValidator-trait:
 
@@ -891,3 +958,4 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _Control access using Cognito user pools: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html

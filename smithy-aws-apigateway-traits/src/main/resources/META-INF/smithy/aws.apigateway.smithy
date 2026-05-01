@@ -20,6 +20,15 @@ string apiKeySource
 @trait(selector: ":test(service, resource, operation)")
 string authorizer
 
+/// Defines the list of OAuth scopes required for an operation that uses a
+/// Cognito authorizer. Applied alongside the @authorizer trait.
+@internal
+@tags(["internal"])
+@trait(selector: "operation[trait|aws.apigateway#authorizer]")
+list authorizationScopes {
+    member: String
+}
+
 /// A list of API Gateway authorizers to augment the service's declared authentication
 /// mechanisms.
 @internal
