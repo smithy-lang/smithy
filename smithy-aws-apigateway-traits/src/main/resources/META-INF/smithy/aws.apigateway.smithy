@@ -14,6 +14,13 @@ use aws.api#arnReference
 @trait(selector: "service")
 string apiKeySource
 
+/// Indicates that an operation requires an API key for API Gateway usage
+/// plan enforcement.
+@internal
+@tags(["internal"])
+@trait(selector: "operation")
+structure apiKeyRequired {}
+
 /// Attaches an authorizer to a service, resource, or operation.
 @internal
 @tags(["internal"])
