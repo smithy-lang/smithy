@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "fixes [#3092](https://github.com/smithy-lang/smithy/issues/3092)",
+  "pull_requests": [
+    "-"
+  ]
+}
