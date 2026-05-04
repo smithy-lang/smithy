@@ -2222,7 +2222,7 @@ The following Smithy model sets the TLS policy to ``TLS_1_2`` with a
       version: "2019-06-17"
     }
 
-Is converted to the following OpenAPI model:
+is converted to the following OpenAPI model:
 
 .. code-block:: json
 
