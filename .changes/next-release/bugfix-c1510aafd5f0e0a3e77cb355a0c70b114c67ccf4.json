@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix init failure on corrupted template cache",
-  "pull_requests": [
-    "[#3051](https://github.com/smithy-lang/smithy/pull/3051)"
-  ]
-}
