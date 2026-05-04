@@ -2246,7 +2246,7 @@ IP address block:
       version: "2019-06-17"
     }
 
-Is converted to the following OpenAPI model:
+is converted to the following OpenAPI model:
 
 .. code-block:: json
 
