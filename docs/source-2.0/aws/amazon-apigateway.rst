@@ -588,9 +588,9 @@ The following example defines an operation that uses a mock integration.
 .. smithy-trait:: aws.apigateway#resourcePolicy
 .. _aws.apigateway#resourcePolicy-trait:
 
--------------------------------------------
+---------------------------------------
 ``aws.apigateway#resourcePolicy`` trait
--------------------------------------------
+---------------------------------------
 
 Summary
     Defines a resource policy for an API Gateway REST API. A resource
