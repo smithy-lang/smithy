@@ -78,7 +78,8 @@ configuration is provided, the linter will check if a shape is connected to
 the closure of any service shape. A selector can be provided to define a
 custom set of "root" shapes to customize how the linter determines if a shape
 is unreferenced. Shapes that are connected through the :ref:`idref-trait`
-are considered connected.
+are considered connected. Shapes targeted by traits marked with the
+:ref:`root-trait` are also considered connected.
 
 Rationale
     Just like unused variables in code, removing unused shapes from a model
