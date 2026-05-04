@@ -588,9 +588,9 @@ The following example defines an operation that uses a mock integration.
 .. smithy-trait:: aws.apigateway#apiTlsPolicy
 .. _aws.apigateway#apiTlsPolicy-trait:
 
------------------------------------------
+-------------------------------------
 ``aws.apigateway#apiTlsPolicy`` trait
------------------------------------------
+-------------------------------------
 
 Summary
     Defines the TLS security policy and endpoint access mode for an API
