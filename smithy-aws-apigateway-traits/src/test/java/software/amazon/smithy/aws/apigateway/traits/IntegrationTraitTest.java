@@ -26,6 +26,9 @@ public class IntegrationTraitTest {
                 .payloadFormatVersion("1.0")
                 .passThroughBehavior("when_no_templates")
                 .putRequestParameter("x", "y")
+                .tlsConfig(TlsConfig.builder().insecureSkipVerification(true).build())
+                .responseTransferMode("STREAM")
+                .integrationTarget("arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/net/my-nlb/abc/def")
                 .build();
 
         assertThat(trait.toBuilder().build(), equalTo(trait));

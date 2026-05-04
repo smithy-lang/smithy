@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `tlsConfig`, `responseTransferMode`, and `integrationTarget` sub-fields to the `aws.apigateway#integration` trait",
+  "pull_requests": [
+    "[#3090](https://github.com/smithy-lang/smithy/pull/3090)"
+  ]
+}

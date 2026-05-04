@@ -408,6 +408,25 @@ following members:
       - Defines the method's responses and specifies desired parameter
         mappings or payload mappings from integration responses to method
         responses.
+    * - tlsConfig
+      - ``structure``
+      - Specifies the TLS configuration for an integration. Supported only
+        for HTTP and HTTP_PROXY integration types. Contains the following
+        member:
+
+        - ``insecureSkipVerification`` (``boolean``): When set to ``true``,
+          API Gateway skips verification that the certificate for an
+          integration endpoint is issued by a supported certificate
+          authority.
+    * - responseTransferMode
+      - ``string``
+      - Specifies how the response payload is transferred between the
+        integration and the caller. Valid values are ``BUFFERED`` and
+        ``STREAM``.
+    * - integrationTarget
+      - ``string``
+      - The ARN of an ALB or NLB listener for private integrations using
+        VPC Links V2.
 
 The following example defines an integration that is applied to every
 operation within the service.

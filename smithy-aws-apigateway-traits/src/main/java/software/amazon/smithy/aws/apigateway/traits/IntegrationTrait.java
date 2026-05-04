@@ -47,6 +47,9 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private final Map<String, String> requestParameters;
     private final Map<String, String> requestTemplates;
     private final Map<String, IntegrationResponse> responses;
+    private final TlsConfig tlsConfig;
+    private final String responseTransferMode;
+    private final String integrationTarget;
 
     private IntegrationTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -65,6 +68,9 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         requestParameters = builder.requestParameters.copy();
         requestTemplates = builder.requestTemplates.copy();
         responses = builder.responses.copy();
+        tlsConfig = builder.tlsConfig;
+        responseTransferMode = builder.responseTransferMode;
+        integrationTarget = builder.integrationTarget;
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -286,6 +292,37 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     }
 
     /**
+     * Gets the TLS configuration for the integration.
+     *
+     * @return Returns the optional TLS configuration.
+     * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-extensions-integration-tls-config.html">TLS config</a>
+     */
+    public Optional<TlsConfig> getTlsConfig() {
+        return Optional.ofNullable(tlsConfig);
+    }
+
+    /**
+     * Gets the response transfer mode for the integration.
+     *
+     * <p>Valid values are {@code BUFFERED} and {@code STREAM}.
+     *
+     * @return Returns the optional response transfer mode.
+     */
+    public Optional<String> getResponseTransferMode() {
+        return Optional.ofNullable(responseTransferMode);
+    }
+
+    /**
+     * Gets the integration target ARN for private integrations using
+     * VPC Links V2.
+     *
+     * @return Returns the optional integration target ARN.
+     */
+    public Optional<String> getIntegrationTarget() {
+        return Optional.ofNullable(integrationTarget);
+    }
+
+    /**
      * Converts the trait an ObjectNode that finds and replaces the templated
      * serviceName and operationName labels in the "uri" and "credentials"
      * key-value pairs.
@@ -351,7 +388,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
                 .requestParameters(requestParameters)
                 .requestTemplates(requestTemplates)
                 .responses(responses)
-                .cacheKeyParameters(cacheKeyParameters);
+                .cacheKeyParameters(cacheKeyParameters)
+                .tlsConfig(tlsConfig)
+                .responseTransferMode(responseTransferMode)
+                .integrationTarget(integrationTarget);
     }
 
     public static final class Builder extends AbstractTraitBuilder<IntegrationTrait, Builder> {
@@ -370,6 +410,9 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         private final BuilderRef<Map<String, String>> requestParameters = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, String>> requestTemplates = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, IntegrationResponse>> responses = BuilderRef.forOrderedMap();
+        private TlsConfig tlsConfig;
+        private String responseTransferMode;
+        private String integrationTarget;
 
         @Override
         public IntegrationTrait build() {
@@ -665,6 +708,39 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          */
         public Builder removeResponse(String statusCodeRegex) {
             responses.get().remove(statusCodeRegex);
+            return this;
+        }
+
+        /**
+         * Sets the TLS configuration for the integration.
+         *
+         * @param tlsConfig TLS configuration to set.
+         * @return Returns the builder.
+         */
+        public Builder tlsConfig(TlsConfig tlsConfig) {
+            this.tlsConfig = tlsConfig;
+            return this;
+        }
+
+        /**
+         * Sets the response transfer mode.
+         *
+         * @param responseTransferMode Transfer mode to set (BUFFERED or STREAM).
+         * @return Returns the builder.
+         */
+        public Builder responseTransferMode(String responseTransferMode) {
+            this.responseTransferMode = responseTransferMode;
+            return this;
+        }
+
+        /**
+         * Sets the integration target ARN for VPC Links V2.
+         *
+         * @param integrationTarget ALB/NLB listener ARN.
+         * @return Returns the builder.
+         */
+        public Builder integrationTarget(String integrationTarget) {
+            this.integrationTarget = integrationTarget;
             return this;
         }
     }
