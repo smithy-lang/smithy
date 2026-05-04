@@ -245,7 +245,9 @@ Value type
 
 -------------------------------------------------
 ``aws.apigateway#minimumCompressionSize`` trait
--------------------------------------------------
+-----------------------------------------------
+``aws.apigateway#minimumCompressionSize`` trait
+-----------------------------------------------
 
 Summary
     Defines the minimum payload size in bytes at which compression is applied

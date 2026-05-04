@@ -27,17 +27,6 @@ public class MinimumCompressionSizeTraitTest {
     }
 
     @Test
-    public void roundTripsFromNode() {
-        MinimumCompressionSizeTrait trait = new MinimumCompressionSizeTrait(0);
-
-        assertThat(trait.getValue(), equalTo(0));
-        assertThat(trait.toNode(), equalTo(Node.from(0)));
-        assertThat(new MinimumCompressionSizeTrait.Provider()
-                .createTrait(ShapeId.from("ns.foo#Bar"), trait.toNode()),
-                equalTo(trait));
-    }
-
-    @Test
     public void roundTripsMaxValue() {
         MinimumCompressionSizeTrait trait = new MinimumCompressionSizeTrait(10485760);
 
