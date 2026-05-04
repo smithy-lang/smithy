@@ -19,7 +19,16 @@ final class DocumentationTraitInterceptor implements CodeInterceptor<JavaDocSect
     @Override
     public void write(TraitCodegenWriter writer, String previousText, JavaDocSection section) {
         String docs = section.shape().expectTrait(DocumentationTrait.class).getValue();
-        writer.write(escapeAt(docs));
+        // We don't pass doc comment directly, as a first argument, and instead do it using L formatter.
+        // We do that for two reasons:
+        // 1. avoid interpreting expression start character (dollar sign ($) by default) as special character
+        // 2. let L formatter, overridden in TraitCodegenWriter, to escape this character for us under the hood.
+        // It is needed because TraitCodegenWriter performs rendering in two stages:
+        // 1. first it renders everything except references to types (see software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter.JavaTypeFormatter.getPlaceholder)
+        // 2. then, in toString method, it renders the rest.
+        // Because of that, if an (already rendered) string literal (e.g. a doc comment after this line of code)
+        // contains an unescaped expression start symbol ($) it'd be parsed incorrectly on the second rendering and lead to an error.
+        writer.write("$L", escapeAt(docs));
 
         if (!previousText.isEmpty()) {
             // Add spacing if tags have been added to the javadoc

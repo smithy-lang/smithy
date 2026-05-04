@@ -19,6 +19,7 @@ import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -51,6 +52,10 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     private final Map<String, Set<Symbol>> symbolNames = new HashMap<>();
     private final Set<String> localDefinedNames = new HashSet<>();
 
+    public static String formatLiteral(Object value) {
+        return AbstractCodeWriter.formatLiteral(value).replace("$", "$$");
+    }
+
     public TraitCodegenWriter(
             String fileName,
             String namespace,
@@ -65,6 +70,42 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         trimBlankLines();
         trimTrailingSpaces();
 
+        // Override standard formatters so that expression start symbol (the one set using setExpressionStart method, dollar ($) sign by default)
+        // is always escaped in such expressions, as we perform two staged template rendering:
+        // 1. first we render everything except references to types (see software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter.JavaTypeFormatter.getPlaceholder)
+        // 2. then, in toString, we render the rest
+        // Because of that, if an (already rendered) expression (e.g. a string literal or a doc comment) contains an unescaped expression start symbol
+        // it'd be parsed incorrectly and lead to an error.
+        //
+        // The sources of such string literals may be doc comments and default values, namely, references to enum members, e.g.:
+        //
+        // /// My doc comment with dollar $ sign in it
+        // enum MyEnum {
+        //   FOO
+        // }
+        //
+        // @trait
+        // structure MyTrait {
+        //   @idRef
+        //   myField: String = MyEnum$FOO
+        // }
+        //
+        // The implementation is supposed to be the same as the default on + escape of the default expression start symbol on top.
+        //
+        // We have to override both L and S formatters because, although default S formatter's implementation uses default L formatter's implementation,
+        // it doesn't (and cannot) _delegate_ rendering to the _current_ L formatter, it just calls the same method, which we override,
+        // but since it is a static method, it is not a subject of a virtual call.
+        //
+        // NOTE the expression start symbol is overridable (setExpressionStart method) from outside, but we don't account for that here
+        // because at the time we escape the literal (1st stage), we don't know what will be its value when this template
+        // will be parsed (and rendered) next time (2nd stage), so we just hope it'll have the default value, the same
+        // logic we apply when we use the dollar sign for type placeholders in JavaTypeFormatter when we prepare them for the 2nd stage rendering.
+        putFormatter('L',
+                (s, i) -> formatLiteral(s)
+        );
+        putFormatter('S',
+                (s, i) -> StringUtils.escapeJavaString(formatLiteral(s), i)
+        );
         putFormatter('T', new JavaTypeFormatter());
         putFormatter('B', new BaseTypeFormatter());
         putFormatter('U', new CapitalizingFormatter());

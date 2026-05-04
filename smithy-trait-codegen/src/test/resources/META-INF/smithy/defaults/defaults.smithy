@@ -13,8 +13,12 @@ structure StructDefaults {
     @default(true)
     defaultBoolean: Boolean
 
-    @default("default")
+    @default("default with special $ symbol")
     defaultString: String
+
+    defaultStringSugar: String = "default with special $ symbol"
+
+    defaultStringIdRef: String = Enum$FOO
 
     @default(1)
     defaultByte: Byte
@@ -53,4 +57,9 @@ list StringList {
 map StringMap {
     key: String
     value: String
+}
+
+@private
+enum Enum {
+    FOO
 }

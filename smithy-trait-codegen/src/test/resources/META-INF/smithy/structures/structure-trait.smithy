@@ -26,10 +26,17 @@ structure structureTrait {
     /// </ul>
     fieldD: ListD
 
+    /// Syntax sugar documentation trait containing special symbols: # @ * ! % ^ & ( ) [ ] ${ }
+    /// it should not be messed with
     fieldE: MyMap
 
+    @documentation("One-line documentation trait containing special symbols: # @ * ! % ^ & ( ) [ ] ${ }, it should not be messed with")
     fieldF: BigDecimal
 
+    @documentation("""
+        Multiline documentation trait containing special symbols: # @ * ! % ^ & ( ) [ ] ${ }
+        it should not be messed with"""
+    )
     fieldG: BigInteger
 }
 
