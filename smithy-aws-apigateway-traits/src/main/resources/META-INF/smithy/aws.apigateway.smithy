@@ -136,6 +136,21 @@ structure mockIntegration {
 @trait(selector: ":test(service, operation)")
 string requestValidator
 
+/// Defines the TLS security policy and endpoint access mode for an API Gateway
+/// REST API. The security policy specifies the TLS version and cipher suite,
+/// and the endpoint access mode controls how the API endpoint can be accessed.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure apiTlsPolicy {
+    /// The TLS version and cipher suite for the API.
+    @required
+    securityPolicy: String
+
+    /// The endpoint access mode for the API.
+    endpointAccessMode: EndpointAccessMode
+}
+
 /// An object that associates an authorizer and associated metadata with an
 /// authentication mechanism.
 @private
@@ -353,4 +368,14 @@ enum PayloadFormatVersion {
     V1_0 = "1.0"
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
+}
+
+/// The endpoint access mode for an API Gateway REST API.
+@private
+enum EndpointAccessMode {
+    /// Basic endpoint access mode.
+    BASIC
+
+    /// Strict endpoint access mode with additional governance checks.
+    STRICT
 }

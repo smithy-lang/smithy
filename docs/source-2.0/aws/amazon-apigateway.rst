@@ -584,6 +584,74 @@ The following example defines an operation that uses a mock integration.
     This trait should be considered internal-only and not exposed to your
     customers.
 
+
+.. smithy-trait:: aws.apigateway#apiTlsPolicy
+.. _aws.apigateway#apiTlsPolicy-trait:
+
+-------------------------------------
+``aws.apigateway#apiTlsPolicy`` trait
+-------------------------------------
+
+Summary
+    Defines the TLS security policy and endpoint access mode for an API
+    Gateway REST API. The security policy specifies the TLS version and
+    cipher suite, and the endpoint access mode controls how the API
+    endpoint can be accessed.
+Trait selector
+    ``service``
+Value type
+    ``structure``
+
+The ``aws.apigateway#apiTlsPolicy`` trait is a structure that supports the
+following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - securityPolicy
+      - ``string`` **required**
+      - The TLS version and cipher suite for the API (for example,
+        ``TLS_1_2``).
+    * - endpointAccessMode
+      - ``string``
+      - The endpoint access mode for the API. Valid values are ``BASIC``
+        and ``STRICT``.
+
+See also
+    - `Security policies for REST APIs`_ for more information
+    - `x-amazon-apigateway-security-policy`_ for how the security policy
+      relates to OpenAPI
+    - `x-amazon-apigateway-endpoint-access-mode`_ for how the endpoint
+      access mode relates to OpenAPI
+
+The following example sets the TLS policy to ``TLS_1_2`` with a ``STRICT``
+endpoint access mode:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#apiTlsPolicy
+
+    @apiTlsPolicy(
+        securityPolicy: "TLS_1_2"
+        endpointAccessMode: "STRICT"
+    )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
 -----------------------
 Shared trait data types
 -----------------------
@@ -891,3 +959,6 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _Security policies for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-security-policies.html
+.. _x-amazon-apigateway-security-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html
+.. _x-amazon-apigateway-endpoint-access-mode: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html
