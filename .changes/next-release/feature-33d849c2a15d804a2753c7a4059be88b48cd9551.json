@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "Add aws.apigateway#apiTlsPolicy trait and OpenAPI mapper",
+  "description": "Added `aws.apigateway#apiTlsPolicy` trait and OpenAPI mapper",
   "pull_requests": [
     "[#3083](https://github.com/smithy-lang/smithy/pull/3083)"
   ]
