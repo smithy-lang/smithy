@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -506,7 +507,7 @@ the following members:</p>
 <p>See the <a class="reference internal" href="waiters.html#waiter-jmespath-data-model"><span class="std std-ref">JMESPath data model</span></a> for details on how Smithy types are mapped to JMESPath types.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@conditions</span>({
 <span class="w">    </span><span class="py">StartBeforeEnd</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The start time must be strictly less than the end time&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The start time must be strictly less than the end time&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start &lt; end&quot;</span>
 <span class="w">    </span>}
 })
@@ -520,7 +521,7 @@ the following members:</p>
 
 <span class="nt">@conditions</span>({
 <span class="w">    </span><span class="py">NoKeywords</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The name cannot contain either &#39;id&#39; or &#39;name&#39;, as these are reserved keywords&quot;</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The name cannot contain either &#39;id&#39; or &#39;name&#39;, as these are reserved keywords&quot;</span>
 <span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!contains(@, &#39;id&#39;) &amp;&amp; !contains(@, &#39;name&#39;)&quot;</span>
 <span class="w">    </span>}
 })

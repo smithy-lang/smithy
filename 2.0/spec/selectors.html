@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -522,74 +523,87 @@ selector results.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">simpleType</span></code></p></td>
 <td><p>Matches all <a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">simple types</span></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">collection</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">aggregateType</span></code></p></td>
+<td><p>Matches all <a class="reference internal" href="aggregate-types.html#aggregate-types"><span class="std std-ref">aggregate types</span></a> (<code class="docutils literal notranslate"><span class="pre">list</span></code>,
+<code class="docutils literal notranslate"><span class="pre">map</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, and <code class="docutils literal notranslate"><span class="pre">union</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dataType</span></code></p></td>
+<td><p>Matches all <a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">simple types</span></a> and
+<a class="reference internal" href="aggregate-types.html#aggregate-types"><span class="std std-ref">aggregate types</span></a>. This is an alias of
+<code class="docutils literal notranslate"><span class="pre">:is(simpleType,</span> <span class="pre">aggregateType)</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">serviceType</span></code></p></td>
+<td><p>Matches all <a class="reference internal" href="service-types.html#service-types"><span class="std std-ref">service types</span></a> (<code class="docutils literal notranslate"><span class="pre">service</span></code>,
+<code class="docutils literal notranslate"><span class="pre">operation</span></code>, and <code class="docutils literal notranslate"><span class="pre">resource</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">collection</span></code></p></td>
 <td><p>Deprecated: An alias of <code class="docutils literal notranslate"><span class="pre">list</span></code>. Also matches <code class="docutils literal notranslate"><span class="pre">set</span></code> shapes in Smithy IDL 1.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">blob</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">blob</span></code></p></td>
 <td><p>Matches blob shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
 <td><p>Matches boolean shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
 <td><p>Matches document shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>Matches string shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">integer</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">integer</span></code></p></td>
 <td><p>Matches integer shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">byte</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">byte</span></code></p></td>
 <td><p>Matches byte shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">short</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">short</span></code></p></td>
 <td><p>Matches short shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">long</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">long</span></code></p></td>
 <td><p>Matches long shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p>Matches float shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
 <td><p>Matches double shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></p></td>
 <td><p>Matches bigDecimal shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></p></td>
 <td><p>Matches bigInteger shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></p></td>
 <td><p>Matches timestamp shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
 <td><p>Matches list shapes. Note that set shapes also match <code class="docutils literal notranslate"><span class="pre">list</span></code> because
 they are considered sub-types of list.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">set</span></code></p></td>
 <td><p>Deprecated: Matches set shapes. This is considered an alias for <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">map</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">map</span></code></p></td>
 <td><p>Matches map shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p></td>
 <td><p>Matches structure shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">union</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">union</span></code></p></td>
 <td><p>Matches union shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p></td>
 <td><p>Matches service shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p></td>
 <td><p>Matches operation shapes</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">resource</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resource</span></code></p></td>
 <td><p>Matches resource shapes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">member</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">member</span></code></p></td>
 <td><p>Matches member shapes</p></td>
 </tr>
 </tbody>

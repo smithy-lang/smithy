@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -886,7 +887,7 @@ using these protocols MUST NOT be bound to the HTTP body. They MAY be bound to
 any other part of the HTTP message, such as the headers, URI, or query string.</p>
 <p>In RPC protocols (<a class="reference internal" href="protocols/aws-json-1_0-protocol.html#aws-json-1-0"><span class="std std-ref">AWS JSON 1.0</span></a>,
 <a class="reference internal" href="protocols/aws-json-1_1-protocol.html#aws-json-1-1"><span class="std std-ref">AWS JSON 1.1</span></a>,
-<a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html#smithy-rpc-v2-cbor"><span class="std std-ref">Smithy RPC v2 CBOR</span></a>), initial messages take the form
+<a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-cbor.html#smithy-rpc-v2-cbor"><span class="std std-ref">Smithy RPC v2 CBOR</span></a>), initial messages take the form
 of message events with the event types <code class="docutils literal notranslate"><span class="pre">initial-request</span></code> for request streams
 and <code class="docutils literal notranslate"><span class="pre">initial-response</span></code> for response streams. Every member of the input or
 output structure except for the event stream member MUST be serialized into the

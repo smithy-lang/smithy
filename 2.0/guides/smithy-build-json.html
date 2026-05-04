@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -539,7 +540,7 @@ validators, transforms, and other extensions.</p></td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.69.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.70.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -588,6 +589,19 @@ validators, transforms, and other extensions.</p></td>
 content between two consecutive <code class="docutils literal notranslate"><span class="pre">/</span></code> characters and a new line (<code class="docutils literal notranslate"><span class="pre">\n</span></code>) or
 the end of the file is considered a comment and ignored when parsing.</p>
 </div>
+<section id="json-schema">
+<span id="smithy-build-json-schema"></span><h3>JSON Schema<a class="headerlink" href="#json-schema" title="Link to this heading">¶</a></h3>
+<p>A <a class="reference external" href="https://smithy.io/2.0/_static/smithy-build-schema.json">JSON Schema</a> is available for <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> that can be used to
+validate configuration files and to enable autocompletion and inline
+documentation in editors that support JSON Schema. To use it, add a
+<code class="docutils literal notranslate"><span class="pre">$schema</span></code> property to the top of your configuration file:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://smithy.io/2.0/_static/smithy-build-schema.json&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="plugin-id-and-artifact-names">
 <span id="plugin-id"></span><h2>Plugin ID and artifact names<a class="headerlink" href="#plugin-id-and-artifact-names" title="Link to this heading">¶</a></h2>
@@ -628,7 +642,7 @@ same projection multiple times using a custom artifact name.</p>
 </div>
 </section>
 <section id="maven-configuration">
-<span id="id2"></span><h2>Maven configuration<a class="headerlink" href="#maven-configuration" title="Link to this heading">¶</a></h2>
+<span id="id3"></span><h2>Maven configuration<a class="headerlink" href="#maven-configuration" title="Link to this heading">¶</a></h2>
 <p>Maven dependencies and repositories can be defined in smithy-build.json files,
 and the Smithy CLI will automatically resolve these dependencies using the
 <a class="reference external" href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">Apache Maven</a> dependency resolver.</p>
@@ -675,9 +689,9 @@ requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id17">
-<table class="docutils align-default" id="id17">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id17" title="Link to this table">¶</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id18">
+<table class="docutils align-default" id="id18">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id18" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -729,7 +743,7 @@ has a critical vulnerability).</p></td>
 </section>
 </section>
 <section id="maven-repositories">
-<span id="id3"></span><h3>Maven Repositories<a class="headerlink" href="#maven-repositories" title="Link to this heading">¶</a></h3>
+<span id="id4"></span><h3>Maven Repositories<a class="headerlink" href="#maven-repositories" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">repositories</span></code> property accepts a list of structures that each accept
 the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -746,11 +760,15 @@ the following configuration:</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>url</p></td>
+<tr class="row-even"><td><p>id</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>An optional identifier for the repository.</p></td>
+</tr>
+<tr class="row-odd"><td><p>url</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>The URL of the repository (for example, <code class="docutils literal notranslate"><span class="pre">https://repo.maven.apache.org/maven2</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p>httpCredentials</p></td>
+<tr class="row-even"><td><p>httpCredentials</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>HTTP basic or digest credentials to use with the repository.
 Credentials are provided in the form of &quot;username:password&quot;.</p>
@@ -762,11 +780,11 @@ keep credentials out of source control.</p>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td><p>proxyHost</p></td>
+<tr class="row-odd"><td><p>proxyHost</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>The URL of the proxy to configure for this repository (for example, <code class="docutils literal notranslate"><span class="pre">http://proxy.maven.apache.org:8080</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p>proxyCredentials</p></td>
+<tr class="row-even"><td><p>proxyCredentials</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>HTTP credentials to use with the proxy for the repository.
 Credentials are provided in the form of &quot;username:password&quot;.</p>
@@ -793,7 +811,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.69.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.70.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -846,7 +864,7 @@ variable:</p>
 </section>
 </section>
 <section id="projections">
-<span id="id4"></span><h2>Projections<a class="headerlink" href="#projections" title="Link to this heading">¶</a></h2>
+<span id="id5"></span><h2>Projections<a class="headerlink" href="#projections" title="Link to this heading">¶</a></h2>
 <p>A projection of a model is a filtered and modified version of a Smithy model
 that is intended for specific audiences or customers. Projections are
 useful to companies that maintain internal and external versions of an API
@@ -907,7 +925,7 @@ warning when a plugin cannot be resolved.</p></td>
 </table>
 </div>
 <section id="projection-artifacts">
-<span id="id5"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Link to this heading">¶</a></h3>
+<span id="id6"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Link to this heading">¶</a></h3>
 <p>smithy-build will write artifacts for each projection inside of
 <cite>outputDirectory</cite>.</p>
 <ul class="simple">
@@ -922,7 +940,7 @@ and <code class="docutils literal notranslate"><span class="pre">${files...}</sp
 </section>
 </section>
 <section id="transforms">
-<span id="id6"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Link to this heading">¶</a></h2>
+<span id="id7"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Link to this heading">¶</a></h2>
 <p>Transforms are used to filter and modify the model for the projection.
 Transforms are applied to the model, in order.</p>
 <p>A transform accepts the following configuration:</p>
@@ -1006,7 +1024,7 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 </div>
 </section>
 <section id="changestringenumstoenumshapes">
-<span id="id7"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Link to this heading">¶</a></h3>
+<span id="id8"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Link to this heading">¶</a></h3>
 <p>Changes string shapes with enum traits into enum shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
@@ -1064,7 +1082,7 @@ transform.</p>
 </div>
 </section>
 <section id="makeidempotencytokensclientoptional">
-<span id="id8"></span><h3>makeIdempotencyTokensClientOptional<a class="headerlink" href="#makeidempotencytokensclientoptional" title="Link to this heading">¶</a></h3>
+<span id="id9"></span><h3>makeIdempotencyTokensClientOptional<a class="headerlink" href="#makeidempotencytokensclientoptional" title="Link to this heading">¶</a></h3>
 <p>Makes required <a class="reference internal" href="../spec/behavior-traits.html#idempotencytoken-trait"><span class="std std-ref">&#64;idempotencyToken</span></a> members <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">&#64;clientOptional</span></a>.</p>
 <p>Idempotency tokens that are required should fail validation, but shouldn't be required to create a type.
 This allows a default value to get injected when missing.</p>
@@ -1084,7 +1102,7 @@ This allows a default value to get injected when missing.</p>
 </div>
 </section>
 <section id="changetypes">
-<span id="id9"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Link to this heading">¶</a></h3>
+<span id="id10"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Link to this heading">¶</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
@@ -1165,7 +1183,7 @@ the compiled <a class="reference internal" href="../additional-specs/rules-engin
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-rules-engine:1.69.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-rules-engine:1.70.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1175,7 +1193,7 @@ the compiled <a class="reference internal" href="../additional-specs/rules-engin
 <p class="admonition-title">Note</p>
 <p>AWS services like <code class="docutils literal notranslate"><span class="pre">S3</span></code> can have special tree transformations that dramatically improve the BDD compiled result
 both in size and performance. To use them, please use the dedicated transform <code class="docutils literal notranslate"><span class="pre">compileBddForAws</span></code> and
-include the dependency of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-endpoints:1.69.0</span></code>.</p>
+include the dependency of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-endpoints:1.70.0</span></code>.</p>
 </div>
 </section>
 <section id="excludeshapesbyselector">
@@ -2109,7 +2127,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div>
 </section>
 <section id="flattenandremovemixins">
-<span id="id10"></span><h3>flattenAndRemoveMixins<a class="headerlink" href="#flattenandremovemixins" title="Link to this heading">¶</a></h3>
+<span id="id11"></span><h3>flattenAndRemoveMixins<a class="headerlink" href="#flattenandremovemixins" title="Link to this heading">¶</a></h3>
 <p>Flattens <a class="reference internal" href="../spec/mixins.html#mixins"><span class="std std-ref">mixins</span></a> out of the model and into their local shapes.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
@@ -2127,7 +2145,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div>
 </section>
 <section id="flattennamespaces">
-<span id="id11"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Link to this heading">¶</a></h3>
+<span id="id12"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Link to this heading">¶</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2476,7 +2494,7 @@ files have access to the following environment variables:</p>
 </div>
 </section>
 <section id="plugins">
-<span id="id12"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Link to this heading">¶</a></h2>
+<span id="id13"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Link to this heading">¶</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -2497,7 +2515,7 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <section id="model-plugin">
-<span id="id13"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Link to this heading">¶</a></h3>
+<span id="id14"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file. By default the serialized model excludes <a class="reference internal" href="../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
@@ -2515,12 +2533,12 @@ to the <code class="docutils literal notranslate"><span class="pre">smithy-build
 </div>
 </section>
 <section id="build-info-plugin">
-<span id="id14"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Link to this heading">¶</a></h3>
+<span id="id15"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </section>
 <section id="sources-plugin">
-<span id="id15"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Link to this heading">¶</a></h3>
+<span id="id16"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2538,7 +2556,7 @@ ignored. A Smithy manifest file is stored in a JAR as <code class="docutils lite
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
 </section>
 <section id="run-plugin">
-<span id="id16"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Link to this heading">¶</a></h3>
+<span id="id17"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
 useful when integrating Smithy's build process with Smithy implementations
 that are not written in Java.</p>
@@ -2726,7 +2744,10 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">smithy-build.json</a><ul>
-<li><a class="reference internal" href="#using-smithy-build-json">Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code></a></li>
+<li><a class="reference internal" href="#using-smithy-build-json">Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code></a><ul>
+<li><a class="reference internal" href="#json-schema">JSON Schema</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#plugin-id-and-artifact-names">Plugin ID and artifact names</a></li>
 <li><a class="reference internal" href="#maven-configuration">Maven configuration</a><ul>
 <li><a class="reference internal" href="#dependency-versions">Dependency versions</a><ul>

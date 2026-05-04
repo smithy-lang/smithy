@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -517,7 +518,7 @@ guides the generation of client and server code.</p>
 <li><p>The ability to order a coffee.</p></li>
 <li><p>The ability to check the status of an order.</p></li>
 </ul>
-<p>The service has the <code class="docutils literal notranslate"><span class="pre">&#64;restJson1</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;rpcv2Cbor</span></code> protocol trait applied indicating that the service supports the <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-restjson1-protocol"><span class="std std-ref">AWS restJson1 protocol</span></a> and <a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2.html#smithy-rpc-v2-cbor"><span class="std std-ref">rpcv2Cbor protocol</span></a>.</p>
+<p>The service has the <code class="docutils literal notranslate"><span class="pre">&#64;restJson1</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;rpcv2Cbor</span></code> protocol trait applied indicating that the service supports the <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-restjson1-protocol"><span class="std std-ref">AWS restJson1 protocol</span></a> and <a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html#smithy-rpc-v2-cbor"><span class="std std-ref">rpcv2Cbor protocol</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">smithy/model/main.smithy</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Allows users to retrieve a menu, create a coffee order, and</span>

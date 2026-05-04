@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -1014,7 +1015,7 @@ and do not raise an error.</p></li>
 <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration objects. No validators are provided by default.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.69.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.70.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </section>
 </section>
 </section>
@@ -1405,6 +1406,218 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 </div>
 </section>
 </section>
+<section id="smithy-rules-endpointtests-trait">
+<span id="smithy-rules-endpointtests-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointTests</span></code> trait<a class="headerlink" href="#smithy-rules-endpointtests-trait" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Experimental</p>
+<p>This trait is experimental and subject to change.</p>
+</div>
+<dl>
+<dt>Summary</dt><dd><p>Defines endpoint test cases for validating a client's endpoint rule-set.
+Test cases assert that, given a set of parameter values, the rule set
+resolves to an expected endpoint or error.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">:is([trait|smithy.rules#endpointRuleSet],</span> <span class="pre">[trait|smithy.rules#endpointBdd])</span></code></p>
+<p><em>A service with the :ref:`endpointRuleSet &lt;smithy.rules#endpointRuleSet-trait&gt;`
+or :ref:`endpointBdd &lt;smithy.rules#endpointBdd-trait&gt;` trait.</em></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">endpointTests</span></code> trait is a structure that supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>version</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The endpoint tests schema version.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testCases</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#endpointtest-object">EndpointTest object</a> <code class="docutils literal notranslate"><span class="pre">]</span></code></p></td>
+<td><p>A list of endpoint test case definitions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines an endpoint test that expects an endpoint URL
+to be based on configured region parameter.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@endpointTests</span>(
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="w">    </span><span class="py">testCases</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="s2">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">&quot;Region&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;north-america-1&quot;</span>
+<span class="w">            </span>}
+<span class="w">            </span><span class="s2">&quot;expect&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="s2">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://north-america-1.example.com&quot;</span>
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+</pre></div>
+</div>
+<section id="endpointtest-object">
+<span id="rules-engine-endpoint-test"></span><h3>EndpointTest object<a class="headerlink" href="#endpointtest-object" title="Link to this heading">¶</a></h3>
+<p>An endpoint test case describes a set of inputs and the expected outcome of
+evaluating the rule set. The <code class="docutils literal notranslate"><span class="pre">EndpointTest</span></code> object supports the following
+members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>documentation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A description of the test case.</p></td>
+</tr>
+<tr class="row-odd"><td><p>params</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
+<td><p>Defines rule-set parameter names and their values to use when
+evaluating the rule set.</p></td>
+</tr>
+<tr class="row-even"><td><p>operationInputs</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span></code> <a class="reference internal" href="#operationinput-object">OperationInput object</a> <code class="docutils literal notranslate"><span class="pre">]</span></code></p></td>
+<td><p>A list of service operation configurations used for testing the
+rules engine. Each entry describes an operation invocation whose
+input is used to bind parameter values.</p></td>
+</tr>
+<tr class="row-odd"><td><p>expect</p></td>
+<td><p><a class="reference internal" href="#endpointtestexpectation-union">EndpointTestExpectation union</a></p></td>
+<td><p><strong>Required</strong>. The expected outcome of evaluating the rule set with
+the given parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="operationinput-object">
+<span id="rules-engine-endpoint-test-operation-input"></span><h3>OperationInput object<a class="headerlink" href="#operationinput-object" title="Link to this heading">¶</a></h3>
+<p>An <code class="docutils literal notranslate"><span class="pre">OperationInput</span></code> object describes a service operation and the input used
+to verify an endpoint rule-set test case. It supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>operationName</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The name of the service operation targeted by the test.</p></td>
+</tr>
+<tr class="row-odd"><td><p>operationParams</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
+<td><p>Input parameters used to generate the operation request. These
+parameters MUST be compatible with the input of the operation.</p></td>
+</tr>
+<tr class="row-even"><td><p>builtInParams</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
+<td><p>Rule-set built-in values and their corresponding values to be set.</p></td>
+</tr>
+<tr class="row-odd"><td><p>clientParams</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p></td>
+<td><p>Client configuration parameters to be set.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="endpointtestexpectation-union">
+<span id="rules-engine-endpoint-test-expectation"></span><h3>EndpointTestExpectation union<a class="headerlink" href="#endpointtestexpectation-union" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">EndpointTestExpectation</span></code> union describes the expected outcome of a test
+case. Exactly one member MUST be set:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>error</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A test case expectation resulting in an error. The value is the
+expected error message.</p></td>
+</tr>
+<tr class="row-odd"><td><p>endpoint</p></td>
+<td><p><a class="reference internal" href="#endpointexpectation-object">EndpointExpectation object</a></p></td>
+<td><p>A test case expectation resulting in a resolved endpoint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="endpointexpectation-object">
+<span id="rules-engine-endpoint-test-endpoint-expectation"></span><h3>EndpointExpectation object<a class="headerlink" href="#endpointexpectation-object" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">EndpointExpectation</span></code> object describes the expected endpoint resolved for
+a test case. It supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>url</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The expected endpoint URL.</p></td>
+</tr>
+<tr class="row-odd"><td><p>headers</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">[string]&gt;</span></code></p></td>
+<td><p>A map of expected transport header names to their values.</p></td>
+</tr>
+<tr class="row-even"><td><p>properties</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">document&gt;</span></code></p></td>
+<td><p>The expected properties for the endpoint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
 </section>
 
         </article>
@@ -1497,6 +1710,13 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 <li><a class="reference internal" href="#reference-object">Reference object</a></li>
 <li><a class="reference internal" href="#template-string">Template string</a><ul>
 <li><a class="reference internal" href="#template-shorthand">Template shorthand</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-rules-endpointtests-trait"><code class="docutils literal notranslate"><span class="pre">smithy.rules#endpointTests</span></code> trait</a><ul>
+<li><a class="reference internal" href="#endpointtest-object">EndpointTest object</a></li>
+<li><a class="reference internal" href="#operationinput-object">OperationInput object</a></li>
+<li><a class="reference internal" href="#endpointtestexpectation-union">EndpointTestExpectation union</a></li>
+<li><a class="reference internal" href="#endpointexpectation-object">EndpointExpectation object</a></li>
 </ul>
 </li>
 </ul>

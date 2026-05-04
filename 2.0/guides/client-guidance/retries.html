@@ -306,7 +306,8 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><input aria-label="Toggle navigation of Protocols" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
 </ul>
 </li>
 </ul>
@@ -513,23 +514,30 @@ tokens, which it creates and refreshes.</p>
 <span class="cm">     * may continue to track each request and be informed when they succeed or</span>
 <span class="cm">     * fail.</span>
 <span class="cm">     *</span>
+<span class="cm">     * @param operation information about the operation that is being invoked.</span>
+<span class="cm">     *</span>
 <span class="cm">     * @throws TokenAcquisitionFailedException if a token cannot be acquired.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">acquireInitialToken</span><span class="p">();</span>
+<span class="w">    </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">acquireInitialToken</span><span class="p">(</span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">);</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Invoked before each subsequent (non-first) request attempt.</span>
 <span class="cm">     *</span>
+<span class="cm">     * @param token the retry token generated prior to the most recent attempt.</span>
+<span class="cm">     * @param failure the error that caused the attempt to fail.</span>
+<span class="cm">     *</span>
 <span class="cm">     * @throws IllegalArgumentException if the provided token was not issued by</span>
 <span class="cm">     *     this strategy or the provided token was already used for a previous</span>
 <span class="cm">     *     refresh or success call.</span>
-<span class="cm">     * </span>
+<span class="cm">     *</span>
 <span class="cm">     * @throws TokenAcquisitionFailedException if a token cannot be acquired.</span>
 <span class="cm">     */</span>
 <span class="w">    </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">refreshRetryToken</span><span class="p">(</span><span class="n">RetryToken</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="n">Throwable</span><span class="w"> </span><span class="n">failure</span><span class="p">);</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Invoked after an attempt succeeds.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param token the retry token generated prior to the most recent attempt.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @throws IllegalArgumentException if the provided token was not issued by</span>
 <span class="cm">     *     this strategy or the provided token was already used for a previous</span>
@@ -545,6 +553,11 @@ tokens, which it creates and refreshes.</p>
 retry strategy may still need to manage some state that is shared across the
 client. Be careful to ensure that access to that state is synchronized in order
 to prevent race conditions.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">TODO - Define ApiOperation</p>
+<p><code class="docutils literal notranslate"><span class="pre">ApiOperation</span></code> will be defined later in a separate document. At a minimum, it
+should contain the operation's ID.</p>
 </div>
 <section id="using-retry-strategies">
 <h4>Using retry strategies<a class="headerlink" href="#using-retry-strategies" title="Link to this heading">¶</a></h4>
@@ -565,17 +578,18 @@ free up any resources it was using.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
 <span class="cm"> * A simplified example of what a retryable request loop looks like.</span>
 <span class="cm"> *</span>
+<span class="cm"> * @param operation information about the operation that is being invoked.</span>
 <span class="cm"> * @param serializedRequest a request that has been fully serialized and is</span>
 <span class="cm"> *     ready to send.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @return a successful result.</span>
 <span class="cm"> */</span>
-<span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="n">SerializedRequest</span><span class="w"> </span><span class="n">serializedRequest</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">SerializedRequest</span><span class="w"> </span><span class="n">serializedRequest</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// First acquire the initial retry token. If a token cannot be acquired,</span>
 <span class="w">    </span><span class="c1">// make only one attempt without retries.</span>
 <span class="w">    </span><span class="n">RetryToken</span><span class="w"> </span><span class="n">retryToken</span><span class="p">;</span>
 <span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">retryToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">retryStrategy</span><span class="p">.</span><span class="na">acquireInitialToken</span><span class="p">();</span>
+<span class="w">        </span><span class="n">retryToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">retryStrategy</span><span class="p">.</span><span class="na">acquireInitialToken</span><span class="p">(</span><span class="n">operation</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TokenAcquisitionFailedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">send</span><span class="p">(</span><span class="n">serializedRequest</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
@@ -844,21 +858,29 @@ demonstrate some of the potential needs of a retry system.</p>
 <section id="example-retry-strategy">
 <h3>Example retry strategy<a class="headerlink" href="#example-retry-strategy" title="Link to this heading">¶</a></h3>
 <p>The following is an example retry strategy that implements exponential backoff
-with jitter alongside a token bucket. This strategy adds extra cost for timeout
-errors since they may indicate a more degraded service.</p>
+with jitter alongside a token bucket. This strategy has a reduced cost for
+throttling errors as they indicate that the service is actively managing
+retries.</p>
 <p>Aside from delay, the retry token also tracks the number of attempts that have
-been made. This is necessary because this strategy imposes a maximum attempt
-count, and also because the delay is calculated in part based on how many
-attempts have been made.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">AwsStandardRetryToken</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">delay</span><span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">RetryToken</span><span class="w"> </span><span class="p">{</span>
+been made as well as if the operation is a long-polling operation. The attempt
+count is necessary because this strategy imposes a maximum attempt count, and
+also because the delay is calculated in part based on how many attempts have
+been made.</p>
+<p>For long-polling operations, the strategy will sleep if the bucket is found
+to be empty.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">AwsStandardRetryToken</span><span class="p">(</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Duration</span><span class="w"> </span><span class="n">delay</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">boolean</span><span class="w"> </span><span class="n">isLongPoll</span>
+<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">RetryToken</span><span class="w"> </span><span class="p">{</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AwsStandardRetryStrategy</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">RetryStrategy</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// These values are not prescriptive. They are static in this example for the</span>
 <span class="w">    </span><span class="c1">// sake of simplicity, but making them configurable is ideal.</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">RETRY_COST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TIMEOUT_COST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">RETRY_COST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">14</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">THROTTLING_RETRY_COST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">SUCCESS_REFUND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">MAX_ATTEMPTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
@@ -876,13 +898,14 @@ attempts have been made.</p>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">tokensLock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="p">();</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">acquireInitialToken</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">acquireInitialToken</span><span class="p">(</span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// This returns successfully even if the token bucket is empty. This is</span>
 <span class="w">        </span><span class="c1">// because an initial attempt will always be performed anyway, and</span>
 <span class="w">        </span><span class="c1">// returning successfully here will ensure that the retry strategy is</span>
 <span class="w">        </span><span class="c1">// checked if that initial attempt fails. By that point, the token bucket</span>
 <span class="w">        </span><span class="c1">// may no longer be empty.</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">boolean</span><span class="w"> </span><span class="n">isLongPoll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">operation</span><span class="p">.</span><span class="na">schema</span><span class="p">().</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">TraitKey</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">LongPollTrait</span><span class="p">.</span><span class="na">class</span><span class="p">));</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="n">isLongPoll</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
@@ -904,10 +927,9 @@ attempts have been made.</p>
 <span class="w">            </span><span class="c1">// If the exception thrown by the operation includes retryability</span>
 <span class="w">            </span><span class="c1">// information, use that to inform retry behavior.</span>
 <span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="n">RetryInfo</span><span class="w"> </span><span class="n">retryInfo</span><span class="w"> </span><span class="n">when</span><span class="w"> </span><span class="n">retryInfo</span><span class="p">.</span><span class="na">isRetrySafe</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">RetrySafety</span><span class="p">.</span><span class="na">NO</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="c1">// Attempt to consume tokens from the token bucket to &quot;pay&quot;</span>
-<span class="w">                </span><span class="c1">// for the retry.</span>
-<span class="w">                </span><span class="n">consumeTokens</span><span class="p">(</span><span class="n">retryInfo</span><span class="p">.</span><span class="na">isTimeout</span><span class="p">());</span>
-<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="nf">backoff</span><span class="p">(</span><span class="n">standardToken</span><span class="p">,</span><span class="w"> </span><span class="n">retryInfo</span><span class="p">.</span><span class="na">retryAfter</span><span class="p">());</span>
+<span class="w">                </span><span class="kd">var</span><span class="w"> </span><span class="n">resultToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">backoff</span><span class="p">(</span><span class="n">standardToken</span><span class="p">,</span><span class="w"> </span><span class="n">retryInfo</span><span class="p">.</span><span class="na">retryAfter</span><span class="p">(),</span><span class="w"> </span><span class="n">retryInfo</span><span class="p">.</span><span class="na">isThrottle</span><span class="p">());</span>
+<span class="w">                </span><span class="n">payForRetry</span><span class="p">(</span><span class="n">retryInfo</span><span class="p">.</span><span class="na">isThrottle</span><span class="p">(),</span><span class="w"> </span><span class="n">resultToken</span><span class="p">);</span>
+<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="n">resultToken</span><span class="p">;</span>
 <span class="w">            </span><span class="p">}</span>
 
 <span class="w">            </span><span class="c1">// If the exception does not have retry info, but does have more</span>
@@ -915,8 +937,9 @@ attempts have been made.</p>
 <span class="w">            </span><span class="c1">// a server error is likely retryable and that a client error</span>
 <span class="w">            </span><span class="c1">// likely is not.</span>
 <span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="n">ErrorInfo</span><span class="w"> </span><span class="n">errorInfo</span><span class="w"> </span><span class="n">when</span><span class="w"> </span><span class="n">errorInfo</span><span class="p">.</span><span class="na">fault</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ErrorFault</span><span class="p">.</span><span class="na">SERVER</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="n">consumeTokens</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
-<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="nf">backoff</span><span class="p">(</span><span class="n">standardToken</span><span class="p">);</span>
+<span class="w">                </span><span class="kd">var</span><span class="w"> </span><span class="n">resultToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">backoff</span><span class="p">(</span><span class="n">standardToken</span><span class="p">);</span>
+<span class="w">                </span><span class="n">payForRetry</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">resultToken</span><span class="p">);</span>
+<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="n">resultToken</span><span class="p">;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">            </span><span class="k">default</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Exception not retryable.&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="p">};</span>
@@ -925,21 +948,43 @@ attempts have been made.</p>
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Consumes tokens to &quot;pay&quot; for a retry.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @param isTimeout whether the retry is in response to a timeout error,</span>
-<span class="cm">     *     which will require more tokens.</span>
+<span class="cm">     * @param isThrottle whether the retry is in response to a throttling error,</span>
+<span class="cm">     *     which will require fewer tokens.</span>
+<span class="cm">     * @param resultCandidate The candidate RetryToken that needs to be paid for.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @throws TokenAcquisitionFailedException if there are not enough tokens</span>
 <span class="cm">     *     in the bucket to pay for the retry.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">consumeTokens</span><span class="p">(</span><span class="kt">boolean</span><span class="w"> </span><span class="n">isTimeout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">synchronized</span><span class="w"> </span><span class="p">(</span><span class="n">tokensLock</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isTimeout</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">TIMEOUT_COST</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">RETRY_COST</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">payForRetry</span><span class="p">(</span><span class="kt">boolean</span><span class="w"> </span><span class="n">isThrottle</span><span class="p">,</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="n">resultCandidate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isThrottle</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">THROTTLING_RETRY_COST</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">RETRY_COST</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">consumeTokens</span><span class="p">(</span><span class="n">cost</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">resultCandidate</span><span class="p">.</span><span class="na">isLongPoll</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Include a delay for a long-poll operation even if there will</span>
+<span class="w">                </span><span class="c1">// be no more attempts.</span>
+<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="n">resultCandidate</span><span class="p">.</span><span class="na">delay</span><span class="p">());</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">interrupt</span><span class="p">();</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Token bucket exhausted.&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Attempts to consume a specified amount of tokens.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param cost The amount of tokens to attempt to consume.</span>
+<span class="cm">     * @return Returns whether the tokens were able to be consumed.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">consumeTokens</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">cost</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">synchronized</span><span class="w"> </span><span class="p">(</span><span class="n">tokensLock</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">tokens</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cost</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Token bucket exhausted.&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
 <span class="w">            </span><span class="p">}</span>
 
 <span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">tokens</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">cost</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -949,41 +994,51 @@ attempts have been made.</p>
 <span class="cm">     * @param token the previous token.</span>
 <span class="cm">     */</span>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="nf">backoff</span><span class="p">(</span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="n">token</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">computeDelay</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="p">));</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span>
+<span class="w">            </span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">computeDelay</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">),</span><span class="w"> </span><span class="n">token</span><span class="p">.</span><span class="na">isLongPoll</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Computes a backoff with exponential backoff and jitter, capped at 20 seconds.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param token the previous token.</span>
+<span class="cm">     * @param isThrottle whether the triggering error was a throttle.</span>
 <span class="cm">     * @param suggested the delay suggested by the service, which will serve as</span>
 <span class="cm">     *     the minimum delay.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="nf">backoff</span><span class="p">(</span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">suggested</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="nf">backoff</span><span class="p">(</span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">suggested</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">isThrottle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Compute the backoff as normal. If it is longer than the suggested</span>
 <span class="w">        </span><span class="c1">// backoff from the service, use it. Otherwise, use the suggested</span>
 <span class="w">        </span><span class="c1">// backoff.</span>
-<span class="w">        </span><span class="n">Duration</span><span class="w"> </span><span class="n">computedDelay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">computeDelay</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="p">);</span>
-<span class="w">        </span><span class="n">Duration</span><span class="w"> </span><span class="n">finalDelay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">computedDelay</span><span class="p">.</span><span class="na">toMillis</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">suggested</span><span class="p">.</span><span class="na">toMillis</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">suggested</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">computedDelay</span><span class="p">;</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">finalDelay</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Duration</span><span class="w"> </span><span class="n">finalDelay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">computeDelay</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="p">,</span><span class="w"> </span><span class="n">isThrottle</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">suggested</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">finalDelay</span><span class="p">.</span><span class="na">toMillis</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">suggested</span><span class="p">.</span><span class="na">toMillis</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">finalDelay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">suggested</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="p">(</span><span class="n">token</span><span class="p">.</span><span class="na">attempts</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">finalDelay</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="p">.</span><span class="na">isLongPoll</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Computes the delay with exponential backoff and jitter, capped at 20 seconds.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param attempts the number of attempts made so far.</span>
+<span class="cm">     * @param isThrottle whether the triggering error was a throttle.</span>
 <span class="cm">     * @return the computed delay duration.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="nf">computeDelay</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">attempts</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="nf">computeDelay</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">attempts</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">isThrottle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// First compute the exponential backoff.</span>
 <span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">backoff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">attempts</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Try to recover faster from non-throttling errors.</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isThrottle</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">backoff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">backoff</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.05</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1">// Next, cap it at 20 seconds.</span>
 <span class="w">        </span><span class="n">backoff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="n">backoff</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_BACKOFF</span><span class="p">);</span>
 
 <span class="w">        </span><span class="c1">// Finally, add jitter and expand to milliseconds.</span>
 <span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">backoffMillis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">random</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">backoff</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMilliseconds</span><span class="p">((</span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="n">backoffMillis</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">((</span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="n">backoffMillis</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
