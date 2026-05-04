@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `aws.apigateway#resourcePolicy` trait and OpenAPI mapper",
+  "pull_requests": [
+    "[#3081](https://github.com/smithy-lang/smithy/pull/3081)"
+  ]
+}

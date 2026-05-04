@@ -136,6 +136,14 @@ structure mockIntegration {
 @trait(selector: ":test(service, operation)")
 string requestValidator
 
+/// Defines a resource policy for an API Gateway REST API. A resource policy
+/// is a JSON policy document attached to an API that controls whether a
+/// specified principal (typically an IAM role or group) can invoke the API.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+document resourcePolicy
+
 /// An object that associates an authorizer and associated metadata with an
 /// authentication mechanism.
 @private
