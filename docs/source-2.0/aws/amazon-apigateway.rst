@@ -595,7 +595,7 @@ The following example defines an operation that uses a mock integration.
 Summary
     Defines the endpoint configuration for an API Gateway REST API,
     including the endpoint type, VPC endpoint IDs, and whether the
-    default execute-api endpoint is disabled.
+    default ``execute-api`` endpoint is disabled.
 Trait selector
     ``service``
 Value type
