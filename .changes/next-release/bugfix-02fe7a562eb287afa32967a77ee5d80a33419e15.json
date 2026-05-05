@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Preserve typed traits when renaming shapes",
+  "pull_requests": [
+    "[#3086](https://github.com/smithy-lang/smithy/pull/3086)"
+  ]
+}

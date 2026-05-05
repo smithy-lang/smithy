@@ -11,7 +11,6 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
-import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
  * {@code renameShapes} updates a model by renaming shapes. When
@@ -62,7 +61,7 @@ public final class RenameShapes extends ConfigurableProjectionTransformer<Rename
         }
         Model model = context.getModel();
 
-        return ModelTransformer.create().renameShapes(model, getShapeIdsToRename(config, model));
+        return context.getTransformer().renameShapes(model, getShapeIdsToRename(config, model));
     }
 
     @Override
