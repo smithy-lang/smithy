@@ -2189,6 +2189,84 @@ The following Smithy model enables API Gateway's API key usage plans on the
     operation OperationA {}
 
 
+.. _apigateway-api-key-required:
+
+API key required
+================
+
+Operations annotated with the :ref:`aws.apigateway#apiKeyRequired-trait`
+require an API key for API Gateway usage plan enforcement. The mapper adds
+an ``api_key`` security scheme to the OpenAPI ``components/securitySchemes``
+and a ``security`` requirement to each annotated operation.
+
+The following Smithy model requires an API key on ``ListItems`` but not
+on ``HealthCheck``:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#apiKeyRequired
+    use aws.protocols#restJson1
+
+    @restJson1
+    service Example {
+      version: "2019-06-17"
+      operations: [ListItems, HealthCheck]
+    }
+
+    @apiKeyRequired
+    @http(method: "GET", uri: "/items")
+    operation ListItems {}
+
+    @http(method: "GET", uri: "/health")
+    operation HealthCheck {}
+
+is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "paths": {
+            "/items": {
+                "get": {
+                    "operationId": "ListItems",
+                    "responses": {
+                        "200": {
+                            "description": "ListItems response"
+                        }
+                    },
+                    "security": [
+                        {
+                            "api_key": []
+                        }
+                    ]
+                }
+            },
+            "/health": {
+                "get": {
+                    "operationId": "HealthCheck",
+                    "responses": {
+                        "200": {
+                            "description": "HealthCheck response"
+                        }
+                    }
+                }
+            }
+        },
+        "components": {
+            "securitySchemes": {
+                "api_key": {
+                    "type": "apiKey",
+                    "name": "x-api-key",
+                    "in": "header"
+                }
+            }
+        }
+    }
+
+
 .. _other-traits:
 
 Other traits that influence API Gateway
