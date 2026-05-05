@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added smithy-cfn-json plugin that serializes Smithy models to JSON AST with CloudFormation Fn Sub intrinsic functions",
+  "pull_requests": [
+    "[#3095](https://github.com/smithy-lang/smithy/pull/3095)"
+  ]
+}

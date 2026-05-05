@@ -9,6 +9,7 @@ formats.
     :maxdepth: 1
 
     converting-to-openapi
+    smithy-cfn-json
     migrating-idl-1-to-2
     generating-cloudformation-resources
 
