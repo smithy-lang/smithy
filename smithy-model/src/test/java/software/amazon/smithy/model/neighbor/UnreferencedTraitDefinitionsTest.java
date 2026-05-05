@@ -15,7 +15,7 @@ public class UnreferencedTraitDefinitionsTest {
     @Test
     public void shouldReportDefinitionsForTraitsThatAreNotUsed() {
         Model model = Model.assembler()
-                .addImport(UnreferencedTraitDefinitionsTest.class.getResource("unreferenced-test.json"))
+                .addImport(UnreferencedTraitDefinitionsTest.class.getResource("unreferenced-test.smithy"))
                 .assemble()
                 .unwrap();
         UnreferencedTraitDefinitions unreferencedTraitDefinitions = new UnreferencedTraitDefinitions();

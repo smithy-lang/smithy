@@ -1,0 +1,1 @@
+[ERROR] -: metadata.auditLevel: Missing required structure member `level` for `smithy.example#AuditLevelMetadata` | TypedMetadata.auditLevel

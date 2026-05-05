@@ -13,13 +13,19 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.MetadataTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
- * Finds shapes that are not connected to a "root" shape, are not trait definitions, are not referenced by trait
- * definitions, and are not referenced in trait values through
- * {@link software.amazon.smithy.model.traits.IdRefTrait}.
+ * Finds shapes that do not meet any of the following criteria:
+ *
+ * <ul>
+ *     <li>The shape is connected to a "root" shape.
+ *     <li>The shape is a trait definition or is connected to a trait definition.
+ *     <li>The shape is referenced in a trait value through {@link software.amazon.smithy.model.traits.IdRefTrait}.
+ *     <li>The shape is a metadata definition or is connected to a metadata definition.
+ * </ul>
  *
  * <p>The "root" shapes defaults to all service shapes in the model. You can customize this by providing a selector
  * that considers every matching shape a root shape. For example, a model might consider all shapes marked with
@@ -80,6 +86,11 @@ public final class UnreferencedShapes {
         // Don't remove shapes that are traits or connected to traits.
         for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
             shapeWalker.iterateShapes(trait, traversed).forEachRemaining(shape -> connected.add(shape.getId()));
+        }
+
+        // Don't remove shapes that are metadata definitions or connected to metadata definitions.
+        for (Shape metadata : model.getShapesWithTrait(MetadataTrait.class)) {
+            shapeWalker.iterateShapes(metadata, traversed).forEachRemaining(shape -> connected.add(shape.getId()));
         }
 
         // Any shape that wasn't identified as connected to a root is considered unreferenced.
