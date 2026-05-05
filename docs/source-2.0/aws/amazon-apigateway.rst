@@ -584,6 +584,89 @@ The following example defines an operation that uses a mock integration.
     This trait should be considered internal-only and not exposed to your
     customers.
 
+
+.. smithy-trait:: aws.apigateway#gatewayResponses
+.. _aws.apigateway#gatewayResponses-trait:
+
+-----------------------------------------
+``aws.apigateway#gatewayResponses`` trait
+-----------------------------------------
+
+Summary
+    Defines custom gateway responses for an API Gateway REST API. Gateway
+    responses customize error responses for authentication failures,
+    integration errors, and other API Gateway-generated errors.
+Trait selector
+    ``service``
+Value type
+    ``map`` of response type ``string`` to ``GatewayResponse`` structure
+See also
+    - `x-amazon-apigateway-gateway-responses`_ for the related OpenAPI
+      extension
+    - `Gateway response types`_ for the list of valid response type keys
+
+The ``GatewayResponse`` structure supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - statusCode
+      - ``string``
+      - The HTTP status code for the gateway response.
+    * - responseParameters
+      - ``map`` of ``string`` to ``string``
+      - Response parameters for the gateway response. Keys use the format
+        ``gatewayresponse.header.<header-name>``.
+    * - responseTemplates
+      - ``map`` of ``string`` to ``string``
+      - Response templates keyed by media type.
+
+.. note::
+
+    Response type keys (``DEFAULT_4XX``, ``DEFAULT_5XX``,
+    ``INVALID_API_KEY``, etc.) are validated by API Gateway at import
+    time, not by Smithy. When both ``@gatewayResponses`` and ``@cors``
+    are applied to a service, the gateway responses take precedence.
+    The CORS mapper merges its headers into gateway responses without
+    overwriting customer-defined response parameters.
+
+The following example defines custom gateway responses for 4xx and 5xx
+errors:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#gatewayResponses
+
+    @gatewayResponses(
+        "DEFAULT_4XX": {
+            statusCode: "400"
+            responseParameters: {
+                "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+            }
+            responseTemplates: {
+                "application/json": "{\"message\": \"bad request\"}"
+            }
+        }
+        "DEFAULT_5XX": {
+            statusCode: "500"
+            responseTemplates: {
+                "application/json": "{\"message\": \"Internal server error\"}"
+            }
+        }
+    )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+
 -----------------------
 Shared trait data types
 -----------------------
@@ -891,3 +974,5 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
+.. _Gateway response types: https://docs.aws.amazon.com/apigateway/latest/developerguide/supported-gateway-response-types.html

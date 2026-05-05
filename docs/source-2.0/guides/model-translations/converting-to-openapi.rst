@@ -2189,6 +2189,85 @@ The following Smithy model enables API Gateway's API key usage plans on the
     operation OperationA {}
 
 
+.. _apigateway-gateway-responses:
+
+Gateway responses
+=================
+
+Custom gateway responses for an API Gateway REST API can be defined using
+the :ref:`aws.apigateway#gatewayResponses-trait`. Smithy writes the trait
+value to the `x-amazon-apigateway-gateway-responses`_ extension in the
+generated OpenAPI document.
+
+.. note::
+
+    When both ``@gatewayResponses`` and ``@cors`` are applied to a
+    service, the gateway responses take precedence. The CORS mapper
+    merges its headers into gateway responses without overwriting
+    customer-defined response parameters.
+
+The following Smithy model defines custom 4xx and 5xx gateway responses:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#gatewayResponses
+    use aws.protocols#restJson1
+
+    @restJson1
+    @gatewayResponses(
+        "DEFAULT_4XX": {
+            statusCode: "400"
+            responseParameters: {
+                "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+            }
+            responseTemplates: {
+                "application/json": "{\"message\": \"bad request\"}"
+            }
+        }
+        "DEFAULT_5XX": {
+            statusCode: "500"
+            responseTemplates: {
+                "application/json": "{\"message\": \"Internal server error\"}"
+            }
+        }
+    )
+    service Example {
+      version: "2019-06-17"
+    }
+
+is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "x-amazon-apigateway-gateway-responses": {
+            "DEFAULT_4XX": {
+                "statusCode": "400",
+                "responseParameters": {
+                    "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+                },
+                "responseTemplates": {
+                    "application/json": "{\"message\": \"bad request\"}"
+                }
+            },
+            "DEFAULT_5XX": {
+                "statusCode": "500",
+                "responseTemplates": {
+                    "application/json": "{\"message\": \"Internal server error\"}"
+                }
+            }
+        }
+    }
+
+
 .. _other-traits:
 
 Other traits that influence API Gateway
@@ -2292,3 +2371,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
