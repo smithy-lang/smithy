@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
+import software.amazon.smithy.aws.apigateway.traits.AuthorizationScopesTrait;
 import software.amazon.smithy.aws.apigateway.traits.AuthorizerDefinition;
 import software.amazon.smithy.aws.apigateway.traits.AuthorizerIndex;
 import software.amazon.smithy.aws.apigateway.traits.AuthorizerTrait;
@@ -106,12 +107,18 @@ final class AddAuthorizers implements ApiGatewayMapper {
         // ...API Gateway's built-in API keys are being used. It requires the
         // security to be specified on every operation.
         // See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-setup-api-key-with-console.html#api-gateway-usage-plan-configure-apikey-on-method
-        if (Objects.equals(operationAuth, serviceAuth) && !usesApiGatewayApiKeys(service, operationAuth)) {
+        List<String> scopes = shape.getTrait(AuthorizationScopesTrait.class)
+                .map(AuthorizationScopesTrait::getValues)
+                .orElse(ListUtils.of());
+
+        if (Objects.equals(operationAuth, serviceAuth)
+                && !usesApiGatewayApiKeys(service, operationAuth)
+                && scopes.isEmpty()) {
             return operation;
         }
 
         return operation.toBuilder()
-                .addSecurity(MapUtils.of(operationAuth, ListUtils.of()))
+                .addSecurity(MapUtils.of(operationAuth, scopes))
                 .build();
     }
 

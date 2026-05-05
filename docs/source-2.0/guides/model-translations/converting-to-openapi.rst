@@ -2158,6 +2158,74 @@ entry:
 In the entry, ``providerARNs`` will be populated from the ``providerArns`` list
 from the trait.
 
+
+.. _apigateway-authorization-scopes:
+
+Authorization scopes
+====================
+
+When an operation uses a `Cognito`_ authorizer, OAuth scopes can be added to
+the security requirement using the
+:ref:`aws.apigateway#authorizationScopes-trait`. The trait is applied
+alongside the :ref:`aws.apigateway#authorizer-trait` on an operation and
+specifies which scopes the caller must have.
+
+The following Smithy model requires the ``email`` and ``profile`` scopes
+on the ``GetUserProfile`` operation:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#authorizer
+    use aws.apigateway#authorizers
+    use aws.apigateway#authorizationScopes
+    use aws.auth#sigv4
+    use aws.protocols#restJson1
+
+    @restJson1
+    @sigv4(name: "service")
+    @authorizer("my-cognito-auth")
+    @authorizers(
+        "my-cognito-auth": {scheme: "aws.auth#sigv4", type: "cognito_user_pools"}
+    )
+    service Example {
+      version: "2019-06-17"
+      operations: [GetUserProfile]
+    }
+
+    @authorizer("my-cognito-auth")
+    @authorizationScopes(["email", "profile"])
+    @http(uri: "/profile", method: "GET")
+    operation GetUserProfile {}
+
+The scopes are included in the OpenAPI security requirement for the
+operation:
+
+.. code-block:: json
+
+    {
+        "paths": {
+            "/profile": {
+                "get": {
+                    "operationId": "GetUserProfile",
+                    "responses": {
+                        "200": {
+                            "description": "GetUserProfile response"
+                        }
+                    },
+                    "security": [
+                        {
+                            "my-cognito-auth": ["email", "profile"]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+
 Amazon API Gateway API key usage plans
 ======================================
 
@@ -2292,3 +2360,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
