@@ -8,6 +8,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
+import java.util.Arrays;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -37,6 +39,30 @@ public class AuthorizersTraitTest {
         Trait trait = factory.createTrait(AuthorizersTrait.ID, id, node).get();
 
         assertThat(trait, instanceOf(AuthorizersTrait.class));
+        assertThat(factory.createTrait(AuthorizersTrait.ID, id, trait.toNode()).get(), equalTo(trait));
+    }
+
+    @Test
+    public void loadsProviderARNs() {
+        TraitFactory factory = TraitFactory.createServiceFactory();
+        ShapeId id = ShapeId.from("smithy.example#Foo");
+        ObjectNode node = Node.objectNodeBuilder()
+                .withMember("cognito-auth",
+                        Node.objectNodeBuilder()
+                                .withMember("scheme", "aws.auth#sigv4")
+                                .withMember("type", "cognito_user_pools")
+                                .withMember("providerARNs",
+                                        Node.fromStrings(
+                                                "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_abc123"))
+                                .build())
+                .build();
+        Trait trait = factory.createTrait(AuthorizersTrait.ID, id, node).get();
+        AuthorizersTrait authorizersTrait = (AuthorizersTrait) trait;
+        AuthorizerDefinition definition = authorizersTrait.getAuthorizer("cognito-auth").get();
+
+        assertThat(definition.getProviderARNs(),
+                equalTo(Optional.of(Arrays.asList(
+                        "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_abc123"))));
         assertThat(factory.createTrait(AuthorizersTrait.ID, id, trait.toNode()).get(), equalTo(trait));
     }
 }

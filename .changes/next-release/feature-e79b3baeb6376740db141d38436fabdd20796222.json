@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `providerARNs` field to the `aws.apigateway#authorizers` trait",
+  "pull_requests": [
+    "[#3085](https://github.com/smithy-lang/smithy/pull/3085)"
+  ]
+}

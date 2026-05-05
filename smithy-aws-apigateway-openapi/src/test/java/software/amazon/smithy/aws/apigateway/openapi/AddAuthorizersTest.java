@@ -169,4 +169,31 @@ public class AddAuthorizersTest {
         assertThat(result.getPaths().get("/operationB").getGet().get().getSecurity(),
                 is(Optional.of(ListUtils.of(MapUtils.of("baz", ListUtils.of())))));
     }
+
+    @Test
+    public void addsProviderArnsToSecurityScheme() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("cognito-authorizer-provider-arns.smithy"))
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .classLoader(getClass().getClassLoader())
+                .convert(model);
+
+        SecurityScheme scheme = result.getComponents().getSecuritySchemes().get("my-cognito-auth");
+        assertThat(scheme.getType(), equalTo("apiKey"));
+        ObjectNode authorizerExt = scheme.getExtension("x-amazon-apigateway-authorizer")
+                .get()
+                .expectObjectNode();
+        assertThat(authorizerExt.getStringMember("type").get().getValue(),
+                equalTo("cognito_user_pools"));
+        assertThat(
+                authorizerExt.expectArrayMember("providerARNs")
+                        .getElementsAs(n -> n.expectStringNode().getValue()),
+                contains("arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_abc123"));
+    }
 }

@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.aws.traits.auth.SigV4Trait;
@@ -33,6 +34,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     private final Integer resultTtlInSeconds;
     private final String authorizerPayloadFormatVersion;
     private final Boolean enableSimpleResponses;
+    private final List<String> providerARNs;
 
     private AuthorizerDefinition(Builder builder) {
         scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
@@ -44,6 +46,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         resultTtlInSeconds = builder.resultTtlInSeconds;
         authorizerPayloadFormatVersion = builder.authorizerPayloadFormatVersion;
         enableSimpleResponses = builder.enableSimpleResponses;
+        providerARNs = builder.providerARNs;
 
         if (builder.customAuthType != null) {
             customAuthType = builder.customAuthType;
@@ -174,6 +177,16 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         return Optional.ofNullable(enableSimpleResponses);
     }
 
+    /**
+     * Gets the list of Amazon Cognito user pool ARNs for the
+     * COGNITO_USER_POOLS authorizer.
+     *
+     * @return Returns the optional list of provider ARNs.
+     */
+    public Optional<List<String>> getProviderARNs() {
+        return Optional.ofNullable(providerARNs);
+    }
+
     @Override
     public Builder toBuilder() {
         return builder()
@@ -186,7 +199,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
                 .identityValidationExpression(identityValidationExpression)
                 .resultTtlInSeconds(resultTtlInSeconds)
                 .authorizerPayloadFormatVersion(authorizerPayloadFormatVersion)
-                .enableSimpleResponses(enableSimpleResponses);
+                .enableSimpleResponses(enableSimpleResponses)
+                .providerARNs(providerARNs);
     }
 
     @Override
@@ -214,7 +228,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
                 && Objects.equals(identityValidationExpression, that.identityValidationExpression)
                 && Objects.equals(resultTtlInSeconds, that.resultTtlInSeconds)
                 && Objects.equals(authorizerPayloadFormatVersion, that.authorizerPayloadFormatVersion)
-                && Objects.equals(enableSimpleResponses, that.enableSimpleResponses);
+                && Objects.equals(enableSimpleResponses, that.enableSimpleResponses)
+                && Objects.equals(providerARNs, that.providerARNs);
     }
 
     @Override
@@ -236,6 +251,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         private Integer resultTtlInSeconds;
         private String authorizerPayloadFormatVersion;
         private Boolean enableSimpleResponses;
+        private List<String> providerARNs;
 
         @Override
         public AuthorizerDefinition build() {
@@ -371,6 +387,17 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
          */
         public Builder enableSimpleResponses(Boolean enableSimpleResponses) {
             this.enableSimpleResponses = enableSimpleResponses;
+            return this;
+        }
+
+        /**
+         * Sets the list of Amazon Cognito user pool ARNs.
+         *
+         * @param providerARNs List of Cognito user pool ARNs.
+         * @return Returns the builder.
+         */
+        public Builder providerARNs(List<String> providerARNs) {
+            this.providerARNs = providerARNs;
             return this;
         }
     }

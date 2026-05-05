@@ -211,6 +211,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
                         authorizer.getAuthorizerPayloadFormatVersion().map(Node::from))
                 .withOptionalMember("enableSimpleResponses",
                         authorizer.getEnableSimpleResponses().map(Node::from))
+                .withOptionalMember("providerARNs",
+                        authorizer.getProviderARNs().map(Node::fromStrings))
                 .build();
         if (authorizerNode.size() != 0) {
             schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
