@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Fix stale and mismatched AWS API Gateway reference link targets",
+  "pull_requests": [
+    "[#3077](https://github.com/smithy-lang/smithy/pull/3077)"
+  ]
+}
