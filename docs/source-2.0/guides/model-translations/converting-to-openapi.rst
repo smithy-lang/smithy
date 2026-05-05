@@ -1917,7 +1917,7 @@ first defined on a service, and then attached to the service, resources,
 or operations using the ``aws.apigateway#authorizer-trait``.
 
 When an authorizer definition includes ``providerARNs``, the list of
-Amazon Cognito user pool ARNs is included in the generated
+`Amazon Cognito user pool`_ ARNs is included in the generated
 ``x-amazon-apigateway-authorizer`` extension.
 
 The following Smithy model:
@@ -2296,3 +2296,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _Amazon Cognito user pool: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html

@@ -178,7 +178,7 @@ An *authorizer* definition is a structure that supports the following members:
         Lambda authorizer function returns a Boolean value.
     * - providerARNs
       - ``list`` of ``string``
-      - A list of the Amazon Cognito user pool ARNs for the
+      - A list of the `Amazon Cognito user pool`_ ARNs for the
         ``COGNITO_USER_POOLS`` authorizer.
 
 .. code-block:: smithy
@@ -895,3 +895,4 @@ integration response to two ``header`` parameters of the method response.
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
+.. _Amazon Cognito user pool: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
