@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `aws.apigateway#endpointConfiguration` trait",
+  "pull_requests": [
+    "[#3088](https://github.com/smithy-lang/smithy/pull/3088)"
+  ]
+}

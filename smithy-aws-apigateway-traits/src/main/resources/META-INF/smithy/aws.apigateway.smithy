@@ -136,6 +136,25 @@ structure mockIntegration {
 @trait(selector: ":test(service, operation)")
 string requestValidator
 
+/// Defines the endpoint configuration for an API Gateway REST API, including
+/// the endpoint type, VPC endpoint IDs, and whether the default execute-api
+/// endpoint is disabled.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure endpointConfiguration {
+    /// The endpoint types for the API.
+    @required
+    types: EndpointTypes
+
+    /// A list of VPC endpoint IDs for PRIVATE endpoint type APIs.
+    vpcEndpointIds: VpcEndpointIds
+
+    /// Whether clients can invoke the API using the default execute-api
+    /// endpoint.
+    disableExecuteApiEndpoint: Boolean
+}
+
 /// An object that associates an authorizer and associated metadata with an
 /// authentication mechanism.
 @private
@@ -353,4 +372,27 @@ enum PayloadFormatVersion {
     V1_0 = "1.0"
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
+}
+
+/// The endpoint type for an API Gateway REST API.
+@private
+enum EndpointType {
+    /// Edge-optimized API endpoint.
+    EDGE
+
+    /// Regional API endpoint.
+    REGIONAL
+
+    /// Private API endpoint.
+    PRIVATE
+}
+
+@private
+list EndpointTypes {
+    member: EndpointType
+}
+
+@private
+list VpcEndpointIds {
+    member: String
 }
