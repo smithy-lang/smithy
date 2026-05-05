@@ -62,9 +62,9 @@ The following example sets the ``X-API-Key`` header as the API key source.
 .. smithy-trait:: aws.apigateway#apiKeyRequired
 .. _aws.apigateway#apiKeyRequired-trait:
 
-------------------------------------------
+---------------------------------------
 ``aws.apigateway#apiKeyRequired`` trait
-------------------------------------------
+---------------------------------------
 
 Summary
     Indicates that an operation requires an API key for API Gateway usage

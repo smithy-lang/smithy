@@ -2223,7 +2223,7 @@ on ``HealthCheck``:
     @http(method: "GET", uri: "/health")
     operation HealthCheck {}
 
-Is converted to the following OpenAPI model:
+is converted to the following OpenAPI model:
 
 .. code-block:: json
 

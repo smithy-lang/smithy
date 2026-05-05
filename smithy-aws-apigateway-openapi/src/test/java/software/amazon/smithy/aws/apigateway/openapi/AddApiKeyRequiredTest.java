@@ -5,7 +5,6 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
@@ -69,7 +68,9 @@ public class AddApiKeyRequiredTest {
         OperationObject operation = result.getPaths().get("/health").getGet().get();
         // Open operation should not have per-operation security with api_key
         if (operation.getSecurity().isPresent()) {
-            boolean hasApiKey = operation.getSecurity().get().stream()
+            boolean hasApiKey = operation.getSecurity()
+                    .get()
+                    .stream()
                     .anyMatch(s -> s.containsKey("api_key"));
             assertFalse(hasApiKey);
         }
