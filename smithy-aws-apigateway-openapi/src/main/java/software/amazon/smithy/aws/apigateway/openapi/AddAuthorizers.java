@@ -107,17 +107,18 @@ final class AddAuthorizers implements ApiGatewayMapper {
         // ...API Gateway's built-in API keys are being used. It requires the
         // security to be specified on every operation.
         // See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-setup-api-key-with-console.html#api-gateway-usage-plan-configure-apikey-on-method
+        List<String> scopes = shape.getTrait(AuthorizationScopesTrait.class)
+                .map(AuthorizationScopesTrait::getValues)
+                .orElse(ListUtils.of());
+
         if (Objects.equals(operationAuth, serviceAuth)
                 && !usesApiGatewayApiKeys(service, operationAuth)
-                && !shape.hasTrait(AuthorizationScopesTrait.class)) {
+                && scopes.isEmpty()) {
             return operation;
         }
 
         return operation.toBuilder()
-                .addSecurity(MapUtils.of(operationAuth,
-                        shape.getTrait(AuthorizationScopesTrait.class)
-                                .map(AuthorizationScopesTrait::getValues)
-                                .orElse(ListUtils.of())))
+                .addSecurity(MapUtils.of(operationAuth, scopes))
                 .build();
     }
 

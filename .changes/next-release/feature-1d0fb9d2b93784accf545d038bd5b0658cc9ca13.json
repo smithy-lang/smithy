@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "Add aws.apigateway#authorizationScopes trait for Cognito authorizer scopes",
+  "description": "Added `aws.apigateway#authorizationScopes` trait for Cognito authorizer scopes",
   "pull_requests": [
     "[#3084](https://github.com/smithy-lang/smithy/pull/3084)"
   ]

@@ -2164,7 +2164,7 @@ from the trait.
 Authorization scopes
 ====================
 
-When an operation uses a Cognito authorizer, OAuth scopes can be added to
+When an operation uses a `Cognito`_ authorizer, OAuth scopes can be added to
 the security requirement using the
 :ref:`aws.apigateway#authorizationScopes-trait`. The trait is applied
 alongside the :ref:`aws.apigateway#authorizer-trait` on an operation and
@@ -2360,3 +2360,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html

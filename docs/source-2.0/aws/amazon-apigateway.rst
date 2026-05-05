@@ -243,13 +243,13 @@ Value type
 .. smithy-trait:: aws.apigateway#authorizationScopes
 .. _aws.apigateway#authorizationScopes-trait:
 
--------------------------------------------------
+--------------------------------------------
 ``aws.apigateway#authorizationScopes`` trait
--------------------------------------------------
+--------------------------------------------
 
 Summary
     Defines the list of OAuth scopes required for an API Gateway operation
-    that uses a Cognito authorizer. Applied alongside the
+    that uses a `Cognito`_ authorizer. Applied alongside the
     :ref:`aws.apigateway#authorizer-trait` to specify which scopes the
     caller must have.
 Trait selector
@@ -959,3 +959,4 @@ integration response to two ``header`` parameters of the method response.
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
 .. _Control access using Cognito user pools: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html
+.. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
