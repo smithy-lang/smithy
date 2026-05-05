@@ -245,9 +245,7 @@ Value type
 
 -------------------------------------------------
 ``aws.apigateway#minimumCompressionSize`` trait
------------------------------------------------
-``aws.apigateway#minimumCompressionSize`` trait
------------------------------------------------
+-------------------------------------------------
 
 Summary
     Defines the minimum payload size in bytes at which compression is applied
@@ -275,11 +273,6 @@ The following example sets the minimum compression size to 10240 bytes:
     service Weather {
         version: "2018-03-17"
     }
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
 
 
 .. smithy-trait:: aws.apigateway#requestValidator
