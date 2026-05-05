@@ -588,9 +588,9 @@ The following example defines an operation that uses a mock integration.
 .. smithy-trait:: aws.apigateway#gatewayResponses
 .. _aws.apigateway#gatewayResponses-trait:
 
-----------------------------------------------
+-----------------------------------------
 ``aws.apigateway#gatewayResponses`` trait
-----------------------------------------------
+-----------------------------------------
 
 Summary
     Defines custom gateway responses for an API Gateway REST API. Gateway
@@ -666,10 +666,6 @@ errors:
       version: "2018-03-17"
     }
 
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
 
 -----------------------
 Shared trait data types

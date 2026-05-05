@@ -5,6 +5,7 @@ namespace smithy.example
 use aws.apigateway#gatewayResponses
 use aws.protocols#restJson1
 
+@suppress(["GatewayResponsesCors"])
 @restJson1
 @cors(origin: "https://cors-default.example.com")
 @gatewayResponses(

@@ -2238,7 +2238,7 @@ The following Smithy model defines custom 4xx and 5xx gateway responses:
       version: "2019-06-17"
     }
 
-Is converted to the following OpenAPI model:
+is converted to the following OpenAPI model:
 
 .. code-block:: json
 

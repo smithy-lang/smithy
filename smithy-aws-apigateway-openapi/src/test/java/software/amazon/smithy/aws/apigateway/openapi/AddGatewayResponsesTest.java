@@ -40,7 +40,8 @@ public class AddGatewayResponsesTest {
         ObjectNode default4xx = responses.expectObjectMember("DEFAULT_4XX");
         assertThat(default4xx.expectStringMember("statusCode").getValue(), equalTo("400"));
         assertThat(default4xx.expectObjectMember("responseParameters")
-                .expectStringMember("gatewayresponse.header.Access-Control-Allow-Origin").getValue(),
+                .expectStringMember("gatewayresponse.header.Access-Control-Allow-Origin")
+                .getValue(),
                 equalTo("'*'"));
 
         // Verify DEFAULT_5XX
