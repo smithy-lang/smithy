@@ -594,8 +594,8 @@ The following example defines an operation that uses a mock integration.
 
 Summary
     Defines the endpoint configuration for an API Gateway REST API,
-    including the endpoint type, VPC endpoint IDs, and whether the
-    default ``execute-api`` endpoint is disabled.
+    including the endpoint type, Virtual Private Cloud (VPC) `endpoint IDs`_,
+    and whether the default ``execute-api`` endpoint is disabled.
 Trait selector
     ``service``
 Value type
@@ -962,3 +962,4 @@ integration response to two ``header`` parameters of the method response.
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
 .. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
 .. _API endpoint types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html
+.. _endpoint IDs: https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints
