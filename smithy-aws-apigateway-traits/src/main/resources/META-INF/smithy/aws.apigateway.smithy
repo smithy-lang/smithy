@@ -136,6 +136,14 @@ structure mockIntegration {
 @trait(selector: ":test(service, operation)")
 string requestValidator
 
+/// Defines the minimum payload size in bytes at which compression is applied on an API Gateway REST API.
+/// Value must be between 0 and 10485760 (10MB).
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+@range(min: 0, max: 10485760)
+integer minimumCompressionSize
+
 /// Defines a resource policy for an API Gateway REST API. A resource policy
 /// is a JSON policy document attached to an API that controls whether a
 /// specified principal (typically an IAM role or group) can invoke the API.

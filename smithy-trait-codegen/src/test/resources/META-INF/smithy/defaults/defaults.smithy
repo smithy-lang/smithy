@@ -16,6 +16,10 @@ structure StructDefaults {
     @default("default")
     defaultString: String
 
+    /// Doc comment that states that this member has a default value of `def$ault`.
+    @default("def$ault")
+    defaultDollarString: String
+
     @default(1)
     defaultByte: Byte
 
