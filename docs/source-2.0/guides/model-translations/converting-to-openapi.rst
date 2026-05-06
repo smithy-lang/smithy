@@ -1809,6 +1809,49 @@ collecting all of the :ref:`mediaType-trait` values for all members marked
 with :ref:`httppayload-trait`.
 
 
+.. _apigateway-minimum-compression-size:
+
+Minimum compression size
+========================
+
+The minimum payload size in bytes at which compression is applied on an
+API Gateway REST API can be set using the
+:ref:`aws.apigateway#minimumCompressionSize-trait`. The value must be
+between 0 and 10485760 bytes (10 MB), inclusive. Smithy will add the
+value of the trait to the generated OpenAPI document as the top-level
+`x-amazon-apigateway-minimum-compression-size`_ extension.
+
+The following Smithy model enables compression on payloads of 1024 bytes
+or larger:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#minimumCompressionSize
+    use aws.protocols#restJson1
+
+    @restJson1
+    @minimumCompressionSize(1024)
+    service Example {
+      version: "2019-06-17"
+    }
+
+is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "x-amazon-apigateway-minimum-compression-size": 1024
+    }
+
+
 .. _apigateway-request-validators:
 
 Request validators
@@ -2276,6 +2319,7 @@ The conversion process is highly extensible through
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
 .. _Smithy Gradle plugin: https://github.com/smithy-lang/smithy-gradle-plugin
 .. _x-amazon-apigateway-binary-media-types: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-binary-media-types.html
+.. _x-amazon-apigateway-minimum-compression-size: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
 .. _intrinsic functions: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
