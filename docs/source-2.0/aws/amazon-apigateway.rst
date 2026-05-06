@@ -59,6 +59,48 @@ The following example sets the ``X-API-Key`` header as the API key source.
     customers.
 
 
+.. smithy-trait:: aws.apigateway#apiKeyRequired
+.. _aws.apigateway#apiKeyRequired-trait:
+
+---------------------------------------
+``aws.apigateway#apiKeyRequired`` trait
+---------------------------------------
+
+Summary
+    Indicates that an operation requires an API key for API Gateway usage
+    plan enforcement.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait (no value)
+See also
+    - `Create and Use Usage Plans with API Keys`_ for more information on
+      API key enforcement
+
+The following example requires an API key on the ``ListItems`` operation
+but not on ``HealthCheck``:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#apiKeyRequired
+
+    @apiKeyRequired
+    @http(method: "GET", uri: "/items")
+    operation ListItems {}
+
+    @http(method: "GET", uri: "/health")
+    operation HealthCheck {}
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
 .. smithy-trait:: aws.apigateway#authorizers
 .. _aws.apigateway#authorizers-trait:
 
@@ -443,6 +485,25 @@ following members:
       - Defines the method's responses and specifies desired parameter
         mappings or payload mappings from integration responses to method
         responses.
+    * - tlsConfig
+      - ``structure``
+      - Specifies the TLS configuration for an integration. Supported only
+        for HTTP and HTTP_PROXY integration types. Contains the following
+        member:
+
+        - ``insecureSkipVerification`` (``boolean``): When set to ``true``,
+          API Gateway skips verification that the certificate for an
+          integration endpoint is issued by a supported certificate
+          authority.
+    * - responseTransferMode
+      - ``string``
+      - Specifies how the response payload is transferred between the
+        integration and the caller. Valid values are ``BUFFERED`` and
+        ``STREAM``.
+    * - integrationTarget
+      - ``string``
+      - The ARN of an ALB or NLB listener for private integrations using
+        VPC Links V2.
 
 The following example defines an integration that is applied to every
 operation within the service.

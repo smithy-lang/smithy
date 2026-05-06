@@ -7,6 +7,9 @@
             "operations": [
                 {
                     "target": "example.smithy#MyOperation"
+                },
+                {
+                    "target": "example.smithy#MyIntegrationOperation"
                 }
             ],
             "traits": {
@@ -25,6 +28,23 @@
                 "smithy.api#http": {
                     "uri": "/foo",
                     "method": "GET"
+                }
+            }
+        },
+        "example.smithy#MyIntegrationOperation": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/bar",
+                    "method": "POST"
+                },
+                "aws.apigateway#integration": {
+                    "type": "http_proxy",
+                    "uri": "https://example.com",
+                    "httpMethod": "POST",
+                    "connectionType": "VPC_LINK",
+                    "connectionId": "${stageVariables.vpcLinkId}",
+                    "integrationTarget": "${stageVariables.targetArn}"
                 }
             }
         }

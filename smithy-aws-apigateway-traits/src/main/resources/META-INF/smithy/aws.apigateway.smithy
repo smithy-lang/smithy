@@ -14,6 +14,13 @@ use aws.api#arnReference
 @trait(selector: "service")
 string apiKeySource
 
+/// Indicates that an operation requires an API key for API Gateway usage
+/// plan enforcement.
+@internal
+@tags(["internal"])
+@trait(selector: "operation")
+structure apiKeyRequired {}
+
 /// Attaches an authorizer to a service, resource, or operation.
 @internal
 @tags(["internal"])
@@ -102,6 +109,17 @@ structure integration {
     /// Defines the method's responses and specifies desired parameter mappings
     /// or payload mappings from integration responses to method responses.
     responses: IntegrationResponses
+
+    /// Specifies the TLS configuration for an integration.
+    tlsConfig: TlsConfig
+
+    /// Specifies how the response payload is transferred between the
+    /// integration and the caller. Valid values are `BUFFERED` and `STREAM`.
+    responseTransferMode: String
+
+    /// The ARN of an ALB or NLB listener for private integrations using
+    /// VPC Links V2.
+    integrationTarget: String
 }
 
 /// Defines an API Gateway mock integration.
@@ -223,6 +241,16 @@ structure IntegrationResponse {
     /// body parameters of the integration response can be mapped to the header
     /// parameters of the method.
     responseParameters: ResponseParameters
+}
+
+/// Specifies the TLS configuration for an integration.
+@private
+structure TlsConfig {
+    /// Specifies whether or not API Gateway skips verification that the
+    /// certificate for an integration endpoint is issued by a supported
+    /// certificate authority. Supported only for HTTP and HTTP_PROXY
+    /// integrations.
+    insecureSkipVerification: Boolean
 }
 
 @private
