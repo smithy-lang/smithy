@@ -243,8 +243,6 @@ Value type
 .. smithy-trait:: aws.apigateway#minimumCompressionSize
 .. _aws.apigateway#minimumCompressionSize-trait:
 
--------------------------------------------------
-``aws.apigateway#minimumCompressionSize`` trait
 -----------------------------------------------
 ``aws.apigateway#minimumCompressionSize`` trait
 -----------------------------------------------
