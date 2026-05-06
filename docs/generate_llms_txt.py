@@ -11,6 +11,7 @@ import re
 import sys
 
 BASE_URL = "https://smithy.io/2.0"
+MARKDOWN_BASE_URL = "https://smithy.io/2.0/markdown"
 SOURCE_DIR = "source-2.0"
 
 # Sections in display order. Keys are directory prefixes relative to SOURCE_DIR;
@@ -49,8 +50,15 @@ def extract_title(filepath):
 def rst_path_to_url(rst_path):
     """Convert a source-relative RST path to a smithy.io URL."""
     rel = rst_path.replace(os.sep, "/")
-    html = rel.removesuffix(".rst") + ".html"
+    html = rel[:-4] + ".html"  # strip .rst, add .html
     return f"{BASE_URL}/{html}"
+
+
+def rst_path_to_md_url(rst_path):
+    """Convert a source-relative RST path to a smithy.io markdown URL."""
+    rel = rst_path.replace(os.sep, "/")
+    md = rel[:-4] + ".md"  # strip .rst, add .md
+    return f"{MARKDOWN_BASE_URL}/{md}"
 
 
 def collect_pages(source_dir):
@@ -88,6 +96,11 @@ def generate(source_dir, output_path):
         " language. Smithy models define a service as a collection of resources,"
         " operations, and shapes.",
         "",
+        "## Content Formats",
+        "",
+        "Each page is available in HTML and Markdown. For AI/LLM consumption,",
+        "use the Markdown URLs listed below (more token-efficient, no HTML parsing).",
+        "",
     ]
 
     for prefix, heading in SECTIONS:
@@ -103,8 +116,8 @@ def generate(source_dir, output_path):
 
         for rel_path in sorted(section_pages):
             title = section_pages[rel_path]
-            url = rst_path_to_url(rel_path)
-            lines.append(f"- [{title}]({url})")
+            md_url = rst_path_to_md_url(rel_path)
+            lines.append(f"- [{title}]({md_url})")
 
         lines.append("")
 

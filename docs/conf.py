@@ -13,6 +13,7 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx_substitution_extensions",
+    "sphinx_markdown_builder",
     "smithy",
 ]
 templates_path = ["../_templates", "../root"]
@@ -127,6 +128,7 @@ replacements = [
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer)
     sphinx.connect("source-read", source_read_handler)
+    sphinx.connect("builder-inited", _builder_inited_handler)
     for placeholder, replacement in replacements:
         print("Finding and replacing '" + placeholder + "' with '" + replacement + "'")
 
@@ -135,3 +137,38 @@ def setup(sphinx):
 def source_read_handler(app, docname, source):
     for placeholder, replacement in replacements:
         source[0] = source[0].replace(placeholder, replacement)
+
+
+# -- Markdown builder: register missing admonition handlers ----------------
+
+def _patch_markdown_translator(app):
+    """Add handlers for admonition types not supported by sphinx-markdown-builder."""
+    try:
+        from sphinx_markdown_builder.translator import MarkdownTranslator
+    except ImportError:
+        return
+
+    def _make_visit(label):
+        def visit(self, node):
+            self._push_box(label)
+        return visit
+
+    def _make_depart(self, node):
+        pass
+
+    for node_type, label in [
+        ("tip", "TIP"),
+        ("danger", "DANGER"),
+        ("caution", "CAUTION"),
+        ("admonition", "NOTE"),
+    ]:
+        visit_name = f"visit_{node_type}"
+        depart_name = f"depart_{node_type}"
+        if not hasattr(MarkdownTranslator, visit_name):
+            setattr(MarkdownTranslator, visit_name, _make_visit(label))
+            setattr(MarkdownTranslator, depart_name, _make_depart)
+
+
+def _builder_inited_handler(app):
+    if app.builder.name == "markdown":
+        _patch_markdown_translator(app)
