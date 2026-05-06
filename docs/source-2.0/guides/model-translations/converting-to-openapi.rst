@@ -2257,6 +2257,98 @@ The following Smithy model enables API Gateway's API key usage plans on the
     operation OperationA {}
 
 
+.. _apigateway-resource-policy:
+
+Resource policy
+===============
+
+A resource policy for an API Gateway REST API can be attached using the
+:ref:`aws.apigateway#resourcePolicy-trait`. A resource policy is a JSON
+policy document attached to an API that controls whether a specified
+principal (typically an IAM role or group) can invoke the API. Smithy
+copies the value of the trait into the generated OpenAPI document as the
+top-level `x-amazon-apigateway-policy`_ extension.
+
+.. note::
+
+    Smithy does not validate the contents of the resource policy document.
+    The policy is passed through to API Gateway, which validates it at
+    import time.
+
+The following Smithy model attaches a resource policy that allows any
+principal to invoke the API except for requests from the specified source
+IP address block:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#resourcePolicy
+    use aws.protocols#restJson1
+
+    @restJson1
+    @resourcePolicy({
+        "Version": "2012-10-17"
+        "Statement": [
+            {
+                "Effect": "Allow"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+            }
+            {
+                "Effect": "Deny"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+                "Condition": {
+                    "IpAddress": {
+                        "aws:SourceIp": "192.0.2.0/24"
+                    }
+                }
+            }
+        ]
+    })
+    service Example {
+      version: "2019-06-17"
+    }
+
+and is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "x-amazon-apigateway-policy": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "execute-api:Invoke",
+                    "Resource": ["execute-api:/*"]
+                },
+                {
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Action": "execute-api:Invoke",
+                    "Resource": ["execute-api:/*"],
+                    "Condition": {
+                        "IpAddress": {
+                            "aws:SourceIp": "192.0.2.0/24"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+
+
 .. _apigateway-api-key-required:
 
 API key required
@@ -2291,11 +2383,16 @@ on ``HealthCheck``:
     @http(method: "GET", uri: "/health")
     operation HealthCheck {}
 
-is converted to the following OpenAPI model:
+and is converted to the following OpenAPI model:
 
 .. code-block:: json
 
     {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
         "paths": {
             "/items": {
                 "get": {
@@ -2442,3 +2539,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
+.. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html

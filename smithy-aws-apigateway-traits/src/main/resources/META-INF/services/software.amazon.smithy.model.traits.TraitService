@@ -6,3 +6,4 @@ software.amazon.smithy.aws.apigateway.traits.IntegrationTrait$Provider
 software.amazon.smithy.aws.apigateway.traits.MockIntegrationTrait$Provider
 software.amazon.smithy.aws.apigateway.traits.ApiKeyRequiredTrait$Provider
 software.amazon.smithy.aws.apigateway.traits.MinimumCompressionSizeTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.ResourcePolicyTrait$Provider
