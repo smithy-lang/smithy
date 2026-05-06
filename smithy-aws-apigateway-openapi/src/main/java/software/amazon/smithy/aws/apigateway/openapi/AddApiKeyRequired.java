@@ -57,10 +57,7 @@ final class AddApiKeyRequired implements ApiGatewayMapper {
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
         // Only add the api_key security scheme if any operation uses the trait.
-        boolean hasApiKeyRequired = context.getModel()
-                .getOperationShapes()
-                .stream()
-                .anyMatch(op -> op.hasTrait(ApiKeyRequiredTrait.class));
+        boolean hasApiKeyRequired = context.getModel().isTraitApplied(ApiKeyRequiredTrait.class);
 
         if (!hasApiKeyRequired) {
             return openApi;
