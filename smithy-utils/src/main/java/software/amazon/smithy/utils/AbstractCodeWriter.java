@@ -621,7 +621,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
     private boolean enableStackTraceComments;
-    private final Map<String, Supplier<String>> deferredValues = new HashMap<>();
+    private final List<String> deferredPlaceholders = new ArrayList<>();
+    private final List<Supplier<String>> deferredSuppliers = new ArrayList<>();
     private int deferredCounter = 0;
 
     /**
@@ -788,9 +789,28 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         String result = currentState.toString();
 
         // Resolve any deferred values.
-        if (!deferredValues.isEmpty()) {
-            for (Map.Entry<String, Supplier<String>> entry : deferredValues.entrySet()) {
-                result = result.replace(entry.getKey(), entry.getValue().get());
+        if (!deferredPlaceholders.isEmpty()) {
+            // Find all sentinel positions, then resolve in a single linear pass.
+            List<int[]> positions = new ArrayList<>();
+            for (int i = 0; i < deferredPlaceholders.size(); i++) {
+                String key = deferredPlaceholders.get(i);
+                int fromIndex = 0;
+                while ((fromIndex = result.indexOf(key, fromIndex)) != -1) {
+                    positions.add(new int[] {fromIndex, i, key.length()});
+                    fromIndex += key.length();
+                }
+            }
+            if (!positions.isEmpty()) {
+                positions.sort((a, b) -> Integer.compare(a[0], b[0]));
+                StringBuilder resolved = new StringBuilder(result.length());
+                int pos = 0;
+                for (int[] entry : positions) {
+                    resolved.append(result, pos, entry[0]);
+                    resolved.append(deferredSuppliers.get(entry[1]).get());
+                    pos = entry[0] + entry[2];
+                }
+                resolved.append(result, pos, result.length());
+                result = resolved.toString();
             }
         }
 
@@ -1784,7 +1804,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      */
     protected final String defer(Supplier<String> supplier) {
         String id = "\u0000\u0000" + (deferredCounter++) + "\u0000\u0000";
-        deferredValues.put(id, supplier);
+        deferredPlaceholders.add(id);
+        deferredSuppliers.add(supplier);
         return id;
     }
 
