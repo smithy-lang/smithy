@@ -19,6 +19,7 @@ import java.util.StringJoiner;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -620,6 +621,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
     private boolean enableStackTraceComments;
+    private final Map<String, Supplier<String>> deferredValues = new HashMap<>();
+    private int deferredCounter = 0;
 
     /**
      * Creates a new SimpleCodeWriter that uses "\n" for a newline, four spaces
@@ -783,6 +786,13 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     @Override
     public String toString() {
         String result = currentState.toString();
+
+        // Resolve any deferred values.
+        if (!deferredValues.isEmpty()) {
+            for (Map.Entry<String, Supplier<String>> entry : deferredValues.entrySet()) {
+                result = result.replace(entry.getKey(), entry.getValue().get());
+            }
+        }
 
         // Trim excessive blank lines.
         if (trimBlankLines > -1) {
@@ -1754,6 +1764,45 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         StringBuilder result = new StringBuilder();
         CodeFormatter.run(result, this, Objects.requireNonNull(content).toString(), args);
         return result.toString();
+    }
+
+    /**
+     * Registers a deferred value that will be resolved when {@link #toString()} is called.
+     *
+     * <p>This method returns a sentinel string that can be embedded in the writer's output
+     * (for example, as the return value of a custom formatter). When the writer's content is
+     * materialized via {@code toString()}, all sentinels are replaced with the result of
+     * invoking their corresponding supplier.
+     *
+     * <p>This mechanism allows code generators to defer decisions (such as whether to use
+     * a short or fully-qualified type name) until all content has been written, without
+     * requiring a second formatting pass that would re-interpret expression characters
+     * in the output.
+     *
+     * @param supplier A supplier that produces the final string value at resolution time.
+     * @return A sentinel string to embed in the output.
+     */
+    protected final String defer(Supplier<String> supplier) {
+        String id = "\u0000\u0000" + (deferredCounter++) + "\u0000\u0000";
+        deferredValues.put(id, supplier);
+        return id;
+    }
+
+    /**
+     * Writes a lazily-evaluated value to the writer.
+     *
+     * <p>The supplier is not invoked immediately. Instead, a sentinel is written to the
+     * output, and the supplier is invoked when {@link #toString()} is called. This is
+     * useful for writing content that depends on information not yet available at write
+     * time.
+     *
+     * @param supplier A supplier that produces the string value at resolution time.
+     * @return Returns self.
+     */
+    @SuppressWarnings("unchecked")
+    public T writeLazy(Supplier<String> supplier) {
+        writeInlineWithNoFormatting(defer(supplier));
+        return (T) this;
     }
 
     /**
