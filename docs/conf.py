@@ -139,22 +139,23 @@ def source_read_handler(app, docname, source):
         source[0] = source[0].replace(placeholder, replacement)
 
 
-# -- Markdown builder: register missing admonition handlers ----------------
+# -- Markdown builder: register missing node handlers -----------------------
 
 def _patch_markdown_translator(app):
-    """Add handlers for admonition types not supported by sphinx-markdown-builder."""
+    """Add handlers for node types not supported by sphinx-markdown-builder."""
     try:
         from sphinx_markdown_builder.translator import MarkdownTranslator
     except ImportError:
         return
+    from docutils import nodes as _nodes
 
-    def _make_visit(label):
+    def _make_admonition_visit(label):
         def visit(self, node):
             self._push_box(label)
         return visit
 
-    def _make_depart(self, node):
-        pass
+    def _admonition_depart(self, node):
+        self._pop_context(node)
 
     for node_type, label in [
         ("tip", "TIP"),
@@ -165,8 +166,66 @@ def _patch_markdown_translator(app):
         visit_name = f"visit_{node_type}"
         depart_name = f"depart_{node_type}"
         if not hasattr(MarkdownTranslator, visit_name):
-            setattr(MarkdownTranslator, visit_name, _make_visit(label))
-            setattr(MarkdownTranslator, depart_name, _make_depart)
+            setattr(MarkdownTranslator, visit_name, _make_admonition_visit(label))
+            setattr(MarkdownTranslator, depart_name, _admonition_depart)
+
+    # productionlist: render grammar rules as a code block
+    def visit_productionlist(self, node):
+        self._push_status(escape_text=False)
+        self.add("```", prefix_eol=2, suffix_eol=1)
+        for production in node.children:
+            token_name = production.get("tokenname", "")
+            rule_text = production.astext()
+            if token_name:
+                self.add(f"{token_name} ::= {rule_text}", prefix_eol=1)
+            else:
+                self.add(f"         {rule_text}", prefix_eol=1)
+        self.add("```", prefix_eol=1, suffix_eol=2)
+        self._pop_status()
+        raise _nodes.SkipNode
+
+    if not hasattr(MarkdownTranslator, "visit_productionlist"):
+        MarkdownTranslator.visit_productionlist = visit_productionlist
+        MarkdownTranslator.depart_productionlist = lambda self, node: None
+
+    # caption: render as bold text
+    def visit_caption(self, node):
+        self.add("**", prefix_eol=2)
+
+    def depart_caption(self, node):
+        self.add("**", suffix_eol=2)
+
+    if not hasattr(MarkdownTranslator, "visit_caption"):
+        MarkdownTranslator.visit_caption = visit_caption
+        MarkdownTranslator.depart_caption = depart_caption
+
+    # hlist / hlistcol: pass through to children (they contain bullet_lists)
+    def _pass(self, node):
+        pass
+
+    if not hasattr(MarkdownTranslator, "visit_hlist"):
+        MarkdownTranslator.visit_hlist = _pass
+        MarkdownTranslator.depart_hlist = _pass
+
+    if not hasattr(MarkdownTranslator, "visit_hlistcol"):
+        MarkdownTranslator.visit_hlistcol = _pass
+        MarkdownTranslator.depart_hlistcol = _pass
+
+    # label (non-footnote, e.g. tab labels from sphinx_inline_tabs): skip
+    from sphinx_markdown_builder.contexts import FootNoteContext as _FootNoteContext
+
+    def visit_label(self, node):
+        if isinstance(self.ctx, _FootNoteContext):
+            self.footnote_ctx.visit_label()
+        else:
+            raise _nodes.SkipNode
+
+    def depart_label(self, node):
+        if isinstance(self.ctx, _FootNoteContext):
+            self.footnote_ctx.depart_label()
+
+    MarkdownTranslator.visit_label = visit_label
+    MarkdownTranslator.depart_label = depart_label
 
 
 def _builder_inited_handler(app):
