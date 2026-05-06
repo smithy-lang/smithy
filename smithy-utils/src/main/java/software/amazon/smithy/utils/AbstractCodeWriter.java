@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -622,7 +621,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
     private boolean enableStackTraceComments;
-    private final Map<String, Supplier<String>> deferredValues = new LinkedHashMap<>();
+    private final List<String> deferredPlaceholders = new ArrayList<>();
+    private final List<Supplier<String>> deferredSuppliers = new ArrayList<>();
     private int deferredCounter = 0;
 
     /**
@@ -789,30 +789,24 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         String result = currentState.toString();
 
         // Resolve any deferred values.
-        if (!deferredValues.isEmpty()) {
+        if (!deferredPlaceholders.isEmpty()) {
             // Find all sentinel positions, then resolve in a single linear pass.
             List<int[]> positions = new ArrayList<>();
-            int idx = 0;
-            for (Map.Entry<String, Supplier<String>> entry : deferredValues.entrySet()) {
-                String key = entry.getKey();
+            for (int i = 0; i < deferredPlaceholders.size(); i++) {
+                String key = deferredPlaceholders.get(i);
                 int fromIndex = 0;
                 while ((fromIndex = result.indexOf(key, fromIndex)) != -1) {
-                    // Store [position, index-into-entries-list, key-length]
-                    positions.add(new int[]{fromIndex, idx, key.length()});
+                    positions.add(new int[]{fromIndex, i, key.length()});
                     fromIndex += key.length();
                 }
-                idx++;
             }
             if (!positions.isEmpty()) {
                 positions.sort((a, b) -> Integer.compare(a[0], b[0]));
-                // Build list of suppliers indexed by insertion order for O(1) lookup.
-                @SuppressWarnings("unchecked")
-                Supplier<String>[] suppliers = deferredValues.values().toArray(new Supplier[0]);
                 StringBuilder resolved = new StringBuilder(result.length());
                 int pos = 0;
                 for (int[] entry : positions) {
                     resolved.append(result, pos, entry[0]);
-                    resolved.append(suppliers[entry[1]].get());
+                    resolved.append(deferredSuppliers.get(entry[1]).get());
                     pos = entry[0] + entry[2];
                 }
                 resolved.append(result, pos, result.length());
@@ -1810,7 +1804,8 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      */
     protected final String defer(Supplier<String> supplier) {
         String id = "\u0000\u0000" + (deferredCounter++) + "\u0000\u0000";
-        deferredValues.put(id, supplier);
+        deferredPlaceholders.add(id);
+        deferredSuppliers.add(supplier);
         return id;
     }
 
