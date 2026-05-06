@@ -796,7 +796,7 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
                 String key = deferredPlaceholders.get(i);
                 int fromIndex = 0;
                 while ((fromIndex = result.indexOf(key, fromIndex)) != -1) {
-                    positions.add(new int[]{fromIndex, i, key.length()});
+                    positions.add(new int[] {fromIndex, i, key.length()});
                     fromIndex += key.length();
                 }
             }
