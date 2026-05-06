@@ -41,7 +41,7 @@ final class AddApiKeyRequired implements ApiGatewayMapper {
             String httpMethodName,
             String path
     ) {
-        if (!shape.hasTrait(ApiKeyRequiredTrait.class)) {
+        if (!shape.hasTrait(ApiKeyRequiredTrait.ID)) {
             return operation;
         }
 
