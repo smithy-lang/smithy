@@ -36,17 +36,17 @@ final class AddGatewayResponses implements ApiGatewayMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
-        return context.getService()
-                .getTrait(GatewayResponsesTrait.class)
-                .map(trait -> {
-                    LOGGER.fine(() -> String.format(
-                            "Adding %s to %s",
-                            EXTENSION_NAME,
-                            context.getService().getId()));
-                    return openApi.toBuilder()
-                            .putExtension(EXTENSION_NAME, trait.getValue())
-                            .build();
-                })
-                .orElse(openApi);
+        ServiceShape service = context.getService();
+        GatewayResponsesTrait trait = service.getTrait(GatewayResponsesTrait.class).orElse(null);
+        if  (trait != null) {
+            LOGGER.fine(() -> String.format(
+                    "Adding %s to %s",
+                    EXTENSION_NAME,
+                    context.getService().getId()));
+            return openApi.toBuilder()
+                    .putExtension(EXTENSION_NAME, trait.getValue())
+                    .build();
+        }
+        return openApi;
     }
 }
