@@ -154,6 +154,17 @@ structure mockIntegration {
 @trait(selector: ":test(service, operation)")
 string requestValidator
 
+/// Defines custom gateway responses for an API Gateway REST API. Gateway
+/// responses customize error responses for authentication failures,
+/// integration errors, and other API Gateway-generated errors.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+map gatewayResponses {
+    key: String
+    value: GatewayResponse
+}
+
 /// Defines the endpoint configuration for an API Gateway REST API, including
 /// the endpoint type, VPC endpoint IDs, and whether the default execute-api
 /// endpoint is disabled.
@@ -416,6 +427,33 @@ enum PayloadFormatVersion {
     V1_0 = "1.0"
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
+}
+
+/// A gateway response configuration for a specific response type.
+@private
+structure GatewayResponse {
+    /// The HTTP status code for the gateway response.
+    statusCode: String
+
+    /// Response parameters for the gateway response.
+    responseParameters: GatewayResponseParameterMap
+
+    /// Response templates for the gateway response.
+    responseTemplates: GatewayResponseTemplateMap
+}
+
+/// A map of gateway response parameter names to values.
+@private
+map GatewayResponseParameterMap {
+    key: String
+    value: String
+}
+
+/// A map of media types to response templates.
+@private
+map GatewayResponseTemplateMap {
+    key: String
+    value: String
 }
 
 /// The endpoint type for an API Gateway REST API.

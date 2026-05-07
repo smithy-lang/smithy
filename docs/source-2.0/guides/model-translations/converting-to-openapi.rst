@@ -1809,49 +1809,6 @@ collecting all of the :ref:`mediaType-trait` values for all members marked
 with :ref:`httppayload-trait`.
 
 
-.. _apigateway-minimum-compression-size:
-
-Minimum compression size
-========================
-
-The minimum payload size in bytes at which compression is applied on an
-API Gateway REST API can be set using the
-:ref:`aws.apigateway#minimumCompressionSize-trait`. The value must be
-between 0 and 10485760 bytes (10 MB), inclusive. Smithy will add the
-value of the trait to the generated OpenAPI document as the top-level
-`x-amazon-apigateway-minimum-compression-size`_ extension.
-
-The following Smithy model enables compression on payloads of 1024 bytes
-or larger:
-
-.. code-block:: smithy
-
-    $version: "2"
-    namespace smithy.example
-
-    use aws.apigateway#minimumCompressionSize
-    use aws.protocols#restJson1
-
-    @restJson1
-    @minimumCompressionSize(1024)
-    service Example {
-      version: "2019-06-17"
-    }
-
-is converted to the following OpenAPI model:
-
-.. code-block:: json
-
-    {
-        "openapi": "3.0.2",
-        "info": {
-            "title": "Example",
-            "version": "2019-06-17"
-        },
-        "x-amazon-apigateway-minimum-compression-size": 1024
-    }
-
-
 .. _apigateway-request-validators:
 
 Request validators
@@ -1925,30 +1882,6 @@ applied to a resource shape, then all operations of the resource and all child
 resources inherit the applied integration. If either trait is applied to an
 operation, then the operation uses a specific integration that overrides any
 integration inherited from a resource or service.
-
-The following ``aws.apigateway#integration`` trait fields map directly to
-``x-amazon-apigateway-integration`` OpenAPI extension fields:
-
-tlsConfig
-    Maps to ``x-amazon-apigateway-integration.tlsConfig`` in the OpenAPI
-    output. Contains the ``insecureSkipVerification`` boolean member. When
-    set to ``true``, API Gateway skips verification that the certificate for
-    an integration endpoint is issued by a supported certificate authority.
-    Supported only for HTTP and HTTP_PROXY integration types.
-
-responseTransferMode
-    Maps to ``x-amazon-apigateway-integration.responseTransferMode`` in the
-    OpenAPI output. Specifies how the response payload is transferred between
-    the integration and the caller. Valid values are ``BUFFERED`` and
-    ``STREAM``.
-
-integrationTarget
-    Maps to ``x-amazon-apigateway-integration.integrationTarget`` in the
-    OpenAPI output. The ARN of an `Application Load Balancer (ALB)`_ or
-    `Network Load Balancer (NLB)`_ listener for private integrations using
-    `VPC Links V2`_. Values containing ``${...}`` syntax are automatically
-    wrapped in an `Fn::Sub`_ intrinsic function for CloudFormation
-    substitution. See :ref:`openapi-cfn-substitutions`.
 
 
 CORS functionality
@@ -2189,7 +2122,6 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 - ``paths/*/*/x-amazon-apigateway-integration/connectionId``
 - ``paths/*/*/x-amazon-apigateway-integration/credentials``
 - ``paths/*/*/x-amazon-apigateway-integration/uri``
-- ``paths/*/*/x-amazon-apigateway-integration/integrationTarget``
 
 .. note::
 
@@ -2257,133 +2189,56 @@ The following Smithy model enables API Gateway's API key usage plans on the
     operation OperationA {}
 
 
-.. _apigateway-resource-policy:
+.. _apigateway-gateway-responses:
 
-Resource policy
-===============
+Gateway responses
+=================
 
-A resource policy for an API Gateway REST API can be attached using the
-:ref:`aws.apigateway#resourcePolicy-trait`. A resource policy is a JSON
-policy document attached to an API that controls whether a specified
-principal (typically an IAM role or group) can invoke the API. Smithy
-copies the value of the trait into the generated OpenAPI document as the
-top-level `x-amazon-apigateway-policy`_ extension.
+Custom gateway responses for an API Gateway REST API can be defined using
+the :ref:`aws.apigateway#gatewayResponses-trait`. Smithy writes the trait
+value to the `x-amazon-apigateway-gateway-responses`_ extension in the
+generated OpenAPI document.
 
 .. note::
 
-    Smithy does not validate the contents of the resource policy document.
-    The policy is passed through to API Gateway, which validates it at
-    import time.
+    When both ``@gatewayResponses`` and ``@cors`` are applied to a
+    service, the gateway responses take precedence. The CORS mapper
+    merges its headers into gateway responses without overwriting
+    customer-defined response parameters.
 
-The following Smithy model attaches a resource policy that allows any
-principal to invoke the API except for requests from the specified source
-IP address block:
+The following Smithy model defines custom 4xx and 5xx gateway responses:
 
 .. code-block:: smithy
 
     $version: "2"
     namespace smithy.example
 
-    use aws.apigateway#resourcePolicy
+    use aws.apigateway#gatewayResponses
     use aws.protocols#restJson1
 
     @restJson1
-    @resourcePolicy({
-        "Version": "2012-10-17"
-        "Statement": [
-            {
-                "Effect": "Allow"
-                "Principal": "*"
-                "Action": "execute-api:Invoke"
-                "Resource": ["execute-api:/*"]
+    @gatewayResponses(
+        "DEFAULT_4XX": {
+            statusCode: "400"
+            responseParameters: {
+                "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
             }
-            {
-                "Effect": "Deny"
-                "Principal": "*"
-                "Action": "execute-api:Invoke"
-                "Resource": ["execute-api:/*"]
-                "Condition": {
-                    "IpAddress": {
-                        "aws:SourceIp": "192.0.2.0/24"
-                    }
-                }
+            responseTemplates: {
+                "application/json": "{\"message\": \"bad request\"}"
             }
-        ]
-    })
-    service Example {
-      version: "2019-06-17"
-    }
-
-and is converted to the following OpenAPI model:
-
-.. code-block:: json
-
-    {
-        "openapi": "3.0.2",
-        "info": {
-            "title": "Example",
-            "version": "2019-06-17"
-        },
-        "x-amazon-apigateway-policy": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": "*",
-                    "Action": "execute-api:Invoke",
-                    "Resource": ["execute-api:/*"]
-                },
-                {
-                    "Effect": "Deny",
-                    "Principal": "*",
-                    "Action": "execute-api:Invoke",
-                    "Resource": ["execute-api:/*"],
-                    "Condition": {
-                        "IpAddress": {
-                            "aws:SourceIp": "192.0.2.0/24"
-                        }
-                    }
-                }
-            ]
         }
-    }
-
-
-.. _apigateway-api-key-required:
-
-API key required
-================
-
-Operations annotated with the :ref:`aws.apigateway#apiKeyRequired-trait`
-require an API key for API Gateway usage plan enforcement. The mapper adds
-an ``api_key`` security scheme to the OpenAPI ``components/securitySchemes``
-and a ``security`` requirement to each annotated operation.
-
-The following Smithy model requires an API key on ``ListItems`` but not
-on ``HealthCheck``:
-
-.. code-block:: smithy
-
-    $version: "2"
-    namespace smithy.example
-
-    use aws.apigateway#apiKeyRequired
-    use aws.protocols#restJson1
-
-    @restJson1
+        "DEFAULT_5XX": {
+            statusCode: "500"
+            responseTemplates: {
+                "application/json": "{\"message\": \"Internal server error\"}"
+            }
+        }
+    )
     service Example {
       version: "2019-06-17"
-      operations: [ListItems, HealthCheck]
     }
 
-    @apiKeyRequired
-    @http(method: "GET", uri: "/items")
-    operation ListItems {}
-
-    @http(method: "GET", uri: "/health")
-    operation HealthCheck {}
-
-and is converted to the following OpenAPI model:
+is converted to the following OpenAPI model:
 
 .. code-block:: json
 
@@ -2393,39 +2248,20 @@ and is converted to the following OpenAPI model:
             "title": "Example",
             "version": "2019-06-17"
         },
-        "paths": {
-            "/items": {
-                "get": {
-                    "operationId": "ListItems",
-                    "responses": {
-                        "200": {
-                            "description": "ListItems response"
-                        }
-                    },
-                    "security": [
-                        {
-                            "api_key": []
-                        }
-                    ]
+        "x-amazon-apigateway-gateway-responses": {
+            "DEFAULT_4XX": {
+                "statusCode": "400",
+                "responseParameters": {
+                    "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+                },
+                "responseTemplates": {
+                    "application/json": "{\"message\": \"bad request\"}"
                 }
             },
-            "/health": {
-                "get": {
-                    "operationId": "HealthCheck",
-                    "responses": {
-                        "200": {
-                            "description": "HealthCheck response"
-                        }
-                    }
-                }
-            }
-        },
-        "components": {
-            "securitySchemes": {
-                "api_key": {
-                    "type": "apiKey",
-                    "name": "x-api-key",
-                    "in": "header"
+            "DEFAULT_5XX": {
+                "statusCode": "500",
+                "responseTemplates": {
+                    "application/json": "{\"message\": \"Internal server error\"}"
                 }
             }
         }
@@ -2519,14 +2355,10 @@ The conversion process is highly extensible through
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
 .. _Smithy Gradle plugin: https://github.com/smithy-lang/smithy-gradle-plugin
 .. _x-amazon-apigateway-binary-media-types: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-binary-media-types.html
-.. _x-amazon-apigateway-minimum-compression-size: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
 .. _intrinsic functions: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
-.. _`Fn::Sub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/intrinsic-function-reference-sub.html
-.. _Application Load Balancer (ALB): https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html
-.. _Network Load Balancer (NLB): https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html
-.. _VPC Links V2: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-vpc-links-v2.html
+.. _`Fn::Sub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
 .. _OpenAPI tags: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject
 .. _OpenAPI Data types: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types
@@ -2539,4 +2371,4 @@ The conversion process is highly extensible through
 .. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions
 .. _integration's passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
 .. _gradle installed: https://gradle.org/install/
-.. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html
+.. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
