@@ -100,6 +100,18 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
         }
 
         /**
+         * Sets the gateway responses.
+         *
+         * @param responses The response type to gateway response definition.
+         * @return Returns the builder.
+         */
+        public Builder responses(Map<String, GatewayResponse> responses) {
+            this.responses.clear();
+            this.responses.get().putAll(responses);
+            return this;
+        }
+
+        /**
          * Adds a gateway response.
          *
          * @param type Response type key (e.g., {@code DEFAULT_4XX}).
