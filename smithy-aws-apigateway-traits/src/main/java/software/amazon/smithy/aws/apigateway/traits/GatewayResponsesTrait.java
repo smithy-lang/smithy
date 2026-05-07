@@ -121,4 +121,22 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
             return this;
         }
     }
+
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(ID);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            Builder builder = builder().sourceLocation(value);
+            for (Map.Entry<StringNode, Node> entry : value.expectObjectNode().getMembers().entrySet()) {
+                GatewayResponse response = GatewayResponse.fromNode(entry.getValue());
+                builder.putResponse(entry.getKey().getValue(), response);
+            }
+            GatewayResponsesTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
+        }
+    }
 }
