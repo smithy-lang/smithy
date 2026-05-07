@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
