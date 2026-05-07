@@ -109,16 +109,18 @@ public final class GatewayResponse implements ToNode, ToSmithyBuilder<GatewayRes
             builder.withMember(STATUS_CODE, Node.from(statusCode));
         }
         if (!responseParameters.isEmpty()) {
-            builder.withMember(RESPONSE_PARAMETERS,
-                    responseParameters.entrySet()
-                            .stream()
-                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> Node.from(e.getValue()))));
+            ObjectNode.Builder paramsBuilder = ObjectNode.builder();
+            for (Map.Entry<String, String> entry : responseParameters.entrySet()) {
+                paramsBuilder.withMember(entry.getKey(), Node.from(entry.getValue()));
+            }
+            builder.withMember(RESPONSE_PARAMETERS, paramsBuilder.build());
         }
         if (!responseTemplates.isEmpty()) {
-            builder.withMember(RESPONSE_TEMPLATES,
-                    responseTemplates.entrySet()
-                            .stream()
-                            .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> Node.from(e.getValue()))));
+            ObjectNode.Builder templatesBuilder = ObjectNode.builder();
+            for (Map.Entry<String, String> entry : responseTemplates.entrySet()) {
+                templatesBuilder.withMember(entry.getKey(), Node.from(entry.getValue()));
+            }
+            builder.withMember(RESPONSE_TEMPLATES, templatesBuilder.build());
         }
         return builder.build();
     }
@@ -186,6 +188,30 @@ public final class GatewayResponse implements ToNode, ToSmithyBuilder<GatewayRes
          */
         public Builder putResponseTemplate(String mediaType, String template) {
             responseTemplates.get().put(mediaType, template);
+            return this;
+        }
+
+        /**
+         * Replaces all response parameters with the given map.
+         *
+         * @param responseParameters Map of response parameters.
+         * @return Returns the builder.
+         */
+        public Builder responseParameters(Map<String, String> responseParameters) {
+            this.responseParameters.clear();
+            this.responseParameters.get().putAll(responseParameters);
+            return this;
+        }
+
+        /**
+         * Replaces all response templates with the given map.
+         *
+         * @param responseTemplates Map of response templates.
+         * @return Returns the builder.
+         */
+        public Builder responseTemplates(Map<String, String> responseTemplates) {
+            this.responseTemplates.clear();
+            this.responseTemplates.get().putAll(responseTemplates);
             return this;
         }
     }
