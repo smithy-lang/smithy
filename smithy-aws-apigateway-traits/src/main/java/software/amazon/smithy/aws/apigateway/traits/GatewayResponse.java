@@ -134,8 +134,8 @@ public final class GatewayResponse implements ToNode, ToSmithyBuilder<GatewayRes
         }
         GatewayResponse that = (GatewayResponse) o;
         return Objects.equals(statusCode, that.statusCode)
-                && Objects.equals(responseParameters, that.responseParameters)
-                && Objects.equals(responseTemplates, that.responseTemplates);
+                && responseParameters.equals(that.responseParameters)
+                && responseTemplates.equals(that.responseTemplates);
     }
 
     @Override
