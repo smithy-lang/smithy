@@ -133,7 +133,6 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
             responses.get().remove(type);
             return this;
         }
-
     }
 
     public static final class Provider extends AbstractTrait.Provider {
