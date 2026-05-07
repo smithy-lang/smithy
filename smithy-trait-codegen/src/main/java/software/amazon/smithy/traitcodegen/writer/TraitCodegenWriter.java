@@ -135,9 +135,9 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         builder.append(getPackageHeader()).append(getNewline());
         builder.append(getImportContainer().toString()).append(getNewline());
 
-        // Handle duplicates that may need to use full name
+        // Resolve type name conflicts before toString() resolves deferred values
         resolveNameContext();
-        builder.append(format(super.toString()));
+        builder.append(super.toString());
 
         return builder.toString();
     }
@@ -242,8 +242,9 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             Set<Symbol> nameSet = symbolNames.computeIfAbsent(normalizedSymbol.getName(), n -> new HashSet<>());
             nameSet.add(normalizedSymbol);
 
-            // Return a placeholder value that will be filled when toString is called
-            return format("$${$L:L}", normalizedSymbol.getFullName());
+            // Return a deferred value that resolves the type name at toString() time
+            String fullName = normalizedSymbol.getFullName();
+            return defer(() -> format("${" + fullName + ":L}"));
         }
 
         // Recursively process the symbols using Java Type.

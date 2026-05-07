@@ -14,6 +14,13 @@ use aws.api#arnReference
 @trait(selector: "service")
 string apiKeySource
 
+/// Indicates that an operation requires an API key for API Gateway usage
+/// plan enforcement.
+@internal
+@tags(["internal"])
+@trait(selector: "operation")
+structure apiKeyRequired {}
+
 /// Attaches an authorizer to a service, resource, or operation.
 @internal
 @tags(["internal"])
@@ -102,6 +109,17 @@ structure integration {
     /// Defines the method's responses and specifies desired parameter mappings
     /// or payload mappings from integration responses to method responses.
     responses: IntegrationResponses
+
+    /// Specifies the TLS configuration for an integration.
+    tlsConfig: TlsConfig
+
+    /// Specifies how the response payload is transferred between the
+    /// integration and the caller. Valid values are `BUFFERED` and `STREAM`.
+    responseTransferMode: String
+
+    /// The ARN of an ALB or NLB listener for private integrations using
+    /// VPC Links V2.
+    integrationTarget: String
 }
 
 /// Defines an API Gateway mock integration.
@@ -135,6 +153,52 @@ structure mockIntegration {
 @tags(["internal"])
 @trait(selector: ":test(service, operation)")
 string requestValidator
+
+/// Defines custom gateway responses for an API Gateway REST API. Gateway
+/// responses customize error responses for authentication failures,
+/// integration errors, and other API Gateway-generated errors.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+map gatewayResponses {
+    key: String
+    value: GatewayResponse
+}
+
+/// Defines the endpoint configuration for an API Gateway REST API, including
+/// the endpoint type, VPC endpoint IDs, and whether the default execute-api
+/// endpoint is disabled.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure endpointConfiguration {
+    /// The endpoint types for the API.
+    @required
+    types: EndpointTypes
+
+    /// A list of VPC endpoint IDs for PRIVATE endpoint type APIs.
+    vpcEndpointIds: VpcEndpointIds
+
+    /// Whether clients can invoke the API using the default execute-api
+    /// endpoint.
+    disableExecuteApiEndpoint: Boolean
+}
+
+/// Defines the minimum payload size in bytes at which compression is applied on an API Gateway REST API.
+/// Value must be between 0 and 10485760 (10MB).
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+@range(min: 0, max: 10485760)
+integer minimumCompressionSize
+
+/// Defines a resource policy for an API Gateway REST API. A resource policy
+/// is a JSON policy document attached to an API that controls whether a
+/// specified principal (typically an IAM role or group) can invoke the API.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+document resourcePolicy
 
 /// Defines the TLS security policy and endpoint access mode for an API Gateway
 /// REST API. The security policy specifies the TLS version and cipher suite,
@@ -222,6 +286,16 @@ structure IntegrationResponse {
     /// body parameters of the integration response can be mapped to the header
     /// parameters of the method.
     responseParameters: ResponseParameters
+}
+
+/// Specifies the TLS configuration for an integration.
+@private
+structure TlsConfig {
+    /// Specifies whether or not API Gateway skips verification that the
+    /// certificate for an integration endpoint is issued by a supported
+    /// certificate authority. Supported only for HTTP and HTTP_PROXY
+    /// integrations.
+    insecureSkipVerification: Boolean
 }
 
 @private
@@ -368,6 +442,56 @@ enum PayloadFormatVersion {
     V1_0 = "1.0"
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
+}
+
+/// A gateway response configuration for a specific response type.
+@private
+structure GatewayResponse {
+    /// The HTTP status code for the gateway response.
+    statusCode: String
+
+    /// Response parameters for the gateway response.
+    responseParameters: GatewayResponseParameterMap
+
+    /// Response templates for the gateway response.
+    responseTemplates: GatewayResponseTemplateMap
+}
+
+/// A map of gateway response parameter names to values.
+@private
+map GatewayResponseParameterMap {
+    key: String
+    value: String
+}
+
+/// A map of media types to response templates.
+@private
+map GatewayResponseTemplateMap {
+    key: String
+    value: String
+}
+
+/// The endpoint type for an API Gateway REST API.
+@private
+enum EndpointType {
+    /// Edge-optimized API endpoint.
+    EDGE
+
+    /// Regional API endpoint.
+    REGIONAL
+
+    /// Private API endpoint.
+    PRIVATE
+}
+
+@private
+list EndpointTypes {
+    member: EndpointType
+}
+
+@private
+list VpcEndpointIds {
+    member: String
 }
 
 /// The endpoint access mode for an API Gateway REST API.
