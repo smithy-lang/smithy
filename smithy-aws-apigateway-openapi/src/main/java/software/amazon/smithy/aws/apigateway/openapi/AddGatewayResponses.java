@@ -7,6 +7,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.apigateway.traits.GatewayResponsesTrait;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.model.OpenApi;
