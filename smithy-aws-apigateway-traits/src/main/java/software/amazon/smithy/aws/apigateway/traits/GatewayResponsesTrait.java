@@ -74,7 +74,7 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
     @Override
     public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        responses.forEach(builder::putResponse);
+        builder.responses(responses);
         return builder;
     }
 
