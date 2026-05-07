@@ -97,8 +97,8 @@ public final class GatewayResponse implements ToNode, ToSmithyBuilder<GatewayRes
     @Override
     public Builder toBuilder() {
         Builder builder = builder().statusCode(statusCode);
-        responseParameters.forEach(builder::putResponseParameter);
-        responseTemplates.forEach(builder::putResponseTemplate);
+        builder.responseParameters(responseParameters);
+        builder.responseTemplates(responseTemplates);
         return builder;
     }
 
