@@ -59,6 +59,48 @@ The following example sets the ``X-API-Key`` header as the API key source.
     customers.
 
 
+.. smithy-trait:: aws.apigateway#apiKeyRequired
+.. _aws.apigateway#apiKeyRequired-trait:
+
+---------------------------------------
+``aws.apigateway#apiKeyRequired`` trait
+---------------------------------------
+
+Summary
+    Indicates that an operation requires an API key for API Gateway usage
+    plan enforcement.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait (no value)
+See also
+    - `Create and Use Usage Plans with API Keys`_ for more information on
+      API key enforcement
+
+The following example requires an API key on the ``ListItems`` operation
+but not on ``HealthCheck``:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#apiKeyRequired
+
+    @apiKeyRequired
+    @http(method: "GET", uri: "/items")
+    operation ListItems {}
+
+    @http(method: "GET", uri: "/health")
+    operation HealthCheck {}
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
 .. smithy-trait:: aws.apigateway#authorizers
 .. _aws.apigateway#authorizers-trait:
 
@@ -240,6 +282,41 @@ Value type
     customers.
 
 
+.. smithy-trait:: aws.apigateway#minimumCompressionSize
+.. _aws.apigateway#minimumCompressionSize-trait:
+
+-----------------------------------------------
+``aws.apigateway#minimumCompressionSize`` trait
+-----------------------------------------------
+
+Summary
+    Defines the minimum payload size in bytes at which compression is applied
+    on an API Gateway REST API.
+Trait selector
+    ``service``
+Value type
+    ``integer`` value between 0 and 10485760 (10MB).
+See also
+    - `Payload compression for REST APIs`_ for more information
+    - `x-amazon-apigateway-minimum-compression-size`_ for how this relates
+      to OpenAPI
+
+The following example sets the minimum compression size to 10240 bytes:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#minimumCompressionSize
+
+    @minimumCompressionSize(10240)
+    service Weather {
+        version: "2018-03-17"
+    }
+
+
 .. smithy-trait:: aws.apigateway#requestValidator
 .. _aws.apigateway#requestValidator-trait:
 
@@ -408,6 +485,25 @@ following members:
       - Defines the method's responses and specifies desired parameter
         mappings or payload mappings from integration responses to method
         responses.
+    * - tlsConfig
+      - ``structure``
+      - Specifies the TLS configuration for an integration. Supported only
+        for HTTP and HTTP_PROXY integration types. Contains the following
+        member:
+
+        - ``insecureSkipVerification`` (``boolean``): When set to ``true``,
+          API Gateway skips verification that the certificate for an
+          integration endpoint is issued by a supported certificate
+          authority.
+    * - responseTransferMode
+      - ``string``
+      - Specifies how the response payload is transferred between the
+        integration and the caller. Valid values are ``BUFFERED`` and
+        ``STREAM``.
+    * - integrationTarget
+      - ``string``
+      - The ARN of an ALB or NLB listener for private integrations using
+        VPC Links V2.
 
 The following example defines an integration that is applied to every
 operation within the service.
@@ -644,6 +740,75 @@ disables the default endpoint:
         vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
         disableExecuteApiEndpoint: true
     )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
+.. smithy-trait:: aws.apigateway#resourcePolicy
+.. _aws.apigateway#resourcePolicy-trait:
+
+---------------------------------------
+``aws.apigateway#resourcePolicy`` trait
+---------------------------------------
+
+Summary
+    Defines a resource policy for an API Gateway REST API. A resource
+    policy is a JSON policy document attached to an API that controls
+    whether a specified principal (typically an IAM role or group) can
+    invoke the API.
+Trait selector
+    ``service``
+Value type
+    ``document``
+See also
+    - `Resource policies for REST APIs`_ for more information
+    - `x-amazon-apigateway-policy`_ for how this relates to OpenAPI
+
+.. note::
+
+    Smithy does not validate the contents of the resource policy document.
+    The policy is passed through to API Gateway, which validates it at
+    import time.
+
+The following example defines a resource policy that allows any principal to
+invoke the API except for requests from the specified source IP address block:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#resourcePolicy
+
+    @resourcePolicy({
+        "Version": "2012-10-17"
+        "Statement": [
+            {
+                "Effect": "Allow"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+            }
+            {
+                "Effect": "Deny"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+                "Condition": {
+                    "IpAddress": {
+                        "aws:SourceIp": "192.0.2.0/24"
+                    }
+                }
+            }
+        ]
+    })
     service Weather {
       version: "2018-03-17"
     }
@@ -945,21 +1110,25 @@ integration response to two ``header`` parameters of the method response.
 
 
 .. _Enable Request Validation in API Gateway: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html
-.. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.requestValidator.html
+.. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _Granting Permissions Using a Resource Policy: https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#intro-permission-model-access-policy
-.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior
-.. _VpcLink: https://docs.aws.amazon.com/apigateway/api-reference/resource/vpc-link/
+.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html#passthroughBehavior
+.. _VpcLink: https://docs.aws.amazon.com/apigateway/latest/api/API_VpcLink.html
 .. _x-amazon-apigateway-integration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
-.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _x-amazon-apigateway-authtype: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authtype.html
 .. _Create and Use Usage Plans with API Keys: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _Choose an API Key Source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
-.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
+.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/latest/api/API_IntegrationResponse.html
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
 .. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
 .. _API endpoint types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html
 .. _endpoint IDs: https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints
+.. _Payload compression for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-gzip-compression-decompression.html
+.. _x-amazon-apigateway-minimum-compression-size: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html
+.. _Resource policies for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-resource-policies.html
+.. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html

@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed trait-codegen failure when string literals contain dollar signs",
+  "pull_requests": [
+    "[#3096](https://github.com/smithy-lang/smithy/pull/3096)"
+  ]
+}
