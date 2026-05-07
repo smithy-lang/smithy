@@ -1204,4 +1204,92 @@ public class SimpleCodeWriterTest {
 
         assertThat(writer.toString(), equalTo("Foo\nBar\nBaz\nBam\n"));
     }
+
+    @Test
+    public void writeLazyResolvesAtToStringTime() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        String[] value = {"initial"};
+        writer.writeInline("Hello ");
+        writer.writeLazy(() -> value[0]);
+        value[0] = "world";
+
+        assertThat(writer.toString(), equalTo("Hello world\n"));
+    }
+
+    @Test
+    public void writeLazyWorksWithSurroundingContent() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.write("before");
+        writer.writeLazy(() -> "lazy");
+        writer.write("after");
+
+        assertThat(writer.toString(), equalTo("before\nlazyafter\n"));
+    }
+
+    @Test
+    public void writeLazyDoesNotReinterpretDollarSigns() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.writeWithNoFormatting("String s = \"$100\";");
+        writer.writeLazy(() -> "resolved");
+
+        assertThat(writer.toString(), equalTo("String s = \"$100\";\nresolved\n"));
+    }
+
+    @Test
+    public void deferCanBeUsedInCustomFormatter() {
+        MyWriter writer = new MyWriter();
+        writer.putFormatter('T', (value, indent) -> writer.defer(() -> "Resolved<" + value + ">"));
+        writer.write("Type: $T", "Foo");
+
+        assertThat(writer.toString(), equalTo("Type: Resolved<Foo>\n"));
+    }
+
+    @Test
+    public void deferredValuesResolveBeforeBlankLineTrimming() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.trimBlankLines();
+        writer.write("before");
+        writer.writeLazy(() -> "lazy");
+        writer.write("after");
+
+        assertThat(writer.toString(), equalTo("before\nlazyafter\n"));
+    }
+
+    @Test
+    public void multipleDeferredValuesResolveIndependently() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.writeInline("A=");
+        writer.writeLazy(() -> "1");
+        writer.writeInline(" B=");
+        writer.writeLazy(() -> "2");
+
+        assertThat(writer.toString(), equalTo("A=1 B=2\n"));
+    }
+
+    @Test
+    public void deferredFormatDoesNotReinterpretDollarSignsInOutput() {
+        // This test reproduces the TraitCodegenWriter problem: a custom $T formatter
+        // uses defer() to lazily resolve type names via context variables. The output
+        // also contains literal $ characters (e.g., from string constants in generated code).
+        // Without defer(), the old approach would re-format the entire output, causing
+        // the literal $ to be misinterpreted as an expression start.
+        MyWriter writer = new MyWriter();
+
+        // Register a formatter that defers type name resolution (like TraitCodegenWriter's $T)
+        writer.putFormatter('T', (value, indent) -> {
+            String fullName = value.toString();
+            return writer.defer(() -> writer.format("${" + fullName + ":L}"));
+        });
+
+        // Set up context that maps full name to short name (like resolveNameContext does)
+        writer.putContext("com.example.MyType", "MyType");
+
+        // Write code that includes both a $T reference AND a literal dollar sign
+        writer.write("public $T getValue() {", "com.example.MyType");
+        writer.writeWithNoFormatting("    return \"costs $100\";");
+        writer.write("}");
+
+        String result = writer.toString();
+        assertThat(result, equalTo("public MyType getValue() {\n    return \"costs $100\";\n}\n"));
+    }
 }

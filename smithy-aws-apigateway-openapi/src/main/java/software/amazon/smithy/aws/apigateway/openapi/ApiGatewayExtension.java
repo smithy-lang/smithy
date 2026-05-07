@@ -18,9 +18,11 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
                 ApiGatewayMapper.wrap(new AddDefaultConfigSettings()),
                 ApiGatewayMapper.wrap(new AddDefaultRestConfigSettings()),
                 ApiGatewayMapper.wrap(new AddApiKeySource()),
+                ApiGatewayMapper.wrap(new AddApiKeyRequired()),
                 ApiGatewayMapper.wrap(new AddAuthorizers()),
                 ApiGatewayMapper.wrap(new AddBinaryTypes()),
                 ApiGatewayMapper.wrap(new AddIntegrations()),
+                ApiGatewayMapper.wrap(new AddMinimumCompressionSize()),
 
                 // Gateway responses must be registered before CORS mappers.
                 // AddCorsToGatewayResponses merges CORS headers into existing
@@ -35,6 +37,7 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
                 ApiGatewayMapper.wrap(new AddCorsToGatewayResponses()),
 
                 ApiGatewayMapper.wrap(new AddRequestValidators()),
+                ApiGatewayMapper.wrap(new AddResourcePolicy()),
                 ApiGatewayMapper.wrap(new CloudFormationSubstitution()),
 
                 // HTTP API mappers.

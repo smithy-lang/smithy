@@ -7,6 +7,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.apigateway.traits.GatewayResponsesTrait;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -38,7 +39,7 @@ final class AddGatewayResponses implements ApiGatewayMapper {
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
         ServiceShape service = context.getService();
         GatewayResponsesTrait trait = service.getTrait(GatewayResponsesTrait.class).orElse(null);
-        if  (trait != null) {
+        if (trait != null) {
             LOGGER.fine(() -> String.format(
                     "Adding %s to %s",
                     EXTENSION_NAME,

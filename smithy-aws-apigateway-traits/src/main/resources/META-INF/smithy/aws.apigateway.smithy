@@ -14,6 +14,13 @@ use aws.api#arnReference
 @trait(selector: "service")
 string apiKeySource
 
+/// Indicates that an operation requires an API key for API Gateway usage
+/// plan enforcement.
+@internal
+@tags(["internal"])
+@trait(selector: "operation")
+structure apiKeyRequired {}
+
 /// Attaches an authorizer to a service, resource, or operation.
 @internal
 @tags(["internal"])
@@ -102,6 +109,17 @@ structure integration {
     /// Defines the method's responses and specifies desired parameter mappings
     /// or payload mappings from integration responses to method responses.
     responses: IntegrationResponses
+
+    /// Specifies the TLS configuration for an integration.
+    tlsConfig: TlsConfig
+
+    /// Specifies how the response payload is transferred between the
+    /// integration and the caller. Valid values are `BUFFERED` and `STREAM`.
+    responseTransferMode: String
+
+    /// The ARN of an ALB or NLB listener for private integrations using
+    /// VPC Links V2.
+    integrationTarget: String
 }
 
 /// Defines an API Gateway mock integration.
@@ -146,6 +164,41 @@ map gatewayResponses {
     key: String
     value: GatewayResponse
 }
+
+/// Defines the endpoint configuration for an API Gateway REST API, including
+/// the endpoint type, VPC endpoint IDs, and whether the default execute-api
+/// endpoint is disabled.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure endpointConfiguration {
+    /// The endpoint types for the API.
+    @required
+    types: EndpointTypes
+
+    /// A list of VPC endpoint IDs for PRIVATE endpoint type APIs.
+    vpcEndpointIds: VpcEndpointIds
+
+    /// Whether clients can invoke the API using the default execute-api
+    /// endpoint.
+    disableExecuteApiEndpoint: Boolean
+}
+
+/// Defines the minimum payload size in bytes at which compression is applied on an API Gateway REST API.
+/// Value must be between 0 and 10485760 (10MB).
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+@range(min: 0, max: 10485760)
+integer minimumCompressionSize
+
+/// Defines a resource policy for an API Gateway REST API. A resource policy
+/// is a JSON policy document attached to an API that controls whether a
+/// specified principal (typically an IAM role or group) can invoke the API.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+document resourcePolicy
 
 /// An object that associates an authorizer and associated metadata with an
 /// authentication mechanism.
@@ -218,6 +271,16 @@ structure IntegrationResponse {
     /// body parameters of the integration response can be mapped to the header
     /// parameters of the method.
     responseParameters: ResponseParameters
+}
+
+/// Specifies the TLS configuration for an integration.
+@private
+structure TlsConfig {
+    /// Specifies whether or not API Gateway skips verification that the
+    /// certificate for an integration endpoint is issued by a supported
+    /// certificate authority. Supported only for HTTP and HTTP_PROXY
+    /// integrations.
+    insecureSkipVerification: Boolean
 }
 
 @private
@@ -391,4 +454,27 @@ map GatewayResponseParameterMap {
 map GatewayResponseTemplateMap {
     key: String
     value: String
+}
+
+/// The endpoint type for an API Gateway REST API.
+@private
+enum EndpointType {
+    /// Edge-optimized API endpoint.
+    EDGE
+
+    /// Regional API endpoint.
+    REGIONAL
+
+    /// Private API endpoint.
+    PRIVATE
+}
+
+@private
+list EndpointTypes {
+    member: EndpointType
+}
+
+@private
+list VpcEndpointIds {
+    member: String
 }
