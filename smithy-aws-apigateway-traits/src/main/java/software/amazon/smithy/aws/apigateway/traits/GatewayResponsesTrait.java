@@ -74,7 +74,7 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
     @Override
     public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        responses.forEach(builder::putResponse);
+        builder.responses(responses);
         return builder;
     }
 
@@ -122,17 +122,6 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
             return this;
         }
 
-        /**
-         * Replaces all gateway responses with the given map.
-         *
-         * @param responses Map of response type keys to definitions.
-         * @return Returns the builder.
-         */
-        public Builder responses(Map<String, GatewayResponse> responses) {
-            this.responses.clear();
-            responses.forEach(this::putResponse);
-            return this;
-        }
     }
 
     public static final class Provider extends AbstractTrait.Provider {
