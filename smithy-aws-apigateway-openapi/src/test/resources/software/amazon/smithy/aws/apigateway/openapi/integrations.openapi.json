@@ -72,6 +72,11 @@
           "credentials": "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
           "cacheNamespace": "cache namespace",
           "payloadFormatVersion": "1.0",
+          "tlsConfig": {
+            "insecureSkipVerification": true
+          },
+          "responseTransferMode": "STREAM",
+          "integrationTarget": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/net/my-nlb/abc123/def456",
           "requestParameters": {
             "integration.request.querystring.provider": "method.request.querystring.vendor",
             "integration.request.path.stage": "method.request.querystring.version"

@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `aws.apigateway#gatewayResponses` trait and OpenAPI mapper with DANGER validation for CORS conflicts",
+  "pull_requests": [
+    "[#3089](https://github.com/smithy-lang/smithy/pull/3089)"
+  ]
+}

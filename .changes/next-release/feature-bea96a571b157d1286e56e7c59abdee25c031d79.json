@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added three new shape type selectors\n\n* `aggregateType` selects lists, structures, unions, and maps.\n* `serviceType` selects services, resources, and operations.\n* `dataType` selects aggregate types and simple types.",
-  "pull_requests": [
-    "[#3070](https://github.com/smithy-lang/smithy/pull/3070)"
-  ]
-}
