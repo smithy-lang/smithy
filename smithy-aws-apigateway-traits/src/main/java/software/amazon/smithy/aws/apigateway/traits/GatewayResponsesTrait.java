@@ -81,10 +81,11 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
 
     @Override
     protected Node createNode() {
-        return responses.entrySet()
-                .stream()
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, e -> e.getValue().toNode()));
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        for (Map.Entry<String, GatewayResponse> entry : responses.entrySet()) {
+            builder.withMember(entry.getKey(), entry.getValue());
+        }
+        return builder.build();
     }
 
     /**
