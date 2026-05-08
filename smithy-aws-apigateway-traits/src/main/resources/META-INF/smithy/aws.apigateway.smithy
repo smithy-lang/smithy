@@ -200,6 +200,21 @@ integer minimumCompressionSize
 @trait(selector: "service")
 document resourcePolicy
 
+/// Defines the TLS security policy and endpoint access mode for an API Gateway
+/// REST API. The security policy specifies the TLS version and cipher suite,
+/// and the endpoint access mode controls how the API endpoint can be accessed.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure apiTlsPolicy {
+    /// The TLS version and cipher suite for the API.
+    @required
+    securityPolicy: String
+
+    /// The endpoint access mode for the API.
+    endpointAccessMode: EndpointAccessMode
+}
+
 /// An object that associates an authorizer and associated metadata with an
 /// authentication mechanism.
 @private
@@ -477,4 +492,14 @@ list EndpointTypes {
 @private
 list VpcEndpointIds {
     member: String
+}
+
+/// The endpoint access mode for an API Gateway REST API.
+@private
+enum EndpointAccessMode {
+    /// Basic endpoint access mode.
+    BASIC
+
+    /// Strict endpoint access mode with additional governance checks.
+    STRICT
 }
