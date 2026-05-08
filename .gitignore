@@ -18,6 +18,7 @@ docs/src
 .fleet/
 
 # VSCode
+.vscode/
 bin/
 
 # Mac
