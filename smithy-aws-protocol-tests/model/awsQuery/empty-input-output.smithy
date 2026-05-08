@@ -37,6 +37,19 @@ apply NoInputAndNoOutput @httpResponseTests([
        protocol: awsQuery,
        code: 200,
    }
+   {
+       id: "QueryNoInputAndNoOutputWithResponseMetadata",
+       documentation: "Empty output, but the server returns ResponseMetadata.",
+       protocol: awsQuery,
+       code: 200,
+       body: """
+       <NoInputAndNoOutputResponse>
+           <ResponseMetadata>
+               <RequestId>abc-123</RequestId>
+           </ResponseMetadata>
+       </NoInputAndNoOutputResponse>
+       """
+   }
 ])
 
 /// The example tests how requests and responses are serialized when there's
