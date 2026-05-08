@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Added a new protocol test for query operations with no output that can include `ResponseMetadata`. No assertions are done but protocol test runners should be able to handle the metadata without choking.",
+  "pull_requests": [
+    "[#3106](https://github.com/smithy-lang/smithy/pull/3106)"
+  ]
+}
