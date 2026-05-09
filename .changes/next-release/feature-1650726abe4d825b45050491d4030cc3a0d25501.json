@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added copy-on-write optimization for `toBuilder()` via `BuilderRef.setBorrowed`",
+  "pull_requests": []
+}

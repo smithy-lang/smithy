@@ -91,7 +91,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        return builder().sourceLocation(getSourceLocation()).authorizers(authorizers);
+        return new Builder(this);
     }
 
     @Override
@@ -110,6 +110,13 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      */
     public static final class Builder extends AbstractTraitBuilder<AuthorizersTrait, Builder> {
         private final BuilderRef<Map<String, AuthorizerDefinition>> authorizers = BuilderRef.forOrderedMap();
+
+        private Builder() {}
+
+        private Builder(AuthorizersTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.authorizers.setBorrowed(trait.authorizers);
+        }
 
         @Override
         public AuthorizersTrait build() {

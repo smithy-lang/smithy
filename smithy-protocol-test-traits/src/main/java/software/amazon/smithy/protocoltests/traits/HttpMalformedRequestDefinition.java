@@ -118,15 +118,7 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
-                .headers(getHeaders())
-                .method(getMethod())
-                .queryParams(getQueryParams());
-        getBody().ifPresent(builder::body);
-        getBodyMediaType().ifPresent(builder::bodyMediaType);
-        getHost().ifPresent(builder::host);
-        getUri().ifPresent(builder::uri);
-        return builder;
+        return new Builder(this);
     }
 
     public static Builder builder() {
@@ -147,6 +139,16 @@ public final class HttpMalformedRequestDefinition implements ToNode, ToSmithyBui
         private String uri;
 
         private Builder() {}
+
+        private Builder(HttpMalformedRequestDefinition def) {
+            this.body = def.body;
+            this.bodyMediaType = def.bodyMediaType;
+            this.host = def.host;
+            this.method = def.method;
+            this.uri = def.uri;
+            this.headers.setBorrowed(def.headers);
+            this.queryParams.setBorrowed(def.queryParams);
+        }
 
         public Builder body(String body) {
             this.body = body;

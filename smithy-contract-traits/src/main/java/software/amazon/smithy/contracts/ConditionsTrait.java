@@ -71,8 +71,7 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
      * Converts this trait to a builder used to build an equivalent {@link ConditionsTrait}.
      */
     public SmithyBuilder<ConditionsTrait> toBuilder() {
-        return builder().sourceLocation(getSourceLocation())
-                .conditions(getConditions());
+        return new Builder(this);
     }
 
     /**
@@ -89,6 +88,11 @@ public final class ConditionsTrait extends AbstractTrait implements ToSmithyBuil
         private final BuilderRef<Map<String, Condition>> conditions = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(ConditionsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.conditions.setBorrowed(trait.conditions);
+        }
 
         public Builder conditions(Map<String, Condition> conditions) {
             clearConditions();

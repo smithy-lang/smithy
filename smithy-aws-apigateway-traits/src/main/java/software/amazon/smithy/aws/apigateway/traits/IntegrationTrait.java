@@ -372,26 +372,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .type(type)
-                .uri(uri)
-                .credentials(credentials)
-                .httpMethod(httpMethod)
-                .passThroughBehavior(passThroughBehavior)
-                .contentHandling(contentHandling)
-                .timeoutInMillis(timeoutInMillis)
-                .connectionId(connectionId)
-                .connectionType(connectionType)
-                .cacheNamespace(cacheNamespace)
-                .payloadFormatVersion(payloadFormatVersion)
-                .requestParameters(requestParameters)
-                .requestTemplates(requestTemplates)
-                .responses(responses)
-                .cacheKeyParameters(cacheKeyParameters)
-                .tlsConfig(tlsConfig)
-                .responseTransferMode(responseTransferMode)
-                .integrationTarget(integrationTarget);
+        return new Builder(this);
     }
 
     public static final class Builder extends AbstractTraitBuilder<IntegrationTrait, Builder> {
@@ -413,6 +394,30 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         private TlsConfig tlsConfig;
         private String responseTransferMode;
         private String integrationTarget;
+
+        private Builder() {}
+
+        private Builder(IntegrationTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.type = trait.type;
+            this.uri = trait.uri;
+            this.credentials = trait.credentials;
+            this.httpMethod = trait.httpMethod;
+            this.passThroughBehavior = trait.passThroughBehavior;
+            this.contentHandling = trait.contentHandling;
+            this.timeoutInMillis = trait.timeoutInMillis;
+            this.connectionId = trait.connectionId;
+            this.connectionType = trait.connectionType;
+            this.cacheNamespace = trait.cacheNamespace;
+            this.payloadFormatVersion = trait.payloadFormatVersion;
+            this.tlsConfig = trait.tlsConfig;
+            this.responseTransferMode = trait.responseTransferMode;
+            this.integrationTarget = trait.integrationTarget;
+            this.cacheKeyParameters.setBorrowed(trait.cacheKeyParameters);
+            this.requestParameters.setBorrowed(trait.requestParameters);
+            this.requestTemplates.setBorrowed(trait.requestTemplates);
+            this.responses.setBorrowed(trait.responses);
+        }
 
         @Override
         public IntegrationTrait build() {

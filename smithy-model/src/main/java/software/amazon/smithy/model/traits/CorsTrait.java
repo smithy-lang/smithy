@@ -134,16 +134,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
     @Override
     public Builder toBuilder() {
-        Builder b = builder()
-                .sourceLocation(getSourceLocation())
-                .origins(origins)
-                .maxAge(maxAge)
-                .additionalAllowedHeaders(additionalAllowedHeaders)
-                .additionalExposedHeaders(additionalExposedHeaders);
-        if (specifiedOrigin != null) {
-            b.origin(specifiedOrigin);
-        }
-        return b;
+        return new Builder(this);
     }
 
     @Override
@@ -208,6 +199,15 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
                 BuilderRef.forSortedSet(String.CASE_INSENSITIVE_ORDER);
 
         private Builder() {}
+
+        private Builder(CorsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.origin = trait.specifiedOrigin;
+            this.maxAge = trait.maxAge;
+            this.origins.setBorrowed(trait.origins);
+            this.additionalAllowedHeaders.setBorrowed(trait.additionalAllowedHeaders);
+            this.additionalExposedHeaders.setBorrowed(trait.additionalExposedHeaders);
+        }
 
         public Builder origin(String origin) {
             this.origin = Objects.requireNonNull(origin);

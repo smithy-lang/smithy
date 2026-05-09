@@ -64,13 +64,7 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .documentation(getDocumentation().orElse(null))
-                .acceptors(getAcceptors())
-                .minDelay(getMinDelay())
-                .maxDelay(getMaxDelay())
-                .tags(tags)
-                .deprecated(deprecated);
+        return new Builder(this);
     }
 
     /**
@@ -207,6 +201,15 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
         private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(Waiter waiter) {
+            this.documentation = waiter.documentation;
+            this.minDelay = waiter.minDelay;
+            this.maxDelay = waiter.maxDelay;
+            this.deprecated = waiter.deprecated;
+            this.acceptors.setBorrowed(waiter.acceptors);
+            this.tags.setBorrowed(waiter.tags);
+        }
 
         @Override
         public Waiter build() {

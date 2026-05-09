@@ -120,4 +120,115 @@ public class BuilderRefTest {
         sortedSet.get().add("a");
         assertThat(sortedSet.peek(), containsInRelativeOrder("a", "B"));
     }
+
+    @Test
+    public void setBorrowedAllowsPeekWithoutCopy() {
+        List<String> immutable = ListUtils.of("a", "b");
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.setBorrowed(immutable);
+
+        // peek returns the borrowed value directly
+        assertThat(ref.peek(), equalTo(immutable));
+        assertThat(ref.hasValue(), equalTo(true));
+    }
+
+    @Test
+    public void setBorrowedCopiesOnGet() {
+        List<String> immutable = ListUtils.of("a", "b");
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.setBorrowed(immutable);
+
+        // get() triggers a copy so we can mutate
+        List<String> mutable = ref.get();
+        mutable.add("c");
+
+        // original is unchanged
+        assertThat(immutable.size(), equalTo(2));
+        // ref now has the mutated copy
+        assertThat(ref.peek(), contains("a", "b", "c"));
+    }
+
+    @Test
+    public void setBorrowedClearsOwnedState() {
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.get().add("x");
+
+        // setBorrowed replaces owned state
+        List<String> immutable = ListUtils.of("a", "b");
+        ref.setBorrowed(immutable);
+
+        assertThat(ref.peek(), equalTo(immutable));
+        assertThat(ref.peek(), contains("a", "b"));
+    }
+
+    @Test
+    public void setBorrowedWithNullClearsState() {
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.get().add("x");
+
+        ref.setBorrowed(null);
+
+        assertThat(ref.hasValue(), equalTo(false));
+    }
+
+    @Test
+    public void setBorrowedCopyReturnsBorrowedValue() {
+        List<String> immutable = ListUtils.of("a", "b");
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.setBorrowed(immutable);
+
+        // copy() on a borrowed value copies it and wraps immutably
+        List<String> copied = ref.copy();
+        assertThat(copied, contains("a", "b"));
+    }
+
+    @Test
+    public void setBorrowedEnablesToBuilderPattern() {
+        // Simulates the toBuilder() optimization:
+        // 1. Build an object with copy()
+        BuilderRef<Map<String, String>> ref = BuilderRef.forOrderedMap();
+        ref.get().put("key", "value");
+        Map<String, String> built = ref.copy(); // immutable
+
+        // 2. Create a new builder and setBorrowed (simulates toBuilder)
+        BuilderRef<Map<String, String>> ref2 = BuilderRef.forOrderedMap();
+        ref2.setBorrowed(built);
+
+        // 3. peek() returns the borrowed value without copy
+        assertThat(ref2.peek(), equalTo(built));
+
+        // 4. Mutating via get() doesn't affect the original
+        ref2.get().put("key2", "value2");
+        assertThat(built.size(), equalTo(1));
+        assertThat(ref2.peek().size(), equalTo(2));
+    }
+
+    @Test
+    public void copyReturnsSameInstanceWhenNotMutatedAfterSetBorrowed() {
+        // The key optimization: if setBorrowed is called and no mutation happens,
+        // copy() returns the exact same instance (no copy at all).
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.get().add("a");
+        List<String> original = ref.copy();
+
+        // Simulate toBuilder: setBorrowed with the immutable collection
+        BuilderRef<List<String>> ref2 = BuilderRef.forList();
+        ref2.setBorrowed(original);
+
+        // copy() without any mutation should return the same instance
+        List<String> result = ref2.copy();
+        assertThat(result == original, equalTo(true));
+    }
+
+    @Test
+    public void copyReturnsSameInstanceOnRepeatedCopyCalls() {
+        // Even without setBorrowed, repeated copy() calls should reuse the same instance
+        BuilderRef<List<String>> ref = BuilderRef.forList();
+        ref.get().add("a");
+
+        List<String> first = ref.copy();
+        List<String> second = ref.copy();
+
+        assertThat(first == second, equalTo(true));
+    }
 }

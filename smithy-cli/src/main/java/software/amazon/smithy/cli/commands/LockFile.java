@@ -165,10 +165,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
 
     @Override
     public LockFile.Builder toBuilder() {
-        return builder().repositories(repositories)
-                .artifacts(artifacts)
-                .version(version)
-                .configHash(configHash);
+        return new Builder(this);
     }
 
     public static final class Builder implements SmithyBuilder<LockFile> {
@@ -176,6 +173,15 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         private final BuilderRef<Set<String>> repositories = BuilderRef.forOrderedSet();
         private String version = DEFAULT_VERSION;
         private int configHash;
+
+        private Builder() {}
+
+        private Builder(LockFile lockFile) {
+            this.version = lockFile.version;
+            this.configHash = lockFile.configHash;
+            this.artifacts.setBorrowed(lockFile.artifacts);
+            this.repositories.setBorrowed(lockFile.repositories);
+        }
 
         public LockFile.Builder artifacts(Map<String, LockedArtifact> artifacts) {
             this.artifacts.clear();

@@ -47,9 +47,7 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
 
     @Override
     public Builder toBuilder() {
-        return new Builder()
-                .sourceLocation(getSourceLocation())
-                .parameters(parameters);
+        return new Builder(this);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -77,6 +75,11 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
         private final BuilderRef<Map<String, StaticContextParamDefinition>> parameters = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(StaticContextParamsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.parameters.setBorrowed(trait.parameters);
+        }
 
         public Builder parameters(Map<String, StaticContextParamDefinition> parameters) {
             this.parameters.clear();

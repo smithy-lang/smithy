@@ -81,8 +81,8 @@ public final class DefaultBuilderRef<T> implements BuilderRef<T> {
             borrowed = result;
             return result;
         } else if (borrowed != null) {
-            // Copy the borrowed value and make it immutable.
-            return applyImmutableWrapper(applyCopyCtor(borrowed));
+            // The borrowed value is already immutable, return it directly.
+            return borrowed;
         } else if (emptyCtorOptimization != null) {
             // The value is empty and was never created, so call the empty ctor supplier if available.
             return applyEmptyCtorOptimization();
@@ -101,6 +101,13 @@ public final class DefaultBuilderRef<T> implements BuilderRef<T> {
     @Override
     public void clear() {
         setOwned(null);
+    }
+
+    @Override
+    public void setBorrowed(T value) {
+        this.owned = null;
+        this.immutableOwned = null;
+        this.borrowed = value;
     }
 
     private T setOwned(T value) {

@@ -75,19 +75,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
-        Builder builder = updateBuilder(builder())
-                .identifiers(getIdentifiers())
-                .properties(properties)
-                .put(put)
-                .create(create)
-                .read(read)
-                .update(update)
-                .delete(delete)
-                .list(list);
-        getOperations().forEach(builder::addOperation);
-        getCollectionOperations().forEach(builder::addCollectionOperation);
-        getResources().forEach(builder::addResource);
-        return builder;
+        return new Builder(this);
     }
 
     @Override
@@ -231,6 +219,23 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         private ShapeId update;
         private ShapeId delete;
         private ShapeId list;
+
+        private Builder() {}
+
+        private Builder(ResourceShape shape) {
+            shape.updateBuilder(this);
+            this.put = shape.put;
+            this.create = shape.create;
+            this.read = shape.read;
+            this.update = shape.update;
+            this.delete = shape.delete;
+            this.list = shape.list;
+            this.identifiers.setBorrowed(shape.identifiers);
+            this.properties.setBorrowed(shape.properties);
+            this.collectionOperations.setBorrowed(shape.collectionOperations);
+            operations(shape.getOperations());
+            resources(shape.getResources());
+        }
 
         @Override
         public ResourceShape build() {

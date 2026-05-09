@@ -45,9 +45,7 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().sourceLocation(getSourceLocation());
-        validators.forEach(builder::putValidator);
-        return builder;
+        return new Builder(this);
     }
 
     /**
@@ -133,6 +131,11 @@ public final class TraitValidatorsTrait extends AbstractTrait implements ToSmith
         private final BuilderRef<Map<String, Validator>> validators = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(TraitValidatorsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.validators.setBorrowed(trait.validators);
+        }
 
         @Override
         public TraitValidatorsTrait build() {

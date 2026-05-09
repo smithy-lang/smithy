@@ -64,12 +64,7 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     public Builder toBuilder() {
-        return new Builder()
-                .sourceLocation(getSourceLocation())
-                .requestChecksumRequired(requestChecksumRequired)
-                .requestAlgorithmMember(requestAlgorithmMember)
-                .requestValidationModeMember(requestValidationModeMember)
-                .responseAlgorithms(responseAlgorithms);
+        return new Builder(this);
     }
 
     /**
@@ -176,6 +171,14 @@ public final class HttpChecksumTrait extends AbstractTrait implements ToSmithyBu
         private final BuilderRef<List<String>> responseAlgorithms = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(HttpChecksumTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.requestChecksumRequired = trait.requestChecksumRequired;
+            this.requestAlgorithmMember = trait.requestAlgorithmMember;
+            this.requestValidationModeMember = trait.requestValidationModeMember;
+            this.responseAlgorithms.setBorrowed(trait.responseAlgorithms);
+        }
 
         @Override
         public HttpChecksumTrait build() {

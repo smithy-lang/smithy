@@ -77,12 +77,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
 
     @Override
     public Builder toBuilder() {
-        return updateBuilder(builder())
-                .version(introducedVersion)
-                .errors(introducedErrors)
-                .rename(introducedRename)
-                .operations(getIntroducedOperations())
-                .resources(getIntroducedResources());
+        return new Builder(this);
     }
 
     @Override
@@ -215,6 +210,17 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         private String version = "";
         private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
         private final BuilderRef<Set<ShapeId>> errors = BuilderRef.forOrderedSet();
+
+        public Builder() {}
+
+        private Builder(ServiceShape shape) {
+            shape.updateBuilder(this);
+            this.version = shape.introducedVersion;
+            this.rename.setBorrowed(shape.introducedRename);
+            this.errors.setBorrowed(shape.introducedErrors);
+            operations(shape.getIntroducedOperations());
+            resources(shape.getIntroducedResources());
+        }
 
         @Override
         public ServiceShape build() {

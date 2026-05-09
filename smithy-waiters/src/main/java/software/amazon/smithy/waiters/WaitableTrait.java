@@ -36,7 +36,7 @@ public final class WaitableTrait extends AbstractTrait implements ToSmithyBuilde
 
     @Override
     public Builder toBuilder() {
-        return new Builder().sourceLocation(getSourceLocation()).replace(waiters);
+        return new Builder(this);
     }
 
     /**
@@ -63,6 +63,11 @@ public final class WaitableTrait extends AbstractTrait implements ToSmithyBuilde
         private final BuilderRef<Map<String, Waiter>> waiters = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(WaitableTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.waiters.setBorrowed(trait.waiters);
+        }
 
         @Override
         public WaitableTrait build() {

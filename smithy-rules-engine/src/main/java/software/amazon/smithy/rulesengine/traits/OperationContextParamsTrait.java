@@ -48,9 +48,7 @@ public final class OperationContextParamsTrait extends AbstractTrait
 
     @Override
     public Builder toBuilder() {
-        return new Builder()
-                .sourceLocation(getSourceLocation())
-                .parameters(parameters);
+        return new Builder(this);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -78,6 +76,11 @@ public final class OperationContextParamsTrait extends AbstractTrait
         private final BuilderRef<Map<String, OperationContextParamDefinition>> parameters = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(OperationContextParamsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.parameters.setBorrowed(trait.parameters);
+        }
 
         public Builder parameters(Map<String, OperationContextParamDefinition> parameters) {
             this.parameters.clear();

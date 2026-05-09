@@ -68,14 +68,7 @@ public final class HttpMalformedRequestTestCase implements Tagged, ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
-                .id(getId())
-                .protocol(getProtocol())
-                .request(getRequest())
-                .response(getResponse())
-                .tags(getTags());
-        getDocumentation().ifPresent(builder::documentation);
-        return builder;
+        return new Builder(this);
     }
 
     public static Builder builder() {
@@ -95,6 +88,15 @@ public final class HttpMalformedRequestTestCase implements Tagged, ToSmithyBuild
         private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(HttpMalformedRequestTestCase testCase) {
+            this.documentation = testCase.documentation;
+            this.id = testCase.id;
+            this.protocol = testCase.protocol;
+            this.request = testCase.request;
+            this.response = testCase.response;
+            this.tags.setBorrowed(testCase.tags);
+        }
 
         public Builder documentation(String documentation) {
             this.documentation = documentation;

@@ -73,9 +73,7 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().sourceLocation(getSourceLocation());
-        builder.responses(responses);
-        return builder;
+        return new Builder(this);
     }
 
     @Override
@@ -93,6 +91,13 @@ public final class GatewayResponsesTrait extends AbstractTrait implements ToSmit
      */
     public static final class Builder extends AbstractTraitBuilder<GatewayResponsesTrait, Builder> {
         private final BuilderRef<Map<String, GatewayResponse>> responses = BuilderRef.forOrderedMap();
+
+        private Builder() {}
+
+        private Builder(GatewayResponsesTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.responses.setBorrowed(trait.responses);
+        }
 
         @Override
         public GatewayResponsesTrait build() {

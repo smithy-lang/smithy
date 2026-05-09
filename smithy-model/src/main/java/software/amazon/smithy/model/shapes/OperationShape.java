@@ -66,10 +66,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
     @Override
     public Builder toBuilder() {
-        return updateBuilder(builder())
-                .input(input)
-                .output(output)
-                .errors(getIntroducedErrorsSet());
+        return new Builder(this);
     }
 
     @Override
@@ -212,6 +209,15 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         private ShapeId input = UnitTypeTrait.UNIT;
         private ShapeId output = UnitTypeTrait.UNIT;
         private final BuilderRef<Set<ShapeId>> errors = BuilderRef.forOrderedSet();
+
+        private Builder() {}
+
+        private Builder(OperationShape shape) {
+            shape.updateBuilder(this);
+            this.input = shape.input;
+            this.output = shape.output;
+            this.errors.setBorrowed(shape.introducedErrors);
+        }
 
         @Override
         public ShapeType getShapeType() {

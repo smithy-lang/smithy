@@ -61,12 +61,7 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(sourceLocation)
-                .documentation(documentation)
-                .params(params)
-                .operationInputs(operationInputs)
-                .expect(expect);
+        return new Builder(this);
     }
 
     @Override
@@ -97,6 +92,14 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
         private EndpointTestExpectation expect;
 
         private Builder() {}
+
+        private Builder(EndpointTestCase testCase) {
+            this.sourceLocation = testCase.sourceLocation;
+            this.documentation = testCase.documentation;
+            this.params = testCase.params;
+            this.expect = testCase.expect;
+            this.operationInputs.setBorrowed(testCase.operationInputs);
+        }
 
         public Builder sourceLocation(FromSourceLocation sourceLocation) {
             this.sourceLocation = sourceLocation.getSourceLocation();
