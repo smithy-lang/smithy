@@ -2158,6 +2158,49 @@ entry:
 In the entry, ``providerARNs`` will be populated from the ``providerArns`` list
 from the trait.
 
+Per-operation scopes can be required by applying the
+:ref:`aws.auth#cognitoUserPoolsScopes-trait` to an operation. When scopes
+are present, Smithy emits a ``security`` requirement on the generated OpenAPI
+operation that uses the ``aws.auth.cognitoUserPools`` scheme name:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.auth#cognitoUserPools
+    use aws.auth#cognitoUserPoolsScopes
+    use aws.protocols#restJson1
+
+    @restJson1
+    @cognitoUserPools(
+        providerArns: ["arn:aws:cognito-idp:us-east-1:123:userpool/123"])
+    service Example {
+        version: "2019-06-17"
+        operations: [GetThing]
+    }
+
+    @cognitoUserPoolsScopes(["email", "profile"])
+    @http(method: "GET", uri: "/things")
+    operation GetThing {}
+
+The ``GetThing`` operation in the generated OpenAPI will include:
+
+.. code-block:: json
+
+    {
+        "security": [
+            {
+                "aws.auth.cognitoUserPools": [
+                    "email",
+                    "profile"
+                ]
+            }
+        ]
+    }
+
+Operations without the trait inherit the service-level security requirement.
+
 Amazon API Gateway API key usage plans
 ======================================
 
@@ -2316,73 +2359,6 @@ is converted to the following OpenAPI model:
     }
 
 
-.. _apigateway-authorization-scopes:
-
-Authorization scopes
-====================
-
-When an operation uses a `Cognito`_ authorizer, OAuth scopes can be added to
-the security requirement using the
-:ref:`aws.apigateway#authorizationScopes-trait`. The trait is applied
-alongside the :ref:`aws.apigateway#authorizer-trait` on an operation and
-specifies which scopes the caller must have.
-
-The following Smithy model requires the ``email`` and ``profile`` scopes
-on the ``GetUserProfile`` operation:
-
-.. code-block:: smithy
-
-    $version: "2"
-    namespace smithy.example
-
-    use aws.apigateway#authorizer
-    use aws.apigateway#authorizers
-    use aws.apigateway#authorizationScopes
-    use aws.auth#sigv4
-    use aws.protocols#restJson1
-
-    @restJson1
-    @sigv4(name: "service")
-    @authorizer("my-cognito-auth")
-    @authorizers(
-        "my-cognito-auth": {scheme: "aws.auth#sigv4", type: "cognito_user_pools"}
-    )
-    service Example {
-      version: "2019-06-17"
-      operations: [GetUserProfile]
-    }
-
-    @authorizer("my-cognito-auth")
-    @authorizationScopes(["email", "profile"])
-    @http(uri: "/profile", method: "GET")
-    operation GetUserProfile {}
-
-The scopes are included in the OpenAPI security requirement for the
-operation:
-
-.. code-block:: json
-
-    {
-        "paths": {
-            "/profile": {
-                "get": {
-                    "operationId": "GetUserProfile",
-                    "responses": {
-                        "200": {
-                            "description": "GetUserProfile response"
-                        }
-                    },
-                    "security": [
-                        {
-                            "my-cognito-auth": ["email", "profile"]
-                        }
-                    ]
-                }
-            }
-        }
-    }
-
-
 .. _other-traits:
 
 Other traits that influence API Gateway
@@ -2489,4 +2465,3 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
 .. _x-amazon-apigateway-security-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html
 .. _x-amazon-apigateway-endpoint-access-mode: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html
-.. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html

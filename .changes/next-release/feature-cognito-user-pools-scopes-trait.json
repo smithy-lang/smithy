@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `aws.auth#cognitoUserPoolsScopes` trait for specifying OAuth scopes on operations that use an Amazon Cognito User Pools authorizer. This replaces the short-lived `aws.apigateway#authorizationScopes` trait added in #3084, which has been removed.",
+  "pull_requests": [
+    "[#3109](https://github.com/smithy-lang/smithy/pull/3109)"
+  ]
+}

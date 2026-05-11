@@ -210,6 +210,61 @@ Trait value
     }
 
 
+.. smithy-trait:: aws.auth#cognitoUserPoolsScopes
+.. _aws.auth#cognitoUserPoolsScopes-trait:
+
+-----------------------------------------
+``aws.auth#cognitoUserPoolsScopes`` trait
+-----------------------------------------
+
+Trait summary
+    The ``aws.auth#cognitoUserPoolsScopes`` trait defines the list of
+    OAuth scopes required to invoke an operation that uses an
+    :ref:`aws.auth#cognitoUserPools-trait` authorizer.
+Trait selector
+    ``service[trait|aws.auth#cognitoUserPools] ~> operation``
+
+    *An operation in a service that has the ``aws.auth#cognitoUserPools``
+    trait applied.*
+Trait value
+    A list of ``string`` values.
+
+When the scopes list is non-empty, the generated OpenAPI operation emits a
+``security`` requirement that uses the ``aws.auth.cognitoUserPools`` security
+scheme name and carries the listed scopes. See :ref:`smithy-to-openapi` for
+details.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace aws.fooBaz
+
+    use aws.api#service
+    use aws.auth#cognitoUserPools
+    use aws.auth#cognitoUserPoolsScopes
+    use aws.protocols#restJson1
+
+    @service(sdkId: "Some Value")
+    @cognitoUserPools(
+        providerArns: ["arn:aws:cognito-idp:us-east-1:123:userpool/123"])
+    @restJson1
+    service FooBaz {
+        version: "2018-03-17"
+        operations: [GetThing]
+    }
+
+    @cognitoUserPoolsScopes(["email", "profile"])
+    @http(method: "GET", uri: "/things/{id}")
+    operation GetThing {
+        input := {
+            @httpLabel
+            @required
+            id: String
+        }
+    }
+
+
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
 .. _AWS Signature Version 4 Asymmetric (SigV4A): https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html#how-sigv4a-works
 .. _credential scope: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html

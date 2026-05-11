@@ -584,72 +584,6 @@ endpoint access mode:
     This trait should be considered internal-only and not exposed to your
     customers.
 
-.. smithy-trait:: aws.apigateway#authorizationScopes
-.. _aws.apigateway#authorizationScopes-trait:
-
---------------------------------------------
-``aws.apigateway#authorizationScopes`` trait
---------------------------------------------
-
-Summary
-    Defines the list of OAuth scopes required for an API Gateway operation
-    that uses a `Cognito`_ authorizer. Applied alongside the
-    :ref:`aws.apigateway#authorizer-trait` to specify which scopes the
-    caller must have.
-Trait selector
-    ``operation[trait|aws.apigateway#authorizer]``
-
-    *An operation with the aws.apigateway#authorizer trait applied*
-Value type
-    ``list`` of ``string``
-See also
-    - `Control access using Cognito user pools`_ for more information on
-      how scopes work with Cognito authorizers
-
-.. note::
-
-    Authorization scopes are only supported with ``COGNITO_USER_POOLS``
-    authorizers. API Gateway validates the scope values at import time.
-
-The following example requires the ``email`` and ``profile`` scopes on an
-operation that uses a Cognito authorizer:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#authorizer
-    use aws.apigateway#authorizers
-    use aws.apigateway#authorizationScopes
-    use aws.auth#sigv4
-
-    @sigv4(name: "service")
-    @authorizer("my-cognito-auth")
-    @authorizers(
-        "my-cognito-auth": {
-            scheme: "aws.auth#sigv4"
-            type: "cognito_user_pools"
-        }
-    )
-    service MyService {
-      version: "2024-01-01"
-      operations: [GetUserProfile]
-    }
-
-    @authorizer("my-cognito-auth")
-    @authorizationScopes(["email", "profile"])
-    operation GetUserProfile {
-        input := {}
-        output := {}
-    }
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
-
 .. smithy-trait:: aws.apigateway#integration
 .. _aws.apigateway#integration-trait:
 
@@ -1334,5 +1268,3 @@ integration response to two ``header`` parameters of the method response.
 .. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
 .. _API endpoint types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html
 .. _endpoint IDs: https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints
-.. _Control access using Cognito user pools: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html
-.. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
