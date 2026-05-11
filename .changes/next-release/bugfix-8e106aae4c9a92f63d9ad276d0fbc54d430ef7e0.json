@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed an issue where jsonName wasn't applied to examples in OpenAPI for restJson1",
+  "pull_requests": [
+    "[#3108](https://github.com/smithy-lang/smithy/pull/3108)"
+  ]
+}
