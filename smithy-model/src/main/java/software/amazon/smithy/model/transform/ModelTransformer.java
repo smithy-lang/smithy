@@ -38,9 +38,15 @@ import software.amazon.smithy.utils.ListUtils;
  */
 public final class ModelTransformer {
     private final List<ModelTransformerPlugin> plugins;
+    private final ClassLoader classLoader;
 
     private ModelTransformer(List<ModelTransformerPlugin> plugins) {
+        this(plugins, null);
+    }
+
+    private ModelTransformer(List<ModelTransformerPlugin> plugins, ClassLoader classLoader) {
         this.plugins = ListUtils.copyOf(plugins);
+        this.classLoader = classLoader;
     }
 
     /**
@@ -83,7 +89,11 @@ public final class ModelTransformer {
      * @return Returns the created ModelTransformer.
      */
     public static ModelTransformer createWithServiceProviders(ClassLoader classLoader) {
-        return createWithServiceLoader(ServiceLoader.load(ModelTransformerPlugin.class, classLoader));
+        ServiceLoader<ModelTransformerPlugin> serviceLoader =
+                ServiceLoader.load(ModelTransformerPlugin.class, classLoader);
+        List<ModelTransformerPlugin> plugins = new ArrayList<>();
+        serviceLoader.forEach(plugins::add);
+        return new ModelTransformer(plugins, classLoader);
     }
 
     /**
@@ -145,7 +155,10 @@ public final class ModelTransformer {
             Model model,
             Map<ShapeId, ShapeId> renamed
     ) {
-        return this.renameShapes(model, renamed, () -> Model.assembler().disableValidation());
+        Supplier<ModelAssembler> supplier = classLoader == null
+                ? () -> Model.assembler().disableValidation()
+                : () -> Model.assembler(classLoader).disableValidation();
+        return this.renameShapes(model, renamed, supplier);
     }
 
     /**

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -423,5 +426,28 @@ public class RenameShapesTest {
 
         assertThat(model2.expectShape(originalBoxedId).getAllTraits(),
                 equalTo(model1.expectShape(originalBoxedId).getAllTraits()));
+    }
+
+    @Test
+    public void renameShapesUsesStoredClassLoaderForTraitResolution() {
+        ShapeId from = ShapeId.from("ns.foo#MyString");
+        ShapeId to = ShapeId.from("ns.foo#NewString");
+        StringShape stringShape = StringShape.builder()
+                .id(from)
+                .addTrait(DeprecatedTrait.builder().build())
+                .build();
+        Model model = Model.builder().addShape(stringShape).build();
+
+        // Sanity check: the trait is initially the typed class.
+        assertTrue(model.expectShape(from).getTrait(DeprecatedTrait.class).isPresent());
+
+        // An empty class loader (null parent) sees no TraitService providers.
+        ClassLoader empty = new URLClassLoader(new java.net.URL[] {}, null);
+        ModelTransformer transformer = ModelTransformer.createWithServiceProviders(empty);
+
+        Model result = transformer.renameShapes(model, Collections.singletonMap(from, to));
+
+        Trait raw = result.expectShape(to).getAllTraits().get(DeprecatedTrait.ID);
+        assertThat(raw.getClass().getName(), equalTo(DynamicTrait.class.getName()));
     }
 }
