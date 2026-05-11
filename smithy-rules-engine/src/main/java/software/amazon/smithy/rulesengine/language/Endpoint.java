@@ -160,7 +160,7 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        return builder().sourceLocation(sourceLocation).url(url).headers(headers).properties(properties);
+        return new Builder(this);
     }
 
     @Override
@@ -261,6 +261,13 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
+        }
+
+        private Builder(Endpoint endpoint) {
+            super(endpoint.sourceLocation);
+            this.url = endpoint.url;
+            this.headers.setBorrowed(endpoint.headers);
+            this.properties.setBorrowed(endpoint.properties);
         }
 
         public Builder url(Expression url) {

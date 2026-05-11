@@ -81,6 +81,20 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
     void clear();
 
     /**
+     * Sets a borrowed (immutable) value directly, clearing any owned state.
+     *
+     * <p>This enables the {@code toBuilder()} optimization: when creating a
+     * builder from an existing built object, the already-immutable collections
+     * can be set directly without copying. A copy will only be made if the
+     * builder actually mutates the value via {@link #get()}.
+     *
+     * @param value The immutable value to borrow. May be {@code null} to clear.
+     */
+    default void setBorrowed(T value) {
+        throw new UnsupportedOperationException("setBorrowed");
+    }
+
+    /**
      * Creates a builder reference to an unordered map.
      *
      * @param <K> Type of key of the map.
@@ -89,7 +103,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <K, V> BuilderRef<Map<K, V>> forUnorderedMap() {
         return new DefaultBuilderRef<>(HashMap::new,
-                HashMap::new,
+                source -> {
+                    Map<K, V> copy = new HashMap<>((int) (source.size() / 0.75f + 1));
+                    for (Map.Entry<K, V> entry : source.entrySet()) {
+                        copy.put(entry.getKey(), entry.getValue());
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableMap,
                 Collections::emptyMap);
     }
@@ -103,7 +123,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <K, V> BuilderRef<Map<K, V>> forOrderedMap() {
         return new DefaultBuilderRef<>(LinkedHashMap::new,
-                LinkedHashMap::new,
+                source -> {
+                    Map<K, V> copy = new LinkedHashMap<>((int) (source.size() / 0.75f + 1));
+                    for (Map.Entry<K, V> entry : source.entrySet()) {
+                        copy.put(entry.getKey(), entry.getValue());
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableMap,
                 Collections::emptyMap);
     }
@@ -117,7 +143,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <K, V> BuilderRef<Map<K, V>> forSortedMap() {
         return new DefaultBuilderRef<>(TreeMap::new,
-                TreeMap::new,
+                source -> {
+                    Map<K, V> copy = new TreeMap<>();
+                    for (Map.Entry<K, V> entry : source.entrySet()) {
+                        copy.put(entry.getKey(), entry.getValue());
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableMap,
                 Collections::emptyMap);
     }
@@ -135,7 +167,9 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
                 () -> new TreeMap<>(comparator),
                 source -> {
                     Map<K, V> copy = new TreeMap<>(comparator);
-                    copy.putAll(source);
+                    for (Map.Entry<K, V> entry : source.entrySet()) {
+                        copy.put(entry.getKey(), entry.getValue());
+                    }
                     return copy;
                 },
                 Collections::unmodifiableMap,
@@ -150,7 +184,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <T> BuilderRef<List<T>> forList() {
         return new DefaultBuilderRef<>(ArrayList::new,
-                ArrayList::new,
+                source -> {
+                    List<T> copy = new ArrayList<>(source.size());
+                    for (T item : source) {
+                        copy.add(item);
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableList,
                 Collections::emptyList);
     }
@@ -163,7 +203,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <T> BuilderRef<Set<T>> forUnorderedSet() {
         return new DefaultBuilderRef<>(HashSet::new,
-                HashSet::new,
+                source -> {
+                    Set<T> copy = new HashSet<>((int) (source.size() / 0.75f + 1));
+                    for (T item : source) {
+                        copy.add(item);
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableSet,
                 Collections::emptySet);
     }
@@ -176,7 +222,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <T> BuilderRef<Set<T>> forOrderedSet() {
         return new DefaultBuilderRef<>(LinkedHashSet::new,
-                LinkedHashSet::new,
+                source -> {
+                    Set<T> copy = new LinkedHashSet<>((int) (source.size() / 0.75f + 1));
+                    for (T item : source) {
+                        copy.add(item);
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableSet,
                 Collections::emptySet);
     }
@@ -189,7 +241,13 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
      */
     static <T> BuilderRef<Set<T>> forSortedSet() {
         return new DefaultBuilderRef<>(TreeSet::new,
-                TreeSet::new,
+                source -> {
+                    Set<T> copy = new TreeSet<>();
+                    for (T item : source) {
+                        copy.add(item);
+                    }
+                    return copy;
+                },
                 Collections::unmodifiableSet,
                 Collections::emptySet);
     }
@@ -206,7 +264,9 @@ public interface BuilderRef<T> extends CopyOnWriteRef<T> {
                 () -> new TreeSet<>(comparator),
                 source -> {
                     Set<T> copy = new TreeSet<>(comparator);
-                    copy.addAll(source);
+                    for (T item : source) {
+                        copy.add(item);
+                    }
                     return copy;
                 },
                 Collections::unmodifiableSet,

@@ -74,9 +74,7 @@ public final class RequestCompressionTrait extends AbstractTrait implements ToSm
 
     @Override
     public Builder toBuilder() {
-        return new Builder()
-                .sourceLocation(getSourceLocation())
-                .encodings(encodings);
+        return new Builder(this);
     }
 
     public static final class Builder
@@ -84,6 +82,11 @@ public final class RequestCompressionTrait extends AbstractTrait implements ToSm
         private final BuilderRef<List<String>> encodings = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(RequestCompressionTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.encodings.setBorrowed(trait.encodings);
+        }
 
         @Override
         public RequestCompressionTrait build() {

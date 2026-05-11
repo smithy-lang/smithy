@@ -158,11 +158,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .parameters(parameters)
-                .rules(rules)
-                .version(version);
+        return new Builder(this);
     }
 
     @Override
@@ -261,6 +257,13 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
          */
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
+        }
+
+        private Builder(EndpointRuleSet ruleSet) {
+            super(ruleSet.sourceLocation);
+            this.parameters = ruleSet.parameters;
+            this.version = ruleSet.version;
+            this.rules.setBorrowed(ruleSet.rules);
         }
 
         /**

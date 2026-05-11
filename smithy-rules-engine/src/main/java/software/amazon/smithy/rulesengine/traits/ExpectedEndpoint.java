@@ -56,11 +56,7 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(sourceLocation)
-                .url(url)
-                .headers(headers)
-                .properties(properties);
+        return new Builder(this);
     }
 
     @Override
@@ -109,6 +105,13 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         private String url;
 
         private Builder() {}
+
+        private Builder(ExpectedEndpoint endpoint) {
+            this.sourceLocation = endpoint.sourceLocation;
+            this.url = endpoint.url;
+            this.headers.setBorrowed(endpoint.headers);
+            this.properties.setBorrowed(endpoint.properties);
+        }
 
         public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
             this.sourceLocation = fromSourceLocation.getSourceLocation();

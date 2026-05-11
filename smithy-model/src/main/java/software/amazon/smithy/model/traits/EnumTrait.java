@@ -93,11 +93,7 @@ public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrai
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().sourceLocation(getSourceLocation());
-        for (EnumDefinition definition : definitions) {
-            builder.addEnum(definition);
-        }
-        return builder;
+        return new Builder(this);
     }
 
     /**
@@ -112,6 +108,13 @@ public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrai
      */
     public static class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
         private final BuilderRef<List<EnumDefinition>> definitions = BuilderRef.forList();
+
+        protected Builder() {}
+
+        private Builder(EnumTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.definitions.setBorrowed(trait.definitions);
+        }
 
         public Builder addEnum(EnumDefinition value) {
             definitions.get().add(value);

@@ -61,10 +61,7 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .version(version)
-                .testCases(testCases);
+        return new Builder(this);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -83,6 +80,12 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
         private String version;
 
         private Builder() {}
+
+        private Builder(EndpointTestsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.version = trait.version;
+            this.testCases.setBorrowed(trait.testCases);
+        }
 
         public Builder version(String version) {
             this.version = version;

@@ -167,17 +167,7 @@ public final class Event implements ToSmithyBuilder<Event> {
 
     @Override
     public SmithyBuilder<Event> toBuilder() {
-        return new Builder()
-                .type(type)
-                .params(params)
-                .headers(headers)
-                .forbidHeaders(forbidHeaders)
-                .requireHeaders(requireHeaders)
-                .body(body)
-                .bodyMediaType(bodyMediaType)
-                .bytes(bytes)
-                .vendorParams(vendorParams)
-                .vendorParamsShape(vendorParamsShape);
+        return new Builder(this);
     }
 
     /**
@@ -232,6 +222,21 @@ public final class Event implements ToSmithyBuilder<Event> {
         private byte[] bytes;
         private ObjectNode vendorParams;
         private ShapeId vendorParamsShape;
+
+        private Builder() {}
+
+        private Builder(Event event) {
+            this.type = event.type;
+            this.params = event.params;
+            this.body = event.body;
+            this.bodyMediaType = event.bodyMediaType;
+            this.bytes = event.bytes;
+            this.vendorParams = event.vendorParams;
+            this.vendorParamsShape = event.vendorParamsShape;
+            this.headers.setBorrowed(event.headers);
+            this.forbidHeaders.setBorrowed(event.forbidHeaders);
+            this.requireHeaders.setBorrowed(event.requireHeaders);
+        }
 
         @Override
         public Event build() {

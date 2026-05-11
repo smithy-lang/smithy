@@ -211,13 +211,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
-                .sourceLocation(getSourceLocation())
-                .selector(selector)
-                .structurallyExclusive(structurallyExclusive)
-                .breakingChanges(breakingChanges);
-        conflicts.forEach(builder::addConflict);
-        return builder;
+        return new Builder(this);
     }
 
     /**
@@ -327,6 +321,14 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         private final BuilderRef<List<BreakingChangeRule>> breakingChanges = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(TraitDefinition trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.selector = trait.selector;
+            this.structurallyExclusive = trait.structurallyExclusive;
+            this.conflicts.setBorrowed(trait.conflicts);
+            this.breakingChanges.setBorrowed(trait.breakingChanges);
+        }
 
         public Builder selector(Selector selector) {
             this.selector = selector;

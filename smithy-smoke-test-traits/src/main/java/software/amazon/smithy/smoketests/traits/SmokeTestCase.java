@@ -140,13 +140,7 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .id(this.getId())
-                .params(this.getParams().orElse(null))
-                .vendorParams(this.getVendorParams().orElse(null))
-                .vendorParamsShape(this.getVendorParamsShape().orElse(null))
-                .expectation(this.getExpectation())
-                .tags(this.getTags());
+        return new Builder(this);
     }
 
     @Override
@@ -192,6 +186,15 @@ public final class SmokeTestCase implements Tagged, ToNode, ToSmithyBuilder<Smok
         private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(SmokeTestCase testCase) {
+            this.id = testCase.id;
+            this.params = testCase.params;
+            this.vendorParams = testCase.vendorParams;
+            this.vendorParamsShape = testCase.vendorParamsShape;
+            this.expectation = testCase.expectation;
+            this.tags.setBorrowed(testCase.tags);
+        }
 
         /**
          * Sets the smoke test case ID.

@@ -71,10 +71,7 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .traits(traits)
-                .noInlineDocumentSupport(noInlineDocumentSupport);
+        return new Builder(this);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -97,6 +94,14 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
     public static final class Builder extends AbstractTraitBuilder<ProtocolDefinitionTrait, Builder> {
         private final BuilderRef<List<ShapeId>> traits = BuilderRef.forList();
         private boolean noInlineDocumentSupport;
+
+        private Builder() {}
+
+        private Builder(ProtocolDefinitionTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.noInlineDocumentSupport = trait.noInlineDocumentSupport;
+            this.traits.setBorrowed(trait.traits);
+        }
 
         @Override
         public ProtocolDefinitionTrait build() {

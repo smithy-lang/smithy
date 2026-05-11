@@ -152,13 +152,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .passThroughBehavior(passThroughBehavior)
-                .contentHandling(contentHandling)
-                .requestParameters(requestParameters)
-                .requestTemplates(requestTemplates)
-                .responses(responses);
+        return new Builder(this);
     }
 
     public static final class Builder extends AbstractTraitBuilder<MockIntegrationTrait, Builder> {
@@ -167,6 +161,17 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         private final BuilderRef<Map<String, String>> requestParameters = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, String>> requestTemplates = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, IntegrationResponse>> responses = BuilderRef.forOrderedMap();
+
+        private Builder() {}
+
+        private Builder(MockIntegrationTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.passThroughBehavior = trait.passThroughBehavior;
+            this.contentHandling = trait.contentHandling;
+            this.requestParameters.setBorrowed(trait.requestParameters);
+            this.requestTemplates.setBorrowed(trait.requestTemplates);
+            this.responses.setBorrowed(trait.responses);
+        }
 
         @Override
         public MockIntegrationTrait build() {

@@ -179,21 +179,7 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
      */
     @Override
     public Builder toBuilder() {
-        return builder()
-                .id(id)
-                .protocol(protocol)
-                .initialRequestParams(initialRequestParams)
-                .initialRequest(initialRequest)
-                .initialRequestShape(initialRequestShape)
-                .initialResponseParams(initialResponseParams)
-                .initialResponse(initialResponse)
-                .initialResponseShape(initialResponseShape)
-                .events(events)
-                .expectation(expectation)
-                .vendorParams(vendorParams)
-                .vendorParamsShape(vendorParamsShape)
-                .documentation(documentation)
-                .appliesTo(appliesTo);
+        return new Builder(this);
     }
 
     /**
@@ -263,6 +249,26 @@ public final class EventStreamTestCase implements ToSmithyBuilder<EventStreamTes
         private String documentation;
         private AppliesTo appliesTo;
         private final BuilderRef<List<String>> tags = BuilderRef.forList();
+
+        private Builder() {}
+
+        private Builder(EventStreamTestCase testCase) {
+            this.id = testCase.id;
+            this.protocol = testCase.protocol;
+            this.initialRequestParams = testCase.initialRequestParams;
+            this.initialRequest = testCase.initialRequest;
+            this.initialRequestShape = testCase.initialRequestShape;
+            this.initialResponseParams = testCase.initialResponseParams;
+            this.initialResponse = testCase.initialResponse;
+            this.initialResponseShape = testCase.initialResponseShape;
+            this.expectation = testCase.expectation;
+            this.vendorParams = testCase.vendorParams;
+            this.vendorParamsShape = testCase.vendorParamsShape;
+            this.documentation = testCase.documentation;
+            this.appliesTo = testCase.appliesTo;
+            this.events.setBorrowed(testCase.events);
+            this.tags.setBorrowed(testCase.tags);
+        }
 
         @Override
         public EventStreamTestCase build() {

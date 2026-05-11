@@ -66,7 +66,7 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
 
     @Override
     public Builder toBuilder() {
-        return builder().sourceLocation(getSourceLocation()).providerArns(providerArns);
+        return new Builder(this);
     }
 
     @Override
@@ -82,6 +82,11 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
         private final BuilderRef<List<String>> providerArns = BuilderRef.forList();
 
         private Builder() {}
+
+        private Builder(CognitoUserPoolsTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.providerArns.setBorrowed(trait.providerArns);
+        }
 
         @Override
         public CognitoUserPoolsTrait build() {

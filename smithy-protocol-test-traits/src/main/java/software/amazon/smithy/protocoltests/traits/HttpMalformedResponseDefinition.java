@@ -71,11 +71,7 @@ public final class HttpMalformedResponseDefinition implements ToNode, ToSmithyBu
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
-                .headers(getHeaders())
-                .code(getCode());
-        getBody().ifPresent(builder::body);
-        return builder;
+        return new Builder(this);
     }
 
     public static Builder builder() {
@@ -92,6 +88,12 @@ public final class HttpMalformedResponseDefinition implements ToNode, ToSmithyBu
         private final BuilderRef<Map<String, String>> headers = BuilderRef.forOrderedMap();
 
         private Builder() {}
+
+        private Builder(HttpMalformedResponseDefinition def) {
+            this.body = def.body;
+            this.code = def.code;
+            this.headers.setBorrowed(def.headers);
+        }
 
         public Builder body(HttpMalformedResponseBodyDefinition body) {
             this.body = body;

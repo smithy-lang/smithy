@@ -861,9 +861,7 @@ public final class Model implements ToSmithyBuilder<Model> {
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .metadata(getMetadata())
-                .addShapes(this);
+        return new Builder(this);
     }
 
     /**
@@ -926,6 +924,11 @@ public final class Model implements ToSmithyBuilder<Model> {
         private final BuilderRef<Map<ShapeId, Shape>> shapeMap = BuilderRef.forUnorderedMap();
 
         private Builder() {}
+
+        private Builder(Model model) {
+            this.shapeMap.setBorrowed(model.shapeMap);
+            this.metadata.setBorrowed(model.metadata);
+        }
 
         public Builder metadata(Map<String, Node> metadata) {
             clearMetadata();

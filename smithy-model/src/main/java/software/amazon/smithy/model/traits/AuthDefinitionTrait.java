@@ -55,7 +55,7 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
 
     @Override
     public Builder toBuilder() {
-        return builder().sourceLocation(getSourceLocation()).traits(traits);
+        return new Builder(this);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -75,6 +75,13 @@ public final class AuthDefinitionTrait extends AbstractTrait implements ToSmithy
 
     public static final class Builder extends AbstractTraitBuilder<AuthDefinitionTrait, Builder> {
         private final BuilderRef<List<ShapeId>> traits = BuilderRef.forList();
+
+        private Builder() {}
+
+        private Builder(AuthDefinitionTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.traits.setBorrowed(trait.traits);
+        }
 
         @Override
         public AuthDefinitionTrait build() {

@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added copy-on-write optimization for `toBuilder()` via `BuilderRef.setBorrowed`",
+  "pull_requests": [
+    "[#3107](https://github.com/smithy-lang/smithy/pull/3107)"
+  ]
+}
