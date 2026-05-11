@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Fixed trait codegen to generate more specific return type for trait provider",
+  "pull_requests": [
+    "[#3087](https://github.com/smithy-lang/smithy/pull/3087)"
+  ]
+}

@@ -22,7 +22,6 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -75,7 +74,7 @@ final class ProviderGenerator implements Runnable {
                         writer.override();
                         writer.openBlock("public $T createTrait($T target, $T value) {",
                                 "}",
-                                Trait.class,
+                                traitSymbol,
                                 ShapeId.class,
                                 Node.class,
                                 () -> writer.write("return new $T(value);", traitSymbol));
@@ -157,7 +156,7 @@ final class ProviderGenerator implements Runnable {
                         writer.override();
                         writer.openBlock("public $T createTrait($T target, $T value) {",
                                 "}",
-                                Trait.class,
+                                traitSymbol,
                                 ShapeId.class,
                                 Node.class,
                                 () -> {
@@ -181,7 +180,7 @@ final class ProviderGenerator implements Runnable {
                         writer.override();
                         writer.openBlock("public $T createTrait($T target, $T value) {",
                                 "}",
-                                Trait.class,
+                                traitSymbol,
                                 ShapeId.class,
                                 Node.class,
                                 () -> writer.write("return new $1T($2C, value.getSourceLocation());",

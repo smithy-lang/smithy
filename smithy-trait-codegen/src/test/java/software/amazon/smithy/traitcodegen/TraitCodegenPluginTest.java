@@ -5,6 +5,7 @@
 package software.amazon.smithy.traitcodegen;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,6 +68,18 @@ public class TraitCodegenPluginTest {
         assertThat(fileList,
                 hasItem(
                         Paths.get("/com/example/traits/nested/NestedNamespaceStruct.java").toString()));
+
+        assertThat(
+                manifest.getFileString("/com/example/traits/nested/NestedNamespaceTrait.java").get(),
+                containsString("public NestedNamespaceTrait createTrait(ShapeId target, Node value) {"));
+
+        assertThat(
+                manifest.getFileString("/com/example/traits/documents/DocumentTrait.java").get(),
+                containsString("public DocumentTrait createTrait(ShapeId target, Node value) {"));
+
+        assertThat(
+                manifest.getFileString("/com/example/traits/numbers/IntegerTrait.java").get(),
+                containsString("public IntegerTrait createTrait(ShapeId target, Node value) {"));
     }
 
     @Test
