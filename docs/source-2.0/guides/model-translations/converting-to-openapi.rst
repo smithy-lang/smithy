@@ -2542,4 +2542,5 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
 .. _x-amazon-apigateway-security-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html
 .. _x-amazon-apigateway-endpoint-access-mode: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html
+.. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
 .. _Cognito: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html

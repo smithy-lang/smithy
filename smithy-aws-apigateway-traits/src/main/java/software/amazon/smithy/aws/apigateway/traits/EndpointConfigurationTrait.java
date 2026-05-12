@@ -13,6 +13,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -32,8 +33,8 @@ public final class EndpointConfigurationTrait extends AbstractTrait
 
     private EndpointConfigurationTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        types = SmithyBuilder.requiredState("types", builder.types);
-        vpcEndpointIds = builder.vpcEndpointIds;
+        types = SmithyBuilder.requiredState("types", builder.types.copy());
+        vpcEndpointIds = builder.vpcEndpointIds.hasValue() ? builder.vpcEndpointIds.copy() : null;
         disableExecuteApiEndpoint = builder.disableExecuteApiEndpoint;
         ipAddressType = builder.ipAddressType;
     }
@@ -109,19 +110,26 @@ public final class EndpointConfigurationTrait extends AbstractTrait
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .types(types)
-                .vpcEndpointIds(vpcEndpointIds)
-                .disableExecuteApiEndpoint(disableExecuteApiEndpoint)
-                .ipAddressType(ipAddressType);
+        return new Builder(this);
     }
 
     public static final class Builder extends AbstractTraitBuilder<EndpointConfigurationTrait, Builder> {
-        private List<String> types;
-        private List<String> vpcEndpointIds;
+        private final BuilderRef<List<String>> types = BuilderRef.forList();
+        private final BuilderRef<List<String>> vpcEndpointIds = BuilderRef.forList();
         private Boolean disableExecuteApiEndpoint;
         private String ipAddressType;
+
+        private Builder() {}
+
+        private Builder(EndpointConfigurationTrait trait) {
+            sourceLocation(trait.getSourceLocation());
+            this.types.setBorrowed(trait.types);
+            if (trait.vpcEndpointIds != null) {
+                this.vpcEndpointIds.setBorrowed(trait.vpcEndpointIds);
+            }
+            this.disableExecuteApiEndpoint = trait.disableExecuteApiEndpoint;
+            this.ipAddressType = trait.ipAddressType;
+        }
 
         @Override
         public EndpointConfigurationTrait build() {
@@ -135,7 +143,29 @@ public final class EndpointConfigurationTrait extends AbstractTrait
          * @return Returns the builder.
          */
         public Builder types(List<String> types) {
-            this.types = types;
+            clearTypes();
+            this.types.get().addAll(types);
+            return this;
+        }
+
+        /**
+         * Adds an endpoint type.
+         *
+         * @param type The endpoint type to add.
+         * @return Returns the builder.
+         */
+        public Builder addType(String type) {
+            this.types.get().add(type);
+            return this;
+        }
+
+        /**
+         * Clears all of the endpoint types in the builder.
+         *
+         * @return Returns the builder.
+         */
+        public Builder clearTypes() {
+            this.types.clear();
             return this;
         }
 
@@ -146,7 +176,31 @@ public final class EndpointConfigurationTrait extends AbstractTrait
          * @return Returns the builder.
          */
         public Builder vpcEndpointIds(List<String> vpcEndpointIds) {
-            this.vpcEndpointIds = vpcEndpointIds;
+            clearVpcEndpointIds();
+            if (vpcEndpointIds != null) {
+                this.vpcEndpointIds.get().addAll(vpcEndpointIds);
+            }
+            return this;
+        }
+
+        /**
+         * Adds a VPC endpoint ID.
+         *
+         * @param vpcEndpointId The VPC endpoint ID to add.
+         * @return Returns the builder.
+         */
+        public Builder addVpcEndpointId(String vpcEndpointId) {
+            this.vpcEndpointIds.get().add(vpcEndpointId);
+            return this;
+        }
+
+        /**
+         * Clears all of the VPC endpoint IDs in the builder.
+         *
+         * @return Returns the builder.
+         */
+        public Builder clearVpcEndpointIds() {
+            this.vpcEndpointIds.clear();
             return this;
         }
 
