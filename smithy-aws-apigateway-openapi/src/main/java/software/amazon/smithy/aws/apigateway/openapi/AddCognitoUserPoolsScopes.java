@@ -52,13 +52,11 @@ final class AddCognitoUserPoolsScopes implements ApiGatewayMapper {
             return operation;
         }
 
-        List<String> scopes = shape.getTrait(CognitoUserPoolsScopesTrait.class)
-                .map(CognitoUserPoolsScopesTrait::getValues)
-                .orElse(ListUtils.of());
-
-        if (scopes.isEmpty()) {
+        if (!shape.hasTrait(CognitoUserPoolsScopesTrait.ID)) {
             return operation;
         }
+        
+        List<String> scopes = shape.expectTrait(CognitoUserPoolsScopesTrait.class).getValues();
 
         // Only emit a scoped security requirement when Cognito is actually an
         // effective auth scheme for this operation. This respects operations
