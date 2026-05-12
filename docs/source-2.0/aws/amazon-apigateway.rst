@@ -493,11 +493,10 @@ supports the following members:
       - Whether clients can invoke the API using the default
         ``execute-api`` endpoint.
     * - ipAddressType
-      - ``string``
-      - The IP address type that can invoke the API. Valid values are
-        ``ipv4`` and ``dualstack``. For the ``PRIVATE`` endpoint type,
-        only ``dualstack`` is supported. See `IP address types for REST APIs`_
-        for details.
+      - ``string`` enum (``ipv4`` or ``dualstack``)
+      - The IP address type that can invoke the API. For the ``PRIVATE``
+        endpoint type, only ``dualstack`` is supported. See
+        `IP address types for REST APIs`_ for details.
 
 The following example configures a private API with a VPC endpoint and
 disables the default endpoint:
