@@ -191,6 +191,12 @@ structure endpointConfiguration {
     /// Whether clients can invoke the API using the default execute-api
     /// endpoint.
     disableExecuteApiEndpoint: Boolean
+
+    /// The IP address type that can invoke the API. Use `ipv4` to allow
+    /// only IPv4 addresses. Use `dualstack` to allow both IPv4 and IPv6
+    /// addresses. For the `PRIVATE` endpoint type, only `dualstack` is
+    /// supported.
+    ipAddressType: String
 }
 
 /// Defines the minimum payload size in bytes at which compression is applied on an API Gateway REST API.

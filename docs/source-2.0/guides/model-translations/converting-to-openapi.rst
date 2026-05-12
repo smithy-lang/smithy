@@ -2122,6 +2122,7 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 - ``paths/*/*/x-amazon-apigateway-integration/connectionId``
 - ``paths/*/*/x-amazon-apigateway-integration/credentials``
 - ``paths/*/*/x-amazon-apigateway-integration/uri``
+- ``x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*``
 
 .. note::
 
@@ -2313,6 +2314,58 @@ is converted to the following OpenAPI model:
         },
         "x-amazon-apigateway-security-policy": "TLS_1_2",
         "x-amazon-apigateway-endpoint-access-mode": "STRICT"
+    }
+
+
+.. _apigateway-endpoint-configuration:
+
+Endpoint configuration
+======================
+
+The endpoint configuration for an API Gateway REST API can be set using the
+:ref:`aws.apigateway#endpointConfiguration-trait`. Smithy writes the
+``vpcEndpointIds`` and ``disableExecuteApiEndpoint`` values to the
+`x-amazon-apigateway-endpoint-configuration`_ extension in the generated
+OpenAPI document. The ``types`` and ``ipAddressType`` members are not part
+of this extension and are configured outside of the OpenAPI document at
+API import time.
+
+The following Smithy model configures a private API with VPC endpoints and
+disables the default ``execute-api`` endpoint:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use aws.apigateway#endpointConfiguration
+    use aws.protocols#restJson1
+
+    @restJson1
+    @endpointConfiguration(
+        types: ["PRIVATE"]
+        vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
+        disableExecuteApiEndpoint: true
+        ipAddressType: "dualstack"
+    )
+    service Example {
+      version: "2019-06-17"
+    }
+
+is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "x-amazon-apigateway-endpoint-configuration": {
+            "vpcEndpointIds": ["vpce-0212a4ababd5b8c3e"],
+            "disableExecuteApiEndpoint": true
+        }
     }
 
 

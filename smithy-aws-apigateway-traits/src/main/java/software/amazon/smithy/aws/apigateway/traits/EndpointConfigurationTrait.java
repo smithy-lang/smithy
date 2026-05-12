@@ -18,8 +18,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines the endpoint configuration for an API Gateway REST API, including
- * the endpoint type, VPC endpoint IDs, and whether the default execute-api
- * endpoint is disabled.
+ * the endpoint type, VPC endpoint IDs, whether the default execute-api
+ * endpoint is disabled, and the IP address type.
  */
 public final class EndpointConfigurationTrait extends AbstractTrait
         implements ToSmithyBuilder<EndpointConfigurationTrait> {
@@ -28,12 +28,14 @@ public final class EndpointConfigurationTrait extends AbstractTrait
     private final List<String> types;
     private final List<String> vpcEndpointIds;
     private final Boolean disableExecuteApiEndpoint;
+    private final String ipAddressType;
 
     private EndpointConfigurationTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         types = SmithyBuilder.requiredState("types", builder.types);
         vpcEndpointIds = builder.vpcEndpointIds;
         disableExecuteApiEndpoint = builder.disableExecuteApiEndpoint;
+        ipAddressType = builder.ipAddressType;
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -86,6 +88,17 @@ public final class EndpointConfigurationTrait extends AbstractTrait
         return Optional.ofNullable(disableExecuteApiEndpoint);
     }
 
+    /**
+     * Gets the IP address type that can invoke the API.
+     *
+     * <p>Supported values are {@code ipv4} and {@code dualstack}.
+     *
+     * @return Returns the optional IP address type.
+     */
+    public Optional<String> getIpAddressType() {
+        return Optional.ofNullable(ipAddressType);
+    }
+
     @Override
     protected ObjectNode createNode() {
         NodeMapper mapper = new NodeMapper();
@@ -100,13 +113,15 @@ public final class EndpointConfigurationTrait extends AbstractTrait
                 .sourceLocation(getSourceLocation())
                 .types(types)
                 .vpcEndpointIds(vpcEndpointIds)
-                .disableExecuteApiEndpoint(disableExecuteApiEndpoint);
+                .disableExecuteApiEndpoint(disableExecuteApiEndpoint)
+                .ipAddressType(ipAddressType);
     }
 
     public static final class Builder extends AbstractTraitBuilder<EndpointConfigurationTrait, Builder> {
         private List<String> types;
         private List<String> vpcEndpointIds;
         private Boolean disableExecuteApiEndpoint;
+        private String ipAddressType;
 
         @Override
         public EndpointConfigurationTrait build() {
@@ -143,6 +158,17 @@ public final class EndpointConfigurationTrait extends AbstractTrait
          */
         public Builder disableExecuteApiEndpoint(Boolean disableExecuteApiEndpoint) {
             this.disableExecuteApiEndpoint = disableExecuteApiEndpoint;
+            return this;
+        }
+
+        /**
+         * Sets the IP address type that can invoke the API.
+         *
+         * @param ipAddressType The IP address type to set ({@code ipv4} or {@code dualstack}).
+         * @return Returns the builder.
+         */
+        public Builder ipAddressType(String ipAddressType) {
+            this.ipAddressType = ipAddressType;
             return this;
         }
     }
