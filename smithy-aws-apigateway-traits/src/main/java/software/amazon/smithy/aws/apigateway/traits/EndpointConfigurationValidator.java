@@ -4,13 +4,12 @@
  */
 package software.amazon.smithy.aws.apigateway.traits;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -29,25 +28,19 @@ public final class EndpointConfigurationValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(ServiceShape.class)
-                .filter(service -> service.hasTrait(EndpointConfigurationTrait.class))
-                .flatMap(service -> {
-                    EndpointConfigurationTrait trait = service.expectTrait(EndpointConfigurationTrait.class);
-                    return trait.getIpAddressType()
-                            .filter(ipAddressType -> trait.getTypes().contains(PRIVATE)
-                                    && !DUALSTACK.equals(ipAddressType))
-                            .map(ipAddressType -> ValidationEvent.builder()
-                                    .id(getName())
-                                    .shape(service)
-                                    .severity(Severity.ERROR)
-                                    .message(String.format(
-                                            "The `PRIVATE` endpoint type requires `ipAddressType` to be "
-                                                    + "`dualstack`, but found `%s`.",
-                                            ipAddressType))
-                                    .build())
-                            .map(Stream::of)
-                            .orElseGet(Stream::empty);
-                })
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (ServiceShape service : model.getServiceShapesWithTrait(EndpointConfigurationTrait.class)) {
+            EndpointConfigurationTrait trait = service.expectTrait(EndpointConfigurationTrait.class);
+            Optional<String> ipAddressType = trait.getIpAddressType();
+            if (ipAddressType.isPresent()
+                    && trait.getTypes().contains(PRIVATE)
+                    && !DUALSTACK.equals(ipAddressType.get())) {
+                events.add(error(service,
+                        String.format("The `PRIVATE` endpoint type requires `ipAddressType` to be "
+                                + "`dualstack`, but found `%s`.",
+                                ipAddressType.get())));
+            }
+        }
+        return events;
     }
 }
