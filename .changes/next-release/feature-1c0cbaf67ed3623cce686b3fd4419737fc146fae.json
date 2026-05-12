@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Optimized model scoping in JsonSchemaConverter by constructing through a Model.Builder instead of filtering shapes.",
+  "pull_requests": [
+    "[#3111](https://github.com/smithy-lang/smithy/pull/3111)"
+  ]
+}
