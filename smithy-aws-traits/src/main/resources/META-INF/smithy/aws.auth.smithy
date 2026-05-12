@@ -18,6 +18,7 @@ structure cognitoUserPools {
 /// Amazon Cognito User Pools authorizer.
 @internal
 @tags(["internal"])
+@length(min: 1)
 @trait(selector: "service[trait|aws.auth#cognitoUserPools] ~> operation")
 list cognitoUserPoolsScopes {
     member: String

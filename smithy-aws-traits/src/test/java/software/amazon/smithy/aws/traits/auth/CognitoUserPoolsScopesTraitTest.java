@@ -43,14 +43,4 @@ public class CognitoUserPoolsScopesTraitTest {
                 .createTrait(ShapeId.from("ns.foo#Bar"), trait.toNode()),
                 equalTo(trait));
     }
-
-    @Test
-    public void handlesEmptyList() {
-        CognitoUserPoolsScopesTrait trait = CognitoUserPoolsScopesTrait.builder().build();
-
-        assertThat(trait.getValues().isEmpty(), equalTo(true));
-        assertThat(new CognitoUserPoolsScopesTrait.Provider()
-                .createTrait(ShapeId.from("ns.foo#Bar"), trait.toNode()),
-                equalTo(trait));
-    }
 }
