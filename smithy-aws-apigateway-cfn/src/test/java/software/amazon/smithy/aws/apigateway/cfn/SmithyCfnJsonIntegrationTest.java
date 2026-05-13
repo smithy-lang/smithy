@@ -88,4 +88,38 @@ public class SmithyCfnJsonIntegrationTest {
 
         Node.assertEquals(outputNode, expected);
     }
+
+    @Test
+    public void appliesJsonAddPatches() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("integration-model.smithy"))
+                .assemble()
+                .unwrap();
+
+        MockManifest manifest = new MockManifest();
+        ObjectNode settings = Node.objectNodeBuilder()
+                .withMember("service", "com.example#MyService")
+                .withMember("jsonAdd",
+                        Node.objectNodeBuilder()
+                                .withMember("/metadata/custom", "injected-value")
+                                .build())
+                .build();
+
+        PluginContext context = PluginContext.builder()
+                .model(model)
+                .fileManifest(manifest)
+                .settings(settings)
+                .build();
+
+        new SmithyCfnJson().execute(context);
+
+        String output = manifest.getFileString("MyService.smithy.json").get();
+        ObjectNode outputNode = Node.parse(output).expectObjectNode();
+
+        // Verify the jsonAdd patch was applied
+        assertThat(outputNode.expectObjectMember("metadata")
+                .expectStringMember("custom")
+                .getValue(), equalTo("injected-value"));
+    }
 }

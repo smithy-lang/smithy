@@ -31,5 +31,17 @@ public class SmithyCfnJsonConfigTest {
 
         assertThat(config.getService(), equalTo(ShapeId.from("com.example#MyService")));
         assertFalse(config.getDisableCloudFormationSubstitution());
+        assertThat(config.getJsonAdd().size(), equalTo(0));
+    }
+
+    @Test
+    public void deserializesJsonAdd() {
+        Node node = Node.parse("{\"service\": \"com.example#MyService\", "
+                + "\"jsonAdd\": {\"/metadata/custom\": \"hello\"}}");
+        SmithyCfnJsonConfig config = new NodeMapper().deserialize(node, SmithyCfnJsonConfig.class);
+
+        assertThat(config.getJsonAdd().size(), equalTo(1));
+        assertThat(config.getJsonAdd().get("/metadata/custom").expectStringNode().getValue(),
+                equalTo("hello"));
     }
 }

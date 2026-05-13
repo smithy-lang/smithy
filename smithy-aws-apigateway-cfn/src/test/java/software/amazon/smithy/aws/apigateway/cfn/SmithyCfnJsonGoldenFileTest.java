@@ -25,6 +25,10 @@ public class SmithyCfnJsonGoldenFileTest {
         MockManifest manifest = new MockManifest();
         ObjectNode settings = Node.objectNodeBuilder()
                 .withMember("service", "com.example#MyService")
+                .withMember("jsonAdd",
+                        Node.objectNodeBuilder()
+                                .withMember("/metadata/deployRegion", "us-west-2")
+                                .build())
                 .build();
 
         PluginContext context = PluginContext.builder()

@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.aws.apigateway.cfn;
 
+import java.util.Map;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
@@ -25,6 +27,7 @@ public final class SmithyCfnJsonConfig {
 
     private ShapeId service;
     private boolean disableCloudFormationSubstitution;
+    private Map<String, Node> jsonAdd = java.util.Collections.emptyMap();
 
     /**
      * Gets the service shape ID to export.
@@ -50,5 +53,18 @@ public final class SmithyCfnJsonConfig {
 
     public void setDisableCloudFormationSubstitution(boolean disableCloudFormationSubstitution) {
         this.disableCloudFormationSubstitution = disableCloudFormationSubstitution;
+    }
+
+    /**
+     * Gets the JSON Pointer patches to apply to the output.
+     *
+     * @return Returns the jsonAdd map.
+     */
+    public Map<String, Node> getJsonAdd() {
+        return jsonAdd;
+    }
+
+    public void setJsonAdd(Map<String, Node> jsonAdd) {
+        this.jsonAdd = java.util.Objects.requireNonNull(jsonAdd);
     }
 }

@@ -4,11 +4,14 @@
  */
 package software.amazon.smithy.aws.apigateway.cfn;
 
+import java.util.Map;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -51,6 +54,20 @@ public final class SmithyCfnJson implements SmithyBuildPlugin {
 
         if (!config.getDisableCloudFormationSubstitution()) {
             astNode = astNode.accept(new CloudFormationFnSubInjector()).expectObjectNode();
+        }
+
+        // Apply jsonAdd patches
+        for (Map.Entry<String, Node> entry : config.getJsonAdd().entrySet()) {
+            try {
+                astNode = NodePointer.parse(entry.getKey())
+                        .addWithIntermediateValues(astNode, entry.getValue().toNode())
+                        .expectObjectNode();
+            } catch (IllegalArgumentException e) {
+                throw new SmithyBuildException(
+                        "smithy-cfn-json: invalid jsonAdd pointer '"
+                                + entry.getKey() + "': " + e.getMessage(),
+                        e);
+            }
         }
 
         context.getFileManifest()

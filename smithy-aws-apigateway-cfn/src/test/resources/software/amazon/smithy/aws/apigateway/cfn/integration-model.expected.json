@@ -1648,5 +1648,8 @@
                 }
             }
         }
+    },
+    "metadata": {
+        "deployRegion": "us-west-2"
     }
 }
