@@ -1,2 +1,3 @@
 software.amazon.smithy.aws.apigateway.traits.AuthorizersTraitValidator
+software.amazon.smithy.aws.apigateway.traits.EndpointConfigurationValidator
 software.amazon.smithy.aws.apigateway.traits.GatewayResponsesCorsValidator

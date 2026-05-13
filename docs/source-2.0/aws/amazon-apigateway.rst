@@ -466,6 +466,8 @@ Value type
 See also
     - `API endpoint types for REST APIs`_ for more information on
       endpoint types
+    - `IP address types for REST APIs`_ for more information on the
+      ``ipAddressType`` property
     - `x-amazon-apigateway-endpoint-configuration`_ for the related
       OpenAPI extension
 
@@ -490,6 +492,11 @@ supports the following members:
       - ``boolean``
       - Whether clients can invoke the API using the default
         ``execute-api`` endpoint.
+    * - ipAddressType
+      - ``string`` enum (``ipv4`` or ``dualstack``)
+      - The IP address type that can invoke the API. For the ``PRIVATE``
+        endpoint type, only ``dualstack`` is supported. See
+        `IP address types for REST APIs`_ for details.
 
 The following example configures a private API with a VPC endpoint and
 disables the default endpoint:
@@ -506,6 +513,7 @@ disables the default endpoint:
         types: ["PRIVATE"]
         vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
         disableExecuteApiEndpoint: true
+        ipAddressType: "dualstack"
     )
     service Weather {
       version: "2018-03-17"
@@ -1267,4 +1275,5 @@ integration response to two ``header`` parameters of the method response.
 .. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html
 .. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
 .. _API endpoint types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html
+.. _IP address types for REST APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-ip-address-type.html
 .. _endpoint IDs: https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints

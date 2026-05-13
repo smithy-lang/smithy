@@ -24,12 +24,14 @@ public class EndpointConfigurationTraitTest {
                 .types(Arrays.asList("PRIVATE"))
                 .vpcEndpointIds(Arrays.asList("vpce-0212a4ababd5b8c3e", "vpce-01d622316a7df47f9"))
                 .disableExecuteApiEndpoint(true)
+                .ipAddressType("dualstack")
                 .build();
 
         assertThat(trait.getTypes(), equalTo(Arrays.asList("PRIVATE")));
         assertThat(trait.getVpcEndpointIds(),
                 equalTo(Optional.of(Arrays.asList("vpce-0212a4ababd5b8c3e", "vpce-01d622316a7df47f9"))));
         assertThat(trait.getDisableExecuteApiEndpoint(), equalTo(Optional.of(true)));
+        assertThat(trait.getIpAddressType(), equalTo(Optional.of("dualstack")));
         assertThat(trait.toBuilder().build(), equalTo(trait));
     }
 
@@ -42,6 +44,7 @@ public class EndpointConfigurationTraitTest {
         assertThat(trait.getTypes(), equalTo(Arrays.asList("REGIONAL")));
         assertThat(trait.getVpcEndpointIds(), equalTo(Optional.empty()));
         assertThat(trait.getDisableExecuteApiEndpoint(), equalTo(Optional.empty()));
+        assertThat(trait.getIpAddressType(), equalTo(Optional.empty()));
         assertThat(trait.toBuilder().build(), equalTo(trait));
     }
 
@@ -50,6 +53,7 @@ public class EndpointConfigurationTraitTest {
         EndpointConfigurationTrait trait = EndpointConfigurationTrait.builder()
                 .types(Arrays.asList("EDGE"))
                 .disableExecuteApiEndpoint(false)
+                .ipAddressType("ipv4")
                 .build();
 
         assertThat(new EndpointConfigurationTrait.Provider()
@@ -65,6 +69,7 @@ public class EndpointConfigurationTraitTest {
                 .withMember("types", Node.fromStrings("REGIONAL"))
                 .withMember("vpcEndpointIds", Node.fromStrings("vpce-abc123"))
                 .withMember("disableExecuteApiEndpoint", true)
+                .withMember("ipAddressType", "dualstack")
                 .build();
         Trait trait = factory.createTrait(EndpointConfigurationTrait.ID, id, node).get();
 

@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added `ipAddressType` field to the `aws.apigateway#endpointConfiguration` trait and added an OpenAPI mapper that writes `vpcEndpointIds` and `disableExecuteApiEndpoint` to the `x-amazon-apigateway-endpoint-configuration` extension.",
+  "pull_requests": [
+    "[#3110](https://github.com/smithy-lang/smithy/pull/3110)"
+  ]
+}

@@ -1,0 +1,1 @@
+[ERROR] smithy.example#PrivateIpv4Service: The `PRIVATE` endpoint type requires `ipAddressType` to be `dualstack`, but found `ipv4`. | EndpointConfiguration
