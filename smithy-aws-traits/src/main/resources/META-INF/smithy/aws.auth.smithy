@@ -14,6 +14,16 @@ structure cognitoUserPools {
     providerArns: StringList
 }
 
+/// Defines the OAuth scopes required to invoke an operation that uses an
+/// Amazon Cognito User Pools authorizer.
+@internal
+@tags(["internal"])
+@length(min: 1)
+@trait(selector: "service[trait|aws.auth#cognitoUserPools] ~> operation")
+list cognitoUserPoolsScopes {
+    member: String
+}
+
 /// [Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
 /// is the process to add authentication information to AWS requests sent by HTTP. For
 /// security, most requests to AWS must be signed with an access key, which consists

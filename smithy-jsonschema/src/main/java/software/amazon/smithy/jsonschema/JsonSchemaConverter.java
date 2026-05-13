@@ -6,9 +6,9 @@ package software.amazon.smithy.jsonschema;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -83,7 +83,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         LOGGER.fine("Creating JSON ref strategy");
         Model refModel = config.isEnableOutOfServiceReferences()
                 ? this.model
-                : scopeModelToService(model, config.getService());
+                : scopeModelToShape(model, config.getService());
 
         unitTargetedByUnion = refModel.shapes(UnionShape.class)
                 .anyMatch(u -> u.members().stream().anyMatch(m -> m.getTarget().equals(UnitTypeTrait.UNIT)));
@@ -120,12 +120,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
 
         if (rootShape != null) {
             LOGGER.fine(() -> "Filtering out shapes that are not connected to " + rootShape);
-            Set<Shape> connected = new Walker(model).walkShapes(rootShape);
-            LOGGER.fine(() -> "Only generating the following JSON schema shapes: " + connected.stream()
-                    .map(Shape::getId)
-                    .map(ShapeId::toString)
-                    .collect(Collectors.joining(", ")));
-            model = transformer.filterShapes(model, connected::contains);
+            model = scopeModelToShape(model, rootShape.toShapeId());
         }
 
         model = transformer.filterShapes(model, predicate);
@@ -136,12 +131,18 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         return model;
     }
 
-    private static Model scopeModelToService(Model model, ShapeId serviceId) {
-        if (serviceId == null) {
+    private static Model scopeModelToShape(Model model, ShapeId shapeId) {
+        if (shapeId == null) {
             return model;
         }
-        Set<Shape> connected = new Walker(model).walkShapes(model.expectShape(serviceId));
-        return ModelTransformer.create().filterShapes(model, connected::contains);
+        Iterator<Shape> connected = new Walker(model).iterateShapes(model.expectShape(shapeId));
+        Model.Builder builder = Model.builder().metadata(model.getMetadata());
+
+        while (connected.hasNext()) {
+            builder.addShape(connected.next());
+        }
+
+        return builder.build();
     }
 
     private static int countSegments(String pointer) {

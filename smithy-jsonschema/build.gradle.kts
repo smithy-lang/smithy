@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.profiling-conventions")
 }
 
 description = "This module contains support for converting a Smithy model to JSON Schema."
