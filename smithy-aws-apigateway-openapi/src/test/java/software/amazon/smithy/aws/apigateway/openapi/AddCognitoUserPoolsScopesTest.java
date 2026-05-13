@@ -21,21 +21,22 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.PathItem;
 
-public class AddAuthorizationScopesTest {
+public class AddCognitoUserPoolsScopesTest {
+    private static final String SCHEME_NAME = "aws.auth.cognitoUserPools";
     private static OpenApi result;
 
     @BeforeAll
     public static void setup() {
         Model model = Model.assembler()
-                .discoverModels(AddAuthorizationScopesTest.class.getClassLoader())
-                .addImport(AddAuthorizationScopesTest.class.getResource("authorization-scopes.smithy"))
+                .discoverModels(AddCognitoUserPoolsScopesTest.class.getClassLoader())
+                .addImport(AddCognitoUserPoolsScopesTest.class.getResource("cognito-user-pools-scopes.smithy"))
                 .assemble()
                 .unwrap();
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
         result = OpenApiConverter.create()
                 .config(config)
-                .classLoader(AddAuthorizationScopesTest.class.getClassLoader())
+                .classLoader(AddCognitoUserPoolsScopesTest.class.getClassLoader())
                 .convert(model);
     }
 
@@ -45,14 +46,13 @@ public class AddAuthorizationScopesTest {
         OperationObject operation = path.getGet().get();
         List<Map<String, List<String>>> security = operation.getSecurity().get();
 
-        // Find the security requirement for our authorizer
         Map<String, List<String>> authReq = security.stream()
-                .filter(s -> s.containsKey("my-cognito-auth"))
+                .filter(s -> s.containsKey(SCHEME_NAME))
                 .findFirst()
                 .get();
 
-        assertThat(authReq, hasKey("my-cognito-auth"));
-        assertThat(authReq.get("my-cognito-auth"), contains("email", "profile"));
+        assertThat(authReq, hasKey(SCHEME_NAME));
+        assertThat(authReq.get(SCHEME_NAME), contains("email", "profile"));
     }
 
     @Test
@@ -60,9 +60,21 @@ public class AddAuthorizationScopesTest {
         PathItem path = result.getPaths().get("/unscoped");
         OperationObject operation = path.getGet().get();
 
-        // Unscoped operation has the same authorizer as the service and no
-        // scopes, so no per-operation security is added. The operation
-        // inherits security from the service level.
+        // Unscoped operation has no scopes, so no per-operation security
+        // is added. The operation inherits security from the service level.
         assertThat(operation.getSecurity().isPresent(), is(false));
+    }
+
+    @Test
+    public void noAuthOperationRespectsAuthOptOut() {
+        PathItem path = result.getPaths().get("/noauth");
+        OperationObject operation = path.getGet().get();
+
+        // Operation uses @auth([]) to opt out of authentication. Even though
+        // the @cognitoUserPoolsScopes trait is applied, the mapper must not
+        // add a Cognito security requirement because Cognito is not an
+        // effective auth scheme for this operation.
+        List<Map<String, List<String>>> security = operation.getSecurity().get();
+        assertThat(security, is(List.of()));
     }
 }
