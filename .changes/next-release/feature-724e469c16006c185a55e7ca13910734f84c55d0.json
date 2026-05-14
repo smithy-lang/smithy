@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add `--check` flag to `smithy format` that validates files are formatted without modifying them. Exits with code 2 if any files would be changed.",
+  "pull_requests": [
+    "[#3094](https://github.com/smithy-lang/smithy/pull/3094)"
+  ]
+}

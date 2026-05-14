@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -44,10 +46,26 @@ final class FormatCommand implements Command {
     }
 
     private static final class Options implements ArgumentReceiver {
+        private boolean check;
+
+        @Override
+        public boolean testOption(String name) {
+            switch (name) {
+                case "--check":
+                    check = true;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         @Override
         public void registerHelp(HelpPrinter printer) {
             printer.positional("<MODELS>",
                     "`.smithy` model files and directories of model files to recursively format.");
+            printer.option("--check",
+                    null,
+                    "Checks if model files are formatted. Exits with code 2 if any files would be changed.");
         }
     }
 
@@ -61,12 +79,15 @@ final class FormatCommand implements Command {
             buffer.println("   smithy format model-file.smithy", ColorTheme.LITERAL);
             buffer.println("   smithy format model/", ColorTheme.LITERAL);
             buffer.println("   smithy format model-file.smithy model/", ColorTheme.LITERAL);
+            buffer.println("   smithy format --check model/", ColorTheme.LITERAL);
             return buffer.toString();
         }, this::run);
         return action.apply(arguments, env);
     }
 
     private int run(Arguments arguments, Env env) {
+        Options options = arguments.getReceiver(Options.class);
+
         if (arguments.getPositional().isEmpty()) {
             throw new CliError("No .smithy model or directory was provided as a positional argument");
         }
@@ -85,31 +106,62 @@ final class FormatCommand implements Command {
             }
         }
 
-        paths.forEach(this::formatFile);
+        if (options.check) {
+            List<Path> violations = new ArrayList<>();
+            for (Path p : paths) {
+                checkFile(p, violations);
+            }
+            if (!violations.isEmpty()) {
+                StringBuilder msg = new StringBuilder("The following files are not formatted:\n");
+                for (Path v : violations) {
+                    msg.append("  ").append(v).append("\n");
+                }
+                throw new CliError(msg.toString(), 2);
+            }
+        } else {
+            for (Path p : paths) {
+                formatFile(p);
+            }
+        }
+
         return 0;
     }
 
-    private void formatFile(Path file) {
-        if (Files.isDirectory(file)) {
-            try {
-                Files.find(file, 100, (p, a) -> a.isRegularFile()).forEach(this::formatFile);
+    private void walkSmithyFiles(Path path, Consumer<Path> action) {
+        if (Files.isDirectory(path)) {
+            try (Stream<Path> files = Files.find(path,
+                    100,
+                    (p, a) -> a.isRegularFile() && p.toString().endsWith(".smithy"))) {
+                files.forEach(action);
             } catch (IOException e) {
-                throw new CliError("Error formatting " + file + " (directory): " + e.getMessage());
+                throw new CliError("Error walking " + path + ": " + e.getMessage());
             }
-        } else if (Files.isRegularFile(file) && file.toString().endsWith(".smithy")) {
-            TokenTree tree = parse(file);
-            String formatted = Formatter.format(tree);
-            try (OutputStream s = Files.newOutputStream(file, StandardOpenOption.TRUNCATE_EXISTING)) {
-                s.write(formatted.getBytes(StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                throw new CliError("Error formatting " + file + " (file): " + e.getMessage());
-            }
+        } else if (Files.isRegularFile(path) && path.toString().endsWith(".smithy")) {
+            action.accept(path);
         }
     }
 
-    private TokenTree parse(Path file) {
-        String contents = IoUtils.readUtf8File(file);
-        IdlTokenizer tokenizer = IdlTokenizer.create(file.toString(), contents);
-        return TokenTree.of(tokenizer);
+    private void checkFile(Path file, List<Path> violations) {
+        walkSmithyFiles(file, p -> {
+            String original = IoUtils.readUtf8File(p);
+            TokenTree tree = TokenTree.of(IdlTokenizer.create(p.toString(), original));
+            String formatted = Formatter.format(tree);
+            if (!original.equals(formatted)) {
+                violations.add(p);
+            }
+        });
+    }
+
+    private void formatFile(Path file) {
+        walkSmithyFiles(file, p -> {
+            String contents = IoUtils.readUtf8File(p);
+            TokenTree tree = TokenTree.of(IdlTokenizer.create(p.toString(), contents));
+            String formatted = Formatter.format(tree);
+            try (OutputStream s = Files.newOutputStream(p, StandardOpenOption.TRUNCATE_EXISTING)) {
+                s.write(formatted.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                throw new CliError("Error formatting " + p + ": " + e.getMessage());
+            }
+        });
     }
 }
