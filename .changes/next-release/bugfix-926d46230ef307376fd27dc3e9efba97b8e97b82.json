@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed a bug in OpenAPI conversions where onErrorStatusConflict from mappers/protocols wasn't being respected.",
+  "pull_requests": [
+    "[#3123](https://github.com/smithy-lang/smithy/pull/3123)"
+  ]
+}
