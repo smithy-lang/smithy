@@ -28,6 +28,7 @@ software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
 software.amazon.smithy.model.validation.validators.MemberShouldReferenceResourceValidator
+software.amazon.smithy.model.validation.validators.MetadataTraitValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
@@ -55,6 +56,7 @@ software.amazon.smithy.model.validation.validators.TraitBreakingChangesValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator
+software.amazon.smithy.model.validation.validators.TypedMetadataValidator
 software.amazon.smithy.model.validation.validators.UnionValidator
 software.amazon.smithy.model.validation.validators.UnitTypeValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator

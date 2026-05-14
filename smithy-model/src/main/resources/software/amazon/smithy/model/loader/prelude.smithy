@@ -350,6 +350,20 @@ structure TraitValidator {
     severity: Severity = "ERROR"
 }
 
+/// Defines a type for a metadata key.
+///
+/// If a matching key is defined in the model, its value will be validated
+/// according to the targeted shape.
+///
+/// The type for any metadata key MUST only be defined once.
+@trait(selector: "dataType :not([trait|input]) :not([trait|output])")
+structure metadata {
+    /// The metadata key to validate. Each key MUST only be defined once.
+    @required
+    @length(min: 1)
+    key: String
+}
+
 /// Provides a structure member with a default value. When added to root
 /// level shapes, requires that every targeting structure member defines the
 /// same default value on the member or sets a default of null.

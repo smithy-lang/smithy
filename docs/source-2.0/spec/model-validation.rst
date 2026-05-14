@@ -867,3 +867,86 @@ Validator definition
       - ``string``
       - The :ref:`severity <severity-definition>` to use when an
         incompatible shape is found. Defaults to ``ERROR`` if not set.
+
+
+.. smithy-trait:: smithy.api#metadata
+.. _metadata-trait:
+
+------------------
+``metadata`` trait
+------------------
+
+:ref:`Metadata <metadata>` is schema-less by default. Any tool that consumes
+metadata, including Smithy itself, must validate it independently. The
+``metadata`` trait lets model authors define a type for a metadata key.
+When the type for a metadata key is defined this way, Smithy will automatically
+validate any value for that metadata key against its defined type.
+
+Summary
+    Defines a type for a metadata key by targeting a shape. When a metadata
+    entry with a matching key is defined in the model, its value is
+    validated against the targeted shape.
+Trait selector
+    ``dataType :not([trait|input]) :not([trait|output])``
+
+    *A :ref:`simple shape <simple-types>` or
+    :ref:`aggregate shape <aggregate-types>` that is not marked with the
+    :ref:`input trait <input-trait>` or :ref:`output trait <output-trait>`.*
+Value type
+    ``structure``
+
+The ``metadata`` trait is a structure that contains the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - key
+      - ``string``
+      - **Required**. The metadata key whose type is being defined. The
+        type of any metadata key may only be defined once across the entire
+        model. This value must be non-empty.
+
+.. rubric:: Example
+
+Consider a service that configures an ``auditLevel`` metadata entry. Defining
+a type for the key gives Smithy enough information to validate each usage:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @metadata(key: "auditLevel")
+    enum AuditLevel {
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+With that declaration in place, any ``auditLevel`` metadata entry in the
+model is automatically validated against the ``AuditLevel`` shape. For example,
+the following model would produce a validation event because an invalid enum
+value is provided:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    metadata auditLevel = "unknown"
+
+Building the above model results in the following validation event:
+
+.. code-block::
+
+    ──  ERROR  ──────────────────────────────────────────── TypedMetadata.auditLevel
+    File:  example.smithy:3:23
+
+    3| metadata auditLevel = "unknown"
+     |                       ^
+
+    metadata.auditLevel: String value provided for smithy.example#AuditLevel must
+    be one of the following values: HIGH, LOW, MEDIUM
