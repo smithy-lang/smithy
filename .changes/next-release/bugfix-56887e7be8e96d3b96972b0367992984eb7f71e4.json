@@ -1,6 +1,6 @@
 {
   "type": "bugfix",
-  "description": "Fix base64 blobs in event stream test params.",
+  "description": "Fixed event stream test params encoding blobs in b64.",
   "pull_requests": [
     "[#3121](https://github.com/smithy-lang/smithy/pull/3121)"
   ]
