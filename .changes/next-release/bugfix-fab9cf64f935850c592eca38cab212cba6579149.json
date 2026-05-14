@@ -1,6 +1,6 @@
 {
   "type": "bugfix",
-  "description": "Fix Windows user PATH corruption in install.bat caused by setx silently truncating values over 1024 characters",
+  "description": "Fixed a Windows user PATH corruption in install.bat caused by setx silently truncating values over 1024 characters",
   "pull_requests": [
     "[#3117](https://github.com/smithy-lang/smithy/pull/3117)"
   ]
