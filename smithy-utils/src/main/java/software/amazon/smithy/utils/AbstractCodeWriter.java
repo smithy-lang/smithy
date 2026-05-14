@@ -20,7 +20,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 /**
  * Helper class for generating code.
@@ -609,7 +608,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             '_',
             '`'};
 
-    private static final Pattern LINES = Pattern.compile("\\r?\\n");
     private static final Map<Character, BiFunction<Object, String, String>> DEFAULT_FORMATTERS = MapUtils.of(
             'L',
             (s, i) -> formatLiteral(s),
@@ -621,7 +619,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     private boolean trailingNewline = true;
     private int trimBlankLines = -1;
     private boolean enableStackTraceComments;
-    private final List<String> deferredPlaceholders = new ArrayList<>();
     private final List<Supplier<String>> deferredSuppliers = new ArrayList<>();
     private int deferredCounter = 0;
 
@@ -788,28 +785,33 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
     public String toString() {
         String result = currentState.toString();
 
-        // Resolve any deferred values.
-        if (!deferredPlaceholders.isEmpty()) {
-            // Find all sentinel positions, then resolve in a single linear pass.
-            List<int[]> positions = new ArrayList<>();
-            for (int i = 0; i < deferredPlaceholders.size(); i++) {
-                String key = deferredPlaceholders.get(i);
-                int fromIndex = 0;
-                while ((fromIndex = result.indexOf(key, fromIndex)) != -1) {
-                    positions.add(new int[] {fromIndex, i, key.length()});
-                    fromIndex += key.length();
+        // Resolve any deferred values with a single linear scan.
+        if (deferredCounter > 0) {
+            StringBuilder resolved = new StringBuilder(result.length());
+            int pos = 0;
+            int fromIndex = 0;
+            int len = result.length();
+            while (fromIndex < len) {
+                if (result.charAt(fromIndex) == '\0' && fromIndex + 1 < len && result.charAt(fromIndex + 1) == '\0') {
+                    int idStart = fromIndex + 2;
+                    int end = result.indexOf("\0\0", idStart);
+                    if (end != -1) {
+                        int id = 0;
+                        for (int k = idStart; k < end; k++) {
+                            id = id * 10 + (result.charAt(k) - '0');
+                        }
+                        int keyLen = end + 2 - fromIndex;
+                        resolved.append(result, pos, fromIndex);
+                        resolved.append(deferredSuppliers.get(id).get());
+                        fromIndex += keyLen;
+                        pos = fromIndex;
+                        continue;
+                    }
                 }
+                fromIndex++;
             }
-            if (!positions.isEmpty()) {
-                positions.sort((a, b) -> Integer.compare(a[0], b[0]));
-                StringBuilder resolved = new StringBuilder(result.length());
-                int pos = 0;
-                for (int[] entry : positions) {
-                    resolved.append(result, pos, entry[0]);
-                    resolved.append(deferredSuppliers.get(entry[1]).get());
-                    pos = entry[0] + entry[2];
-                }
-                resolved.append(result, pos, result.length());
+            if (pos > 0) {
+                resolved.append(result, pos, len);
                 result = resolved.toString();
             }
         }
@@ -817,18 +819,32 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
         // Trim excessive blank lines.
         if (trimBlankLines > -1) {
             StringBuilder builder = new StringBuilder(result.length());
-            String[] lines = LINES.split(result);
             int blankCount = 0;
+            int start = 0;
+            int len = result.length();
+            int lastNonBlankEnd = 0;
 
-            for (String line : lines) {
-                if (!StringUtils.isBlank(line)) {
-                    builder.append(line).append(currentState.newline);
+            while (start < len) {
+                int newlineIdx = result.indexOf('\n', start);
+                int lineEnd = (newlineIdx == -1) ? len : newlineIdx;
+                // Handle \r\n
+                int lineContentEnd = (lineEnd > start && result.charAt(lineEnd - 1) == '\r')
+                        ? lineEnd - 1
+                        : lineEnd;
+
+                boolean blank = StringUtils.isBlank(result, start, lineContentEnd);
+                if (!blank) {
+                    builder.append(result, start, lineContentEnd).append(currentState.newline);
                     blankCount = 0;
+                    lastNonBlankEnd = builder.length();
                 } else if (blankCount++ < trimBlankLines) {
-                    builder.append(line).append(currentState.newline);
+                    builder.append(result, start, lineContentEnd).append(currentState.newline);
                 }
+
+                start = (newlineIdx == -1) ? len : newlineIdx + 1;
             }
 
+            builder.setLength(lastNonBlankEnd);
             result = builder.toString();
         }
 
@@ -1804,7 +1820,6 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
      */
     protected final String defer(Supplier<String> supplier) {
         String id = "\u0000\u0000" + (deferredCounter++) + "\u0000\u0000";
-        deferredPlaceholders.add(id);
         deferredSuppliers.add(supplier);
         return id;
     }

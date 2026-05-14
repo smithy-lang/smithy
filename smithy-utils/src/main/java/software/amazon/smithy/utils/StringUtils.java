@@ -163,6 +163,23 @@ public final class StringUtils {
     }
 
     /**
+     * Checks if a region of a CharSequence contains only whitespace.
+     *
+     * @param cs    the CharSequence to check, must not be null
+     * @param start the start index (inclusive)
+     * @param end   the end index (exclusive)
+     * @return {@code true} if the region is empty or contains only whitespace
+     */
+    public static boolean isBlank(final CharSequence cs, int start, int end) {
+        for (int i = start; i < end; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * <p>Checks if a CharSequence is not empty (""), not null and not whitespace only.</p>
      *
      * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
