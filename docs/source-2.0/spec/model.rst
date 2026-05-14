@@ -1123,6 +1123,7 @@ Is changed to:
 Then the change to the ``foo`` member from "a" to "b" is backward
 incompatible, as is the removal of the ``baz`` member.
 
+
 Referring to list members
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1248,6 +1249,58 @@ backward incompatible.
     * Using the "update" ``change`` type with a map key has no effect.
     * Using any ``change`` type other than "update" with map values has no
       effect.
+
+
+.. smithy-trait:: smithy.api#root
+.. _root-trait:
+
+``root`` trait
+--------------
+
+Summary
+    A meta-trait that marks a trait as a *rooting* trait. Shapes targeted by
+    a rooting trait, and all shapes transitively connected to them, are
+    considered root shapes and are never treated as unreferenced.
+Trait selector
+    ``[trait|trait]``
+Value type
+    Annotation trait
+
+Certain shapes in a Smithy model are considered *root shapes*. Root shapes
+sit at the top of a closure of shapes that serve some shared purpose. For
+example, :ref:`service shapes <service>` are root shapes because they are
+the entry point of a service API. Root shapes and all shapes transitively
+connected to them are always considered referenced.
+
+The :ref:`trait <trait-trait>` trait is itself marked with ``@root``, which
+is why all trait definitions and the shapes they reference are automatically
+considered root shapes. The ``@root`` trait allows custom traits to designate
+their targets as additional root shapes. This is useful when shapes are not
+connected to a service but should still be retained in the model.
+
+The following example defines a ``@myRoot`` trait that is marked with
+``@root``. Any shape that has ``@myRoot`` applied, along with all shapes
+transitively connected to it, will never be considered unreferenced:
+
+.. code-block:: smithy
+
+    @root
+    @trait
+    structure myRoot {}
+
+    @myRoot
+    structure MyShape {
+        value: MyString
+    }
+
+    // Not unreferenced because it is connected to MyShape,
+    // which is a root shape due to @myRoot.
+    string MyString
+
+.. seealso::
+
+    :ref:`UnreferencedShape`
+        The linter that detects shapes not connected to any root shape.
 
 
 ..  _prelude:
