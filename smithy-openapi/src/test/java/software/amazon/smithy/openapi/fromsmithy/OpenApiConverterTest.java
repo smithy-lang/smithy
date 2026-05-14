@@ -438,6 +438,32 @@ public class OpenApiConverterTest {
         assertThat(config.getExtensions().getMember("hello"), not(Optional.empty()));
     }
 
+    // Setting onErrorStatusConflict via updateDefaultSettings (rather than
+    // directly on the config) triggers error deconflicting in the output.
+    @Test
+    public void errorConflictStrategySetViaUpdateDefaultSettingsIsRespected() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("protocols/error-code-collision-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .addOpenApiMapper(new OpenApiMapper() {
+                    @Override
+                    public void updateDefaultSettings(Model m, OpenApiConfig c) {
+                        c.setOnErrorStatusConflict(
+                                OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF);
+                    }
+                })
+                .convertToNode(model);
+
+        String json = Node.printJson(result);
+        assertThat(json, containsString("oneOf"));
+    }
+
     // The input structure needs a synthesized content structure. Since the
     // path property is a "parameter" the synthesized structure must not list
     // it as required because it is not part of the payload.

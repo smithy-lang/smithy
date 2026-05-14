@@ -187,13 +187,7 @@ public final class OpenApiConverter {
         // Remove mixins from the model.
         model = ModelTransformer.create().flattenAndRemoveMixins(model);
 
-        // Dejjjqconflict errors that share the same status code.
-        if (OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF == config.getOnErrorStatusConflict()) {
-            model = ModelTransformer.create().deconflictErrorsWithSharedStatusCode(model, service);
-        }
-
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
-        jsonSchemaConverterBuilder.model(model);
 
         // Discover OpenAPI extensions.
         List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
@@ -217,6 +211,14 @@ public final class OpenApiConverter {
 
         // Update with protocol default values.
         openApiProtocol.updateDefaultSettings(model, config);
+
+        // Deconflict errors that share the same status code. This must happen after
+        // updateDefaultSettings so that protocols can set onErrorStatusConflict.
+        if (OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF == config.getOnErrorStatusConflict()) {
+            model = ModelTransformer.create().deconflictErrorsWithSharedStatusCode(model, service);
+        }
+
+        jsonSchemaConverterBuilder.model(model);
         jsonSchemaConverterBuilder.config(config);
 
         // Only convert shapes in the closure of the targeted service.
