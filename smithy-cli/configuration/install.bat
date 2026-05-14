@@ -29,8 +29,13 @@ if exist "%choice_path%" goto upgrade
 
 :: Copy the installation
 xcopy /i /h /e /k "%installer_path%*" "%choice_path%\"
-setx path "%path%;%choice_path%\;"
-call %exe_name% warmup
+set "smithy_install_dir=%choice_path%"
+powershell -Command "& { $installDir = $env:smithy_install_dir; $userPath = [Environment]::GetEnvironmentVariable('PATH','User'); if ([string]::IsNullOrEmpty($userPath)) { [Environment]::SetEnvironmentVariable('PATH', $installDir, 'User') } elseif (-not $userPath.Contains($installDir)) { [Environment]::SetEnvironmentVariable('PATH', $userPath.TrimEnd(';') + ';' + $installDir, 'User') } }"
+if %ERRORLEVEL% neq 0 (
+  echo Failed to update PATH. You may need to add %choice_path% to your PATH manually.
+  goto done
+)
+call "%choice_path%\bin\%exe_name%" warmup
 echo You may now run '%exe_name% --version'
 goto done
 
