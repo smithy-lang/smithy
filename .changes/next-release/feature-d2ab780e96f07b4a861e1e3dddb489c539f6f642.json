@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added `aws.apigateway#minimumCompressionSize` trait and OpenAPI mapper",
-  "pull_requests": [
-    "[#3076](https://github.com/smithy-lang/smithy/pull/3076)"
-  ]
-}
