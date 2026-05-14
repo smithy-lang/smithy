@@ -19,7 +19,6 @@ service MyService {
     }
 }
 
-@http(method: "POST", uri: "/say-hello")
 operation SayHello {
     input: SayHelloInput,
     output: SayHelloOutput,

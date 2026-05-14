@@ -30,6 +30,7 @@ import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.OpenApiVersion;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -268,6 +269,31 @@ public class OpenApiConverterTest {
                 getClass().getResourceAsStream("unsupported-http-method.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void protocolsCanOmitOperations() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("missing-http-bindings.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+
+        for (PathItem pathItem : result.getPaths().values()) {
+            assertFalse(pathItem.getGet().isPresent());
+            assertFalse(pathItem.getHead().isPresent());
+            assertFalse(pathItem.getDelete().isPresent());
+            assertFalse(pathItem.getPatch().isPresent());
+            assertFalse(pathItem.getPost().isPresent());
+            assertFalse(pathItem.getPut().isPresent());
+            assertFalse(pathItem.getTrace().isPresent());
+            assertFalse(pathItem.getOptions().isPresent());
+        }
     }
 
     @Test

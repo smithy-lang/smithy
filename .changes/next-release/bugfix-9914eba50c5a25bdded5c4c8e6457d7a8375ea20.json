@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixed a bug where HttpBindingMissing validation didn't fire if a service requiring `@http` traits had none at all.",
-  "pull_requests": [
-    "[#3122](https://github.com/smithy-lang/smithy/pull/3122)"
-  ]
-}
