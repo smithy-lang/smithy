@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventFormatter;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -32,6 +33,8 @@ import software.amazon.smithy.utils.IoUtils;
 public final class SmithyTestCase {
     private static final Pattern EVENT_PATTERN = Pattern.compile(
             "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] (?<shape>[^ ]+): ?(?<message>.*) \\| (?<id>[^)]+)");
+
+    private static final ValidationEventFormatter VALIDATION_EVENT_FORMATTER = new ErrorsFileValidationEventFormatter();
 
     private final List<ValidationEvent> expectedEvents;
     private final String modelLocation;
@@ -222,7 +225,7 @@ public final class SmithyTestCase {
                 builder.append("\nDid not match the following events\n"
                         + "----------------------------------\n");
                 for (ValidationEvent event : getUnmatchedEvents()) {
-                    builder.append(event.toString().replace("\n", "\\n")).append('\n');
+                    builder.append(VALIDATION_EVENT_FORMATTER.format(event)).append('\n');
                 }
                 builder.append('\n');
             }
@@ -231,7 +234,7 @@ public final class SmithyTestCase {
                 builder.append("\nEncountered unexpected events\n"
                         + "-----------------------------\n");
                 for (ValidationEvent event : getExtraEvents()) {
-                    builder.append(event.toString().replace("\n", "\\n")).append("\n");
+                    builder.append(VALIDATION_EVENT_FORMATTER.format(event)).append("\n");
                 }
                 builder.append('\n');
             }
@@ -293,6 +296,27 @@ public final class SmithyTestCase {
         Error(Result result) {
             super(result.toString());
             this.result = result;
+        }
+    }
+
+    private static final class ErrorsFileValidationEventFormatter implements ValidationEventFormatter {
+        @Override
+        public String format(ValidationEvent event) {
+            String message = event.getMessage();
+
+            String reason = event.getSuppressionReason().orElse(null);
+            if (reason != null) {
+                message += " (" + reason + ")";
+            }
+
+            String formattedEventString = String.format(
+                    "[%s] %s: %s | %s",
+                    event.getSeverity(),
+                    event.getShapeId().map(ShapeId::toString).orElse("-"),
+                    message,
+                    event.getId());
+
+            return formattedEventString.replace("\n", "\\n");
         }
     }
 }

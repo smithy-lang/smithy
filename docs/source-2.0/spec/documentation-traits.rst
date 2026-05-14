@@ -355,6 +355,55 @@ Value type
     ``string`` representing the date it was added.
 
 
+.. smithy-trait:: smithy.api#shapeExamples
+.. _shapeExamples-trait:
+
+``shapeExamples`` trait
+=======================
+
+Summary
+    Defines values which are specifically allowed and/or disallowed for a
+    shape.
+
+    These shape example values are validated within the model to ensure there
+    is consistency between the shape author's intent and the shape's configured
+    :doc:`constraint traits <constraint-traits>`.
+Trait selector
+    ``:test(number, string, blob, structure, list, map, member)``
+Value type
+    Structure with the following members:
+
+    .. list-table::
+        :header-rows: 1
+        :widths: 10 10 80
+
+        * - Property
+          - Type
+          - Description
+        * - allowed
+          - ``[document]``
+          - Provides a list of values which are explicitly valid per the
+            shape's definition.
+        * - disallowed
+          - ``[document]```
+          - Provides a list of values which are explicitly invalid per the
+            shape's definition.
+
+One of either ``allowed`` or ``disallowed`` MUST be provided.  When ``allowed``
+or ``disallowed`` is defined, it MUST have at least one value.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @shapeExamples({
+            allowed: ["a"]
+            disallowed: ["aa"]
+        })
+        @length(min: 1, max: 1)
+        string MyString
+
+
 .. smithy-trait:: smithy.api#tags
 .. _tags-trait:
 
