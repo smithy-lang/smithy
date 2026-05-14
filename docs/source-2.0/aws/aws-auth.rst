@@ -190,6 +190,9 @@ Trait value
           - ``[string]``
           - **Required**. A list of the Amazon Cognito user pool ARNs. Each
             element is of this format: ``arn:aws:cognito-idp:{region}:{account_id}:userpool/{user_pool_id}``.
+See also
+    - :ref:`aws.auth#cognitoUserPoolsScopes-trait` for per-operation
+      OAuth scopes.
 
 .. code-block:: smithy
 
@@ -228,6 +231,10 @@ Trait selector
     trait applied.*
 Trait value
     A list of ``string`` values.
+See also
+    - :ref:`aws.auth#cognitoUserPools-trait` which this trait pairs with.
+      ``@cognitoUserPoolsScopes`` is rejected at model time on operations
+      that are not bound to a service with ``@cognitoUserPools``.
 
 When the scopes list is non-empty, the generated OpenAPI operation emits a
 ``security`` requirement that uses the ``aws.auth.cognitoUserPools`` security
