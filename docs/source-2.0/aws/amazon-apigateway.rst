@@ -124,7 +124,7 @@ Value type
     the shape.
 See also
     - :ref:`aws.apigateway#authorizers-trait` where authorizer definitions
-      live.
+      are declared.
     - :ref:`aws.auth#cognitoUserPools-trait` for Amazon Cognito User Pools
       authentication, which is configured through ``aws.auth`` instead of
       ``@authorizer``.
@@ -359,10 +359,11 @@ The ``GatewayResponse`` structure supports the following members:
 
     Response type keys (``DEFAULT_4XX``, ``DEFAULT_5XX``,
     ``INVALID_API_KEY``, etc.) are validated by API Gateway at import
-    time, not by Smithy. When both ``@gatewayResponses`` and ``@cors``
-    are applied to a service, the gateway responses take precedence.
-    The CORS mapper merges its headers into gateway responses without
-    overwriting customer-defined response parameters.
+    time, not by Smithy. When both ``@gatewayResponses`` and
+    ``@cors`` are applied to a service, the CORS mapper merges
+    its headers into gateway responses but does not overwrite
+    customer-defined response parameters. Customer-defined values
+    always take precedence.
 
 The following example defines custom gateway responses for 4xx and 5xx
 errors:
@@ -399,11 +400,12 @@ errors:
 Validation
 """"""""""
 
-Smithy emits a ``DANGER`` validation event when both ``@gatewayResponses``
-and :ref:`cors-trait` are applied to the same service. Gateway response
-parameters take precedence over CORS-generated headers, so customer-defined
-response parameters may override CORS defaults. Review the merged output to
-confirm the effective headers are what you intend.
+Smithy emits a ``DANGER`` validation event when both
+``@gatewayResponses`` and :ref:`cors-trait` are applied to the same
+service. This is informational, customer-defined response
+parameters in ``@gatewayResponses`` take precedence over
+CORS-generated headers. Review the merged output to confirm the
+effective headers match your intent.
 
 .. smithy-trait:: aws.apigateway#minimumCompressionSize
 .. _aws.apigateway#minimumCompressionSize-trait:
@@ -798,9 +800,9 @@ API endpoint and access control
 .. smithy-trait:: aws.apigateway#apiTlsPolicy
 .. _aws.apigateway#apiTlsPolicy-trait:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#apiTlsPolicy`` trait
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Defines the TLS security policy and endpoint access mode for an API
@@ -865,9 +867,9 @@ endpoint access mode:
 .. smithy-trait:: aws.apigateway#endpointConfiguration
 .. _aws.apigateway#endpointConfiguration-trait:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#endpointConfiguration`` trait
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Defines the endpoint configuration for an API Gateway REST API,
@@ -1014,10 +1016,9 @@ invoke the API except for requests from the specified source IP address block:
     customers.
 
 
-
--------------------------------------
+------------------------------------
 Related traits from other namespaces
--------------------------------------
+------------------------------------
 
 Several public traits outside the ``aws.apigateway`` namespace are
 commonly applied alongside the traits above when modeling an API Gateway
@@ -1052,9 +1053,6 @@ the generated specification.
 - :ref:`mediaType-trait` values applied to ``@httpPayload`` members are
   collected into the ``x-amazon-apigateway-binary-media-types``
   extension on the generated OpenAPI document.
-
-
-
 
 
 -----------------------
