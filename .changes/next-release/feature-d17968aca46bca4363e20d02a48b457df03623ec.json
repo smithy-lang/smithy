@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Allow tags member names in input/output structures to have \"map\" suffix variants.",
+  "pull_requests": []
+}
