@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -126,9 +128,12 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     /**
-     * Gets the ShapeID of the TagResource operation on the shape if one is found by name.
-     * If a resource ID is passed in, it will return the qualifiying service wide TagResource operation ID rather than
-     * the operation ID specified by the tagApi property.
+     * Gets the ShapeID of the TagResource operation on the shape if one is found.
+     * For services, this returns the operation referenced by the service-level
+     * {@link TagEnabledTrait} apiConfig if set, otherwise the default-named
+     * {@code TagResource} operation if bound to the service. For resources, this
+     * returns the resource-level {@link TaggableTrait} apiConfig if set, otherwise
+     * the service-wide resolved operation.
      *
      * @param serviceOrResourceId ShapeID of the service shape to retrieve the qualifying TagResource operation for.
      * @return The ShapeID of a qualifying TagResource operation if one is found. Returns an empty optional otherwise.
@@ -138,9 +143,12 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     /**
-     * Gets the ShapeID of the UntagResource operation on the shape if one is found meeting the criteria.
-     * If a resource ID is passed in, it will return the qualifiying service wide TagResource operation ID rather than
-     * the operation ID specified by the tagApi property.
+     * Gets the ShapeID of the UntagResource operation on the shape if one is found.
+     * For services, this returns the operation referenced by the service-level
+     * {@link TagEnabledTrait} apiConfig if set, otherwise the default-named
+     * {@code UntagResource} operation if bound to the service. For resources, this
+     * returns the resource-level {@link TaggableTrait} apiConfig if set, otherwise
+     * the service-wide resolved operation.
      *
      * @param serviceOrResourceId ShapeID of the service shape to retrieve the qualifying UntagResource operation for.
      * @return The ShapeID of a qualifying UntagResource operation if one is found. Returns an empty optional
@@ -151,9 +159,12 @@ public final class AwsTagIndex implements KnowledgeIndex {
     }
 
     /**
-     * Gets the ShapeID of the ListTagsForResource operation on the service shape if one is found meeting the criteria.
-     * If a resource ID is passed in, it will return the qualifiying service wide TagResource operation ID rather than
-     * the operation ID specified by the tagApi property.
+     * Gets the ShapeID of the ListTagsForResource operation on the shape if one is found.
+     * For services, this returns the operation referenced by the service-level
+     * {@link TagEnabledTrait} apiConfig if set, otherwise the default-named
+     * {@code ListTagsForResource} operation if bound to the service. For resources,
+     * this returns the resource-level {@link TaggableTrait} apiConfig if set,
+     * otherwise the service-wide resolved operation.
      *
      * @param serviceOrResourceId ShapeID of the service shape to retrieve the qualifying ListTagsForResource
      *  operation for.
@@ -205,84 +216,80 @@ public final class AwsTagIndex implements KnowledgeIndex {
         for (ShapeId operationId : service.getOperations()) {
             operationMap.put(operationId.getName(), operationId);
         }
+        OperationIndex operationIndex = OperationIndex.of(model);
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        calculateTagApi(model, service, operationMap);
-        calculateUntagApi(model, service, operationMap);
-        calculateListTagsApi(model, service, operationMap);
+        calculateServiceTagOp(model,
+                service,
+                operationMap,
+                operationIndex,
+                topDownIndex,
+                TaggingShapeUtils.TAG_RESOURCE_OPNAME,
+                TaggableServiceApiConfig::getTagApi,
+                TaggableApiConfig::getTagApi,
+                (m, op) -> TaggingShapeUtils.verifyTagResourceOperation(m, op, operationIndex),
+                shapeToTagOperation,
+                serviceTagOperationIsValid);
+        calculateServiceTagOp(model,
+                service,
+                operationMap,
+                operationIndex,
+                topDownIndex,
+                TaggingShapeUtils.UNTAG_RESOURCE_OPNAME,
+                TaggableServiceApiConfig::getUntagApi,
+                TaggableApiConfig::getUntagApi,
+                (m, op) -> TaggingShapeUtils.verifyUntagResourceOperation(m, op, operationIndex),
+                shapeToUntagOperation,
+                serviceUntagOperationIsValid);
+        calculateServiceTagOp(model,
+                service,
+                operationMap,
+                operationIndex,
+                topDownIndex,
+                TaggingShapeUtils.LIST_TAGS_OPNAME,
+                TaggableServiceApiConfig::getListTagsApi,
+                TaggableApiConfig::getListTagsApi,
+                (m, op) -> TaggingShapeUtils.verifyListTagsOperation(m, op, operationIndex),
+                shapeToListTagsOperation,
+                serviceListTagsOperationIsValid);
     }
 
-    private void calculateTagApi(
+    private void calculateServiceTagOp(
             Model model,
             ServiceShape service,
-            Map<String, ShapeId> operationMap
+            Map<String, ShapeId> operationMap,
+            OperationIndex operationIndex,
+            TopDownIndex topDownIndex,
+            String defaultOpName,
+            Function<TaggableServiceApiConfig, Optional<ShapeId>> serviceCfg,
+            Function<TaggableApiConfig, ShapeId> resourceCfg,
+            BiPredicate<Model, OperationShape> verifier,
+            Map<ShapeId, ShapeId> shapeToOpMap,
+            Set<ShapeId> validitySet
     ) {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-        OperationIndex operationIndex = OperationIndex.of(model);
+        // Service-level apiConfig wins; otherwise fall back to the default-named operation if bound.
+        Optional<ShapeId> resolved = service.getTrait(TagEnabledTrait.class)
+                .flatMap(TagEnabledTrait::getApiConfig)
+                .flatMap(serviceCfg)
+                .filter(opId -> service.getOperations().contains(opId))
+                .map(Optional::of)
+                .orElseGet(() -> Optional.ofNullable(operationMap.get(defaultOpName)));
 
-        if (operationMap.containsKey(TaggingShapeUtils.TAG_RESOURCE_OPNAME)) {
-            ShapeId tagOperationId = operationMap.get(TaggingShapeUtils.TAG_RESOURCE_OPNAME);
-            shapeToTagOperation.put(service.getId(), tagOperationId);
-            OperationShape tagOperation = model.expectShape(tagOperationId, OperationShape.class);
-            if (TaggingShapeUtils.verifyTagResourceOperation(model, tagOperation, operationIndex)) {
-                serviceTagOperationIsValid.add(service.getId());
+        resolved.ifPresent(opId -> {
+            shapeToOpMap.put(service.getId(), opId);
+            OperationShape op = model.expectShape(opId, OperationShape.class);
+            if (verifier.test(model, op)) {
+                validitySet.add(service.getId());
             }
-        }
+        });
+
+        // Resource-level apiConfig still wins; otherwise fall through to the (possibly renamed) service-level op.
         for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToTagOperation.put(resourceShape.getId(),
+            shapeToOpMap.put(resourceShape.getId(),
                     resourceShape.getTrait(TaggableTrait.class)
                             .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getTagApi)
-                            .orElse(shapeToTagOperation.get(service.getId())));
-        }
-    }
-
-    private void calculateUntagApi(
-            Model model,
-            ServiceShape service,
-            Map<String, ShapeId> operationMap
-    ) {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-        OperationIndex operationIndex = OperationIndex.of(model);
-
-        if (operationMap.containsKey(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME)) {
-            ShapeId untagOperationId = operationMap.get(TaggingShapeUtils.UNTAG_RESOURCE_OPNAME);
-            shapeToUntagOperation.put(service.getId(), untagOperationId);
-            OperationShape untagOperation = model.expectShape(untagOperationId, OperationShape.class);
-            if (TaggingShapeUtils.verifyUntagResourceOperation(model, untagOperation, operationIndex)) {
-                serviceUntagOperationIsValid.add(service.getId());
-            }
-        }
-        for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToUntagOperation.put(resourceShape.getId(),
-                    resourceShape.getTrait(TaggableTrait.class)
-                            .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getUntagApi)
-                            .orElse(shapeToUntagOperation.get(service.getId())));
-        }
-    }
-
-    private void calculateListTagsApi(
-            Model model,
-            ServiceShape service,
-            Map<String, ShapeId> operationMap
-    ) {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-        OperationIndex operationIndex = OperationIndex.of(model);
-
-        if (operationMap.containsKey(TaggingShapeUtils.LIST_TAGS_OPNAME)) {
-            ShapeId listTagsOperationId = operationMap.get(TaggingShapeUtils.LIST_TAGS_OPNAME);
-            shapeToListTagsOperation.put(service.getId(), listTagsOperationId);
-            OperationShape listTagsOperation = model.expectShape(listTagsOperationId, OperationShape.class);
-            if (TaggingShapeUtils.verifyListTagsOperation(model, listTagsOperation, operationIndex)) {
-                serviceListTagsOperationIsValid.add(service.getId());
-            }
-        }
-        for (ResourceShape resourceShape : topDownIndex.getContainedResources(service)) {
-            shapeToListTagsOperation.put(resourceShape.getId(),
-                    resourceShape.getTrait(TaggableTrait.class)
-                            .flatMap(TaggableTrait::getApiConfig)
-                            .map(TaggableApiConfig::getListTagsApi)
-                            .orElse(shapeToListTagsOperation.get(service.getId())));
+                            .map(resourceCfg)
+                            .orElse(shapeToOpMap.get(service.getId())));
         }
     }
 

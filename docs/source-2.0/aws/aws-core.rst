@@ -1320,11 +1320,17 @@ members:
       - ``boolean``
       - Set to true to indicate that the service does not have default tagging
         operations that create, read, update, and delete tags on resources.
+    * - apiConfig
+      - :ref:`Taggable service API config structure <service-taggable-apiconfig-structure>`
+      - Specifies non-default operation names for the service-wide tagging
+        APIs. Any unset member falls back to the default-named operation.
 
 The default operations for resource tagging operations are named TagResource,
 UntagResource, and ListTagsForResource. All three operations are required to be
 in the service, and each operation must satisfy corresponding validation
-constraints unless ``disableDefaultOperations`` is set to **true**.
+constraints unless ``disableDefaultOperations`` is set to **true**. The
+``apiConfig`` member allows a service to use non-default operation names for
+any of the three slots; an unset slot falls back to the default name.
 
 The following is a minimal snippet showing the inclusion of the named required
 operations for the ``aws.api#tagEnabled``  Weather service.
@@ -1460,6 +1466,58 @@ through the operates attached to the service.
             forecastId: ForecastId
         }
     }
+
+A service that uses non-default operation names can specify them via
+``apiConfig``. Each member is independently optional; a slot left unset falls
+back to the default-named operation.
+
+.. code-block:: smithy
+
+    @tagEnabled(apiConfig: {
+        tagApi: AddTagsToResource
+        untagApi: RemoveTagsFromResource
+        listTagsApi: DescribeTagsForResource
+    })
+    service Weather {
+        resources: [Forecast]
+        operations: [AddTagsToResource, RemoveTagsFromResource, DescribeTagsForResource]
+    }
+
+
+.. _service-taggable-apiconfig-structure:
+
+Taggable service API config structure
+=====================================
+
+Configuration structure for specifying service-wide tagging operations when
+non-default operation names are used. Any unset member falls back to the
+default-named operation (``TagResource``, ``UntagResource``,
+``ListTagsForResource`` respectively).
+
+**Properties**
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 10 60
+
+    * - Property
+      - Type
+      - Description
+    * - tagApi
+      - ``ShapeID``
+      - **Optional** Defines the service-wide operation that creates and
+        updates tags on resources. The value MUST be a valid :ref:`shape-id`
+        that targets an ``operation`` shape bound to the service.
+    * - untagApi
+      - ``ShapeID``
+      - **Optional** Defines the service-wide operation that removes tags
+        from resources. The value MUST be a valid :ref:`shape-id` that
+        targets an ``operation`` shape bound to the service.
+    * - listTagsApi
+      - ``ShapeID``
+      - **Optional** Defines the service-wide operation that lists tags on
+        resources. The value MUST be a valid :ref:`shape-id` that targets an
+        ``operation`` shape bound to the service.
 
 
 .. smithy-trait:: aws.api#taggable

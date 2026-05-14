@@ -11,6 +11,7 @@ import static software.amazon.smithy.aws.traits.tagging.TaggingShapeUtils.UNTAG_
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -42,7 +43,10 @@ public final class ServiceTaggingValidator extends AbstractValidator {
                 events.add(getInvalidOperationEvent(service, trait, tagResourceId.get(), TAG_RESOURCE_OPNAME));
             }
         } else {
-            events.add(getMissingOperationEvent(service, trait, TAG_RESOURCE_OPNAME));
+            events.add(getMissingOperationEvent(service,
+                    trait,
+                    TAG_RESOURCE_OPNAME,
+                    TaggableServiceApiConfig::getTagApi));
         }
 
         Optional<ShapeId> untagResourceId = awsTagIndex.getUntagResourceOperation(service.getId());
@@ -51,7 +55,10 @@ public final class ServiceTaggingValidator extends AbstractValidator {
                 events.add(getInvalidOperationEvent(service, trait, untagResourceId.get(), UNTAG_RESOURCE_OPNAME));
             }
         } else {
-            events.add(getMissingOperationEvent(service, trait, UNTAG_RESOURCE_OPNAME));
+            events.add(getMissingOperationEvent(service,
+                    trait,
+                    UNTAG_RESOURCE_OPNAME,
+                    TaggableServiceApiConfig::getUntagApi));
         }
 
         Optional<ShapeId> listTagsId = awsTagIndex.getListTagsForResourceOperation(service.getId());
@@ -60,17 +67,32 @@ public final class ServiceTaggingValidator extends AbstractValidator {
                 events.add(getInvalidOperationEvent(service, trait, listTagsId.get(), LIST_TAGS_OPNAME));
             }
         } else {
-            events.add(getMissingOperationEvent(service, trait, LIST_TAGS_OPNAME));
+            events.add(getMissingOperationEvent(service,
+                    trait,
+                    LIST_TAGS_OPNAME,
+                    TaggableServiceApiConfig::getListTagsApi));
         }
 
         return events;
     }
 
-    private ValidationEvent getMissingOperationEvent(ServiceShape service, FromSourceLocation location, String opName) {
+    private ValidationEvent getMissingOperationEvent(
+            ServiceShape service,
+            TagEnabledTrait trait,
+            String defaultOpName,
+            Function<TaggableServiceApiConfig, Optional<ShapeId>> accessor
+    ) {
+        Optional<ShapeId> configured = trait.getApiConfig().flatMap(accessor);
+        if (configured.isPresent()) {
+            return warning(service,
+                    trait,
+                    "Service marked `aws.api#TagEnabled` is missing an operation named '"
+                            + configured.get().getName() + "' (specified by `apiConfig`).");
+        }
         return warning(service,
-                location,
+                trait,
                 "Service marked `aws.api#TagEnabled` is missing an operation named "
-                        + "'" + opName + ".'");
+                        + "'" + defaultOpName + ".'");
     }
 
     private ValidationEvent getInvalidOperationEvent(

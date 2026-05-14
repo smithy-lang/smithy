@@ -239,6 +239,33 @@ structure tagEnabled {
     /// if the service does not have the standard tag operations supporting all
     /// resources on the service. Default value is `false`
     disableDefaultOperations: Boolean
+
+    /// Specifies non-default operation names for the service-wide tagging APIs.
+    /// Any unset member falls back to the default-named operation
+    /// (TagResource, UntagResource, ListTagsForResource respectively).
+    apiConfig: TaggableServiceApiConfig
+}
+
+/// Points to a service-bound operation designated for a service-wide tagging API.
+@idRef(
+    failWhenMissing: true
+    selector: "service > operation"
+)
+string ServiceTagOperationReference
+
+/// Structure representing the configuration of service-wide tagging APIs when
+/// non-default operation names are used. All members are optional; an unset
+/// member implies the default-named operation (TagResource, UntagResource,
+/// ListTagsForResource respectively) is used.
+structure TaggableServiceApiConfig {
+    /// The operation that creates or updates tags on resources for this service.
+    tagApi: ServiceTagOperationReference
+
+    /// The operation that removes tags from resources for this service.
+    untagApi: ServiceTagOperationReference
+
+    /// The operation that lists tags on resources for this service.
+    listTagsApi: ServiceTagOperationReference
 }
 
 /// Points to an operation designated for a tagging APi
