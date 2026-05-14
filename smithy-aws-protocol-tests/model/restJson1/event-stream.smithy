@@ -192,7 +192,7 @@ structure ErrorEvent {
             {
                 type: "request"
                 params: {
-                    headers: { blobHeader: "Zm9v" }
+                    headers: { blobHeader: "foo" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -246,7 +246,7 @@ structure ErrorEvent {
             {
                 type: "request"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -684,7 +684,7 @@ operation InputStream {
             {
                 type: "response"
                 params: {
-                    headers: { blobHeader: "Zm9v" }
+                    headers: { blobHeader: "foo" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -738,7 +738,7 @@ operation InputStream {
             {
                 type: "response"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -1217,7 +1217,7 @@ structure ServiceUnavailableError {
             {
                 type: "request"
                 params: {
-                    headers: { blobHeader: "Zm9v" }
+                    headers: { blobHeader: "foo" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -1271,7 +1271,7 @@ structure ServiceUnavailableError {
             {
                 type: "request"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -1699,7 +1699,7 @@ structure ServiceUnavailableError {
             {
                 type: "response"
                 params: {
-                    headers: { blobHeader: "Zm9v" }
+                    headers: { blobHeader: "foo" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
@@ -1753,7 +1753,7 @@ structure ServiceUnavailableError {
             {
                 type: "response"
                 params: {
-                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "YmFy" }
+                    headers: { booleanHeader: true, stringHeader: "foo", blobHeader: "bar" }
                 }
                 headers: {
                     ":message-type": { string: "event" }
