@@ -6,12 +6,57 @@ Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.
 
 
+--------------------------------
+Authentication and authorization
+--------------------------------
+
+.. smithy-trait:: aws.apigateway#apiKeyRequired
+.. _aws.apigateway#apiKeyRequired-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#apiKeyRequired`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Indicates that an operation requires an API key for API Gateway usage
+    plan enforcement.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait (no value)
+See also
+    - `Create and Use Usage Plans with API Keys`_ for more information on
+      API key enforcement
+
+The following example requires an API key on the ``ListItems`` operation
+but not on ``HealthCheck``:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#apiKeyRequired
+
+    @apiKeyRequired
+    @http(method: "GET", uri: "/items")
+    operation ListItems {}
+
+    @http(method: "GET", uri: "/health")
+    operation HealthCheck {}
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
 .. smithy-trait:: aws.apigateway#apiKeySource
 .. _aws.apigateway#apiKeySource-trait:
 
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#apiKeySource`` trait
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Specifies the source of the caller identifier that will be used to
@@ -33,8 +78,8 @@ Value type
           - for receiving the API key from the UsageIdentifierKey
             from a Lambda authorizer (formerly known as a custom authorizer)
 See also
-    - `Create and Use Usage Plans with API Keys`_ for more on usage plans and
-      API keys
+    - `Create and Use Usage Plans with API Keys`_ for more information on
+      usage plans and API keys
     - `Choose an API Key Source`_ for information on choosing a source
     - `x-amazon-apigateway-api-key-source`_ for how this relates to OpenAPI
 
@@ -58,13 +103,43 @@ The following example sets the ``X-API-Key`` header as the API key source.
     This trait should be considered internal-only and not exposed to your
     customers.
 
+.. smithy-trait:: aws.apigateway#authorizer
+.. _aws.apigateway#authorizer-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#authorizer`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Applies a Lambda authorizer to a service, resource, or operation.
+    Authorizers are resolved hierarchically: an operation inherits
+    the effective authorizer applied to a parent resource or operation.
+Trait selector
+    ``:is(service, resource, operation)``
+
+    *A service, resource, or operation*
+Value type
+    ``string`` value that MUST reference one of the keys in the
+    :ref:`aws.apigateway#authorizers-trait` of the service that contains
+    the shape.
+See also
+    - :ref:`aws.apigateway#authorizers-trait` where authorizer definitions
+      are declared.
+    - :ref:`aws.auth#cognitoUserPools-trait` for Amazon Cognito User Pools
+      authentication, which is configured through ``aws.auth`` instead of
+      ``@authorizer``.
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
 
 .. smithy-trait:: aws.apigateway#authorizers
 .. _aws.apigateway#authorizers-trait:
 
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#authorizers`` trait
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     `Lambda authorizers`_ to attach to the authentication schemes defined on
@@ -77,6 +152,14 @@ Value type
     ``map`` of arbitrary names to *authorizer* definitions. These authorizer
     definitions are applied to a service, resource, or operation using the
     :ref:`aws.apigateway#authorizer-trait`.
+See also
+    - :ref:`aws.auth#cognitoUserPools-trait` for configuring Amazon Cognito
+      User Pools authentication on a service. Cognito authentication is
+      declared through ``aws.auth`` rather than as an entry in
+      ``@authorizers``. Use ``@cognitoUserPools`` for Cognito and
+      ``@authorizers`` + ``@authorizer`` for Lambda authorizers.
+    - :ref:`aws.auth#cognitoUserPoolsScopes-trait` for per-operation OAuth
+      scopes on Cognito-authorized operations.
 
 An *authorizer* definition is a structure that supports the following members:
 
@@ -122,9 +205,9 @@ An *authorizer* definition is a structure that supports the following members:
       - ``string``
       - Specifies the required credentials as an IAM role for API Gateway to
         invoke the authorizer. To specify an IAM role for API Gateway to
-        assume, use the role's Amazon Resource Name (ARN). This value MUST
-        be omitted in order to use resource-based permissions on the
-        Lambda function.
+        assume, use the role's Amazon Resource Name (ARN). Omit this value
+        to use Lambda resource-based permissions instead of an IAM role
+        assumed by API Gateway.
     * - identitySource
       - ``string``
       - The identity source for which authorization is requested.
@@ -152,12 +235,12 @@ An *authorizer* definition is a structure that supports the following members:
     * - identityValidationExpression
       - ``string``
       - A validation expression for the incoming identity token. For ``token``
-        authorizers, this value is a regular expression. API Gateway will
-        match the aud field of the incoming token from the client against
-        the specified regular expression. It will invoke the authorizer's
-        Lambda function when there is a match. Otherwise, it will return a
-        401 Unauthorized response without calling the Lambda function. The
-        validation expression does not apply to the ``request`` authorizer.
+        authorizers, this value is a regular expression. API Gateway matches
+        the incoming token against the specified regular expression and
+        invokes the authorizer's Lambda function when there is a match.
+        Otherwise, it returns a 401 Unauthorized response without calling
+        the Lambda function. The validation expression does not apply to the
+        ``request`` authorizer.
     * - resultTtlInSeconds
       - ``integer``
       - The TTL in seconds of cached authorizer results. If it equals 0,
@@ -208,44 +291,162 @@ An *authorizer* definition is a structure that supports the following members:
         version: "2018-03-17"
     }
 
+Validation
+""""""""""
+
+Smithy emits ``ERROR`` validation events in the following cases:
+
+- A ``scheme`` of ``@authorizers`` does not target one of the auth schemes
+  applied to the service.
+- An authorizer sets ``enableSimpleResponses`` while
+  ``authorizerPayloadFormatVersion`` is anything other than ``2.0``.
+
+These checks fire before an API Gateway import would otherwise fail at
+deploy time.
+
 .. note::
 
     This trait should be considered internal-only and not exposed to your
     customers.
 
 
-.. smithy-trait:: aws.apigateway#authorizer
-.. _aws.apigateway#authorizer-trait:
 
------------------------------------
-``aws.apigateway#authorizer`` trait
------------------------------------
+----------------------------
+Method and response handling
+----------------------------
+
+.. smithy-trait:: aws.apigateway#gatewayResponses
+.. _aws.apigateway#gatewayResponses-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#gatewayResponses`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
-    Applies a Lambda authorizer to a service, resource, or operation.
-    Authorizers are resolved hierarchically: an operation inherits
-    the effective authorizer applied to a parent resource or operation.
+    Defines custom gateway responses for an API Gateway REST API. Gateway
+    responses customize error responses for authentication failures,
+    integration errors, and other API Gateway-generated errors.
 Trait selector
-    ``:is(service, resource, operation)``
-
-    *A service, resource, or operation*
+    ``service``
 Value type
-    ``string`` value that MUST reference one of the keys in the
-    :ref:`aws.apigateway#authorizers-trait` of the service that contains
-    the shape.
+    ``map`` of response type ``string`` to ``GatewayResponse`` structure
+See also
+    - `x-amazon-apigateway-gateway-responses`_ for the related OpenAPI
+      extension
+    - `Gateway response types`_ for the list of valid response type keys
+
+The ``GatewayResponse`` structure supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - statusCode
+      - ``string``
+      - The HTTP status code for the gateway response.
+    * - responseParameters
+      - ``map`` of ``string`` to ``string``
+      - Response parameters for the gateway response. Keys use the format
+        ``gatewayresponse.header.<header-name>``.
+    * - responseTemplates
+      - ``map`` of ``string`` to ``string``
+      - Response templates keyed by media type.
 
 .. note::
 
-    This trait should be considered internal-only and not exposed to your
-    customers.
+    Response type keys (``DEFAULT_4XX``, ``DEFAULT_5XX``,
+    ``INVALID_API_KEY``, etc.) are validated by API Gateway at import
+    time, not by Smithy. When both ``@gatewayResponses`` and
+    ``@cors`` are applied to a service, the CORS mapper merges
+    its headers into gateway responses but does not overwrite
+    customer-defined response parameters. Customer-defined values
+    always take precedence.
 
+The following example defines custom gateway responses for 4xx and 5xx
+errors:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#gatewayResponses
+
+    @gatewayResponses(
+        "DEFAULT_4XX": {
+            statusCode: "400"
+            responseParameters: {
+                "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+            }
+            responseTemplates: {
+                "application/json": "{\"message\": \"bad request\"}"
+            }
+        }
+        "DEFAULT_5XX": {
+            statusCode: "500"
+            responseTemplates: {
+                "application/json": "{\"message\": \"Internal server error\"}"
+            }
+        }
+    )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+Validation
+""""""""""
+
+Smithy emits a ``DANGER`` validation event when both
+``@gatewayResponses`` and :ref:`cors-trait` are applied to the same
+service. This is informational, customer-defined response
+parameters in ``@gatewayResponses`` take precedence over
+CORS-generated headers. Review the merged output to confirm the
+effective headers match your intent.
+
+.. smithy-trait:: aws.apigateway#minimumCompressionSize
+.. _aws.apigateway#minimumCompressionSize-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#minimumCompressionSize`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Defines the minimum payload size in bytes at which compression is applied
+    on an API Gateway REST API.
+Trait selector
+    ``service``
+Value type
+    ``integer`` value between 0 and 10485760 (10MB).
+See also
+    - `Payload compression for REST APIs`_ for more information
+    - `x-amazon-apigateway-minimum-compression-size`_ for how this relates
+      to OpenAPI
+
+The following example sets the minimum compression size to 10240 bytes:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#minimumCompressionSize
+
+    @minimumCompressionSize(10240)
+    service Weather {
+        version: "2018-03-17"
+    }
 
 .. smithy-trait:: aws.apigateway#requestValidator
 .. _aws.apigateway#requestValidator-trait:
 
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#requestValidator`` trait
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Opts-in to Amazon API Gateway request validation for a service or
@@ -276,7 +477,7 @@ See also
     - `x-amazon-apigateway-request-validators`_ for more on how this converts
       to OpenAPI
 
-Then following example enables request validation on a service:
+The following example enables request validation on a service:
 
 .. code-block:: smithy
 
@@ -302,302 +503,18 @@ Then following example enables request validation on a service:
     to validate requests against models and may not meet all the
     validation needs of your application.
 
-.. smithy-trait:: aws.apigateway#apiKeyRequired
-.. _aws.apigateway#apiKeyRequired-trait:
 
----------------------------------------
-``aws.apigateway#apiKeyRequired`` trait
----------------------------------------
 
-Summary
-    Indicates that an operation requires an API key for API Gateway usage
-    plan enforcement.
-Trait selector
-    ``operation``
-Value type
-    Annotation trait (no value)
-See also
-    - `Create and Use Usage Plans with API Keys`_ for more information on
-      API key enforcement
-
-The following example requires an API key on the ``ListItems`` operation
-but not on ``HealthCheck``:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#apiKeyRequired
-
-    @apiKeyRequired
-    @http(method: "GET", uri: "/items")
-    operation ListItems {}
-
-    @http(method: "GET", uri: "/health")
-    operation HealthCheck {}
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
-
-
-.. smithy-trait:: aws.apigateway#minimumCompressionSize
-.. _aws.apigateway#minimumCompressionSize-trait:
-
--------------------------------------------------
-``aws.apigateway#minimumCompressionSize`` trait
--------------------------------------------------
-
-Summary
-    Defines the minimum payload size in bytes at which compression is applied
-    on an API Gateway REST API.
-Trait selector
-    ``service``
-Value type
-    ``integer`` value between 0 and 10485760 (10MB).
-See also
-    - `Payload compression for REST APIs`_ for more information
-    - `x-amazon-apigateway-minimum-compression-size`_ for how this relates
-      to OpenAPI
-
-The following example sets the minimum compression size to 10240 bytes:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#minimumCompressionSize
-
-    @minimumCompressionSize(10240)
-    service Weather {
-        version: "2018-03-17"
-    }
-
-
-.. smithy-trait:: aws.apigateway#resourcePolicy
-.. _aws.apigateway#resourcePolicy-trait:
-
----------------------------------------
-``aws.apigateway#resourcePolicy`` trait
----------------------------------------
-
-Summary
-    Defines a resource policy for an API Gateway REST API. A resource
-    policy is a JSON policy document attached to an API that controls
-    whether a specified principal (typically an IAM role or group) can
-    invoke the API.
-Trait selector
-    ``service``
-Value type
-    ``document``
-See also
-    - `Resource policies for REST APIs`_ for more information
-    - `x-amazon-apigateway-policy`_ for how this relates to OpenAPI
-
-.. note::
-
-    Smithy does not validate the contents of the resource policy document.
-    The policy is passed through to API Gateway, which validates it at
-    import time.
-
-The following example defines a resource policy that allows any principal to
-invoke the API except for requests from the specified source IP address block:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#resourcePolicy
-
-    @resourcePolicy({
-        "Version": "2012-10-17"
-        "Statement": [
-            {
-                "Effect": "Allow"
-                "Principal": "*"
-                "Action": "execute-api:Invoke"
-                "Resource": ["execute-api:/*"]
-            }
-            {
-                "Effect": "Deny"
-                "Principal": "*"
-                "Action": "execute-api:Invoke"
-                "Resource": ["execute-api:/*"]
-                "Condition": {
-                    "IpAddress": {
-                        "aws:SourceIp": "192.0.2.0/24"
-                    }
-                }
-            }
-        ]
-    })
-    service Weather {
-      version: "2018-03-17"
-    }
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
-
-
-.. smithy-trait:: aws.apigateway#endpointConfiguration
-.. _aws.apigateway#endpointConfiguration-trait:
-
----------------------------------------------------
-``aws.apigateway#endpointConfiguration`` trait
----------------------------------------------------
-
-Summary
-    Defines the endpoint configuration for an API Gateway REST API,
-    including the endpoint type, Virtual Private Cloud (VPC) `endpoint IDs`_,
-    and whether the default ``execute-api`` endpoint is disabled.
-Trait selector
-    ``service``
-Value type
-    ``structure``
-See also
-    - `API endpoint types for REST APIs`_ for more information on
-      endpoint types
-    - `IP address types for REST APIs`_ for more information on the
-      ``ipAddressType`` property
-    - `x-amazon-apigateway-endpoint-configuration`_ for the related
-      OpenAPI extension
-
-The ``aws.apigateway#endpointConfiguration`` trait is a structure that
-supports the following members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - types
-      - ``list`` of ``string`` **required**
-      - The endpoint types for the API. Valid values are ``EDGE``,
-        ``REGIONAL``, and ``PRIVATE``.
-    * - vpcEndpointIds
-      - ``list`` of ``string``
-      - A list of VPC endpoint IDs for ``PRIVATE`` endpoint type APIs.
-    * - disableExecuteApiEndpoint
-      - ``boolean``
-      - Whether clients can invoke the API using the default
-        ``execute-api`` endpoint.
-    * - ipAddressType
-      - ``string`` enum (``ipv4`` or ``dualstack``)
-      - The IP address type that can invoke the API. For the ``PRIVATE``
-        endpoint type, only ``dualstack`` is supported. See
-        `IP address types for REST APIs`_ for details.
-
-The following example configures a private API with a VPC endpoint and
-disables the default endpoint:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#endpointConfiguration
-
-    @endpointConfiguration(
-        types: ["PRIVATE"]
-        vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
-        disableExecuteApiEndpoint: true
-        ipAddressType: "dualstack"
-    )
-    service Weather {
-      version: "2018-03-17"
-    }
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
-
-
-.. smithy-trait:: aws.apigateway#apiTlsPolicy
-.. _aws.apigateway#apiTlsPolicy-trait:
-
------------------------------------------
-``aws.apigateway#apiTlsPolicy`` trait
------------------------------------------
-
-Summary
-    Defines the TLS security policy and endpoint access mode for an API
-    Gateway REST API. The security policy specifies the TLS version and
-    cipher suite, and the endpoint access mode controls how the API
-    endpoint can be accessed.
-Trait selector
-    ``service``
-Value type
-    ``structure``
-
-The ``aws.apigateway#apiTlsPolicy`` trait is a structure that supports the
-following members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - securityPolicy
-      - ``string`` **required**
-      - The TLS version and cipher suite for the API (for example,
-        ``TLS_1_2``).
-    * - endpointAccessMode
-      - ``string``
-      - The endpoint access mode for the API. Valid values are ``BASIC``
-        and ``STRICT``.
-
-See also
-    - `Security policies for REST APIs`_ for more information
-    - `x-amazon-apigateway-security-policy`_ for how the security policy
-      relates to OpenAPI
-    - `x-amazon-apigateway-endpoint-access-mode`_ for how the endpoint
-      access mode relates to OpenAPI
-
-The following example sets the TLS policy to ``TLS_1_2`` with a ``STRICT``
-endpoint access mode:
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.apigateway#apiTlsPolicy
-
-    @apiTlsPolicy(
-        securityPolicy: "TLS_1_2"
-        endpointAccessMode: "STRICT"
-    )
-    service Weather {
-      version: "2018-03-17"
-    }
-
-.. note::
-
-    This trait should be considered internal-only and not exposed to your
-    customers.
+------------
+Integrations
+------------
 
 .. smithy-trait:: aws.apigateway#integration
 .. _aws.apigateway#integration-trait:
 
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#integration`` trait
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Defines an `API Gateway integration`_ that integrates with an actual
@@ -625,23 +542,23 @@ following members:
       - Description
     * - type
       - ``string``
-      - **Required.** The type of integration with the specified backend.
+      - **Required**. The type of integration with the specified backend.
         Valid values are:
 
         - ``http`` or ``http_proxy``: for integration with an HTTP backend
-        - ``aws_proxy``: for integration with AWS Lambda functions
-        - ``aws``: for integration with AWS Lambda functions or other AWS
-          services such as Amazon DynamoDB, Amazon Simple Notification Service
-          or Amazon Simple Queue Service.
+        - ``aws_proxy``: for Lambda proxy integration
+        - ``aws``: for non-proxy integration with AWS Lambda functions or
+          other AWS services such as Amazon DynamoDB, Amazon Simple
+          Notification Service, or Amazon Simple Queue Service.
     * - uri
       - ``string``
-      - **Required.** The endpoint URI of the backend. For integrations of
+      - **Required**. The endpoint URI of the backend. For integrations of
         the ``aws`` type, this is an ARN value. For the HTTP integration,
         this is the URL of the HTTP endpoint including the ``https`` or
         ``http`` scheme.
     * - httpMethod
       - ``string``
-      - **Required.** Specifies the integration's HTTP method type
+      - **Required**. Specifies the integration's HTTP method type
         (for example, ``POST``). For Lambda function invocations, the value
         must be ``POST``.
     * - credentials
@@ -679,9 +596,10 @@ following members:
       - An API-specific tag group of related cached parameters.
     * - payloadFormatVersion
       - ``string``
-      - Specifies the format of the payload sent to an integration. Required for HTTP APIs. For HTTP APIs,
-        supported values for Lambda proxy integrations are 1.0 and 2.0. For all other integrations, 1.0 is the
-        only supported value.
+      - Specifies the format of the payload sent to an integration. This
+        property is required for HTTP APIs. Supported values for Lambda proxy
+        integrations are ``1.0`` and ``2.0``. For all other integrations,
+        ``1.0`` is the only supported value.
     * - cacheKeyParameters
       - ``list<string>``
       - A list of request parameter names whose values are to be cached.
@@ -768,13 +686,12 @@ operation within the service.
     This trait should be considered internal-only and not exposed to your
     customers.
 
-
 .. smithy-trait:: aws.apigateway#mockIntegration
 .. _aws.apigateway#mockIntegration-trait:
 
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ``aws.apigateway#mockIntegration`` trait
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Defines an `API Gateway integration`_ that returns a mock response.
@@ -875,27 +792,30 @@ The following example defines an operation that uses a mock integration.
     customers.
 
 
-.. smithy-trait:: aws.apigateway#gatewayResponses
-.. _aws.apigateway#gatewayResponses-trait:
 
------------------------------------------
-``aws.apigateway#gatewayResponses`` trait
------------------------------------------
+-------------------------------
+API endpoint and access control
+-------------------------------
+
+.. smithy-trait:: aws.apigateway#apiTlsPolicy
+.. _aws.apigateway#apiTlsPolicy-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#apiTlsPolicy`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
-    Defines custom gateway responses for an API Gateway REST API. Gateway
-    responses customize error responses for authentication failures,
-    integration errors, and other API Gateway-generated errors.
+    Defines the TLS security policy and endpoint access mode for an API
+    Gateway REST API. The security policy specifies the TLS version and
+    cipher suite, and the endpoint access mode controls how the API
+    endpoint can be accessed.
 Trait selector
     ``service``
 Value type
-    ``map`` of response type ``string`` to ``GatewayResponse`` structure
-See also
-    - `x-amazon-apigateway-gateway-responses`_ for the related OpenAPI
-      extension
-    - `Gateway response types`_ for the list of valid response type keys
+    ``structure``
 
-The ``GatewayResponse`` structure supports the following members:
+The ``aws.apigateway#apiTlsPolicy`` trait is a structure that supports the
+following members:
 
 .. list-table::
     :header-rows: 1
@@ -904,28 +824,24 @@ The ``GatewayResponse`` structure supports the following members:
     * - Property
       - Type
       - Description
-    * - statusCode
+    * - securityPolicy
       - ``string``
-      - The HTTP status code for the gateway response.
-    * - responseParameters
-      - ``map`` of ``string`` to ``string``
-      - Response parameters for the gateway response. Keys use the format
-        ``gatewayresponse.header.<header-name>``.
-    * - responseTemplates
-      - ``map`` of ``string`` to ``string``
-      - Response templates keyed by media type.
+      - **Required**. The TLS version and cipher suite for the API (for
+        example, ``TLS_1_2``).
+    * - endpointAccessMode
+      - ``string``
+      - The endpoint access mode for the API. Valid values are ``BASIC``
+        and ``STRICT``.
 
-.. note::
+See also
+    - `Security policies for REST APIs`_ for more information
+    - `x-amazon-apigateway-security-policy`_ for how the security policy
+      relates to OpenAPI
+    - `x-amazon-apigateway-endpoint-access-mode`_ for how the endpoint
+      access mode relates to OpenAPI
 
-    Response type keys (``DEFAULT_4XX``, ``DEFAULT_5XX``,
-    ``INVALID_API_KEY``, etc.) are validated by API Gateway at import
-    time, not by Smithy. When both ``@gatewayResponses`` and ``@cors``
-    are applied to a service, the gateway responses take precedence.
-    The CORS mapper merges its headers into gateway responses without
-    overwriting customer-defined response parameters.
-
-The following example defines custom gateway responses for 4xx and 5xx
-errors:
+The following example sets the TLS policy to ``TLS_1_2`` with a ``STRICT``
+endpoint access mode:
 
 .. code-block:: smithy
 
@@ -933,28 +849,210 @@ errors:
 
     namespace smithy.example
 
-    use aws.apigateway#gatewayResponses
+    use aws.apigateway#apiTlsPolicy
 
-    @gatewayResponses(
-        "DEFAULT_4XX": {
-            statusCode: "400"
-            responseParameters: {
-                "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
-            }
-            responseTemplates: {
-                "application/json": "{\"message\": \"bad request\"}"
-            }
-        }
-        "DEFAULT_5XX": {
-            statusCode: "500"
-            responseTemplates: {
-                "application/json": "{\"message\": \"Internal server error\"}"
-            }
-        }
+    @apiTlsPolicy(
+        securityPolicy: "TLS_1_2"
+        endpointAccessMode: "STRICT"
     )
     service Weather {
       version: "2018-03-17"
     }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+.. smithy-trait:: aws.apigateway#endpointConfiguration
+.. _aws.apigateway#endpointConfiguration-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#endpointConfiguration`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Defines the endpoint configuration for an API Gateway REST API,
+    including the endpoint type, Virtual Private Cloud (VPC) `endpoint IDs`_,
+    and whether the default ``execute-api`` endpoint is disabled.
+Trait selector
+    ``service``
+Value type
+    ``structure``
+See also
+    - `API endpoint types for REST APIs`_ for more information on
+      endpoint types
+    - `IP address types for REST APIs`_ for more information on the
+      ``ipAddressType`` property
+    - `x-amazon-apigateway-endpoint-configuration`_ for the related
+      OpenAPI extension
+
+The ``aws.apigateway#endpointConfiguration`` trait is a structure that
+supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - types
+      - ``list`` of ``string``
+      - **Required**. The endpoint types for the API. Valid values are
+        ``EDGE``, ``REGIONAL``, and ``PRIVATE``.
+    * - vpcEndpointIds
+      - ``list`` of ``string``
+      - A list of VPC endpoint IDs for ``PRIVATE`` endpoint type APIs.
+    * - disableExecuteApiEndpoint
+      - ``boolean``
+      - Whether clients can invoke the API using the default
+        ``execute-api`` endpoint.
+    * - ipAddressType
+      - ``string`` enum (``ipv4`` or ``dualstack``)
+      - The IP address type that can invoke the API. For the ``PRIVATE``
+        endpoint type, only ``dualstack`` is supported. See
+        `IP address types for REST APIs`_ for details.
+
+The following example configures a private API with a VPC endpoint and
+disables the default endpoint:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#endpointConfiguration
+
+    @endpointConfiguration(
+        types: ["PRIVATE"]
+        vpcEndpointIds: ["vpce-0212a4ababd5b8c3e"]
+        disableExecuteApiEndpoint: true
+        ipAddressType: "dualstack"
+    )
+    service Weather {
+      version: "2018-03-17"
+    }
+
+Validation
+""""""""""
+
+Smithy emits an ``ERROR`` validation event when the ``PRIVATE`` endpoint
+type is used with an ``ipAddressType`` other than ``dualstack``. API Gateway
+requires ``dualstack`` for private endpoints.
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+.. smithy-trait:: aws.apigateway#resourcePolicy
+.. _aws.apigateway#resourcePolicy-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#resourcePolicy`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Defines a resource policy for an API Gateway REST API. A resource
+    policy is a JSON policy document attached to an API that controls
+    whether a specified principal (typically an IAM role or group) can
+    invoke the API.
+Trait selector
+    ``service``
+Value type
+    ``document``
+See also
+    - `Resource policies for REST APIs`_ for more information
+    - `x-amazon-apigateway-policy`_ for how this relates to OpenAPI
+
+.. note::
+
+    Smithy does not validate the contents of the resource policy document.
+    The policy is passed through to API Gateway, which validates it at
+    import time.
+
+The following example defines a resource policy that allows any principal to
+invoke the API except for requests from the specified source IP address block:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#resourcePolicy
+
+    @resourcePolicy({
+        "Version": "2012-10-17"
+        "Statement": [
+            {
+                "Effect": "Allow"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+            }
+            {
+                "Effect": "Deny"
+                "Principal": "*"
+                "Action": "execute-api:Invoke"
+                "Resource": ["execute-api:/*"]
+                "Condition": {
+                    "IpAddress": {
+                        "aws:SourceIp": "192.0.2.0/24"
+                    }
+                }
+            }
+        ]
+    })
+    service Weather {
+      version: "2018-03-17"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
+------------------------------------
+Related traits from other namespaces
+------------------------------------
+
+Several public traits outside the ``aws.apigateway`` namespace are
+commonly applied alongside the traits above when modeling an API Gateway
+REST API. The API Gateway OpenAPI converter reads them when producing
+the generated specification.
+
+**Authentication**
+
+- :ref:`aws.auth#sigv4-trait` configures AWS Signature Version 4
+  authentication. Reference it from an entry in
+  :ref:`aws.apigateway#authorizers-trait` to declare an ``awsSigv4``
+  authorizer.
+- :ref:`aws.auth#cognitoUserPools-trait` configures Amazon Cognito User
+  Pools authentication on a service. Cognito authentication is declared
+  through ``aws.auth`` rather than as an entry in
+  :ref:`aws.apigateway#authorizers-trait`.
+- :ref:`aws.auth#cognitoUserPoolsScopes-trait` declares the OAuth scopes
+  required to invoke an operation that uses a Cognito authorizer.
+- :ref:`httpApiKeyAuth-trait` enables API Gateway API key usage plans
+  when referenced from an entry in
+  :ref:`aws.apigateway#authorizers-trait` with no ``type`` field. This
+  is the trait combination required for API Gateway's built-in API key
+  authorization on REST APIs.
+
+**Request and response handling**
+
+- :ref:`cors-trait` controls CORS handling. The API Gateway OpenAPI
+  converter expands ``@cors`` into preflight ``OPTIONS`` integrations
+  and the appropriate ``Access-Control-*`` response headers on each
+  method, and merges those headers into any
+  :ref:`aws.apigateway#gatewayResponses-trait` entries.
+- :ref:`mediaType-trait` values applied to ``@httpPayload`` members are
+  collected into the ``x-amazon-apigateway-binary-media-types``
+  extension on the generated OpenAPI document.
 
 
 -----------------------
@@ -967,8 +1065,9 @@ definitions.
 
 .. _apigateway-content-handling:
 
+~~~~~~~~~~~~~~~~~~~~~~
 ContentHandling string
-======================
+~~~~~~~~~~~~~~~~~~~~~~
 
 Defines the payload conversion handling of a request or response.
 Valid values are:
@@ -984,8 +1083,9 @@ Valid values are:
 
 .. _apigateway-requestParameters:
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 requestParameters structure
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
@@ -1026,8 +1126,9 @@ header (x-userid), and path parameters (op), respectively.
 
 .. _apigateway-requestTemplates:
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 requestTemplates structure
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Specifies mapping templates for a request payload of the specified media types.
 
@@ -1059,8 +1160,9 @@ The following example sets mapping templates for a request payload of the
 
 .. _apigateway-responses:
 
+~~~~~~~~~~~~~~~~~~~
 responses structure
-===================
+~~~~~~~~~~~~~~~~~~~
 
 Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.
@@ -1121,8 +1223,9 @@ property on the integration response's payload.
 
 .. _apigateway-response-structure:
 
+~~~~~~~~~~~~~~~~~~
 response structure
-==================
+~~~~~~~~~~~~~~~~~~
 
 Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.
@@ -1175,8 +1278,9 @@ redirect URL from the integration response in the method's Location header.
 
 .. _apigateway-response-templates-structure:
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Response templates structure
-============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Specifies mapping templates for a response payload of the specified
 media types.
@@ -1213,8 +1317,9 @@ The following example sets mapping templates for a request payload of the
 
 .. _apigateway-response-parameters-structure:
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Response parameters structure
-=============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Specifies mappings from integration method response parameters to method
 response parameters. Only the ``header`` and ``body`` types of the integration
@@ -1252,16 +1357,16 @@ integration response to two ``header`` parameters of the method response.
 .. _x-amazon-apigateway-request-validator: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.requestValidator.html
 .. _x-amazon-apigateway-request-validators: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
 .. _Granting Permissions Using a Resource Policy: https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#intro-permission-model-access-policy
-.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior
-.. _VpcLink: https://docs.aws.amazon.com/apigateway/api-reference/resource/vpc-link/
+.. _Integration.passthroughBehavior: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html
+.. _VpcLink: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-private-integration.html
 .. _x-amazon-apigateway-integration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
-.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/
+.. _API Gateway integration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-integration-types.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _x-amazon-apigateway-authtype: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authtype.html
 .. _Create and Use Usage Plans with API Keys: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 .. _Choose an API Key Source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
-.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
+.. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
 .. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
 .. _x-amazon-apigateway-gateway-responses: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
