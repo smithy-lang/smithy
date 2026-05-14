@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SmithyInternalApi
@@ -321,8 +320,6 @@ final class CodeFormatter {
     }
 
     private static final class Parser {
-        private static final Pattern NAME_PATTERN = Pattern.compile("^[a-z]+[a-zA-Z0-9_.#$]*$");
-
         private final String template;
         private final SimpleParser parser;
         private final char expressionStart;
@@ -704,8 +701,13 @@ final class CodeFormatter {
         }
 
         private void ensureNameIsValid(String name) {
-            if (!NAME_PATTERN.matcher(name).matches()) {
+            if (name.isEmpty() || name.charAt(0) < 'a' || name.charAt(0) > 'z') {
                 throw error(String.format("Invalid format expression name `%s`", name));
+            }
+            for (int i = 1; i < name.length(); i++) {
+                if (!isNameCharacter(name.charAt(i))) {
+                    throw error(String.format("Invalid format expression name `%s`", name));
+                }
             }
         }
 
