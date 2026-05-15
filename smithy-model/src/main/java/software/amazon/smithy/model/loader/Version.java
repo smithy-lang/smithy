@@ -26,18 +26,18 @@ enum Version {
 
     VERSION_2_0("2.0",
             Feature.MIXINS
-            | Feature.INLINE_OPERATION_IO
-            | Feature.TARGET_ELISION
-            | Feature.DEFAULT
-            | Feature.RESOURCE_PROPERTIES),
+                    | Feature.INLINE_OPERATION_IO
+                    | Feature.TARGET_ELISION
+                    | Feature.DEFAULT
+                    | Feature.RESOURCE_PROPERTIES),
 
     VERSION_2_1("2.1",
             Feature.MIXINS
-            | Feature.INLINE_OPERATION_IO
-            | Feature.TARGET_ELISION
-            | Feature.DEFAULT
-            | Feature.RESOURCE_PROPERTIES
-            | Feature.INLINE_COLLECTIONS);
+                    | Feature.INLINE_OPERATION_IO
+                    | Feature.TARGET_ELISION
+                    | Feature.DEFAULT
+                    | Feature.RESOURCE_PROPERTIES
+                    | Feature.INLINE_COLLECTIONS);
 
     private final String label;
     private final int features;

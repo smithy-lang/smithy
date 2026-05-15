@@ -29,10 +29,11 @@ public final class SyntheticShapeValidator extends AbstractValidator {
         for (Shape shape : syntheticShapes) {
             for (Trait trait : shape.getAllTraits().values()) {
                 if (!trait.toShapeId().equals(SyntheticShapeTrait.ID)) {
-                    events.add(error(shape, trait,
+                    events.add(error(shape,
+                            trait,
                             "Traits cannot be applied to synthetic shapes. "
-                            + "Found trait `" + Trait.getIdiomaticTraitName(trait.toShapeId())
-                            + "` on assembler-generated shape `" + shape.getId() + "`."));
+                                    + "Found trait `" + Trait.getIdiomaticTraitName(trait.toShapeId())
+                                    + "` on assembler-generated shape `" + shape.getId() + "`."));
                 }
             }
         }
@@ -42,8 +43,8 @@ public final class SyntheticShapeValidator extends AbstractValidator {
                     && shape.getId().getName().startsWith("_Synthetic")) {
                 events.add(warning(shape,
                         "Shape name starts with `_Synthetic` which is reserved for "
-                        + "assembler-generated shapes. Consider renaming this shape "
-                        + "to avoid potential conflicts."));
+                                + "assembler-generated shapes. Consider renaming this shape "
+                                + "to avoid potential conflicts."));
             }
         }
 
