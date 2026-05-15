@@ -965,6 +965,17 @@ Traits can be applied to the list shape and its member:
         }
 
 
+.. versionadded:: 2.1
+   Lists can also be declared inline in member target positions using
+   ``[Target]`` syntax. See :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           myList: [String]
+       }
+
+
 .. _idl-map:
 
 Map shapes
@@ -1059,6 +1070,17 @@ Traits can be applied to the map shape and its members:
                 }
             }
         }
+
+
+.. versionadded:: 2.1
+   Maps can also be declared inline in member target positions using
+   ``{Key: Value}`` syntax. See :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           tags: {String: String}
+       }
 
 
 .. _idl-structure:
@@ -1174,6 +1196,17 @@ Is exactly equivalent to:
         normative: Boolean
     }
 
+.. versionadded:: 2.1
+   Structure members can use :ref:`inline collection syntax
+   <idl-inline-collections>` to declare list and map targets directly:
+
+   .. code-block:: smithy
+
+       structure Example {
+           names: [String]
+           metadata: {String: String}
+       }
+
 
 .. _idl-union:
 
@@ -1227,6 +1260,17 @@ The following example defines a union shape with several members:
                 }
             }
         }
+
+.. versionadded:: 2.1
+   Union members can also use :ref:`inline collection syntax
+   <idl-inline-collections>`:
+
+   .. code-block:: smithy
+
+       union MyUnion {
+           names: [String]
+           tags: {String: String}
+       }
 
 
 .. _idl-service:
