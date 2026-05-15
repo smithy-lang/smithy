@@ -20,7 +20,9 @@ import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 
 /**
- * Applies the jsonName trait to a node value if applicable.
+ * Applies the jsonName trait to example node values if applicable, recursing through list elements,
+ * map values, and structure/union members. Document-typed shapes pass through without transformation,
+ * since documents accept any node value.
  */
 public class JsonValueNodeTransformer implements NodeVisitor<Node> {
     private final Context<?> context;
@@ -59,11 +61,16 @@ public class JsonValueNodeTransformer implements NodeVisitor<Node> {
 
     @Override
     public Node arrayNode(ArrayNode node) {
-        ArrayNode.Builder resultBuilder = ArrayNode.builder();
         Shape listShape = shape.asMemberShape()
                 .map(m -> context.getModel().expectShape(m.getTarget()))
                 .orElse(shape);
 
+        // Documents accept any node value, so short-circuit without trying to resolve a list element shape.
+        if (listShape.isDocumentShape()) {
+            return node;
+        }
+
+        ArrayNode.Builder resultBuilder = ArrayNode.builder();
         Shape target = context.getModel().expectShape(listShape.asListShape().get().getMember().getTarget());
         JsonValueNodeTransformer elementTransformer = new JsonValueNodeTransformer(context, target);
         for (Node element : node.getElements()) {
@@ -77,6 +84,11 @@ public class JsonValueNodeTransformer implements NodeVisitor<Node> {
         Shape actual = shape.asMemberShape()
                 .map(m -> context.getModel().expectShape(m.getTarget()))
                 .orElse(shape);
+
+        // Documents accept any node value, so short-circuit without trying to resolve member shapes.
+        if (actual.isDocumentShape()) {
+            return node;
+        }
 
         if (shape.isMapShape()) {
             return mapNode(actual.asMapShape().get(), node);
