@@ -1,0 +1,30 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#First": {
+            "type": "structure",
+            "members": {
+                "names": {
+                    "target": "smithy.example#_SyntheticListOfString"
+                }
+            }
+        },
+        "smithy.example#Second": {
+            "type": "structure",
+            "members": {
+                "tags": {
+                    "target": "smithy.example#_SyntheticListOfString"
+                }
+            }
+        },
+        "smithy.example#_SyntheticListOfString": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        }
+    }
+}
