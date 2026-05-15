@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -280,6 +281,58 @@ public class AwsRestJson1ProtocolTest {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("documentExampleCases")
+    public void convertsExamplesWithDocumentMembers(String path, String exampleId, Node expectedValue) {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("document-examples-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example.documentexamples#DocumentExamples"));
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+
+        // Navigate paths.<path>.get.responses["200"].content["application/json"].examples.<exampleId>.value.data
+        Node actualValue = result.expectObjectMember("paths")
+                .expectObjectMember(path)
+                .expectObjectMember("get")
+                .expectObjectMember("responses")
+                .expectObjectMember("200")
+                .expectObjectMember("content")
+                .expectObjectMember("application/json")
+                .expectObjectMember("examples")
+                .expectObjectMember(exampleId)
+                .expectObjectMember("value")
+                .expectMember("data");
+
+        Node.assertEquals(actualValue, expectedValue);
+    }
+
+    private static Stream<Arguments> documentExampleCases() {
+        Node arrayValue = ArrayNode.builder()
+                .withValue(ObjectNode.builder().withMember("name", "first").withMember("size", 1).build())
+                .withValue(ObjectNode.builder().withMember("name", "second").withMember("size", 2).build())
+                .build();
+        Node objectValue = ObjectNode.builder()
+                .withMember("name", "only")
+                .withMember("size", 1)
+                .build();
+        Node scalarValue = Node.from("just-a-string");
+        Node booleanValue = Node.from(true);
+        Node numberValue = Node.from(42);
+        Node nullValue = Node.nullNode();
+        return Stream.of(
+                Arguments.of("/array", "GetArrayDocument_example1", arrayValue),
+                Arguments.of("/object", "GetObjectDocument_example1", objectValue),
+                Arguments.of("/scalar", "GetScalarDocument_example1", scalarValue),
+                Arguments.of("/boolean", "GetBooleanDocument_example1", booleanValue),
+                Arguments.of("/number", "GetNumberDocument_example1", numberValue),
+                Arguments.of("/null", "GetNullDocument_example1", nullValue));
     }
 
     @Test
