@@ -67,17 +67,54 @@ final class FixBadDocComments implements Function<TokenTree, TokenTree> {
             // Find BRs in shape statements and look at the next sibling.
             for (TreeCursor br : shapeStatements.getChildrenByType(TreeType.BR)) {
                 TreeCursor nextSibling = br.getNextSibling();
-                if (nextSibling == null || nextSibling.getFirstChild(TreeType.APPLY_STATEMENT) != null) {
+                if (nextSibling == null
+                        || nextSibling.getFirstChild(TreeType.APPLY_STATEMENT) != null
+                        || hasBlankLineBeforeNextStatement(br, nextSibling)) {
                     updateNestedChildren(br);
                 }
             }
-            // Fix any trailing doc comments in shape bodies
-            for (TreeCursor members : shapeStatements.findChildrenByType(TreeType.SHAPE_MEMBERS)) {
+            // Fix any trailing doc comments in member bodies (structures, enums, and operations).
+            for (TreeCursor members : shapeStatements.findChildrenByType(
+                    TreeType.SHAPE_MEMBERS,
+                    TreeType.ENUM_SHAPE_MEMBERS,
+                    TreeType.OPERATION_BODY)) {
                 TreeCursor closeBrace = members.getLastChild();
-                if (closeBrace != null) {
-                    TreeCursor possibleTrailingWs = closeBrace.getPreviousSibling();
-                    if (possibleTrailingWs != null && possibleTrailingWs.getTree().getType() == TreeType.WS) {
-                        updateDirectChildren(possibleTrailingWs);
+                List<TreeCursor> wsNodes = members.getChildrenByType(TreeType.WS);
+                for (TreeCursor ws : wsNodes) {
+                    // Trailing WS right before closing brace: all doc comments are invalid.
+                    if (closeBrace != null && ws.getNextSibling() != null
+                            && ws.getNextSibling().getTree() == closeBrace.getTree()) {
+                        updateDirectChildren(ws);
+                        continue;
+                    }
+                    // Between-member WS: only same-line trailing doc comments are invalid.
+                    // Use the NODE_VALUE end line for members with VALUE_ASSIGNMENT to avoid
+                    // the BR's NEWLINE token inflating the member's end line.
+                    TreeCursor prevSibling = ws.getPreviousSibling();
+                    if (prevSibling != null) {
+                        int prevEndLine = FormatUtils.valueEndLine(prevSibling);
+                        for (TreeCursor comment : ws.getChildrenByType(TreeType.COMMENT)) {
+                            if (comment.getTree().getStartLine() == prevEndLine && isDocComment(comment)) {
+                                updateComment(comment);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Fix same-line trailing doc comments inside VALUE_ASSIGNMENT BR nodes
+            // (e.g., `a: String = "" /// comment`). Non-inline comments have already been
+            // relocated to WS siblings by RelocateMemberComments, so only same-line comments
+            // remain in the BR.
+            for (TreeCursor valueAssignment : shapeStatements.findChildrenByType(TreeType.VALUE_ASSIGNMENT)) {
+                TreeCursor nodeValue = valueAssignment.getFirstChild(TreeType.NODE_VALUE);
+                if (nodeValue == null) {
+                    continue;
+                }
+                int valueEndLine = nodeValue.getTree().getEndLine();
+                for (TreeCursor comment : valueAssignment.findChildrenByType(TreeType.COMMENT)) {
+                    if (isDocComment(comment) && comment.getTree().getStartLine() == valueEndLine) {
+                        updateComment(comment);
                     }
                 }
             }
@@ -114,12 +151,73 @@ final class FixBadDocComments implements Function<TokenTree, TokenTree> {
                 .isPresent();
     }
 
+    // A banner is a comment whose lexeme begins with 4 or more slashes (e.g., `//////` or
+    // `////// Shapes`). Banners are visual section dividers; their extra slashes are content,
+    // not prefix, and must survive demotion intact.
+    private static boolean isBannerLexeme(CharSequence lexeme) {
+        return lexeme.length() >= 4
+                && lexeme.charAt(0) == '/'
+                && lexeme.charAt(1) == '/'
+                && lexeme.charAt(2) == '/'
+                && lexeme.charAt(3) == '/';
+    }
+
+    // True iff the cursor wraps a DOC_COMMENT token whose lexeme is a banner.
+    private boolean isBannerDocComment(TreeCursor cursor) {
+        if (!isDocComment(cursor)) {
+            return false;
+        }
+        return cursor.getTree().tokens().findFirst().map(t -> isBannerLexeme(t.getLexeme())).orElse(false);
+    }
+
+    // Detect a blank line between a doc-comment block in a BR and the start of the next shape
+    // statement, and decide whether the block should be demoted. The rule is asymmetric:
+    //
+    //   - A standard `///` doc comment separated from its shape by a blank line is still a
+    //     doc comment for that shape; the formatter normalizes the blank line elsewhere and the
+    //     doc comment survives.
+    //
+    //   - A banner doc comment (`////` or longer) separated from its shape by a blank line is
+    //     a section divider, not documentation. Section dividers can't span blank-line gaps, so
+    //     the entire block of doc comments preceding that gap is demoted to regular comments.
+    //
+    // This method returns true when both conditions hold: a blank line exists between the BR's
+    // last comment and the next shape, AND at least one of the BR's doc comments is a banner.
+    private boolean hasBlankLineBeforeNextStatement(TreeCursor br, TreeCursor nextStatement) {
+        List<TreeCursor> comments = br.findChildrenByType(TreeType.COMMENT);
+        if (comments.isEmpty()) {
+            return false;
+        }
+        // A comment lexeme includes its trailing newline, so a comment on source line N has
+        // end line N+1. The strict greater-than therefore fires only when the next statement
+        // starts at N+2 or later, i.e., when there is at least one blank source line between
+        // the last comment and the next statement.
+        int lastCommentEndLine = comments.get(comments.size() - 1).getTree().getEndLine();
+        if (nextStatement.getTree().getStartLine() <= lastCommentEndLine) {
+            return false;
+        }
+        for (TreeCursor comment : comments) {
+            if (isBannerDocComment(comment)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateComment(TreeCursor cursor) {
         cursor.getTree().tokens().findFirst().ifPresent(token -> {
-            CapturedToken updatedToken = token.toBuilder()
-                    // Trim the first "/" from the lexeme. Note that this does make the spans inaccurate.
-                    .lexeme(token.getLexeme().subSequence(1, token.getLexeme().length()))
-                    .build();
+            CharSequence lexeme = token.getLexeme();
+            // Banners (4+ leading slashes like `////// Banner`) preserve their full lexeme so the
+            // extra slashes survive demotion as content of a regular comment. The renderer keys
+            // off the IdlToken type, so we mark the comment as COMMENT and let the formatter
+            // produce `// <rest of lexeme>`. Standard `/// X` doc comments still drop one slash
+            // here, producing the conventional `// X` lexeme expected by the rest of the pipeline.
+            CapturedToken.Builder builder = token.toBuilder().token(IdlToken.COMMENT);
+            if (!isBannerLexeme(lexeme)) {
+                // Trim the first "/" from the lexeme. Note that this does make the spans inaccurate.
+                builder.lexeme(lexeme.subSequence(1, lexeme.length()));
+            }
+            CapturedToken updatedToken = builder.build();
             TokenTree updatedTree = TokenTree.of(TreeType.COMMENT);
             updatedTree.appendChild(TokenTree.of(updatedToken));
             cursor.getParent().getTree().replaceChild(cursor.getTree(), updatedTree);
