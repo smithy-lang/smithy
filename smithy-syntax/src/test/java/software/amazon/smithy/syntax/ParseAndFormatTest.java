@@ -58,6 +58,12 @@ public class ParseAndFormatTest {
         String expected = IoUtils.readUtf8File(formattedFile);
 
         assertEquals(expected, formatted);
+
+        // Formatting must be idempotent: re-formatting the expected output produces the same output.
+        IdlTokenizer reTokenizer = IdlTokenizer.create(formattedFile.toString(), expected);
+        TokenTree reTree = TokenTree.of(reTokenizer);
+        String reformatted = Formatter.format(reTree, 120);
+        assertEquals(expected, reformatted, "Formatter is not idempotent for " + formattedFile);
     }
 
     public static List<Path> tests() throws Exception {

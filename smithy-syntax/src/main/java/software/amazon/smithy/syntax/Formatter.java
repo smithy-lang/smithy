@@ -56,7 +56,12 @@ public final class Formatter {
                     errors.get(0));
         }
 
+        // Pipeline ordering matters: RelocateMemberComments must run before FixBadDocComments
+        // (which depends on non-inline comments having been relocated out of VALUE_ASSIGNMENT BR
+        // nodes) and before FormatVisitor (whose hasNonInlineAnnotations heuristic assumes
+        // relocated comments are in WS siblings, not BR nodes).
         root = new SortUseStatements().apply(root);
+        root = new RelocateMemberComments().apply(root);
         root = new FixBadDocComments().apply(root);
         root = new RemoveUnusedUseStatements().apply(root);
 

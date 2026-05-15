@@ -91,3 +91,26 @@ structure MyStructure2 { //k
     l: Long // m
 } // n
 // o
+
+// ///+ lines are doc comments when followed immediately by a shape.
+// They must be preserved as-is rather than rewritten to //.
+////// Shapes
+structure MyStructure3 {}
+
+//////
+/// Number
+//////
+integer MyInteger3
+
+// ///+ lines are regular comments when NOT followed immediately by a shape.
+// They must be rewritten to //.
+
+////// Banner 1
+
+integer MyInteger4
+
+//////
+// Banner 2
+//////
+
+integer MyInteger5
