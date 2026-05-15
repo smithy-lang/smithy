@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Add apiConfig to the aws.api#tagEnabled trait so services can declare non-default operation names (e.g., AddTagsToResource) for the TagResource, UntagResource, and ListTagsForResource slots; tag API discovery and validation honor the override before falling back to default-named operations.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3130](https://github.com/smithy-lang/smithy/pull/3130)"
+  ]
 }
