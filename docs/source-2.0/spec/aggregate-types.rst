@@ -50,6 +50,17 @@ The shape ID of the member of a list is the list shape ID followed by
 ``$member``. For example, the shape ID of the list member in the above
 example is ``smithy.example#MyList$member``.
 
+.. versionadded:: 2.1
+   Lists can be declared inline in member target positions using ``[Target]``
+   syntax. Inline lists produce a synthetic shape that is shared across all
+   members using the same target type. See :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           names: [String]
+       }
+
 
 .. _map:
 
@@ -107,6 +118,18 @@ The shape ID of the ``key`` member of a map is the map shape ID followed by
 followed by ``$value``. For example, the shape ID of the ``key`` member in
 the above map is ``smithy.example#IntegerMap$key``, and the ``value``
 member is ``smithy.example#IntegerMap$value``.
+
+.. versionadded:: 2.1
+   Maps can be declared inline in member target positions using
+   ``{Key: Value}`` syntax. Inline maps produce a synthetic shape that is
+   shared across all members using the same key and value types.
+   See :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           tags: {String: String}
+       }
 
 
 .. _structure:
