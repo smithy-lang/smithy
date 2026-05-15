@@ -105,9 +105,8 @@ integer MyInteger2
 structure MyStruct {
     // b
     // c
-    a: String
+    a: String // d
 
-    // d
     // e
     // f
     b: String
@@ -115,8 +114,8 @@ structure MyStruct {
     // g
     // h
 } // i
-
 // j
+
 structure MyStructure2 {
     // k
     // l
@@ -127,3 +126,23 @@ structure MyStructure2 {
     // m
 } // n
 // o
+
+// ///+ lines are doc comments when followed immediately by a shape.
+// They must be preserved as-is rather than rewritten to //.
+////// Shapes
+structure MyStructure3 {}
+
+//////
+/// Number
+//////
+integer MyInteger3
+
+// ///+ lines are regular comments when NOT followed immediately by a shape.
+// They must be rewritten to //.
+// //// Banner 1
+integer MyInteger4
+
+// ////
+// Banner 2
+// ////
+integer MyInteger5
