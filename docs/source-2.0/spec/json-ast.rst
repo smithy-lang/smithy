@@ -289,6 +289,55 @@ The following example defines a map of strings to numbers:
     }
 
 
+.. _ast-synthetic-shapes:
+
+.. versionadded:: 2.1
+
+-------------------------------
+Synthetic shapes in the JSON AST
+-------------------------------
+
+:ref:`Inline collection declarations <idl-inline-collections>` produce
+synthetic shapes that appear in the JSON AST with the
+``smithy.synthetic#generated`` trait. This trait is an annotation (empty
+object) that identifies the shape as assembler-generated.
+
+The following example shows a structure with an inline list member and the
+resulting synthetic shape in the JSON AST:
+
+.. code-block:: json
+
+    {
+        "smithy": "2.1",
+        "shapes": {
+            "smithy.example#MyStructure": {
+                "type": "structure",
+                "members": {
+                    "names": {
+                        "target": "smithy.example#_SyntheticListOfString"
+                    }
+                }
+            },
+            "smithy.example#_SyntheticListOfString": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "traits": {
+                    "smithy.synthetic#generated": {}
+                }
+            }
+        }
+    }
+
+The ``smithy.synthetic#generated`` trait:
+
+- Is not user-applicable: only the assembler attaches it.
+- Appears in the JSON AST but NOT in the IDL.
+- Indicates that the shape was created from inline collection syntax.
+- Shapes bearing this trait MUST NOT have other traits applied to them.
+
+
 ------------------------------------------
 Structure, union, enum, and intEnum shapes
 ------------------------------------------
