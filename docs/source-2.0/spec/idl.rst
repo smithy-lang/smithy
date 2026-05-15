@@ -199,8 +199,11 @@ string support defined in :rfc:`7405`.
     ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
     ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`)
                             :   [`ValueAssignment`]
-    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
+    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `MemberTarget`
     ElidedShapeMember       :"$" `Identifier`
+    MemberTarget            :`ShapeId` / `InlineListTarget` / `InlineMapTarget`
+    InlineListTarget        :"[" [`WS`] `MemberTarget` [`WS`] "]"
+    InlineMapTarget         :"{" [`WS`] `MemberTarget` [`WS`] ":" [`WS`] `MemberTarget` [`WS`] "}"
     EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     EntityTypeName          :%s"service" / %s"resource"
     OperationShape          :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
@@ -211,6 +214,10 @@ string support defined in :rfc:`7405`.
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
     InlineAggregateShape    :":=" [`WS`] `TraitStatements` [`ForResource`] [`Mixins`]
                             :   [`WS`] `ShapeMembers`
+
+.. versionadded:: 2.1
+   The ``MemberTarget``, ``InlineListTarget``, and ``InlineMapTarget``
+   productions were added to support inline collection declarations.
 
 .. rubric:: Traits
 
