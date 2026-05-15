@@ -871,20 +871,19 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACKET);
         tokenizer.next();
 
-        // Compute the synthetic name from the inner target.
-        ShapeId innerTargetId = ShapeId.from(
-                innerTarget.contains("#") ? innerTarget : namespace + "#" + innerTarget);
-        String syntheticName = SyntheticShapeNaming.listName(innerTargetId);
+        // Compute the synthetic name from the target string as written.
+        String syntheticName = SyntheticShapeNaming.listName(innerTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
         // Create the synthetic list shape if not already emitted.
         if (emittedSyntheticShapes.add(syntheticId)) {
+            ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
             ListShape.Builder listBuilder = ListShape.builder()
                     .id(syntheticId)
                     .source(location)
                     .member(MemberShape.builder()
                             .id(syntheticId.withMember("member"))
-                            .target(innerTargetId)
+                            .target(resolvedTarget)
                             .source(location)
                             .build())
                     .addTrait(new SyntheticShapeTrait());
@@ -921,27 +920,26 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
 
-        // Compute the synthetic name from key and value targets.
-        ShapeId keyTargetId = ShapeId.from(
-                keyTarget.contains("#") ? keyTarget : namespace + "#" + keyTarget);
-        ShapeId valueTargetId = ShapeId.from(
-                valueTarget.contains("#") ? valueTarget : namespace + "#" + valueTarget);
-        String syntheticName = SyntheticShapeNaming.mapName(keyTargetId, valueTargetId);
+        // Compute the synthetic name from the target strings as written.
+        String syntheticName = SyntheticShapeNaming.mapName(keyTarget, valueTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
         // Create the synthetic map shape if not already emitted.
         if (emittedSyntheticShapes.add(syntheticId)) {
+            ShapeId resolvedKey = resolveInlineTarget(keyTarget);
+            ShapeId resolvedValue = resolveInlineTarget(valueTarget);
+
             MapShape.Builder mapBuilder = MapShape.builder()
                     .id(syntheticId)
                     .source(location)
                     .key(MemberShape.builder()
                             .id(syntheticId.withMember("key"))
-                            .target(keyTargetId)
+                            .target(resolvedKey)
                             .source(location)
                             .build())
                     .value(MemberShape.builder()
                             .id(syntheticId.withMember("value"))
-                            .target(valueTargetId)
+                            .target(resolvedValue)
                             .source(location)
                             .build())
                     .addTrait(new SyntheticShapeTrait());
@@ -949,6 +947,27 @@ final class IdlModelLoader {
         }
 
         return syntheticId.toString();
+    }
+
+    /**
+     * Resolves an inline target string to a ShapeId, checking use statements
+     * and the prelude, defaulting to the current namespace for relative names.
+     */
+    private ShapeId resolveInlineTarget(String target) {
+        if (target.contains("#")) {
+            return ShapeId.from(target);
+        }
+        // Check use statements first.
+        ShapeId used = useShapes.get(target);
+        if (used != null) {
+            return used;
+        }
+        // Check if it's a prelude shape.
+        ShapeId preludeId = ShapeId.fromParts(Prelude.NAMESPACE, target);
+        if (Prelude.isPreludeShape(preludeId)) {
+            return preludeId;
+        }
+        return ShapeId.fromParts(namespace, target);
     }
 
     private void parseForResource(LoadOperation.DefineShape operation) {

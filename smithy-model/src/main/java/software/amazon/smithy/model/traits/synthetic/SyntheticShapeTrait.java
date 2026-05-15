@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.traits.synthetic;
 
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
@@ -26,6 +27,10 @@ public final class SyntheticShapeTrait extends AnnotationTrait {
         super(ID, Node.objectNode());
     }
 
+    public SyntheticShapeTrait(ObjectNode node) {
+        super(ID, node);
+    }
+
     @Override
     public boolean isSynthetic() {
         return true;
@@ -34,5 +39,11 @@ public final class SyntheticShapeTrait extends AnnotationTrait {
     @Override
     public SerializationMode serializationMode() {
         return SerializationMode.AST_ONLY;
+    }
+
+    public static final class Provider extends AnnotationTrait.Provider<SyntheticShapeTrait> {
+        public Provider() {
+            super(ID, SyntheticShapeTrait::new);
+        }
     }
 }
