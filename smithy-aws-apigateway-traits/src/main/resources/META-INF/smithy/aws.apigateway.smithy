@@ -119,6 +119,7 @@ structure integration {
 
     /// The ARN of an ALB or NLB listener for private integrations using
     /// VPC Links V2.
+    @suppress(["RepeatedShapeName"])
     integrationTarget: String
 }
 
