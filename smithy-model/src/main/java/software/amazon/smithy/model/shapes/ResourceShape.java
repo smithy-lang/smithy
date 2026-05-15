@@ -220,7 +220,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         private ShapeId delete;
         private ShapeId list;
 
-        private Builder() {}
+        public Builder() {}
 
         private Builder(ResourceShape shape) {
             shape.updateBuilder(this);
