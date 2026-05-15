@@ -1430,6 +1430,67 @@ The suffixes for the generated names can be customized using the
     }
 
 
+.. _idl-inline-collections:
+
+Inline collection declarations
+++++++++++++++++++++++++++++++
+
+.. versionadded:: 2.1
+
+Members can declare list and map shapes inline using a compact syntax instead
+of referencing a separately defined shape.
+
+A list is declared inline using ``[Target]``:
+
+.. code-block:: smithy
+
+    structure Playlist {
+        songs: [String]
+    }
+
+A map is declared inline using ``{KeyTarget: ValueTarget}``:
+
+.. code-block:: smithy
+
+    structure Metadata {
+        tags: {String: String}
+    }
+
+Inline collections can be nested:
+
+.. code-block:: smithy
+
+    structure Account {
+        // A map from group name to a list of user IDs
+        groups: {String: [String]}
+    }
+
+.. note::
+   Nesting is supported up to 3 levels deep.
+
+**Synthetic shapes**
+
+Inline collection declarations produce assembler-generated *synthetic shapes*.
+These shapes are:
+
+- Named using a ``_Synthetic`` prefix derived from their content (e.g.,
+  ``_SyntheticListOfString``, ``_SyntheticMapOfStringToString``).
+- Marked with the ``smithy.synthetic#generated`` trait.
+- Placed in the same namespace as the declaring structure.
+- Grouped: multiple members using the same inline type (e.g., two members
+  both using ``[String]``) share a single synthetic shape.
+
+**Limitations**
+
+- Inline collections require ``$version: "2.1"`` or later.
+- Traits cannot be applied to synthetic shapes. Collections requiring
+  shape-level traits (such as ``@sparse``, ``@uniqueItems``, or ``@length``)
+  must use explicit shape definitions.
+- The ``apply`` statement cannot target synthetic shapes.
+- Shape names starting with ``_Synthetic`` are reserved for
+  assembler-generated shapes.
+
+
 .. _idl-resource:
 
 Resource shape
