@@ -66,6 +66,33 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
     }
 
     /**
+     * Controls how this trait is serialized.
+     *
+     * <p>Most traits use {@link SerializationMode#ALL}, meaning they are
+     * serialized in both the JSON AST and the IDL. Synthetic traits that
+     * are purely transient use {@link SerializationMode#NONE}. Traits that
+     * need to be persisted in the JSON AST but should not appear in the IDL
+     * (e.g., assembler-generated markers) use {@link SerializationMode#AST_ONLY}.
+     *
+     * @return Returns the serialization mode for this trait.
+     */
+    default SerializationMode serializationMode() {
+        return isSynthetic() ? SerializationMode.NONE : SerializationMode.ALL;
+    }
+
+    /**
+     * Controls where a trait is serialized.
+     */
+    enum SerializationMode {
+        /** Trait is serialized in both JSON AST and IDL. */
+        ALL,
+        /** Trait is serialized in the JSON AST only, not in the IDL. */
+        AST_ONLY,
+        /** Trait is never serialized (purely in-memory). */
+        NONE
+    }
+
+    /**
      * Used in a stream flatMapStream to return a {@link Stream} with a
      * {@link Pair} of Shape and Trait if the trait is present on the
      * given shape.
