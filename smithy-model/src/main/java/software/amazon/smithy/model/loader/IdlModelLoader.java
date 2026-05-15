@@ -102,6 +102,7 @@ final class IdlModelLoader {
     private final String filename;
     private final IdlInternalTokenizer tokenizer;
     private final Map<String, ShapeId> useShapes = new HashMap<>();
+    private final Set<ShapeId> emittedSyntheticShapes = new HashSet<>();
     private final Function<CharSequence, String> stringTable;
     private Consumer<LoadOperation> operations;
     private Version modelVersion = Version.VERSION_1_0;
@@ -876,17 +877,19 @@ final class IdlModelLoader {
         String syntheticName = SyntheticShapeNaming.listName(innerTargetId);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
-        // Create the synthetic list shape.
-        ListShape.Builder listBuilder = ListShape.builder()
-                .id(syntheticId)
-                .source(location)
-                .member(MemberShape.builder()
-                        .id(syntheticId.withMember("member"))
-                        .target(innerTargetId)
-                        .source(location)
-                        .build())
-                .addTrait(new SyntheticShapeTrait());
-        addOperation(createShape(listBuilder));
+        // Create the synthetic list shape if not already emitted.
+        if (emittedSyntheticShapes.add(syntheticId)) {
+            ListShape.Builder listBuilder = ListShape.builder()
+                    .id(syntheticId)
+                    .source(location)
+                    .member(MemberShape.builder()
+                            .id(syntheticId.withMember("member"))
+                            .target(innerTargetId)
+                            .source(location)
+                            .build())
+                    .addTrait(new SyntheticShapeTrait());
+            addOperation(createShape(listBuilder));
+        }
 
         return syntheticId.toString();
     }
@@ -926,22 +929,24 @@ final class IdlModelLoader {
         String syntheticName = SyntheticShapeNaming.mapName(keyTargetId, valueTargetId);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
-        // Create the synthetic map shape.
-        MapShape.Builder mapBuilder = MapShape.builder()
-                .id(syntheticId)
-                .source(location)
-                .key(MemberShape.builder()
-                        .id(syntheticId.withMember("key"))
-                        .target(keyTargetId)
-                        .source(location)
-                        .build())
-                .value(MemberShape.builder()
-                        .id(syntheticId.withMember("value"))
-                        .target(valueTargetId)
-                        .source(location)
-                        .build())
-                .addTrait(new SyntheticShapeTrait());
-        addOperation(createShape(mapBuilder));
+        // Create the synthetic map shape if not already emitted.
+        if (emittedSyntheticShapes.add(syntheticId)) {
+            MapShape.Builder mapBuilder = MapShape.builder()
+                    .id(syntheticId)
+                    .source(location)
+                    .key(MemberShape.builder()
+                            .id(syntheticId.withMember("key"))
+                            .target(keyTargetId)
+                            .source(location)
+                            .build())
+                    .value(MemberShape.builder()
+                            .id(syntheticId.withMember("value"))
+                            .target(valueTargetId)
+                            .source(location)
+                            .build())
+                    .addTrait(new SyntheticShapeTrait());
+            addOperation(createShape(mapBuilder));
+        }
 
         return syntheticId.toString();
     }
