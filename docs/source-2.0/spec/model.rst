@@ -475,6 +475,12 @@ documentation for :ref:`shape types <shapes>`.
         member: UserName
     }
 
+.. versionadded:: 2.1
+   In IDL 2.1+, members in structures and unions can declare their target
+   using :ref:`inline collection syntax <idl-inline-collections>` instead of
+   referencing a separately defined shape. The assembler creates a synthetic
+   shape for the inline declaration.
+
 
 .. _shape-id:
 
@@ -539,6 +545,12 @@ Shape name
     form of PascalCase in which only the first letter of acronyms,
     abbreviations, and initialisms are capitalized. For example, prefer
     ``UserId`` over ``UserID``, and ``Arn`` over ``ARN``.
+
+    .. versionadded:: 2.1
+       Shape names starting with ``_Synthetic`` are reserved for
+       assembler-generated shapes created by :ref:`inline collection
+       declarations <idl-inline-collections>`. User-defined shapes SHOULD NOT
+       use this prefix.
 Root shape ID
     A :dfn:`root shape ID` is a shape ID that does not contain a member.
     For example, ``smithy.example#Foo`` and ``Foo`` are root shape IDs.
