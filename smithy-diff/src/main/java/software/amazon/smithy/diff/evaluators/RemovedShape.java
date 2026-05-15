@@ -11,6 +11,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -23,6 +24,8 @@ public final class RemovedShape extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()
                 .filter(shape -> !shape.hasTrait(PrivateTrait.ID))
+                // Synthetic shapes are assembler-generated implementation details, not API surface.
+                .filter(shape -> !shape.hasTrait(SyntheticShapeTrait.ID))
                 .filter(shape -> !isMemberOfRemovedShape(shape, differences))
                 .map(shape -> isInconsequentialType(shape)
                         ? ValidationEvent.builder()
