@@ -355,6 +355,11 @@ version greater than or equal to ``2.1`` and less than ``3.0``:
             "smithy": "2.1"
         }
 
+.. versionadded:: 2.1
+   Version ``2.1`` introduces :ref:`inline collection declarations
+   <idl-inline-collections>`, which allow list and map shapes to be declared
+   directly in member target positions.
+
 .. rubric:: Version compatibility
 
 A single version statement can appear in a model file, but different versions
