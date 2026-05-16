@@ -293,9 +293,9 @@ The following example defines a map of strings to numbers:
 
 .. versionadded:: 2.1
 
--------------------------------
+----------------------------------
 Synthetic shapes in the JSON AST
--------------------------------
+----------------------------------
 
 :ref:`Inline collection declarations <idl-inline-collections>` produce
 synthetic shapes that appear in the JSON AST with the
