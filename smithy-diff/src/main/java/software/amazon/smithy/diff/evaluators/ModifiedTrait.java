@@ -29,6 +29,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -91,7 +92,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
     private static final Set<ShapeId> IGNORED_TRAITS = SetUtils.of(BoxTrait.ID,
             RequiredTrait.ID,
             SyntheticEnumTrait.ID,
-            OriginalShapeIdTrait.ID);
+            OriginalShapeIdTrait.ID,
+            SyntheticShapeTrait.ID);
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
