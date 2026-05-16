@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,10 +31,12 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
@@ -60,6 +63,7 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -1124,5 +1128,214 @@ public class SmithyBuildTest {
                 Arguments.of(ListUtils.of(rootPath)),
                 // Test that passing explicit files works too.
                 Arguments.of(ListUtils.of(rootPath.resolve("a.smithy"), rootPath.resolve("foo.md"))));
+    }
+
+    @Test
+    public void toProjectedModelAppliesTransforms() throws Exception {
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        // excludeShapesByTag removes shapes tagged "foo" -- ns.foo#String1 has tag "foo".
+        TransformConfig transform = TransformConfig.builder()
+                .name("excludeShapesByTag")
+                .args(Node.objectNode().withMember("tags", Node.fromStrings("foo")))
+                .build();
+        ProjectionConfig projection = ProjectionConfig.builder()
+                .transforms(ListUtils.of(transform))
+                .build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of("filtered", projection))
+                .build();
+
+        Model model = SmithyBuild.toProjectedModel(config, "filtered").unwrap();
+
+        // String1 has tag "foo" and should be excluded.
+        assertFalse(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+        // String2 has no tags and should remain.
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String2")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelThrowsForUnknownProjection() {
+        SmithyBuildConfig config = SmithyBuildConfig.builder().version(SmithyBuild.VERSION).build();
+
+        UnknownProjectionException thrown = assertThrows(UnknownProjectionException.class,
+                () -> SmithyBuild.toProjectedModel(config, "nonexistent"));
+        assertThat(thrown.getMessage(), containsString("Unknown projection"));
+        assertThat(thrown.getMessage(), containsString("nonexistent"));
+    }
+
+    @Test
+    public void toProjectedModelWithNoTransformsReturnsBaseModel() throws Exception {
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of("passthrough", projection))
+                .build();
+
+        Model model = SmithyBuild.toProjectedModel(config, "passthrough").unwrap();
+
+        // All shapes should be present since no transforms were applied.
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String2")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String3")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelReturnsBrokenBaseModelWithoutThrowing() throws Exception {
+        // invalid-model.smithy defines a shape that references a non-existent target, producing an
+        // ERROR event during assembly. toProjectedModel must surface that as a broken ValidatedResult
+        // rather than throwing out of the base-model unwrap.
+        String modelPath = Paths.get(getClass().getResource("invalid-model.smithy").toURI()).toString();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of("passthrough", projection))
+                .build();
+
+        ValidatedResult<Model> result = SmithyBuild.toProjectedModel(config, "passthrough");
+
+        assertTrue(result.isBroken());
+        assertThat(result.getValidationEvents(),
+                hasItem(hasProperty("severity", is(Severity.ERROR))));
+    }
+
+    @Test
+    public void toProjectedModelAppliesOnlyTargetedProjectionWhenConfigHasMany() throws Exception {
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        TransformConfig dropTagged = TransformConfig.builder()
+                .name("excludeShapesByTag")
+                .args(Node.objectNode().withMember("tags", Node.fromStrings("foo")))
+                .build();
+        TransformConfig dropString2 = TransformConfig.builder()
+                .name("excludeShapesBySelector")
+                .args(Node.objectNode().withMember("selector", "[id=ns.foo#String2]"))
+                .build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of(
+                        "drops-tagged",
+                        ProjectionConfig.builder().transforms(ListUtils.of(dropTagged)).build(),
+                        "drops-string2",
+                        ProjectionConfig.builder().transforms(ListUtils.of(dropString2)).build()))
+                .build();
+
+        Model model = SmithyBuild.toProjectedModel(config, "drops-tagged").unwrap();
+
+        // Only the drops-tagged projection should have run: String1 (tagged "foo") is gone, String2 remains.
+        assertFalse(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String2")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelToleratesUnknownPlugins() throws Exception {
+        // External tools (LSP, smithy4s, playground) commonly load configs that declare plugins not on
+        // their classpath. Plugin resolution still walks the declarations even though the plugin filter
+        // rejects everything, so toProjectedModel must force ignoreMissingPlugins on internally.
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        ProjectionConfig projection = ProjectionConfig.builder()
+                .plugins(MapUtils.of("some-unknown-plugin", Node.objectNode()))
+                .build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of("uses-missing-plugin", projection))
+                .build();
+
+        // Must not throw even though ignoreMissingPlugins is not set on the input config.
+        Model model = SmithyBuild.toProjectedModel(config, "uses-missing-plugin").unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelToleratesTopLevelUnknownPlugins() throws Exception {
+        // Top-level plugins are merged into every projection's plugin set, so the unknown-plugin
+        // tolerance must extend to declarations at the top level too.
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .plugins(MapUtils.of("some-unknown-plugin", Node.objectNode()))
+                .projections(MapUtils.of("p", ProjectionConfig.builder().build()))
+                .build();
+
+        Model model = SmithyBuild.toProjectedModel(config, "p").unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelToleratesUnknownTransformsInUnrelatedProjections() throws Exception {
+        // Configs in IDE/LSP environments commonly reference transforms that are not on the tool's
+        // classpath. toProjectedModel restricts the run to the targeted projection so unrelated
+        // projections never have their transforms resolved.
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        TransformConfig knownTransform = TransformConfig.builder()
+                .name("excludeShapesByTag")
+                .args(Node.objectNode().withMember("tags", Node.fromStrings("foo")))
+                .build();
+        TransformConfig unknownTransform = TransformConfig.builder()
+                .name("does-not-exist-transform")
+                .build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .projections(MapUtils.of(
+                        "target",
+                        ProjectionConfig.builder().transforms(ListUtils.of(knownTransform)).build(),
+                        "sibling",
+                        ProjectionConfig.builder().transforms(ListUtils.of(unknownTransform)).build()))
+                .build();
+
+        Model model = SmithyBuild.toProjectedModel(config, "target").unwrap();
+
+        // Targeted projection ran (String1 is tagged "foo" and got excluded), and the sibling's
+        // bogus transform never tripped resolution.
+        assertFalse(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String2")).isPresent());
+    }
+
+    @Test
+    public void toProjectedModelDoesNotMutateInputConfig() throws Exception {
+        String modelPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .sources(ListUtils.of(modelPath))
+                .plugins(MapUtils.of("some-unknown-plugin", Node.objectNode()))
+                .projections(MapUtils.of(
+                        "target",
+                        ProjectionConfig.builder().build(),
+                        "sibling",
+                        ProjectionConfig.builder().build()))
+                .build();
+
+        boolean preFlag = config.isIgnoreMissingPlugins();
+        Set<String> preProjections = new HashSet<>(config.getProjections().keySet());
+        Set<String> prePlugins = new HashSet<>(config.getPlugins().keySet());
+
+        SmithyBuild.toProjectedModel(config, "target");
+
+        assertEquals(preFlag, config.isIgnoreMissingPlugins());
+        assertEquals(preProjections, config.getProjections().keySet());
+        assertEquals(prePlugins, config.getPlugins().keySet());
+    }
+
+    @Test
+    public void toProjectedModelForAbstractProjectionFailsClearly() {
+        ProjectionConfig abstractProjection = ProjectionConfig.builder().setAbstract(true).build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .projections(MapUtils.of("base", abstractProjection))
+                .build();
+
+        SmithyBuildException thrown = assertThrows(SmithyBuildException.class,
+                () -> SmithyBuild.toProjectedModel(config, "base"));
+        assertThat(thrown.getMessage(), containsString("Cannot apply abstract projection"));
+        assertThat(thrown.getMessage(), containsString("base"));
     }
 }

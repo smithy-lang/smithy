@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -224,6 +226,44 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      */
     public long getLastModifiedInMillis() {
         return lastModifiedInMillis;
+    }
+
+    /**
+     * Creates a {@link ModelAssembler} populated with the sources and imports
+     * defined in this configuration. Both {@link #getSources()} and
+     * {@link #getImports()} are added to the assembler via
+     * {@link ModelAssembler#addImport(String)}.
+     *
+     * <p>Note: Maven dependencies declared in the configuration are not
+     * resolved by this method. Dependency resolution is the responsibility
+     * of the caller (for example, the Smithy CLI).
+     *
+     * @return Returns a pre-configured {@link ModelAssembler}.
+     * @see software.amazon.smithy.build.SmithyBuild#toProjectedModel(SmithyBuildConfig, String)
+     */
+    public ModelAssembler toModelAssembler() {
+        return toModelAssembler(getClass().getClassLoader());
+    }
+
+    /**
+     * Creates a {@link ModelAssembler} populated with the sources and imports
+     * defined in this configuration, using the given {@code ClassLoader} for
+     * service discovery of traits, validators, and other providers. Both
+     * {@link #getSources()} and {@link #getImports()} are added to the assembler
+     * via {@link ModelAssembler#addImport(String)}.
+     *
+     * <p>Note: Maven dependencies declared in the configuration are not
+     * resolved by this method. Dependency resolution is the responsibility
+     * of the caller (for example, the Smithy CLI).
+     *
+     * @param classLoader Class loader used to discover traits and validators.
+     * @return Returns a pre-configured {@link ModelAssembler}.
+     */
+    public ModelAssembler toModelAssembler(ClassLoader classLoader) {
+        ModelAssembler assembler = Model.assembler(classLoader);
+        sources.forEach(assembler::addImport);
+        imports.forEach(assembler::addImport);
+        return assembler;
     }
 
     /**
