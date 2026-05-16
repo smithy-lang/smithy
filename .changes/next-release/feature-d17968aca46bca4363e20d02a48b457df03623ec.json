@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "Allow tags member names in input/output structures to have \"map\" suffix variants.",
+  "description": "Updated tags member names validation in input/output structures to allow \"map\" suffix variants.",
   "pull_requests": [
     "[#3129](https://github.com/smithy-lang/smithy/pull/3129)"
   ]
