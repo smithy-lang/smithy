@@ -13,6 +13,9 @@ import java.util.function.Predicate;
 public final class FunctionalUtils {
 
     @SuppressWarnings("rawtypes")
+    private static final Predicate ALWAYS_FALSE = x -> false;
+
+    @SuppressWarnings("rawtypes")
     private static final Predicate ALWAYS_TRUE = x -> true;
 
     private static final Function<Object, Object> IDENTITY = value -> value;
@@ -39,6 +42,17 @@ public final class FunctionalUtils {
     @SuppressWarnings("unchecked")
     public static <T> Predicate<T> alwaysTrue() {
         return (Predicate<T>) ALWAYS_TRUE;
+    }
+
+    /**
+     * Returns a {@link Predicate} that always returns false.
+     *
+     * @param <T> Value that the predicate accepts.
+     * @return Returns the predicate.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Predicate<T> alwaysFalse() {
+        return (Predicate<T>) ALWAYS_FALSE;
     }
 
     /**

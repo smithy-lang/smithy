@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,10 +26,12 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.SmithyBuildTest;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 
 public class SmithyBuildConfigTest {
@@ -249,5 +252,31 @@ public class SmithyBuildConfigTest {
 
         assertThat(a.toBuilder().merge(b).build().getMaven().get().getDependencies(),
                 contains("c:d:1.0.0", "a:b:1.0.0"));
+    }
+
+    @Test
+    public void toModelAssemblerLoadsSourcesAndImports() {
+        SmithyBuildConfig config = SmithyBuildConfig.load(
+                Paths.get(getModelResourcePath("config-with-sources-and-imports.json")));
+        Model model = config.toModelAssembler().assemble().unwrap();
+
+        // simple-model.json defines ns.foo#String1, ns.foo#String2, ns.foo#String3
+        assertThat(config.getSources(), is(not(empty())));
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String1")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String2")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#String3")).isPresent());
+
+        // resource-model.json defines ns.foo#MyResource, ns.foo#GetMyResource, etc.
+        assertThat(config.getImports(), is(not(empty())));
+        assertTrue(model.getShape(ShapeId.from("ns.foo#MyResource")).isPresent());
+        assertTrue(model.getShape(ShapeId.from("ns.foo#GetMyResource")).isPresent());
+    }
+
+    private String getModelResourcePath(String name) {
+        try {
+            return Paths.get(getClass().getResource(name).toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -22,10 +22,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Runs the projections and plugins found in a {@link SmithyBuildConfig}
@@ -165,6 +168,102 @@ public final class SmithyBuild {
      */
     public void build(Consumer<ProjectionResult> resultCallback, BiConsumer<String, Throwable> exceptionCallback) {
         new SmithyBuildImpl(this).applyAllProjections(resultCallback, exceptionCallback);
+    }
+
+    /**
+     * Assembles the model from the given configuration and applies the transforms
+     * of the named projection, returning the projected model and its validation
+     * events without running any plugins or writing artifacts to disk. Both
+     * {@link SmithyBuildConfig#getSources()} and {@link SmithyBuildConfig#getImports()}
+     * are loaded into the model.
+     *
+     * <p>If the base-model assemble is broken, the base result is returned
+     * unchanged so the caller can inspect its events.
+     *
+     * <p>The class loader used for service discovery is the
+     * {@linkplain Thread#getContextClassLoader() current thread's context
+     * class loader}, falling back to {@link SmithyBuild}'s class loader. Use
+     * {@link #toProjectedModel(SmithyBuildConfig, String, ClassLoader)} when
+     * the loader needs to be controlled explicitly (for example, in IDE or
+     * application-server environments).
+     *
+     * @param config Configuration to load.
+     * @param projectionName The projection to apply.
+     * @return The validated projected model.
+     * @throws UnknownProjectionException if the projection is not declared.
+     * @throws SmithyBuildException if the projection is abstract or the build
+     *   fails.
+     */
+    public static ValidatedResult<Model> toProjectedModel(SmithyBuildConfig config, String projectionName) {
+        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+        return toProjectedModel(config,
+                projectionName,
+                contextLoader != null ? contextLoader : SmithyBuild.class.getClassLoader());
+    }
+
+    /**
+     * Assembles the model from the given configuration and applies the transforms
+     * of the named projection, using the given class loader for service
+     * discovery of traits, validators, etc., returning the projected model and
+     * its validation events without running any plugins. Both
+     * {@link SmithyBuildConfig#getSources()} and {@link SmithyBuildConfig#getImports()}
+     * are loaded into the model.
+     *
+     * <p>If the base-model assemble is broken, the base result is returned
+     * unchanged so the caller can inspect its events.
+     *
+     * @param config Configuration to load.
+     * @param projectionName The projection to apply.
+     * @param classLoader Class loader used for service discovery.
+     * @return The validated projected model.
+     * @throws UnknownProjectionException if the projection is not declared.
+     * @throws SmithyBuildException if the projection is abstract or the build
+     *   fails.
+     */
+    public static ValidatedResult<Model> toProjectedModel(
+            SmithyBuildConfig config,
+            String projectionName,
+            ClassLoader classLoader
+    ) {
+        ProjectionConfig projection = config.getProjections().get(projectionName);
+        if (projection == null) {
+            throw new UnknownProjectionException("Unknown projection: " + projectionName);
+        }
+        if (projection.isAbstract()) {
+            throw new SmithyBuildException("Cannot apply abstract projection: " + projectionName);
+        }
+
+        ValidatedResult<Model> baseResult = config.toModelAssembler(classLoader).assemble();
+        if (baseResult.isBroken()) {
+            // The inner pipeline unwraps the base model and would throw on ERROR/DANGER events,
+            // so short-circuit and hand the broken result to the caller intact.
+            return baseResult;
+        }
+
+        // Restrict the run config to the targeted projection so SmithyBuildImpl does not eagerly
+        // resolve transformers for unrelated projections (which would throw on configs that mention
+        // transforms not on this classloader). 
+        SmithyBuildConfig runConfig = config.toBuilder()
+                .projections(Collections.singletonMap(projectionName, projection))
+                // Strip sources and imports because the pre-assembled base model is passed via
+                // .model() below, leaving them would re-parse the same files
+                .sources(Collections.emptyList())
+                .imports(Collections.emptyList())
+                // Set ignoreMissingPlugins because plugin resolution still walks declared plugins
+                // even though the pluginFilter rejects them all.
+                .ignoreMissingPlugins(true)
+                .build();
+
+        ProjectionResult result = SmithyBuild.create(classLoader)
+                .config(runConfig)
+                .model(baseResult.getResult().get())
+                .pluginFilter(FunctionalUtils.alwaysFalse())
+                .build()
+                .getProjectionResult(projectionName)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Projection result not found: " + projectionName));
+
+        return new ValidatedResult<>(result.getModel(), result.getEvents());
     }
 
     /**
