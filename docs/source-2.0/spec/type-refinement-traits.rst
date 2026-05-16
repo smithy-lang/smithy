@@ -516,6 +516,11 @@ The following example defines a :ref:`map <map>` shape that MAY contain
         value: String
     }
 
+.. versionadded:: 2.1
+   The ``@sparse`` trait cannot be applied to synthetic shapes created by
+   :ref:`inline collection declarations <idl-inline-collections>`. To define
+   a sparse list or map, use an explicit shape definition.
+
 
 .. smithy-trait:: smithy.api#mixin
 .. _mixin-trait:
