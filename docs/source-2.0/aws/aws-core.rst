@@ -1348,10 +1348,11 @@ tag associations on a resource:
 * Must have exactly one input member that targets a string shape and has a
   member name that matches ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
   the resource ARN.
-* Must have exactly one input member that targets a list shape, with list
-  member targeting a structure that consists of two members that target a
-  string shape representing the tag key or name and the tag value. This
-  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+* Must have exactly one input member that targets either a list shape (with
+  list member targeting a structure of two string members representing the
+  tag key and tag value) or a map shape with string keys and values. This
+  member name must match: ``^[T|t]ag(s|s?[M|m]ap|[L|l]ist)$`` (e.g., ``tags``,
+  ``TagList``, ``tagMap``, ``tagsMap``).
 
 The following snippet is a valid definition of a tag resource operation and
 its input:
@@ -1416,10 +1417,11 @@ resource.
 * Must have exactly one input member that targets a string shape and has a
   member name that matches: ``^([R|r]esource)?([A|a]rn|ARN)$`` to accept
   the resource ARN.
-* Must have exactly one output member that targets a list shape, with list
-  member targeting a structure that consists of two members that target a
-  string shape representing the tag key or name and the tag value. This
-  member name must match: ``^[T|t]ag(s|[L|l]ist)$``
+* Must have exactly one output member that targets either a list shape (with
+  list member targeting a structure of two string members representing the
+  tag key and tag value) or a map shape with string keys and values. This
+  member name must match: ``^[T|t]ag(s|s?[M|m]ap|[L|l]ist)$`` (e.g., ``tags``,
+  ``TagList``, ``tagMap``, ``tagsMap``).
 
 The following snippet is an example of the list tags for resource operation and
 its input:
