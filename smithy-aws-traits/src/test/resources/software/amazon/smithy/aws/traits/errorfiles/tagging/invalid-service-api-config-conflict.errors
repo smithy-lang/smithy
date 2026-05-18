@@ -1,0 +1,1 @@
+[WARNING] example.weather#Weather: Service has `apiConfig.tagApi` set to `example.weather#AddTagsToResource` but also has a service-bound operation named `TagResource`. The default-named operation will be ignored for tagging API discovery. Remove either the `apiConfig` override or the `TagResource` operation to avoid ambiguity. | TagEnabledService
