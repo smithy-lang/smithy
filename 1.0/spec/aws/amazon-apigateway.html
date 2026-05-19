@@ -625,7 +625,7 @@ operation.</p>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html">Enable Request Validation in API Gateway</a> for more information</p></li>
 <li><p><a class="reference internal" href="../../guides/converting-to-openapi.html#apigateway-request-validators"><span class="std std-ref">Request validators</span></a> for information on how this converts
 to OpenAPI</p></li>
-<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.requestValidator.html">x-amazon-apigateway-request-validator</a> for more on how this converts
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html">x-amazon-apigateway-request-validator</a> for more on how this converts
 to OpenAPI</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html">x-amazon-apigateway-request-validators</a> for more on how this converts
 to OpenAPI</p></li>
@@ -672,7 +672,7 @@ customers.</p>
 <section id="aws-apigateway-integration-trait">
 <span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that integrates with an actual
+<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html">API Gateway integration</a> that integrates with an actual
 backend.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
@@ -682,7 +682,7 @@ backend.</p>
 <dt>See also</dt><dd><ul class="simple">
 <li><p><a class="reference internal" href="../../guides/converting-to-openapi.html#apigateway-integrations"><span class="std std-ref">Integrations</span></a> for information on how this converts
 to OpenAPI</p></li>
-<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway Integration</a> for in-depth API documentation</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html">API Gateway Integration</a> for in-depth API documentation</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html">x-amazon-apigateway-integration</a> for details on how this looks
 to OpenAPI</p></li>
 </ul>
@@ -744,7 +744,7 @@ the resource. For more information, see
 <td><p>Specifies how a request payload of unmapped content type is passed
 through the integration request without modification. Supported
 values are <code class="docutils literal notranslate"><span class="pre">when_no_templates</span></code>, <code class="docutils literal notranslate"><span class="pre">when_no_match</span></code>, and <code class="docutils literal notranslate"><span class="pre">never</span></code>.
-For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
+For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>contentHandling</p></td>
 <td><p><a class="reference internal" href="#apigateway-content-handling"><span class="std std-ref">ContentHandling string</span></a></p></td>
@@ -756,7 +756,7 @@ For more information, see <a class="reference external" href="https://docs.aws.a
 </tr>
 <tr class="row-odd"><td><p>connectionId</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p>The ID of a <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/vpc-link/">VpcLink</a> for the private integration.</p></td>
+<td><p>The ID of a <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_VpcLink.html">VpcLink</a> for the private integration.</p></td>
 </tr>
 <tr class="row-even"><td><p>connectionType</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
@@ -867,7 +867,7 @@ customers.</p>
 <section id="aws-apigateway-mockintegration-trait">
 <span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Link to this heading">¶</a></h2>
 <dl class="simple">
-<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that returns a mock response.</p>
+<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html">API Gateway integration</a> that returns a mock response.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
 </dd>
@@ -895,7 +895,7 @@ following members:</p>
 <td><p>Specifies how a request payload of unmapped content type is passed
 through the integration request without modification. Supported
 values are <code class="docutils literal notranslate"><span class="pre">when_no_templates</span></code>, <code class="docutils literal notranslate"><span class="pre">when_no_match</span></code>, and <code class="docutils literal notranslate"><span class="pre">never</span></code>.
-For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
+For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_Integration.html#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>requestParameters</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters structure</span></a> to request parameters</p></td>
@@ -1104,7 +1104,7 @@ Lambda function execution throws an exception.</p>
 <p>The Response status pattern property name refers to a response
 status code or regular expression describing a group of response
 status codes. It does not correspond to any identifier of an
-<a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/">IntegrationResponse</a> resource in the API Gateway REST API.</p>
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/api/API_IntegrationResponse.html">IntegrationResponse</a> resource in the API Gateway REST API.</p>
 </div>
 </td>
 </tr>

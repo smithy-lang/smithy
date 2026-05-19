@@ -190,6 +190,9 @@ Trait value
           - ``[string]``
           - **Required**. A list of the Amazon Cognito user pool ARNs. Each
             element is of this format: ``arn:aws:cognito-idp:{region}:{account_id}:userpool/{user_pool_id}``.
+See also
+    - :ref:`aws.auth#cognitoUserPoolsScopes-trait` for per-operation
+      OAuth scopes.
 
 .. code-block:: smithy
 
@@ -207,6 +210,65 @@ Trait value
     @restJson1
     service FooBaz {
         version: "2018-03-17"
+    }
+
+
+.. smithy-trait:: aws.auth#cognitoUserPoolsScopes
+.. _aws.auth#cognitoUserPoolsScopes-trait:
+
+-----------------------------------------
+``aws.auth#cognitoUserPoolsScopes`` trait
+-----------------------------------------
+
+Trait summary
+    The ``aws.auth#cognitoUserPoolsScopes`` trait defines the list of
+    OAuth scopes required to invoke an operation that uses an
+    :ref:`aws.auth#cognitoUserPools-trait` authorizer.
+Trait selector
+    ``service[trait|aws.auth#cognitoUserPools] ~> operation``
+
+    *An operation in a service that has the ``aws.auth#cognitoUserPools``
+    trait applied.*
+Trait value
+    A list of ``string`` values.
+See also
+    - :ref:`aws.auth#cognitoUserPools-trait` which this trait pairs with.
+      ``@cognitoUserPoolsScopes`` is rejected at model time on operations
+      that are not bound to a service with ``@cognitoUserPools``.
+
+When the scopes list is non-empty, the generated OpenAPI operation emits a
+``security`` requirement that uses the ``aws.auth.cognitoUserPools`` security
+scheme name and carries the listed scopes. See :ref:`smithy-to-openapi` for
+details.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace aws.fooBaz
+
+    use aws.api#service
+    use aws.auth#cognitoUserPools
+    use aws.auth#cognitoUserPoolsScopes
+    use aws.protocols#restJson1
+
+    @service(sdkId: "Some Value")
+    @cognitoUserPools(
+        providerArns: ["arn:aws:cognito-idp:us-east-1:123:userpool/123"])
+    @restJson1
+    service FooBaz {
+        version: "2018-03-17"
+        operations: [GetThing]
+    }
+
+    @cognitoUserPoolsScopes(["email", "profile"])
+    @http(method: "GET", uri: "/things/{id}")
+    operation GetThing {
+        input := {
+            @httpLabel
+            @required
+            id: String
+        }
     }
 
 

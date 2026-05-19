@@ -645,6 +645,11 @@ element is of this format: <code class="docutils literal notranslate"><span clas
 </table>
 </div>
 </dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#aws-auth-cognitouserpoolsscopes-trait"><span class="std std-ref">aws.auth#cognitoUserPoolsScopes trait</span></a> for per-operation
+OAuth scopes.</p></li>
+</ul>
+</dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
@@ -660,6 +665,60 @@ element is of this format: <code class="docutils literal notranslate"><span clas
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="aws-auth-cognitouserpoolsscopes-trait">
+<span id="aws-auth-cognitouserpoolsscopes-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPoolsScopes</span></code> trait<a class="headerlink" href="#aws-auth-cognitouserpoolsscopes-trait" title="Link to this heading">¶</a></h2>
+<dl>
+<dt>Trait summary</dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPoolsScopes</span></code> trait defines the list of
+OAuth scopes required to invoke an operation that uses an
+<a class="reference internal" href="#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> authorizer.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service[trait|aws.auth#cognitoUserPools]</span> <span class="pre">~&gt;</span> <span class="pre">operation</span></code></p>
+<p><em>An operation in a service that has the ``aws.auth#cognitoUserPools``
+trait applied.</em></p>
+</dd>
+<dt>Trait value</dt><dd><p>A list of <code class="docutils literal notranslate"><span class="pre">string</span></code> values.</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> which this trait pairs with.
+<code class="docutils literal notranslate"><span class="pre">&#64;cognitoUserPoolsScopes</span></code> is rejected at model time on operations
+that are not bound to a service with <code class="docutils literal notranslate"><span class="pre">&#64;cognitoUserPools</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>When the scopes list is non-empty, the generated OpenAPI operation emits a
+<code class="docutils literal notranslate"><span class="pre">security</span></code> requirement that uses the <code class="docutils literal notranslate"><span class="pre">aws.auth.cognitoUserPools</span></code> security
+scheme name and carries the listed scopes. See <a class="reference internal" href="../guides/model-translations/converting-to-openapi.html#smithy-to-openapi"><span class="std std-ref">Converting Smithy to OpenAPI</span></a> for
+details.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
+
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.auth#cognitoUserPools</span>
+<span class="kd">use </span><span class="nc">aws.auth#cognitoUserPoolsScopes</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
+
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@cognitoUserPools</span>(
+<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>])
+<span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetThing</span>]
+}
+
+<span class="nt">@cognitoUserPoolsScopes</span>([<span class="s2">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;profile&quot;</span>])
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things/{id}&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@httpLabel</span>
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
 }
 </pre></div>
 </div>
@@ -736,6 +795,7 @@ element is of this format: <code class="docutils literal notranslate"><span clas
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-auth-cognitouserpools-trait"><code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPools</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-auth-cognitouserpoolsscopes-trait"><code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPoolsScopes</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

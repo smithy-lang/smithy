@@ -457,8 +457,48 @@
 <h1>Amazon API Gateway traits<a class="headerlink" href="#amazon-api-gateway-traits" title="Link to this heading">¶</a></h1>
 <p>Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.</p>
+<section id="authentication-and-authorization">
+<h2>Authentication and authorization<a class="headerlink" href="#authentication-and-authorization" title="Link to this heading">¶</a></h2>
+<section id="aws-apigateway-apikeyrequired-trait">
+<span id="aws-apigateway-apikeyrequired-trait"></span><span id="id1"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeyRequired</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeyrequired-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates that an operation requires an API key for API Gateway usage
+plan enforcement.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait (no value)</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">Create and Use Usage Plans with API Keys</a> for more information on
+API key enforcement</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example requires an API key on the <code class="docutils literal notranslate"><span class="pre">ListItems</span></code> operation
+but not on <code class="docutils literal notranslate"><span class="pre">HealthCheck</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#apiKeyRequired</span>
+
+<span class="nt">@apiKeyRequired</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span>)
+<span class="kd">operation </span><span class="nc">ListItems</span><span class="w"> </span>{}
+
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/health&quot;</span>)
+<span class="kd">operation </span><span class="nc">HealthCheck</span><span class="w"> </span>{}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
 <section id="aws-apigateway-apikeysource-trait">
-<span id="aws-apigateway-apikeysource-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeysource-trait" title="Link to this heading">¶</a></h2>
+<span id="aws-apigateway-apikeysource-trait"></span><span id="id2"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeysource-trait" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Specifies the source of the caller identifier that will be used to
 throttle API methods that require a key.</p>
@@ -490,8 +530,8 @@ from a Lambda authorizer (formerly known as a custom authorizer)</p></td>
 </div>
 </dd>
 <dt>See also</dt><dd><ul class="simple">
-<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">Create and Use Usage Plans with API Keys</a> for more on usage plans and
-API keys</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">Create and Use Usage Plans with API Keys</a> for more information on
+usage plans and API keys</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html">Choose an API Key Source</a> for information on choosing a source</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html">x-amazon-apigateway-api-key-source</a> for how this relates to OpenAPI</p></li>
 </ul>
@@ -516,8 +556,37 @@ API keys</p></li>
 customers.</p>
 </div>
 </section>
+<section id="aws-apigateway-authorizer-trait">
+<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Link to this heading">¶</a></h3>
+<dl>
+<dt>Summary</dt><dd><p>Applies a Lambda authorizer to a service, resource, or operation.
+Authorizers are resolved hierarchically: an operation inherits
+the effective authorizer applied to a parent resource or operation.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
+<p><em>A service, resource, or operation</em></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST reference one of the keys in the
+<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> of the service that contains
+the shape.</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> where authorizer definitions
+are declared.</p></li>
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> for Amazon Cognito User Pools
+authentication, which is configured through <code class="docutils literal notranslate"><span class="pre">aws.auth</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">&#64;authorizer</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
 <section id="aws-apigateway-authorizers-trait">
-<span id="aws-apigateway-authorizers-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizers-trait" title="Link to this heading">¶</a></h2>
+<span id="aws-apigateway-authorizers-trait"></span><span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizers-trait" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>Summary</dt><dd><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">Lambda authorizers</a> to attach to the authentication schemes defined on
 this service.</p>
@@ -528,6 +597,16 @@ this service.</p>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of arbitrary names to <em>authorizer</em> definitions. These authorizer
 definitions are applied to a service, resource, or operation using the
 <a class="reference internal" href="#aws-apigateway-authorizer-trait"><span class="std std-ref">aws.apigateway#authorizer trait</span></a>.</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> for configuring Amazon Cognito
+User Pools authentication on a service. Cognito authentication is
+declared through <code class="docutils literal notranslate"><span class="pre">aws.auth</span></code> rather than as an entry in
+<code class="docutils literal notranslate"><span class="pre">&#64;authorizers</span></code>. Use <code class="docutils literal notranslate"><span class="pre">&#64;cognitoUserPools</span></code> for Cognito and
+<code class="docutils literal notranslate"><span class="pre">&#64;authorizers</span></code> + <code class="docutils literal notranslate"><span class="pre">&#64;authorizer</span></code> for Lambda authorizers.</p></li>
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpoolsscopes-trait"><span class="std std-ref">aws.auth#cognitoUserPoolsScopes trait</span></a> for per-operation OAuth
+scopes on Cognito-authorized operations.</p></li>
+</ul>
 </dd>
 </dl>
 <p>An <em>authorizer</em> definition is a structure that supports the following members:</p>
@@ -584,9 +663,9 @@ should be treated as the path to the resource, including the initial
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>Specifies the required credentials as an IAM role for API Gateway to
 invoke the authorizer. To specify an IAM role for API Gateway to
-assume, use the role's Amazon Resource Name (ARN). This value MUST
-be omitted in order to use resource-based permissions on the
-Lambda function.</p></td>
+assume, use the role's Amazon Resource Name (ARN). Omit this value
+to use Lambda resource-based permissions instead of an IAM role
+assumed by API Gateway.</p></td>
 </tr>
 <tr class="row-odd"><td><p>identitySource</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
@@ -615,12 +694,12 @@ authorization caching is not enabled, this property is optional.</p>
 <tr class="row-even"><td><p>identityValidationExpression</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
 <td><p>A validation expression for the incoming identity token. For <code class="docutils literal notranslate"><span class="pre">token</span></code>
-authorizers, this value is a regular expression. API Gateway will
-match the aud field of the incoming token from the client against
-the specified regular expression. It will invoke the authorizer's
-Lambda function when there is a match. Otherwise, it will return a
-401 Unauthorized response without calling the Lambda function. The
-validation expression does not apply to the <code class="docutils literal notranslate"><span class="pre">request</span></code> authorizer.</p></td>
+authorizers, this value is a regular expression. API Gateway matches
+the incoming token against the specified regular expression and
+invokes the authorizer's Lambda function when there is a match.
+Otherwise, it returns a 401 Unauthorized response without calling
+the Lambda function. The validation expression does not apply to the
+<code class="docutils literal notranslate"><span class="pre">request</span></code> authorizer.</p></td>
 </tr>
 <tr class="row-odd"><td><p>resultTtlInSeconds</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">integer</span></code></p></td>
@@ -676,35 +755,159 @@ Lambda authorizer function returns a Boolean value.</p></td>
 }
 </pre></div>
 </div>
+<section id="validation">
+<h4>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h4>
+<p>Smithy emits <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> validation events in the following cases:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">scheme</span></code> of <code class="docutils literal notranslate"><span class="pre">&#64;authorizers</span></code> does not target one of the auth schemes
+applied to the service.</p></li>
+<li><p>An authorizer sets <code class="docutils literal notranslate"><span class="pre">enableSimpleResponses</span></code> while
+<code class="docutils literal notranslate"><span class="pre">authorizerPayloadFormatVersion</span></code> is anything other than <code class="docutils literal notranslate"><span class="pre">2.0</span></code>.</p></li>
+</ul>
+<p>These checks fire before an API Gateway import would otherwise fail at
+deploy time.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This trait should be considered internal-only and not exposed to your
 customers.</p>
 </div>
 </section>
-<section id="aws-apigateway-authorizer-trait">
-<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Link to this heading">¶</a></h2>
-<dl>
-<dt>Summary</dt><dd><p>Applies a Lambda authorizer to a service, resource, or operation.
-Authorizers are resolved hierarchically: an operation inherits
-the effective authorizer applied to a parent resource or operation.</p>
+</section>
+</section>
+<section id="method-and-response-handling">
+<h2>Method and response handling<a class="headerlink" href="#method-and-response-handling" title="Link to this heading">¶</a></h2>
+<section id="aws-apigateway-gatewayresponses-trait">
+<span id="aws-apigateway-gatewayresponses-trait"></span><span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#gatewayResponses</span></code> trait<a class="headerlink" href="#aws-apigateway-gatewayresponses-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines custom gateway responses for an API Gateway REST API. Gateway
+responses customize error responses for authentication failures,
+integration errors, and other API Gateway-generated errors.</p>
 </dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
-<p><em>A service, resource, or operation</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
 </dd>
-<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST reference one of the keys in the
-<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> of the service that contains
-the shape.</p>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of response type <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">GatewayResponse</span></code> structure</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html">x-amazon-apigateway-gateway-responses</a> for the related OpenAPI
+extension</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/supported-gateway-response-types.html">Gateway response types</a> for the list of valid response type keys</p></li>
+</ul>
 </dd>
 </dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">GatewayResponse</span></code> structure supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>statusCode</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The HTTP status code for the gateway response.</p></td>
+</tr>
+<tr class="row-odd"><td><p>responseParameters</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Response parameters for the gateway response. Keys use the format
+<code class="docutils literal notranslate"><span class="pre">gatewayresponse.header.&lt;header-name&gt;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>responseTemplates</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> to <code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Response templates keyed by media type.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This trait should be considered internal-only and not exposed to your
-customers.</p>
+<p>Response type keys (<code class="docutils literal notranslate"><span class="pre">DEFAULT_4XX</span></code>, <code class="docutils literal notranslate"><span class="pre">DEFAULT_5XX</span></code>,
+<code class="docutils literal notranslate"><span class="pre">INVALID_API_KEY</span></code>, etc.) are validated by API Gateway at import
+time, not by Smithy. When both <code class="docutils literal notranslate"><span class="pre">&#64;gatewayResponses</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&#64;cors</span></code> are applied to a service, the CORS mapper merges
+its headers into gateway responses but does not overwrite
+customer-defined response parameters. Customer-defined values
+always take precedence.</p>
+</div>
+<p>The following example defines custom gateway responses for 4xx and 5xx
+errors:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#gatewayResponses</span>
+
+<span class="nt">@gatewayResponses</span>(
+<span class="w">    </span><span class="s2">&quot;DEFAULT_4XX&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">statusCode</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span>
+<span class="w">        </span><span class="py">responseParameters</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;gatewayresponse.header.Access-Control-Allow-Origin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;*&#39;&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">responseTemplates</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">message</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">bad request</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+<span class="w">    </span><span class="s2">&quot;DEFAULT_5XX&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">statusCode</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;500&quot;</span>
+<span class="w">        </span><span class="py">responseTemplates</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">message</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Internal server error</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+<section id="id6">
+<h4>Validation<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
+<p>Smithy emits a <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> validation event when both
+<code class="docutils literal notranslate"><span class="pre">&#64;gatewayResponses</span></code> and <a class="reference internal" href="../spec/http-bindings.html#cors-trait"><span class="std std-ref">cors trait</span></a> are applied to the same
+service. This is informational, customer-defined response
+parameters in <code class="docutils literal notranslate"><span class="pre">&#64;gatewayResponses</span></code> take precedence over
+CORS-generated headers. Review the merged output to confirm the
+effective headers match your intent.</p>
+</section>
+</section>
+<section id="aws-apigateway-minimumcompressionsize-trait">
+<span id="aws-apigateway-minimumcompressionsize-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#minimumCompressionSize</span></code> trait<a class="headerlink" href="#aws-apigateway-minimumcompressionsize-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the minimum payload size in bytes at which compression is applied
+on an API Gateway REST API.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">integer</span></code> value between 0 and 10485760 (10MB).</p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-gzip-compression-decompression.html">Payload compression for REST APIs</a> for more information</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html">x-amazon-apigateway-minimum-compression-size</a> for how this relates
+to OpenAPI</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example sets the minimum compression size to 10240 bytes:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#minimumCompressionSize</span>
+
+<span class="nt">@minimumCompressionSize</span>(<span class="m">10240</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
 </div>
 </section>
 <section id="aws-apigateway-requestvalidator-trait">
-<span id="aws-apigateway-requestvalidator-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Link to this heading">¶</a></h2>
+<span id="aws-apigateway-requestvalidator-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Link to this heading">¶</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Opts-in to Amazon API Gateway request validation for a service or
 operation.</p>
@@ -748,7 +951,7 @@ to OpenAPI</p></li>
 </ul>
 </dd>
 </dl>
-<p>Then following example enables request validation on a service:</p>
+<p>The following example enables request validation on a service:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
@@ -773,10 +976,13 @@ to validate requests against models and may not meet all the
 validation needs of your application.</p>
 </div>
 </section>
+</section>
+<section id="integrations">
+<h2>Integrations<a class="headerlink" href="#integrations" title="Link to this heading">¶</a></h2>
 <section id="aws-apigateway-integration-trait">
-<span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Link to this heading">¶</a></h2>
+<span id="aws-apigateway-integration-trait"></span><span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Link to this heading">¶</a></h3>
 <dl class="simple">
-<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that integrates with an actual
+<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-integration-types.html">API Gateway integration</a> that integrates with an actual
 backend.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
@@ -786,7 +992,7 @@ backend.</p>
 <dt>See also</dt><dd><ul class="simple">
 <li><p><a class="reference internal" href="../guides/model-translations/converting-to-openapi.html#apigateway-integrations"><span class="std std-ref">Integrations</span></a> for information on how this converts
 to OpenAPI</p></li>
-<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway Integration</a> for in-depth API documentation</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-integration-types.html">API Gateway Integration</a> for in-depth API documentation</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html">x-amazon-apigateway-integration</a> for details on how this looks
 to OpenAPI</p></li>
 </ul>
@@ -810,27 +1016,27 @@ following members:</p>
 <tbody>
 <tr class="row-even"><td><p>type</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p><strong>Required.</strong> The type of integration with the specified backend.
+<td><p><strong>Required</strong>. The type of integration with the specified backend.
 Valid values are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">http_proxy</span></code>: for integration with an HTTP backend</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">aws_proxy</span></code>: for integration with AWS Lambda functions</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">aws</span></code>: for integration with AWS Lambda functions or other AWS
-services such as Amazon DynamoDB, Amazon Simple Notification Service
-or Amazon Simple Queue Service.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aws_proxy</span></code>: for Lambda proxy integration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aws</span></code>: for non-proxy integration with AWS Lambda functions or
+other AWS services such as Amazon DynamoDB, Amazon Simple
+Notification Service, or Amazon Simple Queue Service.</p></li>
 </ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p>uri</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p><strong>Required.</strong> The endpoint URI of the backend. For integrations of
+<td><p><strong>Required</strong>. The endpoint URI of the backend. For integrations of
 the <code class="docutils literal notranslate"><span class="pre">aws</span></code> type, this is an ARN value. For the HTTP integration,
 this is the URL of the HTTP endpoint including the <code class="docutils literal notranslate"><span class="pre">https</span></code> or
 <code class="docutils literal notranslate"><span class="pre">http</span></code> scheme.</p></td>
 </tr>
 <tr class="row-even"><td><p>httpMethod</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p><strong>Required.</strong> Specifies the integration's HTTP method type
+<td><p><strong>Required</strong>. Specifies the integration's HTTP method type
 (for example, <code class="docutils literal notranslate"><span class="pre">POST</span></code>). For Lambda function invocations, the value
 must be <code class="docutils literal notranslate"><span class="pre">POST</span></code>.</p></td>
 </tr>
@@ -848,7 +1054,7 @@ the resource. For more information, see
 <td><p>Specifies how a request payload of unmapped content type is passed
 through the integration request without modification. Supported
 values are <code class="docutils literal notranslate"><span class="pre">when_no_templates</span></code>, <code class="docutils literal notranslate"><span class="pre">when_no_match</span></code>, and <code class="docutils literal notranslate"><span class="pre">never</span></code>.
-For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
+For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html">Integration.passthroughBehavior</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>contentHandling</p></td>
 <td><p><a class="reference internal" href="#apigateway-content-handling"><span class="std std-ref">ContentHandling string</span></a></p></td>
@@ -860,7 +1066,7 @@ For more information, see <a class="reference external" href="https://docs.aws.a
 </tr>
 <tr class="row-odd"><td><p>connectionId</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p>The ID of a <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/vpc-link/">VpcLink</a> for the private integration.</p></td>
+<td><p>The ID of a <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-private-integration.html">VpcLink</a> for the private integration.</p></td>
 </tr>
 <tr class="row-even"><td><p>connectionType</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
@@ -876,9 +1082,10 @@ value is <code class="docutils literal notranslate"><span class="pre">INTERNET</
 </tr>
 <tr class="row-even"><td><p>payloadFormatVersion</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
-<td><p>Specifies the format of the payload sent to an integration. Required for HTTP APIs. For HTTP APIs,
-supported values for Lambda proxy integrations are 1.0 and 2.0. For all other integrations, 1.0 is the
-only supported value.</p></td>
+<td><p>Specifies the format of the payload sent to an integration. This
+property is required for HTTP APIs. Supported values for Lambda proxy
+integrations are <code class="docutils literal notranslate"><span class="pre">1.0</span></code> and <code class="docutils literal notranslate"><span class="pre">2.0</span></code>. For all other integrations,
+<code class="docutils literal notranslate"><span class="pre">1.0</span></code> is the only supported value.</p></td>
 </tr>
 <tr class="row-odd"><td><p>cacheKeyParameters</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></p></td>
@@ -969,9 +1176,9 @@ customers.</p>
 </div>
 </section>
 <section id="aws-apigateway-mockintegration-trait">
-<span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Link to this heading">¶</a></h2>
+<span id="aws-apigateway-mockintegration-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Link to this heading">¶</a></h3>
 <dl class="simple">
-<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that returns a mock response.</p>
+<dt>Summary</dt><dd><p>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-integration-types.html">API Gateway integration</a> that returns a mock response.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
 </dd>
@@ -999,7 +1206,7 @@ following members:</p>
 <td><p>Specifies how a request payload of unmapped content type is passed
 through the integration request without modification. Supported
 values are <code class="docutils literal notranslate"><span class="pre">when_no_templates</span></code>, <code class="docutils literal notranslate"><span class="pre">when_no_match</span></code>, and <code class="docutils literal notranslate"><span class="pre">never</span></code>.
-For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior">Integration.passthroughBehavior</a>.</p></td>
+For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-passthrough-behaviors.html">Integration.passthroughBehavior</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>requestParameters</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters structure</span></a> to request parameters</p></td>
@@ -1076,6 +1283,277 @@ responses.</p></td>
 <p>This trait should be considered internal-only and not exposed to your
 customers.</p>
 </div>
+</section>
+</section>
+<section id="api-endpoint-and-access-control">
+<h2>API endpoint and access control<a class="headerlink" href="#api-endpoint-and-access-control" title="Link to this heading">¶</a></h2>
+<section id="aws-apigateway-apitlspolicy-trait">
+<span id="aws-apigateway-apitlspolicy-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-apitlspolicy-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the TLS security policy and endpoint access mode for an API
+Gateway REST API. The security policy specifies the TLS version and
+cipher suite, and the endpoint access mode controls how the API
+endpoint can be accessed.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait is a structure that supports the
+following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>securityPolicy</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The TLS version and cipher suite for the API (for
+example, <code class="docutils literal notranslate"><span class="pre">TLS_1_2</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>endpointAccessMode</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The endpoint access mode for the API. Valid values are <code class="docutils literal notranslate"><span class="pre">BASIC</span></code>
+and <code class="docutils literal notranslate"><span class="pre">STRICT</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="simple">
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-security-policies.html">Security policies for REST APIs</a> for more information</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html">x-amazon-apigateway-security-policy</a> for how the security policy
+relates to OpenAPI</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html">x-amazon-apigateway-endpoint-access-mode</a> for how the endpoint
+access mode relates to OpenAPI</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example sets the TLS policy to <code class="docutils literal notranslate"><span class="pre">TLS_1_2</span></code> with a <code class="docutils literal notranslate"><span class="pre">STRICT</span></code>
+endpoint access mode:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#apiTlsPolicy</span>
+
+<span class="nt">@apiTlsPolicy</span>(
+<span class="w">    </span><span class="py">securityPolicy</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TLS_1_2&quot;</span>
+<span class="w">    </span><span class="py">endpointAccessMode</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;STRICT&quot;</span>
+)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
+<section id="aws-apigateway-endpointconfiguration-trait">
+<span id="aws-apigateway-endpointconfiguration-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait<a class="headerlink" href="#aws-apigateway-endpointconfiguration-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the endpoint configuration for an API Gateway REST API,
+including the endpoint type, Virtual Private Cloud (VPC) <a class="reference external" href="https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints">endpoint IDs</a>,
+and whether the default <code class="docutils literal notranslate"><span class="pre">execute-api</span></code> endpoint is disabled.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-endpoint-types.html">API endpoint types for REST APIs</a> for more information on
+endpoint types</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-ip-address-type.html">IP address types for REST APIs</a> for more information on the
+<code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> property</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html">x-amazon-apigateway-endpoint-configuration</a> for the related
+OpenAPI extension</p></li>
+</ul>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait is a structure that
+supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>types</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The endpoint types for the API. Valid values are
+<code class="docutils literal notranslate"><span class="pre">EDGE</span></code>, <code class="docutils literal notranslate"><span class="pre">REGIONAL</span></code>, and <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>vpcEndpointIds</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A list of VPC endpoint IDs for <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code> endpoint type APIs.</p></td>
+</tr>
+<tr class="row-even"><td><p>disableExecuteApiEndpoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">boolean</span></code></p></td>
+<td><p>Whether clients can invoke the API using the default
+<code class="docutils literal notranslate"><span class="pre">execute-api</span></code> endpoint.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ipAddressType</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code> enum (<code class="docutils literal notranslate"><span class="pre">ipv4</span></code> or <code class="docutils literal notranslate"><span class="pre">dualstack</span></code>)</p></td>
+<td><p>The IP address type that can invoke the API. For the <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code>
+endpoint type, only <code class="docutils literal notranslate"><span class="pre">dualstack</span></code> is supported. See
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-ip-address-type.html">IP address types for REST APIs</a> for details.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example configures a private API with a VPC endpoint and
+disables the default endpoint:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#endpointConfiguration</span>
+
+<span class="nt">@endpointConfiguration</span>(
+<span class="w">    </span><span class="py">types</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;PRIVATE&quot;</span>]
+<span class="w">    </span><span class="py">vpcEndpointIds</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;vpce-0212a4ababd5b8c3e&quot;</span>]
+<span class="w">    </span><span class="py">disableExecuteApiEndpoint</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="py">ipAddressType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dualstack&quot;</span>
+)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+<section id="id13">
+<h4>Validation<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
+<p>Smithy emits an <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> validation event when the <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code> endpoint
+type is used with an <code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> other than <code class="docutils literal notranslate"><span class="pre">dualstack</span></code>. API Gateway
+requires <code class="docutils literal notranslate"><span class="pre">dualstack</span></code> for private endpoints.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
+</section>
+<section id="aws-apigateway-resourcepolicy-trait">
+<span id="aws-apigateway-resourcepolicy-trait"></span><span id="id14"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-resourcepolicy-trait" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines a resource policy for an API Gateway REST API. A resource
+policy is a JSON policy document attached to an API that controls
+whether a specified principal (typically an IAM role or group) can
+invoke the API.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">document</span></code></p>
+</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-resource-policies.html">Resource policies for REST APIs</a> for more information</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html">x-amazon-apigateway-policy</a> for how this relates to OpenAPI</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Smithy does not validate the contents of the resource policy document.
+The policy is passed through to API Gateway, which validates it at
+import time.</p>
+</div>
+<p>The following example defines a resource policy that allows any principal to
+invoke the API except for requests from the specified source IP address block:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#resourcePolicy</span>
+
+<span class="nt">@resourcePolicy</span>({
+<span class="w">    </span><span class="s2">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span>
+<span class="w">    </span><span class="s2">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="s2">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Principal&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;execute-api:Invoke&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;execute-api:/*&quot;</span>]
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="s2">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Deny&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Principal&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;execute-api:Invoke&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;execute-api:/*&quot;</span>]
+<span class="w">            </span><span class="s2">&quot;Condition&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">&quot;IpAddress&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="s2">&quot;aws:SourceIp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0/24&quot;</span>
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">    </span>]
+})
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
+</section>
+<section id="related-traits-from-other-namespaces">
+<h2>Related traits from other namespaces<a class="headerlink" href="#related-traits-from-other-namespaces" title="Link to this heading">¶</a></h2>
+<p>Several public traits outside the <code class="docutils literal notranslate"><span class="pre">aws.apigateway</span></code> namespace are
+commonly applied alongside the traits above when modeling an API Gateway
+REST API. The API Gateway OpenAPI converter reads them when producing
+the generated specification.</p>
+<p><strong>Authentication</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-sigv4-trait"><span class="std std-ref">aws.auth#sigv4 trait</span></a> configures AWS Signature Version 4
+authentication. Reference it from an entry in
+<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> to declare an <code class="docutils literal notranslate"><span class="pre">awsSigv4</span></code>
+authorizer.</p></li>
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpools-trait"><span class="std std-ref">aws.auth#cognitoUserPools trait</span></a> configures Amazon Cognito User
+Pools authentication on a service. Cognito authentication is declared
+through <code class="docutils literal notranslate"><span class="pre">aws.auth</span></code> rather than as an entry in
+<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a>.</p></li>
+<li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpoolsscopes-trait"><span class="std std-ref">aws.auth#cognitoUserPoolsScopes trait</span></a> declares the OAuth scopes
+required to invoke an operation that uses a Cognito authorizer.</p></li>
+<li><p><a class="reference internal" href="../spec/authentication-traits.html#httpapikeyauth-trait"><span class="std std-ref">httpApiKeyAuth trait</span></a> enables API Gateway API key usage plans
+when referenced from an entry in
+<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> with no <code class="docutils literal notranslate"><span class="pre">type</span></code> field. This
+is the trait combination required for API Gateway's built-in API key
+authorization on REST APIs.</p></li>
+</ul>
+<p><strong>Request and response handling</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../spec/http-bindings.html#cors-trait"><span class="std std-ref">cors trait</span></a> controls CORS handling. The API Gateway OpenAPI
+converter expands <code class="docutils literal notranslate"><span class="pre">&#64;cors</span></code> into preflight <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> integrations
+and the appropriate <code class="docutils literal notranslate"><span class="pre">Access-Control-*</span></code> response headers on each
+method, and merges those headers into any
+<a class="reference internal" href="#aws-apigateway-gatewayresponses-trait"><span class="std std-ref">aws.apigateway#gatewayResponses trait</span></a> entries.</p></li>
+<li><p><a class="reference internal" href="../spec/protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> values applied to <code class="docutils literal notranslate"><span class="pre">&#64;httpPayload</span></code> members are
+collected into the <code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-binary-media-types</span></code>
+extension on the generated OpenAPI document.</p></li>
+</ul>
 </section>
 <section id="shared-trait-data-types">
 <h2>Shared trait data types<a class="headerlink" href="#shared-trait-data-types" title="Link to this heading">¶</a></h2>
@@ -1208,7 +1686,7 @@ Lambda function execution throws an exception.</p>
 <p>The Response status pattern property name refers to a response
 status code or regular expression describing a group of response
 status codes. It does not correspond to any identifier of an
-<a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/">IntegrationResponse</a> resource in the API Gateway REST API.</p>
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html">IntegrationResponse</a> resource in the API Gateway REST API.</p>
 </div>
 </td>
 </tr>
@@ -1449,12 +1927,40 @@ integration response to two <code class="docutils literal notranslate"><span cla
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Amazon API Gateway traits</a><ul>
+<li><a class="reference internal" href="#authentication-and-authorization">Authentication and authorization</a><ul>
+<li><a class="reference internal" href="#aws-apigateway-apikeyrequired-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeyRequired</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-apigateway-authorizers-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-authorizer-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizers-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a><ul>
+<li><a class="reference internal" href="#validation">Validation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#method-and-response-handling">Method and response handling</a><ul>
+<li><a class="reference internal" href="#aws-apigateway-gatewayresponses-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#gatewayResponses</span></code> trait</a><ul>
+<li><a class="reference internal" href="#id6">Validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-apigateway-minimumcompressionsize-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#minimumCompressionSize</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-requestvalidator-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integrations">Integrations</a><ul>
 <li><a class="reference internal" href="#aws-apigateway-integration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul>
+<li><a class="reference internal" href="#aws-apigateway-apitlspolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-endpointconfiguration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait</a><ul>
+<li><a class="reference internal" href="#id13">Validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-apigateway-resourcepolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#related-traits-from-other-namespaces">Related traits from other namespaces</a></li>
 <li><a class="reference internal" href="#shared-trait-data-types">Shared trait data types</a><ul>
 <li><a class="reference internal" href="#contenthandling-string">ContentHandling string</a></li>
 <li><a class="reference internal" href="#requestparameters-structure">requestParameters structure</a></li>
