@@ -332,7 +332,9 @@ resulting synthetic shape in the JSON AST:
 
 The ``smithy.synthetic#generated`` trait:
 
-- Is not user-applicable: only the assembler attaches it.
+- Is not intended to be applied by users. The assembler attaches it
+  automatically, and applying it manually will trigger a validation
+  error if other traits are also present on the shape.
 - Appears in the JSON AST but NOT in the IDL.
 - Indicates that the shape was created from inline collection syntax.
 - Shapes bearing this trait MUST NOT have other traits applied to them.

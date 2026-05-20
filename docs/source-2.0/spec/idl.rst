@@ -1536,8 +1536,9 @@ These shapes are:
   shape-level traits (such as ``@sparse``, ``@uniqueItems``, or ``@length``)
   must use explicit shape definitions.
 - The ``apply`` statement cannot target synthetic shapes.
-- Shape names starting with ``_Synthetic`` are reserved for
-  assembler-generated shapes.
+- Shape names starting with ``_Synthetic`` SHOULD NOT be used for
+  user-defined shapes to avoid potential conflicts with
+  assembler-generated names.
 
 
 .. _idl-resource:

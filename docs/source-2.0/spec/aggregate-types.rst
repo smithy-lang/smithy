@@ -83,7 +83,7 @@ The following example defines a map of strings to integers:
     }
 
 .. versionadded:: 2.1
-   maps can be declared inline in member target positions using ``{Key: Value]``
+   maps can be declared inline in member target positions using ``{Key: Value}``
    syntax. Inline maps produce a synthetic shape that is shared across all
    members using the same key and value target types. See :ref:`idl-inline-collections`.
 
