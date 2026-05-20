@@ -222,7 +222,7 @@ in selector results and can be matched by type:
 
 ```
 list                           // matches all lists, including synthetic
-[trait|synthetic]              // matches only synthetic shapes
+[trait|generated]              // matches only generated synthetic shapes
 ```
 
 ### AST serialization
