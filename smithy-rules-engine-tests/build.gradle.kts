@@ -24,6 +24,5 @@ tasks.sourcesJar {
 }
 
 smithy {
-    format.set(false)
     sourceProjection.set("bddSource")
 }

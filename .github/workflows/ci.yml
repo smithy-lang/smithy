@@ -46,6 +46,35 @@ jobs:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
           path: '**/build/reports/tests'
 
+  smithy-format-check:
+    runs-on: ubuntu-latest
+    name: Check Smithy formatting
+    steps:
+      - uses: actions/checkout@v6
+      - uses: gradle/actions/wrapper-validation@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: 'corretto'
+          cache: gradle
+
+      - name: Check Smithy formatting
+        # The convention-driven smithyFormat tasks honor -PsmithyFormatCheck and fail
+        # without writing. The four packages on smithy-jar's bundled smithyFormat task
+        # need to wait for that to get plumbed through the gradle plugin, so for now
+        # they use git to check changes.
+        run: ./gradlew smithyFormat -PsmithyFormatCheck --stacktrace
+
+      - name: Assert no formatting changes from smithy-jar packages
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::smithyFormat rewrote files in smithy-jar-managed packages. Run './gradlew smithyFormat' locally and commit the result."
+            git diff
+            exit 1
+          fi
+
   cli-distributions:
     runs-on: ubuntu-latest
     name: Build CLI executables
