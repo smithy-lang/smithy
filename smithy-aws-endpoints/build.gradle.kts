@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.smithy-format-conventions")
 }
 
 description = "AWS specific components for managing endpoints in Smithy"

@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.smithy-format-conventions")
 }
 
 description = "Defines shapes used by AWS for modeling smoke tests"

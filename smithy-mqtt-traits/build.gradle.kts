@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.smithy-format-conventions")
 }
 
 description = "This module provides the implementation of MQTT binding traits for Smithy."
