@@ -276,6 +276,14 @@ The following model is invalid because it attempts to refer to
         member: PrivateString
     }
 
+.. note::
+
+    Applying the ``private`` trait to a member of a :ref:`mixin <mixins>` does
+    not prevent the member from being inherited by shapes in other namespaces,
+    nor does it prevent new traits from being applied to the inherited member.
+    To restrict cross-namespace access, apply the ``private`` trait to the
+    mixin shape itself or to the targeted shape.
+
 
 .. smithy-trait:: smithy.api#range
 .. _range-trait:

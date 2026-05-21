@@ -33,6 +33,7 @@ software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
 software.amazon.smithy.model.validation.validators.PatternTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
+software.amazon.smithy.model.validation.validators.PrivateMixinMemberValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
 software.amazon.smithy.model.validation.validators.ReferencesTraitValidator
 software.amazon.smithy.model.validation.validators.RequestCompressionTraitValidator
