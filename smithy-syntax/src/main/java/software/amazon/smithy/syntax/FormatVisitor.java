@@ -331,7 +331,7 @@ final class FormatVisitor {
                                 }
                                 return Stream.empty();
                             }))
-                            .detectHardLines(cursor)
+                            .detectHardLinesOrTooWide(cursor, width)
                             .write();
                 } else if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
                     TreeCursor traitNode = cursor.getFirstChild(TreeType.TRAIT_NODE);
@@ -418,7 +418,7 @@ final class FormatVisitor {
                         .open(Formatter.LBRACKET)
                         .close(Formatter.RBRACKET)
                         .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_VALUE, this::visit))
-                        .detectHardLines(cursor)
+                        .detectHardLinesOrTooWide(cursor, width)
                         .write();
             }
 
@@ -431,7 +431,7 @@ final class FormatVisitor {
                     // Always break objects inside arrays if not empty
                     formatter.forceLineBreaksIfNotEmpty();
                 } else {
-                    formatter.detectHardLines(cursor);
+                    formatter.detectHardLinesOrTooWide(cursor, width);
                 }
                 return formatter.write();
 
