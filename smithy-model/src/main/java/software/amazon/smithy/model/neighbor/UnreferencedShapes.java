@@ -13,7 +13,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.RootTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
@@ -24,6 +24,9 @@ import software.amazon.smithy.utils.FunctionalUtils;
  * <p>The "root" shapes defaults to all service shapes in the model. You can customize this by providing a selector
  * that considers every matching shape a root shape. For example, a model might consider all shapes marked with
  * a trait called "root" to be a root shape.
+ *
+ * <p>Root shapes will also always include any shapes targeted by a trait that has the
+ * {@link software.amazon.smithy.model.traits.RootTrait} and any shape that is connected to one of those shapes.
  *
  * <p>Prelude shapes are never considered unreferenced.
  */
@@ -77,9 +80,12 @@ public final class UnreferencedShapes {
             shapeWalker.iterateShapes(root, traversed).forEachRemaining(shape -> connected.add(shape.getId()));
         }
 
-        // Don't remove shapes that are traits or connected to traits.
-        for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
-            shapeWalker.iterateShapes(trait, traversed).forEachRemaining(shape -> connected.add(shape.getId()));
+        // Don't remove root shapes or shapes that ar connected to them. This includes traits.
+        for (Shape rootTrait : model.getShapesWithTrait(RootTrait.class)) {
+            for (Shape shape : model.getShapesWithTrait(rootTrait.getId())) {
+                shapeWalker.iterateShapes(shape, traversed)
+                        .forEachRemaining(s -> connected.add(s.getId()));
+            }
         }
 
         // Any shape that wasn't identified as connected to a root is considered unreferenced.

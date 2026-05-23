@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a new `root` meta-trait that marks a trait as a rooting trait. Shapes targeted by a rooting trait are considered root shapes, which are always considered to be referenced.",
+  "pull_requests": [
+    "[#3079](https://github.com/smithy-lang/smithy/pull/3079)"
+  ]
+}
