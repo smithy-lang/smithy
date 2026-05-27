@@ -61,6 +61,10 @@ final class ConfigOptions implements ArgumentReceiver {
         this.root = root;
     }
 
+    boolean hasExplicitConfig() {
+        return !config.isEmpty();
+    }
+
     List<String> config() {
         List<String> config = this.config;
 

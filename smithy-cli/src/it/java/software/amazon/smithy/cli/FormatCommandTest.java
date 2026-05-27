@@ -98,4 +98,58 @@ public class FormatCommandTest {
             assertThat(checked.getExitCode(), equalTo(0));
         });
     }
+
+    @Test
+    public void formatsSourcesFromSmithyBuildConfig() {
+        IntegUtils.run("format-from-config", ListUtils.of("format"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+
+            String main = result.getFile("model/main.smithy");
+            assertThat(main,
+                    equalTo(String.format("$version: \"2.0\"%n"
+                            + "%n"
+                            + "metadata this_is_a_long_string = {%n"
+                            + "    this_is_a_long_string1: \"a\"%n"
+                            + "    this_is_a_long_string2: \"b\"%n"
+                            + "    this_is_a_long_string3: \"c\"%n"
+                            + "    this_is_a_long_string4: \"d\"%n"
+                            + "}%n")));
+
+            String other = result.getFile("model/other.smithy");
+            assertThat(other,
+                    equalTo(String.format("$version: \"2.0\"%n"
+                            + "%n"
+                            + "namespace smithy.example%n"
+                            + "%n"
+                            + "string MyString%n"
+                            + "%n"
+                            + "string MyString2%n")));
+
+            String vendored = result.getFile("vendored/vendored.smithy");
+            assertThat(vendored,
+                    equalTo(String.format("$version: \"2.0\"%n"
+                            + "namespace smithy.vendored%n"
+                            + "string VendoredString%n")));
+        });
+    }
+
+    @Test
+    public void failsWhenBothModelsAndConfigGiven() {
+        IntegUtils.run("format-from-config",
+                ListUtils.of("format", "--config", "smithy-build.json", "model"),
+                result -> {
+                    assertThat(result.getExitCode(), equalTo(1));
+                    assertThat(result.getOutput(),
+                            containsString("Cannot combine --config with positional model arguments"));
+                });
+    }
+
+    @Test
+    public void failsWhenNoArgsAndNoConfigFlag() {
+        IntegUtils.run("format-from-config", ListUtils.of("format", "--no-config"), result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+            assertThat(result.getOutput(),
+                    containsString("No .smithy model or directory was provided as a positional argument"));
+        });
+    }
 }

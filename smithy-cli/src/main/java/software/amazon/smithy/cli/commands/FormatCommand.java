@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -62,12 +63,14 @@ final class FormatCommand implements Command {
                     null,
                     "Exit with a non-zero status if any files would be reformatted, without modifying them.");
             printer.positional("<MODELS>",
-                    "`.smithy` model files and directories of model files to recursively format.");
+                    "`.smithy` model files and directories of model files to recursively format. "
+                            + "If omitted, the `sources` from smithy-build.json are formatted.");
         }
     }
 
     @Override
     public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new Options());
 
         CommandAction action = HelpActionWrapper.fromCommand(this, parentCommandName, c -> {
@@ -76,6 +79,7 @@ final class FormatCommand implements Command {
             buffer.println("   smithy format model-file.smithy", ColorTheme.LITERAL);
             buffer.println("   smithy format model/", ColorTheme.LITERAL);
             buffer.println("   smithy format model-file.smithy model/", ColorTheme.LITERAL);
+            buffer.println("   smithy format  # uses sources from smithy-build.json", ColorTheme.LITERAL);
             buffer.println("   smithy format --check model/", ColorTheme.LITERAL);
             return buffer.toString();
         }, this::run);
@@ -83,14 +87,12 @@ final class FormatCommand implements Command {
     }
 
     private int run(Arguments arguments, Env env) {
-        if (arguments.getPositional().isEmpty()) {
-            throw new CliError("No .smithy model or directory was provided as a positional argument");
-        }
+        List<String> filenames = resolveFilenames(arguments);
 
         Options options = arguments.getReceiver(Options.class);
 
-        List<Path> paths = new ArrayList<>(arguments.getPositional().size());
-        for (String filename : arguments.getPositional()) {
+        List<Path> paths = new ArrayList<>(filenames.size());
+        for (String filename : filenames) {
             Path path = Paths.get(filename);
             paths.add(path);
 
@@ -115,6 +117,31 @@ final class FormatCommand implements Command {
             throw new CliError(message.toString());
         }
         return 0;
+    }
+
+    private List<String> resolveFilenames(Arguments arguments) {
+        ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
+        List<String> positional = arguments.getPositional();
+
+        if (!positional.isEmpty()) {
+            if (configOptions.hasExplicitConfig()) {
+                throw new CliError("Cannot combine --config with positional model arguments. "
+                        + "Provide either model paths or --config, not both.");
+            }
+            return positional;
+        }
+
+        // Fall back to `sources` from smithy-build.json so `smithy format` can be run
+        // with no arguments in a configured project. `imports` is intentionally
+        // excluded: imports often point to vendored or generated content that the
+        // current project does not own and should not reformat in place.
+        SmithyBuildConfig config = configOptions.createSmithyBuildConfig();
+        List<String> sources = config.getSources();
+        if (sources.isEmpty()) {
+            throw new CliError("No .smithy model or directory was provided as a positional argument, "
+                    + "and no sources were found in smithy-build.json");
+        }
+        return sources;
     }
 
     private void visit(Path file, Options options, List<Path> needsFormat) {
