@@ -44,8 +44,23 @@ final class FormatCommand implements Command {
     }
 
     private static final class Options implements ArgumentReceiver {
+        private boolean check = false;
+
+        @Override
+        public boolean testOption(String name) {
+            if ("--check".equals(name)) {
+                check = true;
+                return true;
+            }
+            return false;
+        }
+
         @Override
         public void registerHelp(HelpPrinter printer) {
+            printer.param("--check",
+                    null,
+                    null,
+                    "Exit with a non-zero status if any files would be reformatted, without modifying them.");
             printer.positional("<MODELS>",
                     "`.smithy` model files and directories of model files to recursively format.");
         }
@@ -61,6 +76,7 @@ final class FormatCommand implements Command {
             buffer.println("   smithy format model-file.smithy", ColorTheme.LITERAL);
             buffer.println("   smithy format model/", ColorTheme.LITERAL);
             buffer.println("   smithy format model-file.smithy model/", ColorTheme.LITERAL);
+            buffer.println("   smithy format --check model/", ColorTheme.LITERAL);
             return buffer.toString();
         }, this::run);
         return action.apply(arguments, env);
@@ -70,6 +86,8 @@ final class FormatCommand implements Command {
         if (arguments.getPositional().isEmpty()) {
             throw new CliError("No .smithy model or directory was provided as a positional argument");
         }
+
+        Options options = arguments.getReceiver(Options.class);
 
         List<Path> paths = new ArrayList<>(arguments.getPositional().size());
         for (String filename : arguments.getPositional()) {
@@ -85,20 +103,38 @@ final class FormatCommand implements Command {
             }
         }
 
-        paths.forEach(this::formatFile);
+        List<Path> needsFormat = new ArrayList<>();
+        paths.forEach(p -> visit(p, options, needsFormat));
+
+        if (options.check && !needsFormat.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append(needsFormat.size()).append(" file(s) would be reformatted:");
+            for (Path p : needsFormat) {
+                message.append(System.lineSeparator()).append("  ").append(p);
+            }
+            throw new CliError(message.toString());
+        }
         return 0;
     }
 
-    private void formatFile(Path file) {
+    private void visit(Path file, Options options, List<Path> needsFormat) {
         if (Files.isDirectory(file)) {
             try {
-                Files.find(file, 100, (p, a) -> a.isRegularFile()).forEach(this::formatFile);
+                Files.find(file, 100, (p, a) -> a.isRegularFile()).forEach(p -> visit(p, options, needsFormat));
             } catch (IOException e) {
                 throw new CliError("Error formatting " + file + " (directory): " + e.getMessage());
             }
         } else if (Files.isRegularFile(file) && file.toString().endsWith(".smithy")) {
-            TokenTree tree = parse(file);
-            String formatted = Formatter.format(tree);
+            String original = IoUtils.readUtf8File(file);
+            IdlTokenizer tokenizer = IdlTokenizer.create(file.toString(), original);
+            String formatted = Formatter.format(TokenTree.of(tokenizer));
+            if (formatted.equals(original)) {
+                return;
+            }
+            if (options.check) {
+                needsFormat.add(file);
+                return;
+            }
             try (OutputStream s = Files.newOutputStream(file, StandardOpenOption.TRUNCATE_EXISTING)) {
                 s.write(formatted.getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
@@ -107,9 +143,4 @@ final class FormatCommand implements Command {
         }
     }
 
-    private TokenTree parse(Path file) {
-        String contents = IoUtils.readUtf8File(file);
-        IdlTokenizer tokenizer = IdlTokenizer.create(file.toString(), contents);
-        return TokenTree.of(tokenizer);
-    }
 }

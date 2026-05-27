@@ -75,4 +75,27 @@ public class FormatCommandTest {
                             + "string MyString2%n")));
         });
     }
+
+    @Test
+    public void checkFailsWhenFormattingWouldChangeFiles() {
+        IntegUtils.run("bad-formatting", ListUtils.of("format", "--check", "model"), result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+            assertThat(result.getOutput(), containsString("would be reformatted"));
+
+            // --check must not actually modify the files
+            String unchanged = result.getFile("model/other.smithy");
+            assertThat(unchanged, containsString(String.format("string MyString%nstring MyString2")));
+        });
+    }
+
+    @Test
+    public void checkSucceedsWhenAlreadyFormatted() {
+        IntegUtils.withProject("bad-formatting", path -> {
+            RunResult formatted = IntegUtils.run(path, ListUtils.of("format", "model"));
+            assertThat(formatted.getExitCode(), equalTo(0));
+
+            RunResult checked = IntegUtils.run(path, ListUtils.of("format", "--check", "model"));
+            assertThat(checked.getExitCode(), equalTo(0));
+        });
+    }
 }
