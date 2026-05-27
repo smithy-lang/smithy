@@ -18,13 +18,21 @@ html1:
 html2:
 	@source build/venv/bin/activate && $(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) -W --keep-going -n $(O)
 
+md1:
+	@source build/venv/bin/activate && $(SPHINXBUILD) -M markdown "source-1.0" "build/1.0-md" $(SPHINXOPTS) -W --keep-going -n $(O)
+
+md2:
+	@source build/venv/bin/activate && $(SPHINXBUILD) -M markdown "source-2.0" "build/2.0-md" $(SPHINXOPTS) -W --keep-going -n $(O)
+
 build-landing-page:
 	cd landing-page && npm run build
 
 llms-txt: html2
 	python3 generate_llms_txt.py
 
-html: html2 html1 build-landing-page merge-versions llms-txt
+markdown: md2 md1 merge-markdown
+
+html: html2 html1 build-landing-page merge-versions markdown llms-txt
 
 serve: 
 	npx http-server build/html
@@ -35,6 +43,11 @@ merge-versions:
 	cp -R "build/2.0/html" "build/html/2.0"
 	cp -R root/* "build/html"
 	cp -R landing-page/dist/* "build/html/"
+
+merge-markdown:
+	mkdir -p build/html/1.0/markdown build/html/2.0/markdown
+	cp -R "build/1.0-md/markdown/." "build/html/1.0/markdown/"
+	cp -R "build/2.0-md/markdown/." "build/html/2.0/markdown/"
 
 openhtml:
 	open "build/html/index.html"
