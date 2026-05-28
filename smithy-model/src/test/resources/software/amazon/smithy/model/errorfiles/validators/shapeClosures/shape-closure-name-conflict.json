@@ -1,0 +1,19 @@
+{
+    "smithy": "2.0",
+    "metadata": {
+        "shapeClosures": [
+            {
+                "id": "com.example#NameConflict",
+                "includeNamespaces": ["com.a", "com.b"]
+            }
+        ]
+    },
+    "shapes": {
+        "com.a#Widget": {
+            "type": "structure"
+        },
+        "com.b#widget": {
+            "type": "structure"
+        }
+    }
+}

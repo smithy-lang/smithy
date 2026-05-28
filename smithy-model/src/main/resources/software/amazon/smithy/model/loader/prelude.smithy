@@ -364,6 +364,103 @@ structure metadata {
     key: String
 }
 
+/// Defines named closures of shapes that consumers like code generators can
+/// reference by id.
+@private
+@metadata(key: "shapeClosures")
+list ShapeClosures {
+    member: ShapeClosure
+}
+
+/// A defined closure of shapes that consumers like code generators can
+/// reference by id.
+@private
+structure ShapeClosure {
+    /// The namespaced identifier of the closure. Used by consumers to refer
+    /// to this closure. The id follows the same format as a shape id, MUST
+    /// be unique across all closures in the model, and MUST NOT refer to a
+    /// shape that exists in the model.
+    @required
+    id: ClosureId
+
+    /// Namespaces whose shapes are included in the closure.
+    includeNamespaces: Namespaces = []
+
+    /// A Smithy selector whose matched shapes are included in the closure.
+    @length(min: 1)
+    includeBySelector: String
+
+    /// Disambiguates shape name conflicts in the closure. Map keys are
+    /// shape ids contained in the closure, and map values are the
+    /// disambiguated shape names (without a namespace) to use in the
+    /// context of the closure. Each given map value MUST match the
+    /// `Identifier` production used for shape ids. Renaming a shape
+    /// does not give the shape a new shape id.
+    ///
+    /// - No renamed shape name can case-insensitively match any other
+    ///   renamed shape name or the name of a non-renamed shape contained
+    ///   in the closure.
+    /// - Member shapes MAY NOT be renamed.
+    /// - Service, resource, and operation shapes MAY NOT be renamed.
+    ///   Renaming shapes is intended for incidental naming conflicts,
+    ///   not for renaming the fundamental concepts of an API.
+    /// - Shapes from other namespaces marked as private MAY be renamed.
+    /// - A rename MUST use a name that is case-sensitively different
+    ///   from the original shape id name.
+    rename: Renames = {}
+}
+
+/// An identifier for a closure. This matches the shape id format.
+@private
+// The idRef trait is being used here to validate format.
+@idRef(failWhenMissing: false)
+string ClosureId
+
+/// A list of Smithy namespaces.
+@private
+@uniqueItems
+list Namespaces {
+    member: String
+}
+
+/// Disambiguates shape name conflicts in a closure. Map keys are
+/// shape ids contained in the closure, and map values are the
+/// disambiguated shape names (without a namespace) to use in the
+/// context of the closure. Each given map value MUST match the
+/// `Identifier` production used for shape ids. Renaming a shape
+/// does not give the shape a new shape id.
+///
+/// - No renamed shape name can case-insensitively match any other
+///   renamed shape name or the name of a non-renamed shape contained
+///   in the closure.
+/// - Member shapes MAY NOT be renamed.
+/// - Service, resource, and operation shapes MAY NOT be renamed.
+///   Renaming shapes is intended for incidental naming conflicts,
+///   not for renaming the fundamental concepts of an API.
+/// - Shapes from other namespaces marked as private MAY be renamed.
+/// - A rename MUST use a name that is case-sensitively different
+///   from the original shape id name.
+@private
+map Renames {
+    /// The id of the shape to rename.
+    @idRef(
+        failWhenMissing: true
+        selector: ":not(:is(member, service, resource, operation))"
+        errorMessage: """
+            Renames must target shapes that are in the model and must not target \
+            services, resources, operations, or members."""
+    )
+    key: String
+
+    /// The new name for the shape.
+    value: Identifier
+}
+
+/// A string matching the `Identifier` ABNF production used for shape names.
+@private
+@pattern("^(_+[a-zA-Z0-9]|[a-zA-Z])\\w*$")
+string Identifier
+
 /// Provides a structure member with a default value. When added to root
 /// level shapes, requires that every targeting structure member defines the
 /// same default value on the member or sets a default of null.
