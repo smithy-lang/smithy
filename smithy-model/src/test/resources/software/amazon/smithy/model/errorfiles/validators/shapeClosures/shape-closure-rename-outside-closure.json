@@ -1,0 +1,22 @@
+{
+    "smithy": "2.0",
+    "metadata": {
+        "shapeClosures": [
+            {
+                "id": "com.example#OutsideClosure",
+                "includeNamespaces": ["com.example"],
+                "rename": {
+                    "com.other#Other": "Renamed"
+                }
+            }
+        ]
+    },
+    "shapes": {
+        "com.example#Foo": {
+            "type": "structure"
+        },
+        "com.other#Other": {
+            "type": "structure"
+        }
+    }
+}

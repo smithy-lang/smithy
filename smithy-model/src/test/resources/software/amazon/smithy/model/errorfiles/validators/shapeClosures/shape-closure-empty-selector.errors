@@ -1,0 +1,1 @@
+[ERROR] -: metadata.shapeClosures.0.includeBySelector: String value provided for `smithy.api#ShapeClosure$includeBySelector` must be | TypedMetadata.shapeClosures
