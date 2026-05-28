@@ -167,7 +167,7 @@ from the explicit name to a synthetic name (e.g., ``MyList`` becomes
 
 Extracting an inline collection into a named shape is also wire-compatible
 but changes the shape ID. This is necessary when the collection needs
-shape-level traits such as ``@sparse``, ``@uniqueItems``, or ``@length``.
+shape-level traits such as ``@sparse`` or ``@uniqueItems``.
 
 **When to use inline vs explicit**
 

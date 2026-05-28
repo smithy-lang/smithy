@@ -966,8 +966,8 @@ Traits can be applied to the list shape and its member:
 
 
 .. versionadded:: 2.1
-   Lists can also be declared inline in member target positions using
-   ``[Target]`` syntax. See :ref:`idl-inline-collections`.
+   Lists can also be declared inline using ``[Target]`` syntax. See
+   :ref:`idl-inline-collections`.
 
    .. code-block:: smithy
 
@@ -1073,8 +1073,8 @@ Traits can be applied to the map shape and its members:
 
 
 .. versionadded:: 2.1
-   Maps can also be declared inline in member target positions using
-   ``{Key: Value}`` syntax. See :ref:`idl-inline-collections`.
+   Maps can also be declared inline using ``{Key: Value}`` syntax. See
+   :ref:`idl-inline-collections`.
 
    .. code-block:: smithy
 

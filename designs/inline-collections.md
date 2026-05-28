@@ -154,15 +154,15 @@ that contains them.
 
 ### Grouping
 
-Inline collections that are structurally equivalent produce a single
-shared synthetic shape. Two inline collections are equivalent when
-they have the same shape type (list or map) and the same target
-shape(s).
+Grouping is scoped to a single namespace. Within a namespace, all
+members using the same inline collection type (e.g., `[String]`)
+reference the same synthetic shape. Across namespaces, each namespace
+produces its own synthetic shape independently:
+`com.foo#_SyntheticListOfString` and `com.bar#_SyntheticListOfString`
+are distinct shapes.
 
-For example, if multiple members across different structures use
-`[String]`, they all reference the same `_SyntheticListOfString`
-shape. Only synthetic shapes are grouped, an explicit user-defined
-`list MyList { member: String }` is a distinct shape from
+Explicit user-defined shapes are never grouped with synthetic shapes.
+A `list MyList { member: String }` is a distinct shape from
 `_SyntheticListOfString` even though they are structurally equivalent.
 
 ### The `@generated` trait
@@ -187,10 +187,9 @@ time or via `apply` statements. The `apply` statement MUST NOT target
 a shape that has the `@generated` trait.
 
 Traits that would normally apply to a collection shape (such as
-`@sparse`, `@uniqueItems`, or `@length` when constraining collection
-size) cannot be expressed using inline syntax. Authors requiring these
-traits on the collection shape itself MUST use explicit shape
-definitions.
+`@sparse` or `@uniqueItems`) cannot be expressed using inline syntax.
+Authors requiring these traits on the collection shape itself MUST use
+explicit shape definitions.
 
 Note that some traits like `@length` can also be applied to the
 containing member. When applied to a member, the trait constrains only
@@ -199,16 +198,13 @@ example, `@length(min: 1) names: [String]` constrains the `names`
 member but does not affect other members that reference the same
 `_SyntheticListOfString` shape.
 
-Traits on the containing member (e.g., `@documentation`,
-`@deprecated`) apply to the member itself, not to the synthetic shape.
-
 ### Referencing synthetic shapes
 
 Synthetic shape names exist as valid shape IDs in the semantic model
 and AST. However, since traits cannot be applied to synthetic shapes
 and their members cannot be independently referenced, there is no
-practical use case for referencing them directly in IDL `apply`
-statements or member target positions.
+practical use case for referencing them directly in `apply` statements
+(IDL or AST) or member target positions.
 
 Synthetic shapes can be referenced in:
 
