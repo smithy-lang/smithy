@@ -12,35 +12,35 @@ public class SyntheticShapeNamingTest {
 
     @Test
     public void listNameWithSimpleTarget() {
-        assertEquals("_SyntheticListOfString", SyntheticShapeNaming.listName("String"));
+        assertEquals("_SyntheticListOfString", LoaderUtils.listName("String"));
     }
 
     @Test
     public void listNameWithQualifiedTarget() {
-        assertEquals("_SyntheticListOfBar", SyntheticShapeNaming.listName("com.foo#Bar"));
+        assertEquals("_SyntheticListOfBar", LoaderUtils.listName("com.foo#Bar"));
     }
 
     @Test
     public void listNameWithSyntheticTarget() {
         assertEquals("_SyntheticListOf_SyntheticListOfString",
-                SyntheticShapeNaming.listName("_SyntheticListOfString"));
+                LoaderUtils.listName("_SyntheticListOfString"));
     }
 
     @Test
     public void mapNameWithSimpleTargets() {
         assertEquals("_SyntheticMapOfStringToInteger",
-                SyntheticShapeNaming.mapName("String", "Integer"));
+                LoaderUtils.mapName("String", "Integer"));
     }
 
     @Test
     public void mapNameWithQualifiedTargets() {
         assertEquals("_SyntheticMapOfKeyToValue",
-                SyntheticShapeNaming.mapName("com.foo#Key", "com.bar#Value"));
+                LoaderUtils.mapName("com.foo#Key", "com.bar#Value"));
     }
 
     @Test
     public void mapNameWithMixedTargets() {
         assertEquals("_SyntheticMapOfStringToBar",
-                SyntheticShapeNaming.mapName("String", "com.foo#Bar"));
+                LoaderUtils.mapName("String", "com.foo#Bar"));
     }
 }

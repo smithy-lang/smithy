@@ -872,7 +872,7 @@ final class IdlModelLoader {
         tokenizer.next();
 
         // Compute the synthetic name from the target string as written.
-        String syntheticName = SyntheticShapeNaming.listName(innerTarget);
+        String syntheticName = LoaderUtils.listName(innerTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
         // Create the synthetic list shape if not already emitted.
@@ -921,7 +921,7 @@ final class IdlModelLoader {
         tokenizer.next();
 
         // Compute the synthetic name from the target strings as written.
-        String syntheticName = SyntheticShapeNaming.mapName(keyTarget, valueTarget);
+        String syntheticName = LoaderUtils.mapName(keyTarget, valueTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
 
         // Create the synthetic map shape if not already emitted.
