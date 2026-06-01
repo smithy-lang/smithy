@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixes an issue with exponential performance on graph traversal in MemberShouldReferenceResourceValidator",
+  "pull_requests": [
+    "[#3149](https://github.com/smithy-lang/smithy/pull/3149)"
+  ]
+}
