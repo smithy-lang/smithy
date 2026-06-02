@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed a bug where comments trailing unused imports were being improperly removed during formatting.",
+  "pull_requests": []
+}
