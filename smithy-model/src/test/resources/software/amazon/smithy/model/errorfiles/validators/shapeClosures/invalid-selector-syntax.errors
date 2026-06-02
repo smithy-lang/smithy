@@ -1,0 +1,2 @@
+[ERROR] -: metadata.shapeClosures.0.includeBySelector: String value provided for `smithy.api#ShapeClosure$includeBySelector` must be >= 1 characters, but the provided value is only 0 characters. | TypedMetadata.shapeClosures
+[ERROR] -: Shape closure `com.example#BadSelector` has an invalid `includeBySelector`: Syntax error at line 1 column 1, near `][not a selector`: Unexpected selector character: ]; expression: ][not a selector | ShapeClosure

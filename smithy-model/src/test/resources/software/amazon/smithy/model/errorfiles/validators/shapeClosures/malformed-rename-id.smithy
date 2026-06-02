@@ -8,9 +8,7 @@ metadata shapeClosures = [
     {
         id: "com.example#Bad"
         includeNamespaces: ["com.example"]
-        rename: {
-            "BadKey": "Renamed"
-        }
+        rename: { BadKey: "Renamed" }
     }
 ]
 

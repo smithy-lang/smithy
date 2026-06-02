@@ -3,7 +3,7 @@ $version: "2.0"
 metadata shapeClosures = [
     {
         id: "com.example#primary"
-        includeNamespaces: ["smithy.api", "com.example"]
+        includeNamespaces: ["com.example"]
         includeBySelector: "string"
         rename: {
             "com.example#Foo": "RenamedFoo"
