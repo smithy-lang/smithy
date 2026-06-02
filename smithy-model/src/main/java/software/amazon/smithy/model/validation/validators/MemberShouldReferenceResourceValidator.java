@@ -124,7 +124,7 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
      * runs in {@code O(V + E)}. It intentionally mirrors the directed-relationship traversal that
      * {@link software.amazon.smithy.model.selector.PathFinder} performs, but without enumerating
      * every simple path between each resource and the member ... that enumeration is exponential
-     * on recursive or highly-connected models and previously caused this validator to hang.
+     * on recursive or highly-connected models and can cause this validator to hang.
      */
     private Set<ShapeId> findBindingResources(NeighborProvider reverseProvider, MemberShape member) {
         Set<ShapeId> boundResources = new HashSet<>();
