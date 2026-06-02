@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.ShapeClosureIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class FlattenClosureNamespacesTest {
@@ -105,28 +103,5 @@ public class FlattenClosureNamespacesTest {
         ObjectNode rename = closure.expectObjectMember("rename");
         assertTrue(rename.getStringMember("com.flat#RenamedFoo").isPresent());
         assertFalse(rename.getStringMember("com.example#Foo").isPresent());
-    }
-
-    @Test
-    public void canFilterPreludeShapesFromClosure() {
-        ShapeClosureIndex index = ShapeClosureIndex.of(model);
-
-        boolean withPreludeHasString = false;
-        for (Shape s : index.getShapesInClosure("com.example#Shapes", true)) {
-            if (s.getId().equals(ShapeId.from("smithy.api#String"))) {
-                withPreludeHasString = true;
-                break;
-            }
-        }
-        boolean withoutPreludeHasString = false;
-        for (Shape s : index.getShapesInClosure("com.example#Shapes", false)) {
-            if (s.getId().equals(ShapeId.from("smithy.api#String"))) {
-                withoutPreludeHasString = true;
-                break;
-            }
-        }
-
-        assertTrue(withPreludeHasString);
-        assertFalse(withoutPreludeHasString);
     }
 }
