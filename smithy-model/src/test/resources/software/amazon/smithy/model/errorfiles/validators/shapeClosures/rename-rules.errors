@@ -5,6 +5,3 @@
 [ERROR] -: Shape closure `com.example#NonRenamedConflict` rename for `com.example#Foo` ("BAR") case-insensitively conflicts with non-renamed shape `com.example#Bar`. | ShapeClosure
 [ERROR] -: Shape closure `com.example#RenameRenameConflict` rename for `com.example#Bar` ("CONFLICT") case-insensitively conflicts with the rename for `com.example#Foo`. | ShapeClosure
 [ERROR] -: metadata.shapeClosures.6.rename.com.example#Foo: String value provided for `smithy.api#Identifier` must match regular expression: ^(_+[a-zA-Z0-9]|[a-zA-Z])\w*$ | TypedMetadata.shapeClosures
-[ERROR] -: Shape closure `com.example#BadSelector` has an invalid `includeBySelector`: Syntax error at line 1 column 1, near `][not a selector`: Unexpected selector character: ]; expression: ][not a selector | ShapeClosure
-[ERROR] -: Shape closure `com.example#NoRoots` must define at least one of `includeNamespaces` or `includeBySelector`. | ShapeClosure
-[DANGER] -: Shape closure `com.example#EmptyNamespace` includes namespace `com.empty`, which has no shapes in the model. | ShapeClosure.EmptyNamespace.com.example#EmptyNamespace

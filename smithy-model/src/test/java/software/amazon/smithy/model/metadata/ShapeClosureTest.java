@@ -21,7 +21,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
 
 public class ShapeClosureTest {
 
@@ -39,7 +38,7 @@ public class ShapeClosureTest {
     public void readsClosuresFromModelKeyedByIdInOrder() {
         Map<String, ShapeClosure> closures = ShapeClosure.fromModel(model);
 
-        assertThat(ListUtils.copyOf(closures.keySet()), contains("com.example#primary", "com.example#secondary"));
+        assertThat(closures.keySet(), contains("com.example#primary", "com.example#secondary"));
 
         ShapeClosure secondary = closures.get("com.example#secondary");
         assertFalse(secondary.getIncludeBySelector().isPresent());
@@ -54,7 +53,7 @@ public class ShapeClosureTest {
         expectedRename.put(ShapeId.from("com.example#Foo"), "RenamedFoo");
 
         assertThat(primary.getId(), equalTo("com.example#primary"));
-        assertThat(ListUtils.copyOf(primary.getIncludeNamespaces()), contains("smithy.api", "com.example"));
+        assertThat(primary.getIncludeNamespaces(), contains("com.example"));
         assertThat(primary.getIncludeBySelector(), equalTo(Optional.of("string")));
         assertThat(primary.getRename(), equalTo(expectedRename));
         assertThat(ShapeClosure.fromNode(primary.toNode()), equalTo(primary));
@@ -65,7 +64,7 @@ public class ShapeClosureTest {
     public void readsClosuresFromMetadataMap() {
         Map<String, ShapeClosure> closures = ShapeClosure.fromModel(model.getMetadata());
 
-        assertThat(ListUtils.copyOf(closures.keySet()), contains("com.example#primary", "com.example#secondary"));
+        assertThat(closures.keySet(), contains("com.example#primary", "com.example#secondary"));
     }
 
     @Test

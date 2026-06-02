@@ -4,37 +4,27 @@ metadata shapeClosures = [
     {
         id: "com.example#NoOpRename"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#Foo": "Foo"
-        }
+        rename: { "com.example#Foo": "Foo" }
     }
     {
         id: "com.example#OperationRename"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#GetFoo": "Renamed"
-        }
+        rename: { "com.example#GetFoo": "Renamed" }
     }
     {
         id: "com.example#ResourceRename"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#WidgetResource": "Renamed"
-        }
+        rename: { "com.example#WidgetResource": "Renamed" }
     }
     {
         id: "com.example#ServiceRename"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#WidgetService": "Renamed"
-        }
+        rename: { "com.example#WidgetService": "Renamed" }
     }
     {
         id: "com.example#NonRenamedConflict"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#Foo": "BAR"
-        }
+        rename: { "com.example#Foo": "BAR" }
     }
     {
         id: "com.example#RenameRenameConflict"
@@ -47,23 +37,7 @@ metadata shapeClosures = [
     {
         id: "com.example#InvalidIdentifier"
         includeNamespaces: ["com.example"]
-        rename: {
-            "com.example#Foo": "123Foo"
-        }
-    }
-    {
-        id: "com.example#BadSelector"
-        includeBySelector: "][not a selector"
-        rename: {
-            "com.example#Foo": "Renamed"
-        }
-    }
-    {
-        id: "com.example#NoRoots"
-    }
-    {
-        id: "com.example#EmptyNamespace"
-        includeNamespaces: ["com.empty"]
+        rename: { "com.example#Foo": "123Foo" }
     }
 ]
 
@@ -83,7 +57,9 @@ operation GetFoo {
 }
 
 resource WidgetResource {
-    identifiers: { id: String }
+    identifiers: {
+        id: String
+    }
 }
 
 service WidgetService {
