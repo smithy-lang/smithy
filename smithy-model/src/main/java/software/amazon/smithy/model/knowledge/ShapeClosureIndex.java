@@ -6,13 +6,11 @@ package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.metadata.ShapeClosure;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipDirection;
@@ -23,6 +21,7 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.selector.SelectorException;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Resolves {@code shapeClosures} metadata into the set of shapes that
@@ -47,6 +46,7 @@ public final class ShapeClosureIndex implements KnowledgeIndex {
             rel -> rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED;
 
     private final Map<String, Set<Shape>> closureShapes = new LinkedHashMap<>();
+    private final Map<String, Set<Shape>> rootClosureShapes = new LinkedHashMap<>();
     private final Map<String, Map<ShapeId, String>> closureRenames = new LinkedHashMap<>();
 
     public ShapeClosureIndex(Model model) {
@@ -57,9 +57,43 @@ public final class ShapeClosureIndex implements KnowledgeIndex {
 
         Walker walker = new Walker(NeighborProviderIndex.of(model).getProvider());
         for (ShapeClosure closure : closures.values()) {
-            closureShapes.put(closure.getId(), computeClosure(model, walker, closure));
+            computeClosure(model, walker, closure);
             closureRenames.put(closure.getId(), closure.getRename());
         }
+    }
+
+    private void computeClosure(Model model, Walker walker, ShapeClosure closure) {
+        Set<Shape> roots = new TreeSet<>();
+
+        Set<String> namespaces = closure.getIncludeNamespaces();
+        if (!namespaces.isEmpty()) {
+            for (Shape shape : model.toSet()) {
+                if (namespaces.contains(shape.getId().getNamespace())) {
+                    roots.add(shape);
+                }
+            }
+        }
+
+        closure.getIncludeBySelector().ifPresent(selector -> {
+            try {
+                roots.addAll(Selector.parse(selector).select(model));
+            } catch (SelectorException e) {
+                // Invalid selectors are reported by ShapeClosureValidator. We swallow
+                // the exception here to prevent one invalid closure from breaking
+                // the full validation of closures with valid selectors.
+            }
+        });
+        this.rootClosureShapes.put(closure.getId(), SetUtils.orderedCopyOf(roots));
+
+        Set<Shape> result = new TreeSet<>();
+        for (Shape root : roots) {
+            // A root already reached by an earlier directed walk has its whole
+            // subtree covered, so skip re-walking it.
+            if (!result.contains(root)) {
+                result.addAll(walker.walkShapes(root, ONLY_DIRECTED));
+            }
+        }
+        this.closureShapes.put(closure.getId(), SetUtils.orderedCopyOf(result));
     }
 
     public static ShapeClosureIndex of(Model model) {
@@ -75,36 +109,33 @@ public final class ShapeClosureIndex implements KnowledgeIndex {
      * @throws ExpectationNotMetException if no closure with the given id is defined in the model.
      */
     public Set<Shape> getShapesInClosure(String closure) {
-        return getShapesInClosure(closure, true);
-    }
-
-    /**
-     * Gets the shapes in the named closure, optionally filtering out
-     * prelude shapes.
-     *
-     * @param closure The id of the closure to look up.
-     * @param includePrelude If true, prelude shapes that were reached by
-     *  transitive walking are included; if false, they are filtered out.
-     * @return The shapes in the closure.
-     * @throws ExpectationNotMetException if no closure with the given id is defined in the model.
-     */
-    public Set<Shape> getShapesInClosure(String closure, boolean includePrelude) {
-        Set<Shape> shapes = closureShapes.get(closure);
-        if (shapes == null) {
+        if (!closureShapes.containsKey(closure)) {
             throw new ExpectationNotMetException(
                     "No shape closure named `" + closure + "` is defined in the model.",
                     Node.objectNode());
         }
-        if (includePrelude) {
-            return Collections.unmodifiableSet(shapes);
+        return closureShapes.get(closure);
+    }
+
+    /**
+     * Gets the root shapes in the named closure.
+     *
+     * <p>This only includes shapes directly matched by {@code includeBySelector} and
+     * shape that are part of a namespace in {@code includeNamespaces}. It does NOT
+     * include any connected shapes that are not themselves matched by the selector
+     * or part of an included namespace.
+     *
+     * @param closure The id of the closure to look up.
+     * @return The shapes in the closure.
+     * @throws ExpectationNotMetException if no closure with the given id is defined in the model.
+     */
+    public Set<Shape> getRootShapesInClosure(String closure) {
+        if (!rootClosureShapes.containsKey(closure)) {
+            throw new ExpectationNotMetException(
+                    "No shape closure named `" + closure + "` is defined in the model.",
+                    Node.objectNode());
         }
-        Set<Shape> filtered = new LinkedHashSet<>();
-        for (Shape shape : shapes) {
-            if (!Prelude.isPreludeShape(shape.getId())) {
-                filtered.add(shape);
-            }
-        }
-        return Collections.unmodifiableSet(filtered);
+        return rootClosureShapes.get(closure);
     }
 
     /**
@@ -133,39 +164,5 @@ public final class ShapeClosureIndex implements KnowledgeIndex {
      */
     public Set<String> getClosureIds() {
         return Collections.unmodifiableSet(closureShapes.keySet());
-    }
-
-    private static Set<Shape> computeClosure(Model model, Walker walker, ShapeClosure closure) {
-        // Use a TreeSet ordered by shape id so the resulting closure is
-        // deterministic regardless of how the model stores its shapes.
-        Set<Shape> roots = new TreeSet<>((a, b) -> a.getId().compareTo(b.getId()));
-
-        Set<String> namespaces = closure.getIncludeNamespaces();
-        if (!namespaces.isEmpty()) {
-            for (Shape shape : model.toSet()) {
-                if (namespaces.contains(shape.getId().getNamespace())) {
-                    roots.add(shape);
-                }
-            }
-        }
-
-        closure.getIncludeBySelector().ifPresent(selector -> {
-            try {
-                roots.addAll(Selector.parse(selector).select(model));
-            } catch (SelectorException e) {
-                // Invalid selectors are reported by ShapeClosureValidator;
-                // here we just keep the rest of the closure usable.
-            }
-        });
-
-        Set<Shape> result = new LinkedHashSet<>();
-        for (Shape root : roots) {
-            // A root already reached by an earlier directed walk has its whole
-            // subtree covered, so skip re-walking it.
-            if (!result.contains(root)) {
-                result.addAll(walker.walkShapes(root, ONLY_DIRECTED));
-            }
-        }
-        return result;
     }
 }

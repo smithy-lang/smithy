@@ -50,6 +50,21 @@ public class ShapeClosureIndexTest {
     }
 
     @Test
+    public void rootShapesDontIncludeReferences() {
+        ShapeClosureIndex index = ShapeClosureIndex.of(model);
+
+        Set<ShapeId> ids = index.getRootShapesInClosure("com.example#Namespaced")
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(ids, hasItem(ShapeId.from("com.example#Foo")));
+        assertThat(ids, hasItem(ShapeId.from("com.example#Bar")));
+        // Walked transitively from `Foo.other`.
+        assertThat(ids, not(hasItem(ShapeId.from("com.other#Other"))));
+    }
+
+    @Test
     public void includesShapesBySelector() {
         ShapeClosureIndex index = ShapeClosureIndex.of(model);
 

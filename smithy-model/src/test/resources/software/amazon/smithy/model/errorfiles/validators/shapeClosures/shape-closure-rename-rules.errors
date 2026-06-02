@@ -8,4 +8,3 @@
 [ERROR] -: Shape closure `com.example#BadSelector` has an invalid `includeBySelector`: Syntax error at line 1 column 1, near `][not a selector`: Unexpected selector character: ]; expression: ][not a selector | ShapeClosure
 [ERROR] -: Shape closure `com.example#NoRoots` must define at least one of `includeNamespaces` or `includeBySelector`. | ShapeClosure
 [DANGER] -: Shape closure `com.example#EmptyNamespace` includes namespace `com.empty`, which has no shapes in the model. | ShapeClosure.EmptyNamespace.com.example#EmptyNamespace
-[DANGER] -: Shape closure `com.example#SelectorMatchesNothing` has an `includeBySelector` that matches no shapes in the model. | ShapeClosure.EmptySelector.com.example#SelectorMatchesNothing
