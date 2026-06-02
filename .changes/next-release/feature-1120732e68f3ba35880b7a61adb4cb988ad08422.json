@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added an optional `message` property to waiter acceptors that allows extracting a human-readable message from the operation output via a JMESPath expression. The expression must resolve to a string or array of strings and is only valid on failure state acceptors.",
+  "pull_requests": []
+}

@@ -115,6 +115,58 @@ use smithy.waiters#waitable
                 }
             }
         ]
+    },
+    G: {
+        "documentation": "Waiter with a message on failure acceptor",
+        "acceptors": [
+            {
+                "state": "success",
+                "matcher": {
+                    "output": {
+                        "path": "foo == 'hi'",
+                        "comparator": "booleanEquals",
+                        "expected": "true"
+                    }
+                }
+            },
+            {
+                "state": "failure",
+                "matcher": {
+                    "output": {
+                        "path": "foo == 'failed'",
+                        "comparator": "booleanEquals",
+                        "expected": "true"
+                    }
+                },
+                "message": "foo"
+            }
+        ]
+    },
+    H: {
+        "documentation": "Waiter with message pointing to array of strings",
+        "acceptors": [
+            {
+                "state": "success",
+                "matcher": {
+                    "output": {
+                        "path": "foo == 'hi'",
+                        "comparator": "booleanEquals",
+                        "expected": "true"
+                    }
+                }
+            },
+            {
+                "state": "failure",
+                "matcher": {
+                    "output": {
+                        "path": "foo == 'failed'",
+                        "comparator": "booleanEquals",
+                        "expected": "true"
+                    }
+                },
+                "message": "reasons"
+            }
+        ]
     }
 )
 operation A {
@@ -129,6 +181,11 @@ structure AInput {}
 @output
 structure AOutput {
     foo: String,
+    reasons: StringList,
+}
+
+list StringList {
+    member: String,
 }
 
 @error("client")
