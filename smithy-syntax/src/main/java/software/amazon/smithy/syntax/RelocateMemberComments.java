@@ -79,22 +79,13 @@ final class RelocateMemberComments implements Function<TokenTree, TokenTree> {
             List<Pair<TokenTree, TokenTree>> toRelocate = new ArrayList<>();
             int brStartLine = br.getTree().getStartLine();
             // Comments may be direct children of BR or nested inside a WS child of BR.
-            collectNonInlineComments(br, brStartLine, toRelocate);
+            FormatUtils.collectNonInlineComments(br, brStartLine, toRelocate);
 
             if (toRelocate.isEmpty()) {
                 continue;
             }
 
-            // Detach each comment from its recorded parent. Because the parent reference is captured at
-            // collection time, removal cannot fail to locate the node and we never risk attaching the
-            // same comment to two parents. A failed remove indicates the tree shape changed underneath us.
-            for (Pair<TokenTree, TokenTree> entry : toRelocate) {
-                if (!entry.getLeft().removeChild(entry.getRight())) {
-                    throw new IllegalStateException(
-                            "RelocateMemberComments could not detach comment from its recorded parent: "
-                                    + entry.getRight().concatTokens());
-                }
-            }
+            FormatUtils.detachCollectedComments(toRelocate);
 
             // Clean up residual whitespace in the BR after removing comments. If the BR's WS child
             // no longer contains any COMMENT children (only SP/NEWLINE/COMMA tokens remain), remove
@@ -126,32 +117,6 @@ final class RelocateMemberComments implements Function<TokenTree, TokenTree> {
             }
             for (TokenTree child : existingChildren) {
                 wsTarget.appendChild(child);
-            }
-        }
-    }
-
-    private void collectNonInlineComments(
-            TreeCursor brCursor,
-            int brStartLine,
-            List<Pair<TokenTree, TokenTree>> result
-    ) {
-        // The BR's start line equals the value's last line in both newline-led and comment-led
-        // BR branches (the parser anchors BR at the position right after the value, then consumes
-        // the trailing newline plus any optional WS). Comments whose start line differs from the
-        // BR start line are therefore not on the same source line as the value and are candidates
-        // for relocation. Same-line trailing comments are left in the BR for FixBadDocComments
-        // and FormatVisitor's BR visitor to handle inline.
-        TokenTree brTree = brCursor.getTree();
-        for (TokenTree child : brTree.getChildren()) {
-            if (child.getType() == TreeType.COMMENT && child.getStartLine() != brStartLine) {
-                result.add(Pair.of(brTree, child));
-            } else if (child.getType() == TreeType.WS) {
-                // Comments inside a WS child of BR.
-                for (TokenTree wsChild : child.getChildren()) {
-                    if (wsChild.getType() == TreeType.COMMENT && wsChild.getStartLine() != brStartLine) {
-                        result.add(Pair.of(child, wsChild));
-                    }
-                }
             }
         }
     }
