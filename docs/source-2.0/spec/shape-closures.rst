@@ -53,6 +53,11 @@ value is a list of ``ShapeClosure`` structures with the following members:
         closure. The id follows the same format as a shape id, MUST be unique
         across all closures in the model, and MUST NOT refer to a shape that
         exists in the model.
+
+        This identifier is not intended to be semantically significant. The
+        requirement for a namespace is intended to reduce the chance for naming
+        collisions, not to suggest the namespace that any generated artifacts
+        must be generated into.
     * - includeNamespaces
       - ``[string]``
       - Namespaces whose shapes are included in the closure.
