@@ -387,7 +387,9 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return value.asObjectNode()
                 .map(object -> {
                     List<ValidationEvent> events = applyPlugins(shape);
-                    if (object.size() > 1) {
+                    if (object.isEmpty()) {
+                        events.add(event("union values must contain a value for exactly one member"));
+                    } else if (object.size() > 1) {
                         events.add(event("union values can contain a value for only a single member"));
                     } else {
                         Map<String, MemberShape> members = shape.getAllMembers();
@@ -409,16 +411,19 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
         List<ValidationEvent> events = applyPlugins(shape);
-        if (value.isNullNode()) {
+
+        if (!value.isNullNode()) {
+            model.getShape(shape.getTarget()).ifPresent(target -> {
+                // We only need to keep track of a single referring member, so a stack of members or anything like that
+                // isn't needed here.
+                validationContext.setReferringMember(shape);
+                events.addAll(target.accept(this));
+                validationContext.setReferringMember(null);
+            });
+        } else {
             events.addAll(checkNullMember(shape));
         }
-        model.getShape(shape.getTarget()).ifPresent(target -> {
-            // We only need to keep track of a single referring member, so a stack of members or anything like that
-            // isn't needed here.
-            validationContext.setReferringMember(shape);
-            events.addAll(target.accept(this));
-            validationContext.setReferringMember(null);
-        });
+
         return events;
     }
 
@@ -435,9 +440,20 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                             String.format(
                                     "Non-sparse map shape `%s` cannot contain null values",
                                     shape.getContainer())));
+                case SET:
+                    return ListUtils.of(event(
+                            String.format(
+                                    "Set shape `%s` cannot contain null values",
+                                    shape.getContainer())));
                 case STRUCTURE:
                     return ListUtils.of(event(
                             String.format("Required structure member `%s` for `%s` cannot be null",
+                                    shape.getMemberName(),
+                                    shape.getContainer())));
+                case UNION:
+                    return ListUtils.of(event(
+                            String.format(
+                                    "Union member `%s` for `%s` cannot contain null values",
                                     shape.getMemberName(),
                                     shape.getContainer())));
                 default:

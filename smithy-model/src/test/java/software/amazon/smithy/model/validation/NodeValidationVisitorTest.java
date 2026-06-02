@@ -741,6 +741,18 @@ public class NodeValidationVisitorTest {
 
                 // base64 encoded value without padding
                 {"ns.foo#Blob1", "\"Zg\"", null},
+
+                // Member validation
+                {"ns.foo#Structure2", "{\"d\": \"Zg==\"}", null},
+                {"ns.foo#Structure2",
+                        "{\"d\": \"Zm9vbw==\"}",
+                        new String[] {
+                                "d: Value provided for `ns.foo#Structure2$d` must have no more than 3 bytes, but the provided value has 4 bytes"}},
+                {"ns.foo#Structure2",
+                        "{\"d\": \"{}\"}",
+                        new String[] {
+                                "d: Blob value must be a valid base64 string"
+                        }},
         });
     }
 }
