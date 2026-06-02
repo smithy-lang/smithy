@@ -208,7 +208,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
     /**
      * Validates the message JMESPath expression on a failure acceptor.
      * The expression is evaluated against the operation output and must
-     * resolve to a string or array of strings.
+     * resolve to a string.
      */
     List<ValidationEvent> validateMessage(String messageExpression) {
         OperationIndex index = OperationIndex.of(model);
@@ -223,31 +223,13 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             }
 
             RuntimeType returnType = result.getReturnType();
-            if (returnType == RuntimeType.ARRAY) {
-                // Evaluate against sample data to check array element type.
-                LiteralExpression evaluated = expression.evaluate(input);
-                List<Object> array = evaluated.expectArrayValue();
-                if (!array.isEmpty() && !(array.get(0) instanceof String)) {
-                    addEvent(Severity.DANGER,
-                            String.format(
-                                    "The `message` JMESPath expression must resolve to a string or array of "
-                                            + "strings, but this expression resolves to an array of `%s`.",
-                                    new LiteralExpression(array.get(0)).getType()),
-                            JMESPATH_PROBLEM,
-                            "MessageTypeMismatch",
-                            waiterName,
-                            String.valueOf(acceptorIndex));
-                }
-            } else if (returnType != RuntimeType.STRING && returnType != RuntimeType.ANY) {
-                addEvent(Severity.DANGER,
+            if (returnType != RuntimeType.STRING && returnType != RuntimeType.ANY) {
+                addEvent(Severity.ERROR,
                         String.format(
-                                "The `message` JMESPath expression must resolve to a string or array of strings, "
+                                "The `message` JMESPath expression must resolve to a string, "
                                         + "but this expression was statically determined to return a `%s` type.",
                                 returnType),
-                        JMESPATH_PROBLEM,
-                        "MessageTypeMismatch",
-                        waiterName,
-                        String.valueOf(acceptorIndex));
+                        NON_SUPPRESSABLE_ERROR);
             }
         } catch (JmespathException e) {
             addEvent(Severity.ERROR,

@@ -68,8 +68,8 @@ structure Acceptor {
 
     /// A JMESPath expression that extracts a human-readable message from
     /// the operation output when this acceptor matches. The expression
-    /// MUST resolve to a string or an array of strings. This field is
-    /// only valid on acceptors with a ``failure`` state.
+    /// MUST resolve to a string. This field is only valid on acceptors
+    /// with a ``failure`` state.
     message: String,
 }
 

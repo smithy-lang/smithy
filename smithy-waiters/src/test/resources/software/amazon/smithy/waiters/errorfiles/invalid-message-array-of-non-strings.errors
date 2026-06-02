@@ -1,1 +1,0 @@
-[DANGER] smithy.example#A: Waiter `A`, acceptor 1: The `message` JMESPath expression must resolve to a string or array of strings, but this expression resolves to an array of `number`. | WaitableTraitJmespathProblem.MessageTypeMismatch.A.1
