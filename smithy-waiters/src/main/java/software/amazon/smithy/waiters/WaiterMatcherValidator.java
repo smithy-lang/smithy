@@ -223,7 +223,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             }
 
             RuntimeType returnType = result.getReturnType();
-            if (returnType != RuntimeType.STRING && returnType != RuntimeType.ANY) {
+            if (returnType != RuntimeType.STRING) {
                 addEvent(Severity.ERROR,
                         String.format(
                                 "The `message` JMESPath expression must resolve to a string, "
