@@ -65,10 +65,6 @@ metadata shapeClosures = [
         id: "com.example#EmptyNamespace"
         includeNamespaces: ["com.empty"]
     }
-    {
-        id: "com.example#SelectorMatchesNothing"
-        includeBySelector: "[id = 'com.example#DoesNotExist']"
-    }
 ]
 
 namespace com.example

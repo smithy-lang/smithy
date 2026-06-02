@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.ShapeClosureIndex;
@@ -67,6 +68,7 @@ public final class ShapeClosureValidator extends AbstractValidator {
             } catch (ExpectationNotMetException | ShapeIdSyntaxException e) {
                 continue;
             }
+
             SourceLocation location = closure.getSourceLocation();
             String id = closure.getId();
 
@@ -104,6 +106,7 @@ public final class ShapeClosureValidator extends AbstractValidator {
                                 id)));
             }
 
+            Set<String> nonEmptyNamespaces = new HashSet<>();
             for (String namespace : closure.getIncludeNamespaces()) {
                 if (!namespacesInModel.contains(namespace)) {
                     events.add(event(getName() + ".EmptyNamespace." + id,
@@ -113,41 +116,84 @@ public final class ShapeClosureValidator extends AbstractValidator {
                                     "Shape closure `%s` includes namespace `%s`, which has no shapes in the model.",
                                     id,
                                     namespace)));
+                } else {
+                    nonEmptyNamespaces.add(namespace);
                 }
             }
 
-            // Rename validation resolves the closure, which is unreliable when
-            // the selector can't be parsed, so skip renames in that case.
-            boolean validSelector = true;
-            String selector = closure.getIncludeBySelector().orElse(null);
-            if (selector != null && !selector.isEmpty()) {
-                try {
-                    if (Selector.parse(selector).select(model).isEmpty()) {
-                        events.add(event(getName() + ".EmptySelector." + id,
-                                Severity.DANGER,
-                                location,
-                                String.format(
-                                        "Shape closure `%s` has an `includeBySelector` that matches no "
-                                                + "shapes in the model.",
-                                        id)));
-                    }
-                } catch (SelectorException e) {
-                    events.add(error(location,
-                            String.format(
-                                    "Shape closure `%s` has an invalid `includeBySelector`: %s",
-                                    id,
-                                    e.getMessage())));
-                    validSelector = false;
-                }
+            if (!validateSelector(events, model, closure, nonEmptyNamespaces)) {
+                // If the selector is broken, further validation can't happen.
+                continue;
             }
 
-            if (validSelector) {
-                events.addAll(validateRenames(model, closure));
-                events.addAll(validateNameConflicts(model, closure));
-            }
+            events.addAll(validateRenames(model, closure));
+            events.addAll(validateNameConflicts(model, closure));
         }
 
         return events;
+    }
+
+    private boolean validateSelector(
+            List<ValidationEvent> events,
+            Model model,
+            ShapeClosure closure,
+            Set<String> nonEmptyNamespaces
+    ) {
+        if (!closure.getIncludeBySelector().isPresent()) {
+            return true;
+        }
+
+        if (closure.getIncludeBySelector().get().isEmpty()) {
+            // This is validated by the length trait.
+            return false;
+        }
+        try {
+            Selector.parse(closure.getIncludeBySelector().get());
+        } catch (SelectorException e) {
+            events.add(error(closure.getSourceLocation(),
+                    String.format(
+                            "Shape closure `%s` has an invalid `includeBySelector`: %s",
+                            closure.getId(),
+                            e.getMessage())));
+            return false;
+        }
+
+        // Avoid running the (potentially expensive) selector multiple times by just
+        // examining the root shapes provided by the index.
+        Set<Shape> rootShapes = ShapeClosureIndex.of(model).getRootShapesInClosure(closure.getId());
+        if (nonEmptyNamespaces.isEmpty() && rootShapes.isEmpty()) {
+            // If there aren't any configured namespaces that have shapes in them and
+            // there are no root shapes, then we know that the selector itself is
+            // not matching any shapes.
+            events.add(event(getName() + ".EmptySelector." + closure.getId(),
+                    Severity.DANGER,
+                    closure.getSourceLocation(),
+                    String.format(
+                            "Shape closure `%s` has an `includeBySelector` that matches no "
+                                    + "shapes in the model.",
+                            closure.getId())));
+        } else if (!nonEmptyNamespaces.isEmpty()) {
+            // If there are configured namespaces with shapes in them, we can't
+            // confidently say that the selector doesn't match any shapes. We
+            // can, however, check to see if any of the root shapes in the closure
+            // fall outside the configured namespaces. If none do, then the selector
+            // either selects nothing, OR it only selects shapes that are already
+            // included by the namespaces.
+            List<Shape> filtered = rootShapes.stream()
+                    .filter(shape -> !nonEmptyNamespaces.contains(shape.getId().getNamespace()))
+                    .collect(Collectors.toList());
+            if (filtered.isEmpty()) {
+                events.add(event(getName() + ".EmptySelector." + closure.getId(),
+                        Severity.DANGER,
+                        closure.getSourceLocation(),
+                        String.format(
+                                "Shape closure `%s` has an `includeBySelector` that matches no shapes in the "
+                                        + "model that aren't already in an included namespace.",
+                                closure.getId())));
+            }
+        }
+
+        return true;
     }
 
     private List<ValidationEvent> validateRenames(Model model, ShapeClosure closure) {
