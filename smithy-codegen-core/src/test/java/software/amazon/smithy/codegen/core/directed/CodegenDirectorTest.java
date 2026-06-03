@@ -7,26 +7,37 @@ package software.amazon.smithy.codegen.core.directed;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.PaginatedTrait;
+import software.amazon.smithy.model.traits.Trait;
 
 public class CodegenDirectorTest {
 
@@ -38,6 +49,14 @@ public class CodegenDirectorTest {
         public final List<TestIntegration> integrations = new ArrayList<>();
 
         public TestContext capturedContext;
+        public CustomizeDirective<TestContext, TestSettings> capturedCustomizeDirective;
+        public Map<ShapeId, Trait> capturedSupportedProtocols;
+        public final List<GenerateServiceDirective<TestContext, TestSettings>> generatedServiceDirectives =
+                new ArrayList<>();
+        public final Map<ShapeId, GenerateOperationDirective<TestContext, TestSettings>> generatedOperationDirectives =
+                new HashMap<>();
+        public final Map<ShapeId, GenerateStructureDirective<TestContext, TestSettings>> generatedStructureDirectives =
+                new HashMap<>();
 
         @Override
         public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<TestSettings> directive) {
@@ -51,6 +70,7 @@ public class CodegenDirectorTest {
         public TestContext createContext(CreateContextDirective<TestSettings, TestIntegration> directive) {
             integrations.clear();
             integrations.addAll(directive.integrations());
+            capturedSupportedProtocols = directive.supportedProtocols();
             WriterDelegator<TestWriter> delegator = new WriterDelegator<>(
                     directive.fileManifest(),
                     directive.symbolProvider(),
@@ -62,13 +82,14 @@ public class CodegenDirectorTest {
                     directive.fileManifest(),
                     directive.sharedFileManifest().orElse(null),
                     delegator,
-                    directive.service());
+                    directive.getService().orElse(null));
             return capturedContext;
         }
 
         @Override
         public void generateService(GenerateServiceDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
+            generatedServiceDirectives.add(directive);
         }
 
         @Override
@@ -79,11 +100,13 @@ public class CodegenDirectorTest {
         @Override
         public void generateOperation(GenerateOperationDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
+            generatedOperationDirectives.put(directive.shape().getId(), directive);
         }
 
         @Override
         public void generateStructure(GenerateStructureDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
+            generatedStructureDirectives.put(directive.shape().getId(), directive);
         }
 
         @Override
@@ -125,6 +148,11 @@ public class CodegenDirectorTest {
         @Override
         public void generateIntEnumShape(GenerateIntEnumDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
+        }
+
+        @Override
+        public void customizeBeforeShapeGeneration(CustomizeDirective<TestContext, TestSettings> directive) {
+            capturedCustomizeDirective = directive;
         }
 
         @Override
@@ -415,5 +443,354 @@ public class CodegenDirectorTest {
         runner.run();
 
         assertThat(testDirected.capturedContext.sharedFileManifest().get(), equalTo(sharedManifest));
+    }
+
+    private CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> closureRunner(
+            TestDirected testDirected,
+            String... modelFiles
+    ) {
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = new CodegenDirector<>();
+        ModelAssembler assembler = Model.assembler();
+        for (String modelFile : modelFiles) {
+            assembler.addImport(getClass().getResource(modelFile));
+        }
+        runner.settings(new TestSettings());
+        runner.directedCodegen(testDirected);
+        runner.fileManifest(new MockManifest());
+        runner.model(assembler.assemble().unwrap());
+        runner.integrationClass(TestIntegration.class);
+        return runner;
+    }
+
+    @Test
+    public void generatesShapeClosureWithoutService() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#cityData");
+        runner.run();
+
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#City"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#Conditions")));
+
+        // The directive is given the closure rather than a service.
+        assertThat(testDirected.capturedContext.service(), equalTo(null));
+        assertFalse(testDirected.capturedCustomizeDirective.getService().isPresent());
+        assertThat(testDirected.capturedCustomizeDirective.getShapeClosureId().get(),
+                equalTo("smithy.example#cityData"));
+
+        // There is no service, operations, or protocols
+        assertThat(testDirected.capturedCustomizeDirective.operations(), empty());
+        assertThat(testDirected.capturedSupportedProtocols.entrySet(), empty());
+    }
+
+    @Test
+    public void generatesServiceShapesInClosure() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#serviceClosure");
+        runner.run();
+
+        // The service in the closure is generated through the shape visitor.
+        assertThat(testDirected.generatedShapes, hasItem(ShapeId.from("smithy.example#Weather")));
+        assertThat(testDirected.generatedServiceDirectives, hasSize(1));
+
+        // The directive distinguishes the generated service shape from the (absent)
+        // driving service, and carries the closure that is driving generation.
+        GenerateServiceDirective<TestContext, TestSettings> serviceDirective =
+                testDirected.generatedServiceDirectives.get(0);
+        assertThat(serviceDirective.shape().getId(), equalTo(ShapeId.from("smithy.example#Weather")));
+        assertFalse(serviceDirective.getService().isPresent());
+        assertThat(serviceDirective.getShapeClosureId().get(), equalTo("smithy.example#serviceClosure"));
+    }
+
+    @Test
+    public void generatesOperationShapesInClosure() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#getCityClosure");
+        runner.run();
+
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetCity"),
+                        ShapeId.from("smithy.example#GetCityInput"),
+                        ShapeId.from("smithy.example#GetCityOutput"),
+                        ShapeId.from("smithy.example#City"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#Conditions")));
+    }
+
+    @Test
+    public void generatesTheDrivingServiceExactlyOnce() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.service(ShapeId.from("smithy.example#Weather"));
+        runner.run();
+
+        // The driving service is generated by the explicit ordered call, and the visitor
+        // must not generate it a second time.
+        assertThat(testDirected.generatedServiceDirectives, hasSize(1));
+        GenerateServiceDirective<TestContext, TestSettings> serviceDirective =
+                testDirected.generatedServiceDirectives.get(0);
+        assertThat(serviceDirective.getService().get().getId(), equalTo(ShapeId.from("smithy.example#Weather")));
+        assertThat(serviceDirective.shape().getId(), equalTo(ShapeId.from("smithy.example#Weather")));
+    }
+
+    @Test
+    public void typeCodegenSkipsServiceShapesInAClosureButKeepsTheirDataShapes() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#getCityClosure");
+        runner.generateDataShapesOnly();
+        runner.run();
+
+        // The operation is not generated (it is absent from the exact set below), but
+        // the structures it reaches are.
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetCityInput"),
+                        ShapeId.from("smithy.example#GetCityOutput"),
+                        ShapeId.from("smithy.example#City"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#Conditions")));
+    }
+
+    @Test
+    public void typeCodegenOverAServiceSkipsServiceResourceAndOperationShapes() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.service(ShapeId.from("smithy.example#Weather"));
+        runner.generateDataShapesOnly();
+        runner.run();
+
+        // The service, resource, and operation shapes are not generated, but their data
+        // shapes are.
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetCityInput"),
+                        ShapeId.from("smithy.example#GetCityOutput"),
+                        ShapeId.from("smithy.example#ForecastData"),
+                        ShapeId.from("smithy.example#City"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#Conditions")));
+        assertThat(testDirected.generatedShapes, not(hasItem(ShapeId.from("smithy.example#Weather"))));
+        assertThat(testDirected.generatedShapes, not(hasItem(ShapeId.from("smithy.example#Forecast"))));
+        assertThat(testDirected.generatedShapes, not(hasItem(ShapeId.from("smithy.example#GetCity"))));
+        assertThat(testDirected.generatedShapes, not(hasItem(ShapeId.from("smithy.example#GetForecast"))));
+
+        // The directive reports only the shapes being generated: there are no operations,
+        // and the connected shapes exclude the service, resource, and operations.
+        assertThat(testDirected.capturedCustomizeDirective.operations(), empty());
+        assertThat(testDirected.capturedCustomizeDirective.connectedShapes(),
+                not(hasKey(ShapeId.from("smithy.example#Weather"))));
+        assertThat(testDirected.capturedCustomizeDirective.connectedShapes(),
+                not(hasKey(ShapeId.from("smithy.example#GetCity"))));
+    }
+
+    @Test
+    public void typeCodegenGeneratesSynthesizedShapes() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#getForecastClosure");
+
+        // GetForecast shares ForecastData for input and output. This transform synthesizes
+        // dedicated GetForecastInput/GetForecastOutput shapes. The closure must be resolved
+        // from the post-transform model so the synthesized shapes are generated.
+        runner.createDedicatedInputsAndOutputs();
+        runner.run();
+
+        // The synthesized input/output shapes are generated, and the original shared
+        // ForecastData shape is gone (it is absent from this exact set).
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetForecast"),
+                        ShapeId.from("smithy.example#GetForecastInput"),
+                        ShapeId.from("smithy.example#GetForecastOutput")));
+    }
+
+    @Test
+    public void flattensPaginationInfoForServicesInTheClosure() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        // The closure is rooted at the CityDirectory service, which pulls in its
+        // ListCities operation. The service defines the pagination defaults, so its
+        // operations in the closure inherit them via flattening.
+        runner.shapeClosure("smithy.example#cityDirectoryClosure");
+        runner.flattenPaginationInfoIntoOperations();
+        runner.run();
+
+        GenerateOperationDirective<TestContext, TestSettings> operation =
+                testDirected.generatedOperationDirectives.get(ShapeId.from("smithy.example#ListCities"));
+        assertThat(operation, notNullValue());
+        PaginatedTrait paginated = operation.shape().expectTrait(PaginatedTrait.class);
+
+        // Defined on the operation.
+        assertThat(paginated.getItems().get(), equalTo("items"));
+
+        // Inherited from the CityDirectory service via flattening.
+        assertThat(paginated.getInputToken().get(), equalTo("nextToken"));
+        assertThat(paginated.getOutputToken().get(), equalTo("nextToken"));
+        assertThat(paginated.getPageSize().get(), equalTo("maxResults"));
+    }
+
+    @Test
+    public void performsDefaultTransformsForClosureGenerationFlatteningMixins() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#mixinUserClosure");
+        runner.performDefaultCodegenTransforms();
+        runner.run();
+
+        // The mixin member was flattened onto the structure, and the mixin shape was
+        // removed from the model rather than generated.
+        GenerateStructureDirective<TestContext, TestSettings> mixinUser =
+                testDirected.generatedStructureDirectives.get(ShapeId.from("smithy.example#MixinUser"));
+        assertThat(mixinUser, notNullValue());
+        assertThat(mixinUser.shape().getMemberNames(), containsInAnyOrder("id", "name"));
+        assertThat(mixinUser.shape().getMixins(), empty());
+        assertThat(testDirected.generatedShapes, not(hasItem(ShapeId.from("smithy.example#CommonFields"))));
+    }
+
+    @Test
+    public void appliesClosureRenamesWhenOrderingShapesAlphabetically() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#renamedCityData");
+        runner.shapeGenerationOrder(ShapeGenerationOrder.ALPHABETICAL);
+        runner.run();
+
+        // City is renamed to ZanyCity, so it sorts last rather than first, proving the
+        // closure rename (not the original name) drives the alphabetical sort.
+        assertThat(testDirected.generatedShapes,
+                contains(
+                        ShapeId.from("smithy.example#Conditions"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#City")));
+    }
+
+    @Test
+    public void failsWhenBothServiceAndShapeClosureAreSet() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.service(ShapeId.from("smithy.example#Weather"));
+        runner.shapeClosure("smithy.example#cityData");
+
+        Assertions.assertThrows(IllegalStateException.class, runner::run);
+    }
+
+    @Test
+    public void failsWhenNeitherServiceNorShapeClosureIsSet() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        Assertions.assertThrows(IllegalStateException.class, runner::run);
+    }
+
+    @Test
+    public void failsWhenShapeClosureIsUnknown() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.shapeClosure("smithy.example#doesNotExist");
+
+        Assertions.assertThrows(IllegalStateException.class, runner::run);
+    }
+
+    @Test
+    public void allowsClosureGenerationWithNameConflictsByDefault() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = closureRunner(
+                testDirected,
+                "closure-name-conflict-model.smithy",
+                "closure-name-conflict-other.smithy");
+
+        // smithy.example#City and smithy.other#city collide case-insensitively.
+        runner.shapeClosure("smithy.example#conflicting");
+        runner.run();
+    }
+
+    @Test
+    public void failsClosureGenerationWithNameConflictsOnRequest() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = closureRunner(
+                testDirected,
+                "closure-name-conflict-model.smithy",
+                "closure-name-conflict-other.smithy");
+
+        // smithy.example#City and smithy.other#city collide case-insensitively.
+        runner.shapeClosure("smithy.example#conflicting");
+        runner.requireCaseInsensitiveNames();
+
+        CodegenException e = Assertions.assertThrows(CodegenException.class, runner::run);
+        assertThat(e.getMessage(), containsString("smithy.example#City"));
+        assertThat(e.getMessage(), containsString("smithy.other#city"));
+    }
+
+    @Test
+    public void requireCaseInsensitiveNamesChecksShapesSynthesizedByTransforms() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = closureRunner(
+                testDirected,
+                "closure-synthesized-conflict-model.smithy",
+                "closure-synthesized-conflict-other.smithy");
+        runner.shapeClosure("smithy.example#synthesizedConflict");
+        // The conflict only exists after createDedicatedInputsAndOutputs synthesizes
+        // MakeThingOutput, so this passing proves the check runs after transforms.
+        runner.createDedicatedInputsAndOutputs();
+        runner.requireCaseInsensitiveNames();
+
+        CodegenException e = Assertions.assertThrows(CodegenException.class, runner::run);
+        assertThat(e.getMessage(), containsString("smithy.example#MakeThingOutput"));
+        assertThat(e.getMessage(), containsString("smithy.other#makeThingOutput"));
+    }
+
+    @Test
+    public void allowsConflictingNamesWhenDisambiguatedByARename() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner = closureRunner(
+                testDirected,
+                "closure-name-conflict-model.smithy",
+                "closure-name-conflict-other.smithy");
+
+        // The closure renames smithy.other#city to OtherCity, resolving the conflict.
+        runner.shapeClosure("smithy.example#disambiguated");
+        runner.requireCaseInsensitiveNames();
+        runner.run();
+
+        assertThat(testDirected.generatedShapes,
+                hasItem(ShapeId.from("smithy.example#City")));
+        assertThat(testDirected.generatedShapes,
+                hasItem(ShapeId.from("smithy.other#city")));
+    }
+
+    @Test
+    public void requireCaseInsensitiveNamesIsANoOpForServiceGeneration() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+        runner.service(ShapeId.from("smithy.example#Weather"));
+
+        // Service closures already enforce case-insensitive name uniqueness, so this
+        // does nothing rather than failing.
+        runner.requireCaseInsensitiveNames();
+        runner.run();
+
+        assertThat(testDirected.generatedShapes, hasItem(ShapeId.from("smithy.example#Weather")));
     }
 }

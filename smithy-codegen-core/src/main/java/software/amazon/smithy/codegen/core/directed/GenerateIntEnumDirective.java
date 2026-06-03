@@ -19,8 +19,14 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 public final class GenerateIntEnumDirective<C extends CodegenContext<S, ?, ?>, S> extends ShapeDirective<Shape, C, S> {
 
-    GenerateIntEnumDirective(C context, ServiceShape service, Shape shape) {
-        super(context, service, validateShape(shape));
+    GenerateIntEnumDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            Shape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, validateShape(shape));
     }
 
     private static Shape validateShape(Shape shape) {

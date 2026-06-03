@@ -217,15 +217,22 @@ deserializers, response serializers, etc.
 Type generation
 ---------------
 
-Smithy code generators can generate standalone types. For example, this
-would happen when a service has no operations or resources but only shapes
-bound to the service via the (upcoming)
-`shapes property <https://github.com/smithy-lang/smithy/pull/1061>`__.
+Smithy code generators can generate standalone types rather than a full
+client or server.
 
-- Generation of types should still require a service shape that is
-  used to create a closure of shapes.
-- The service shape dictates the serialization formats supported by
-  the generated types using :ref:`protocol traits <protocolDefinition-trait>`.
+Type generation can be driven by a service, generating the data shapes
+in that :ref:`service's closure <service-closure>`. It can also be driven
+by a :ref:`shape closure <shape-closures>`, which defines a set of shapes
+to generate without requiring a service to anchor them.
+
+Generators that only want to emit data shapes can enable
+:ref:`type codegen <directed-type-codegen>`, which never generates
+service, resource, or operation shapes even when they are in scope.
+
+When a service is present, it dictates the serialization formats
+supported by the generated types using
+:ref:`protocol traits <protocolDefinition-trait>`. A shape closure need
+not have a service, in which case no protocol is implied.
 
 .. _AWS Signature version 4: https://docs.aws.amazon.com/general/latest/gr/signing-aws-api-requests.html
 .. _model-ignorant code generation: https://www.martinfowler.com/dslCatalog/modelIgnorantGeneration.html

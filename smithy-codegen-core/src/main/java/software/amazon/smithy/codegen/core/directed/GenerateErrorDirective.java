@@ -19,8 +19,14 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 public final class GenerateErrorDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<StructureShape, C, S> {
 
-    GenerateErrorDirective(C context, ServiceShape service, StructureShape shape) {
-        super(context, service, shape);
+    GenerateErrorDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            StructureShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 
     /**

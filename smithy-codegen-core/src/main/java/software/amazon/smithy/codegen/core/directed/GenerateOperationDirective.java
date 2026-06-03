@@ -17,7 +17,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  */
 public class GenerateOperationDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<OperationShape, C, S> {
-    GenerateOperationDirective(C context, ServiceShape service, OperationShape shape) {
-        super(context, service, shape);
+    GenerateOperationDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            OperationShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 }

@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added a `generateDataShapesOnly` mode to `CodegenDirector` that generates only data shapes (skipping service, resource, and operation shapes).",
+  "pull_requests": []
+}
