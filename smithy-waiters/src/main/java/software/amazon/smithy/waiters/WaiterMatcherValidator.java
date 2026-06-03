@@ -223,11 +223,26 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             }
 
             RuntimeType returnType = result.getReturnType();
-            if (returnType != RuntimeType.STRING) {
+            if (returnType == RuntimeType.ARRAY) {
+                // Lint the expression with [0] appended to check element type.
+                JmespathExpression elementExpression = JmespathExpression.parse(messageExpression + "[0]");
+                LinterResult elementResult = elementExpression.lint(input);
+                RuntimeType elementType = elementResult.getReturnType();
+                if (elementType != RuntimeType.STRING) {
+                    addEvent(Severity.ERROR,
+                            String.format(
+                                    "The `message` JMESPath expression must resolve to a string or an "
+                                            + "array of strings, but this expression resolves to an "
+                                            + "array of `%s`.",
+                                    elementType),
+                            NON_SUPPRESSABLE_ERROR);
+                }
+            } else if (returnType != RuntimeType.STRING) {
                 addEvent(Severity.ERROR,
                         String.format(
-                                "The `message` JMESPath expression must resolve to a string, "
-                                        + "but this expression was statically determined to return a `%s` type.",
+                                "The `message` JMESPath expression must resolve to a string or an "
+                                        + "array of strings, but this expression was statically determined "
+                                        + "to return a `%s` type.",
                                 returnType),
                         NON_SUPPRESSABLE_ERROR);
             }

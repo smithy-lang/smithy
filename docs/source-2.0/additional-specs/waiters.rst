@@ -365,9 +365,10 @@ Acceptor structure
       - ``string``
       - A JMESPath expression that extracts a human-readable message from the
         operation output when this acceptor matches. The expression MUST
-        resolve to a ``string``. This is used to provide actionable
-        information (for example, failure reasons) to the waiter caller.
-        This property is only valid on acceptors with a ``failure`` state.
+        resolve to a ``string`` or an array of strings. This is used to
+        provide actionable information (for example, failure reasons) to the
+        waiter caller. This property is only valid on acceptors with a
+        ``failure`` state.
 
 
 .. _waiter-acceptor-state:
