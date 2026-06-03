@@ -517,11 +517,17 @@ union EventHeaderValue {
     /// Byte headers MUST be written in the model as base64-encoded
     /// strings, e.g. `Zm9v` represents utf8 `foo`.
     byte: Byte
+
     short: Short
+
     integer: Integer
+
     long: Long
+
     blob: Blob
+
     string: String
+
     timestamp: Timestamp
 }
 

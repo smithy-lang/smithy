@@ -4,10 +4,15 @@ namespace smithy.openapi
 
 /// Indicates a trait shape should be converted into an [OpenAPI specification extension](https://spec.openapis.org/oas/v3.1.0#specification-extensions).
 @trait(
-    selector: "[trait|trait]",
+    selector: "[trait|trait]"
     breakingChanges: [
-        {change: "presence"},
-        {path: "/as", change: "any"}
+        {
+            change: "presence"
+        }
+        {
+            path: "/as"
+            change: "any"
+        }
     ]
 )
 structure specificationExtension {

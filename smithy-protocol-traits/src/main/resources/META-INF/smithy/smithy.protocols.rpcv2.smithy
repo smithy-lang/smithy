@@ -10,18 +10,14 @@ use smithy.api#requestCompression
 
 /// An RPC-based protocol that serializes CBOR payloads.
 @trait(selector: "service")
-@protocolDefinition(traits: [
-    cors
-    endpoint
-    hostLabel
-    httpError
-    requestCompression
-])
+@protocolDefinition(
+    traits: [cors, endpoint, hostLabel, httpError, requestCompression]
+)
 @traitValidators(
     "rpcv2Cbor.NoDocuments": {
-         selector: "service ~> member :test(> document)"
-         message: "This protocol does not support document types in most possible scenarios."
-         severity: "DANGER"
+        selector: "service ~> member :test(> document)"
+        message: "This protocol does not support document types in most possible scenarios."
+        severity: "DANGER"
     }
 )
 structure rpcv2Cbor {
@@ -35,13 +31,9 @@ structure rpcv2Cbor {
 
 /// An RPC-based protocol that serializes JSON payloads.
 @trait(selector: "service")
-@protocolDefinition(traits: [
-    cors
-    endpoint
-    hostLabel
-    httpError
-    requestCompression
-])
+@protocolDefinition(
+    traits: [cors, endpoint, hostLabel, httpError, requestCompression]
+)
 structure rpcv2Json {
     /// Priority ordered list of supported HTTP protocol versions.
     http: StringList

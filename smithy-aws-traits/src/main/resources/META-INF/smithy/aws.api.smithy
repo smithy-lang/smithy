@@ -3,9 +3,7 @@ $version: "2.0"
 namespace aws.api
 
 /// Specifies an ARN template for the resource.
-@externalDocumentation(
-    Reference: "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html"
-)
+@externalDocumentation(Reference: "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html")
 @trait(selector: "resource")
 structure arn {
     /// Defines the ARN template. The provided string contains URI-template
@@ -77,7 +75,11 @@ structure arnReference {
 /// that contains metadata about the content transferred (e.g., checksums).
 @trait(
     selector: "blob[trait|streaming]"
-    breakingChanges: [{change: "remove"}]
+    breakingChanges: [
+        {
+            change: "remove"
+        }
+    ]
 )
 structure awsChunked {}
 
@@ -99,10 +101,7 @@ structure clientDiscoveredEndpoint {
 structure clientEndpointDiscovery {
     /// Indicates the operation that clients should use to discover endpoints
     /// for the service.
-    @idRef(
-        failWhenMissing: true
-        selector: "operation"
-    )
+    @idRef(failWhenMissing: true, selector: "operation")
     @required
     operation: String
 
@@ -110,10 +109,7 @@ structure clientEndpointDiscovery {
     /// is no longer valid. This error MUST be bound to any operation bound to
     /// the service which is marked with the aws.api#clientDiscoveredEndpoint
     /// trait.
-    @idRef(
-        failWhenMissing: true
-        selector: "structure[trait|error]"
-    )
+    @idRef(failWhenMissing: true, selector: "structure[trait|error]")
     @recommended
     error: String
 }
@@ -130,9 +126,7 @@ structure clientEndpointDiscoveryId {}
 /// Defines a service, resource, or operation as operating on the control plane.
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.api#dataPlane"
-    ]
+    conflicts: ["aws.api#dataPlane"]
 )
 structure controlPlane {}
 
@@ -169,9 +163,7 @@ enum data {
 /// Defines a service, resource, or operation as operating on the data plane.
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.api#controlPlane"
-    ]
+    conflicts: ["aws.api#controlPlane"]
 )
 structure dataPlane {}
 
@@ -247,10 +239,7 @@ structure tagEnabled {
 }
 
 /// Points to a service-bound operation designated for a service-wide tagging API.
-@idRef(
-    failWhenMissing: true
-    selector: "service > operation"
-)
+@idRef(failWhenMissing: true, selector: "service > operation")
 string ServiceTagOperationReference
 
 /// Structure representing the configuration of service-wide tagging APIs when
@@ -269,10 +258,7 @@ structure TaggableServiceApiConfig {
 }
 
 /// Points to an operation designated for a tagging APi
-@idRef(
-    failWhenMissing: true
-    selector: "resource > operation"
-)
+@idRef(failWhenMissing: true, selector: "resource > operation")
 string TagOperationReference
 
 /// Structure representing the configuration of resource specific tagging APIs
@@ -311,7 +297,6 @@ structure taggable {
     /// Used by service principals. Default value is `false`
     disableSystemTags: Boolean
 }
-
 
 /// The possible delimiters for an ARN resource segment.
 @private

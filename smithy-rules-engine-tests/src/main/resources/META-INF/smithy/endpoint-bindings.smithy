@@ -2,7 +2,7 @@ $version: "2.0"
 
 metadata suppressions = [
     {
-        id: "UnstableTrait",
+        id: "UnstableTrait"
         namespace: "smithy.rules.tests"
     }
 ]
@@ -25,9 +25,24 @@ use smithy.rules#staticContextParams
     version: "1.0"
     parameters: {
         bar: { required: false, documentation: "String parameter with no default value and client binding", type: "String" }
-        baz: { required: true, default: "baz", documentation: "String parameter with default value and client binding", type: "String" }
-        booleanParam: { required: true, default: true, documentation: "Boolean parameter with default value and client binding", type: "Boolean" }
-        Endpoint: { builtIn: "SDK::Endpoint", required: false, documentation: "Override the endpoint used to send this request", type: "String" }
+        baz: {
+            required: true
+            default: "baz"
+            documentation: "String parameter with default value and client binding"
+            type: "String"
+        }
+        booleanParam: {
+            required: true
+            default: true
+            documentation: "Boolean parameter with default value and client binding"
+            type: "Boolean"
+        }
+        Endpoint: {
+            builtIn: "SDK::Endpoint"
+            required: false
+            documentation: "Override the endpoint used to send this request"
+            type: "String"
+        }
     }
     rules: [
         {

@@ -4,7 +4,6 @@
 // should be defined in this file. However, things like input or output
 // structures or other test-case specific shapes should be defined closer to
 // the test case and in its same file.
-
 $version: "2.0"
 
 metadata validators = [
@@ -18,9 +17,7 @@ metadata validators = [
             "smithy.protocoltests.rpcv2Cbor"
             "smithy.protocoltests.rpcv2Json"
         ]
-        configuration: {
-            "selector": "operation :not(< service)"
-        }
+        configuration: { selector: "operation :not(< service)" }
     }
 ]
 
@@ -112,6 +109,7 @@ list ByteList {
 list ByteSet {
     member: Byte
 }
+
 @uniqueItems
 list ShortSet {
     member: Short

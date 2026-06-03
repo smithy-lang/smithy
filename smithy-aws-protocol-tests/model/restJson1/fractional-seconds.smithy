@@ -15,19 +15,18 @@ operation FractionalSeconds {
 
 apply FractionalSeconds @httpResponseTests([
     {
-        id: "RestJsonDateTimeWithFractionalSeconds",
+        id: "RestJsonDateTimeWithFractionalSeconds"
         documentation: """
-        Ensures that clients can correctly parse datetime timestamps with fractional seconds""",
-        protocol: restJson1,
-        code: 200,
-        body:
-        """
-              {
-                  "datetime": "2000-01-02T20:34:56.123Z"
-              }
-        """,
+            Ensures that clients can correctly parse datetime timestamps with fractional seconds"""
+        protocol: restJson1
+        code: 200
+        body: """
+                  {
+                      "datetime": "2000-01-02T20:34:56.123Z"
+                  }
+            """
         params: { datetime: 946845296.123 }
-        bodyMediaType: "application/json",
+        bodyMediaType: "application/json"
         appliesTo: "client"
     }
 ])

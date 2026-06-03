@@ -8,27 +8,27 @@ use smithy.test#httpResponseTests
 @http(uri: "/EnumPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestXmlEnumPayloadRequest",
-        uri: "/EnumPayload",
-        headers: { "Content-Type": "text/plain" },
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        method: "POST",
+        id: "RestXmlEnumPayloadRequest"
+        uri: "/EnumPayload"
+        headers: { "Content-Type": "text/plain" }
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        method: "POST"
         protocol: "aws.protocols#restXml"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestXmlEnumPayloadResponse",
-        headers: { "Content-Type": "text/plain" },
-        body: "enumvalue",
-        params: { payload: "enumvalue" },
-        protocol: "aws.protocols#restXml",
+        id: "RestXmlEnumPayloadResponse"
+        headers: { "Content-Type": "text/plain" }
+        body: "enumvalue"
+        params: { payload: "enumvalue" }
+        protocol: "aws.protocols#restXml"
         code: 200
     }
 ])
 operation HttpEnumPayload {
-    input: EnumPayloadInput,
+    input: EnumPayloadInput
     output: EnumPayloadInput
 }
 
@@ -44,27 +44,27 @@ enum StringEnum {
 @http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
     {
-        id: "RestXmlStringPayloadRequest",
-        uri: "/StringPayload",
-        headers: { "Content-Type": "text/plain" },
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        method: "POST",
+        id: "RestXmlStringPayloadRequest"
+        uri: "/StringPayload"
+        headers: { "Content-Type": "text/plain" }
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        method: "POST"
         protocol: "aws.protocols#restXml"
     }
 ])
 @httpResponseTests([
     {
-        id: "RestXmlStringPayloadResponse",
-        headers: { "Content-Type": "text/plain" },
-        body: "rawstring",
-        params: { payload: "rawstring" },
-        protocol: "aws.protocols#restXml",
+        id: "RestXmlStringPayloadResponse"
+        headers: { "Content-Type": "text/plain" }
+        body: "rawstring"
+        params: { payload: "rawstring" }
+        protocol: "aws.protocols#restXml"
         code: 200
     }
 ])
 operation HttpStringPayload {
-    input: StringPayloadInput,
+    input: StringPayloadInput
     output: StringPayloadInput
 }
 

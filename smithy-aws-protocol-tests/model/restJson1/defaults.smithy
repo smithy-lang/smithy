@@ -16,7 +16,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "defaults": {
@@ -62,12 +62,11 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
             }"""
-        params: {
-        }
+        params: {}
     }
     {
         id: "RestJsonClientUsesExplicitlyProvidedMemberValuesOverDefaults"
@@ -78,13 +77,13 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         params: {
             defaults: {
                 defaultString: "bye"
                 defaultBoolean: true
                 defaultList: ["a"]
-                defaultDocumentMap: {name: "Jack"}
+                defaultDocumentMap: { name: "Jack" }
                 defaultDocumentString: "bye"
                 defaultDocumentBoolean: true
                 defaultDocumentList: ["b"]
@@ -97,7 +96,7 @@ apply OperationWithDefaults @httpRequestTests([
                 defaultLong: 200
                 defaultFloat: 2.0
                 defaultDouble: 2.0
-                defaultMap: {name: "Jack"}
+                defaultMap: { name: "Jack" }
                 defaultEnum: "BAR"
                 defaultIntEnum: 2
                 emptyString: "foo"
@@ -154,7 +153,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
             "defaults": {}
@@ -188,7 +187,7 @@ apply OperationWithDefaults @httpRequestTests([
                 zeroLong: 0
                 zeroFloat: 0.0
                 zeroDouble: 0.0
-            },
+            }
             topLevelDefault: "hi"
             otherTopLevelDefault: 0
         }
@@ -202,16 +201,13 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "topLevelDefault": "hi",
                 "otherTopLevelDefault": 0
             }"""
-        params: {
-            topLevelDefault: "hi"
-            otherTopLevelDefault: 0
-        }
+        params: { topLevelDefault: "hi", otherTopLevelDefault: 0 }
     }
     {
         id: "RestJsonClientIgnoresNonTopLevelDefaultsOnMembersWithClientOptional"
@@ -222,7 +218,7 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "clientOptionalDefaults": {}
@@ -242,7 +238,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: restJson1
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: "{}"
         params: {
             defaultString: "hi"
@@ -282,7 +278,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: restJson1
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "defaultString": "bye",
@@ -318,7 +314,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultString: "bye"
             defaultBoolean: false
             defaultList: ["a"]
-            defaultDocumentMap: {name: "Jack"}
+            defaultDocumentMap: { name: "Jack" }
             defaultDocumentString: "bye"
             defaultDocumentBoolean: false
             defaultDocumentList: ["b"]
@@ -331,7 +327,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultLong: 200
             defaultFloat: 2.0
             defaultDouble: 2.0
-            defaultMap: {name: "Jack"}
+            defaultMap: { name: "Jack" }
             defaultEnum: "BAR"
             defaultIntEnum: 2
             emptyString: "foo"
@@ -353,7 +349,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: restJson1
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "defaultString": "hi",
@@ -396,7 +392,6 @@ operation OperationWithDefaults {
         topLevelDefault: String = "hi" // Client should ignore default values in input shape
         otherTopLevelDefault: Integer = 0
     }
-
     output := with [DefaultsMixin] {}
 }
 

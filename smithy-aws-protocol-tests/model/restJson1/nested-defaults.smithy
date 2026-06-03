@@ -16,7 +16,7 @@ apply OperationWithNestedStructure @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithNestedStructure"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "topLevel": {
@@ -63,36 +63,28 @@ apply OperationWithNestedStructure @httpRequestTests([
                 }
             }"""
         params: {
-            "topLevel": {
-                "dialog": {
-                    "language": "en"
-                },
-                "dialogList": [
+            topLevel: {
+                dialog: { language: "en" }
+                dialogList: [
+                    {}
                     {
-                    },
-                    {
-                        "farewell": {}
-                    },
-                    {
-                        "language": "it",
-                        "greeting": "ciao",
-                        "farewell": {
-                            "phrase": "arrivederci"
-                        }
+                        farewell: {}
                     }
-                ],
-                "dialogMap": {
-                    "emptyDialog": {
-                    },
-                    "partialEmptyDialog": {
-                        "language": "en",
-                        "farewell": {}
-                    },
-                    "nonEmptyDialog": {
-                        "greeting": "konnichiwa",
-                        "farewell": {
-                            "phrase": "sayonara"
-                        }
+                    {
+                        language: "it"
+                        greeting: "ciao"
+                        farewell: { phrase: "arrivederci" }
+                    }
+                ]
+                dialogMap: {
+                    emptyDialog: {}
+                    partialEmptyDialog: {
+                        language: "en"
+                        farewell: {}
+                    }
+                    nonEmptyDialog: {
+                        greeting: "konnichiwa"
+                        farewell: { phrase: "sayonara" }
                     }
                 }
             }
@@ -107,7 +99,7 @@ apply OperationWithNestedStructure @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/OperationWithNestedStructure"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "topLevel": {
@@ -145,45 +137,32 @@ apply OperationWithNestedStructure @httpRequestTests([
                 }
             }"""
         params: {
-            "topLevel": {
-                "dialog": {
-                    "language": "en"
-                    "greeting": "hi",
-                }
-                "dialogList": [
+            topLevel: {
+                dialog: { language: "en", greeting: "hi" }
+                dialogList: [
                     {
-                        "greeting": "hi",
-                    },
-                    {
-                        "greeting": "hi",
-                        "farewell": {
-                            "phrase": "bye",
-                        }
-                    },
-                    {
-                        "language": "it",
-                        "greeting": "ciao",
-                        "farewell": {
-                            "phrase": "arrivederci"
-                        }
+                        greeting: "hi"
                     }
-                ],
-                "dialogMap": {
-                    "emptyDialog": {
-                        "greeting": "hi",
-                    },
-                    "partialEmptyDialog": {
-                        "language": "en",
-                        "greeting": "hi",
-                        "farewell": {
-                            "phrase": "bye",
-                        }
-                    },
-                    "nonEmptyDialog": {
-                        "greeting": "konnichiwa",
-                        "farewell": {
-                            "phrase": "sayonara"
-                        }
+                    {
+                        greeting: "hi"
+                        farewell: { phrase: "bye" }
+                    }
+                    {
+                        language: "it"
+                        greeting: "ciao"
+                        farewell: { phrase: "arrivederci" }
+                    }
+                ]
+                dialogMap: {
+                    emptyDialog: { greeting: "hi" }
+                    partialEmptyDialog: {
+                        language: "en"
+                        greeting: "hi"
+                        farewell: { phrase: "bye" }
+                    }
+                    nonEmptyDialog: {
+                        greeting: "konnichiwa"
+                        farewell: { phrase: "sayonara" }
                     }
                 }
             }
@@ -200,7 +179,7 @@ apply OperationWithNestedStructure @httpResponseTests([
         protocol: restJson1
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "dialog": {
@@ -236,44 +215,31 @@ apply OperationWithNestedStructure @httpResponseTests([
                 }
             }"""
         params: {
-            "dialog": {
-                "language": "en"
-                "greeting": "hi",
-            }
-            "dialogList": [
+            dialog: { language: "en", greeting: "hi" }
+            dialogList: [
                 {
-                    "greeting": "hi",
-                },
-                {
-                    "greeting": "hi",
-                    "farewell": {
-                        "phrase": "bye",
-                    }
-                },
-                {
-                    "language": "it",
-                    "greeting": "ciao",
-                    "farewell": {
-                        "phrase": "arrivederci"
-                    }
+                    greeting: "hi"
                 }
-            ],
-            "dialogMap": {
-                "emptyDialog": {
-                    "greeting": "hi",
-                },
-                "partialEmptyDialog": {
-                    "language": "en",
-                    "greeting": "hi",
-                    "farewell": {
-                        "phrase": "bye",
-                    }
-                },
-                "nonEmptyDialog": {
-                    "greeting": "konnichiwa",
-                    "farewell": {
-                        "phrase": "sayonara"
-                    }
+                {
+                    greeting: "hi"
+                    farewell: { phrase: "bye" }
+                }
+                {
+                    language: "it"
+                    greeting: "ciao"
+                    farewell: { phrase: "arrivederci" }
+                }
+            ]
+            dialogMap: {
+                emptyDialog: { greeting: "hi" }
+                partialEmptyDialog: {
+                    language: "en"
+                    greeting: "hi"
+                    farewell: { phrase: "bye" }
+                }
+                nonEmptyDialog: {
+                    greeting: "konnichiwa"
+                    farewell: { phrase: "sayonara" }
                 }
             }
         }
@@ -286,7 +252,7 @@ apply OperationWithNestedStructure @httpResponseTests([
         protocol: restJson1
         code: 200
         bodyMediaType: "application/json"
-        headers: {"Content-Type": "application/json"}
+        headers: { "Content-Type": "application/json" }
         body: """
             {
                 "dialog": {
@@ -331,35 +297,27 @@ apply OperationWithNestedStructure @httpResponseTests([
                 }
             }"""
         params: {
-            "dialog": {
-                "language": "en"
-            },
-            "dialogList": [
+            dialog: { language: "en" }
+            dialogList: [
+                {}
                 {
-                },
-                {
-                    "farewell": {}
-                },
-                {
-                    "language": "it",
-                    "greeting": "ciao",
-                    "farewell": {
-                        "phrase": "arrivederci"
-                    }
+                    farewell: {}
                 }
-            ],
-            "dialogMap": {
-                "emptyDialog": {
-                },
-                "partialEmptyDialog": {
-                    "language": "en",
-                    "farewell": {}
-                },
-                "nonEmptyDialog": {
-                    "greeting": "konnichiwa",
-                    "farewell": {
-                        "phrase": "sayonara"
-                    }
+                {
+                    language: "it"
+                    greeting: "ciao"
+                    farewell: { phrase: "arrivederci" }
+                }
+            ]
+            dialogMap: {
+                emptyDialog: {}
+                partialEmptyDialog: {
+                    language: "en"
+                    farewell: {}
+                }
+                nonEmptyDialog: {
+                    greeting: "konnichiwa"
+                    farewell: { phrase: "sayonara" }
                 }
             }
         }
@@ -373,19 +331,18 @@ operation OperationWithNestedStructure {
         topLevel: TopLevel
     }
 
-    output := with [NestedDefaultsMixin] {
-    }
+    output := with [NestedDefaultsMixin] {}
 }
 
-structure TopLevel with [NestedDefaultsMixin] {
-
-}
+structure TopLevel with [NestedDefaultsMixin] {}
 
 @mixin
 structure NestedDefaultsMixin {
     @required
     dialog: Dialog
+
     dialogList: DialogList = []
+
     dialogMap: DialogMap = {}
 }
 
