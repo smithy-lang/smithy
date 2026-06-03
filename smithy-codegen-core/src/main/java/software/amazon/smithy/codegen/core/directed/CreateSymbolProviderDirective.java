@@ -15,7 +15,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  * @see DirectedCodegen#createSymbolProvider
  */
 public final class CreateSymbolProviderDirective<S> extends Directive<S> {
-    CreateSymbolProviderDirective(Model model, S settings, ServiceShape service) {
-        super(model, settings, service);
+    CreateSymbolProviderDirective(
+            Model model,
+            S settings,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly
+    ) {
+        super(model, settings, service, shapeClosureId, generateDataShapesOnly);
     }
 }

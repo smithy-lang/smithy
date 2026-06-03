@@ -129,8 +129,12 @@ in a Smithy-Build plugin using the data provided by
         MylangSettings settings = runner.settings(MylangSettings.class,
                                                   context.getSettings());
 
-        // Assuming service() returns the configured service shape ID.
+        // Assuming service() returns a configured service shape ID.
         runner.service(settings.service());
+
+        // Alternatively, codegen can be driven by a shape closure instead
+        // of a service.
+        // runner.shapeClosure(settings.closure());
 
         // Configure the director to perform some common model transforms.
         runner.performDefaultCodegenTransforms();
@@ -161,12 +165,14 @@ Creating a settings class
 
 A code generator uses a settings object to configure the generator in
 Smithy-Build and during directed code generation. At a minimum, this
-class should have a ``ShapeId`` for the service to generate.
+class should have a ``ShapeId`` for the service to generate and/or a
+closure ID for the closure to generate.
 
 .. code-block:: java
 
     public final class MylangSettings {
         private ShapeId service;
+        private String closureId;
 
         public void service(ShapeId service) {
             this.service = service;
@@ -174,6 +180,14 @@ class should have a ``ShapeId`` for the service to generate.
 
         public ShapeId service() {
             return service;
+        }
+
+        public void closure(String closureId) {
+            this.closureId = closureId;
+        }
+
+        public String closure() {
+            return closureId;
         }
     }
 
@@ -203,6 +217,72 @@ generator. This can be done using a Java record, POJO, builder, etc.
 ``DirectedCodegen#createContext`` is responsible for creating a
 ``CodegenContext``. Ensure that the data provided by your ``CodegenContext``
 are available using the data available to ``CreateContextDirective``.
+
+Generating for a single service
+===============================
+
+Code generators will typically generate code for interacting with a single,
+specific service. To do this, simply call ``runner.service(...)`` to set the
+service that code generation will be directed from.
+
+When generating code from a service shape, all shapes in that
+:ref:`service's closure <service-closure>` will be in scope for generation.
+Other services and shapes may be present in the model, but generation directives
+for shapes outside the closure will not be invoked.
+
+Generating for a shape closure
+==============================
+
+Code generators can additionally be driven by a
+:ref:`shape closure <shape-closures>`. Like a
+:ref:`service's closure <service-closure>`, a shape closure defines the set of
+shapes that are in scope for generation. Code generators can use a shape closure
+to drive code generation by calling ``runner.shapeClosure(...)`` with the ID of
+the closure to generate.
+
+Shape closures are distinct from service closures in a number of ways, but the
+most important things to note for a code generator are:
+
+* There is no guarantee that there is exactly one service. A shape closure may
+  have any number of service shapes.
+
+  Not all generators may be able to represent multiple service shapes in their
+  outputs. Generators that support output without service shapes can enable
+  :ref:`type codegen <directed-type-codegen>` to generate code for just the data
+  shapes in the closure.
+* Since multiple services are supported, ``performDefaultCodegenTransforms``
+  does not apply service-defined errors to operations.
+* The ``service`` property of a ``Directive`` refers to the top-level service
+  configured to drive code generation. This will not be present in shape
+  closure driven generation.
+
+  As a result, the ``shape`` property of ``GenerateServiceDirective`` must be
+  used when generating services for closures. For the sake of simplicity, it is
+  recommended to use the ``shape`` property even in service-based generation
+  where both properties refer to the same shape.
+* There is no guarantee that shape names in the closure are case-insensitively
+  unique across namespaces. Service closures enforce this behavior, but it is
+  optional in shape closures. Generators that cannot represent such conflicts
+  can call ``runner.requireCaseInsensitiveNames()`` to fail code generation when
+  the shapes being generated have case-insensitively conflicting names (taking
+  closure-defined renames into account).
+
+.. _directed-type-codegen:
+
+Generating only data shapes
+============================
+
+Calling ``runner.generateDataShapesOnly()`` enables "type codegen", where only
+the shapes that carry data are generated. Service, resource, and operation
+shapes are never generated, even when they are present in the generated closure.
+Operation input and output shapes as well as error shapes are still generated.
+
+This mode composes with either source.
+
+.. important::
+
+    Code generators are expected to not attempt to generate any service or
+    client scaffolding when this mode is enabled.
 
 
 Tips for using ``DirectedCodegen``

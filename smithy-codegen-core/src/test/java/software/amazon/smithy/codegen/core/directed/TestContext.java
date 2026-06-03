@@ -28,6 +28,23 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
     private final ServiceShape service;
 
     static TestContext create(String modelFile, ShapeId serviceId) {
+        Model model = Model.assembler()
+                .addImport(TestContext.class.getResource(modelFile))
+                .assemble()
+                .unwrap();
+        return create(model, model.expectShape(serviceId, ServiceShape.class));
+    }
+
+    // Creates a context that is not anchored to a service, for shape-closure-driven tests.
+    static TestContext create(String modelFile) {
+        Model model = Model.assembler()
+                .addImport(TestContext.class.getResource(modelFile))
+                .assemble()
+                .unwrap();
+        return create(model, null);
+    }
+
+    private static TestContext create(Model model, ServiceShape service) {
         FileManifest manifest = new MockManifest();
         FileManifest sharedManifest = new MockManifest();
         SymbolProvider symbolProvider = (shape) -> Symbol.builder()
@@ -37,11 +54,6 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
         WriterDelegator<TestWriter> delegator = new WriterDelegator<>(manifest, symbolProvider, (file, namespace) -> {
             throw new UnsupportedOperationException();
         });
-        Model model = Model.assembler()
-                .addImport(TestContext.class.getResource(modelFile))
-                .assemble()
-                .unwrap();
-        ServiceShape service = model.expectShape(serviceId, ServiceShape.class);
         return new TestContext(model, new TestSettings(), symbolProvider, manifest, sharedManifest, delegator, service);
     }
 

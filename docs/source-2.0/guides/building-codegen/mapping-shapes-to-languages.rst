@@ -412,6 +412,13 @@ You can get the entire set of operations contained in a service using a
 
     :ref:`directedcodegen` automatically handles this for you.
 
+.. note::
+
+    Code generation can also be driven by a :ref:`shape closure <shape-closures>`
+    instead of a service. The shapes in a shape closure are computed for you by
+    ``ShapeClosureIndex`` (``ShapeClosureIndex.of(model).getShapesInClosure(id)``)
+    rather than by walking from a service.
+
 
 Service renames
 ~~~~~~~~~~~~~~~
@@ -431,6 +438,13 @@ within the closure of a service. This can be done by passing a
 
    // Bad!
    String badCodegenName = someShapeId.getName();
+
+.. note::
+
+    :ref:`Shape closures <shape-closures>` can also rename shapes. When code
+    generation is driven by a shape closure rather than a service, get the
+    renames from ``ShapeClosureIndex.of(model).getRenames(closureId)`` and fall
+    back to ``ShapeId#getName`` when a shape has no rename.
 
 
 Operation

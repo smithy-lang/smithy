@@ -444,6 +444,14 @@ example:
         }
     }
 
+.. note::
+
+    These examples assume a service is driving code generation. When code
+    generation is driven by a :ref:`shape closure <shape-closures>`, there is
+    no service for the symbol provider to use: resolve names with
+    ``ShapeId#getName()`` (applying any closure renames from
+    ``ShapeClosureIndex``) rather than ``ShapeId#getName(ServiceShape)``.
+
 While you can manually define the mapping for each reserved word, a
 simpler method is to create an algorithm for automatically handling
 reserved words. This can be done by creating a newline delimited file
