@@ -6,15 +6,20 @@ package software.amazon.smithy.codegen.core.directed;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
@@ -22,6 +27,8 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolWriter;
 import software.amazon.smithy.codegen.core.TopologicalIndex;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ShapeClosureIndex;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
@@ -35,6 +42,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -42,6 +50,8 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.validators.ShapeClosureValidator;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -64,6 +74,7 @@ public final class CodegenDirector<
 
     private Class<I> integrationClass;
     private ShapeId service;
+    private String shapeClosure;
     private Model model;
     private S settings;
     private ObjectNode integrationSettings = Node.objectNode();
@@ -73,6 +84,8 @@ public final class CodegenDirector<
     private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
     private ShapeGenerationOrder shapeGenerationOrder = ShapeGenerationOrder.TOPOLOGICAL;
+    private boolean generateDataShapesOnly;
+    private boolean requireCaseInsensitiveNames;
 
     /**
      * Simplifies a Smithy model for code generation of a single service.
@@ -108,12 +121,61 @@ public final class CodegenDirector<
     }
 
     /**
-     * Sets the required service being generated.
+     * Sets the service being generated.
+     *
+     * <p>Exactly one of {@link #service} or {@link #shapeClosure} must be set. Setting
+     * a service generates the closure of shapes connected to that service.
      *
      * @param service Service to generate.
      */
     public void service(ShapeId service) {
         this.service = service;
+    }
+
+    /**
+     * Sets the shape closure being generated.
+     *
+     * <p>Exactly one of {@link #service} or {@link #shapeClosure} must be set. Setting
+     * a shape closure generates the shapes in that closure without requiring a service
+     * shape to anchor them.
+     *
+     * @param shapeClosure ID of the shape closure to generate.
+     */
+    public void shapeClosure(String shapeClosure) {
+        this.shapeClosure = shapeClosure;
+    }
+
+    /**
+     * Generates only data shapes, never invoking the {@code generateService},
+     * {@code generateResource}, or {@code generateOperation} methods of the
+     * {@link DirectedCodegen}.
+     *
+     * <p>This enables "type codegen", where only the shapes that carry data are
+     * generated. Service, resource, and operation shapes are removed from the set of
+     * generated shapes even when they are present in the generated closure (for
+     * example, when generating the data shapes of a service's closure). The data
+     * shapes reachable through removed operations (their inputs, outputs, and errors)
+     * are unaffected and are still generated.
+     */
+    public void generateDataShapesOnly() {
+        this.generateDataShapesOnly = true;
+    }
+
+    /**
+     * Requires that the names of the shapes being generated are case-insensitively
+     * unique, failing code generation if they are not.
+     *
+     * <p>Unlike service closures, shape closures do not require their shape names to be
+     * case-insensitively unique. Code generators that cannot represent such conflicts
+     * can call this to enforce uniqueness. The check is performed on the actual shapes
+     * being generated after model transforms are applied and with closure renames
+     * applied, and it fails regardless of whether the related validation event was
+     * suppressed.
+     *
+     * <p>Applying this to service-based generation is a no-op.
+     */
+    public void requireCaseInsensitiveNames() {
+        this.requireCaseInsensitiveNames = true;
     }
 
     /**
@@ -265,7 +327,13 @@ public final class CodegenDirector<
     public void performDefaultCodegenTransforms() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Performing default codegen model transforms for directed codegen");
-            return simplifyModelForServiceCodegen(model, Objects.requireNonNull(service), transformer);
+            // Service codegen simplifies the model for its service, but error flattening
+            // is service-specific. Closure-based generation has no service, so it only
+            // flattens mixins.
+            if (service != null) {
+                return simplifyModelForServiceCodegen(model, service, transformer);
+            }
+            return transformer.flattenAndRemoveMixins(model);
         });
     }
 
@@ -357,8 +425,17 @@ public final class CodegenDirector<
     public void flattenPaginationInfoIntoOperations() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Flattening pagination info into operation traits for directed codegen");
-            return transformer.flattenPaginationInfoIntoOperations(model,
-                    model.expectShape(service, ServiceShape.class));
+            if (service != null) {
+                return transformer.flattenPaginationInfoIntoOperations(model,
+                        model.expectShape(service, ServiceShape.class));
+            }
+            Set<Shape> closureShapes = ShapeClosureIndex.of(model).getShapesInClosure(shapeClosure);
+            for (ServiceShape serviceShape : model.getServiceShapes()) {
+                if (closureShapes.contains(serviceShape)) {
+                    model = transformer.flattenPaginationInfoIntoOperations(model, serviceShape);
+                }
+            }
+            return model;
         });
     }
 
@@ -401,7 +478,7 @@ public final class CodegenDirector<
         List<I> integrations = findIntegrations();
         preprocessModelWithIntegrations(integrations);
 
-        ServiceShape serviceShape = model.expectShape(service, ServiceShape.class);
+        ServiceShape serviceShape = service == null ? null : model.expectShape(service, ServiceShape.class);
 
         SymbolProvider provider = createSymbolProvider(integrations, serviceShape);
 
@@ -418,14 +495,29 @@ public final class CodegenDirector<
 
         LOGGER.finest(() -> "Performing custom codegen for "
                 + directedCodegen.getClass().getName() + " before shape codegen");
-        CustomizeDirective<C, S> customizeDirective = new CustomizeDirective<>(context, serviceShape);
+        CustomizeDirective<C, S> customizeDirective =
+                new CustomizeDirective<>(context, serviceShape, shapeClosure, generateDataShapesOnly);
         directedCodegen.customizeBeforeShapeGeneration(customizeDirective);
 
-        LOGGER.finest(() -> "Generating shapes for service " + serviceShape.getId());
-        generateShapesInService(context, serviceShape);
+        if (service == null) {
+            LOGGER.finest("Generating shapes for closure: " + shapeClosure);
+        } else {
+            LOGGER.finest("Generating shapes for service: " + serviceShape);
+        }
+        generateShapes(context, serviceShape);
 
-        LOGGER.finest(() -> "Generating service " + serviceShape.getId());
-        directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
+        // The service is only generated when driven by a service and not performing
+        // data-shape-only ("type") code generation. Here the driving service is also the
+        // service shape being generated.
+        if (serviceShape != null && !generateDataShapesOnly) {
+            LOGGER.finest(() -> "Generating service " + serviceShape.getId());
+            directedCodegen.generateService(
+                    new GenerateServiceDirective<>(context,
+                            serviceShape,
+                            shapeClosure,
+                            generateDataShapesOnly,
+                            serviceShape));
+        }
 
         LOGGER.finest(() -> "Performing custom codegen for "
                 + directedCodegen.getClass().getName() + " before integrations");
@@ -447,12 +539,31 @@ public final class CodegenDirector<
 
     private void validateState() {
         SmithyBuilder.requiredState("integrationClass", integrationClass);
-        SmithyBuilder.requiredState("service", service);
         SmithyBuilder.requiredState("model", model);
         SmithyBuilder.requiredState("settings", settings);
         SmithyBuilder.requiredState("fileManifest", fileManifest);
         SmithyBuilder.requiredState("directedCodegen", directedCodegen);
         SmithyBuilder.requiredState("shapeGenerationOrder", shapeGenerationOrder);
+
+        // Code generation is driven by exactly one source: a service to walk, or a
+        // metadata-defined shape closure.
+        if (service != null && shapeClosure != null) {
+            throw new IllegalStateException(
+                    "Only one of `service` and `shapeClosure` may be set, but both were provided.");
+        } else if (service == null && shapeClosure == null) {
+            throw new IllegalStateException(
+                    "Exactly one of `service` and `shapeClosure` must be set, but neither was provided.");
+        }
+
+        // Fail fast on an unknown shape closure rather than deep inside code generation.
+        if (shapeClosure != null) {
+            Set<String> closureIds = ShapeClosureIndex.of(model).getClosureIds();
+            if (!closureIds.contains(shapeClosure)) {
+                throw new IllegalStateException(
+                        "The shape closure `" + shapeClosure + "` is not defined in the model. Defined "
+                                + "closures: " + closureIds);
+            }
+        }
 
         // Use a default integration finder implementation.
         if (integrationFinder == null) {
@@ -468,6 +579,36 @@ public final class CodegenDirector<
         ModelTransformer transformer = ModelTransformer.create();
         for (BiFunction<Model, ModelTransformer, Model> transform : transforms) {
             model = transform.apply(model, transformer);
+        }
+
+        if (requireCaseInsensitiveNames) {
+            enforceCaseInsensitiveNames();
+        }
+    }
+
+    /**
+     * Re-runs {@link ShapeClosureValidator} against the transformed model and fails code
+     * generation if the shape closure being generated has case-insensitively conflicting
+     * shape names.
+     *
+     * <p>This does nothing for service-driven code generation, since service closures
+     * already enforce case-insensitive name uniqueness.
+     */
+    private void enforceCaseInsensitiveNames() {
+        if (shapeClosure == null) {
+            return;
+        }
+
+        String conflictEventId = "ShapeClosure.NameConflicts." + shapeClosure;
+        List<ValidationEvent> conflicts = new ShapeClosureValidator().validate(model)
+                .stream()
+                .filter(event -> event.getId().equals(conflictEventId))
+                .collect(Collectors.toList());
+
+        if (!conflicts.isEmpty()) {
+            throw new CodegenException(conflicts.stream()
+                    .map(ValidationEvent::getMessage)
+                    .collect(Collectors.joining("\n")));
         }
     }
 
@@ -492,7 +633,11 @@ public final class CodegenDirector<
     private SymbolProvider createSymbolProvider(List<I> integrations, ServiceShape serviceShape) {
         LOGGER.fine(() -> "Creating a symbol provider from " + settings.getClass().getName());
         SymbolProvider provider = directedCodegen.createSymbolProvider(
-                new CreateSymbolProviderDirective<>(model, settings, serviceShape));
+                new CreateSymbolProviderDirective<>(model,
+                        settings,
+                        serviceShape,
+                        shapeClosure,
+                        generateDataShapesOnly));
 
         LOGGER.finer(() -> "Decorating symbol provider using " + integrationClass.getName());
         for (I integration : integrations) {
@@ -508,6 +653,8 @@ public final class CodegenDirector<
                 model,
                 settings,
                 serviceShape,
+                shapeClosure,
+                generateDataShapesOnly,
                 provider,
                 fileManifest,
                 sharedFileManifest,
@@ -523,18 +670,20 @@ public final class CodegenDirector<
         context.writerDelegator().setInterceptors(interceptors);
     }
 
-    private void generateShapesInService(C context, ServiceShape serviceShape) {
+    private void generateShapes(C context, ServiceShape serviceShape) {
         LOGGER.fine(() -> String.format("Generating shapes for %s in %s order",
                 directedCodegen.getClass().getName(),
                 this.shapeGenerationOrder.name()));
-        Set<Shape> shapes = new Walker(context.model()).walkShapes(serviceShape);
-        ShapeGenerator<W, C, S> generator = new ShapeGenerator<>(context, serviceShape, directedCodegen);
+        Set<Shape> shapes = resolveShapesToGenerate(context.model(), serviceShape);
+        ShapeGenerator<W, C, S> generator =
+                new ShapeGenerator<>(context, serviceShape, shapeClosure, generateDataShapesOnly, directedCodegen);
         List<Shape> orderedShapes = new ArrayList<>();
 
         switch (this.shapeGenerationOrder) {
             case ALPHABETICAL:
                 orderedShapes.addAll(shapes);
-                orderedShapes.sort(Comparator.comparing(s -> s.getId().getName(serviceShape)));
+                Function<Shape, String> nameForSort = contextualNamer(context.model(), serviceShape);
+                orderedShapes.sort(Comparator.comparing(nameForSort));
                 break;
             case NONE:
                 orderedShapes.addAll(shapes);
@@ -562,6 +711,37 @@ public final class CodegenDirector<
         LOGGER.finest(() -> "Finished generating shapes for " + directedCodegen.getClass().getName());
     }
 
+    /**
+     * Resolves the set of shapes to generate from the configured source.
+     *
+     * <p>When generating only data shapes, service, resource, and operation
+     * shapes are removed so they are never dispatched to their respective
+     * generation methods.
+     */
+    private Set<Shape> resolveShapesToGenerate(Model model, ServiceShape serviceShape) {
+        Set<Shape> shapes;
+        if (serviceShape != null) {
+            shapes = new Walker(model).walkShapes(serviceShape);
+        } else {
+            shapes = new LinkedHashSet<>(ShapeClosureIndex.of(model).getShapesInClosure(shapeClosure));
+            shapes.removeIf(Prelude::isPreludeShape);
+        }
+
+        if (generateDataShapesOnly) {
+            shapes.removeIf(shape -> shape.getType().getCategory() == ShapeType.Category.SERVICE);
+        }
+
+        return shapes;
+    }
+
+    private Function<Shape, String> contextualNamer(Model model, ServiceShape serviceShape) {
+        if (shapeClosure != null) {
+            Map<ShapeId, String> renames = ShapeClosureIndex.of(model).getRenames(shapeClosure);
+            return shape -> renames.getOrDefault(shape.getId(), shape.getId().getName());
+        }
+        return shape -> shape.getId().getName(serviceShape);
+    }
+
     private void applyIntegrationCustomizations(C context, List<I> integrations) {
         for (I integration : integrations) {
             LOGGER.finest(() -> "Customizing codegen for " + directedCodegen.getClass().getName()
@@ -577,11 +757,21 @@ public final class CodegenDirector<
 
         private final C context;
         private final ServiceShape serviceShape;
+        private final String shapeClosureId;
+        private final boolean generateDataShapesOnly;
         private final DirectedCodegen<C, S, ?> directedCodegen;
 
-        ShapeGenerator(C context, ServiceShape serviceShape, DirectedCodegen<C, S, ?> directedCodegen) {
+        ShapeGenerator(
+                C context,
+                ServiceShape serviceShape,
+                String shapeClosureId,
+                boolean generateDataShapesOnly,
+                DirectedCodegen<C, S, ?> directedCodegen
+        ) {
             this.context = context;
             this.serviceShape = serviceShape;
+            this.shapeClosureId = shapeClosureId;
+            this.generateDataShapesOnly = generateDataShapesOnly;
             this.directedCodegen = directedCodegen;
         }
 
@@ -591,10 +781,32 @@ public final class CodegenDirector<
         }
 
         @Override
+        public Void serviceShape(ServiceShape shape) {
+            // The driving service is generated by a separate, ordered call after all other
+            // shapes, so skip it here to avoid generating it twice. Any other service shape
+            // (for example, one reached through a shape closure) is generated normally.
+            if (shape.equals(serviceShape)) {
+                return null;
+            }
+            LOGGER.finest(() -> "Generating service " + shape.getId());
+            directedCodegen.generateService(
+                    new GenerateServiceDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
+            return null;
+        }
+
+        @Override
         public Void resourceShape(ResourceShape shape) {
             LOGGER.finest(() -> "Generating resource " + shape.getId());
             directedCodegen.generateResource(
-                    new GenerateResourceDirective<>(context, serviceShape, shape));
+                    new GenerateResourceDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
@@ -602,7 +814,11 @@ public final class CodegenDirector<
         public Void operationShape(OperationShape shape) {
             LOGGER.finest(() -> "Generating operation " + shape.getId());
             directedCodegen.generateOperation(
-                    new GenerateOperationDirective<>(context, serviceShape, shape));
+                    new GenerateOperationDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
@@ -610,10 +826,20 @@ public final class CodegenDirector<
         public Void structureShape(StructureShape shape) {
             if (shape.hasTrait(ErrorTrait.ID)) {
                 LOGGER.finest(() -> "Generating error " + shape.getId());
-                directedCodegen.generateError(new GenerateErrorDirective<>(context, serviceShape, shape));
+                directedCodegen.generateError(
+                        new GenerateErrorDirective<>(context,
+                                serviceShape,
+                                shapeClosureId,
+                                generateDataShapesOnly,
+                                shape));
             } else {
                 LOGGER.finest(() -> "Generating structure " + shape.getId());
-                directedCodegen.generateStructure(new GenerateStructureDirective<>(context, serviceShape, shape));
+                directedCodegen.generateStructure(
+                        new GenerateStructureDirective<>(context,
+                                serviceShape,
+                                shapeClosureId,
+                                generateDataShapesOnly,
+                                shape));
             }
             return null;
         }
@@ -621,21 +847,36 @@ public final class CodegenDirector<
         @Override
         public Void unionShape(UnionShape shape) {
             LOGGER.finest(() -> "Generating union " + shape.getId());
-            directedCodegen.generateUnion(new GenerateUnionDirective<>(context, serviceShape, shape));
+            directedCodegen.generateUnion(
+                    new GenerateUnionDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
             LOGGER.finest(() -> "Generating list " + shape.getId());
-            directedCodegen.generateList(new GenerateListDirective<>(context, serviceShape, shape));
+            directedCodegen.generateList(
+                    new GenerateListDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
         @Override
         public Void mapShape(MapShape shape) {
             LOGGER.finest(() -> "Generating map " + shape.getId());
-            directedCodegen.generateMap(new GenerateMapDirective<>(context, serviceShape, shape));
+            directedCodegen.generateMap(
+                    new GenerateMapDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
@@ -643,7 +884,12 @@ public final class CodegenDirector<
         public Void stringShape(StringShape shape) {
             if (shape.hasTrait(EnumTrait.class)) {
                 LOGGER.finest(() -> "Generating string enum " + shape.getId());
-                directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
+                directedCodegen.generateEnumShape(
+                        new GenerateEnumDirective<>(context,
+                                serviceShape,
+                                shapeClosureId,
+                                generateDataShapesOnly,
+                                shape));
             }
             return null;
         }
@@ -651,14 +897,24 @@ public final class CodegenDirector<
         @Override
         public Void enumShape(EnumShape shape) {
             LOGGER.finest(() -> "Generating enum shape" + shape.getId());
-            directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
+            directedCodegen.generateEnumShape(
+                    new GenerateEnumDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
 
         @Override
         public Void intEnumShape(IntEnumShape shape) {
             LOGGER.finest(() -> "Generating intEnum shape" + shape.getId());
-            directedCodegen.generateIntEnumShape(new GenerateIntEnumDirective<>(context, serviceShape, shape));
+            directedCodegen.generateIntEnumShape(
+                    new GenerateIntEnumDirective<>(context,
+                            serviceShape,
+                            shapeClosureId,
+                            generateDataShapesOnly,
+                            shape));
             return null;
         }
     }
