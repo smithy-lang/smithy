@@ -1,6 +1,5 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
-
 $version: "2.0"
 
 namespace aws.protocoltests.restxml
@@ -17,23 +16,23 @@ operation NoInputAndNoOutput {}
 
 apply NoInputAndNoOutput @httpRequestTests([
     {
-        id: "NoInputAndNoOutput",
-        documentation: "No input serializes no payload",
-        protocol: restXml,
-        method: "POST",
-        uri: "/NoInputAndNoOutput",
+        id: "NoInputAndNoOutput"
+        documentation: "No input serializes no payload"
+        protocol: restXml
+        method: "POST"
+        uri: "/NoInputAndNoOutput"
         body: ""
     }
 ])
 
 apply NoInputAndNoOutput @httpResponseTests([
-   {
-       id: "NoInputAndNoOutput",
-       documentation: "No output serializes no payload",
-       protocol: restXml,
-       code: 200,
-       body: ""
-   }
+    {
+        id: "NoInputAndNoOutput"
+        documentation: "No output serializes no payload"
+        protocol: restXml
+        code: 200
+        body: ""
+    }
 ])
 
 /// The example tests how requests and responses are serialized when there's
@@ -47,21 +46,21 @@ operation NoInputAndOutput {
 
 apply NoInputAndOutput @httpRequestTests([
     {
-        id: "NoInputAndOutput",
-        documentation: "No input serializes no payload",
-        protocol: restXml,
-        method: "POST",
-        uri: "/NoInputAndOutputOutput",
+        id: "NoInputAndOutput"
+        documentation: "No input serializes no payload"
+        protocol: restXml
+        method: "POST"
+        uri: "/NoInputAndOutputOutput"
         body: ""
     }
 ])
 
 apply NoInputAndOutput @httpResponseTests([
     {
-        id: "NoInputAndOutput",
-        documentation: "Empty output serializes no payload",
-        protocol: restXml,
-        code: 200,
+        id: "NoInputAndOutput"
+        documentation: "Empty output serializes no payload"
+        protocol: restXml
+        code: 200
         body: ""
     }
 ])
@@ -74,30 +73,31 @@ structure NoInputAndOutputOutput {}
 /// be rare, code generators must support this.
 @http(uri: "/EmptyInputAndEmptyOutput", method: "POST")
 operation EmptyInputAndEmptyOutput {
-    input: EmptyInputAndEmptyOutputInput,
+    input: EmptyInputAndEmptyOutputInput
     output: EmptyInputAndEmptyOutputOutput
 }
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
-        id: "EmptyInputAndEmptyOutput",
-        documentation: "Empty input serializes no payload",
-        protocol: restXml,
-        method: "POST",
-        uri: "/EmptyInputAndEmptyOutput",
+        id: "EmptyInputAndEmptyOutput"
+        documentation: "Empty input serializes no payload"
+        protocol: restXml
+        method: "POST"
+        uri: "/EmptyInputAndEmptyOutput"
         body: ""
-    },
+    }
 ])
 
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
-        id: "EmptyInputAndEmptyOutput",
-        documentation: "Empty output serializes no payload",
-        protocol: restXml,
-        code: 200,
+        id: "EmptyInputAndEmptyOutput"
+        documentation: "Empty output serializes no payload"
+        protocol: restXml
+        code: 200
         body: ""
-    },
+    }
 ])
 
 structure EmptyInputAndEmptyOutputInput {}
+
 structure EmptyInputAndEmptyOutputOutput {}

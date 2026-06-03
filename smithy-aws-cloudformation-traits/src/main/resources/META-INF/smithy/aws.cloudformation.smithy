@@ -8,7 +8,11 @@ namespace aws.cloudformation
 @trait(
     selector: "structure > :test(member > string)"
     conflicts: [cfnExcludeProperty]
-    breakingChanges: [{change: "remove"}]
+    breakingChanges: [
+        {
+            change: "remove"
+        }
+    ]
 )
 structure cfnAdditionalIdentifier {}
 
@@ -17,7 +21,11 @@ structure cfnAdditionalIdentifier {}
 @unstable
 @trait(
     selector: "structure > member"
-    breakingChanges: [{change: "any"}]
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 string cfnName
 
@@ -26,12 +34,12 @@ string cfnName
 @unstable
 @trait(
     selector: "structure > member"
-    conflicts: [
-        cfnAdditionalIdentifier
-        cfnMutability
-        cfnDefaultValue
+    conflicts: [cfnAdditionalIdentifier, cfnMutability, cfnDefaultValue]
+    breakingChanges: [
+        {
+            change: "add"
+        }
     ]
-    breakingChanges: [{change: "add"}]
 )
 structure cfnExcludeProperty {}
 
@@ -69,12 +77,10 @@ enum cfnMutability {
     /// member is also marked with the `@additionalIdentifier` trait.
     CREATE = "create"
 
-
     /// Indicates that the CloudFormation property generated from this
     /// member can be returned by a `read` or `list` request, but
     /// cannot be set by the user.
     READ = "read"
-
 
     /// Indicates that the CloudFormation property generated from this
     /// member can be specified by the user, but cannot be returned by a
@@ -87,7 +93,11 @@ enum cfnMutability {
 @unstable
 @trait(
     selector: "resource"
-    breakingChanges: [{change: "presence"}]
+    breakingChanges: [
+        {
+            change: "presence"
+        }
+    ]
 )
 structure cfnResource {
     /// Provides a custom CloudFormation resource name.

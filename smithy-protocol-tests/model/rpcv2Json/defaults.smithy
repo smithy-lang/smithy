@@ -2,10 +2,10 @@ $version: "2.0"
 
 namespace smithy.protocoltests.rpcv2Json
 
+use smithy.framework#ValidationException
 use smithy.protocols#rpcv2Json
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
-use smithy.framework#ValidationException
 
 apply OperationWithDefaults @httpRequestTests([
     {
@@ -16,14 +16,8 @@ apply OperationWithDefaults @httpRequestTests([
         tags: ["defaults"]
         method: "POST"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         bodyMediaType: "application/json"
         body: """
             {
@@ -66,17 +60,10 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: "{}"
-        params: {
-        }
+        params: {}
     }
     {
         id: "RpcV2JsonRequestClientUsesExplicitlyProvidedMemberValuesOverDefaults"
@@ -87,14 +74,8 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "defaults": {
@@ -136,7 +117,7 @@ apply OperationWithDefaults @httpRequestTests([
                 defaultLong: 200
                 defaultFloat: 2.0
                 defaultDouble: 2.0
-                defaultMap: {name: "Jack"}
+                defaultMap: { name: "Jack" }
                 defaultEnum: "BAR"
                 defaultIntEnum: 2
                 emptyString: "foo"
@@ -160,14 +141,8 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "defaults": {}
@@ -211,23 +186,14 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "topLevelDefault": "hi",
                 "otherTopLevelDefault": 0
             }"""
-        params: {
-            topLevelDefault: "hi"
-            otherTopLevelDefault: 0
-        }
+        params: { topLevelDefault: "hi", otherTopLevelDefault: 0 }
     }
     {
         id: "RpcV2JsonRequestClientIgnoresNonTopLevelDefaultsOnMembersWithClientOptional"
@@ -238,14 +204,8 @@ apply OperationWithDefaults @httpRequestTests([
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/OperationWithDefaults"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "clientOptionalDefaults": {}
@@ -265,10 +225,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: rpcv2Json
         code: 200
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: "{}"
         params: {
             defaultString: "hi"
@@ -304,10 +261,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: rpcv2Json
         code: 200
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: """
             {
                 "defaultString": "bye",
@@ -346,7 +300,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultLong: 200
             defaultFloat: 2.0
             defaultDouble: 2.0
-            defaultMap: {name: "Jack"}
+            defaultMap: { name: "Jack" }
             defaultEnum: "BAR"
             defaultIntEnum: 2
             emptyString: "foo"
@@ -368,10 +322,7 @@ apply OperationWithDefaults @httpResponseTests([
         protocol: rpcv2Json
         code: 200
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: """
             {
                 "defaultString": "hi",
@@ -402,7 +353,6 @@ apply OperationWithDefaults @httpResponseTests([
     }
 ])
 
-
 operation OperationWithDefaults {
     input := {
         defaults: Defaults
@@ -410,10 +360,10 @@ operation OperationWithDefaults {
         topLevelDefault: String = "hi" // Client should ignore default values in input shape
         otherTopLevelDefault: Integer = 0
     }
-
     output := with [DefaultsMixin] {}
-
-    errors: [ValidationException]
+    errors: [
+        ValidationException
+    ]
 }
 
 structure Defaults with [DefaultsMixin] {}

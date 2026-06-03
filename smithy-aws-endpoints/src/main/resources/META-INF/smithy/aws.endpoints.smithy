@@ -8,16 +8,24 @@ namespace aws.endpoints
 /// must be a structure, and must have the `trait` trait.
 @trait(
     selector: "structure[trait|trait]"
-    breakingChanges: [{change: "presence"}]
+    breakingChanges: [
+        {
+            change: "presence"
+        }
+    ]
 )
-structure endpointsModifier { }
+structure endpointsModifier {}
 
 /// Marks that a services endpoints should be resolved using
 /// standard regional endpoint patterns.
 @trait(
     selector: "service"
     conflicts: [standardPartitionalEndpoints]
-    breakingChanges: [{change: "remove"}]
+    breakingChanges: [
+        {
+            change: "remove"
+        }
+    ]
 )
 @endpointsModifier
 structure standardRegionalEndpoints {
@@ -88,7 +96,11 @@ structure RegionSpecialCase {
 @trait(
     selector: "service"
     conflicts: [standardRegionalEndpoints]
-    breakingChanges: [{change: "any"}]
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 @endpointsModifier
 structure standardPartitionalEndpoints {
@@ -106,8 +118,10 @@ structure standardPartitionalEndpoints {
 enum PartitionEndpointPattern {
     @deprecated(since: "2025-04-01", message: "Not recommended to use. Use AWS_RECOMMENDED instead")
     SERVICE_DNSSUFFIX = "service_dnsSuffix"
+
     @deprecated(since: "2025-04-01", message: "Not recommended to use. Use AWS_RECOMMENDED instead")
     SERVICE_REGION_DNSSUFFIX = "service_region_dnsSuffix"
+
     AWS_RECOMMENDED = "aws_recommended"
 }
 
@@ -141,16 +155,24 @@ structure PartitionEndpointSpecialCase {
 /// Marks that a services has only dualStack endpoints.
 @trait(
     selector: "service"
-    breakingChanges: [{change: "any"}]
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 @endpointsModifier
-structure dualStackOnlyEndpoints { }
+structure dualStackOnlyEndpoints {}
 
 /// Marks that a services has hand written endpoint rules.
 @trait(
     selector: "service"
-    breakingChanges: [{change: "any"}]
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
 )
 @endpointsModifier
 @unstable
-structure rulesBasedEndpoints { }
+structure rulesBasedEndpoints {}

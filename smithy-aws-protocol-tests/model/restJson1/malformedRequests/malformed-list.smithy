@@ -13,57 +13,47 @@ operation MalformedList {
 
 apply MalformedList @httpMalformedRequestTests([
     {
-        id: "RestJsonBodyMalformedListNullItem",
+        id: "RestJsonBodyMalformedListNullItem"
         documentation: """
-        When a dense list contains null, the response should be a 400
-        SerializationException.""",
-        protocol: restJson1,
+            When a dense list contains null, the response should be a 400
+            SerializationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedList",
+            method: "POST"
+            uri: "/MalformedList"
             body: """
-            { "bodyList" : ["a", null, "b", "c"] }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
-        response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
+                { "bodyList" : ["a", null, "b", "c"] }"""
+            headers: { "content-type": "application/json" }
         }
-    },
+        response: {
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+    }
     {
-        id: "RestJsonBodyMalformedListUnclosed",
+        id: "RestJsonBodyMalformedListUnclosed"
         documentation: """
-        When a list does not have a closing bracket, the response should be
-        a 400 SerializationException.""",
-        protocol: restJson1,
+            When a list does not have a closing bracket, the response should be
+            a 400 SerializationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedList",
+            method: "POST"
+            uri: "/MalformedList"
             body: """
-            { "bodyList" : ["a", "b", "c" }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
-        response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "SerializationException"
-            }
+                { "bodyList" : ["a", "b", "c" }"""
+            headers: { "content-type": "application/json" }
         }
-    },
+        response: {
+            code: 400
+            headers: { "x-amzn-errortype": "SerializationException" }
+        }
+    }
 ])
 
 structure MalformedListInput {
-    bodyList: SimpleList,
+    bodyList: SimpleList
 }
-
 
 list SimpleList {
     member: String
 }
-

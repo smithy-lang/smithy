@@ -3,8 +3,6 @@ $version: "2.0"
 namespace smithy.protocoltests.rpcv2Json
 
 use smithy.protocols#rpcv2Json
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
 
 @rpcv2Json
 @title("RpcV2 JSON Protocol Service")
