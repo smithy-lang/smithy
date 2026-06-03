@@ -65,6 +65,12 @@ structure Acceptor {
     /// The matcher used to test if the resource is in a given state.
     @required
     matcher: Matcher,
+
+    /// A JMESPath expression that extracts a human-readable message from
+    /// the operation output when this acceptor matches. The expression
+    /// MUST resolve to a string. This field is only valid on acceptors
+    /// with a ``failure`` state.
+    message: String,
 }
 
 /// The transition state of a waiter.

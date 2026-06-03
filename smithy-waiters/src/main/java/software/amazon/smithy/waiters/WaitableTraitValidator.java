@@ -52,6 +52,19 @@ public final class WaitableTraitValidator extends AbstractValidator {
                 if (acceptor.getState() == AcceptorState.SUCCESS) {
                     foundSuccess = true;
                 }
+                if (acceptor.getMessage().isPresent() && acceptor.getState() != AcceptorState.FAILURE) {
+                    events.add(error(operation,
+                            trait,
+                            String.format(
+                                    "Waiter `%s`, acceptor %d: The `message` property is only valid on "
+                                            + "acceptors with a `failure` state, but found state `%s`.",
+                                    waiterName,
+                                    i,
+                                    acceptor.getState())));
+                }
+                if (acceptor.getMessage().isPresent() && acceptor.getState() == AcceptorState.FAILURE) {
+                    events.addAll(visitor.validateMessage(acceptor.getMessage().get()));
+                }
             }
 
             if (!foundSuccess) {
