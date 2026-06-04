@@ -77,6 +77,8 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         Map<String, Parameter> modelParams = validateAndExtractParameters(errors, model, service, operations);
         // Make sure parameters align across Params <-> RuleSet transitions.
         validateParametersMatching(errors, service, sourceLocation, parameters, modelParams);
+        // Check that all required parameters are bound by each operation.
+        validateRequiredParametersPerOperation(errors, model, service, parameters, operations);
         // Check that tests declare required parameters, only defined parameters, etc.
         if (service.hasTrait(EndpointTestsTrait.ID)) {
             validateTestsParameters(errors, service, service.expectTrait(EndpointTestsTrait.class), parameters);
@@ -185,6 +187,60 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         }
 
         return endpointParams;
+    }
+
+    private void validateRequiredParametersPerOperation(
+            List<ValidationEvent> errors,
+            Model model,
+            ServiceShape service,
+            Iterable<Parameter> ruleSetParams,
+            Set<OperationShape> operations
+    ) {
+        // Collect required params that must be bound per-operation (no default, not built-in).
+        Set<String> requiredParams = new HashSet<>();
+        for (Parameter param : ruleSetParams) {
+            if (param.isRequired() && !param.getDefault().isPresent() && !param.isBuiltIn()) {
+                requiredParams.add(param.getName().toString());
+            }
+        }
+        if (requiredParams.isEmpty()) {
+            return;
+        }
+
+        // Service-level ClientContextParams satisfy requirements for all operations.
+        Set<String> serviceLevel = new HashSet<>();
+        if (service.hasTrait(ClientContextParamsTrait.ID)) {
+            serviceLevel.addAll(service.expectTrait(ClientContextParamsTrait.class).getParameters().keySet());
+        }
+
+        for (OperationShape operation : operations) {
+            Set<String> boundParams = new HashSet<>(serviceLevel);
+
+            if (operation.hasTrait(StaticContextParamsTrait.ID)) {
+                boundParams.addAll(operation.expectTrait(StaticContextParamsTrait.class).getParameters().keySet());
+            }
+            if (operation.hasTrait(OperationContextParamsTrait.ID)) {
+                boundParams.addAll(operation.expectTrait(OperationContextParamsTrait.class).getParameters().keySet());
+            }
+
+            StructureShape input = model.expectShape(operation.getInputShape(), StructureShape.class);
+            for (MemberShape member : input.members()) {
+                if (member.hasTrait(ContextParamTrait.ID)) {
+                    boundParams.add(member.expectTrait(ContextParamTrait.class).getName());
+                }
+            }
+
+            for (String required : requiredParams) {
+                if (!boundParams.contains(required)) {
+                    errors.add(parameterError(operation,
+                            operation,
+                            "Operation.RequiredMissing",
+                            String.format("Required parameter `%s` is not bound by operation `%s`",
+                                    required,
+                                    operation.getId().getName())));
+                }
+            }
+        }
     }
 
     private void validateParametersMatching(
