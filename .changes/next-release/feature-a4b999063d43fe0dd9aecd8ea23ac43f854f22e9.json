@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Added a `generateDataShapesOnly` mode to `CodegenDirector` that generates only data shapes (skipping service, resource, and operation shapes).",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3156](https://github.com/smithy-lang/smithy/pull/3156)"
+  ]
 }
