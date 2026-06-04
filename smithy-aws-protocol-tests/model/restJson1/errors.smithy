@@ -178,6 +178,16 @@ apply FooError @httpResponseTests([
         appliesTo: "client"
     }
     {
+        id: "RestJsonFooErrorUsingXAmznErrorTypeWithUriAndDifferentNamespace"
+        documentation: """
+            Because namespace and URL are ignored, an unrecognized namespace should \
+            not make a difference."""
+        protocol: restJson1
+        code: 500
+        headers: { "X-Amzn-Errortype": "aws.different.namespace#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/" }
+        appliesTo: "client"
+    }
+    {
         id: "RestJsonFooErrorUsingCode"
         documentation: """
             This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some \

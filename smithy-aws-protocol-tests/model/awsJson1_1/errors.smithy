@@ -214,6 +214,21 @@ apply FooError @httpResponseTests([
         appliesTo: "client"
     }
     {
+        id: "AwsJson11FooErrorWithDunderTypeAndDifferentNamespace"
+        documentation: """
+            Because only the part after '#' is considered, an unrecognized namespace should \
+            not make a difference."""
+        protocol: awsJson1_1
+        code: 500
+        headers: { "Content-Type": "application/x-amz-json-1.1" }
+        body: """
+            {
+                "__type": "aws.different.namespace#FooError"
+            }"""
+        bodyMediaType: "application/json"
+        appliesTo: "client"
+    }
+    {
         id: "AwsJson11FooErrorWithDunderTypeUriAndNamespace"
         documentation: """
             Some services serialize errors using __type, and it might contain a namespace. It also might \
