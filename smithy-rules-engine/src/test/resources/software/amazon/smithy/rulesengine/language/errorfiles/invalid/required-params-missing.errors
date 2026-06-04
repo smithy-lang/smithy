@@ -1,0 +1,4 @@
+[WARNING] example#MyService: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[WARNING] example#MyService: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#HasBucket: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait.smithy.rules#staticContextParams
+[ERROR] example#MissingBucket: Required parameter `Bucket` is not bound by operation `MissingBucket` | RuleSetParameter.Operation.RequiredMissing
