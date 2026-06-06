@@ -23,7 +23,7 @@ dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-utils"))
 
-    s3Model("software.amazon.api.models:s3:1.0.18")
+    s3Model("software.amazon.api.models:s3:1.0.19")
 }
 
 // Integration test source set for tests that require the S3 model
