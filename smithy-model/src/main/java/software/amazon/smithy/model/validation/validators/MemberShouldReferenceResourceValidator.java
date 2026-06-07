@@ -8,6 +8,7 @@ import static java.lang.String.format;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,11 @@ import software.amazon.smithy.utils.ListUtils;
 /**
  * Validates if a member matches a resource identifier without the
  * proper configuration of a `@references` trait.
+ *
+ * <p>Uses a one-of-N policy: if a member's name and target match multiple resources,
+ * declaring a `@references` trait for at least one of them silences the warning for
+ * all of them. The warning only fires when the member matches one or more resources
+ * and the structure references none of them.
  */
 public final class MemberShouldReferenceResourceValidator extends AbstractValidator {
     @Override
@@ -59,13 +65,22 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
                 continue;
             }
 
-            Set<ShapeId> potentialReferences = computePotentialReferences(model, reverseProvider, member);
-            if (!potentialReferences.isEmpty()) {
-                events.add(warning(member,
-                        format("This member appears to reference the following resources without "
-                                + "being included in a `@references` trait: [%s]",
-                                ValidationUtils.tickedList(potentialReferences))));
+            Set<ShapeId> matchingResources = computeMatchingResources(model, reverseProvider, member);
+            if (matchingResources.isEmpty()) {
+                continue;
             }
+
+            // One-of-N: any explicit `@references` to a matching resource is sufficient
+            // evidence of author intent, so stay silent for all the other matches too.
+            Set<ShapeId> referencedResources = collectReferencedResources(model, member);
+            if (!Collections.disjoint(matchingResources, referencedResources)) {
+                continue;
+            }
+
+            events.add(warning(member,
+                    format("This member appears to reference the following resources without "
+                            + "being included in a `@references` trait: [%s]",
+                            ValidationUtils.tickedList(matchingResources))));
         }
 
         return events;
@@ -79,40 +94,36 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         return identifierNames;
     }
 
-    private Set<ShapeId> computePotentialReferences(Model model, NeighborProvider reverseProvider, MemberShape member) {
-        // Exclude any resources already in `@references` on the member or container structure.
-        Set<ShapeId> resourcesToIgnore = new HashSet<>();
-        ignoreReferencedResources(member, resourcesToIgnore);
-        ignoreReferencedResources(model.expectShape(member.getContainer()), resourcesToIgnore);
-
+    private Set<ShapeId> computeMatchingResources(Model model, NeighborProvider reverseProvider, MemberShape member) {
         // Exclude resources the member is already bound to (i.e., the member is reachable from
         // the resource through the model graph), including the other resources in those
         // hierarchies. Resources on a `resource -> ... -> member` path are exactly the resources
         // from which the member is reachable, so a single reverse-reachability walk from the
-        // member finds all of them at once.
+        // member finds all of them at once. Being bound via lifecycle already makes this member
+        // an identifier for that resource, so flagging it as a "missing reference" would be noise.
+        Set<ShapeId> resourcesToIgnore = new HashSet<>();
         for (ShapeId boundResource : findBindingResources(reverseProvider, member)) {
             resourcesToIgnore.add(boundResource);
             resourcesToIgnore.addAll(model.expectShape(boundResource, ResourceShape.class).getResources());
         }
 
-        // Check each resource in the model for something missed.
-        Set<ShapeId> potentialResources = new HashSet<>();
+        Set<ShapeId> matchingResources = new HashSet<>();
         for (ResourceShape resource : model.getResourceShapes()) {
-            // Exclude members bound to resource hierarchies from generating events,
-            // including for resources that are within the same hierarchy.
             if (resourcesToIgnore.contains(resource.getId())) {
                 continue;
             }
-
-            // This member matches the identifier for the resource we're checking, add it to a list.
             if (isIdentifierMatch(resource, member)) {
-                potentialResources.add(resource.getId());
+                matchingResources.add(resource.getId());
             }
         }
+        return matchingResources;
+    }
 
-        // Clean up any resources added through other paths that should be ignored.
-        potentialResources.removeAll(resourcesToIgnore);
-        return potentialResources;
+    private Set<ShapeId> collectReferencedResources(Model model, MemberShape member) {
+        Set<ShapeId> referenced = new HashSet<>();
+        addReferencedResources(member, referenced);
+        addReferencedResources(model.expectShape(member.getContainer()), referenced);
+        return referenced;
     }
 
     /**
@@ -153,11 +164,11 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         return boundResources;
     }
 
-    private void ignoreReferencedResources(Shape shape, Set<ShapeId> resourcesToIgnore) {
+    private void addReferencedResources(Shape shape, Set<ShapeId> referenced) {
         if (shape.hasTrait(ReferencesTrait.ID)) {
             for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class)
                     .getReferences()) {
-                resourcesToIgnore.add(reference.getResource());
+                referenced.add(reference.getResource());
             }
         }
     }
