@@ -1,0 +1,1 @@
+[WARNING] ns.multi#ZeroCoverageInput$widgetId: This member appears to reference the following resources without being included in a `@references` trait: [`ns.multi#Widget`, `ns.multi#WidgetContext`] | MemberShouldReferenceResource

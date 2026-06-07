@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Relaxed the `MemberShouldReferenceResource` validator to a one-of-N policy: a member whose name and target match multiple resources only triggers the warning when none of the matching resources are listed in `@references`.",
+  "pull_requests": [
+    "[#3158](https://github.com/smithy-lang/smithy/pull/3158)"
+  ]
+}
