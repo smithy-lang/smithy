@@ -14,6 +14,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -32,6 +33,16 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
                 .addImport(TestContext.class.getResource(modelFile))
                 .assemble()
                 .unwrap();
+        return create(model, model.expectShape(serviceId, ServiceShape.class));
+    }
+
+    // Loads a service-anchored context from several model files.
+    static TestContext create(ShapeId serviceId, String... modelFiles) {
+        ModelAssembler assembler = Model.assembler();
+        for (String modelFile : modelFiles) {
+            assembler.addImport(TestContext.class.getResource(modelFile));
+        }
+        Model model = assembler.assemble().unwrap();
         return create(model, model.expectShape(serviceId, ServiceShape.class));
     }
 
