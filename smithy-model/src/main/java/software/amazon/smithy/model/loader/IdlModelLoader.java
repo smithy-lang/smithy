@@ -310,6 +310,7 @@ final class IdlModelLoader {
 
         emittedVersion = true;
         modelVersion = resolvedVersion;
+        tokenizer.setVersion(resolvedVersion);
         addOperation(new LoadOperation.ModelVersion(modelVersion, value.getSourceLocation()));
     }
 
