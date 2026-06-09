@@ -21,8 +21,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
 
 public class DirectiveTest {
     @Test
@@ -162,5 +164,50 @@ public class DirectiveTest {
         assertThat(d.getShapeClosureId().get(), equalTo("smithy.example#getCityClosure"));
         CodegenException e = Assertions.assertThrows(CodegenException.class, d::service);
         assertThat(e.getMessage(), containsString("smithy.example#getCityClosure"));
+    }
+
+    @Test
+    public void getRenamesReturnsServiceRenamesInServiceMode() {
+        TestContext context = TestContext.create(
+                ShapeId.from("smithy.example#Renaming"),
+                "service-rename.smithy",
+                "service-rename-other.smithy");
+        CustomizeDirective<TestContext, TestSettings> d =
+                new CustomizeDirective<>(context, context.service(), null, false);
+
+        // In service mode the renames are the primary service's renames.
+        assertThat(d.getRenames(),
+                equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
+    }
+
+    @Test
+    public void getRenamesReturnsClosureRenamesInClosureMode() {
+        TestContext context = TestContext.create("combined-model.smithy");
+        CustomizeDirective<TestContext, TestSettings> d = new CustomizeDirective<>(
+                context,
+                null,
+                "smithy.example#combinedRenamedClosure",
+                false);
+
+        // In closure mode the renames are the closure's renames.
+        assertThat(d.getRenames(),
+                equalTo(MapUtils.of(ShapeId.from("smithy.example#ExtraType"), "RenamedExtraType")));
+    }
+
+    @Test
+    public void getRenamesReturnsClosureRenamesInCombinedMode() {
+        TestContext context = TestContext.create("combined-model.smithy");
+        ServiceShape service = context.model().expectShape(ShapeId.from("smithy.example#Weather"), ServiceShape.class);
+        CustomizeDirective<TestContext, TestSettings> d = new CustomizeDirective<>(
+                context,
+                service,
+                "smithy.example#combinedRenamedClosure",
+                false);
+
+        // In combined mode the renames mirror the generated set (the closure), so they are
+        // the closure's renames rather than the service's.
+        assertThat(d.getService().get().getId(), equalTo(ShapeId.from("smithy.example#Weather")));
+        assertThat(d.getRenames(),
+                equalTo(MapUtils.of(ShapeId.from("smithy.example#ExtraType"), "RenamedExtraType")));
     }
 }
