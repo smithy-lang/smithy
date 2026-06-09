@@ -184,11 +184,39 @@ final class FormatVisitor {
             case EXPLICIT_SHAPE_MEMBER: {
                 return visit(cursor.getFirstChild(TreeType.IDENTIFIER))
                         .append(Doc.text(": "))
-                        .append(visit(cursor.getFirstChild(TreeType.SHAPE_ID)));
+                        .append(visit(cursor.getFirstChild(TreeType.MEMBER_TARGET)));
             }
 
             case ELIDED_SHAPE_MEMBER: {
                 return Doc.text("$").append(visit(cursor.getFirstChild(TreeType.IDENTIFIER)));
+            }
+
+            case MEMBER_TARGET: {
+                TreeCursor child = cursor.getFirstChild(TreeType.SHAPE_ID);
+                if (child != null) {
+                    return visit(child);
+                }
+                child = cursor.getFirstChild(TreeType.INLINE_LIST_TARGET);
+                if (child != null) {
+                    return visit(child);
+                }
+                return visit(cursor.getFirstChild(TreeType.INLINE_MAP_TARGET));
+            }
+
+            case INLINE_LIST_TARGET: {
+                return Doc.text("[")
+                        .append(visit(cursor.getFirstChild(TreeType.MEMBER_TARGET)))
+                        .append(Doc.text("]"));
+            }
+
+            case INLINE_MAP_TARGET: {
+                TreeCursor first = cursor.getFirstChild(TreeType.MEMBER_TARGET);
+                TreeCursor second = cursor.getLastChild(TreeType.MEMBER_TARGET);
+                return Doc.text("{")
+                        .append(visit(first))
+                        .append(Doc.text(": "))
+                        .append(visit(second))
+                        .append(Doc.text("}"));
             }
 
             case ENTITY_SHAPE: {

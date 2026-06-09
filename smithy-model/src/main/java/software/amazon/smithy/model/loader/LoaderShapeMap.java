@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -294,7 +295,8 @@ final class LoaderShapeMap {
                         previous.getSourceLocation(),
                         joiner.toString()));
                 return false;
-            } else if (!LoaderUtils.isSameLocation(built, previous)) {
+            } else if (!LoaderUtils.isSameLocation(built, previous)
+                    && !built.hasTrait(SyntheticShapeTrait.ID)) {
                 events.add(ValidationEvent.builder()
                         .id(Validator.MODEL_ERROR + ".IgnoredDuplicateDefinition")
                         .severity(Severity.NOTE)

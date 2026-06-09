@@ -119,7 +119,7 @@ Next, we will start to model a ``Weather`` service in the ``weather.smithy`` fil
 .. code-block:: smithy
     :caption: model/weather.smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace example.weather
 
     /// Provides weather forecasts.
@@ -152,7 +152,7 @@ identifiers, operations, and any number of child resources.
 .. code-block:: smithy
     :caption: model/weather.smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace example.weather
 
     /// Provides weather forecasts.
@@ -386,13 +386,8 @@ cities, so there's no way we could provide a ``City`` identifier.
             nextToken: String
 
             @required
-            items: CitySummaries
+            items: [CitySummary]
         }
-    }
-
-    // CitySummaries is a list of CitySummary structures.
-    list CitySummaries {
-        member: CitySummary
     }
 
     // CitySummary contains a reference to a City.
@@ -414,6 +409,12 @@ the results of invoking the operation can be truncated, requiring subsequent
 calls to retrieve the entire list of results. It's usually a good idea to add
 pagination to an API that lists resources because it can help prevent
 operational issues in the future if the list grows to an unpredicted size.
+
+.. note::
+
+   The ``items: [CitySummary]`` syntax was added in Smithy 2.1. It declares a
+   list inline without needing a separate named shape. See
+   :ref:`idl-inline-collections`.
 
 The ``CitySummary`` structure defines a :ref:`reference <references-trait>`
 to a ``City`` resource. This gives tooling a better understanding of the
@@ -621,7 +622,7 @@ The complete ``weather.smithy`` model should look like:
 .. code-block:: smithy
     :caption: weather.smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace example.weather
 
@@ -715,13 +716,8 @@ The complete ``weather.smithy`` model should look like:
             nextToken: String
 
             @required
-            items: CitySummaries
+            items: [CitySummary]
         }
-    }
-
-    // CitySummaries is a list of CitySummary structures.
-    list CitySummaries {
-        member: CitySummary
     }
 
     // CitySummary contains a reference to a City.

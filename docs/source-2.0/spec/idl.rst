@@ -199,8 +199,11 @@ string support defined in :rfc:`7405`.
     ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
     ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`)
                             :   [`ValueAssignment`]
-    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
+    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `MemberTarget`
     ElidedShapeMember       :"$" `Identifier`
+    MemberTarget            :`ShapeId` / `InlineListTarget` / `InlineMapTarget`
+    InlineListTarget        :"[" [`WS`] `MemberTarget` [`WS`] "]"
+    InlineMapTarget         :"{" [`WS`] `MemberTarget` [`WS`] ":" [`WS`] `MemberTarget` [`WS`] "}"
     EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     EntityTypeName          :%s"service" / %s"resource"
     OperationShape          :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
@@ -211,6 +214,10 @@ string support defined in :rfc:`7405`.
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
     InlineAggregateShape    :":=" [`WS`] `TraitStatements` [`ForResource`] [`Mixins`]
                             :   [`WS`] `ShapeMembers`
+
+.. versionadded:: 2.1
+   The ``MemberTarget``, ``InlineListTarget``, and ``InlineMapTarget``
+   productions were added to support inline collection declarations.
 
 .. rubric:: Traits
 
@@ -347,6 +354,11 @@ version greater than or equal to ``2.1`` and less than ``3.0``:
         {
             "smithy": "2.1"
         }
+
+.. versionadded:: 2.1
+   Version ``2.1`` introduces :ref:`inline collection declarations
+   <idl-inline-collections>`, which allow list and map shapes to be declared
+   directly in member target positions.
 
 .. rubric:: Version compatibility
 
@@ -953,6 +965,17 @@ Traits can be applied to the list shape and its member:
         }
 
 
+.. versionadded:: 2.1
+   Lists can also be declared inline using ``[Target]`` syntax. See
+   :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           myList: [String]
+       }
+
+
 .. _idl-map:
 
 Map shapes
@@ -1047,6 +1070,17 @@ Traits can be applied to the map shape and its members:
                 }
             }
         }
+
+
+.. versionadded:: 2.1
+   Maps can also be declared inline using ``{Key: Value}`` syntax. See
+   :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           tags: {String: String}
+       }
 
 
 .. _idl-structure:
@@ -1162,6 +1196,17 @@ Is exactly equivalent to:
         normative: Boolean
     }
 
+.. versionadded:: 2.1
+   Structure members can use :ref:`inline collection syntax
+   <idl-inline-collections>` to declare list and map targets directly:
+
+   .. code-block:: smithy
+
+       structure Example {
+           names: [String]
+           metadata: {String: String}
+       }
+
 
 .. _idl-union:
 
@@ -1215,6 +1260,17 @@ The following example defines a union shape with several members:
                 }
             }
         }
+
+.. versionadded:: 2.1
+   Union members can also use :ref:`inline collection syntax
+   <idl-inline-collections>`:
+
+   .. code-block:: smithy
+
+       union MyUnion {
+           names: [String]
+           tags: {String: String}
+       }
 
 
 .. _idl-service:
@@ -1421,6 +1477,68 @@ The suffixes for the generated names can be customized using the
             userId: String
         }
     }
+
+
+.. _idl-inline-collections:
+
+Inline collection declarations
+++++++++++++++++++++++++++++++
+
+.. versionadded:: 2.1
+
+Members can declare list and map shapes inline using a compact syntax instead
+of referencing a separately defined shape.
+
+A list is declared inline using ``[Target]``:
+
+.. code-block:: smithy
+
+    structure Playlist {
+        songs: [String]
+    }
+
+A map is declared inline using ``{KeyTarget: ValueTarget}``:
+
+.. code-block:: smithy
+
+    structure Metadata {
+        tags: {String: String}
+    }
+
+Inline collections can be nested:
+
+.. code-block:: smithy
+
+    structure Account {
+        // A map from group name to a list of user IDs
+        groups: {String: [String]}
+    }
+
+.. note::
+   Nesting is supported up to 3 levels deep.
+
+**Synthetic shapes**
+
+Inline collection declarations produce assembler-generated *synthetic shapes*.
+These shapes are:
+
+- Named using a ``_Synthetic`` prefix derived from their content (e.g.,
+  ``_SyntheticListOfString``, ``_SyntheticMapOfStringToString``).
+- Marked with the ``smithy.synthetic#generated`` trait.
+- Placed in the same namespace as the declaring structure.
+- Grouped: multiple members using the same inline type (e.g., two members
+  both using ``[String]``) share a single synthetic shape.
+
+**Limitations**
+
+- Inline collections require ``$version: "2.1"`` or later.
+- Traits cannot be applied to synthetic shapes. Collections requiring
+  shape-level traits (such as ``@sparse``, ``@uniqueItems``, or ``@length``)
+  must use explicit shape definitions.
+- The ``apply`` statement cannot target synthetic shapes.
+- Shape names starting with ``_Synthetic`` SHOULD NOT be used for
+  user-defined shapes to avoid potential conflicts with
+  assembler-generated names.
 
 
 .. _idl-resource:
