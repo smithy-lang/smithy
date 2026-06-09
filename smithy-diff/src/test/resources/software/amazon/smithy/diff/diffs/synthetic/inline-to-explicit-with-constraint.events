@@ -1,0 +1,11 @@
+[NOTE] smithy.example#TagList: Added list `smithy.example#TagList` | AddedShape
+-----
+[WARNING] smithy.example#MyStructure$tags: The shape targeted by the member `smithy.example#MyStructure$tags` changed from `smithy.example#_SyntheticListOfString` (list) to `smithy.example#TagList` (list). This was determined backward compatible. This will result in the following effective differences:
+
+- [NOTE] Added trait `smithy.api#length` with value 
+  ```
+  {
+      "min": 1,
+      "max": 10
+  }
+  ``` | ChangedMemberTarget

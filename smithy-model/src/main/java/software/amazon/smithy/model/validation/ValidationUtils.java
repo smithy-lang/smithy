@@ -30,6 +30,7 @@ import software.amazon.smithy.model.validation.validators.ResourceCycleValidator
 import software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator;
 import software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator;
 import software.amazon.smithy.model.validation.validators.SingleResourceBindingValidator;
+import software.amazon.smithy.model.validation.validators.SyntheticShapeValidator;
 import software.amazon.smithy.model.validation.validators.TargetValidator;
 import software.amazon.smithy.model.validation.validators.TraitConflictValidator;
 import software.amazon.smithy.model.validation.validators.TraitTargetValidator;
@@ -65,7 +66,8 @@ public final class ValidationUtils {
             // Ensure the semantic model adheres to the requirements of shape IDs and service shape uniqueness.
             ShapeIdConflictValidator.class,
             SingleOperationBindingValidator.class,
-            SingleResourceBindingValidator.class);
+            SingleResourceBindingValidator.class,
+            SyntheticShapeValidator.class);
 
     private static final Pattern CAMEL_WORD_SPLITTER = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 

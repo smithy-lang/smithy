@@ -691,7 +691,7 @@ public class TreeTypeTest {
                 TreeType.SP,
                 TreeType.TOKEN,
                 TreeType.SP,
-                TreeType.SHAPE_ID);
+                TreeType.MEMBER_TARGET);
     }
 
     @Test

@@ -1,0 +1,3 @@
+[NOTE] smithy.example#TagList: Removed list `smithy.example#TagList`. All previous references now use inline collection syntax. See the ChangedMemberTarget evaluator for any effective differences. | RemovedShape
+-----
+[WARNING] smithy.example#MyStructure$tags: The shape targeted by the member `smithy.example#MyStructure$tags` changed from `smithy.example#TagList` (list) to `smithy.example#_SyntheticListOfString` (list). This was determined backward compatible. | ChangedMemberTarget

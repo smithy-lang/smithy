@@ -64,6 +64,13 @@ built-in type is available hurts the developer experience of the generator
 and should be avoided. Furthermore, changing the names of these types in the
 Smithy model should not impact generated code.
 
+.. versionadded:: 2.1
+   :ref:`Inline collection declarations <idl-inline-collections>` produce
+   synthetic list and map shapes with auto-generated names (e.g.,
+   ``_SyntheticListOfString``). These names are implementation details and
+   SHOULD NOT be used as generated type names. Generators can detect synthetic
+   shapes by checking for the ``smithy.synthetic#generated`` trait.
+
 The following shapes *are* expected to translate into named generated types
 or methods in the target environment:
 
