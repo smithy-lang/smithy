@@ -84,3 +84,4 @@ software.amazon.smithy.model.traits.DeletesResourcesTrait$Provider
 software.amazon.smithy.model.traits.PutsResourcesTrait$Provider
 software.amazon.smithy.model.traits.ReadsResourcesTrait$Provider
 software.amazon.smithy.model.traits.UpdatesResourcesTrait$Provider
+software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait$Provider

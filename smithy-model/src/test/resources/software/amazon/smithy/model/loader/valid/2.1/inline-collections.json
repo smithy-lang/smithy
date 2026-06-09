@@ -1,0 +1,61 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#MyStructure": {
+            "type": "structure",
+            "members": {
+                "strings": {
+                    "target": "smithy.example#_SyntheticListOfString"
+                },
+                "tags": {
+                    "target": "smithy.example#_SyntheticMapOfStringToString"
+                },
+                "nested": {
+                    "target": "smithy.example#_SyntheticMapOfStringTo_SyntheticListOfInteger"
+                }
+            }
+        },
+        "smithy.example#_SyntheticListOfString": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        },
+        "smithy.example#_SyntheticMapOfStringToString": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        },
+        "smithy.example#_SyntheticListOfInteger": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#Integer"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        },
+        "smithy.example#_SyntheticMapOfStringTo_SyntheticListOfInteger": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.example#_SyntheticListOfInteger"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        }
+    }
+}

@@ -559,6 +559,15 @@ to a shape. The ``trait`` attribute supports the following properties:
 
         [trait|deprecated]
 
+    .. versionadded:: 2.1
+       To select synthetic shapes created by :ref:`inline collection
+       declarations <idl-inline-collections>`, use the fully qualified trait
+       ID:
+
+       .. code-block:: none
+
+           [trait|smithy.synthetic#generated]
+
     Traits are converted to their serialized :token:`node <smithy:NodeValue>` form
     when matching against their values. Only string, boolean, and numeric
     values can be compared using a :ref:`string comparator <string-comparators>`.

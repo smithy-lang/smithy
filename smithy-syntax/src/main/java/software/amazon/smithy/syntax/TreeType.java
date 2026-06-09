@@ -368,7 +368,7 @@ public enum TreeType {
                 tokenizer.expect(IdlToken.COLON);
                 tokenizer.next();
                 optionalSpaces(tokenizer);
-                SHAPE_ID.parse(tokenizer);
+                MEMBER_TARGET.parse(tokenizer);
             });
         }
     },
@@ -380,6 +380,60 @@ public enum TreeType {
                 tokenizer.expect(IdlToken.DOLLAR);
                 tokenizer.next();
                 IDENTIFIER.parse(tokenizer);
+            });
+        }
+    },
+
+    MEMBER_TARGET {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                switch (tokenizer.getCurrentToken()) {
+                    case LBRACKET:
+                        INLINE_LIST_TARGET.parse(tokenizer);
+                        break;
+                    case LBRACE:
+                        INLINE_MAP_TARGET.parse(tokenizer);
+                        break;
+                    default:
+                        SHAPE_ID.parse(tokenizer);
+                        break;
+                }
+            });
+        }
+    },
+
+    INLINE_LIST_TARGET {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACKET);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                MEMBER_TARGET.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACKET);
+                tokenizer.next();
+            });
+        }
+    },
+
+    INLINE_MAP_TARGET {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                MEMBER_TARGET.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                MEMBER_TARGET.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
             });
         }
     },

@@ -24,6 +24,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -37,6 +39,7 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -62,6 +65,9 @@ final class IdlModelLoader {
 
     /** Only allow nesting up to 64 arrays/objects in node values. */
     private static final int MAX_NESTING_LEVEL = 64;
+
+    /** Maximum nesting depth for inline collection declarations. */
+    private static final int MAX_INLINE_COLLECTION_DEPTH = 3;
 
     static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY,
@@ -96,6 +102,7 @@ final class IdlModelLoader {
     private final String filename;
     private final IdlInternalTokenizer tokenizer;
     private final Map<String, ShapeId> useShapes = new HashMap<>();
+    private final Set<ShapeId> emittedSyntheticShapes = new HashSet<>();
     private final Function<CharSequence, String> stringTable;
     private Consumer<LoadOperation> operations;
     private Version modelVersion = Version.VERSION_1_0;
@@ -798,7 +805,7 @@ final class IdlModelLoader {
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
             tokenizer.skipSpaces();
-            String target = internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
+            String target = parseMemberTarget();
             addForwardReference(target, memberBuilder::target);
         }
 
@@ -823,6 +830,144 @@ final class IdlModelLoader {
         // Only add the member once fully parsed.
         operation.addMember(memberBuilder);
         addTraits(memberBuilder.getId(), memberTraits);
+    }
+
+    /**
+     * Parses a member target, which can be a shape ID, an inline list ([Target]),
+     * or an inline map ({KeyTarget: ValueTarget}). Returns the target as a string.
+     */
+    private String parseMemberTarget() {
+        return parseMemberTarget(0);
+    }
+
+    private String parseMemberTarget(int depth) {
+        switch (tokenizer.getCurrentToken()) {
+            case LBRACKET:
+                return parseInlineListTarget(depth);
+            case LBRACE:
+                return parseInlineMapTarget(depth);
+            default:
+                return internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
+        }
+    }
+
+    private String parseInlineListTarget(int depth) {
+        if (!modelVersion.supportsInlineCollections()) {
+            throw syntax("Inline collection syntax requires Smithy IDL version 2.1 or later");
+        }
+        if (depth >= MAX_INLINE_COLLECTION_DEPTH) {
+            throw syntax("Inline collections cannot be nested more than "
+                    + MAX_INLINE_COLLECTION_DEPTH + " levels deep");
+        }
+
+        SourceLocation location = tokenizer.getCurrentTokenLocation();
+        tokenizer.expect(IdlToken.LBRACKET);
+        tokenizer.next();
+        tokenizer.skipWs();
+
+        String innerTarget = parseMemberTarget(depth + 1);
+
+        tokenizer.skipWs();
+        tokenizer.expect(IdlToken.RBRACKET);
+        tokenizer.next();
+
+        // Compute the synthetic name from the target string as written.
+        String syntheticName = LoaderUtils.listName(innerTarget);
+        ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+
+        // Create the synthetic list shape if not already emitted.
+        if (emittedSyntheticShapes.add(syntheticId)) {
+            ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
+            ListShape.Builder listBuilder = ListShape.builder()
+                    .id(syntheticId)
+                    .source(location)
+                    .member(MemberShape.builder()
+                            .id(syntheticId.withMember("member"))
+                            .target(resolvedTarget)
+                            .source(location)
+                            .build())
+                    .addTrait(new SyntheticShapeTrait());
+            addOperation(createShape(listBuilder));
+        }
+
+        return syntheticId.toString();
+    }
+
+    private String parseInlineMapTarget(int depth) {
+        if (!modelVersion.supportsInlineCollections()) {
+            throw syntax("Inline collection syntax requires Smithy IDL version 2.1 or later");
+        }
+        if (depth >= MAX_INLINE_COLLECTION_DEPTH) {
+            throw syntax("Inline collections cannot be nested more than "
+                    + MAX_INLINE_COLLECTION_DEPTH + " levels deep");
+        }
+
+        SourceLocation location = tokenizer.getCurrentTokenLocation();
+        tokenizer.expect(IdlToken.LBRACE);
+        tokenizer.next();
+        tokenizer.skipWs();
+
+        String keyTarget = parseMemberTarget(depth + 1);
+
+        tokenizer.skipWs();
+        tokenizer.expect(IdlToken.COLON);
+        tokenizer.next();
+        tokenizer.skipWs();
+
+        String valueTarget = parseMemberTarget(depth + 1);
+
+        tokenizer.skipWs();
+        tokenizer.expect(IdlToken.RBRACE);
+        tokenizer.next();
+
+        // Compute the synthetic name from the target strings as written.
+        String syntheticName = LoaderUtils.mapName(keyTarget, valueTarget);
+        ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+
+        // Create the synthetic map shape if not already emitted.
+        if (emittedSyntheticShapes.add(syntheticId)) {
+            ShapeId resolvedKey = resolveInlineTarget(keyTarget);
+            ShapeId resolvedValue = resolveInlineTarget(valueTarget);
+
+            MapShape.Builder mapBuilder = MapShape.builder()
+                    .id(syntheticId)
+                    .source(location)
+                    .key(MemberShape.builder()
+                            .id(syntheticId.withMember("key"))
+                            .target(resolvedKey)
+                            .source(location)
+                            .build())
+                    .value(MemberShape.builder()
+                            .id(syntheticId.withMember("value"))
+                            .target(resolvedValue)
+                            .source(location)
+                            .build())
+                    .addTrait(new SyntheticShapeTrait());
+            addOperation(createShape(mapBuilder));
+        }
+
+        return syntheticId.toString();
+    }
+
+    /**
+     * Resolves an inline target string to a ShapeId, checking use statements
+     * and the prelude, defaulting to the current namespace for relative names.
+     */
+    private ShapeId resolveInlineTarget(String target) {
+        if (target.contains("#")) {
+            return ShapeId.from(target);
+        }
+        // Check use statements first.
+        ShapeId used = useShapes.get(target);
+        if (used != null) {
+            return used;
+        }
+        // Check if it's a prelude shape.
+        ShapeId preludeId = ShapeId.fromParts(Prelude.NAMESPACE, target);
+        if (Prelude.isPreludeShape(preludeId)) {
+            return preludeId;
+        }
+        return ShapeId.fromParts(namespace, target);
     }
 
     private void parseForResource(LoadOperation.DefineShape operation) {
