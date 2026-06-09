@@ -1,4 +1,4 @@
-// Expected one of LBRACE('{'), LBRACKET('['), TEXT_BLOCK('"""'), STRING('"'), NUMBER, IDENTIFIER; but found POUND('#')
+// Tagged string literals require Smithy IDL version 2.1 or later
 $version: "2"
 
 namespace smithy.example

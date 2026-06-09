@@ -52,6 +52,12 @@ final class IdlNodeParser {
      */
     static Node expectAndSkipNode(IdlModelLoader loader, SourceLocation location) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
+
+        // Provide a helpful error if a tagged literal is used in a version that doesn't support it.
+        if (tokenizer.getCurrentToken() == IdlToken.POUND && TaggedStringLiteral.looksLikeTaggedLiteral(tokenizer)) {
+            throw loader.syntax("Tagged string literals require Smithy IDL version 2.1 or later");
+        }
+
         IdlToken token = tokenizer.expect(IdlToken.STRING,
                 IdlToken.TEXT_BLOCK,
                 IdlToken.NUMBER,

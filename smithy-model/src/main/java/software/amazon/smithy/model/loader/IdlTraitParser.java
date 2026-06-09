@@ -155,6 +155,11 @@ final class IdlTraitParser {
 
     private static Node parseTraitValueBody(IdlModelLoader loader, SourceLocation location) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
+
+        if (tokenizer.getCurrentToken() == IdlToken.POUND && TaggedStringLiteral.looksLikeTaggedLiteral(tokenizer)) {
+            throw loader.syntax("Tagged string literals require Smithy IDL version 2.1 or later");
+        }
+
         tokenizer.expect(IdlToken.LBRACE,
                 IdlToken.LBRACKET,
                 IdlToken.TEXT_BLOCK,
