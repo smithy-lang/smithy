@@ -1,0 +1,1 @@
+[ERROR] smithy.example#A: Waiter `A`, acceptor 1: Invalid JMESPath expression in `message` (foo.@@invalid): Syntax error at line 1 column 5: Expected ['[', '{', '*', 'A-Z|a-z|_'], but found '@' | WaitableTrait

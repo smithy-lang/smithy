@@ -1,0 +1,1 @@
+[WARNING] smithy.example#MixinWithPrivateMember$sensitiveField: The `@private` trait does not prevent a mixin member from being inherited by shapes in other namespaces, nor does it prevent new traits from being added to the inherited member. Apply `@private` to the mixin shape or target shape instead if cross-namespace access should be restricted. | PrivateMixinMember

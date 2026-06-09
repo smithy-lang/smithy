@@ -210,7 +210,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         private ShapeId output = UnitTypeTrait.UNIT;
         private final BuilderRef<Set<ShapeId>> errors = BuilderRef.forOrderedSet();
 
-        private Builder() {}
+        public Builder() {}
 
         private Builder(OperationShape shape) {
             shape.updateBuilder(this);

@@ -12,33 +12,28 @@ use smithy.test#httpRequestTests
 @httpChecksumRequired
 @http(uri: "/HttpChecksumRequired", method: "POST")
 operation HttpChecksumRequired {
-    input: HttpChecksumRequiredInputOutput,
+    input: HttpChecksumRequiredInputOutput
     output: HttpChecksumRequiredInputOutput
 }
 
-structure HttpChecksumRequiredInputOutput{
+structure HttpChecksumRequiredInputOutput {
     foo: String
 }
 
 apply HttpChecksumRequired @httpRequestTests([
     {
-        id: "RestJsonHttpChecksumRequired",
-        documentation: "Adds Content-MD5 header",
-        protocol: restJson1,
-        method: "POST",
-        uri: "/HttpChecksumRequired",
+        id: "RestJsonHttpChecksumRequired"
+        documentation: "Adds Content-MD5 header"
+        protocol: restJson1
+        method: "POST"
+        uri: "/HttpChecksumRequired"
         body: """
-        {
-            "foo":"base64 encoded md5 checksum"
-        }
-        """,
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json",
-            "Content-MD5": "iB0/3YSo7maijL0IGOgA9g=="
-        },
-        params: {
-            foo: "base64 encoded md5 checksum"
-        }
+            {
+                "foo":"base64 encoded md5 checksum"
+            }
+            """
+        bodyMediaType: "application/json"
+        headers: { "Content-Type": "application/json", "Content-MD5": "iB0/3YSo7maijL0IGOgA9g==" }
+        params: { foo: "base64 encoded md5 checksum" }
     }
 ])

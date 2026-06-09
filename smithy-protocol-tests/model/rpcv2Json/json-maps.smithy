@@ -2,20 +2,21 @@ $version: "2.0"
 
 namespace smithy.protocoltests.rpcv2Json
 
-use smithy.protocoltests.shared#FooEnumMap
+use smithy.framework#ValidationException
+use smithy.protocols#rpcv2Json
 use smithy.protocoltests.shared#GreetingStruct
 use smithy.protocoltests.shared#SparseStringMap
 use smithy.protocoltests.shared#StringSet
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
-use smithy.protocols#rpcv2Json
-use smithy.framework#ValidationException
 
 /// The example tests basic map serialization.
 operation RpcV2JsonDenseMaps {
     input: RpcV2JsonDenseMapsInputOutput
     output: RpcV2JsonDenseMapsInputOutput
-    errors: [ValidationException]
+    errors: [
+        ValidationException
+    ]
 }
 
 apply RpcV2JsonDenseMaps @httpRequestTests([
@@ -37,22 +38,12 @@ apply RpcV2JsonDenseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "denseStructMap": {
-                "foo": {
-                    "hi": "there"
-                }
-                "baz": {
-                    "hi": "bye"
-                }
+            denseStructMap: {
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -72,21 +63,11 @@ apply RpcV2JsonDenseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "denseNumberMap": {
-                "x": 0
-            }
-            "denseBooleanMap": {
-                "x": false
-            }
+            denseNumberMap: { x: 0 }
+            denseBooleanMap: { x: false }
         }
     }
     {
@@ -103,18 +84,12 @@ apply RpcV2JsonDenseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "denseSetMap": {
-                "x": []
-                "y": ["a", "b"]
+            denseSetMap: {
+                x: []
+                y: ["a", "b"]
             }
         }
     }
@@ -138,18 +113,11 @@ apply RpcV2JsonDenseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "denseStructMap": {
-                "foo": {
-                    "hi": "there"
-                }
-                "baz": {
-                    "hi": "bye"
-                }
+            denseStructMap: {
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -168,17 +136,10 @@ apply RpcV2JsonDenseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "denseNumberMap": {
-                "x": 0
-            }
-            "denseBooleanMap": {
-                "x": false
-            }
+            denseNumberMap: { x: 0 }
+            denseBooleanMap: { x: false }
         }
     }
     {
@@ -194,14 +155,11 @@ apply RpcV2JsonDenseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "denseSetMap": {
-                "x": []
-                "y": ["a", "b"]
+            denseSetMap: {
+                x: []
+                y: ["a", "b"]
             }
         }
     }
@@ -240,7 +198,6 @@ map DenseSetMap {
     value: StringSet
 }
 
-
 apply RpcV2JsonSparseMaps @httpRequestTests([
     {
         id: "RpcV2JsonRequestSparseMaps"
@@ -260,22 +217,12 @@ apply RpcV2JsonSparseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "sparseStructMap": {
-                "foo": {
-                    "hi": "there"
-                }
-                "baz": {
-                    "hi": "bye"
-                }
+            sparseStructMap: {
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -301,27 +248,13 @@ apply RpcV2JsonSparseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "sparseBooleanMap": {
-                "x": null
-            }
-            "sparseNumberMap": {
-                "x": null
-            }
-            "sparseStringMap": {
-                "x": null
-            }
-            "sparseStructMap": {
-                "x": null
-            }
+            sparseBooleanMap: { x: null }
+            sparseNumberMap: { x: null }
+            sparseStringMap: { x: null }
+            sparseStructMap: { x: null }
         }
     }
     {
@@ -338,18 +271,12 @@ apply RpcV2JsonSparseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "sparseSetMap": {
-                "x": []
-                "y": ["a", "b"]
+            sparseSetMap: {
+                x: []
+                y: ["a", "b"]
             }
         }
     }
@@ -368,19 +295,13 @@ apply RpcV2JsonSparseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "sparseSetMap": {
-                "x": []
-                "y": ["a", "b"]
-                "z": null
+            sparseSetMap: {
+                x: []
+                y: ["a", "b"]
+                z: null
             }
         }
     }
@@ -400,21 +321,11 @@ apply RpcV2JsonSparseMaps @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "sparseNumberMap": {
-                "x": 0
-            }
-            "sparseBooleanMap": {
-                "x": false
-            }
+            sparseNumberMap: { x: 0 }
+            sparseBooleanMap: { x: false }
         }
     }
 ])
@@ -437,18 +348,11 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseStructMap": {
-                "foo": {
-                    "hi": "there"
-                },
-                "baz": {
-                    "hi": "bye"
-                }
+            sparseStructMap: {
+                foo: { hi: "there" }
+                baz: { hi: "bye" }
             }
         }
     }
@@ -473,23 +377,12 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseBooleanMap": {
-                "x": null
-            }
-            "sparseNumberMap": {
-                "x": null
-            }
-            "sparseStringMap": {
-                "x": null
-            }
-            "sparseStructMap": {
-                "x": null
-            }
+            sparseBooleanMap: { x: null }
+            sparseNumberMap: { x: null }
+            sparseStringMap: { x: null }
+            sparseStructMap: { x: null }
         }
     }
     {
@@ -505,14 +398,11 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseSetMap": {
-                "x": []
-                "y": ["a", "b"]
+            sparseSetMap: {
+                x: []
+                y: ["a", "b"]
             }
         }
     }
@@ -530,15 +420,12 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseSetMap": {
-                "x": []
-                "y": ["a", "b"]
-                "z": null
+            sparseSetMap: {
+                x: []
+                y: ["a", "b"]
+                z: null
             }
         }
     }
@@ -557,17 +444,10 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseNumberMap": {
-                "x": 0
-            }
-            "sparseBooleanMap": {
-                "x": false
-            }
+            sparseNumberMap: { x: 0 }
+            sparseBooleanMap: { x: false }
         }
     }
 ])
@@ -575,7 +455,9 @@ apply RpcV2JsonSparseMaps @httpResponseTests([
 operation RpcV2JsonSparseMaps {
     input: RpcV2JsonSparseMapsInputOutput
     output: RpcV2JsonSparseMapsInputOutput
-    errors: [ValidationException]
+    errors: [
+        ValidationException
+    ]
 }
 
 structure RpcV2JsonSparseMapsInputOutput {

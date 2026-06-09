@@ -1,11 +1,12 @@
 // This file defines test cases that serialize lists in JSON documents.
-
 $version: "2.0"
 
 namespace smithy.protocoltests.rpcv2Json
 
-use smithy.protocoltests.shared#BooleanList
+use smithy.framework#ValidationException
+use smithy.protocols#rpcv2Json
 use smithy.protocoltests.shared#BlobList
+use smithy.protocoltests.shared#BooleanList
 use smithy.protocoltests.shared#FooEnumList
 use smithy.protocoltests.shared#IntegerEnumList
 use smithy.protocoltests.shared#IntegerList
@@ -15,10 +16,8 @@ use smithy.protocoltests.shared#SparseStringMap
 use smithy.protocoltests.shared#StringList
 use smithy.protocoltests.shared#StringSet
 use smithy.protocoltests.shared#TimestampList
-use smithy.protocols#rpcv2Json
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
-use smithy.framework#ValidationException
 
 /// This test case serializes JSON lists for the following cases for both
 /// input and output:
@@ -31,7 +30,9 @@ use smithy.framework#ValidationException
 operation RpcV2JsonLists {
     input: RpcV2JsonListInputOutput
     output: RpcV2JsonListInputOutput
-    errors: [ValidationException]
+    errors: [
+        ValidationException
+    ]
 }
 
 apply RpcV2JsonLists @httpRequestTests([
@@ -97,67 +98,31 @@ apply RpcV2JsonLists @httpRequestTests([
                 ]
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
-            "stringList": [
-                "foo"
-                "bar"
+            stringList: ["foo", "bar"]
+            stringSet: ["foo", "bar"]
+            integerList: [1, 2]
+            booleanList: [true, false]
+            timestampList: [1398796238, 1398796238]
+            enumList: ["Foo", "0"]
+            intEnumList: [1, 2]
+            nestedStringList: [
+                ["foo", "bar"]
+                ["baz", "qux"]
             ]
-            "stringSet": [
-                "foo"
-                "bar"
-            ]
-            "integerList": [
-                1
-                2
-            ]
-            "booleanList": [
-                true
-                false
-            ]
-            "timestampList": [
-                1398796238
-                1398796238
-            ]
-            "enumList": [
-                "Foo"
-                "0"
-            ]
-            "intEnumList": [
-                1
-                2
-            ]
-            "nestedStringList": [
-                [
-                    "foo"
-                    "bar"
-                ]
-                [
-                    "baz"
-                    "qux"
-                ]
-            ]
-            "structureList": [
+            structureList: [
                 {
-                    "a": "1"
-                    "b": "2"
+                    a: "1"
+                    b: "2"
                 }
                 {
-                    "a": "3"
-                    "b": "4"
+                    a: "3"
+                    b: "4"
                 }
             ]
-            "blobList": [
-                "foo"
-                "bar"
-            ]
+            blobList: ["foo", "bar"]
         }
     }
     {
@@ -171,14 +136,8 @@ apply RpcV2JsonLists @httpRequestTests([
                 "stringList": []
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
             stringList: []
         }
@@ -247,63 +206,30 @@ apply RpcV2JsonLists @httpResponseTests([
                 ]
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "stringList": [
-                "foo"
-                "bar"
+            stringList: ["foo", "bar"]
+            stringSet: ["foo", "bar"]
+            integerList: [1, 2]
+            booleanList: [true, false]
+            timestampList: [1398796238, 1398796238]
+            enumList: ["Foo", "0"]
+            intEnumList: [1, 2]
+            nestedStringList: [
+                ["foo", "bar"]
+                ["baz", "qux"]
             ]
-            "stringSet": [
-                "foo"
-                "bar"
-            ]
-            "integerList": [
-                1
-                2
-            ]
-            "booleanList": [
-                true
-                false
-            ]
-            "timestampList": [
-                1398796238
-                1398796238
-            ]
-            "enumList": [
-                "Foo"
-                "0"
-            ]
-            "intEnumList": [
-                1
-                2
-            ]
-            "nestedStringList": [
-                [
-                    "foo"
-                    "bar"
-                ]
-                [
-                    "baz"
-                    "qux"
-                ]
-            ]
-            "structureList": [
+            structureList: [
                 {
-                    "a": "1"
-                    "b": "2"
+                    a: "1"
+                    b: "2"
                 }
                 {
-                    "a": "3"
-                    "b": "4"
+                    a: "3"
+                    b: "4"
                 }
             ]
-            "blobList": [
-                "foo"
-                "bar"
-            ]
+            blobList: ["foo", "bar"]
         }
     }
     {
@@ -316,10 +242,7 @@ apply RpcV2JsonLists @httpResponseTests([
                 "stringList": []
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
             stringList: []
         }
@@ -348,21 +271,14 @@ structure StructureListMember {
     b: String
 }
 
-
 @httpRequestTests([
     {
         id: "RpcV2JsonRequestSparseMapsSerializeNullValues"
         documentation: "Serializes null values in maps"
         protocol: rpcv2Json
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "sparseStringMap": {
@@ -370,9 +286,7 @@ structure StructureListMember {
                 }
             }"""
         params: {
-            "sparseStringMap": {
-                "foo": null
-            }
+            sparseStringMap: { foo: null }
         }
         method: "POST"
         uri: "/service/RpcV2JsonProtocol/operation/SparseNullsOperation"
@@ -382,14 +296,8 @@ structure StructureListMember {
         documentation: "Serializes null values in lists"
         protocol: rpcv2Json
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         body: """
             {
                 "sparseStringList": [
@@ -397,9 +305,7 @@ structure StructureListMember {
                 ]
             }"""
         params: {
-            "sparseStringList": [
-                null
-            ]
+            sparseStringList: [null]
         }
         method: "POST"
         uri: "/service/RpcV2JsonProtocol/operation/SparseNullsOperation"
@@ -418,14 +324,9 @@ structure StructureListMember {
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseStringMap": {
-                "foo": null
-            }
+            sparseStringMap: { foo: null }
         }
     }
     {
@@ -440,14 +341,9 @@ structure StructureListMember {
                 ]
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
-            "sparseStringList": [
-                null
-            ]
+            sparseStringList: [null]
         }
     }
 ])

@@ -24,7 +24,7 @@ dependencies = [
     "standard-imghdr==3.13.0",
 
     # Allows writing docs in markdown
-    "myst-parser==5.0.0"
+    "myst-parser==5.1.0"
 ]
 
 [project.entry-points."pygments.lexers"]

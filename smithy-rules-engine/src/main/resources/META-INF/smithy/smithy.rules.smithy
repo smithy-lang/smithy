@@ -222,7 +222,7 @@ structure contextParam {
 @trait(selector: "operation")
 map staticContextParams {
     /// The rule-set parameter name.
-    key: String,
+    key: String
 
     /// The static parameter definition.
     value: StaticContextParamDefinition
@@ -234,7 +234,7 @@ map staticContextParams {
 @trait(selector: "operation")
 map operationContextParams {
     /// The rule-set parameter name.
-    key: String,
+    key: String
 
     /// The static parameter definition.
     value: OperationContextParamDefinition
@@ -246,7 +246,7 @@ map operationContextParams {
 @trait(selector: "service")
 map clientContextParams {
     /// The rule-set parameter name.
-    key: String,
+    key: String
 
     /// The client parameter definition.
     value: ClientContextParamDefinition
@@ -276,7 +276,7 @@ structure OperationContextParamDefinition {
 structure ClientContextParamDefinition {
     /// The Smithy shape type that should be used to generate a client configurable for the rule-set parameter.
     @required
-    type: ShapeType,
+    type: ShapeType
 
     /// Documentation string to be generated with the client parameter.
     documentation: String
@@ -305,13 +305,13 @@ list EndpointTestList {
 @private
 structure EndpointTest {
     /// Documentation describing the test case.
-    documentation: String,
+    documentation: String
 
     /// Defines rule-set parameters and values to use for testing rules-engine.
-    params: Document,
+    params: Document
 
     /// Defines a set of service operation configurations used for testing the rules-engine.
-    operationInputs: OperationInputs,
+    operationInputs: OperationInputs
 
     /// The expected outcome of the test case.
     @required
@@ -332,14 +332,14 @@ list OperationInputs {
 structure OperationInput {
     /// The name of the service operation targeted by the test.
     @required
-    operationName: String,
+    operationName: String
 
     /// Defines the input parameters used to generate the operation request.
     /// These parameters MUST be compatible with the input of the operation.
-    operationParams: Document,
+    operationParams: Document
 
     /// Defines the set of rule-set built-ins and their corresponding values to be set.
-    builtInParams: Document,
+    builtInParams: Document
 
     /// Defines the set of client configuration parameters to be set.
     clientParams: Document
@@ -350,7 +350,7 @@ structure OperationInput {
 @private
 union EndpointTestExpectation {
     /// A test case expectation resulting in an error.
-    error: String,
+    error: String
 
     /// A test case expectation resulting in an endpoint.
     endpoint: EndpointExpectation
@@ -361,10 +361,10 @@ union EndpointTestExpectation {
 @private
 structure EndpointExpectation {
     /// The expected endpoint URL to be resolved for this test case.
-    url: String,
+    url: String
 
     /// The transport headers to be set for this test case.
-    headers: EndpointHeaders,
+    headers: EndpointHeaders
 
     /// The properties for the endpoint for this test case.
     properties: Properties
@@ -375,7 +375,7 @@ structure EndpointExpectation {
 @private
 map EndpointHeaders {
     /// The transport header name.
-    key: String,
+    key: String
 
     /// The transport header values.
     value: EndpointHeaderValue
@@ -394,7 +394,7 @@ list EndpointHeaderValue {
 @private
 map Properties {
     /// The property name.
-    key: String,
+    key: String
 
     /// The property value.
     value: Document

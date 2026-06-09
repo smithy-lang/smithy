@@ -11,7 +11,6 @@ use smithy.protocols#rpcv2Cbor
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-
 @service(sdkId: "Query Compatible RpcV2 Protocol")
 @sigv4(name: "querycompatiblerpcv2protocol")
 @rpcv2Cbor
@@ -23,7 +22,6 @@ service QueryCompatibleRpcV2Protocol {
         QueryCompatibleOperation
     ]
 }
-
 
 @idempotent
 operation QueryCompatibleOperation {

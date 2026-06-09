@@ -26,6 +26,5 @@ tasks {
 }
 
 smithy {
-    format.set(false)
     smithyBuildConfigs.set(project.files())
 }

@@ -27,6 +27,71 @@ service Weather {
 
 service UntaggedService {}
 
+@tagEnabled(apiConfig: {
+    tagApi: AddTagsToResource
+    untagApi: RemoveTagsFromResource
+    listTagsApi: DescribeTagsForResource
+})
+service RenamedTaggingService {
+    version: "2006-03-01"
+    resources: [Plot]
+    operations: [AddTagsToResource, RemoveTagsFromResource, DescribeTagsForResource]
+}
+
+operation AddTagsToResource {
+    input := {
+        @required
+        resourceArn: String
+        @length(max: 128)
+        tags: TagList
+    }
+    output := { }
+}
+
+operation RemoveTagsFromResource {
+    input := {
+        @required
+        resourceArn: String
+        @required
+        tagKeys: TagKeys
+    }
+    output := { }
+}
+
+@readonly
+operation DescribeTagsForResource {
+    input := {
+        @required
+        resourceArn: String
+    }
+    output := {
+        @length(max: 128)
+        tags: TagList
+    }
+}
+
+@arn(template: "plot/{plotId}")
+@taggable(property: "tags")
+resource Plot {
+    identifiers: { plotId: String }
+    properties: {
+        name: String
+        tags: TagList
+    }
+    create: CreatePlot
+}
+
+operation CreatePlot {
+    input := for Plot {
+        $name
+        $tags
+    }
+    output := for Plot {
+        @required
+        $plotId
+    }
+}
+
 structure Tag {
     key: String
     value: String

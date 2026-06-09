@@ -15,6 +15,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -65,6 +66,51 @@ final class ApplyResourceBasedTargets implements ShapeModifier {
                 memberBuilder.target(resource.getProperties().get(name));
             }
         }
+    }
+
+    // Validate that resource being used is not a private shape from another
+    // namespace. This is generally validated by PrivateAccessValidator, but
+    // the `for` binding is not persisted as a relationship, so the validator
+    // can't discover it.
+    @Override
+    public void modifyShape(
+            AbstractShapeBuilder<?, ?> builder,
+            Map<String, MemberShape.Builder> memberBuilders,
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> shapeMap
+    ) {
+        // First, check to see if the resource is private or not.
+        Shape fromShape = shapeMap.apply(resourceId);
+        if (fromShape == null || !fromShape.hasTrait(PrivateTrait.ID)) {
+            return;
+        }
+
+        // If it is private, check to see if the current shape is in the same
+        // namespace.
+        if (resourceId.getNamespace().equals(builder.getId().getNamespace())) {
+            return;
+        }
+
+        // Emit a validation event using the same ID as PrivateAccessValidator
+        String message = String.format(
+                "This shape has an invalid for relationship that targets a private shape, `%s`, in another namespace.",
+                resourceId);
+
+        ValidationEvent event = ValidationEvent.builder()
+                .id("PrivateAccess")
+                // Severity is set to danger because this was added well after
+                // resource-based target elision, so it could break people.
+                // As a danger, it can at least be suppressed.
+                .severity(Severity.DANGER)
+                .shapeId(builder.getId())
+                .sourceLocation(builder.getSourceLocation())
+                .message(message)
+                .build();
+
+        if (events == null) {
+            events = new ArrayList<>(1);
+        }
+        events.add(event);
     }
 
     private void fromShapeIsNotResource(MemberShape.Builder memberBuilder, Shape fromShape) {

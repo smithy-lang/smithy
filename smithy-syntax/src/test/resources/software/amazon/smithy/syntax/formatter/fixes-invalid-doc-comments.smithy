@@ -39,7 +39,7 @@ structure Foo {
     @length(min: 1)
     baz: String = ""
 
-    /// 18 (TODO: Fix trailing comment after VALUE_ASSIGNMENT)
+    /// 18 (change)
 }
 
 /// 19 (change)

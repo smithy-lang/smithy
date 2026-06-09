@@ -2,9 +2,8 @@ $version: "2.0"
 
 namespace smithy.protocoltests.rpcv2Json
 
-use smithy.test#httpRequestTests
-use smithy.test#httpResponseTests
 use smithy.protocols#rpcv2Json
+use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
 ///
@@ -17,7 +16,10 @@ use smithy.protocols#rpcv2Json
 @idempotent
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput
-    errors: [InvalidGreeting, ComplexError]
+    errors: [
+        InvalidGreeting
+        ComplexError
+    ]
 }
 
 structure GreetingWithErrorsOutput {
@@ -35,14 +37,9 @@ apply InvalidGreeting @httpResponseTests([
         id: "RpcV2JsonResponseInvalidGreetingError"
         documentation: "Parses simple RpcV2 JSON errors"
         protocol: rpcv2Json
-        params: {
-            Message: "Hi"
-        }
+        params: { Message: "Hi" }
         code: 400
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: """
             {
                 "__type": "smithy.protocoltests.rpcv2Json#InvalidGreeting",
@@ -70,15 +67,10 @@ apply ComplexError @httpResponseTests([
         protocol: rpcv2Json
         params: {
             TopLevel: "Top level"
-            Nested: {
-                Foo: "bar"
-            }
+            Nested: { Foo: "bar" }
         }
         code: 400
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: """
             {
                 "__type": "smithy.protocoltests.rpcv2Json#ComplexError",
@@ -93,10 +85,7 @@ apply ComplexError @httpResponseTests([
         id: "RpcV2JsonResponseEmptyComplexError"
         protocol: rpcv2Json
         code: 400
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         body: """
             {
                 "__type": "smithy.protocoltests.rpcv2Json#ComplexError"

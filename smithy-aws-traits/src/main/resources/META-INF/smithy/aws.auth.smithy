@@ -37,7 +37,7 @@ list cognitoUserPoolsScopes {
     selector: "service"
     breakingChanges: [
         {
-            change: "remove",
+            change: "remove"
             message: """
                 Removing the existing authentication scheme is not backward compatible \
                 and can break existing clients' authentication."""
@@ -70,7 +70,7 @@ structure sigv4 {
     selector: "service[trait|aws.auth#sigv4]"
     breakingChanges: [
         {
-            change: "remove",
+            change: "remove"
             message: """
                 Removing the existing authentication scheme is not backward compatible \
                 and can break existing clients' authentication."""

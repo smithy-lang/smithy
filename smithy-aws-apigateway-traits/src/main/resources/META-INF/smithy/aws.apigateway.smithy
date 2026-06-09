@@ -42,9 +42,7 @@ map authorizers {
 @tags(["internal"])
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.apigateway#mockIntegration"
-    ]
+    conflicts: ["aws.apigateway#mockIntegration"]
 )
 structure integration {
     /// The type of integration with the specified backend.
@@ -119,6 +117,7 @@ structure integration {
 
     /// The ARN of an ALB or NLB listener for private integrations using
     /// VPC Links V2.
+    @suppress(["RepeatedShapeName"])
     integrationTarget: String
 }
 
@@ -127,9 +126,7 @@ structure integration {
 @tags(["internal"])
 @trait(
     selector: ":test(service, resource, operation)"
-    conflicts: [
-        "aws.apigateway#integration"
-    ]
+    conflicts: ["aws.apigateway#integration"]
 )
 structure mockIntegration {
     /// Specifies how a request payload of unmapped content type is passed
@@ -446,6 +443,7 @@ enum PassThroughBehavior {
 enum PayloadFormatVersion {
     /// Specifies 1.0 version of the format used by the authorizer
     V1_0 = "1.0"
+
     /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
 }

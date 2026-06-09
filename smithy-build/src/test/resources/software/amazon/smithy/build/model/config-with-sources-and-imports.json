@@ -1,0 +1,5 @@
+{
+    "version": "1.0",
+    "sources": ["../simple-model.json"],
+    "imports": ["../resource-model.json"]
+}

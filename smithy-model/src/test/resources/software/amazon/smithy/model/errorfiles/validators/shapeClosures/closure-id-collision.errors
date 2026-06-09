@@ -1,0 +1,1 @@
+[ERROR] -: Shape closure ids must not match the ids of shapes in the model, but `com.example#Foo` does. | ShapeClosure

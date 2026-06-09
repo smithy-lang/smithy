@@ -1006,6 +1006,53 @@ shape IDs.
     }
 
 
+.. _includeClosures-transform:
+
+includeClosures
+---------------
+
+Filters the model down to the shapes in one or more
+:ref:`shape closures <shape-closures>`. Closures are defined in the model
+with the :ref:`shapeClosures <shapeClosures-metadata>` metadata key.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - closures
+      - ``[string]``
+      - **Required**. The ids of the closures to include in the model.
+        Each id MUST refer to a closure declared in the model's
+        :ref:`shapeClosures <shapeClosures-metadata>` metadata.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "includeClosures",
+                        "args": {
+                            "closures": ["com.example#EventShapes"]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+.. note::
+
+    This transformer does not remove shapes from the prelude and does not apply
+    renames. Renames may be applied by using the
+    :ref:`flattenClosureNamespaces <flattenClosureNamespaces>` transformer.
+
+
 .. _excludeTags-transform:
 
 excludeTags
@@ -1657,6 +1704,51 @@ long as they don't conflict with a shape within the
                             "namespace": "ns.foo",
                             "service": "ns.bar#MyService",
                             "includeTagged": ["baz", "qux"]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+
+.. _flattenClosureNamespaces:
+
+flattenClosureNamespaces
+------------------------
+
+Flattens namespaces of any shapes in a :ref:`shape closure <shape-closures>`
+into a target namespace, applying any renames declared by the closure. Shapes
+outside the closure are left untouched.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - namespace
+      - ``string``
+      - **REQUIRED** The target namespace.
+    * - closure
+      - ``string``
+      - **REQUIRED** The id of the closure to flatten. The id MUST refer to
+        a closure declared in the model's
+        :ref:`shapeClosures <shapeClosures-metadata>` metadata.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "flattenClosureNamespaces",
+                        "args": {
+                            "namespace": "com.example.events",
+                            "closure": "com.example#EventShapes"
                         }
                     }
                 ]

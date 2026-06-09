@@ -1,0 +1,1 @@
+[WARNING] -: Shape closure `com.example#NameConflict` contains shapes whose names conflict case-insensitively: [com.a#Widget, com.b#widget]. | ShapeClosure.NameConflicts.com.example#NameConflict

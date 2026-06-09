@@ -12,14 +12,8 @@ use smithy.test#httpResponseTests
         protocol: rpcv2Json
         documentation: "Serializes a simple big decimal value as a JSON string to preserve precision."
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigDecimalOperation"
@@ -27,9 +21,7 @@ use smithy.test#httpResponseTests
             {
                 "value": "1.5"
             }"""
-        params: {
-            value: 1.5
-        }
+        params: { value: 1.5 }
     }
     {
         id: "RpcV2JsonRequestBigDecimalHighPrecision"
@@ -38,14 +30,8 @@ use smithy.test#httpResponseTests
             Serializes a big decimal value that exceeds double precision in the decimal
             portion. Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigDecimalOperation"
@@ -53,9 +39,7 @@ use smithy.test#httpResponseTests
             {
                 "value": "0.100000000000000000000001"
             }"""
-        params: {
-            value: 0.100000000000000000000001
-        }
+        params: { value: 0.100000000000000000000001 }
     }
     {
         id: "RpcV2JsonRequestBigDecimalNegativeHighPrecision"
@@ -65,14 +49,8 @@ use smithy.test#httpResponseTests
             the decimal portion. Implementations use JSON strings to preserve this
             precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigDecimalOperation"
@@ -80,9 +58,7 @@ use smithy.test#httpResponseTests
             {
                 "value": "-0.100000000000000000000001"
             }"""
-        params: {
-            value: -0.100000000000000000000001
-        }
+        params: { value: -0.100000000000000000000001 }
     }
     {
         id: "RpcV2JsonRequestBigDecimalLargeWithFraction"
@@ -91,14 +67,8 @@ use smithy.test#httpResponseTests
             Serializes a big decimal value that exceeds double precision in the integer
             portion. Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigDecimalOperation"
@@ -106,9 +76,7 @@ use smithy.test#httpResponseTests
             {
                 "value": "100000000000000000000001.0"
             }"""
-        params: {
-            value: 100000000000000000000001.0
-        }
+        params: { value: 100000000000000000000001.0 }
     }
 ])
 @httpResponseTests([
@@ -117,19 +85,14 @@ use smithy.test#httpResponseTests
         protocol: rpcv2Json
         documentation: "Serializes a simple big decimal value as a JSON string to preserve precision."
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "1.5"
             }"""
         code: 200
-        params: {
-            value: 1.5
-        }
+        params: { value: 1.5 }
     }
     {
         id: "RpcV2JsonResponseBigDecimalHighPrecision"
@@ -138,19 +101,14 @@ use smithy.test#httpResponseTests
             Serializes a big decimal value that exceeds double precision in the decimal
             portion. Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "0.100000000000000000000001"
             }"""
         code: 200
-        params: {
-            value: 0.100000000000000000000001
-        }
+        params: { value: 0.100000000000000000000001 }
     }
     {
         id: "RpcV2JsonResponseBigDecimalNegativeHighPrecision"
@@ -160,19 +118,14 @@ use smithy.test#httpResponseTests
             the decimal portion. Implementations use JSON strings to preserve this
             precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "-0.100000000000000000000001"
             }"""
         code: 200
-        params: {
-            value: -0.100000000000000000000001
-        }
+        params: { value: -0.100000000000000000000001 }
     }
     {
         id: "RpcV2JsonResponseBigDecimalLargeWithFraction"
@@ -181,19 +134,14 @@ use smithy.test#httpResponseTests
             Serializes a big decimal value that exceeds double precision in the integer
             portion. Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "100000000000000000000001.0"
             }"""
         code: 200
-        params: {
-            value: 100000000000000000000001.0
-        }
+        params: { value: 100000000000000000000001.0 }
     }
 ])
 operation BigDecimalOperation {
@@ -211,14 +159,8 @@ structure BigDecimalStructure {
         protocol: rpcv2Json
         documentation: "Serializes a simple big integer value as a JSON string to preserve precision."
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigIntegerOperation"
@@ -226,9 +168,7 @@ structure BigDecimalStructure {
             {
                 "value": "42"
             }"""
-        params: {
-            value: 42
-        }
+        params: { value: 42 }
     }
     {
         id: "RpcV2JsonRequestBigIntegerExceedingLongRange"
@@ -237,14 +177,8 @@ structure BigDecimalStructure {
             Serializes a big integer value that exceeds the precision of a long.
             Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigIntegerOperation"
@@ -252,9 +186,7 @@ structure BigDecimalStructure {
             {
                 "value": "9223372036854775808"
             }"""
-        params: {
-            value: 9223372036854775808
-        }
+        params: { value: 9223372036854775808 }
     }
     {
         id: "RpcV2JsonRequestBigIntegerNegativeLargeValue"
@@ -263,14 +195,8 @@ structure BigDecimalStructure {
             Serializes a negative big integer value that exceeds the precision of a long.
             Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/BigIntegerOperation"
@@ -278,9 +204,7 @@ structure BigDecimalStructure {
             {
                 "value": "-9223372036854775809"
             }"""
-        params: {
-            value: -9223372036854775809
-        }
+        params: { value: -9223372036854775809 }
     }
 ])
 @httpResponseTests([
@@ -289,19 +213,14 @@ structure BigDecimalStructure {
         protocol: rpcv2Json
         documentation: "Serializes a simple big integer value as a JSON string to preserve precision."
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "42"
             }"""
         code: 200
-        params: {
-            value: 42
-        }
+        params: { value: 42 }
     }
     {
         id: "RpcV2JsonResponseBigIntegerExceedingLongRange"
@@ -310,19 +229,14 @@ structure BigDecimalStructure {
             Serializes a big integer value that exceeds the precision of a long.
             Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "9223372036854775808"
             }"""
         code: 200
-        params: {
-            value: 9223372036854775808
-        }
+        params: { value: 9223372036854775808 }
     }
     {
         id: "RpcV2JsonResponseBigIntegerNegativeLargeValue"
@@ -331,19 +245,14 @@ structure BigDecimalStructure {
             Serializes a negative big integer value that exceeds the precision of a long.
             Implementations use JSON strings to preserve this precision."""
         tags: ["arbitrary-precision"]
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
                 "value": "-9223372036854775809"
             }"""
         code: 200
-        params: {
-            value: -9223372036854775809
-        }
+        params: { value: -9223372036854775809 }
     }
 ])
 operation BigIntegerOperation {

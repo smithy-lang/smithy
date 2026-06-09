@@ -1,0 +1,1 @@
+[ERROR] -: Shape closure `com.example#NoRoots` must define at least one of `includeNamespaces` or `includeBySelector`. | ShapeClosure
