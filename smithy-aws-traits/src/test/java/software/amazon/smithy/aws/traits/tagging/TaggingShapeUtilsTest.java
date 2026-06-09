@@ -36,4 +36,39 @@ public class TaggingShapeUtilsTest {
     public void isArnMemberDesiredName(String arnMember, boolean expected) {
         assertEquals(expected, TaggingShapeUtils.isArnMemberDesiredName(arnMember));
     }
+
+    public static List<Arguments> tagMembers() {
+        return ListUtils.of(
+                // accepted plural / list forms (existing)
+                Arguments.of("Tags", true),
+                Arguments.of("tags", true),
+                Arguments.of("TagList", true),
+                Arguments.of("tagList", true),
+                Arguments.of("Taglist", true),
+                Arguments.of("taglist", true),
+                // accepted map forms (new)
+                Arguments.of("TagMap", true),
+                Arguments.of("tagMap", true),
+                Arguments.of("Tagmap", true),
+                Arguments.of("tagmap", true),
+                Arguments.of("TagsMap", true),
+                Arguments.of("tagsMap", true),
+                Arguments.of("Tagsmap", true),
+                Arguments.of("tagsmap", true),
+                // rejected
+                Arguments.of("", false),
+                Arguments.of("Tag", false),
+                Arguments.of("tag", false),
+                Arguments.of("Tagger", false),
+                Arguments.of("tagging", false),
+                Arguments.of("mytags", false),
+                Arguments.of("Maptag", false),
+                Arguments.of("Maps", false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("tagMembers")
+    public void isTagDesiredName(String memberName, boolean expected) {
+        assertEquals(expected, TaggingShapeUtils.isTagDesiredName(memberName));
+    }
 }

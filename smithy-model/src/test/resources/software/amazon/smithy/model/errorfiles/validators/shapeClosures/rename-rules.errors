@@ -1,0 +1,7 @@
+[ERROR] -: Shape closure `com.example#NoOpRename` rename for `com.example#Foo` does not change the name from `Foo`. | ShapeClosure
+[ERROR] -: metadata.shapeClosures.1.rename.com.example#GetFoo (map-key): Renames must target shapes that are in the model and must not target services, resources, operations, or members. | TypedMetadata.shapeClosures
+[ERROR] -: metadata.shapeClosures.2.rename.com.example#WidgetResource (map-key): Renames must target shapes that are in the model and must not target services, resources, operations, or members. | TypedMetadata.shapeClosures
+[ERROR] -: metadata.shapeClosures.3.rename.com.example#WidgetService (map-key): Renames must target shapes that are in the model and must not target services, resources, operations, or members. | TypedMetadata.shapeClosures
+[ERROR] -: Shape closure `com.example#NonRenamedConflict` rename for `com.example#Foo` ("BAR") case-insensitively conflicts with non-renamed shape `com.example#Bar`. | ShapeClosure
+[ERROR] -: Shape closure `com.example#RenameRenameConflict` rename for `com.example#Bar` ("CONFLICT") case-insensitively conflicts with the rename for `com.example#Foo`. | ShapeClosure
+[ERROR] -: metadata.shapeClosures.6.rename.com.example#Foo: String value provided for `smithy.api#Identifier` must match regular expression: ^(_+[a-zA-Z0-9]|[a-zA-Z])\w*$ | TypedMetadata.shapeClosures

@@ -124,6 +124,23 @@ final class BracketFormatter {
         return this;
     }
 
+    BracketFormatter detectHardLinesOrTooWide(TreeCursor hardLineSubject, int maxWidth) {
+        return detectHardLines(hardLineSubject).forceLineBreaksIfTooWide(maxWidth);
+    }
+
+    BracketFormatter forceLineBreaksIfTooWide(int maxWidth) {
+        if (forceLineBreaks || children.isEmpty()) {
+            return this;
+        }
+        // Render the candidate flat form at huge width to test if line breaks are needed.
+        Doc flatCandidate = Doc.intersperse(Formatter.LINE_OR_COMMA, children)
+                .bracket(0, getBracketLineBreakDoc(), open, close);
+        if (flatCandidate.render(Integer.MAX_VALUE).length() > maxWidth) {
+            forceLineBreaks = true;
+        }
+        return this;
+    }
+
     // Don't force line breaks and don't indent inside brackets
     BracketFormatter forceInline() {
         forceInline = true;

@@ -3,115 +3,96 @@ $version: "2.0"
 namespace aws.protocoltests.restjson.validation
 
 use aws.protocols#restJson1
-use smithy.test#httpMalformedRequestTests
 use smithy.framework#ValidationException
+use smithy.test#httpMalformedRequestTests
 
 @suppress(["UnstableTrait"])
 @http(uri: "/MalformedRequired", method: "POST")
 operation MalformedRequired {
-    input: MalformedRequiredInput,
-    errors: [ValidationException]
+    input: MalformedRequiredInput
+    errors: [
+        ValidationException
+    ]
 }
 
 apply MalformedRequired @httpMalformedRequestTests([
     {
-        id: "RestJsonMalformedRequiredBodyUnset",
+        id: "RestJsonMalformedRequiredBodyUnset"
         documentation: """
-        When a required member is not set in the message body,
-        the response should be a 400 ValidationException.""",
-        protocol: restJson1,
+            When a required member is not set in the message body,
+            the response should be a 400 ValidationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedRequired",
+            method: "POST"
+            uri: "/MalformedRequired"
             body: """
-            {  }""",
-            queryParams: [
-                "stringInQuery=abc"
-            ],
-            headers: {
-                "content-type": "application/json",
-                "string-in-headers": "abc"
-
-            }
-        },
+                {  }"""
+            queryParams: ["stringInQuery=abc"]
+            headers: { "content-type": "application/json", "string-in-headers": "abc" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "ValidationException"
-            },
+            code: 400
+            headers: { "x-amzn-errortype": "ValidationException" }
             body: {
-                mediaType: "application/json",
+                mediaType: "application/json"
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
+                        { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
+                          "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
                 }
             }
         }
-    },
+    }
     {
-        id: "RestJsonMalformedRequiredBodyExplicitNull",
+        id: "RestJsonMalformedRequiredBodyExplicitNull"
         documentation: """
-        When a required member is set to null in the message body,
-        the response should be a 400 ValidationException.""",
-        protocol: restJson1,
+            When a required member is set to null in the message body,
+            the response should be a 400 ValidationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedRequired",
+            method: "POST"
+            uri: "/MalformedRequired"
             body: """
-            { "string": null }""",
-            queryParams: [
-                "stringInQuery=abc"
-            ],
-            headers: {
-                "content-type": "application/json",
-                "string-in-headers": "abc"
-            }
-        },
+                { "string": null }"""
+            queryParams: ["stringInQuery=abc"]
+            headers: { "content-type": "application/json", "string-in-headers": "abc" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "ValidationException"
-            },
+            code: 400
+            headers: { "x-amzn-errortype": "ValidationException" }
             body: {
-                mediaType: "application/json",
+                mediaType: "application/json"
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
+                        { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
+                          "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
                 }
             }
         }
-    },
+    }
     {
-        id: "RestJsonMalformedRequiredHeaderUnset",
+        id: "RestJsonMalformedRequiredHeaderUnset"
         documentation: """
-        When a required member is not set in headers,
-        the response should be a 400 ValidationException.""",
-        protocol: restJson1,
+            When a required member is not set in headers,
+            the response should be a 400 ValidationException."""
+        protocol: restJson1
         request: {
-            method: "POST",
-            uri: "/MalformedRequired",
+            method: "POST"
+            uri: "/MalformedRequired"
             body: """
-            { "string": "abc" }""",
-            queryParams: [
-                "stringInQuery=abc"
-            ],
-            headers: {
-                "content-type": "application/json"
-            },
-        },
+                { "string": "abc" }"""
+            queryParams: ["stringInQuery=abc"]
+            headers: { "content-type": "application/json" }
+        }
         response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "ValidationException"
-            },
+            code: 400
+            headers: { "x-amzn-errortype": "ValidationException" }
             body: {
-                mediaType: "application/json",
+                mediaType: "application/json"
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/stringInHeader' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value at '/stringInHeader' failed to satisfy constraint: Member must not be null", "path": "/stringInHeader"}]}"""
+                        { "message" : "1 validation error detected. Value at '/stringInHeader' failed to satisfy constraint: Member must not be null",
+                          "fieldList" : [{"message": "Value at '/stringInHeader' failed to satisfy constraint: Member must not be null", "path": "/stringInHeader"}]}"""
                 }
             }
         }
@@ -120,11 +101,11 @@ apply MalformedRequired @httpMalformedRequestTests([
 
 structure MalformedRequiredInput {
     @required
-    string: String,
+    string: String
 
     @required
     @httpQuery("stringInQuery")
-    stringInQuery: String,
+    stringInQuery: String
 
     @required
     @httpHeader("string-in-headers")

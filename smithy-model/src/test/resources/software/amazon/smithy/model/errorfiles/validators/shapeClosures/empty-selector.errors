@@ -1,0 +1,2 @@
+[DANGER] -: Shape closure `com.example#SelectorMatchesNothing` has an `includeBySelector` that matches no shapes in the model. | ShapeClosure.EmptySelector.com.example#SelectorMatchesNothing
+[DANGER] -: Shape closure `com.example#SelectorMatchesNothingOutsideNamespace` has an `includeBySelector` that matches no shapes in the model that aren't already in an included namespace. | ShapeClosure.EmptySelector.com.example#SelectorMatchesNothingOutsideNamespace

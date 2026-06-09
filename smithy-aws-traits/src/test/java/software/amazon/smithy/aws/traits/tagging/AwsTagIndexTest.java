@@ -24,6 +24,8 @@ public final class AwsTagIndexTest {
     private static final ShapeId WEATHER_SERVICE_ID = ShapeId.fromParts(NAMESPACE, "Weather");
     private static final ShapeId UNTAGGED_SERVICE_ID = ShapeId.fromParts(NAMESPACE, "UntaggedService");
     private static final ShapeId CITY_RESOURCE_ID = ShapeId.fromParts(NAMESPACE, "City");
+    private static final ShapeId RENAMED_SERVICE_ID = ShapeId.fromParts(NAMESPACE, "RenamedTaggingService");
+    private static final ShapeId PLOT_RESOURCE_ID = ShapeId.fromParts(NAMESPACE, "Plot");
 
     private static Model model;
     private static AwsTagIndex tagIndex;
@@ -98,6 +100,34 @@ public final class AwsTagIndexTest {
                 Arguments.of(ShapeId.fromParts(NAMESPACE, "Farm"), true, true),
                 Arguments.of(ShapeId.fromParts(NAMESPACE, "Barn"), true, false),
                 Arguments.of(ShapeId.fromParts(NAMESPACE, "Silo"), true, true));
+    }
+
+    @Test
+    public void detectsServiceApiConfigRenamedTagOperations() {
+        Optional<ShapeId> tagOptional = tagIndex.getTagResourceOperation(RENAMED_SERVICE_ID);
+        assertTrue(tagOptional.isPresent());
+        assertEquals(ShapeId.fromParts(NAMESPACE, "AddTagsToResource"), tagOptional.get());
+
+        Optional<ShapeId> untagOptional = tagIndex.getUntagResourceOperation(RENAMED_SERVICE_ID);
+        assertTrue(untagOptional.isPresent());
+        assertEquals(ShapeId.fromParts(NAMESPACE, "RemoveTagsFromResource"), untagOptional.get());
+
+        Optional<ShapeId> listTagsOptional = tagIndex.getListTagsForResourceOperation(RENAMED_SERVICE_ID);
+        assertTrue(listTagsOptional.isPresent());
+        assertEquals(ShapeId.fromParts(NAMESPACE, "DescribeTagsForResource"), listTagsOptional.get());
+
+        assertTrue(tagIndex.serviceHasTagApis(RENAMED_SERVICE_ID));
+        assertTrue(tagIndex.serviceHasValidTagResourceOperation(RENAMED_SERVICE_ID));
+        assertTrue(tagIndex.serviceHasValidUntagResourceOperation(RENAMED_SERVICE_ID));
+        assertTrue(tagIndex.serviceHasValidListTagsForResourceOperation(RENAMED_SERVICE_ID));
+    }
+
+    @Test
+    public void resourceFallsThroughToServiceApiConfig() {
+        // Plot resource has no resource-level apiConfig; should resolve to the service-level renamed op.
+        Optional<ShapeId> tagOptional = tagIndex.getTagResourceOperation(PLOT_RESOURCE_ID);
+        assertTrue(tagOptional.isPresent());
+        assertEquals(ShapeId.fromParts(NAMESPACE, "AddTagsToResource"), tagOptional.get());
     }
 
     @Test

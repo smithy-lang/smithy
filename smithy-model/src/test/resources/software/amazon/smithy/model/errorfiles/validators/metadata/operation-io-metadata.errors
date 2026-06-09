@@ -1,0 +1,2 @@
+[ERROR] smithy.example#FooInput: Trait `metadata` cannot be applied to `smithy.example#FooInput`. This trait may only be applied to shapes that match the following selector: dataType :not([trait|input]) :not([trait|output]) | TraitTarget
+[ERROR] smithy.example#FooOutput: Trait `metadata` cannot be applied to `smithy.example#FooOutput`. This trait may only be applied to shapes that match the following selector: dataType :not([trait|input]) :not([trait|output]) | TraitTarget

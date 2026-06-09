@@ -25,10 +25,7 @@ apply FractionalSeconds @httpResponseTests([
             {
                 "datetime": 946845296.123
             }"""
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: { datetime: 946845296.123 }
         bodyMediaType: "application/json"
         appliesTo: "client"
@@ -65,20 +62,9 @@ apply TimestampFormatIgnored @httpRequestTests([
                 "normal": 946845296
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
-        params: {
-            dateTime: 946845296
-            httpDate: 946845296
-            epochSeconds: 946845296
-            normal: 946845296
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        params: { dateTime: 946845296, httpDate: 946845296, epochSeconds: 946845296, normal: 946845296 }
     }
 ])
 
@@ -98,16 +84,8 @@ apply TimestampFormatIgnored @httpResponseTests([
                 "normal": 946845296
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
-        params: {
-            dateTime: 946845296
-            httpDate: 946845296
-            epochSeconds: 946845296
-            normal: 946845296
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { dateTime: 946845296, httpDate: 946845296, epochSeconds: 946845296, normal: 946845296 }
     }
 ])
 

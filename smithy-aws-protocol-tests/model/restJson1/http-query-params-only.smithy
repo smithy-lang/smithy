@@ -1,6 +1,5 @@
 // This file defines test cases that test HTTP query params behavior when no other query parameters exist.
 // See: https://smithy.io/2.0/spec/http-bindings.html#httpqueryparams-trait
-
 $version: "2.0"
 
 namespace aws.protocoltests.restjson
@@ -12,44 +11,41 @@ use smithy.test#httpRequestTests
 @readonly
 @http(uri: "/http-query-params-only", method: "GET")
 operation HttpQueryParamsOnlyOperation {
-    input: HttpQueryParamsOnlyInput,
+    input: HttpQueryParamsOnlyInput
 }
 
 apply HttpQueryParamsOnlyOperation @httpRequestTests([
     {
-        id: "HttpQueryParamsOnlyRequest",
-        documentation: "Test that httpQueryParams are included in request when no other query parameters exist",
-        protocol: restJson1,
-        method: "GET",
-        uri: "/http-query-params-only",
-        queryParams: ["a=b", "c=d"],
+        id: "HttpQueryParamsOnlyRequest"
+        documentation: "Test that httpQueryParams are included in request when no other query parameters exist"
+        protocol: restJson1
+        method: "GET"
+        uri: "/http-query-params-only"
+        queryParams: ["a=b", "c=d"]
         params: {
-            queryMap: {
-                "a": "b",
-                "c": "d"
-            }
-        },
-        appliesTo: "client",
-    },
+            queryMap: { a: "b", c: "d" }
+        }
+        appliesTo: "client"
+    }
     {
-        id: "HttpQueryParamsOnlyEmptyRequest",
-        documentation: "Test that empty httpQueryParams map results in no query parameters",
-        protocol: restJson1,
-        method: "GET",
-        uri: "/http-query-params-only",
+        id: "HttpQueryParamsOnlyEmptyRequest"
+        documentation: "Test that empty httpQueryParams map results in no query parameters"
+        protocol: restJson1
+        method: "GET"
+        uri: "/http-query-params-only"
         params: {
             queryMap: {}
-        },
-        appliesTo: "client",
+        }
+        appliesTo: "client"
     }
 ])
 
 structure HttpQueryParamsOnlyInput {
     @httpQueryParams
-    queryMap: QueryMap,
+    queryMap: QueryMap
 }
 
 map QueryMap {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }

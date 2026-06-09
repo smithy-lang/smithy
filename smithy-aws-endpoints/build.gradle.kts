@@ -4,6 +4,7 @@
  */
 plugins {
     id("smithy.module-conventions")
+    id("smithy.smithy-format-conventions")
 }
 
 description = "AWS specific components for managing endpoints in Smithy"
@@ -22,7 +23,7 @@ dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-utils"))
 
-    s3Model("software.amazon.api.models:s3:1.0.17")
+    s3Model("software.amazon.api.models:s3:1.0.19")
 }
 
 // Integration test source set for tests that require the S3 model

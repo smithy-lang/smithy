@@ -1,0 +1,1 @@
+[ERROR] -: Shape closure `com.example#OutsideClosure` attempts to rename `com.other#Other`, which is not in the closure. | ShapeClosure

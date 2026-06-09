@@ -29,7 +29,7 @@ final class TaggingShapeUtils {
     static final String LIST_TAGS_OPNAME = "ListTagsForResource";
 
     private static final Pattern TAG_PROPERTY_REGEX = Pattern
-            .compile("^[T|t]ag(s|[L|l]ist)$");
+            .compile("^[T|t]ag(s|s?[M|m]ap|[L|l]ist)$");
     private static final Pattern RESOURCE_ARN_REGEX = Pattern
             .compile("^([R|r]esource)?([A|a]rn|ARN)?$");
     private static final Pattern TAG_KEYS_REGEX = Pattern

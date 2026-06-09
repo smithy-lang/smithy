@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -358,7 +359,7 @@ final class FormatVisitor {
                                 }
                                 return Stream.empty();
                             }))
-                            .detectHardLines(cursor)
+                            .detectHardLinesOrTooWide(cursor, width)
                             .write();
                 } else if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
                     TreeCursor traitNode = cursor.getFirstChild(TreeType.TRAIT_NODE);
@@ -445,7 +446,7 @@ final class FormatVisitor {
                         .open(Formatter.LBRACKET)
                         .close(Formatter.RBRACKET)
                         .extractChildren(cursor, BracketFormatter.extractByType(TreeType.NODE_VALUE, this::visit))
-                        .detectHardLines(cursor)
+                        .detectHardLinesOrTooWide(cursor, width)
                         .write();
             }
 
@@ -458,7 +459,7 @@ final class FormatVisitor {
                     // Always break objects inside arrays if not empty
                     formatter.forceLineBreaksIfNotEmpty();
                 } else {
-                    formatter.detectHardLines(cursor);
+                    formatter.detectHardLinesOrTooWide(cursor, width);
                 }
                 return formatter.write();
 
@@ -541,15 +542,18 @@ final class FormatVisitor {
             }
 
             case COMMENT: {
-                // Ensure comments have a single space before their content.
+                // Render comments based on their token type so banners (4+ slashes like `//////`)
+                // are preserved as content rather than re-segmented. Plain comments use the `//`
+                // prefix; doc comments use `///`. In both cases we trim trailing whitespace and
+                // ensure exactly one space follows the prefix when the original had none. Doc
+                // comments additionally preserve banner content (a `/` immediately after `///`)
+                // verbatim, since those slashes are part of the banner the user wrote.
                 String contents = tree.concatTokens().trim();
-                if (contents.startsWith("/// ") || contents.startsWith("// ")) {
-                    return Doc.text(contents);
-                } else if (contents.startsWith("///")) {
-                    return Doc.text("/// " + contents.substring(3));
-                } else {
-                    return Doc.text("// " + contents.substring(2));
+                IdlToken tokenType = tree.tokens().findFirst().map(CapturedToken::getIdlToken).orElse(null);
+                if (tokenType == IdlToken.DOC_COMMENT) {
+                    return Doc.text(normalizeCommentSpacing(contents, "///", true));
                 }
+                return Doc.text(normalizeCommentSpacing(contents, "//", false));
             }
 
             case WS: {
@@ -563,9 +567,26 @@ final class FormatVisitor {
                 pendingComments = Doc.empty();
                 Doc result = Doc.empty();
                 List<TreeCursor> comments = getComments(cursor);
+                int brStartLine = tree.getStartLine();
+                // Plain comments contiguous with the BR's owning construct stick to that
+                // construct when the BR sits between top-level shape statements. This keeps
+                // comments after a structure that just closed pinned there instead of being
+                // pushed down to the next shape. Doc comments always defer forward because
+                // they are documentation for what follows. Other BR contexts (use, metadata,
+                // namespace) keep the historical defer-forward behavior so that a comment
+                // between two use statements still attaches to the next one.
+                boolean stickContiguous = isBetweenShapeStatements(cursor);
+                int prevContentLine = brStartLine;
                 for (TreeCursor comment : comments) {
-                    if (comment.getTree().getStartLine() == tree.getStartLine()) {
+                    int commentLine = comment.getTree().getStartLine();
+                    if (commentLine == brStartLine) {
                         result = result.append(Formatter.SPACE.append(visit(comment)));
+                        prevContentLine = commentLine;
+                    } else if (stickContiguous
+                            && !isDocComment(comment)
+                            && commentLine == prevContentLine + 1) {
+                        result = result.append(Doc.line()).append(visit(comment));
+                        prevContentLine = commentLine;
                     } else {
                         pendingComments = pendingComments.append(visit(comment)).append(Doc.line());
                     }
@@ -607,6 +628,70 @@ final class FormatVisitor {
         return !getComments(cursor).isEmpty();
     }
 
+    // Check if a comment is inside a VALUE_ASSIGNMENT's BR node. These are same-line trailing
+    // comments that should not trigger double-line separation.
+    private static boolean isInsideValueAssignmentBr(TreeCursor comment, TreeCursor boundary) {
+        // After RelocateMemberComments runs, the only comments still nested inside a
+        // VALUE_ASSIGNMENT > BR subtree are same-line trailing comments (those on the same
+        // source line as the value). Non-inline comments have already been relocated to the
+        // member's sibling WS by the time the formatter visits this tree, so a positive return
+        // here always means "this is the value's same-line trailing comment, don't promote it
+        // to a standalone annotation."
+        TreeCursor parent = comment.getParent();
+        TokenTree boundaryTree = boundary.getTree();
+        while (parent != null && parent.getTree() != boundaryTree) {
+            if (parent.getTree().getType() == TreeType.BR) {
+                TreeCursor grandparent = parent.getParent();
+                if (grandparent != null && grandparent.getTree().getType() == TreeType.VALUE_ASSIGNMENT) {
+                    return true;
+                }
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+    // True when the BR sits directly inside SHAPE_STATEMENTS, i.e., the gap between (or after)
+    // shape and apply statements at the top level. This is where contiguous trailing comments
+    // should stick to the previous statement rather than defer to the next one.
+    private static boolean isBetweenShapeStatements(TreeCursor brCursor) {
+        TreeCursor parent = brCursor.getParent();
+        return parent != null && parent.getTree().getType() == TreeType.SHAPE_STATEMENTS;
+    }
+
+    // Whether a COMMENT cursor wraps a `///` doc-comment token. Doc comments always defer
+    // forward to the next statement because they document it; only plain `//` comments are
+    // candidates for sticking to the preceding construct.
+    private static boolean isDocComment(TreeCursor commentCursor) {
+        return commentCursor.getTree()
+                .tokens()
+                .findFirst()
+                .map(token -> token.getIdlToken() == IdlToken.DOC_COMMENT)
+                .orElse(false);
+    }
+
+    // Normalize the comment spacing for either a `//` plain comment or a `///` doc comment. The
+    // prefix argument is the literal slashes that introduce the comment; the content is
+    // everything after. When {@code preserveBanner} is true (used for doc comments), a content
+    // that begins with another slash is left alone, so `////// Shapes` round-trips verbatim and
+    // banner doc comments are not re-segmented. Otherwise, a content that lacks a leading space
+    // gets exactly one inserted, so `///foo` becomes `/// foo` and `//////` demoted to a regular
+    // comment renders as `// ////` (prefix `//` + space + four-slash content).
+    private static String normalizeCommentSpacing(String contents, String prefix, boolean preserveBanner) {
+        String content = contents.substring(prefix.length());
+        if (content.isEmpty()) {
+            return prefix;
+        }
+        char first = content.charAt(0);
+        if (first == ' ' || first == '\t') {
+            return prefix + content;
+        }
+        if (preserveBanner && first == '/') {
+            return prefix + content;
+        }
+        return prefix + " " + content;
+    }
+
     // Get direct child comments from a cursor, or from direct WS children that have comments.
     private static List<TreeCursor> getComments(TreeCursor cursor) {
         List<TreeCursor> result = new ArrayList<>();
@@ -631,16 +716,66 @@ final class FormatVisitor {
         return (leadingLine ? Doc.line() : Doc.empty()).append(Doc.fold(docs, Doc::append));
     }
 
+    // Determines whether double-line separation is needed between members. Returns true if the
+    // container has traits or standalone comments (comments not trailing inline on a member).
+    private static boolean hasNonInlineAnnotations(TreeCursor container, TreeType memberType) {
+        if (!container.findChildrenByType(TreeType.TRAIT).isEmpty()) {
+            return true;
+        }
+
+        // Check for standalone comments in WS nodes between members that are NOT
+        // on the same line as the previous member. Comments on the immediately next line after
+        // a member with a VALUE_ASSIGNMENT are excluded because they were relocated from the
+        // VALUE_ASSIGNMENT's BR by RelocateMemberComments and are trailing annotations, not
+        // standalone section dividers.
+        for (TreeCursor ws : container.getChildrenByType(TreeType.WS)) {
+            TreeCursor prevSibling = ws.getPreviousSibling();
+            int prevEndLine = FormatUtils.valueEndLine(prevSibling);
+            for (TreeCursor c : ws.getChildrenByType(TreeType.COMMENT)) {
+                int commentLine = c.getTree().getStartLine();
+                if (commentLine != prevEndLine) {
+                    // Exclude comments on the immediately next line after a member with a
+                    // VALUE_ASSIGNMENT (these are relocated trailing annotations). This is a
+                    // deliberate semantic choice: a comment on the line immediately after a value
+                    // assignment is always treated as a trailing annotation of that member, not a
+                    // standalone section divider. The VALUE_ASSIGNMENT check ensures this exclusion
+                    // only applies to members that had value assignments (where RelocateMemberComments
+                    // would have relocated the comment from the BR); members without VALUE_ASSIGNMENT
+                    // are not affected.
+                    if (prevSibling != null
+                            && prevSibling.getTree().getType() == memberType
+                            && prevSibling.getFirstChild(TreeType.VALUE_ASSIGNMENT) != null
+                            && commentLine == prevEndLine + 1) {
+                        continue;
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Check for comments inside members (e.g., doc comments on inline shapes, comments in traits).
+        // Exclude same-line trailing comments inside VALUE_ASSIGNMENT BR nodes, as these are
+        // inline annotations that should not trigger double-line separation.
+        for (TreeCursor memberCursor : container.getChildrenByType(memberType)) {
+            for (TreeCursor mc : memberCursor.findChildrenByType(TreeType.COMMENT)) {
+                if (!isInsideValueAssignmentBr(mc, memberCursor)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     // Renders "members" in braces, grouping related comments and members together.
     private Doc renderMembers(TreeCursor container, TreeType memberType) {
-        boolean noComments = container.findChildrenByType(TreeType.COMMENT, TreeType.TRAIT).isEmpty();
-        // Separate members by a single line if none have traits or docs, and two lines if any do.
-        Doc separator = noComments ? Doc.line() : Doc.line().append(Doc.line());
+        boolean useDoubleLineSeparator = hasNonInlineAnnotations(container, memberType);
+        Doc separator = useDoubleLineSeparator ? Doc.line().append(Doc.line()) : Doc.line();
         List<TreeCursor> members = container.getChildrenByType(memberType, TreeType.WS);
         // Remove WS we don't care about.
         members.removeIf(c -> c.getTree().getType() == TreeType.WS && !hasComment(c));
         // Empty structures render as "{}".
-        if (noComments && members.isEmpty()) {
+        if (!useDoubleLineSeparator && members.isEmpty()) {
             return Doc.group(Formatter.LINE_OR_SPACE.append(Doc.text("{}")));
         }
 
@@ -652,8 +787,38 @@ final class FormatVisitor {
 
         for (TreeCursor member : members) {
             if (member.getTree().getType() == TreeType.WS) {
-                newLineNeededAfterComment = true;
-                current = current.append(visit(member));
+                // Check if any comments in this WS were on the same line as the previous member.
+                // If so, and the previous member is not the last member, keep them inline.
+                List<TreeCursor> wsComments = member.getChildrenByType(TreeType.COMMENT);
+                TreeCursor prevSibling = member.getPreviousSibling();
+                // Use the value end line of the previous member for same-line detection.
+                // For members with VALUE_ASSIGNMENT, the BR's NEWLINE token can inflate getEndLine()
+                // past the actual value line, so use the NODE_VALUE's end line instead.
+                int prevEndLine = FormatUtils.valueEndLine(prevSibling);
+
+                // Determine if there's a next non-WS member after this WS node.
+                boolean hasNextMember = !FormatUtils.isLastMemberBeforeBrace(member);
+
+                for (TreeCursor c : wsComments) {
+                    boolean isSameLineAsPrev = prevSibling != null
+                            && c.getTree().getStartLine() == prevEndLine;
+                    // Inline a same-line trailing comment when there's a next member. For the last
+                    // member, only inline when using single-line separation (no traits or standalone
+                    // comments in the structure). With double-line separation, last-member trailing
+                    // comments are placed on their own lines before the closing brace.
+                    if (isSameLineAsPrev
+                            && (hasNextMember || !useDoubleLineSeparator)
+                            && !memberDocs.isEmpty()) {
+                        Doc lastDoc = memberDocs.remove(memberDocs.size() - 1);
+                        memberDocs.add(lastDoc.append(Formatter.SPACE).append(visit(c)));
+                    } else {
+                        if (newLineNeededAfterComment) {
+                            current = current.append(Doc.line());
+                        }
+                        newLineNeededAfterComment = true;
+                        current = current.append(visit(c));
+                    }
+                }
             } else {
                 if (newLineNeededAfterComment) {
                     current = current.append(Doc.line());

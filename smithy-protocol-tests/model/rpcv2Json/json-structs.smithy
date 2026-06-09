@@ -11,14 +11,8 @@ use smithy.test#httpResponseTests
         id: "RpcV2JsonRequestSimpleScalarProperties"
         protocol: rpcv2Json
         documentation: "Serializes simple scalar properties"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -56,17 +50,9 @@ use smithy.test#httpResponseTests
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
         body: "{}"
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
-        params: {
-            stringValue: null
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        params: { stringValue: null }
         appliesTo: "client"
     }
     {
@@ -80,14 +66,8 @@ use smithy.test#httpResponseTests
                 "stringValue": null
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {}
         appliesTo: "server"
     }
@@ -95,14 +75,8 @@ use smithy.test#httpResponseTests
         id: "RpcV2JsonRequestSupportsNaNFloatInputs"
         protocol: rpcv2Json
         documentation: "Supports handling NaN float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -111,23 +85,14 @@ use smithy.test#httpResponseTests
                 "doubleValue": "NaN",
                 "floatValue": "NaN"
             }"""
-        params: {
-            doubleValue: "NaN"
-            floatValue: "NaN"
-        }
+        params: { doubleValue: "NaN", floatValue: "NaN" }
     }
     {
         id: "RpcV2JsonRequestSupportsInfinityFloatInputs"
         protocol: rpcv2Json
         documentation: "Supports handling Infinity float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -136,23 +101,14 @@ use smithy.test#httpResponseTests
                 "doubleValue": "Infinity",
                 "floatValue": "Infinity"
             }"""
-        params: {
-            doubleValue: "Infinity"
-            floatValue: "Infinity"
-        }
+        params: { doubleValue: "Infinity", floatValue: "Infinity" }
     }
     {
         id: "RpcV2JsonRequestSupportsNegativeInfinityFloatInputs"
         protocol: rpcv2Json
         documentation: "Supports handling -Infinity float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -161,10 +117,7 @@ use smithy.test#httpResponseTests
                 "doubleValue": "-Infinity",
                 "floatValue": "-Infinity"
             }"""
-        params: {
-            doubleValue: "-Infinity"
-            floatValue: "-Infinity"
-        }
+        params: { doubleValue: "-Infinity", floatValue: "-Infinity" }
     }
     {
         id: "RpcV2JsonRequestExtraFieldsInTheBodyShouldBeSkippedByServers"
@@ -173,14 +126,8 @@ use smithy.test#httpResponseTests
             The server should skip over additional fields that are not part of the structure. This allows a
             client generated against a newer Smithy model to be able to communicate with a server that is
             generated against an older Smithy model."""
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -220,13 +167,8 @@ use smithy.test#httpResponseTests
         id: "RpcV2JsonRequestServersShouldHandleNoAcceptHeader"
         protocol: rpcv2Json
         documentation: "Servers should tolerate requests without an Accept header set."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        requireHeaders: ["Content-Length"]
         method: "POST"
         bodyMediaType: "application/json"
         uri: "/service/RpcV2JsonProtocol/operation/SimpleScalarProperties"
@@ -263,10 +205,7 @@ use smithy.test#httpResponseTests
         id: "RpcV2JsonResponseSimpleScalarProperties"
         protocol: rpcv2Json
         documentation: "Serializes simple scalar properties"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         bodyMediaType: "application/json"
         body: """
             {
@@ -303,10 +242,7 @@ use smithy.test#httpResponseTests
             }"""
         code: 200
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {}
         appliesTo: "client"
     }
@@ -317,23 +253,15 @@ use smithy.test#httpResponseTests
         body: "{}"
         code: 200
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
-        params: {
-            stringValue: null
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { stringValue: null }
         appliesTo: "server"
     }
     {
         id: "RpcV2JsonResponseSupportsNaNFloatOutputs"
         protocol: rpcv2Json
         documentation: "Supports handling NaN float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         code: 200
         bodyMediaType: "application/json"
         body: """
@@ -341,19 +269,13 @@ use smithy.test#httpResponseTests
                 "doubleValue": "NaN",
                 "floatValue": "NaN"
             }"""
-        params: {
-            doubleValue: "NaN"
-            floatValue: "NaN"
-        }
+        params: { doubleValue: "NaN", floatValue: "NaN" }
     }
     {
         id: "RpcV2JsonResponseSupportsInfinityFloatOutputs"
         protocol: rpcv2Json
         documentation: "Supports handling Infinity float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         code: 200
         bodyMediaType: "application/json"
         body: """
@@ -361,19 +283,13 @@ use smithy.test#httpResponseTests
                 "doubleValue": "Infinity",
                 "floatValue": "Infinity"
             }"""
-        params: {
-            doubleValue: "Infinity"
-            floatValue: "Infinity"
-        }
+        params: { doubleValue: "Infinity", floatValue: "Infinity" }
     }
     {
         id: "RpcV2JsonResponseSupportsNegativeInfinityFloatOutputs"
         protocol: rpcv2Json
         documentation: "Supports handling Negative Infinity float values."
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         code: 200
         bodyMediaType: "application/json"
         body: """
@@ -381,10 +297,7 @@ use smithy.test#httpResponseTests
                 "doubleValue": "-Infinity",
                 "floatValue": "-Infinity"
             }"""
-        params: {
-            doubleValue: "-Infinity"
-            floatValue: "-Infinity"
-        }
+        params: { doubleValue: "-Infinity", floatValue: "-Infinity" }
     }
     {
         id: "RpcV2JsonResponseExtraFieldsInTheBodyShouldBeSkippedByClients"
@@ -393,10 +306,7 @@ use smithy.test#httpResponseTests
             The client should skip over additional fields that are not part of the structure. This allows a
             client generated against an older Smithy model to be able to communicate with a server that is
             generated against a newer Smithy model."""
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         code: 200
         bodyMediaType: "application/json"
         body: """
@@ -460,14 +370,8 @@ apply RecursiveShapes @httpRequestTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-            "Accept": "application/json"
-        }
-        requireHeaders: [
-            "Content-Length"
-        ]
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
         params: {
             nested: {
                 foo: "Foo1"
@@ -475,9 +379,7 @@ apply RecursiveShapes @httpRequestTests([
                     bar: "Bar1"
                     recursiveMember: {
                         foo: "Foo2"
-                        nested: {
-                            bar: "Bar2"
-                        }
+                        nested: { bar: "Bar2" }
                     }
                 }
             }
@@ -507,10 +409,7 @@ apply RecursiveShapes @httpResponseTests([
                 }
             }"""
         bodyMediaType: "application/json"
-        headers: {
-            "smithy-protocol": "rpc-v2-json"
-            "Content-Type": "application/json"
-        }
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         params: {
             nested: {
                 foo: "Foo1"
@@ -518,9 +417,7 @@ apply RecursiveShapes @httpResponseTests([
                     bar: "Bar1"
                     recursiveMember: {
                         foo: "Foo2"
-                        nested: {
-                            bar: "Bar2"
-                        }
+                        nested: { bar: "Bar2" }
                     }
                 }
             }

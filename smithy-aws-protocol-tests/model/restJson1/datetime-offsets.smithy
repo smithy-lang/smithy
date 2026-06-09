@@ -16,37 +16,35 @@ operation DatetimeOffsets {
 
 apply DatetimeOffsets @httpResponseTests([
     {
-        id: "RestJsonDateTimeWithNegativeOffset",
+        id: "RestJsonDateTimeWithNegativeOffset"
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
-        protocol: restJson1,
-        code: 200,
-        body:
-        """
-              {
-                  "datetime": "2019-12-16T22:48:18-01:00"
-              }
-        """,
+            Ensures that clients can correctly parse datetime (timestamps) with offsets"""
+        protocol: restJson1
+        code: 200
+        body: """
+                  {
+                      "datetime": "2019-12-16T22:48:18-01:00"
+                  }
+            """
         params: { datetime: 1576540098 }
-        bodyMediaType: "application/json",
+        bodyMediaType: "application/json"
         appliesTo: "client"
-    },
+    }
     {
-        id: "RestJsonDateTimeWithPositiveOffset",
+        id: "RestJsonDateTimeWithPositiveOffset"
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
-        protocol: restJson1,
-        code: 200,
-        body:
-        """
-              {
-                  "datetime": "2019-12-17T00:48:18+01:00"
-              }
-        """,
+            Ensures that clients can correctly parse datetime (timestamps) with offsets"""
+        protocol: restJson1
+        code: 200
+        body: """
+                  {
+                      "datetime": "2019-12-17T00:48:18+01:00"
+                  }
+            """
         params: { datetime: 1576540098 }
-        bodyMediaType: "application/json",
+        bodyMediaType: "application/json"
         appliesTo: "client"
-    },
+    }
 ])
 
 structure DatetimeOffsetsOutput {

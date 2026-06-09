@@ -1,6 +1,5 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
-
 $version: "2.0"
 
 namespace aws.protocoltests.query
@@ -17,39 +16,37 @@ operation NoInputAndNoOutput {}
 
 apply NoInputAndNoOutput @httpRequestTests([
     {
-        id: "QueryNoInputAndNoOutput",
-        documentation: "No input serializes no additional query params",
-        protocol: awsQuery,
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "Action=NoInputAndNoOutput&Version=2020-01-08",
+        id: "QueryNoInputAndNoOutput"
+        documentation: "No input serializes no additional query params"
+        protocol: awsQuery
+        method: "POST"
+        uri: "/"
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        body: "Action=NoInputAndNoOutput&Version=2020-01-08"
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
 
 apply NoInputAndNoOutput @httpResponseTests([
-   {
-       id: "QueryNoInputAndNoOutput",
-       documentation: "Empty output. Note that no assertion is made on the output body itself.",
-       protocol: awsQuery,
-       code: 200,
-   }
-   {
-       id: "QueryNoInputAndNoOutputWithResponseMetadata",
-       documentation: "Empty output, but the server returns ResponseMetadata.",
-       protocol: awsQuery,
-       code: 200,
-       body: """
-       <NoInputAndNoOutputResponse>
-           <ResponseMetadata>
-               <RequestId>abc-123</RequestId>
-           </ResponseMetadata>
-       </NoInputAndNoOutputResponse>
-       """
-   }
+    {
+        id: "QueryNoInputAndNoOutput"
+        documentation: "Empty output. Note that no assertion is made on the output body itself."
+        protocol: awsQuery
+        code: 200
+    }
+    {
+        id: "QueryNoInputAndNoOutputWithResponseMetadata"
+        documentation: "Empty output, but the server returns ResponseMetadata."
+        protocol: awsQuery
+        code: 200
+        body: """
+            <NoInputAndNoOutputResponse>
+                <ResponseMetadata>
+                    <RequestId>abc-123</RequestId>
+                </ResponseMetadata>
+            </NoInputAndNoOutputResponse>
+            """
+    }
 ])
 
 /// The example tests how requests and responses are serialized when there's
@@ -57,31 +54,29 @@ apply NoInputAndNoOutput @httpResponseTests([
 ///
 /// While this should be rare, code generators must support this.
 operation NoInputAndOutput {
-    input: NoInputAndOutputInput,
+    input: NoInputAndOutputInput
     output: NoInputAndOutputOutput
 }
 
 apply NoInputAndOutput @httpRequestTests([
     {
-        id: "QueryNoInputAndOutput",
-        documentation: "No input serializes no payload",
-        protocol: awsQuery,
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "Action=NoInputAndOutput&Version=2020-01-08",
+        id: "QueryNoInputAndOutput"
+        documentation: "No input serializes no payload"
+        protocol: awsQuery
+        method: "POST"
+        uri: "/"
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        body: "Action=NoInputAndOutput&Version=2020-01-08"
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
 
 apply NoInputAndOutput @httpResponseTests([
     {
-        id: "QueryNoInputAndOutput",
-        documentation: "Empty output",
-        protocol: awsQuery,
-        code: 200,
+        id: "QueryNoInputAndOutput"
+        documentation: "Empty output"
+        protocol: awsQuery
+        code: 200
     }
 ])
 
@@ -96,33 +91,32 @@ structure NoInputAndOutputOutput {}
 ///
 /// While this should be rare, code generators must support this.
 operation EmptyInputAndEmptyOutput {
-    input: EmptyInputAndEmptyOutputInput,
+    input: EmptyInputAndEmptyOutputInput
     output: EmptyInputAndEmptyOutputOutput
 }
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
-        id: "QueryEmptyInputAndEmptyOutput",
-        documentation: "Empty input serializes no extra query params",
-        protocol: awsQuery,
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08",
+        id: "QueryEmptyInputAndEmptyOutput"
+        documentation: "Empty input serializes no extra query params"
+        protocol: awsQuery
+        method: "POST"
+        uri: "/"
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08"
         bodyMediaType: "application/x-www-form-urlencoded"
-    },
+    }
 ])
 
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
-        id: "QueryEmptyInputAndEmptyOutput",
-        documentation: "Empty output",
-        protocol: awsQuery,
-        code: 200,
-    },
+        id: "QueryEmptyInputAndEmptyOutput"
+        documentation: "Empty output"
+        protocol: awsQuery
+        code: 200
+    }
 ])
 
 structure EmptyInputAndEmptyOutputInput {}
+
 structure EmptyInputAndEmptyOutputOutput {}

@@ -28,11 +28,13 @@ software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
 software.amazon.smithy.model.validation.validators.MemberShouldReferenceResourceValidator
+software.amazon.smithy.model.validation.validators.MetadataTraitValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
 software.amazon.smithy.model.validation.validators.PatternTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
+software.amazon.smithy.model.validation.validators.PrivateMixinMemberValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
 software.amazon.smithy.model.validation.validators.ReferencesTraitValidator
 software.amazon.smithy.model.validation.validators.RequestCompressionTraitValidator
@@ -45,6 +47,7 @@ software.amazon.smithy.model.validation.validators.ServiceAuthDefinitionsValidat
 software.amazon.smithy.model.validation.validators.ServiceBoundResourceOperationValidator
 software.amazon.smithy.model.validation.validators.ServiceValidator
 software.amazon.smithy.model.validation.validators.SetValidator
+software.amazon.smithy.model.validation.validators.ShapeClosureValidator
 software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator
 software.amazon.smithy.model.validation.validators.ShapeRecursionValidator
 software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator
@@ -56,6 +59,7 @@ software.amazon.smithy.model.validation.validators.TraitBreakingChangesValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator
+software.amazon.smithy.model.validation.validators.TypedMetadataValidator
 software.amazon.smithy.model.validation.validators.UnionValidator
 software.amazon.smithy.model.validation.validators.UnitTypeValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator
