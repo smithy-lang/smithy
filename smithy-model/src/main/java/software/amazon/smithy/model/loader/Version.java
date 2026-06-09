@@ -37,7 +37,8 @@ enum Version {
                     | Feature.TARGET_ELISION
                     | Feature.DEFAULT
                     | Feature.RESOURCE_PROPERTIES
-                    | Feature.INLINE_COLLECTIONS);
+                    | Feature.INLINE_COLLECTIONS
+                    | Feature.TAGGED_LITERALS);
 
     private final String label;
     private final int features;
@@ -133,6 +134,15 @@ enum Version {
      */
     boolean supportsInlineCollections() {
         return supports(Feature.INLINE_COLLECTIONS);
+    }
+
+    /**
+     * Checks if this version of the IDL supports tagged string literals.
+     *
+     * @return Returns true if this version supports tagged string literals.
+     */
+    boolean supportsTaggedLiterals() {
+        return supports(Feature.TAGGED_LITERALS);
     }
 
     /**
@@ -237,6 +247,7 @@ enum Version {
         static final int DEFAULT = 1 << 3;
         static final int RESOURCE_PROPERTIES = 1 << 4;
         static final int INLINE_COLLECTIONS = 1 << 5;
+        static final int TAGGED_LITERALS = 1 << 6;
         static final int ALL = ~0;
 
         private Feature() {}
