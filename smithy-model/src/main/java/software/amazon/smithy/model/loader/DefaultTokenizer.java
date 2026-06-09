@@ -22,10 +22,15 @@ class DefaultTokenizer implements IdlTokenizer {
     private CharSequence currentTokenStringSlice;
     private CharSequence currentTextBlockContents;
     private String currentTokenError;
+    private Version version;
 
     DefaultTokenizer(String filename, CharSequence model) {
         this.filename = filename;
         this.parser = new SimpleParser(model, 64);
+    }
+
+    void setVersion(Version version) {
+        this.version = version;
     }
 
     @Override
@@ -178,7 +183,7 @@ class DefaultTokenizer implements IdlTokenizer {
             case ')':
                 return singleCharToken(IdlToken.RPAREN);
             case '#':
-                return singleCharToken(IdlToken.POUND);
+                return parsePoundOrTaggedLiteral();
             case '=':
                 return singleCharToken(IdlToken.EQUAL);
             case ':':
@@ -355,6 +360,123 @@ class DefaultTokenizer implements IdlTokenizer {
         }
         currentTokenEnd = parser.position();
         return currentTokenType;
+    }
+
+    private IdlToken parsePoundOrTaggedLiteral() {
+        if (version == null || !version.supportsTaggedLiterals()) {
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        int savedPos = parser.position();
+        int savedLine = parser.line();
+        int savedCol = parser.column();
+
+        parser.skip(); // skip '#'
+
+        if (!ParserUtils.isIdentifierStart(parser.peek())) {
+            currentTokenEnd = parser.position();
+            return currentTokenType = IdlToken.POUND;
+        }
+
+        int tagStart = parser.position();
+        parser.consumeWhile(ParserUtils::isValidIdentifierCharacter);
+        String tag = parser.sliceFrom(tagStart);
+
+        if (!TaggedStringLiteral.hasHandler(tag)) {
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Skip optional spaces between tag and string.
+        parser.sp();
+
+        if (parser.peek() != '"') {
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        return parseTaggedString(tag);
+    }
+
+    private IdlToken parseTaggedString(String tag) {
+        parser.skip(); // skip first quote
+        boolean isTextBlock = false;
+
+        if (parser.peek() == '"') {
+            parser.skip(); // skip second quote
+            if (parser.peek() == '"') {
+                parser.skip(); // skip third quote — text block
+                isTextBlock = true;
+            } else {
+                // Empty string "".
+                currentTokenEnd = parser.position();
+                return applyTagResult(tag, isTextBlock);
+            }
+        }
+
+        CharSequence rawContent = parseRawStringContents(isTextBlock);
+        currentTokenEnd = parser.position();
+
+        try {
+            TaggedStringLiteral.Result result = TaggedStringLiteral.scan(tag, rawContent, isTextBlock);
+            switch (result.token) {
+                case NUMBER:
+                    currentTokenNumber = result.numberValue;
+                    return currentTokenType = IdlToken.NUMBER;
+                default:
+                    currentTokenStringSlice = result.stringValue;
+                    return currentTokenType = isTextBlock ? IdlToken.TEXT_BLOCK : IdlToken.STRING;
+            }
+        } catch (RuntimeException e) {
+            currentTokenError = e.getMessage();
+            return currentTokenType = IdlToken.ERROR;
+        }
+    }
+
+    private IdlToken applyTagResult(String tag, boolean isTextBlock) {
+        try {
+            TaggedStringLiteral.Result result = TaggedStringLiteral.scan(tag, "", isTextBlock);
+            switch (result.token) {
+                case NUMBER:
+                    currentTokenNumber = result.numberValue;
+                    return currentTokenType = IdlToken.NUMBER;
+                default:
+                    currentTokenStringSlice = result.stringValue;
+                    return currentTokenType = isTextBlock ? IdlToken.TEXT_BLOCK : IdlToken.STRING;
+            }
+        } catch (RuntimeException e) {
+            currentTokenError = e.getMessage();
+            return currentTokenType = IdlToken.ERROR;
+        }
+    }
+
+    /**
+     * Reads raw content between quotes without applying escape processing.
+     * Used by tagged string literals that handle their own escape logic.
+     */
+    private CharSequence parseRawStringContents(boolean triple) {
+        int start = parser.position();
+
+        while (!parser.eof()) {
+            char next = parser.peek();
+            if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
+                break;
+            }
+            parser.skip();
+            if (next == '\\') {
+                parser.skip();
+            }
+        }
+
+        CharSequence result = parser.borrowSliceFrom(start);
+        parser.expect('"');
+
+        if (triple) {
+            parser.expect('"');
+            parser.expect('"');
+        }
+
+        return result;
     }
 
     private IdlToken parseString() {
