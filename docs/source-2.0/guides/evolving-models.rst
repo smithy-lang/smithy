@@ -144,6 +144,39 @@ The following changes to trait definitions are backward compatible:
 #. Marking a trait as deprecated.
 
 
+Using inline collections
+========================
+
+.. versionadded:: 2.1
+
+:ref:`Inline collection declarations <idl-inline-collections>` allow list and
+map shapes to be declared directly in member target positions. When adopting
+inline collections, consider the following:
+
+**Migrating from explicit to inline**
+
+Replacing an explicit list or map shape with inline syntax is
+wire-compatible (the serialized data is identical), but changes the shape ID
+from the explicit name to a synthetic name (e.g., ``MyList`` becomes
+``_SyntheticListOfString``). This may be a breaking change for:
+
+- Other models referencing the shape by name.
+- Code generators that derive type names from shape IDs.
+
+**Migrating from inline to explicit**
+
+Extracting an inline collection into a named shape is also wire-compatible
+but changes the shape ID. This is necessary when the collection needs
+shape-level traits such as ``@sparse`` or ``@uniqueItems``.
+
+**When to use inline vs explicit**
+
+- Use inline syntax for simple, single-use collections that need no
+  shape-level traits.
+- Use explicit shapes when the collection is referenced by multiple members,
+  needs traits, or benefits from a meaningful name.
+
+
 Using Smithy Diff
 =================
 
