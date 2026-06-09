@@ -1,0 +1,3 @@
+[ERROR] smithy.example#TagList: Removed list `smithy.example#TagList` which had traits that cannot be expressed using inline collection syntax. The following traits were lost: smithy.api#sparse | RemovedShape
+-----
+[ERROR] smithy.example#MyStructure$tags: The shape targeted by the member `smithy.example#MyStructure$tags` changed from `smithy.example#TagList` (list) to `smithy.example#_SyntheticListOfString` (list). This will result in the following effective differences: | ChangedMemberTarget
