@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
@@ -32,12 +34,15 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.metadata.ShapeClosure;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 public class CodegenDirectorTest {
 
@@ -683,14 +688,178 @@ public class CodegenDirectorTest {
     }
 
     @Test
-    public void failsWhenBothServiceAndShapeClosureAreSet() {
+    public void combinedModeGeneratesTheClosureWithTheServiceAsPrimary() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "combined-model.smithy");
+        runner.service(ShapeId.from("smithy.example#Weather"));
+        runner.shapeClosure("smithy.example#combinedClosure");
+        runner.run();
+
+        // The generated set is the closure: the service and its data shapes, plus the
+        // unconnected Standalone operation and ExtraType structure the closure adds.
+        assertThat(testDirected.generatedShapes,
+                hasItem(ShapeId.from("smithy.example#Weather")));
+        assertThat(testDirected.generatedShapes,
+                hasItem(ShapeId.from("smithy.example#ExtraType")));
+        assertThat(testDirected.generatedShapes,
+                hasItem(ShapeId.from("smithy.example#Standalone")));
+
+        // The primary service is exposed and generated exactly once (by the dedicated ordered
+        // call, not also by the shape visitor).
+        assertThat(testDirected.capturedCustomizeDirective.getService().get().getId(),
+                equalTo(ShapeId.from("smithy.example#Weather")));
+        assertThat(testDirected.capturedContext.service().getId(),
+                equalTo(ShapeId.from("smithy.example#Weather")));
+        assertThat(testDirected.generatedServiceDirectives, hasSize(1));
+        GenerateServiceDirective<TestContext, TestSettings> serviceDirective =
+                testDirected.generatedServiceDirectives.get(0);
+        assertThat(serviceDirective.getService().get().getId(),
+                equalTo(ShapeId.from("smithy.example#Weather")));
+        assertThat(serviceDirective.shape().getId(), equalTo(ShapeId.from("smithy.example#Weather")));
+
+        // operations() reflects the closure, so it contains the unconnected Standalone
+        // operation in addition to the service's own operations. A top-down walk of the
+        // service alone would not include Standalone.
+        Set<ShapeId> operations = testDirected.capturedCustomizeDirective.operations()
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+        assertThat(operations,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetCity"),
+                        ShapeId.from("smithy.example#GetForecast"),
+                        ShapeId.from("smithy.example#Standalone")));
+    }
+
+    @Test
+    public void combinedModePartialClosureExcludesOmittedOperations() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "combined-model.smithy");
+
+        // The closure contains the Weather service and ExtraType, but not the unconnected
+        // Standalone operation, proving operations()/the generated set follow the closure and
+        // not a top-down walk of the service.
+        runner.service(ShapeId.from("smithy.example#Weather"));
+        runner.shapeClosure("smithy.example#combinedRenamedClosure");
+        runner.run();
+
+        Set<ShapeId> operations = testDirected.capturedCustomizeDirective.operations()
+                .stream()
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+        assertThat(operations,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#GetCity"),
+                        ShapeId.from("smithy.example#GetForecast")));
+        assertThat(operations, not(hasItem(ShapeId.from("smithy.example#Standalone"))));
+        assertThat(testDirected.generatedShapes,
+                not(hasItem(ShapeId.from("smithy.example#Standalone"))));
+    }
+
+    @Test
+    public void combinedModeFlattensPaginationForServicesInTheClosure() {
         TestDirected testDirected = new TestDirected();
         CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
                 closureRunner(testDirected, "closure-model.smithy");
+
+        // The closure is rooted at the CityDirectory service, which is also set as the
+        // primary service, so this is combined mode. Pagination flattening must still run for
+        // services in the closure being generated.
+        runner.service(ShapeId.from("smithy.example#CityDirectory"));
+        runner.shapeClosure("smithy.example#cityDirectoryClosure");
+        runner.flattenPaginationInfoIntoOperations();
+        runner.run();
+
+        GenerateOperationDirective<TestContext, TestSettings> operation =
+                testDirected.generatedOperationDirectives.get(ShapeId.from("smithy.example#ListCities"));
+        assertThat(operation, notNullValue());
+        PaginatedTrait paginated = operation.shape().expectTrait(PaginatedTrait.class);
+        assertThat(paginated.getItems().get(), equalTo("items"));
+        // Inherited from the CityDirectory service via flattening.
+        assertThat(paginated.getInputToken().get(), equalTo("nextToken"));
+    }
+
+    @Test
+    public void failsWhenServiceIsNotAMemberOfTheShapeClosure() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "combined-model.smithy");
+
+        // The closure does not contain the Weather service, so combined mode is invalid.
         runner.service(ShapeId.from("smithy.example#Weather"));
-        runner.shapeClosure("smithy.example#cityData");
+        runner.shapeClosure("smithy.example#serviceNotIncluded");
 
         Assertions.assertThrows(IllegalStateException.class, runner::run);
+    }
+
+    @Test
+    public void injectsAndGeneratesAShapeClosureObject() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        // A closure built in code is injected into the model and resolved the normal way.
+        // This generates the same shapes as the equivalent metadata-authored `cityData`
+        // closure.
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("smithy.example#injectedCityData")
+                .includeBySelector("[id = 'smithy.example#City']")
+                .build();
+        runner.shapeClosure(closure);
+        runner.run();
+
+        assertThat(testDirected.generatedShapes,
+                containsInAnyOrder(
+                        ShapeId.from("smithy.example#City"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#Conditions")));
+
+        // The injected closure id flows through the directives like a metadata closure.
+        assertThat(testDirected.capturedCustomizeDirective.getShapeClosureId().get(),
+                equalTo("smithy.example#injectedCityData"));
+    }
+
+    @Test
+    public void injectedShapeClosureObjectAppliesRenames() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("smithy.example#injectedRenamedCityData")
+                .includeBySelector("[id = 'smithy.example#City']")
+                .rename(MapUtils.of(ShapeId.from("smithy.example#City"), "ZanyCity"))
+                .build();
+        runner.shapeClosure(closure);
+        runner.shapeGenerationOrder(ShapeGenerationOrder.ALPHABETICAL);
+        runner.run();
+
+        // The injected rename drives the alphabetical sort (City -> ZanyCity sorts last),
+        // proving the injected closure's renames are resolved through getRenames().
+        assertThat(testDirected.generatedShapes,
+                contains(
+                        ShapeId.from("smithy.example#Conditions"),
+                        ShapeId.from("smithy.example#Coordinates"),
+                        ShapeId.from("smithy.example#City")));
+    }
+
+    @Test
+    public void failsWhenInjectedShapeClosureObjectIdCollides() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        // smithy.example#cityData is already declared in the model metadata.
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("smithy.example#cityData")
+                .includeBySelector("[id = 'smithy.example#City']")
+                .build();
+        runner.shapeClosure(closure);
+
+        IllegalStateException e = Assertions.assertThrows(IllegalStateException.class, runner::run);
+        assertThat(e.getMessage(), containsString("smithy.example#cityData"));
     }
 
     @Test

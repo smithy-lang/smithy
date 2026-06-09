@@ -102,6 +102,25 @@ public abstract class Directive<S> {
     }
 
     /**
+     * Gets the renames that apply to the shapes being generated.
+     *
+     * <p>The renames mirror the generated set: when a shape closure is present (closure or
+     * combined mode) these are the closure's renames, otherwise they are the primary
+     * service's renames. Each key is the id of a shape being generated and each value is the
+     * name, without a namespace, to use for that shape.
+     *
+     * @return Returns a map of shape id to replacement name, empty if none apply.
+     */
+    public final Map<ShapeId, String> getRenames() {
+        if (shapeClosureId != null) {
+            return ShapeClosureIndex.of(model).getRenames(shapeClosureId);
+        } else if (service != null) {
+            return service.getRename();
+        }
+        return Collections.emptyMap();
+    }
+
+    /**
      * Returns a map of the shapes being generated.
      *
      * <p>When driven by a service, these are the shapes connected to the service.
@@ -127,17 +146,20 @@ public abstract class Directive<S> {
     private Set<Shape> resolveShapes() {
         Set<Shape> result = new LinkedHashSet<>();
         Iterator<Shape> iterator;
-        if (service != null) {
-            iterator = new Walker(model).iterateShapes(service);
-        } else {
+
+        // A shape closure drives the generated set whenever one is present, even in combined
+        // mode where a primary service is also set.
+        if (shapeClosureId != null) {
             iterator = ShapeClosureIndex.of(model).getShapesInClosure(shapeClosureId).iterator();
+        } else {
+            iterator = new Walker(model).iterateShapes(service);
         }
 
         while (iterator.hasNext()) {
             Shape next = iterator.next();
             // A shape closure may include prelude shapes reached through members, but those
             // are not generated. This matches how a service closure is resolved for codegen.
-            if (service == null && Prelude.isPreludeShape(next)) {
+            if (shapeClosureId != null && Prelude.isPreludeShape(next)) {
                 continue;
             }
 
@@ -167,7 +189,7 @@ public abstract class Directive<S> {
         if (result == null) {
             if (generateDataShapesOnly) {
                 result = Collections.emptySet();
-            } else if (service != null) {
+            } else if (shapeClosureId == null) {
                 result = TopDownIndex.of(model()).getContainedOperations(service);
             } else {
                 result = new LinkedHashSet<>();
