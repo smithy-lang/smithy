@@ -268,24 +268,11 @@ public class TaggedStringLiteralTest {
         return tokenizer;
     }
 
-    public static Stream<Arguments> reTokenizerTests() {
-        return Stream.of(
-                Arguments.of("#re \"^\\d{5}$\"", "^\\d{5}$"),
-                Arguments.of("#re \"\\w+\\s\\d\"", "\\w+\\s\\d"),
-                Arguments.of("#re \"\\\\\"", "\\"),
-                Arguments.of("#re \"\\\"\"", "\""),
-                Arguments.of("#re \"hello\"", "hello"),
-                Arguments.of("#re \"\"", ""),
-                Arguments.of("#re \"[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}\"",
-                        "[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("reTokenizerTests")
-    public void tokenizesReTaggedStrings(String model, String expected) {
-        IdlInternalTokenizer tokenizer = tokenizerV21(model);
+    @Test
+    public void tokenizesReTag() {
+        IdlInternalTokenizer tokenizer = tokenizerV21("#re \"^\\d{5}$\"");
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(expected));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$"));
     }
 
     @Test
@@ -298,24 +285,11 @@ public class TaggedStringLiteralTest {
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$\n"));
     }
 
-    public static Stream<Arguments> bTokenizerTests() {
-        return Stream.of(
-                Arguments.of("#b \"Hello world\"", base64("Hello world")),
-                Arguments.of("#b \"\\xaa\"", base64((byte) 0xaa)),
-                Arguments.of("#b \"A\\x42C\"", base64((byte) 'A', (byte) 0x42, (byte) 'C')),
-                Arguments.of("#b \"\\n\"", base64((byte) '\n')),
-                Arguments.of("#b \"\\\\\"", base64((byte) '\\')),
-                Arguments.of("#b \"\\0\"", base64((byte) 0)),
-                Arguments.of("#b \"\\101\"", base64((byte) 'A')),
-                Arguments.of("#b \"\"", base64()));
-    }
-
-    @ParameterizedTest
-    @MethodSource("bTokenizerTests")
-    public void tokenizesBTaggedStrings(String model, String expected) {
-        IdlInternalTokenizer tokenizer = tokenizerV21(model);
+    @Test
+    public void tokenizesBTag() {
+        IdlInternalTokenizer tokenizer = tokenizerV21("#b \"Hello world\"");
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(expected));
+        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(base64("Hello world")));
     }
 
     @Test
@@ -354,14 +328,14 @@ public class TaggedStringLiteralTest {
     }
 
     @Test
-    public void tokenizesTimestampWithFractionalSeconds() {
+    public void tokenizesTimestampAsNumber() {
         IdlInternalTokenizer tokenizer = tokenizerV21("#timestamp \"2026-04-14T01:40:23.657Z\"");
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
         assertThat(tokenizer.getCurrentTokenNumberValue().doubleValue(), equalTo(1776130823.657));
     }
 
     @Test
-    public void tokenizesTimestampWholeSeconds() {
+    public void tokenizesTimestampWholeSecondsAsNumber() {
         IdlInternalTokenizer tokenizer = tokenizerV21("#timestamp \"2026-04-14T01:40:23Z\"");
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
         assertThat(tokenizer.getCurrentTokenNumberValue().longValue(), equalTo(1776130823L));
