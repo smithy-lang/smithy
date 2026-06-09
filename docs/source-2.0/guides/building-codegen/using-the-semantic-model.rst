@@ -181,6 +181,13 @@ for handling different kinds of shapes.
    - A simpler way to get the answer of the above example is to just call
      ``shape.members().size()``.
 
+.. versionadded:: 2.1
+   Synthetic list and map shapes created by :ref:`inline collection
+   declarations <idl-inline-collections>` are visited like any other shape.
+   Generators that produce named types for collections should check for the
+   ``smithy.synthetic#generated`` trait to avoid generating types with
+   synthetic names.
+
 
 Knowledge Indexes
 =================

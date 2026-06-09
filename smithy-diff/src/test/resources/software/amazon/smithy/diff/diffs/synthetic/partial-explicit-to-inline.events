@@ -1,0 +1,3 @@
+[NOTE] smithy.example#MyStructure$tagsTwo: Added trait `smithy.api#length` with value | ModifiedTrait.Add.smithy.api#length
+-----
+[WARNING] smithy.example#MyStructure$tagsTwo: The shape targeted by the member `smithy.example#MyStructure$tagsTwo` changed from `smithy.example#TagList` (list) to `smithy.example#_SyntheticListOfString` (list). This was determined backward compatible. This will result in the following effective differences: | ChangedMemberTarget

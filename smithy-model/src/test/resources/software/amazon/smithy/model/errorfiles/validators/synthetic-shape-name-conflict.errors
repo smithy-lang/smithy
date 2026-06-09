@@ -1,0 +1,1 @@
+[WARNING] smithy.example#_SyntheticFoo: Shape name starts with `_Synthetic` which is reserved for assembler-generated shapes. Consider renaming this shape to avoid potential conflicts. | SyntheticShape

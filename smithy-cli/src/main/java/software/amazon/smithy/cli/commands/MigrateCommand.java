@@ -60,7 +60,7 @@ final class MigrateCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(MigrateCommand.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1(\\.0)?\"\\s*$");
-    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2(\\.0)?\"\\s*$");
+    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2(\\.\\d)?\"\\s*$");
     private final String parentCommandName;
 
     MigrateCommand(String parentCommandName) {
@@ -106,7 +106,7 @@ final class MigrateCommand implements Command {
 
     @Override
     public String getSummary() {
-        return "Migrate Smithy IDL models from 1.0 to 2.0 in place.";
+        return "Migrate Smithy IDL models from 1.0 to 2.1 in place.";
     }
 
     @Override
@@ -252,9 +252,9 @@ final class MigrateCommand implements Command {
     private String updateVersion(String modelString) {
         Matcher matcher = VERSION_1.matcher(modelString);
         if (matcher.find()) {
-            return matcher.replaceFirst(format("\\$version: \"2.0\"%n"));
+            return matcher.replaceFirst(format("\\$version: \"2.1\"%n"));
         }
-        return format("$version: \"2.0\"%n%n") + modelString;
+        return format("$version: \"2.1\"%n%n") + modelString;
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {

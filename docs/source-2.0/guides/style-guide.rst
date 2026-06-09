@@ -179,6 +179,12 @@ Shape names
 * Enums should use a singular noun (e.g., prefer "Suit" over "Suits").
 * Lists should use plural names (e.g., prefer "Users" over "UserList").
 * Operations should follow the format of "VerbNoun" (e.g., "UpdateUser").
+
+.. versionadded:: 2.1
+   For simple, single-use lists and maps that need no shape-level traits,
+   prefer :ref:`inline collection syntax <idl-inline-collections>` over
+   defining a separate named shape.
+
 * Resources should use a singular noun (e.g., use "User" over "Users").
 * Services should be named after the name of a service, omitting the word
   "Service" and branding when possible (e.g., prefer "S3" over

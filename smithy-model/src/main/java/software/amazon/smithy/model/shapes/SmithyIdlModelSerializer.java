@@ -40,6 +40,7 @@ import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -101,8 +102,8 @@ public final class SmithyIdlModelSerializer {
         } else {
             shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         }
-        // Never serialize synthetic traits.
-        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
+        // Never serialize synthetic traits or AST-only traits in the IDL.
+        traitFilter = builder.traitFilter.and(trait -> trait.serializationMode() == Trait.SerializationMode.ALL);
         basePath = builder.basePath;
         if (basePath != null) {
             Function<Shape, Path> placer = builder.shapePlacer;
@@ -207,6 +208,7 @@ public final class SmithyIdlModelSerializer {
         shapes.stream()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !inlineableShapes.contains(shape.getId()))
+                .filter(shape -> !shape.hasTrait(SyntheticShapeTrait.ID))
                 .sorted(comparator)
                 .forEach(shape -> shape.accept(shapeSerializer));
 
@@ -653,10 +655,39 @@ public final class SmithyIdlModelSerializer {
                         if (member.hasTrait(DefaultTrait.ID)) {
                             assignment = " = " + Node.printJson(member.expectTrait(DefaultTrait.class).toNode());
                         }
-                        codeWriter.write("$L: $I$L", member.getMemberName(), member.getTarget(), assignment);
+                        ShapeId targetId = member.getTarget();
+                        if (model.expectShape(targetId).hasTrait(SyntheticShapeTrait.ID)) {
+                            String inlineSyntax = renderInlineCollectionTarget(targetId);
+                            codeWriter.write("$L: $L$L", member.getMemberName(), inlineSyntax, assignment);
+                        } else {
+                            codeWriter.write("$L: $I$L", member.getMemberName(), targetId, assignment);
+                        }
                     }
                 });
             }
+        }
+
+        private String renderInlineCollectionTarget(ShapeId targetId) {
+            Shape target = model.expectShape(targetId);
+            if (target.isListShape()) {
+                ShapeId memberTarget = target.asListShape().get().getMember().getTarget();
+                if (model.expectShape(memberTarget).hasTrait(SyntheticShapeTrait.ID)) {
+                    return "[" + renderInlineCollectionTarget(memberTarget) + "]";
+                }
+                return "[" + codeWriter.formatShapeId(memberTarget) + "]";
+            } else if (target.isMapShape()) {
+                MapShape map = target.asMapShape().get();
+                ShapeId keyTarget = map.getKey().getTarget();
+                ShapeId valueTarget = map.getValue().getTarget();
+                String keyStr = model.expectShape(keyTarget).hasTrait(SyntheticShapeTrait.ID)
+                        ? renderInlineCollectionTarget(keyTarget)
+                        : codeWriter.formatShapeId(keyTarget);
+                String valueStr = model.expectShape(valueTarget).hasTrait(SyntheticShapeTrait.ID)
+                        ? renderInlineCollectionTarget(valueTarget)
+                        : codeWriter.formatShapeId(valueTarget);
+                return "{" + keyStr + ": " + valueStr + "}";
+            }
+            return codeWriter.formatShapeId(targetId);
         }
 
         private void writeEnumMembers(Collection<MemberShape> members) {

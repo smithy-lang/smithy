@@ -24,6 +24,7 @@ import software.amazon.smithy.model.validation.Validator;
 
 final class LoaderUtils {
 
+    static final String PREFIX = "_Synthetic";
     static final String BAD_DOCUMENTATION_COMMENT = "Model.BadDocumentationComment";
 
     private LoaderUtils() {}
@@ -164,5 +165,31 @@ final class LoaderUtils {
                 .sourceLocation(location)
                 .shapeId(shape)
                 .build();
+    }
+
+    /**
+     * Generates a synthetic name for an inline list shape.
+     *
+     * @param memberTarget The target name as written (e.g., "String" or "com.foo#Bar").
+     * @return The synthetic shape name (without namespace).
+     */
+    static String listName(String memberTarget) {
+        return PREFIX + "ListOf" + simpleName(memberTarget);
+    }
+
+    /**
+     * Generates a synthetic name for an inline map shape.
+     *
+     * @param keyTarget The key target name as written.
+     * @param valueTarget The value target name as written.
+     * @return The synthetic shape name (without namespace).
+     */
+    static String mapName(String keyTarget, String valueTarget) {
+        return PREFIX + "MapOf" + simpleName(keyTarget) + "To" + simpleName(valueTarget);
+    }
+
+    private static String simpleName(String target) {
+        int hashIndex = target.indexOf('#');
+        return hashIndex >= 0 ? target.substring(hashIndex + 1) : target;
     }
 }

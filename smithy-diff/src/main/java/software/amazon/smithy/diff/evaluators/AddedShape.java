@@ -14,6 +14,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -23,6 +24,8 @@ public final class AddedShape extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedShapes()
+                // Synthetic shapes are assembler-generated implementation details, not API surface.
+                .filter(shape -> !shape.hasTrait(SyntheticShapeTrait.ID))
                 .filter(shape -> !isMemberOfAddedShape(shape, differences))
                 .filter(shape -> !isMemberOfConvertedEnumShape(shape, differences))
                 .map(shape -> note(shape, String.format("Added %s `%s`", shape.getType(), shape.getId())))
