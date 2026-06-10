@@ -5,19 +5,28 @@
 
 ## Abstract
 
-This proposal introduces tagged string literals to the Smithy IDL. A tagged string literal is a string prefixed with `#<tag>` that changes how the string content is interpreted at parse time. The tag instructs the parser to use alternative rules for processing escape sequences and encoding, producing a regular string value. This is purely syntactic sugar; the AST and semantic model remain unchanged. Four initial tags are proposed: `#re` (regex), `#b` (binary), `#hex` (hex dump), and `#timestamp` (ISO date to epoch seconds).
+This proposal introduces tagged string literals to the Smithy IDL. A tagged string literal is a string prefixed with
+`#<tag>` that changes how the string content is interpreted at parse time. The tag instructs the parser to use
+alternative rules for processing escape sequences and encoding, producing a regular string value. This is purely
+syntactic sugar; the AST and semantic model remain unchanged. Four initial tags are proposed: `#re` (regex), `#b`
+(binary), `#hex` (hex dump), and `#timestamp` (ISO date to epoch seconds).
 
 ## Motivation
 
-Smithy string literals use standard escape sequences (`\\n`, `\\t`, `\\uXXXX`, etc.). This works well for general text, but becomes cumbersome for certain domains:
+Smithy string literals use standard escape sequences (`\\n`, `\\t`, `\\uXXXX`, etc.). This works well for general text,
+but becomes cumbersome for certain domains:
 
-**Regular expressions** require heavy escaping. A simple pattern like `^\d{5}$` must be written as `"^\\d{5}$"` because `\d` is not a valid Smithy escape sequence. This double-escaping is error-prone and hard to read.
+**Regular expressions** require heavy escaping. A simple pattern like `^\d{5}$` must be written as `"^\\d{5}$"` because
+`\d` is not a valid Smithy escape sequence. This double-escaping is error-prone and hard to read.
 
-**Binary data** in Smithy is represented as base64-encoded strings (for blob shapes). Authors must manually encode binary values, making it difficult to express byte sequences directly.
+**Binary data** in Smithy is represented as base64-encoded strings (for blob shapes). Authors must manually encode
+binary values, making it difficult to express byte sequences directly.
 
-**Hex data** is common in protocol specifications and test fixtures. Expressing raw bytes as base64 obscures the actual byte values that protocol authors are working with.
+**Hex data** is common in protocol specifications and test fixtures. Expressing raw bytes as base64 obscures the actual
+byte values that protocol authors are working with.
 
-**Timestamps** as epoch seconds are opaque. A value like `1704067200` gives no indication that it represents January 1, 2024 without external tooling.
+**Timestamps** as epoch seconds are opaque. A value like `1704067200` gives no indication that it represents January 1,
+2024 without external tooling.
 
 These are common enough patterns that dedicated syntax would significantly improve readability and reduce errors.
 
@@ -37,7 +46,8 @@ A tagged string literal consists of `#` followed by a tag identifier, followed b
     """
 ```
 
-The tag identifier follows the same rules as Smithy identifiers (letters, digits, underscores; must start with a letter or underscore).
+The tag identifier follows the same rules as Smithy identifiers (letters, digits, underscores; must start with a letter
+or underscore).
 
 #### ABNF
 
@@ -49,28 +59,38 @@ quoted_text = DQUOTE *quoted_char DQUOTE
 text_block = three_dquotes br *text_block_content three_dquotes
 ```
 
-A tagged string literal can appear anywhere a regular string literal can appear in the IDL (trait values, node values, etc.).
+A tagged string literal can appear anywhere a regular string literal can appear in the IDL (trait values, node values,
+etc.).
 
 ### Disambiguation
 
-The `#` character is already used in shape IDs (e.g., `com.example#Shape`). The tokenizer disambiguates by checking two conditions: the identifier after `#` must be a known tag name, and it must be followed by a string literal (`"` or `"""`). If either condition fails, `#` is emitted as a plain `POUND` token and subsequent characters are tokenized normally. Because the set of known tags is small and fixed (`re`, `b`, `hex`, `timestamp`), collisions with shape member names are unlikely in practice.
+The `#` character is already used in shape IDs (e.g., `com.example#Shape`). The tokenizer disambiguates by checking two
+conditions: the identifier after `#` must be a known tag name, and it must be followed by a string literal (`"` or
+`"""`). If either condition fails, `#` is emitted as a plain `POUND` token and subsequent characters are tokenized
+normally. Because the set of known tags is small and fixed (`re`, `b`, `hex`, `timestamp`), collisions with shape member
+names are unlikely in practice.
 
 ### Processing model
 
 Tagged string literals are processed across two layers:
 
-1. The tokenizer recognizes `#` followed by a known tag identifier and a string literal. It emits a `TAG` token (lexeme is `#identifier`) followed by a `RAW_STRING` or `RAW_TEXT_BLOCK` token containing the raw string content without escape processing.
-2. The parser validates the tag name, checks that the model version supports tagged literals (2.1 or later), and delegates to a tag-specific handler.
+1. The tokenizer recognizes `#` followed by a known tag identifier and a string literal. It emits a `TAG` token (lexeme
+is `#identifier`) followed by a `RAW_STRING` or `RAW_TEXT_BLOCK` token containing the raw string content without escape
+processing.
+2. The parser validates the tag name, checks that the model version supports tagged literals (2.1 or later), and
+delegates to a tag-specific handler.
 3. The tag handler processes the raw content using its own escape and encoding rules.
 4. The parser produces a regular string or number node value from the result.
 
-No information about the tag is preserved in the AST or semantic model. The tagged literal and its equivalent plain string are indistinguishable after parsing.
+No information about the tag is preserved in the AST or semantic model. The tagged literal and its equivalent plain
+string are indistinguishable after parsing.
 
 ### Initial tags
 
 #### `#re` Regular expression literals
 
-The `#re` tag treats backslash sequences as literal characters rather than escape sequences. This allows regex patterns to be written naturally without double-escaping.
+The `#re` tag treats backslash sequences as literal characters rather than escape sequences. This allows regex patterns
+to be written naturally without double-escaping.
 
 **Escape rules:**
 
@@ -89,7 +109,10 @@ The `#re` tag treats backslash sequences as literal characters rather than escap
 
 #### `#b` Binary (byte) literals
 
-The `#b` tag interprets the string as a sequence of bytes, similar to Python's `b'...'` syntax. The string can contain hex escapes (`\xHH`), octal escapes (`\OOO`), or literal character values. The resulting token is the base64-encoded representation of the bytes. The escape rules are designed to be compatible with Python's byte string literals, so authors can copy escape sequences between Smithy models and Python code without modification.
+The `#b` tag interprets the string as a sequence of bytes, similar to Python's `b'...'` syntax. The string can contain
+hex escapes (`\xHH`), octal escapes (`\OOO`), or literal character values. The resulting token is the base64-encoded
+representation of the bytes. The escape rules are designed to be compatible with Python's byte string literals, so
+authors can copy escape sequences between Smithy models and Python code without modification.
 
 **Escape rules:**
 
@@ -117,9 +140,12 @@ The `#b` tag interprets the string as a sequence of bytes, similar to Python's `
 
 #### `#hex` Hex dump literals
 
-The `#hex` tag interprets the string as a hex dump. The string contains hexadecimal values where spaces are ignored and lines starting with `#` are treated as comments (ignored until end of line). The resulting token is the base64-encoded representation of the decoded bytes.
+The `#hex` tag interprets the string as a hex dump. The string contains hexadecimal values where spaces are ignored and
+lines starting with `#` are treated as comments (ignored until end of line). The resulting token is the base64-encoded
+representation of the decoded bytes.
 
-This is particularly useful for protocol tests where binary formats like CBOR are specified using annotated hex dumps. Authors can paste annotated CBOR directly from specifications or diagnostic tools:
+This is particularly useful for protocol tests where binary formats like CBOR are specified using annotated hex dumps.
+Authors can paste annotated CBOR directly from specifications or diagnostic tools:
 
 ```smithy
 body: #hex """
@@ -156,12 +182,17 @@ Equivalent to `"SGVsbG8="` (base64 of "Hello").
 
 #### `#timestamp` Timestamp literals
 
-The `#timestamp` tag converts an ISO 8601 date/time string into its `epoch-seconds` representation, following the same rules as the `epoch-seconds` timestamp format defined by Smithy. This makes timestamp default values and test data more readable.
+The `#timestamp` tag converts an ISO 8601 date/time string into its `epoch-seconds` representation, following the same
+rules as the `epoch-seconds` timestamp format defined by Smithy. This makes timestamp default values and test data more
+readable.
 
 **Rules:**
 
 * Input must be a valid ISO 8601 date/time string (as defined by the `date-time` production in RFC 3339 Section 5.6)
-* Output is the number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970, with optional millisecond precision. Values that are more granular than millisecond precision SHOULD be truncated to fit millisecond precision. This follows the same rules as the `epoch-seconds` timestamp format.
+* Output is the number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC),
+  Thursday, 1 January 1970, with optional millisecond precision. Values that are more granular than
+  millisecond precision SHOULD be truncated to fit millisecond precision. This follows the same rules
+  as the `epoch-seconds` timestamp format.
 
 **Examples:**
 
@@ -172,7 +203,8 @@ The `#timestamp` tag converts an ISO 8601 date/time string into its `epoch-secon
 
 ### Text block support
 
-Both tags work with text blocks. The text block formatting rules (leading whitespace removal, line normalization) are applied before the tag-specific scanner processes the content:
+Both tags work with text blocks. The text block formatting rules (leading whitespace removal, line normalization) are
+applied before the tag-specific scanner processes the content:
 
 ```smithy
 @pattern(#re """
@@ -183,11 +215,14 @@ string ZipCode
 
 ### Error handling
 
-* **Unknown tag**: If a `#` is followed by an identifier that is not a recognized tag, the parser emits an error: `Unknown tagged literal: #foo`
+* **Unknown tag**: If a `#` is followed by an identifier that is not a recognized tag, the parser
+  emits an error: `Unknown tagged literal: #foo`
 * **Invalid escapes**: Tag-specific escape errors produce clear messages, e.g., `Incomplete \x escape in binary string`
-* **Missing string**: If `#tag` is not followed by a string literal, the parser emits: `Expected a string literal after #tag`
+* **Missing string**: If `#tag` is not followed by a string literal, the parser emits:
+  `Expected a string literal after #tag`
 
-Because the tag set is closed and tied to a specific Smithy IDL version, models using newer tags will fail to parse on older tooling. This is consistent with how other IDL version features are handled.
+Because the tag set is closed and tied to a specific Smithy IDL version, models using newer tags will fail to parse on
+older tooling. This is consistent with how other IDL version features are handled.
 
 ## Alternatives considered
 
@@ -197,10 +232,13 @@ Using a single-letter prefix directly attached to the string, like Python's `b'.
 
 This was rejected because:
 
-* It only solves one use case at a time. Binary gets `b"..."`, but regex would need a separate mechanism (e.g., `r"..."`) — each one is a new special case.
-* A letter followed by a string is ambiguous with an identifier followed by a string value, requiring context-sensitive parsing.
+* It only solves one use case at a time. Binary gets `b"..."`, but regex would need a separate
+  mechanism (e.g., `r"..."`) — each one is a new special case.
+* A letter followed by a string is ambiguous with an identifier followed by a string value,
+  requiring context-sensitive parsing.
 * Not extensible without grammar changes — each new prefix is a new production.
-* The tagged literal approach (`#tag "..."`) provides a single, general mechanism that handles binary, regex, and future tags uniformly.
+* The tagged literal approach (`#tag "..."`) provides a single, general mechanism that handles
+  binary, regex, and future tags uniformly.
 
 ### Prefix character other than `#`
 
@@ -247,25 +285,39 @@ This was rejected because:
 
 * Tagged string literals are IDL-only. They cannot be expressed in the JSON AST format.
 * The set of tags is fixed and hardcoded. New tags require changes to the Smithy parser.
-* IDL round-tripping: converting AST back to IDL cannot reconstruct tagged literals since the tag information is not preserved. The plain string equivalent is emitted instead.
+* IDL round-tripping: converting AST back to IDL cannot reconstruct tagged literals since the tag
+  information is not preserved. The plain string equivalent is emitted instead.
 
 ## Implementation
 
 The implementation consists of the following components:
 
-**`IdlToken.java`**: Three new token types are added: `TAG` (the `#identifier` prefix), `RAW_STRING` (string content with no escape processing), and `RAW_TEXT_BLOCK` (text block content with no escape processing). Helper methods `isString()` and `isTextBlock()` return true for both regular and raw variants.
+**`IdlToken.java`**: Three new token types are added: `TAG` (the `#identifier` prefix), `RAW_STRING` (string content
+with no escape processing), and `RAW_TEXT_BLOCK` (text block content with no escape processing). Helper methods
+`isString()` and `isTextBlock()` return true for both regular and raw variants.
 
-**`DefaultTokenizer.java`**: When `#` is encountered, the tokenizer peeks ahead. If the following characters form a known tag identifier (checked via `TaggedStringLiteral.hasHandler`) and the next non-space character is a quote, it emits a `TAG` token and sets a flag so that the next call to `next()` reads the string content without escape processing, emitting `RAW_STRING` or `RAW_TEXT_BLOCK`. If the identifier is not a known tag or no string follows, it falls back to emitting `POUND`.
+**`DefaultTokenizer.java`**: When `#` is encountered, the tokenizer peeks ahead. If the following characters form a
+known tag identifier (checked via `TaggedStringLiteral.hasHandler`) and the next non-space character is a quote, it
+emits a `TAG` token and sets a flag so that the next call to `next()` reads the string content without escape
+processing, emitting `RAW_STRING` or `RAW_TEXT_BLOCK`. If the identifier is not a known tag or no string follows, it
+falls back to emitting `POUND`.
 
-**`TaggedStringLiteral.java`**: Encapsulates all tag-specific scanning logic. Provides a `Result` type (holding either a STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives the raw string content (with text block normalization already applied) and produces the final value.
+**`TaggedStringLiteral.java`**: Encapsulates all tag-specific scanning logic. Provides a `Result` type (holding either a
+STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives the
+raw string content (with text block normalization already applied) and produces the final value.
 
-**`IdlNodeParser.java` / `IdlTraitParser.java`**: When parsing node values and the current token is `TAG`, the parser validates that the model version supports tagged literals (2.1 or later), checks the tag name, consumes the following `RAW_STRING`/`RAW_TEXT_BLOCK` token, and calls `TaggedStringLiteral.scan()` to produce the resolved node value.
+**`IdlNodeParser.java` / `IdlTraitParser.java`**: When parsing node values and the current token is `TAG`, the parser
+validates that the model version supports tagged literals (2.1 or later), checks the tag name, consumes the following
+`RAW_STRING`/`RAW_TEXT_BLOCK` token, and calls `TaggedStringLiteral.scan()` to produce the resolved node value.
 
 **`Version.java`**: A `TAGGED_LITERALS` feature flag (bit 6) is added to the bitmask. `VERSION_2_1` includes this flag.
 
-**`TreeType.java` (smithy-syntax)**: A `TAGGED_LITERAL` tree type parses the `TAG` + optional whitespace + `RAW_STRING`/`RAW_TEXT_BLOCK` sequence as a structured node, providing full syntactic structure for the Language Server Protocol.
+**`TreeType.java` (smithy-syntax)**: A `TAGGED_LITERAL` tree type parses the `TAG` + optional whitespace +
+`RAW_STRING`/`RAW_TEXT_BLOCK` sequence as a structured node, providing full syntactic structure for the Language Server
+Protocol.
 
-**`FormatVisitor.java` (smithy-syntax)**: Renders `TAGGED_LITERAL` nodes as `#tag "content"` with exactly one space, normalizing any irregular spacing from the original source.
+**`FormatVisitor.java` (smithy-syntax)**: Renders `TAGGED_LITERAL` nodes as `#tag "content"` with exactly one space,
+normalizing any irregular spacing from the original source.
 
 ## FAQ
 
@@ -281,7 +333,8 @@ string NumericString
 
 ### Can tagged literals span multiple lines?
 
-Yes, via text blocks. Note that newlines are preserved in the output. To continue a pattern across lines without including the newline, escape it with `\` at the end of the line:
+Yes, via text blocks. Note that newlines are preserved in the output. To continue a pattern across lines without
+including the newline, escape it with `\` at the end of the line:
 
 ```smithy
 @pattern(#re """
@@ -295,8 +348,13 @@ This produces the pattern `^\d{5}(-\d{4})?$` (no newline between the parts).
 
 ### What happens if a new tag conflicts with a shape name?
 
-Tags are only recognized when `#` is followed by a known tag identifier and then a string literal. The tokenizer checks the identifier against the fixed set of known tags (`re`, `b`, `hex`, `timestamp`). If the identifier is not a known tag, `#` is emitted as a plain `POUND` token. This prevents conflicts with shape IDs: in `com.example#re`, the tokenizer has already emitted `com`, `.`, `example` as separate tokens, and when it reaches `#re` it would only emit TAG if followed by a string. Since shape IDs in that context are not followed by string literals, the `#` falls back to POUND.
+Tags are only recognized when `#` is followed by a known tag identifier and then a string literal. The tokenizer checks
+the identifier against the fixed set of known tags (`re`, `b`, `hex`, `timestamp`). If the identifier is not a known
+tag, `#` is emitted as a plain `POUND` token. This prevents conflicts with shape IDs: in `com.example#re`, the tokenizer
+has already emitted `com`, `.`, `example` as separate tokens, and when it reaches `#re` it would only emit TAG if
+followed by a string. Since shape IDs in that context are not followed by string literals, the `#` falls back to POUND.
 
 ### Can tags be nested or composed?
 
-No. Tagged literals cannot be nested or composed. The content of a tagged string is processed by the tag's scanner and produces a plain string. There is no mechanism for nesting or chaining tags.
+No. Tagged literals cannot be nested or composed. The content of a tagged string is processed by the tag's scanner and
+produces a plain string. There is no mechanism for nesting or chaining tags.
