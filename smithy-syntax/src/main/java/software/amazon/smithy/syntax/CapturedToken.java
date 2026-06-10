@@ -61,7 +61,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
         this.endColumn = endColumn;
 
         if (stringContents == null
-                && (token == IdlToken.IDENTIFIER || token == IdlToken.STRING || token == IdlToken.TEXT_BLOCK)) {
+                && (token == IdlToken.IDENTIFIER || token.isString() || token.isTextBlock())) {
             this.stringContents = lexeme.toString();
         } else {
             this.stringContents = stringContents;
@@ -207,7 +207,7 @@ public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<
                 .endLine(tokenizer.getLine())
                 .endColumn(tokenizer.getColumn())
                 .lexeme(tokenizer.getCurrentTokenLexeme())
-                .stringContents(tok == IdlToken.STRING || tok == IdlToken.TEXT_BLOCK || tok == IdlToken.IDENTIFIER
+                .stringContents(tok.isString() || tok.isTextBlock() || tok == IdlToken.IDENTIFIER
                         ? stringTable.apply(tokenizer.getCurrentTokenStringSlice())
                         : null)
                 .textBlockContents(tok == IdlToken.TEXT_BLOCK
