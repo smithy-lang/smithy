@@ -76,6 +76,33 @@ enum Version {
     }
 
     /**
+     * Detects the IDL version from model text by scanning for the $version control statement.
+     *
+     * @param model Model text to scan.
+     * @return Returns the detected version, or null if not found.
+     */
+    static Version detectFromModel(CharSequence model) {
+        String text = model.toString();
+        int idx = text.indexOf("$version:");
+        if (idx == -1) {
+            idx = text.indexOf("$version :");
+        }
+        if (idx == -1) {
+            return null;
+        }
+        int colon = text.indexOf(':', idx);
+        int quote1 = text.indexOf('"', colon);
+        if (quote1 == -1) {
+            return null;
+        }
+        int quote2 = text.indexOf('"', quote1 + 1);
+        if (quote2 == -1) {
+            return null;
+        }
+        return fromString(text.substring(quote1 + 1, quote2));
+    }
+
+    /**
      * @return Return true if deprecated.
      */
     boolean isDeprecated() {
