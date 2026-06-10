@@ -148,7 +148,7 @@ string support defined in :rfc:`7405`.
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
     NodeKeyword         :%s"true" / %s"false" / %s"null"
-    NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
+    NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText` / `TaggedStringLiteral`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
     QuotedChar          :%x09        ; tab
                         :/ %x20-21     ; space - "!"
@@ -165,6 +165,7 @@ string support defined in :rfc:`7405`.
     TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
+    TaggedStringLiteral :"#" `Identifier` (`QuotedText` / `TextBlock`)
 
 .. rubric:: Shapes
 
@@ -218,6 +219,10 @@ string support defined in :rfc:`7405`.
 .. versionadded:: 2.1
    The ``MemberTarget``, ``InlineListTarget``, and ``InlineMapTarget``
    productions were added to support inline collection declarations.
+
+.. versionadded:: 2.1
+   The ``TaggedStringLiteral`` production was added to support tagged
+   string literals.
 
 .. rubric:: Traits
 
@@ -358,7 +363,9 @@ version greater than or equal to ``2.1`` and less than ``3.0``:
 .. versionadded:: 2.1
    Version ``2.1`` introduces :ref:`inline collection declarations
    <idl-inline-collections>`, which allow list and map shapes to be declared
-   directly in member target positions.
+   directly in member target positions, and :ref:`tagged string literals
+   <tagged-string-literals>`, which provide alternative syntax for expressing
+   regex patterns, binary data, hex dumps, and timestamps.
 
 .. rubric:: Version compatibility
 
@@ -2515,5 +2522,202 @@ example is interpreted as ``Foo\nBaz Bam``:
     Foo
     Baz \
     Bam"""
+
+.. _tagged-string-literals:
+
+Tagged string literals
+======================
+
+.. versionadded:: 2.1
+
+A tagged string literal is a string prefixed with ``#`` followed by a tag
+identifier that changes how the string content is interpreted at parse time.
+The tag instructs the parser to apply alternative escape and encoding rules,
+ultimately producing a regular string or number value. Tagged string literals
+can appear anywhere a string value is expected in the IDL (trait values, node
+values, default values).
+
+Tagged string literals are purely syntactic sugar; the AST and semantic model
+remain unchanged. After parsing, a tagged literal and its equivalent plain
+value are indistinguishable.
+
+.. code-block:: smithy
+
+    $version: "2.1"
+
+    namespace smithy.example
+
+    @pattern(#re "^\d{3}-\d{2}-\d{4}$")
+    string SSN
+
+    structure Example {
+        @default(#timestamp "2024-01-01T00:00:00Z")
+        startDate: Timestamp
+
+        @default(#hex """
+            89 50 4e 47 0d 0a 1a 0a  # PNG magic bytes
+            """)
+        pngHeader: Blob
+    }
+
+Smithy defines the following built-in tags:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 15 85
+
+    * - Tag
+      - Description
+    * - ``#re``
+      - Regular expression literal. Backslash sequences are passed through
+        literally, allowing regex patterns to be written without double-escaping.
+    * - ``#b``
+      - Binary literal. Interprets the string as a sequence of bytes using
+        hex escapes (``\xHH``), octal escapes (``\OOO``), and named escapes.
+        Produces a base64-encoded string.
+    * - ``#hex``
+      - Hex dump literal. Interprets the string as hexadecimal byte values where
+        spaces are ignored and ``#`` begins a comment until end of line.
+        Produces a base64-encoded string.
+    * - ``#timestamp``
+      - Timestamp literal. Converts an ISO 8601 date/time string into its
+        ``epoch-seconds`` representation following the same rules as the
+        `epoch-seconds timestamp format <https://smithy.io/2.0/spec/protocol-traits.html#timestamp-formats>`_.
+        Produces a number value.
+
+The set of tags is closed and tied to the Smithy IDL version. Models using
+tagged string literals require version 2.1 or later.
+
+
+``#re`` tag
+-----------
+
+The ``#re`` tag treats backslash sequences as literal characters rather than
+escape sequences. This allows regular expression patterns to be written
+naturally without double-escaping. Only ``\"`` (escaped quote) and ``\\``
+(escaped backslash) are interpreted; all other ``\X`` sequences are passed
+through as two literal characters.
+
+.. code-block:: smithy
+
+    @pattern(#re "^\d{5}(-\d{4})?$")
+    string ZipCode
+
+The above is equivalent to:
+
+.. code-block:: smithy
+
+    @pattern("^\\d{5}(-\\d{4})?$")
+    string ZipCode
+
+Text blocks can be used with ``#re`` for multiline patterns. Escaped newlines
+(a backslash immediately before a newline) are removed from the output,
+allowing long patterns to be split across lines:
+
+.. code-block:: smithy
+
+    @pattern(#re """
+        ^\d{5}\
+        (-\d{4})?$
+        """)
+    string ZipCode
+
+
+``#b`` tag
+----------
+
+The ``#b`` tag interprets the string as a sequence of bytes, similar to
+Python's ``b'...'`` syntax. The resulting value is the base64-encoded
+representation of the bytes.
+
+The following escapes are supported:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Escape
+      - Meaning
+    * - ``\xHH``
+      - Byte with hex value HH
+    * - ``\OOO``
+      - Byte with octal value OOO (1-3 digits, max 377)
+    * - ``\\``
+      - Literal backslash (0x5C)
+    * - ``\"``
+      - Literal double quote (0x22)
+    * - ``\a``
+      - Bell (0x07)
+    * - ``\b``
+      - Backspace (0x08)
+    * - ``\f``
+      - Form feed (0x0C)
+    * - ``\n``
+      - Newline (0x0A)
+    * - ``\r``
+      - Carriage return (0x0D)
+    * - ``\t``
+      - Horizontal tab (0x09)
+    * - ``\v``
+      - Vertical tab (0x0B)
+    * - ``\0``
+      - Null byte (0x00)
+
+All other characters are encoded as their UTF-8 byte representation.
+
+.. code-block:: smithy
+
+    structure Example {
+        @default(#b "\x89PNG\x0D\x0A\x1A\x0A")
+        pngMagic: Blob
+    }
+
+
+``#hex`` tag
+------------
+
+The ``#hex`` tag interprets the string as a hex dump. Hexadecimal digit pairs
+are decoded into bytes, spaces and tabs are ignored for readability, and
+``#`` begins a comment that continues until end of line. The resulting value is
+base64-encoded.
+
+This is particularly useful in protocol tests where binary formats like CBOR
+are expressed as annotated hex dumps:
+
+.. code-block:: smithy
+
+    body: #hex """
+        81                        # array(1)
+           c1                     #   epoch datetime value, tag(1)
+              fb 41d9ad970f9b4396 #     float(1,723,227,198.426)
+        """
+
+
+``#timestamp`` tag
+------------------
+
+The ``#timestamp`` tag converts an ISO 8601 date/time string (as defined by
+the ``date-time`` production in RFC 3339 Section 5.6) into a number using the
+``epoch-seconds`` format. The output is the number of seconds that have elapsed
+since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
+with optional millisecond precision. Values that are more granular than
+millisecond precision are truncated to fit millisecond precision.
+
+.. code-block:: smithy
+
+    structure Example {
+        @default(#timestamp "2024-01-01T00:00:00Z")
+        startDate: Timestamp
+    }
+
+The above is equivalent to:
+
+.. code-block:: smithy
+
+    structure Example {
+        @default(1704067200)
+        startDate: Timestamp
+    }
+
 
 .. _CommonMark: https://spec.commonmark.org/
