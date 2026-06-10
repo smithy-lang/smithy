@@ -288,37 +288,6 @@ This was rejected because:
 * IDL round-tripping: converting AST back to IDL cannot reconstruct tagged literals since the tag
   information is not preserved. The plain string equivalent is emitted instead.
 
-## Implementation
-
-The implementation consists of the following components:
-
-**`IdlToken.java`**: Three new token types are added: `TAG` (the `#identifier` prefix), `RAW_STRING` (string content
-with no escape processing), and `RAW_TEXT_BLOCK` (text block content with no escape processing). Helper methods
-`isString()` and `isTextBlock()` return true for both regular and raw variants.
-
-**`DefaultTokenizer.java`**: When `#` is encountered, the tokenizer peeks ahead. If the following characters form a
-known tag identifier (checked via `TaggedStringLiteral.hasHandler`) and the next non-space character is a quote, it
-emits a `TAG` token and sets a flag so that the next call to `next()` reads the string content without escape
-processing, emitting `RAW_STRING` or `RAW_TEXT_BLOCK`. If the identifier is not a known tag or no string follows, it
-falls back to emitting `POUND`.
-
-**`TaggedStringLiteral.java`**: Encapsulates all tag-specific scanning logic. Provides a `Result` type (holding either a
-STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives the
-raw string content (with text block normalization already applied) and produces the final value.
-
-**`IdlNodeParser.java` / `IdlTraitParser.java`**: When parsing node values and the current token is `TAG`, the parser
-validates that the model version supports tagged literals (2.1 or later), checks the tag name, consumes the following
-`RAW_STRING`/`RAW_TEXT_BLOCK` token, and calls `TaggedStringLiteral.scan()` to produce the resolved node value.
-
-**`Version.java`**: A `TAGGED_LITERALS` feature flag (bit 6) is added to the bitmask. `VERSION_2_1` includes this flag.
-
-**`TreeType.java` (smithy-syntax)**: A `TAGGED_LITERAL` tree type parses the `TAG` + optional whitespace +
-`RAW_STRING`/`RAW_TEXT_BLOCK` sequence as a structured node, providing full syntactic structure for the Language Server
-Protocol.
-
-**`FormatVisitor.java` (smithy-syntax)**: Renders `TAGGED_LITERAL` nodes as `#tag "content"` with exactly one space,
-normalizing any irregular spacing from the original source.
-
 ## FAQ
 
 ### Can tagged literals be used in trait values?
