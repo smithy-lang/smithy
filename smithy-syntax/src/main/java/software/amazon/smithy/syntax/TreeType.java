@@ -660,12 +660,16 @@ public enum TreeType {
                             IdlToken.TEXT_BLOCK,
                             IdlToken.STRING,
                             IdlToken.NUMBER,
-                            IdlToken.IDENTIFIER);
+                            IdlToken.IDENTIFIER,
+                            IdlToken.TAG);
                     switch (tokenizer.getCurrentToken()) {
                         case LBRACE:
                         case LBRACKET:
                         case TEXT_BLOCK:
                         case NUMBER:
+                            TRAIT_NODE.parse(tokenizer);
+                            break;
+                        case TAG:
                             TRAIT_NODE.parse(tokenizer);
                             break;
                         case STRING:
@@ -768,7 +772,8 @@ public enum TreeType {
                         IdlToken.NUMBER,
                         IdlToken.IDENTIFIER,
                         IdlToken.LBRACE,
-                        IdlToken.LBRACKET);
+                        IdlToken.LBRACKET,
+                        IdlToken.TAG);
                 switch (token) {
                     case IDENTIFIER:
                         if (tokenizer.isCurrentLexeme("true") || tokenizer.isCurrentLexeme("false")
@@ -789,10 +794,26 @@ public enum TreeType {
                         NODE_OBJECT.parse(tokenizer);
                         break;
                     case LBRACKET:
-                    default:
                         NODE_ARRAY.parse(tokenizer);
                         break;
+                    case TAG:
+                    default:
+                        TAGGED_LITERAL.parse(tokenizer);
+                        break;
                 }
+            });
+        }
+    },
+
+    TAGGED_LITERAL {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.TAG);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.RAW_STRING, IdlToken.RAW_TEXT_BLOCK);
+                tokenizer.next();
             });
         }
     },
