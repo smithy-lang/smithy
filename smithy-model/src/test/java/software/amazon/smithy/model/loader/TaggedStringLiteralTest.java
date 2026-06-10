@@ -73,10 +73,10 @@ public class TaggedStringLiteralTest {
                 Arguments.of("\\f", base64((byte) 0x0C)),
                 Arguments.of("\\v", base64((byte) 0x0B)),
                 // Octal escapes
-                Arguments.of("\\101", base64((byte) 'A')),   // 0101 = 65 = 'A'
-                Arguments.of("\\377", base64((byte) 0xFF)),  // max single byte
-                Arguments.of("\\7", base64((byte) 7)),       // single octal digit
-                Arguments.of("\\77", base64((byte) 63)),     // two octal digits
+                Arguments.of("\\101", base64((byte) 'A')), // 0101 = 65 = 'A'
+                Arguments.of("\\377", base64((byte) 0xFF)), // max single byte
+                Arguments.of("\\7", base64((byte) 7)), // single octal digit
+                Arguments.of("\\77", base64((byte) 63)), // two octal digits
                 Arguments.of("", base64()));
     }
 
@@ -175,10 +175,22 @@ public class TaggedStringLiteralTest {
         TaggedStringLiteral.Result result = TaggedStringLiteral.scan("hex", input, false);
         assertThat(result.stringValue.toString(),
                 equalTo(base64(
-                        (byte) 0x89, (byte) 0x50, (byte) 0x4e, (byte) 0x47,
-                        (byte) 0x0d, (byte) 0x0a, (byte) 0x1a, (byte) 0x0a,
-                        (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0d,
-                        (byte) 0x49, (byte) 0x48, (byte) 0x44, (byte) 0x52)));
+                        (byte) 0x89,
+                        (byte) 0x50,
+                        (byte) 0x4e,
+                        (byte) 0x47,
+                        (byte) 0x0d,
+                        (byte) 0x0a,
+                        (byte) 0x1a,
+                        (byte) 0x0a,
+                        (byte) 0x00,
+                        (byte) 0x00,
+                        (byte) 0x00,
+                        (byte) 0x0d,
+                        (byte) 0x49,
+                        (byte) 0x48,
+                        (byte) 0x44,
+                        (byte) 0x52)));
     }
 
     @Test
@@ -233,7 +245,9 @@ public class TaggedStringLiteralTest {
     @Test
     public void parsesTimestampWithThreeDigitMillis() {
         TaggedStringLiteral.Result result = TaggedStringLiteral.scan(
-                "timestamp", "2026-04-14T01:40:23.657Z", false);
+                "timestamp",
+                "2026-04-14T01:40:23.657Z",
+                false);
         assertThat(result.token, is(IdlToken.NUMBER));
         assertThat(result.numberValue.doubleValue(), equalTo(1776130823.657));
     }
