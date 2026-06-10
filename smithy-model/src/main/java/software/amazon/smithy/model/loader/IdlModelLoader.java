@@ -146,6 +146,10 @@ final class IdlModelLoader {
         return tokenizer;
     }
 
+    Version getModelVersion() {
+        return modelVersion;
+    }
+
     ModelSyntaxException syntax(String message) {
         return syntax(null, message);
     }

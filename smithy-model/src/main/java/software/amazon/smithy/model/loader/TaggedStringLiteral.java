@@ -58,41 +58,6 @@ final class TaggedStringLiteral {
         return HANDLERS.containsKey(tag);
     }
 
-    /**
-     * Checks if the text following a POUND token looks like a tagged literal
-     * (known tag identifier followed by a string). Used for better error messages
-     * when tagged literals are used in a version that doesn't support them.
-     */
-    static boolean looksLikeTaggedLiteral(IdlTokenizer tokenizer) {
-        CharSequence model = tokenizer.getModel();
-        int pos = tokenizer.getCurrentTokenEnd();
-        int len = model.length();
-
-        // Skip to find an identifier start.
-        if (pos >= len || !ParserUtils.isIdentifierStart(model.charAt(pos))) {
-            return false;
-        }
-
-        // Read the identifier.
-        int tagStart = pos;
-        while (pos < len && ParserUtils.isValidIdentifierCharacter(model.charAt(pos))) {
-            pos++;
-        }
-        String tag = model.subSequence(tagStart, pos).toString();
-
-        if (!HANDLERS.containsKey(tag)) {
-            return false;
-        }
-
-        // Skip spaces.
-        while (pos < len && (model.charAt(pos) == ' ' || model.charAt(pos) == '\t')) {
-            pos++;
-        }
-
-        // Check for a quote.
-        return pos < len && model.charAt(pos) == '"';
-    }
-
     static Result scan(String tag, CharSequence lexeme, boolean isTextBlock) {
         lexeme = IdlStringLexer.normalizeAndFormat(lexeme, isTextBlock);
         return HANDLERS.get(tag).apply(lexeme);
