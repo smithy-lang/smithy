@@ -262,17 +262,18 @@ public class TaggedStringLiteralTest {
 
     // --- Tokenizer-level tests ---
 
-    private static IdlInternalTokenizer tokenizerV21(String model) {
-        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", model);
-        tokenizer.setVersion(Version.VERSION_2_1);
-        return tokenizer;
+    private static IdlInternalTokenizer tokenizer(String model) {
+        return new IdlInternalTokenizer("a.smithy", model);
     }
 
     @Test
-    public void tokenizesReTag() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#re \"^\\d{5}$\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$"));
+    public void tokenizesReTagAsTagPlusRawString() {
+        IdlInternalTokenizer t = tokenizer("#re \"^\\d{5}$\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#re"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$"));
     }
 
     @Test
@@ -280,110 +281,63 @@ public class TaggedStringLiteralTest {
         String model = "#re \"\"\"\n"
                 + "    ^\\d{5}$\n"
                 + "    \"\"\"";
-        IdlInternalTokenizer tokenizer = tokenizerV21(model);
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.TEXT_BLOCK));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$\n"));
+        IdlInternalTokenizer t = tokenizer(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#re"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
     }
 
     @Test
-    public void tokenizesBTag() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#b \"Hello world\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.STRING));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(base64("Hello world")));
+    public void tokenizesBTagAsTagPlusRawString() {
+        IdlInternalTokenizer t = tokenizer("#b \"Hello world\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#b"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("Hello world"));
     }
 
     @Test
-    public void tokenizesHexWithAnnotatedCbor() {
+    public void tokenizesHexTextBlock() {
         String model = "#hex \"\"\"\n"
                 + "    81 # array(1)\n"
-                + "    c1 # tag(1)\n"
-                + "    fb 41d9ad970f9b4396 # float\n"
                 + "    \"\"\"";
-        IdlInternalTokenizer tokenizer = tokenizerV21(model);
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.TEXT_BLOCK));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(),
-                equalTo(base64(
-                        (byte) 0x81,
-                        (byte) 0xc1,
-                        (byte) 0xfb,
-                        (byte) 0x41,
-                        (byte) 0xd9,
-                        (byte) 0xad,
-                        (byte) 0x97,
-                        (byte) 0x0f,
-                        (byte) 0x9b,
-                        (byte) 0x43,
-                        (byte) 0x96)));
+        IdlInternalTokenizer t = tokenizer(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#hex"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
     }
 
     @Test
-    public void tokenizesHexCommentOnlyLines() {
-        String model = "#hex \"\"\"\n"
-                + "    # This is a comment-only line\n"
-                + "    ff\n"
-                + "    \"\"\"";
-        IdlInternalTokenizer tokenizer = tokenizerV21(model);
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.TEXT_BLOCK));
-        assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(base64((byte) 0xff)));
+    public void tokenizesTimestampTag() {
+        IdlInternalTokenizer t = tokenizer("#timestamp \"2024-01-01T00:00:00Z\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#timestamp"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("2024-01-01T00:00:00Z"));
     }
 
-    @Test
-    public void tokenizesTimestampAsNumber() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#timestamp \"2026-04-14T01:40:23.657Z\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
-        assertThat(tokenizer.getCurrentTokenNumberValue().doubleValue(), equalTo(1776130823.657));
-    }
-
-    @Test
-    public void tokenizesTimestampWholeSecondsAsNumber() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#timestamp \"2026-04-14T01:40:23Z\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
-        assertThat(tokenizer.getCurrentTokenNumberValue().longValue(), equalTo(1776130823L));
-    }
-
-    @Test
-    public void invalidTimestampProducesErrorToken() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#timestamp \"not-a-timestamp\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.ERROR));
-    }
-
-    @Test
-    public void hexOddDigitsProducesErrorToken() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#hex \"abc\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.ERROR));
-    }
-
-    // --- Disambiguation and version gating ---
+    // --- Disambiguation ---
 
     @Test
     public void poundStillWorksAsToken() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.POUND));
+        IdlInternalTokenizer t = tokenizer("#");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
     }
 
     @Test
-    public void unknownTagFallsBackToPound() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#foo \"bar\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.POUND));
+    public void poundFollowedByIdentifierWithoutString() {
+        IdlInternalTokenizer t = tokenizer("#re foo");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
     }
 
     @Test
-    public void tagWithoutStringFallsBackToPound() {
-        IdlInternalTokenizer tokenizer = tokenizerV21("#re foo");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.POUND));
-    }
-
-    @Test
-    public void taggedLiteralsNotParsedInVersion20() {
-        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "#re \"\\d+\"");
-        tokenizer.setVersion(Version.VERSION_2_0);
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.POUND));
-    }
-
-    @Test
-    public void taggedLiteralsNotParsedWithoutVersion() {
-        IdlInternalTokenizer tokenizer = new IdlInternalTokenizer("a.smithy", "#re \"\\d+\"");
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.POUND));
+    public void poundFollowedByNonIdentifier() {
+        IdlInternalTokenizer t = tokenizer("#123");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
     }
 
     // --- Helpers ---

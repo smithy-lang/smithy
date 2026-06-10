@@ -31,12 +31,7 @@ public interface IdlTokenizer extends Iterator<IdlToken> {
      * @return         Returns the tokenizer.
      */
     static IdlTokenizer create(String filename, CharSequence model) {
-        DefaultTokenizer tokenizer = new DefaultTokenizer(filename, model);
-        Version detected = Version.detectFromModel(model);
-        if (detected != null) {
-            tokenizer.setVersion(detected);
-        }
-        return tokenizer;
+        return new DefaultTokenizer(filename, model);
     }
 
     /**
