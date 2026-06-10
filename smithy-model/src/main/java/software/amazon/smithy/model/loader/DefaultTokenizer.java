@@ -378,6 +378,13 @@ class DefaultTokenizer implements IdlTokenizer {
         // Read the identifier.
         parser.consumeWhile(ParserUtils::isValidIdentifierCharacter);
         int afterTag = parser.position();
+        String tag = parser.sliceFrom(savedPos + 1);
+
+        // Only recognize known tags to avoid conflicting with shape IDs.
+        if (!TaggedStringLiteral.hasHandler(tag)) {
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
 
         // Skip optional spaces between tag and string.
         parser.sp();
