@@ -660,12 +660,16 @@ public enum TreeType {
                             IdlToken.TEXT_BLOCK,
                             IdlToken.STRING,
                             IdlToken.NUMBER,
-                            IdlToken.IDENTIFIER);
+                            IdlToken.IDENTIFIER,
+                            IdlToken.TAG);
                     switch (tokenizer.getCurrentToken()) {
                         case LBRACE:
                         case LBRACKET:
                         case TEXT_BLOCK:
                         case NUMBER:
+                            TRAIT_NODE.parse(tokenizer);
+                            break;
+                        case TAG:
                             TRAIT_NODE.parse(tokenizer);
                             break;
                         case STRING:
