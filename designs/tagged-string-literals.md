@@ -53,16 +53,16 @@ A tagged string literal can appear anywhere a regular string literal can appear 
 
 ### Disambiguation
 
-The `#` character is already used in shape IDs (e.g., `com.example#Shape`). Disambiguation between shape ID fragments and tagged string literals is context-dependent. In positions where the grammar expects a shape ID (e.g., after `apply`, in `use` statements, or as trait targets), `#` followed by an identifier is parsed as a shape ID member. In positions where a value is expected (trait arguments, node values, default values), `#` followed by a known tag and a string literal is parsed as a tagged string literal. In all other cases, `#` is emitted as a `POUND` token as before.
+The `#` character is already used in shape IDs (e.g., `com.example#Shape`). The tokenizer disambiguates by checking two conditions: the identifier after `#` must be a known tag name, and it must be followed by a string literal (`"` or `"""`). If either condition fails, `#` is emitted as a plain `POUND` token and subsequent characters are tokenized normally. Because the set of known tags is small and fixed (`re`, `b`, `hex`, `timestamp`), collisions with shape member names are unlikely in practice.
 
 ### Processing model
 
-Tagged string literals are processed entirely at the syntax level:
+Tagged string literals are processed across two layers:
 
-1. The tokenizer recognizes the `#tag` prefix.
-2. The string content is extracted (handling quotes and text block formatting).
-3. A tag-specific scanner processes the raw content, applying its own escape and encoding rules.
-4. The result is emitted as a regular `STRING` token. The `#timestamp` tag is an exception: it emits a `NUMBER` token rather than a `STRING` token.
+1. The tokenizer recognizes `#` followed by a known tag identifier and a string literal. It emits a `TAG` token (lexeme is `#identifier`) followed by a `RAW_STRING` or `RAW_TEXT_BLOCK` token containing the raw string content without escape processing.
+2. The parser validates the tag name, checks that the model version supports tagged literals (2.1 or later), and delegates to a tag-specific handler.
+3. The tag handler processes the raw content using its own escape and encoding rules.
+4. The parser produces a regular string or number node value from the result.
 
 No information about the tag is preserved in the AST or semantic model. The tagged literal and its equivalent plain string are indistinguishable after parsing.
 
@@ -253,21 +253,19 @@ This was rejected because:
 
 The implementation consists of the following components:
 
-**`Version.java`**: A `TAGGED_LITERALS` feature flag (bit 6) is added to the bitmask. `VERSION_2_1` includes this flag. A `detectFromModel(CharSequence)` method pre-scans model text for the `$version` control statement, enabling version-aware tokenization before parsing begins.
+**`IdlToken.java`**: Three new token types are added: `TAG` (the `#identifier` prefix), `RAW_STRING` (string content with no escape processing), and `RAW_TEXT_BLOCK` (text block content with no escape processing). Helper methods `isString()` and `isTextBlock()` return true for both regular and raw variants.
 
-**`TaggedStringLiteral.java`**: A new class that encapsulates all tag-specific scanning logic. It provides a `Result` type (holding either a STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives normalized text block content and applies its own escape and encoding rules.
+**`DefaultTokenizer.java`**: When `#` is encountered, the tokenizer peeks ahead. If the following characters form a known tag identifier (checked via `TaggedStringLiteral.hasHandler`) and the next non-space character is a quote, it emits a `TAG` token and sets a flag so that the next call to `next()` reads the string content without escape processing, emitting `RAW_STRING` or `RAW_TEXT_BLOCK`. If the identifier is not a known tag or no string follows, it falls back to emitting `POUND`.
 
-**`DefaultTokenizer.java`**: When `#` is encountered and the version supports tagged literals, the tokenizer peeks ahead. If the following characters form a known tag identifier and then a string literal, it consumes the entire sequence as a single token and delegates to `TaggedStringLiteral.scan()`. Otherwise, it falls back to emitting a plain `POUND` token. A `setVersion(Version)` method allows the version to be set after the `$version` control statement is parsed.
+**`TaggedStringLiteral.java`**: Encapsulates all tag-specific scanning logic. Provides a `Result` type (holding either a STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives the raw string content (with text block normalization already applied) and produces the final value.
 
-**`IdlTokenizer.java`**: The `create()` factory method calls `Version.detectFromModel()` to pre-set the version, enabling tagged literal recognition for external consumers like smithy-syntax.
+**`IdlNodeParser.java` / `IdlTraitParser.java`**: When parsing node values and the current token is `TAG`, the parser validates that the model version supports tagged literals (2.1 or later), checks the tag name, consumes the following `RAW_STRING`/`RAW_TEXT_BLOCK` token, and calls `TaggedStringLiteral.scan()` to produce the resolved node value.
 
-**`IdlModelLoader.java`**: Calls `tokenizer.setVersion(resolvedVersion)` when the version control statement is parsed.
+**`Version.java`**: A `TAGGED_LITERALS` feature flag (bit 6) is added to the bitmask. `VERSION_2_1` includes this flag.
 
-**`IdlNodeParser.java` / `IdlTraitParser.java`**: When a `POUND` token appears in a value position and the version does not support tagged literals, the parser checks if the text looks like a tagged literal and provides a specific error message guiding users to update to version 2.1.
+**`TreeType.java` (smithy-syntax)**: A `TAGGED_LITERAL` tree type parses the `TAG` + optional whitespace + `RAW_STRING`/`RAW_TEXT_BLOCK` sequence as a structured node, providing full syntactic structure for the Language Server Protocol.
 
-### Deferred work
-
-The smithy-syntax package currently treats tagged literals as a single collapsed token (STRING, TEXT_BLOCK, or NUMBER). A future change should add a `TAGGED_LITERAL` tree type so the Language Server Protocol implementation can provide semantic highlighting, hover information, and other tag-aware features. This requires the tokenizer to emit raw tokens (POUND + IDENTIFIER + STRING) for smithy-syntax while continuing to collapse for model loading.
+**`FormatVisitor.java` (smithy-syntax)**: Renders `TAGGED_LITERAL` nodes as `#tag "content"` with exactly one space, normalizing any irregular spacing from the original source.
 
 ## FAQ
 
@@ -297,7 +295,7 @@ This produces the pattern `^\d{5}(-\d{4})?$` (no newline between the parts).
 
 ### What happens if a new tag conflicts with a shape name?
 
-Tags are only recognized immediately after `#` when followed by a string literal. Since shape IDs always have a namespace before `#` (e.g., `com.example#Shape`), there is no ambiguity. A standalone `#re` followed by a string is always a tagged literal.
+Tags are only recognized when `#` is followed by a known tag identifier and then a string literal. The tokenizer checks the identifier against the fixed set of known tags (`re`, `b`, `hex`, `timestamp`). If the identifier is not a known tag, `#` is emitted as a plain `POUND` token. This prevents conflicts with shape IDs: in `com.example#re`, the tokenizer has already emitted `com`, `.`, `example` as separate tokens, and when it reaches `#re` it would only emit TAG if followed by a string. Since shape IDs in that context are not followed by string literals, the `#` falls back to POUND.
 
 ### Can tags be nested or composed?
 
