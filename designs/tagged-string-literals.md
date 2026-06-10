@@ -251,14 +251,23 @@ This was rejected because:
 
 ## Implementation
 
-The implementation modifies `DefaultTokenizer.java` to:
+The implementation consists of the following components:
 
-1. Recognize `#` followed by a known tag identifier and a string literal.
-2. Consume the tag and string as a single token.
-3. Delegate to a tag-specific scanner that applies its own escape rules.
-4. Emit the result as a regular `STRING` token.
+**`Version.java`**: A `TAGGED_LITERALS` feature flag (bit 6) is added to the bitmask. `VERSION_2_1` includes this flag. A `detectFromModel(CharSequence)` method pre-scans model text for the `$version` control statement, enabling version-aware tokenization before parsing begins.
 
-The tag handlers are hardcoded in a map from tag name to scanner function. The existing `IdlStringLexer.scanStringContents` is bypassed for tagged strings; instead, each tag provides its own scanning logic.
+**`TaggedStringLiteral.java`**: A new class that encapsulates all tag-specific scanning logic. It provides a `Result` type (holding either a STRING or NUMBER token with its value) and a handler map from tag name to scanner function. Each handler receives normalized text block content and applies its own escape and encoding rules.
+
+**`DefaultTokenizer.java`**: When `#` is encountered and the version supports tagged literals, the tokenizer peeks ahead. If the following characters form a known tag identifier and then a string literal, it consumes the entire sequence as a single token and delegates to `TaggedStringLiteral.scan()`. Otherwise, it falls back to emitting a plain `POUND` token. A `setVersion(Version)` method allows the version to be set after the `$version` control statement is parsed.
+
+**`IdlTokenizer.java`**: The `create()` factory method calls `Version.detectFromModel()` to pre-set the version, enabling tagged literal recognition for external consumers like smithy-syntax.
+
+**`IdlModelLoader.java`**: Calls `tokenizer.setVersion(resolvedVersion)` when the version control statement is parsed.
+
+**`IdlNodeParser.java` / `IdlTraitParser.java`**: When a `POUND` token appears in a value position and the version does not support tagged literals, the parser checks if the text looks like a tagged literal and provides a specific error message guiding users to update to version 2.1.
+
+### Deferred work
+
+The smithy-syntax package currently treats tagged literals as a single collapsed token (STRING, TEXT_BLOCK, or NUMBER). A future change should add a `TAGGED_LITERAL` tree type so the Language Server Protocol implementation can provide semantic highlighting, hover information, and other tag-aware features. This requires the tokenizer to emit raw tokens (POUND + IDENTIFIER + STRING) for smithy-syntax while continuing to collapse for model loading.
 
 ## FAQ
 
