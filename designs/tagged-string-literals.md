@@ -160,7 +160,7 @@ body: #hex """
 
 * Hex digits (`0-9`, `a-f`, `A-F`) are read in pairs to produce bytes
 * Spaces and tabs are ignored (for readability)
-* Lines starting with `#` are comments and ignored until end of line
+* `#` begins a comment; all characters from `#` to the end of the line are ignored
 * Newlines are ignored
 
 **Examples:**
