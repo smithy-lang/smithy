@@ -17,7 +17,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  */
 public class GenerateListDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<ListShape, C, S> {
-    GenerateListDirective(C context, ServiceShape service, ListShape shape) {
-        super(context, service, shape);
+    GenerateListDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            ListShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 }

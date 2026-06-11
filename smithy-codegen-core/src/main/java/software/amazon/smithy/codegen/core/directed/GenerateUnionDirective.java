@@ -19,8 +19,14 @@ import software.amazon.smithy.model.traits.StreamingTrait;
 public final class GenerateUnionDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<UnionShape, C, S> {
 
-    GenerateUnionDirective(C context, ServiceShape service, UnionShape shape) {
-        super(context, service, shape);
+    GenerateUnionDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            UnionShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 
     /**

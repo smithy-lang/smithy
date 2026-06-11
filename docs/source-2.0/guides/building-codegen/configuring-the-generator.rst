@@ -58,11 +58,22 @@ example, ``"smithy.example#Weather"``). Smithy models can contain
 multiple services. Providing a ``service`` shape ID tells code
 generators which service to generate.
 
-Generators may choose to make ``service`` optional. If optional, the
-generator will attempt to find every service in the model. If only a
+``closure``
+-----------
+
+The ``closure`` property defines the ID of the
+:ref:`shape closure <shape-closures>` to generate (for example,
+``"smithy.example#Events"``).
+
+``service`` and ``closure`` optionality
+---------------------------------------
+
+Generators should make both ``service`` and ``closure`` optional. The
+generator must fail if both are set. If neither are set, the
+generator may attempt to find every service in the model. If only a
 single service is found in the model, it is used for code generation. If
 multiple services are found, the generator should fail and require an
-explicit service shape ID.
+explicit service or closure ID.
 
 
 ``protocol`` (client and type codegen only)

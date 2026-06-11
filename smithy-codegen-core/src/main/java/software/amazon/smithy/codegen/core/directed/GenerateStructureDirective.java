@@ -21,8 +21,14 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 public final class GenerateStructureDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<StructureShape, C, S> {
 
-    GenerateStructureDirective(C context, ServiceShape service, StructureShape shape) {
-        super(context, service, shape);
+    GenerateStructureDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            StructureShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 
     /**
