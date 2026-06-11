@@ -863,6 +863,23 @@ public class CodegenDirectorTest {
     }
 
     @Test
+    public void failsWhenInjectedShapeClosureMatchesNoShapes() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+                closureRunner(testDirected, "closure-model.smithy");
+
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("smithy.example#emptyClosure")
+                .includeBySelector("[id = 'smithy.example#DoesNotExist']")
+                .build();
+        runner.shapeClosure(closure);
+
+        CodegenException e = Assertions.assertThrows(CodegenException.class, runner::run);
+        assertThat(e.getMessage(), containsString("smithy.example#emptyClosure"));
+        assertThat(e.getMessage(), containsString("no shapes"));
+    }
+
+    @Test
     public void failsWhenNeitherServiceNorShapeClosureIsSet() {
         TestDirected testDirected = new TestDirected();
         CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
