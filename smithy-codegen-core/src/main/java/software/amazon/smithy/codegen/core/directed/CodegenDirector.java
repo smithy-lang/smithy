@@ -51,7 +51,10 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
 import software.amazon.smithy.model.validation.validators.ShapeClosureValidator;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
@@ -160,6 +163,15 @@ public final class CodegenDirector<
      * model's {@code shapeClosures} metadata and then resolved through the same
      * {@link ShapeClosureIndex} path as a metadata-authored closure, keyed by the object's
      * id. The id must not collide with a closure already declared in the model.
+     *
+     * <p>Injecting into the model (rather than resolving the object directly) is deliberate:
+     * {@link ShapeClosureIndex} is a knowledge index that is computed once and cached for the
+     * lifetime of the model, so resolving through it reuses that cache instead of recomputing
+     * the closure at the index's many call sites, and the closure is validated by
+     * {@link ShapeClosureValidator} along the same path as a metadata-authored one. The injected
+     * metadata must survive integration {@code preprocessModel} for resolution to work; injection
+     * happens in {@link #run()} before integrations are applied, and integrations do not drop the
+     * {@code shapeClosures} metadata.
      *
      * @param shapeClosure Shape closure to inject and generate.
      */
@@ -648,32 +660,35 @@ public final class CodegenDirector<
             model = transform.apply(model, transformer);
         }
 
-        if (requireCaseInsensitiveNames) {
-            enforceCaseInsensitiveNames();
-        }
+        enforceShapeClosureConstraints();
     }
 
     /**
-     * Re-runs {@link ShapeClosureValidator} against the transformed model and fails code
-     * generation if the shape closure being generated has case-insensitively conflicting
-     * shape names.
-     *
-     * <p>This does nothing for service-driven code generation, since service closures
-     * already enforce case-insensitive name uniqueness.
+     * Re-validates the shape closure being generated against the transformed model.
      */
-    private void enforceCaseInsensitiveNames() {
+    private void enforceShapeClosureConstraints() {
         if (shapeClosure == null) {
             return;
         }
 
-        String conflictEventId = "ShapeClosure.NameConflicts." + shapeClosure;
-        List<ValidationEvent> conflicts = new ShapeClosureValidator().validate(model)
-                .stream()
-                .filter(event -> event.getId().equals(conflictEventId))
-                .collect(Collectors.toList());
+        // Apply the model's suppressions and severity overrides to the validator's events, exactly
+        // as model assembly would, so suppressed issues are honored.
+        ValidationEventDecorator decorator = new ModelBasedEventDecorator()
+                .createDecorator(model)
+                .unwrap();
 
-        if (!conflicts.isEmpty()) {
-            throw new CodegenException(conflicts.stream()
+        String nameConflictsId = "ShapeClosure.NameConflicts." + shapeClosure;
+        List<ValidationEvent> problems = new ArrayList<>();
+        for (ValidationEvent event : new ShapeClosureValidator().validate(model)) {
+            event = decorator.decorate(event);
+            if (event.getSeverity().compareTo(Severity.DANGER) >= 0
+                    || (requireCaseInsensitiveNames && event.getId().equals(nameConflictsId))) {
+                problems.add(event);
+            }
+        }
+
+        if (!problems.isEmpty()) {
+            throw new CodegenException(problems.stream()
                     .map(ValidationEvent::getMessage)
                     .collect(Collectors.joining("\n")));
         }
