@@ -18,7 +18,7 @@ spotless {
             .onlyIfContentMatches("^((?!SKIPLICENSECHECK)[\\s\\S])*\$")
         leadingTabsToSpaces()
         endWithNewline()
-        eclipse().configFile("${project.rootDir}/config/spotless/formatting.xml")
+        eclipse("4.40").configFile("${project.rootDir}/config/spotless/formatting.xml")
 
         // Fixes for some strange formatting applied by eclipse:
         // see: https://github.com/kamkie/demo-spring-jsf/blob/bcacb9dc90273a5f8d2569470c5bf67b171c7d62/build.gradle.kts#L159
@@ -44,7 +44,8 @@ spotless {
 
     // Formatting for build.gradle.kts files
     kotlinGradle {
-        ktlint()
+        //  TODO: re-enable once ktlint 2.0.0 is out.
+        // ktlint()
         leadingTabsToSpaces()
         trimTrailingWhitespace()
         endWithNewline()
