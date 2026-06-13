@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.Severity;
@@ -36,6 +37,9 @@ public class AddedRequiredMember extends AbstractDiffEvaluator {
                         .stream()
                         .filter(newMember -> newMember.hasTrait(RequiredTrait.ID)
                                 && !newMember.hasTrait(DefaultTrait.ID)
+                                // A member marked @clientOptional is treated as optional by clients, so the
+                                // service reserves the right to add @required without breaking generated code.
+                                && !newMember.hasTrait(ClientOptionalTrait.ID)
                                 // Members that did not exist before
                                 && change.getOldShape().getAllMembers().get(newMember.getMemberName()) == null));
     }
