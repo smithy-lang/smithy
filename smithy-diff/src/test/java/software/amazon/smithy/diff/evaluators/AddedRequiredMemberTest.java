@@ -15,6 +15,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.validation.Severity;
@@ -89,6 +90,26 @@ public class AddedRequiredMemberTest {
                 .addMember("foo",
                         s.getId(),
                         b2 -> b2.addTrait(new RequiredTrait()))
+                .build();
+        Model model1 = Model.builder().addShapes(s, a).build();
+        Model model2 = Model.builder().addShapes(s, b).build();
+        ModelDiff.Result result = ModelDiff.builder().oldModel(model1).newModel(model2).compare();
+
+        assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").size(), equalTo(0));
+    }
+
+    @Test
+    public void addingRequiredTraitWithClientOptionalIsOk() {
+        StringShape s = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape a = StructureShape.builder()
+                .id("smithy.example#A")
+                .build();
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
+                .addMember("foo", s.getId(), b2 -> {
+                    b2.addTrait(new RequiredTrait());
+                    b2.addTrait(new ClientOptionalTrait());
+                })
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
         Model model2 = Model.builder().addShapes(s, b).build();
