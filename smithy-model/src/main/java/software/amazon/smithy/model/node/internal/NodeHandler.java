@@ -6,28 +6,19 @@ package software.amazon.smithy.model.node.internal;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NullNode;
-import software.amazon.smithy.model.node.NumberNode;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.utils.NumberUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Serializes {@link Node} values to JSON.
+ *
+ * <p>JSON parsing now lives in the loader package ({@code JsonAstReader}); this class only retains
+ * the writer entry points.
+ */
 @SmithyInternalApi
-public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode.Builder> {
+public final class NodeHandler {
 
-    private Node value;
-
-    @SmithyInternalApi
-    public static Node parse(String filename, String content, boolean allowComments) {
-        NodeHandler handler = new NodeHandler();
-        new JsonParser(filename, handler, allowComments).parse(content);
-        return handler.value;
-    }
+    private NodeHandler() {}
 
     @SmithyInternalApi
     public static String print(Node node) {
@@ -40,8 +31,7 @@ public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode
     @SmithyInternalApi
     public static String prettyPrint(Node node, String indentString) {
         StringWriter writer = new StringWriter();
-        JsonWriter jsonWriter = new PrettyPrintWriter(writer, indentString);
-        node.accept(new NodeWriter(jsonWriter));
+        prettyPrintToWriter(node, indentString, writer);
         return writer.toString();
     }
 
@@ -49,56 +39,5 @@ public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode
     public static void prettyPrintToWriter(Node node, String indentString, Writer writer) {
         JsonWriter jsonWriter = new PrettyPrintWriter(writer, indentString);
         node.accept(new NodeWriter(jsonWriter));
-    }
-
-    @Override
-    void endNull(SourceLocation location) {
-        value = new NullNode(location);
-    }
-
-    @Override
-    void endBoolean(boolean bool, SourceLocation location) {
-        value = new BooleanNode(bool, location);
-    }
-
-    @Override
-    void endString(String string, SourceLocation location) {
-        value = new StringNode(string, location);
-    }
-
-    @Override
-    void endNumber(String string, SourceLocation location) {
-        value = new NumberNode(NumberUtils.parseNumber(string), location);
-    }
-
-    @Override
-    ArrayNode.Builder startArray() {
-        return ArrayNode.builder();
-    }
-
-    @Override
-    void endArrayValue(ArrayNode.Builder builder) {
-        builder.withValue(value);
-    }
-
-    @Override
-    void endArray(ArrayNode.Builder builder, SourceLocation location) {
-        value = builder.sourceLocation(location).build();
-    }
-
-    @Override
-    ObjectNode.Builder startObject() {
-        return ObjectNode.builder();
-    }
-
-    @Override
-    void endObjectValue(ObjectNode.Builder object, String name, SourceLocation keyLocation) {
-        StringNode key = new StringNode(name, keyLocation);
-        object.withMember(key, value);
-    }
-
-    @Override
-    void endObject(ObjectNode.Builder object, SourceLocation location) {
-        value = object.sourceLocation(location).build();
     }
 }

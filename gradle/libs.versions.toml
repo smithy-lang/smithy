@@ -16,6 +16,7 @@ compile-testing = "0.23.0"
 json-schema = "1.12.1"
 shadow = "9.4.2"
 api-guardian = "1.1.2"
+jazzer = "0.30.0"
 jreleaser = "1.24.0"
 runtime = "2.0.1"
 gradle-checksum = "1.4.0"
@@ -47,6 +48,7 @@ mockserver = { module = "org.mock-server:mockserver-netty", version.ref = "mocks
 compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compile-testing" }
 json-schema-validator = { module = "com.github.everit-org.json-schema:org.everit.json.schema", version.ref = "json-schema" }
 apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "api-guardian" }
+jazzer-junit = { module = "com.code-intelligence:jazzer-junit", version.ref = "jazzer" }
 
 # plugin artifacts for buildsrc plugins
 spotbugs = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }

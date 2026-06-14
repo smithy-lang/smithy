@@ -4,22 +4,21 @@
  */
 package software.amazon.smithy.model.loader;
 
-import java.util.Arrays;
 import java.util.function.Function;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * This is a simple, not thread-safe, caching string table that converts CharSequence to String objects.
  *
  * <p>The implementation uses an FNV-1a hash, and collisions simply overwrite the previously cached value.
  */
+@SmithyInternalApi
 public final class StringTable implements Function<CharSequence, String> {
 
     private static final int FNV_OFFSET_BIAS = 0x811c9dc5;
     private static final int FNV_PRIME = 0x1000193;
 
     private final String[] table;
-    private final int sizeBits;
-    private final int size;
     private final int sizeMask;
 
     /**
@@ -42,11 +41,10 @@ public final class StringTable implements Function<CharSequence, String> {
             throw new IllegalArgumentException("Refusing to create a cache with " + (1 << 17) + " entries");
         }
 
-        this.sizeBits = sizeBits;
-        this.size = (1 << sizeBits);
+        int size = (1 << sizeBits);
         this.sizeMask = size - 1;
+        // Slots start as null (an empty cache slot), avoiding an Arrays.fill of the whole table on construction.
         this.table = new String[size];
-        Arrays.fill(table, "");
     }
 
     @Override
@@ -55,8 +53,8 @@ public final class StringTable implements Function<CharSequence, String> {
         String[] arr = table;
         String text = arr[idx];
 
-        // On a cache hit, return the value if it matches. Otherwise, overwrite this value.
-        if (textEquals(chars, text)) {
+        // On a cache hit, return the value if it matches. Otherwise, overwrite this (possibly empty) slot.
+        if (text != null && textEquals(chars, text)) {
             return text;
         } else {
             String value = chars.toString();
