@@ -14,28 +14,12 @@
  */
 
 /**
- * This is an adaptation of minimal-json: https://github.com/ralfstx/minimal-json
- *
- * <p>The classes from that project are copied into this internal package
- * to allow Smithy the minimal amount of JSON parsing ability it needs to
- * read the AST model. We copied these classes in rather than use a dependency
- * to keep our external dependency count to a minimum.
- *
  * <p>A few modifications were made to the original code:
  *
  * <ul>
  *     <li>The style of the code was changed to match the rest of the project.</li>
- *     <li>There is configurable support for "//" line comments when parsing.</li>
- *     <li>Classes that aren't used were removed.</li>
  *     <li>Pretty printing was modified to use fewer classes and to accept a
  *     String rather than char[].</li>
- *     <li>All {@code Location} classes were converted to be
- *     {@link software.amazon.smithy.model.SourceLocation}</li>
- *     <li>{@link software.amazon.smithy.model.loader.ModelSyntaxException} is now
- *     thrown instead of {@code ParseException}.</li>
- *     <li>Several methods were removed from {@code JsonHandler} that weren't
- *     being used.</li>
- *     <li>A SourceLocation is now passed in all relevant JsonHandler end* methods.</li>
  * </ul>
  *
  * <p>The original copyright is as-follows:

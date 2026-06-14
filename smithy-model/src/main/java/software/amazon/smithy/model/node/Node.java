@@ -6,8 +6,12 @@ package software.amazon.smithy.model.node;
 
 import static java.lang.String.format;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,9 +27,9 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.JsonAstReader;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.internal.NodeHandler;
-import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Base class of for all Smithy model nodes.
@@ -57,7 +61,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(String json) {
-        return NodeHandler.parse("", json, false);
+        return JsonAstReader.parse("", json, false);
     }
 
     /**
@@ -69,7 +73,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(String json, String file) {
-        return NodeHandler.parse(file, json, false);
+        return JsonAstReader.parse(file, json, false);
     }
 
     /**
@@ -94,7 +98,13 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(InputStream json, String file) {
-        return parse(IoUtils.toUtf8String(json), file);
+        // Stream characters straight from the input instead of buffering the whole
+        // document into a byte[] and then a String first.
+        try (Reader reader = new InputStreamReader(json, StandardCharsets.UTF_8)) {
+            return JsonAstReader.parse(file, reader, false);
+        } catch (IOException e) {
+            throw new ModelSyntaxException("Error reading JSON: " + e.getMessage(), new SourceLocation(file));
+        }
     }
 
     /**
@@ -108,7 +118,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parseJsonWithComments(String json, String file) {
-        return NodeHandler.parse(file, json, true);
+        return JsonAstReader.parse(file, json, true);
     }
 
     /**
