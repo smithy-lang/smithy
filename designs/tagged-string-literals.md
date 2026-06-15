@@ -74,16 +74,15 @@ names are unlikely in practice.
 
 Tagged string literals are processed across two layers:
 
-1. The tokenizer recognizes `#` followed by a known tag identifier and a string literal. It emits a `TAG` token (lexeme
-is `#identifier`) followed by a `RAW_STRING` or `RAW_TEXT_BLOCK` token containing the raw string content without escape
-processing.
-2. The parser validates the tag name, checks that the model version supports tagged literals (2.1 or later), and
-delegates to a tag-specific handler.
-3. The tag handler processes the raw content using its own escape and encoding rules.
-4. The parser produces a regular string or number node value from the result.
+1. **Tokenizer.** Recognizes `#` followed by a known tag identifier and a string literal. It emits
+   a `TAG` token (lexeme is `#identifier`) followed by a `RAW_STRING` or `RAW_TEXT_BLOCK` token
+   containing the raw string content without escape processing.
+2. **Parser.** Validates the tag name, checks that the model version supports tagged literals
+   (2.1 or later), delegates to a tag-specific handler that processes the raw content using its own
+   escape and encoding rules, and produces a regular string or number node value from the result.
 
-No information about the tag is preserved in the AST or semantic model. The tagged literal and its equivalent plain
-string are indistinguishable after parsing.
+No information about the tag is preserved in the AST or semantic model. The tagged literal and its
+equivalent plain string are indistinguishable after parsing.
 
 ### Initial tags
 
