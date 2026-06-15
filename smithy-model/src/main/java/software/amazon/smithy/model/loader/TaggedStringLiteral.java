@@ -203,7 +203,7 @@ final class TaggedStringLiteral {
     }
 
     /**
-     * Parses an ISO-8601 timestamp string and returns epoch seconds as a number.
+     * Parses an RFC 3339 timestamp string and returns epoch seconds as a number.
      */
     private static Result scanTimestampContents(CharSequence lexeme) {
         try {
@@ -216,7 +216,7 @@ final class TaggedStringLiteral {
             double value = epochSecond + millis / 1000.0;
             return Result.ofNumber(value);
         } catch (DateTimeParseException e) {
-            throw new RuntimeException("Invalid ISO-8601 timestamp: " + lexeme);
+            throw new RuntimeException("Invalid RFC 3339 timestamp: " + lexeme);
         }
     }
 

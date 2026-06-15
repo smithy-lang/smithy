@@ -1,4 +1,4 @@
-// Invalid ISO-8601 timestamp
+// Invalid RFC 3339 timestamp
 $version: "2.1"
 
 namespace smithy.example

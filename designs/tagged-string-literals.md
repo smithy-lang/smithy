@@ -9,7 +9,7 @@ This proposal introduces tagged string literals to the Smithy IDL. A tagged stri
 `#<tag>` that changes how the string content is interpreted at parse time. The tag instructs the parser to use
 alternative rules for processing escape sequences and encoding, producing a regular string value. This is purely
 syntactic sugar; the AST and semantic model remain unchanged. Four initial tags are proposed: `#re` (regex), `#b`
-(binary), `#hex` (hex dump), and `#timestamp` (ISO date to epoch seconds).
+(binary), `#hex` (hex dump), and `#timestamp` (RFC 3339 date to epoch seconds).
 
 ## Motivation
 

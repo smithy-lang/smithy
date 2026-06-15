@@ -2698,7 +2698,7 @@ are expressed as annotated hex dumps:
 ``#timestamp`` tag
 ------------------
 
-The ``#timestamp`` tag converts an ISO 8601 date/time string (as defined by
+The ``#timestamp`` tag converts an RFC 3339 date/time string (as defined by
 the ``date-time`` production in RFC 3339 Section 5.6) into a number using the
 ``epoch-seconds`` format. The output is the number of seconds that have elapsed
 since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,

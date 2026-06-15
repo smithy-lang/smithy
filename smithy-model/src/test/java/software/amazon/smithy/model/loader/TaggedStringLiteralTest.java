@@ -256,7 +256,7 @@ public class TaggedStringLiteralTest {
     public void timestampInvalidThrows() {
         RuntimeException e = assertThrows(RuntimeException.class,
                 () -> TaggedStringLiteral.scan("timestamp", "not-a-date", false));
-        assertTrue(e.getMessage().contains("Invalid ISO-8601 timestamp"));
+        assertTrue(e.getMessage().contains("Invalid RFC 3339 timestamp"));
     }
 
     // --- Handler lookup ---
