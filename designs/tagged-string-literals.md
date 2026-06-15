@@ -181,17 +181,15 @@ Equivalent to `"SGVsbG8="` (base64 of "Hello").
 
 #### `#timestamp` Timestamp literals
 
-The `#timestamp` tag converts an ISO 8601 date/time string into its `epoch-seconds` representation, following the same
+The `#timestamp` tag converts an RFC 3339 date/time string into its `epoch-seconds` representation, following the same
 rules as the `epoch-seconds` timestamp format defined by Smithy. This makes timestamp default values and test data more
 readable.
 
 **Rules:**
 
-* Input must be a valid ISO 8601 date/time string (as defined by the `date-time` production in RFC 3339 Section 5.6)
+* Input must be a valid RFC 3339 date/time string (as defined by the `date-time` production in RFC 3339 Section 5.6)
 * Output is the number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC),
-  Thursday, 1 January 1970, with optional millisecond precision. Values that are more granular than
-  millisecond precision SHOULD be truncated to fit millisecond precision. This follows the same rules
-  as the `epoch-seconds` timestamp format.
+  Thursday, 1 January 1970, with optional millisecond precision.
 
 **Examples:**
 
@@ -202,8 +200,8 @@ readable.
 
 ### Text block support
 
-Both tags work with text blocks. The text block formatting rules (leading whitespace removal, line normalization) are
-applied before the tag-specific scanner processes the content:
+All tags work with text blocks. The text block formatting rules (leading whitespace removal, line
+normalization) are applied before the tag-specific scanner processes the content:
 
 ```smithy
 @pattern(#re """
