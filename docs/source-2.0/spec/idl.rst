@@ -2683,6 +2683,19 @@ are decoded into bytes, spaces and tabs are ignored for readability, and
 ``#`` begins a comment that continues until end of line. The resulting value is
 base64-encoded.
 
+The content of the string is parsed according to the following grammar:
+
+.. code-block:: none
+
+    hex_content = *(hex_pair / WS / comment / NL)
+    hex_pair    = Hex Hex
+    comment     = "#" *(%x00-09 / %x0B-0D / %x0E-10FFFF) ; # until end of line
+    WS          = SP / HTAB
+    NL          = LF / CRLF
+
+The number of hex digits (excluding those in comments) MUST be even. Each pair
+of hex digits produces one byte in the output.
+
 This is particularly useful in protocol tests where binary formats like CBOR
 are expressed as annotated hex dumps:
 
