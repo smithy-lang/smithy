@@ -165,7 +165,7 @@ string support defined in :rfc:`7405`.
     TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
-    TaggedStringLiteral :"#" `Identifier` (`QuotedText` / `TextBlock`)
+    TaggedStringLiteral :"#" `Identifier` [`SP`] (`QuotedText` / `TextBlock`)
 
 .. rubric:: Shapes
 
@@ -2578,9 +2578,9 @@ Smithy defines the following built-in tags:
     * - ``#hex``
       - Hex dump literal. Interprets the string as hexadecimal byte values where
         spaces are ignored and ``#`` begins a comment until end of line.
-        Produces a base64-encoded string.
+        Produces a base64-encoded string. See :ref:`tagged-literal-hex`.
     * - ``#timestamp``
-      - Timestamp literal. Converts an ISO 8601 date/time string into its
+      - Timestamp literal. Converts an RFC 3339 date/time string into its
         ``epoch-seconds`` representation following the same rules as the
         `epoch-seconds timestamp format <https://smithy.io/2.0/spec/protocol-traits.html#timestamp-formats>`_.
         Produces a number value.
@@ -2672,6 +2672,8 @@ All other characters are encoded as their UTF-8 byte representation.
         pngMagic: Blob
     }
 
+
+.. _tagged-literal-hex:
 
 ``#hex`` tag
 ------------
