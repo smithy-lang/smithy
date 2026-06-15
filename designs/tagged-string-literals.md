@@ -229,11 +229,10 @@ Using a single-letter prefix directly attached to the string, like Python's `b'.
 
 This was rejected because:
 
-* It only solves one use case at a time. Binary gets `b"..."`, but regex would need a separate
-  mechanism (e.g., `r"..."`) — each one is a new special case.
+* Each use case requires its own prefix and grammar production (e.g., `b"..."` for binary,
+  `r"..."` for regex), making the approach not extensible without grammar changes.
 * A letter followed by a string is ambiguous with an identifier followed by a string value,
   requiring context-sensitive parsing.
-* Not extensible without grammar changes — each new prefix is a new production.
 * The tagged literal approach (`#tag "..."`) provides a single, general mechanism that handles
   binary, regex, and future tags uniformly.
 
