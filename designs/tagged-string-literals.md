@@ -52,7 +52,7 @@ or underscore).
 #### ABNF
 
 ```
-tagged_string_literal = "#" identifier (quoted_text / text_block)
+tagged_string_literal = "#" identifier SP (quoted_text / text_block)
 
 quoted_text = DQUOTE *quoted_char DQUOTE
 
