@@ -44,3 +44,9 @@ build/
 
 # Smithy
 .smithy.lsp.log
+
+# Jazzer fuzzing: keep the hand-authored seed corpus under src/fuzz/resources, but ignore the crash
+# reproducers and generated corpus entries Jazzer writes next to the @FuzzTest inputs during a run.
+**/src/test/resources/**/*FuzzTestInputs/**/crash-*
+**/src/test/resources/**/*FuzzTestInputs/
+.cifuzz-corpus/

@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -85,7 +86,8 @@ final class JsonAstLoader {
     private static final List<String> SERVICE_PROPERTIES =
             list(TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS, MIXINS);
 
-    private final AstReader reader;
+    // Use to read out of order version.
+    private AstReader reader;
     private final Consumer<LoadOperation> operations;
     private Version modelVersion = Version.UNKNOWN;
 
@@ -114,8 +116,13 @@ final class JsonAstLoader {
         SourceLocation modelLocation = reader.currentLocation();
         reader.startObject();
 
-        List<String> topLevelKeys = new ArrayList<>();
+        Keys topLevelKeys = new Keys();
         boolean isModel = false;
+
+        // The version drives version-specific shape/trait validation, so it must be applied before any
+        // shapes are loaded. The AST always serializes `smithy` first; in the case `shapes` arrives earlier,
+        // that one value is captured as a Node and replayed after the version is read.
+        Node deferredShapes = null;
         String key;
         while ((key = reader.nextKey()) != null) {
             topLevelKeys.add(key);
@@ -136,7 +143,12 @@ final class JsonAstLoader {
                     loadMetadata();
                     break;
                 case SHAPES:
-                    loadShapes();
+                    if (modelVersion == Version.UNKNOWN) {
+                        // No version? Read shapes into a Node and buffer it. We need the version.
+                        deferredShapes = reader.readValueAsNode();
+                    } else {
+                        loadShapes();
+                    }
                     break;
                 default:
                     reader.skipValue();
@@ -148,8 +160,23 @@ final class JsonAstLoader {
             return false;
         }
 
-        checkAdditionalProperties(topLevelKeys, null, TOP_LEVEL_PROPERTIES, modelLocation);
+        if (deferredShapes != null) {
+            loadDeferredShapes(deferredShapes);
+        }
+
+        checkAdditionalProperties(topLevelKeys.list, null, TOP_LEVEL_PROPERTIES, modelLocation);
         return true;
+    }
+
+    // Loads shapes that were captured as a Node because they appeared before the `smithy` version.
+    private void loadDeferredShapes(Node shapes) {
+        AstReader streamReader = reader;
+        reader = new NodeAstReader(shapes);
+        try {
+            loadShapes();
+        } finally {
+            reader = streamReader;
+        }
     }
 
     private void loadMetadata() {
@@ -173,6 +200,8 @@ final class JsonAstLoader {
             throw new SourceException("Expected `shapes` to be an object; found "
                     + AstReader.describe(reader.currentType()), reader.currentLocation());
         }
+
+        int shapesDepth = reader.depth();
         reader.startObject();
         String idText;
         while ((idText = reader.nextKey()) != null) {
@@ -184,30 +213,53 @@ final class JsonAstLoader {
                 throw new SourceException("Expected object, but found "
                         + AstReader.describe(reader.currentType()) + ".", shapeLocation);
             }
-            int shapeBodyDepth = reader.depth() + 1;
-            reader.startObject();
-            // The AST serializes `type` first.
-            String firstKey = reader.nextKey();
-            if (!TYPE.equals(firstKey)) {
-                if (firstKey != null) {
-                    reader.skipValue();
-                    while (reader.nextKey() != null) {
-                        reader.skipValue();
-                    }
-                }
-                throw new SourceException("Missing expected member `type`.", shapeLocation);
-            }
-            String type = reader.expectStringValue("`type` member");
+
             try {
-                loadShape(id, type, shapeLocation);
+                loadShapeDefinition(id, shapeLocation);
             } catch (SourceException e) {
                 emit(ValidationEvent.fromSourceException(e).toBuilder().shapeId(id).build());
-                // Unwind to this shape's body and drain it so the cursor is ready for the next shape.
-                reader.skipToDepth(shapeBodyDepth);
-                while (reader.nextKey() != null) {
-                    reader.skipValue();
-                }
             }
+
+            // Whether the shape loaded cleanly or threw mid-way, unwind to the shapes map so the
+            // cursor is positioned to read the next shape.
+            reader.skipToDepth(shapesDepth + 1);
+        }
+    }
+
+    // Reads one shape definition. The AST serializes `type` as the first member, which lets the common
+    // case stream with no buffering. If the keys arrive in another order (valid JSON, accepted by the
+    // old node-based loader), the definition is materialized as an ObjectNode and reloaded from it so
+    // `type` can be found regardless of position.
+    private void loadShapeDefinition(ShapeId id, SourceLocation shapeLocation) {
+        reader.startObject();
+        String firstKey = reader.nextKey();
+
+        if (firstKey == null) {
+            throw new SourceException("Missing expected member `type`.", shapeLocation);
+        }
+
+        // Happy case, found type first.
+        if (TYPE.equals(firstKey)) {
+            String type = reader.expectStringValue("`type` member");
+            loadShape(id, type, shapeLocation);
+            return;
+        }
+
+        // Out-of-order keys: materialize the shape definition as a Node (preserving source locations)
+        // and reload it through a NodeAstReader, which finds `type` by random access like the old
+        // loader. The opening and first key were already consumed above.
+        ObjectNode shapeNode = reader.finishObjectAsNode(shapeLocation, firstKey, reader.lastKeyLocation())
+                .expectObjectNode();
+        String type = shapeNode.expectStringMember(TYPE).getValue();
+        AstReader streamReader = reader;
+        reader = new NodeAstReader(shapeNode);
+        try {
+            // loadShape's member loop iterates every key; `type` lands in the default branch and is
+            // skipped (it's an allowed property of every shape kind), so it needn't be pre-consumed.
+            reader.startObject();
+            loadShape(id, type, shapeLocation);
+        } finally {
+            reader = streamReader;
         }
     }
 
@@ -577,7 +629,15 @@ final class JsonAstLoader {
         reader.startObject();
         String memberName;
         while ((memberName = reader.nextKey()) != null) {
-            loadMember(operation, shapeId.withMember(memberName));
+            loadMember(operation, withMember(shapeId, memberName, reader.lastKeyLocation()));
+        }
+    }
+
+    private static ShapeId withMember(ShapeId shapeId, String memberName, SourceLocation location) {
+        try {
+            return shapeId.withMember(memberName);
+        } catch (RuntimeException e) {
+            throw new SourceException(e.getMessage(), location);
         }
     }
 
@@ -598,7 +658,7 @@ final class JsonAstLoader {
             keys.add(key);
             switch (key) {
                 case TARGET:
-                    target = ShapeId.from(reader.expectStringValue("`target` member"));
+                    target = expectShapeId(reader.expectStringValue("`target` member"), reader.currentLocation());
                     sawTarget = true;
                     break;
                 case TRAITS:
@@ -653,7 +713,7 @@ final class JsonAstLoader {
         while ((key = reader.nextKey()) != null) {
             keys.add(key);
             if (TARGET.equals(key)) {
-                target = ShapeId.from(reader.expectStringValue("`target` member"));
+                target = expectShapeId(reader.expectStringValue("`target` member"), reader.currentLocation());
                 sawTarget = true;
             } else {
                 reader.skipValue();
