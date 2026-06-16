@@ -11,7 +11,8 @@ configure<SourceSetContainer> {
     val main by getting
     val test by getting
 
-    // A separate "fuzz" source set so fuzz harnesses don't affect the main test compile/run.
+    // A separate "fuzz" source set so fuzz harnesses don't affect the main test compile/run. Sources
+    // and seed corpora are picked up from src/fuzz/java and src/fuzz/resources by convention.
     create("fuzz") {
         compileClasspath += main.output + configurations["testRuntimeClasspath"] + configurations["testCompileClasspath"]
         runtimeClasspath += output + compileClasspath + test.runtimeClasspath + test.output

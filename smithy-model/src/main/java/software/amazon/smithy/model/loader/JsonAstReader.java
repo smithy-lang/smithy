@@ -17,20 +17,17 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.NumberUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * An {@link AstReader} backed by a self-contained, stateful JSON lexer used when loading JSON model
- * files. All JSON parsing machinery is private; callers see only the {@link AstReader} cursor plus
- * {@link #parse} for materializing a whole document as a {@link Node}.
+ * files. Package-private: external callers reach JSON parsing only through {@link JsonNodeParser}.
  *
  * <p>The lexer is a Jackson-style pull tokenizer (no per-token allocation; the current token's value
  * and location live in fields) that validates as it reads and throws {@link ModelSyntaxException} on
  * malformed input. Low-level routines are adapted from the minimal-json parser the loader previously
  * used, preserving behavior and error messages.
  */
-@SmithyInternalApi
-public final class JsonAstReader implements AstReader {
+final class JsonAstReader implements AstReader {
 
     // Internal token kinds. Not exposed: the AstReader surface speaks in AstReader.Type.
     private enum Token {
@@ -114,8 +111,6 @@ public final class JsonAstReader implements AstReader {
         this.contexts[depth++] = CTX_ROOT;
     }
 
-    // ===== Public entry points =====
-
     /**
      * Creates a reader over JSON text, positioned on the document's root value.
      */
@@ -141,14 +136,14 @@ public final class JsonAstReader implements AstReader {
     /**
      * Parses a complete JSON document from text into a {@link Node}.
      */
-    public static Node parse(String filename, String content, boolean allowComments) {
+    static Node parse(String filename, String content, boolean allowComments) {
         return parseDocument(from(filename, content, allowComments));
     }
 
     /**
      * Parses a complete JSON document from a reader into a {@link Node}.
      */
-    public static Node parse(String filename, Reader reader, boolean allowComments) {
+    static Node parse(String filename, Reader reader, boolean allowComments) {
         return parseDocument(from(filename, reader, allowComments));
     }
 
@@ -279,6 +274,24 @@ public final class JsonAstReader implements AstReader {
             advance();
             builder.withMember(new StringNode(name, keyLocation), readValueAsNode());
         }
+        return builder.build();
+    }
+
+    @Override
+    public Node finishObjectAsNode(SourceLocation objectLocation, String firstKey, SourceLocation firstKeyLocation) {
+        // The object's START_OBJECT and first key have already been consumed by the caller; the cursor
+        // is on the first member's value. Build the rest of the object from here.
+        ObjectNode.Builder builder = ObjectNode.builder().sourceLocation(objectLocation);
+        builder.withMember(new StringNode(firstKey, firstKeyLocation), readValueAsNode());
+
+        while (advance() != Token.END_OBJECT) {
+            String name = currentString;
+            SourceLocation keyLocation = new SourceLocation(filename, tokenLine, tokenColumn);
+            advance();
+            builder.withMember(new StringNode(name, keyLocation), readValueAsNode());
+        }
+
+        enteredDepth--;
         return builder.build();
     }
 

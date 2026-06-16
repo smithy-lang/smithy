@@ -115,6 +115,18 @@ interface AstReader {
     Node readValueAsNode();
 
     /**
+     * Materializes the object the cursor is currently iterating as a {@link Node}, given that its
+     * opening and first member key have already been consumed (the cursor is on the first member's
+     * value). Used by the loader to buffer a shape definition whose keys are out of order.
+     *
+     * @param objectLocation Source location of the object's opening.
+     * @param firstKey The already-read first member name.
+     * @param firstKeyLocation Source location of the first member name.
+     * @return the completed object as a Node.
+     */
+    Node finishObjectAsNode(SourceLocation objectLocation, String firstKey, SourceLocation firstKeyLocation);
+
+    /**
      * Skips the current value (and any nested values), advancing past it.
      */
     void skipValue();

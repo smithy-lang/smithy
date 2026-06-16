@@ -27,10 +27,13 @@ final class NodeAstReader implements AstReader {
         // Exactly one of these is set.
         final Iterator<Map.Entry<StringNode, Node>> objectMembers;
         final Iterator<Node> arrayElements;
+        // The object being iterated (when objectMembers is set), kept so it can be returned whole.
+        final Node objectNode;
 
-        Frame(Iterator<Map.Entry<StringNode, Node>> objectMembers, Iterator<Node> arrayElements) {
+        Frame(Iterator<Map.Entry<StringNode, Node>> objectMembers, Iterator<Node> arrayElements, Node objectNode) {
             this.objectMembers = objectMembers;
             this.arrayElements = arrayElements;
+            this.objectNode = objectNode;
         }
     }
 
@@ -64,7 +67,8 @@ final class NodeAstReader implements AstReader {
 
     @Override
     public void startObject() {
-        frames.push(new Frame(current.expectObjectNode().getMembers().entrySet().iterator(), null));
+        Node object = current;
+        frames.push(new Frame(object.expectObjectNode().getMembers().entrySet().iterator(), null, object));
     }
 
     @Override
@@ -87,7 +91,7 @@ final class NodeAstReader implements AstReader {
 
     @Override
     public void startArray() {
-        frames.push(new Frame(null, current.expectArrayNode().getElements().iterator()));
+        frames.push(new Frame(null, current.expectArrayNode().getElements().iterator(), null));
     }
 
     private Frame peek() {
@@ -118,6 +122,13 @@ final class NodeAstReader implements AstReader {
     public Node readValueAsNode() {
         // subtree already exists.
         return current;
+    }
+
+    @Override
+    public Node finishObjectAsNode(SourceLocation objectLocation, String firstKey, SourceLocation firstKeyLocation) {
+        // The whole object already exists as a Node; pop its (partially consumed) iteration frame and
+        // return it directly, with no rebuilding.
+        return frames.pop().objectNode;
     }
 
     @Override
