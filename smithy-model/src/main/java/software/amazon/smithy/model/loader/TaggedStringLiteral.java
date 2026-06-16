@@ -15,7 +15,7 @@ import java.util.function.Function;
 /**
  * Handles tagged string literals in the Smithy IDL.
  *
- * <p>A tagged string literal is a string prefixed with {@code #tag} that changes
+ * <p>A tagged string literal is a string prefixed with a tag (e.g. {@code #b}) that changes
  * how the string content is interpreted. The result can be a string or number token.
  */
 final class TaggedStringLiteral {
