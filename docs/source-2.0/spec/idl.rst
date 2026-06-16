@@ -165,7 +165,13 @@ string support defined in :rfc:`7405`.
     TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
-    TaggedStringLiteral :"#" `Identifier` [`SP`] (`QuotedText` / `TextBlock`)
+    TaggedStringLiteral :"#" `Identifier` [`SP`] (`RawQuotedText` / `RawTextBlock`)
+    RawQuotedText       :DQUOTE *`RawQuotedChar` DQUOTE
+    RawQuotedChar       :%x09 / %x20-21 / %x23-5B / %x5D-10FFFF
+                        :/ `Escape` %x00-10FFFF
+                        :/ `NL`
+    RawTextBlock        :`ThreeDquotes` [`SP`] `NL` *`RawTextBlockContent` `ThreeDquotes`
+    RawTextBlockContent :`RawQuotedChar` / (1*2DQUOTE 1*`RawQuotedChar`)
 
 .. rubric:: Shapes
 
@@ -2687,9 +2693,9 @@ The content of the string is parsed according to the following grammar:
 
 .. code-block:: none
 
-    hex_content = *(hex_pair / WS / comment / NL)
-    hex_pair    = Hex Hex
-    comment     = "#" *(%x00-09 / %x0B-0D / %x0E-10FFFF) ; # until end of line
+    HexContent = *(HexPair / WS / Comment / NL)
+    HexPair    = Hex Hex
+    Comment     = "#" *(%x00-09 / %x0B-0D / %x0E-10FFFF) ; # until end of line
 
 The number of hex digits (excluding those in comments) MUST be even. Each pair
 of hex digits produces one byte in the output.
