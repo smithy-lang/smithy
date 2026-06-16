@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -352,6 +353,40 @@ public class TaggedStringLiteralTest {
     public void poundFollowedByNonIdentifier() {
         IdlInternalTokenizer t = tokenizer("#123");
         assertThat(t.getCurrentToken(), is(IdlToken.POUND));
+    }
+
+    // --- Raw string escape handling ---
+
+    @Test
+    public void rawStringPreservesEscapedQuote() {
+        // #re "a\"b" — the \" keeps the quote from terminating the string,
+        // raw content includes the backslash and quote.
+        IdlInternalTokenizer t = tokenizer("#re \"a\\\"b\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("a\\\"b"));
+    }
+
+    @Test
+    public void rawStringPreservesBackslashAtEnd() {
+        // #re "foo\\" — escaped backslash before closing quote
+        IdlInternalTokenizer t = tokenizer("#re \"foo\\\\\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("foo\\\\"));
+    }
+
+    @Test
+    public void rawTextBlockAllowsUnescapedQuotes() {
+        // In text blocks, lone " doesn't need escaping.
+        String model = "#re \"\"\"\n    a\"b\n    \"\"\"";
+        IdlInternalTokenizer t = tokenizer(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
+        assertThat(t.getCurrentTokenStringSlice().toString(), containsString("a\"b"));
     }
 
     // --- Helpers ---
