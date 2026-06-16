@@ -64,8 +64,9 @@ final class TaggedStringLiteral {
     }
 
     /**
-     * Scans regex string contents. Backslash sequences are passed through literally
-     * except for {@code \"} and {@code \\}.
+     * Scans regex string contents. {@code \"} produces a literal double quote,
+     * {@code \\} produces a literal backslash, and all other backslash sequences
+     * are passed through as two literal characters.
      */
     private static Result scanRegexContents(CharSequence lexeme) {
         StringBuilder result = new StringBuilder(lexeme.length());
