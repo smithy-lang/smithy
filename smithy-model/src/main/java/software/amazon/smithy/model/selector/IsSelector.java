@@ -4,7 +4,11 @@
  */
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -30,5 +34,23 @@ final class IsSelector implements InternalSelector {
         }
 
         return Response.CONTINUE;
+    }
+
+    @Override
+    public Collection<? extends Shape> getStartingShapes(Model model) {
+        // If all children provide narrower starting shapes, use their union instead of all model shapes.
+        Collection<? extends Shape> allShapes = model.toSet();
+        Set<Shape> union = null;
+        for (InternalSelector selector : selectors) {
+            Collection<? extends Shape> starting = selector.getStartingShapes(model);
+            if (starting == allShapes) {
+                return allShapes;
+            } else if (union == null) {
+                union = new HashSet<>(starting);
+            } else {
+                union.addAll(starting);
+            }
+        }
+        return union != null ? union : allShapes;
     }
 }
