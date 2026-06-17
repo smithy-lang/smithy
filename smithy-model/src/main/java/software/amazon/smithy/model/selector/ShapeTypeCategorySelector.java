@@ -33,4 +33,9 @@ final class ShapeTypeCategorySelector implements InternalSelector {
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return getStartingShapes(context.getModel()).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return shapeCategory.isInstance(input) ? ContainsShape.YES : ContainsShape.NO;
+    }
 }

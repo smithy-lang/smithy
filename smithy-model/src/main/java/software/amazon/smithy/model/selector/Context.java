@@ -219,6 +219,27 @@ final class Context {
      * @return Returns true if the {@code predicate} matches the {@code shape}.
      */
     boolean receivedShapes(Shape shape, InternalSelector predicate) {
+        // Short-circuit side-effect-free predicates that can answer without a full push.
+        switch (predicate.emitsAnyOptimization(this, shape)) {
+            case YES:
+                return true;
+            case NO:
+                return false;
+            case MAYBE:
+            default:
+                break;
+        }
+
+        Holder h = getHolder();
+        try {
+            predicate.push(this, shape, h);
+            return h.set;
+        } finally {
+            holderDepth--;
+        }
+    }
+
+    private Holder getHolder() {
         if (holderDepth >= holders.length) {
             Holder[] grown = new Holder[holders.length * 2];
             System.arraycopy(holders, 0, grown, 0, holders.length);
@@ -231,11 +252,6 @@ final class Context {
 
         Holder h = holders[holderDepth++];
         h.set = false;
-        try {
-            predicate.push(this, shape, h);
-            return h.set;
-        } finally {
-            holderDepth--;
-        }
+        return h;
     }
 }

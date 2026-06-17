@@ -38,4 +38,9 @@ final class VariableGetSelector implements InternalSelector {
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return getShapes(context).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return getShapes(context).isEmpty() ? ContainsShape.NO : ContainsShape.YES;
+    }
 }

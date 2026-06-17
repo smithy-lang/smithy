@@ -25,4 +25,17 @@ final class NotSelector implements InternalSelector {
             return Response.CONTINUE;
         }
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        switch (selector.emitsAnyOptimization(context, input)) {
+            case YES:
+                return ContainsShape.NO;
+            case NO:
+                return ContainsShape.YES;
+            case MAYBE:
+            default:
+                return ContainsShape.MAYBE;
+        }
+    }
 }
