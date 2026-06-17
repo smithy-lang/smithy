@@ -332,7 +332,8 @@ final class SelectorParser extends SimpleParser {
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
 
         if (next == ']') {
-            return AttributeSelector.existence(path);
+            TraitExistenceSelector traitSelector = TraitExistenceSelector.tryCreate(path);
+            return traitSelector != null ? traitSelector : AttributeSelector.existence(path);
         }
 
         AttributeComparator comparator = parseComparator(next);
