@@ -2695,7 +2695,7 @@ The content of the string is parsed according to the following grammar:
 
     HexContent = *(HexPair / WS / Comment / NL)
     HexPair    = Hex Hex
-    Comment     = "#" *(%x00-09 / %x0B-0D / %x0E-10FFFF) ; # until end of line
+    Comment    = "#" *`NotNL`
 
 The number of hex digits (excluding those in comments) MUST be even. Each pair
 of hex digits produces one byte in the output.
