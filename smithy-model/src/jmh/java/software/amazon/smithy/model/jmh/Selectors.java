@@ -13,6 +13,7 @@ import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -138,5 +139,92 @@ public class Selectors {
     @Benchmark
     public Set<Shape> evaluateDoubleRootSelector(SelectorState state) {
         return state.doubleRootSelector.select(state.model);
+    }
+
+    // ==============================================================================
+    // Realistic model benchmarks: exercises real-world selector patterns from the
+    // prelude, validators, and AWS traits on a ~300+ shape model.
+    // ==============================================================================
+
+    @State(Scope.Thread)
+    public static class RealisticState {
+
+        public Model model;
+
+        // Trait existence: the simplest and most common pattern.
+        public Selector traitError = Selector.parse("structure [trait|error]");
+        // Negated trait: very common in validators (e.g., :not([trait|input])).
+        public Selector notTrait = Selector.parse("structure :not([trait|input]) :not([trait|output])");
+        // Multi-type union filter (:is).
+        public Selector isMultiType = Selector.parse(":is(service, operation, resource)");
+        // Neighbor + type filter: exercises forward neighbor traversal.
+        public Selector structureMembers = Selector.parse("structure > member");
+        // Recursive neighbor + type filter: the deep traversal pattern.
+        public Selector recursiveToOperation = Selector.parse("service ~> operation");
+        // :test with nested navigation.
+        public Selector testNestedStructure = Selector.parse(
+                "operation -[input, output]-> structure > member :test(> structure)");
+        // Compound validator pattern from the prelude.
+        public Selector preludeDataType = Selector.parse(
+                "structure :not([trait|input]) :not([trait|output]) > member :test(> integer)");
+        // The trait existence + attribute comparison (exercises AttributeSelector with comparator).
+        public Selector traitWithValue = Selector.parse("structure [trait|error = \"client\"]");
+
+        @Setup
+        public void prepare() {
+            model = Model.assembler()
+                    .addImport(Selectors.class.getResource("realistic-model.smithy"))
+                    .assemble()
+                    .getResult()
+                    .get();
+        }
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> traitExistence(RealisticState state) {
+        return state.traitError.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> notTrait(RealisticState state) {
+        return state.notTrait.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> isMultiType(RealisticState state) {
+        return state.isMultiType.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> structureMembers(RealisticState state) {
+        return state.structureMembers.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> recursiveToOperation(RealisticState state) {
+        return state.recursiveToOperation.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> testNestedStructure(RealisticState state) {
+        return state.testNestedStructure.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> preludeDataType(RealisticState state) {
+        return state.preludeDataType.select(state.model);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public Set<Shape> traitWithValue(RealisticState state) {
+        return state.traitWithValue.select(state.model);
     }
 }
