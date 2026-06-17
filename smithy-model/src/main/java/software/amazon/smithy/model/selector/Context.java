@@ -35,7 +35,7 @@ final class Context {
     private VarMap varsView;
 
     // Pre-allocated Holder stack to avoid per-call allocation in receivedShapes. Handles reentrancy through growth.
-    private Holder[] holders = new Holder[] { new Holder(), new Holder() };
+    private Holder[] holders = new Holder[] {new Holder(), new Holder()};
     private int holderDepth;
 
     @SuppressWarnings("unchecked")
