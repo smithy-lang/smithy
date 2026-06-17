@@ -29,6 +29,7 @@ public class TaggedStringLiteralTest {
                 Arguments.of("\\w+\\s\\d", "\\w+\\s\\d"),
                 Arguments.of("\\\\", "\\"),
                 Arguments.of("\\\"", "\""),
+                Arguments.of("a\\\"b", "a\"b"),
                 Arguments.of("hello", "hello"),
                 Arguments.of("", ""),
                 Arguments.of("[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}", "[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}"));
@@ -78,6 +79,8 @@ public class TaggedStringLiteralTest {
                 Arguments.of("\\377", base64((byte) 0xFF)), // max single byte
                 Arguments.of("\\7", base64((byte) 7)), // single octal digit
                 Arguments.of("\\77", base64((byte) 63)), // two octal digits
+                // Escaped quote
+                Arguments.of("a\\\"b", base64((byte) 'a', (byte) '"', (byte) 'b')),
                 Arguments.of("", base64()));
     }
 

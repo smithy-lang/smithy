@@ -13,6 +13,12 @@
                 "smithy.api#pattern": "\\w+"
             }
         },
+        "smithy.example#QuoteInRegex": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "a\"b"
+            }
+        },
         "smithy.example#TaggedLiteralsExample": {
             "type": "structure",
             "members": {
@@ -26,6 +32,12 @@
                     "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#default": "LlBORw0KGgo="
+                    }
+                },
+                "quoted": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "YSJi"
                     }
                 },
                 "header": {
