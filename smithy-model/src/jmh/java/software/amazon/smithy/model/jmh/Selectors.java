@@ -104,6 +104,18 @@ public class Selectors {
         return state.createHttpBindingIncompatibilitySelector();
     }
 
+    // Parses a selector that heavily exercises the variadic expect(...) paths: directed forward/reverse neighbors
+    // with multiple relationship types, the attribute operator set, projection comparators, and the dataType keyword.
+    @Benchmark
+    public Selector parseVariadicHeavySelector() {
+        return Selector.parse(
+                "operation -[input, output]-> structure > member"
+                        + " :test(<-[member]-)"
+                        + " :is(dataType, structure)"
+                        + " [trait|range|min >= 1]"
+                        + " [@: @{trait|tags|(values)} {<} @{trait|tags|(values)}]");
+    }
+
     // The selector based version of evaluateHttpBindingManually.
     @Benchmark
     public Set<Shape> evaluateHttpBindingSelector(SelectorState state) {

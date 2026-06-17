@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SimpleParser;
+import software.amazon.smithy.utils.SliceMatcher;
 
 /**
  * Parses a selector expression.
@@ -28,19 +30,66 @@ final class SelectorParser extends SimpleParser {
 
     private static final Logger LOGGER = Logger.getLogger(SelectorParser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
-    private static final Set<String> REL_TYPES = new HashSet<>();
+
+    // Hoisted varargs token arrays so each expect(...) call doesn't allocate a fresh char[] while parsing.
+    private static final char[] CLOSE_BRACKET_OR_COMMA = {']', ','};
+    private static final char[] CLOSE_PAREN_OR_COMMA = {')', ','};
+    private static final char[] ATTR_OPERATORS = {']', '=', '!', '^', '$', '*', '?', '>', '<'};
+    private static final char[] PROJECTION_COMPARATORS = {'<', '=', '!'};
+
+    private static final String[] RELATIONSHIP_LABELS = buildRelationshipLabels();
+    private static final Set<String> REL_TYPES = new HashSet<>(Arrays.asList(RELATIONSHIP_LABELS));
+    private static final SliceMatcher RELATIONSHIP_LABEL_MATCHER = new SliceMatcher(RELATIONSHIP_LABELS);
+
+    private static final SliceMatcher FUNCTION_NAMES = new SliceMatcher(
+            "not",
+            "test",
+            "is",
+            "in",
+            "root",
+            "topdown",
+            "recursive",
+            "each");
+
+    // The "dataType" keyword always expands to the same immutable pair of category selectors, which are stateless,
+    // so the list can be shared rather than rebuilt on each parse.
+    private static final List<InternalSelector> DATA_TYPE_SELECTORS = Arrays.asList(
+            new ShapeTypeCategoryEnumSelector(ShapeType.Category.SIMPLE),
+            new ShapeTypeCategoryEnumSelector(ShapeType.Category.AGGREGATE));
+
+    // The category keywords matched in createSelector, in index order. Indices < SHAPE_TYPE_OFFSET are handled by
+    // the switch below; indices >= SHAPE_TYPE_OFFSET are shape-type names resolved against SHAPE_TYPES.
+    private static final ShapeType[] SHAPE_TYPES = ShapeType.values();
+    private static final int SHAPE_TYPE_OFFSET = 6;
+    private static final SliceMatcher TYPE_KEYWORDS = buildTypeKeywordMatcher();
+
+    private static SliceMatcher buildTypeKeywordMatcher() {
+        String[] keywords = new String[SHAPE_TYPE_OFFSET + SHAPE_TYPES.length];
+        keywords[0] = "number";
+        keywords[1] = "simpleType";
+        keywords[2] = "collection";
+        keywords[3] = "aggregateType";
+        keywords[4] = "serviceType";
+        keywords[5] = "dataType";
+        for (int i = 0; i < SHAPE_TYPES.length; i++) {
+            keywords[SHAPE_TYPE_OFFSET + i] = SHAPE_TYPES[i].toString();
+        }
+        return new SliceMatcher(keywords);
+    }
+
+    private static String[] buildRelationshipLabels() {
+        Set<String> labels = new LinkedHashSet<>();
+        for (RelationshipType rel : RelationshipType.values()) {
+            rel.getSelectorLabel().ifPresent(labels::add);
+        }
+        return labels.toArray(new String[0]);
+    }
+
     private final List<InternalSelector> roots = new ArrayList<>();
 
     // Assigns a dense, stable integer slot to each distinct variable name encountered while parsing. Variables are
     // addressed by this slot at evaluation time so the hot path can use array indexing instead of hash lookups.
     private final Map<String, Integer> variableIndices = new LinkedHashMap<>();
-
-    static {
-        // Adds selector relationship labels for warnings when unknown relationship names are used.
-        for (RelationshipType rel : RelationshipType.values()) {
-            rel.getSelectorLabel().ifPresent(REL_TYPES::add);
-        }
-    }
 
     private SelectorParser(String selector) {
         super(selector);
@@ -62,7 +111,7 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<InternalSelector> recursiveParse() {
-        List<InternalSelector> selectors = new IgnoreIdentitySelectorArray();
+        List<InternalSelector> selectors = new IgnoreIdentitySelectorArray(4);
 
         // createSelector() will strip leading ws.
         selectors.add(createSelector());
@@ -84,6 +133,10 @@ final class SelectorParser extends SimpleParser {
      * Filter out unnecessary identity selectors when creating the finalized AST to evaluate selectors.
      */
     private static final class IgnoreIdentitySelectorArray extends ArrayList<InternalSelector> {
+        IgnoreIdentitySelectorArray(int initialCapacity) {
+            super(initialCapacity);
+        }
+
         @Override
         public boolean add(InternalSelector o) {
             return o != InternalSelector.IDENTITY && super.add(o);
@@ -134,26 +187,30 @@ final class SelectorParser extends SimpleParser {
                 return parseVariable();
             default:
                 if (ParserUtils.isIdentifierStart(peek())) {
-                    String identifier = ParserUtils.parseIdentifier(this);
-                    switch (identifier) {
-                        case "number":
+                    // Consume the identifier in place and match it against the fixed type keyword set directly on the
+                    // input buffer, with no String allocation. The matcher returns an index to switch on: the first
+                    // SHAPE_TYPE_OFFSET indices are category keywords, the rest are shape-type names.
+                    int start = position();
+                    ParserUtils.consumeIdentifier(this);
+                    int index = sliceMatches(start, TYPE_KEYWORDS);
+                    switch (index) {
+                        case 0: // number
                             return new ShapeTypeCategorySelector(NumberShape.class);
-                        case "simpleType":
+                        case 1: // simpleType
                             return new ShapeTypeCategoryEnumSelector(ShapeType.Category.SIMPLE);
-                        case "collection":
+                        case 2: // collection
                             return new ShapeTypeCategorySelector(CollectionShape.class);
-                        case "aggregateType":
+                        case 3: // aggregateType
                             return new ShapeTypeCategoryEnumSelector(ShapeType.Category.AGGREGATE);
-                        case "serviceType":
+                        case 4: // serviceType
                             return new ShapeTypeCategoryEnumSelector(ShapeType.Category.SERVICE);
-                        case "dataType":
-                            return IsSelector.of(Arrays.asList(
-                                    new ShapeTypeCategoryEnumSelector(ShapeType.Category.SIMPLE),
-                                    new ShapeTypeCategoryEnumSelector(ShapeType.Category.AGGREGATE)));
-                        default:
-                            ShapeType shape = ShapeType.fromString(identifier)
-                                    .orElseThrow(() -> syntax("Unknown shape type: " + identifier));
-                            return new ShapeTypeSelector(shape);
+                        case 5: // dataType
+                            return IsSelector.of(DATA_TYPE_SELECTORS);
+                        case -1:
+                            String identifier = sliceFrom(start);
+                            throw syntax("Unknown shape type: " + identifier);
+                        default: // a shape-type name
+                            return new ShapeTypeSelector(SHAPE_TYPES[index - SHAPE_TYPE_OFFSET]);
                     }
                 } else if (peek() == Character.MIN_VALUE) {
                     throw syntax("Unexpected selector EOF");
@@ -212,18 +269,21 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<String> parseSelectorDirectedRelationships() {
-        List<String> relationships = new ArrayList<>();
+        List<String> relationships = new ArrayList<>(2);
         String next;
         char peek;
 
         do {
             // Requires at least one relationship type.
             ws();
-            next = ParserUtils.parseIdentifier(this);
+            int start = position();
+            ParserUtils.consumeIdentifier(this);
+            int relationshipIndex = sliceMatches(start, RELATIONSHIP_LABEL_MATCHER);
+            next = relationshipIndex == -1 ? sliceFrom(start) : RELATIONSHIP_LABELS[relationshipIndex];
             relationships.add(next);
 
             // Tolerate unknown relationships, but log a warning.
-            if (!REL_TYPES.contains(next)) {
+            if (relationshipIndex == -1) {
                 LOGGER.warning(String.format(
                         "Unknown relationship type '%s' found near %s. Expected one of: %s",
                         next,
@@ -232,7 +292,7 @@ final class SelectorParser extends SimpleParser {
             }
 
             ws();
-            peek = expect(']', ',');
+            peek = expect(CLOSE_BRACKET_OR_COMMA);
         } while (peek != ']');
 
         return relationships;
@@ -240,10 +300,11 @@ final class SelectorParser extends SimpleParser {
 
     private InternalSelector parseSelectorFunction() {
         int functionPosition = position();
-        String name = ParserUtils.parseIdentifier(this);
+        ParserUtils.consumeIdentifier(this);
+        int functionIndex = sliceMatches(functionPosition, FUNCTION_NAMES);
         List<InternalSelector> selectors = parseSelectorFunctionArgs();
-        switch (name) {
-            case "not":
+        switch (functionIndex) {
+            case 0: // not
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :not function requires a single selector argument",
@@ -253,11 +314,11 @@ final class SelectorParser extends SimpleParser {
                             column());
                 }
                 return new NotSelector(selectors.get(0));
-            case "test":
+            case 1: // test
                 return new TestSelector(selectors);
-            case "is":
+            case 2: // is
                 return IsSelector.of(selectors);
-            case "in":
+            case 3: // in
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :in function requires a single selector argument",
@@ -267,7 +328,7 @@ final class SelectorParser extends SimpleParser {
                             column());
                 }
                 return new InSelector(selectors.get(0));
-            case "root":
+            case 4: // root
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :root function requires a single selector argument",
@@ -279,7 +340,7 @@ final class SelectorParser extends SimpleParser {
                 InternalSelector root = new RootSelector(roots.size());
                 roots.add(selectors.get(0));
                 return root;
-            case "topdown":
+            case 5: // topdown
                 if (selectors.size() > 2) {
                     throw new SelectorSyntaxException(
                             "The :topdown function accepts 1 or 2 selectors, but found " + selectors.size(),
@@ -289,7 +350,7 @@ final class SelectorParser extends SimpleParser {
                             column());
                 }
                 return new TopDownSelector(selectors);
-            case "recursive":
+            case 6: // recursive
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :recursive function requires a single selector argument",
@@ -299,10 +360,11 @@ final class SelectorParser extends SimpleParser {
                             column());
                 }
                 return new RecursiveSelector(selectors.get(0));
-            case "each":
+            case 7: // each
                 LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + input());
                 return IsSelector.of(selectors);
             default:
+                String name = sliceFrom(functionPosition);
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
                         name,
                         input()));
@@ -312,14 +374,14 @@ final class SelectorParser extends SimpleParser {
 
     private List<InternalSelector> parseSelectorFunctionArgs() {
         ws();
-        List<InternalSelector> selectors = new ArrayList<>();
+        List<InternalSelector> selectors = new ArrayList<>(2);
         expect('(');
         char next;
 
         do {
             selectors.add(AndSelector.of(recursiveParse()));
             ws();
-            next = expect(')', ',');
+            next = expect(CLOSE_PAREN_OR_COMMA);
         } while (next != ')');
 
         return selectors;
@@ -329,7 +391,7 @@ final class SelectorParser extends SimpleParser {
         ws();
         List<String> path = parseAttributePath();
         ws();
-        char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
+        char next = expect(ATTR_OPERATORS);
 
         if (next == ']') {
             return AttributeSelector.create(path, null, null, false);
@@ -395,7 +457,7 @@ final class SelectorParser extends SimpleParser {
                 }
                 break;
             case '{': // projection comparators
-                char nextSet = expect('<', '=', '!');
+                char nextSet = expect(PROJECTION_COMPARATORS);
                 if (nextSet == '<') {
                     if (peek() == '<') {
                         expect('<'); // {<<}
@@ -432,7 +494,7 @@ final class SelectorParser extends SimpleParser {
 
     // selector_scoped_comparison *("&&" selector_scoped_comparison)
     private List<ScopedAttributeSelector.Assertion> parseScopedAssertions() {
-        List<ScopedAttributeSelector.Assertion> assertions = new ArrayList<>();
+        List<ScopedAttributeSelector.Assertion> assertions = new ArrayList<>(2);
         assertions.add(parseScopedAssertion());
         ws();
 
@@ -453,7 +515,7 @@ final class SelectorParser extends SimpleParser {
         skip();
         AttributeComparator comparator = parseComparator(next);
 
-        List<ScopedAttributeSelector.ScopedFactory> rhs = new ArrayList<>();
+        List<ScopedAttributeSelector.ScopedFactory> rhs = new ArrayList<>(2);
         rhs.add(parseScopedValue());
 
         while (peek() == ',') {
@@ -486,7 +548,7 @@ final class SelectorParser extends SimpleParser {
             return Collections.emptyList();
         }
 
-        List<String> path = new ArrayList<>();
+        List<String> path = new ArrayList<>(2);
         // Parse the top-level namespace key.
         path.add(ParserUtils.parseIdentifier(this));
 
@@ -497,7 +559,7 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<String> parseAttributeValues() {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>(2);
         result.add(parseAttributeValue(this));
         ws();
 
@@ -525,7 +587,7 @@ final class SelectorParser extends SimpleParser {
         parser.expect('{');
         // parse at least one path segment, followed by any number of
         // comma separated segments.
-        List<String> path = new ArrayList<>();
+        List<String> path = new ArrayList<>(2);
         path.add(parseSelectorPathSegment(parser));
         path.addAll(parseSelectorPath(parser));
         parser.expect('}');
@@ -595,7 +657,7 @@ final class SelectorParser extends SimpleParser {
             return Collections.emptyList();
         }
 
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>(2);
         do {
             parser.skip(); // skip '|'
             result.add(parseSelectorPathSegment(parser));

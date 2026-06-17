@@ -121,6 +121,16 @@ public class SimpleParserTest {
     }
 
     @Test
+    public void skipsKnownNonNewlineCharacters() {
+        SimpleParser p = new SimpleParser("foo");
+
+        p.skipNonNewline();
+        assertThat(p.position(), equalTo(1));
+        assertThat(p.line(), equalTo(1));
+        assertThat(p.column(), equalTo(2));
+    }
+
+    @Test
     public void assertsNestingNotTooDeep() {
         SimpleParser p = new SimpleParser("foo", 2);
         p.increaseNestingLevel();
@@ -218,5 +228,56 @@ public class SimpleParserTest {
         });
 
         assertThat(e.getMessage(), containsString("Expected a line break, but found 'H'"));
+    }
+
+    @Test
+    public void sliceEqualsComparesSliceWithoutAllocating() {
+        SimpleParser p = new SimpleParser("structure");
+        int start = p.position();
+        while (!p.eof()) {
+            p.skipNonNewline();
+        }
+
+        assertThat(p.sliceEquals(start, "structure"), is(true));
+        assertThat(p.sliceEquals(start, "service"), is(false));
+        assertThat(p.sliceEquals(start, "structures"), is(false)); // longer
+        assertThat(p.sliceEquals(start, "struct"), is(false)); // shorter
+    }
+
+    @Test
+    public void sliceMatchesReturnsCandidateIndex() {
+        SliceMatcher matcher = new SliceMatcher("service", "structure", "member");
+        SimpleParser p = new SimpleParser("structure");
+        int start = p.position();
+        while (!p.eof()) {
+            p.skipNonNewline();
+        }
+
+        assertThat(p.sliceMatches(start, matcher), is(1));
+    }
+
+    @Test
+    public void sliceMatchesReturnsNegativeOneWhenNoCandidateMatches() {
+        SliceMatcher matcher = new SliceMatcher("service", "structure");
+        SimpleParser p = new SimpleParser("operation");
+        int start = p.position();
+        while (!p.eof()) {
+            p.skipNonNewline();
+        }
+
+        assertThat(p.sliceMatches(start, matcher), is(-1));
+    }
+
+    @Test
+    public void supportsNonStringCharSequenceInput() {
+        // Exercises the char-by-char copy fallback for non-String CharSequence inputs.
+        SimpleParser p = new SimpleParser(new StringBuilder("foo bar"));
+        assertThat(p.peek(), equalTo('f'));
+        int start = p.position();
+        while (!p.eof() && p.peek() != ' ') {
+            p.skipNonNewline();
+        }
+        assertThat(p.sliceFrom(start), equalTo("foo"));
+        assertThat(p.sliceEquals(start, "foo"), is(true));
     }
 }
