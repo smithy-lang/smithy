@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.loader.ParserUtils;
@@ -29,6 +31,10 @@ final class SelectorParser extends SimpleParser {
     private static final Set<String> REL_TYPES = new HashSet<>();
     private final List<InternalSelector> roots = new ArrayList<>();
 
+    // Assigns a dense, stable integer slot to each distinct variable name encountered while parsing. Variables are
+    // addressed by this slot at evaluation time so the hot path can use array indexing instead of hash lookups.
+    private final Map<String, Integer> variableIndices = new LinkedHashMap<>();
+
     static {
         // Adds selector relationship labels for warnings when unknown relationship names are used.
         for (RelationshipType rel : RelationshipType.values()) {
@@ -43,7 +49,7 @@ final class SelectorParser extends SimpleParser {
     static Selector parse(String selector) {
         SelectorParser parser = new SelectorParser(selector);
         List<InternalSelector> result = parser.parse();
-        return new WrappedSelector(selector, result, parser.roots);
+        return new WrappedSelector(selector, result, parser.roots, parser.variableIndices);
     }
 
     List<InternalSelector> parse() {
@@ -162,6 +168,11 @@ final class SelectorParser extends SimpleParser {
         return new SelectorSyntaxException(message, input().toString(), position(), line(), column());
     }
 
+    // Returns the dense slot assigned to a variable name, assigning a new one if this is the first occurrence.
+    private int variableSlot(String name) {
+        return variableIndices.computeIfAbsent(name, n -> variableIndices.size());
+    }
+
     private InternalSelector parseVariable() {
         ws();
 
@@ -171,7 +182,7 @@ final class SelectorParser extends SimpleParser {
             String variableName = ParserUtils.parseIdentifier(this);
             ws();
             expect('}');
-            return new VariableGetSelector(variableName);
+            return new VariableGetSelector(variableSlot(variableName));
         }
 
         String name = ParserUtils.parseIdentifier(this);
@@ -182,7 +193,7 @@ final class SelectorParser extends SimpleParser {
         ws();
         expect(')');
 
-        return new VariableStoreSelector(name, selector);
+        return new VariableStoreSelector(variableSlot(name), selector);
     }
 
     // Parses a multi edge neighbor selector: "-[" relationship-type *("," relationship-type) "]"

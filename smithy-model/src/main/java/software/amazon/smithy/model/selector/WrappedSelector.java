@@ -6,8 +6,10 @@ package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -28,10 +30,17 @@ final class WrappedSelector implements Selector {
     private final String expression;
     private final InternalSelector delegate;
     private final List<InternalSelector> roots;
+    private final Map<String, Integer> variableIndices;
 
-    WrappedSelector(String expression, List<InternalSelector> selectors, List<InternalSelector> roots) {
+    WrappedSelector(
+            String expression,
+            List<InternalSelector> selectors,
+            List<InternalSelector> roots,
+            Map<String, Integer> variableIndices
+    ) {
         this.expression = expression;
         this.roots = roots;
+        this.variableIndices = Collections.unmodifiableMap(variableIndices);
         this.delegate = AndSelector.of(selectors);
     }
 
@@ -104,7 +113,7 @@ final class WrappedSelector implements Selector {
         NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShapes(startingShapes).flatMap(shape -> {
-            Context context = new Context(model, index, computedRoots);
+            Context context = new Context(model, index, computedRoots, variableIndices);
             return delegate.pushResultsToCollection(context, shape, new ArrayList<>()).stream();
         });
     }
@@ -116,7 +125,7 @@ final class WrappedSelector implements Selector {
         List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShapes(startingShapes).flatMap(shape -> {
             List<ShapeMatch> result = new ArrayList<>();
-            delegate.push(new Context(model, index, computedRoots), shape, (ctx, s) -> {
+            delegate.push(new Context(model, index, computedRoots, variableIndices), shape, (ctx, s) -> {
                 result.add(new ShapeMatch(s, ctx.getVars()));
                 return InternalSelector.Response.CONTINUE;
             });
@@ -147,10 +156,10 @@ final class WrappedSelector implements Selector {
             List<Set<Shape>> results
     ) {
         Collection<? extends Shape> shapesToEmit = selector.getStartingShapes(model);
-        Context isolatedContext = new Context(model, index, results);
+        Context isolatedContext = new Context(model, index, results, variableIndices);
         Set<Shape> captures = new HashSet<>();
         for (Shape rootShape : shapesToEmit) {
-            isolatedContext.getVars().clear();
+            isolatedContext.clearVariables();
             selector.push(isolatedContext, rootShape, (c, s) -> {
                 captures.add(s);
                 return InternalSelector.Response.CONTINUE;
@@ -166,9 +175,19 @@ final class WrappedSelector implements Selector {
             InternalSelector.Receiver acceptor
     ) {
         Objects.requireNonNull(startingShapes);
-        Context context = new Context(model, NeighborProviderIndex.of(model), computeRoots(model));
+        Context context = new Context(model, NeighborProviderIndex.of(model), computeRoots(model), variableIndices);
+
+        // When the selector's output is independent of the input shape (e.g., it begins with a
+        // ":root(...)" rooted subexpression), every starting shape produces the identical result.
+        // Pushing a single shape avoids re-deriving the same result once per starting shape, which
+        // is O(n^2) work for selectors like ":root(*)".
+        if (delegate.isInputShapeIndependent() && !startingShapes.isEmpty()) {
+            delegate.push(context, startingShapes.iterator().next(), acceptor);
+            return;
+        }
+
         for (Shape shape : startingShapes) {
-            context.getVars().clear();
+            context.clearVariables();
             delegate.push(context, shape, acceptor);
         }
     }
