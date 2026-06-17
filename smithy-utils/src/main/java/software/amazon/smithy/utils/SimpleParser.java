@@ -23,6 +23,11 @@ public class SimpleParser {
     public static final char EOF = Character.MIN_VALUE;
 
     private final CharSequence input;
+    // A char[] mirror of the input and its cached length. Hot parser loops can read directly from the array instead
+    // of repeatedly dispatching through CharSequence.charAt(). The CharSequence is retained for the public input()
+    // API.
+    private final char[] chars;
+    private final int length;
     private final int maxNestingLevel;
     private int position = 0;
     private int line = 1;
@@ -50,6 +55,17 @@ public class SimpleParser {
      */
     public SimpleParser(CharSequence input, int maxNestingLevel) {
         this.input = Objects.requireNonNull(input, "expression must not be null");
+        this.length = input.length();
+        // String can copy directly to a char array; fall back to a char-by-char copy for other CharSequence types
+        // (StringBuilder, CharBuffer, etc.).
+        if (input instanceof String) {
+            this.chars = ((String) input).toCharArray();
+        } else {
+            this.chars = new char[length];
+            for (int i = 0; i < length; i++) {
+                this.chars[i] = input.charAt(i);
+            }
+        }
         this.maxNestingLevel = maxNestingLevel;
 
         if (maxNestingLevel < 0) {
@@ -110,7 +126,7 @@ public class SimpleParser {
      * @return Returns true if the parser has reached the end.
      */
     public final boolean eof() {
-        return position >= input.length();
+        return position >= length;
     }
 
     /**
@@ -135,11 +151,11 @@ public class SimpleParser {
      */
     public final char peek(int offset) {
         int target = position + offset;
-        if (target >= input.length() || target < 0) {
+        if (target >= length || target < 0) {
             return EOF;
         }
 
-        return input.charAt(target);
+        return chars[target];
     }
 
     /**
@@ -259,7 +275,7 @@ public class SimpleParser {
             return;
         }
 
-        switch (input.charAt(position)) {
+        switch (chars[position]) {
             case '\r':
                 if (peek(1) == '\n') {
                     position++;
@@ -276,6 +292,21 @@ public class SimpleParser {
         }
 
         position++;
+    }
+
+    /**
+     * Skips a single non-newline character while tracking columns.
+     *
+     * <p>This method must only be called when the current character is known not to be {@code '\r'} or {@code '\n'}.
+     * Use {@link #skip()} when the current character might be a line break.
+     */
+    public final void skipNonNewline() {
+        if (eof()) {
+            return;
+        }
+
+        position++;
+        column++;
     }
 
     /**
@@ -307,7 +338,40 @@ public class SimpleParser {
      * @return Returns the copied slice of the expression from {@code start} to {@link #position}.
      */
     public final String sliceFrom(int start) {
-        return input.subSequence(start, position).toString();
+        return new String(chars, start, position - start);
+    }
+
+    /**
+     * Compares the slice of the expression from {@code start} to the current position against the given string,
+     * without allocating a substring.
+     *
+     * @param start Start position of the slice (inclusive), ending at the current position (exclusive).
+     * @param candidate String to compare the slice against.
+     * @return Returns true if the slice equals the candidate string character-for-character.
+     */
+    public final boolean sliceEquals(int start, String candidate) {
+        int len = position - start;
+        if (candidate.length() != len) {
+            return false;
+        }
+        for (int i = 0; i < len; i++) {
+            if (chars[start + i] != candidate.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Matches the slice of the expression from {@code start} to the current position against a fixed set of
+     * candidate keywords, without allocating a substring.
+     *
+     * @param start Start position of the slice (inclusive), ending at the current position (exclusive).
+     * @param matcher Matcher holding the candidate keywords.
+     * @return The index of the matching candidate, or {@code -1} if none match.
+     */
+    public final int sliceMatches(int start, SliceMatcher matcher) {
+        return matcher.match(chars, start, position - start);
     }
 
     /**

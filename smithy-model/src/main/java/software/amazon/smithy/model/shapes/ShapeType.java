@@ -5,6 +5,8 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -141,13 +143,18 @@ public enum ShapeType {
      * @return Returns the Type in an Optional.
      */
     public static Optional<ShapeType> fromString(String text) {
-        for (ShapeType e : values()) {
-            if (e.stringValue.equals(text)) {
-                return Optional.of(e);
-            }
-        }
+        return Optional.ofNullable(BY_STRING_VALUE.get(text));
+    }
 
-        return Optional.empty();
+    // Precomputed mapping from each type's string value to the type.
+    private static final Map<String, ShapeType> BY_STRING_VALUE = buildStringValueIndex();
+
+    private static Map<String, ShapeType> buildStringValueIndex() {
+        Map<String, ShapeType> map = new HashMap<>();
+        for (ShapeType e : values()) {
+            map.put(e.stringValue, e);
+        }
+        return map;
     }
 
     /**
