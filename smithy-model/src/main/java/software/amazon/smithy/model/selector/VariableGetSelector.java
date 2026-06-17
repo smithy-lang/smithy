@@ -4,7 +4,6 @@
  */
 package software.amazon.smithy.model.selector;
 
-import java.util.Collections;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -12,10 +11,10 @@ import software.amazon.smithy.model.shapes.Shape;
  * Pushes the shapes stored in a specific variable to the next selector.
  */
 final class VariableGetSelector implements InternalSelector {
-    private final String variableName;
+    private final int slot;
 
-    VariableGetSelector(String variableName) {
-        this.variableName = variableName;
+    VariableGetSelector(int slot) {
+        this.slot = slot;
     }
 
     @Override
@@ -32,7 +31,7 @@ final class VariableGetSelector implements InternalSelector {
     }
 
     private Set<Shape> getShapes(Context context) {
-        return context.getVars().getOrDefault(variableName, Collections.emptySet());
+        return context.getVariable(slot);
     }
 
     @Override

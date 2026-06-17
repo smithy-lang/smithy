@@ -42,10 +42,15 @@ final class AndSelector {
     static final class IntermediateAndSelector implements InternalSelector {
         private final InternalSelector leftSelector;
         private final InternalSelector rightSelector;
+        // Precompute these flags once: the AST is immutable, so recomputing them per push() is wasted work.
+        private final boolean rightInputShapeIndependent;
+        private final boolean inputShapeIndependent;
 
         IntermediateAndSelector(InternalSelector leftSelector, InternalSelector rightSelector) {
             this.leftSelector = leftSelector;
             this.rightSelector = rightSelector;
+            this.rightInputShapeIndependent = rightSelector.isInputShapeIndependent();
+            this.inputShapeIndependent = leftSelector.isInputShapeIndependent() && rightInputShapeIndependent;
         }
 
         @Override
@@ -53,7 +58,7 @@ final class AndSelector {
             // When the right selector is input-shape-independent (e.g., RootSelector), its
             // output is the same regardless of which shape is pushed into it. Check if the
             // left emits anything, and if so, call the right selector exactly once.
-            if (rightSelector.isInputShapeIndependent()) {
+            if (rightInputShapeIndependent) {
                 if (ctx.receivedShapes(shape, leftSelector)) {
                     return rightSelector.push(ctx, shape, next);
                 }
@@ -64,7 +69,7 @@ final class AndSelector {
 
         @Override
         public boolean isInputShapeIndependent() {
-            return leftSelector.isInputShapeIndependent() && rightSelector.isInputShapeIndependent();
+            return inputShapeIndependent;
         }
 
         @Override

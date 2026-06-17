@@ -25,6 +25,11 @@ final class AttributeSelector implements InternalSelector {
     private final boolean caseInsensitive;
     private final Function<Model, Collection<? extends Shape>> optimizer;
 
+    // When this selector is a plain "[trait|<name>]" existence check, the trait's ShapeId is resolved once here at
+    // parse time. The hot path can then test the shape directly instead of rebuilding the absolute name and looking
+    // the ShapeId up in a cache on every shape. Null when the fast path does not apply.
+    private final ShapeId traitExistenceId;
+
     AttributeSelector(
             List<String> path,
             List<String> expected,
@@ -52,14 +57,16 @@ final class AttributeSelector implements InternalSelector {
                 && path.size() >= 2
                 && path.get(0).equals("trait") // only match on traits
                 && !path.get(1).startsWith("(")) { // don't match projections
-            optimizer = model -> {
-                // The trait name might be relative to the prelude, so ensure it's absolute.
-                String absoluteShapeId = Trait.makeAbsoluteName(path.get(1));
-                ShapeId trait = ShapeId.from(absoluteShapeId);
-                return model.getShapesWithTrait(trait);
-            };
+            // The trait name might be relative to the prelude, so ensure it's absolute.
+            ShapeId trait = ShapeId.from(Trait.makeAbsoluteName(path.get(1)));
+            optimizer = model -> model.getShapesWithTrait(trait);
+            // The per-shape existence fast path only applies when the path stops at the trait itself
+            // (e.g., "[trait|http]"). Deeper paths (e.g., "[trait|range|min]") still need to walk into
+            // the trait's node value.
+            this.traitExistenceId = path.size() == 2 ? trait : null;
         } else {
             optimizer = Model::toSet;
+            this.traitExistenceId = null;
         }
     }
 
@@ -82,6 +89,14 @@ final class AttributeSelector implements InternalSelector {
     }
 
     private boolean matchesAttribute(Shape shape, Context stack) {
+        // Fast path for plain "[trait|<name>]" existence checks: avoids rebuilding the trait ShapeId and
+        // allocating the AttributeValue path chain on every shape. This mirrors the semantics of resolving the
+        // path to a trait NodeValue, which is considered present only when the trait's node is not a null node.
+        if (traitExistenceId != null) {
+            Trait trait = shape.findTrait(traitExistenceId).orElse(null);
+            return trait != null && !trait.toNode().isNullNode();
+        }
+
         AttributeValue lhs = AttributeValue.shape(shape, stack.getVars()).getPath(path);
 
         if (comparator == null) {
