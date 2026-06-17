@@ -34,6 +34,10 @@ final class Context {
     private final Set<Shape>[] variableSlots;
     private VarMap varsView;
 
+    // Pre-allocated Holder stack to avoid per-call allocation in receivedShapes. Handles reentrancy through growth.
+    private Holder[] holders = new Holder[] { new Holder(), new Holder() };
+    private int holderDepth;
+
     @SuppressWarnings("unchecked")
     Context(
             Model model,
@@ -215,8 +219,23 @@ final class Context {
      * @return Returns true if the {@code predicate} matches the {@code shape}.
      */
     boolean receivedShapes(Shape shape, InternalSelector predicate) {
-        Holder holder = new Holder();
-        predicate.push(this, shape, holder);
-        return holder.set;
+        if (holderDepth >= holders.length) {
+            Holder[] grown = new Holder[holders.length * 2];
+            System.arraycopy(holders, 0, grown, 0, holders.length);
+            // Allocate the new part of the list.
+            for (int i = holders.length; i < grown.length; i++) {
+                grown[i] = new Holder();
+            }
+            holders = grown;
+        }
+
+        Holder h = holders[holderDepth++];
+        h.set = false;
+        try {
+            predicate.push(this, shape, h);
+            return h.set;
+        } finally {
+            holderDepth--;
+        }
     }
 }
