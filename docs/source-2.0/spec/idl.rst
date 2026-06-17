@@ -168,7 +168,7 @@ string support defined in :rfc:`7405`.
     TaggedStringLiteral :"#" `Identifier` [`SP`] (`RawQuotedText` / `RawTextBlock`)
     RawQuotedText       :DQUOTE *`RawQuotedChar` DQUOTE
     RawQuotedChar       :%x09 / %x20-21 / %x23-5B / %x5D-10FFFF
-                        :/ `Escape` %x00-10FFFF
+                        :/ `Escape` (%x09 / %x20-7E / %x80-10FFFF)
                         :/ `NL`
     RawTextBlock        :`ThreeDquotes` [`SP`] `NL` *`RawTextBlockContent` `ThreeDquotes`
     RawTextBlockContent :`RawQuotedChar` / (1*2DQUOTE 1*`RawQuotedChar`)
