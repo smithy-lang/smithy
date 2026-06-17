@@ -36,4 +36,9 @@ final class TraitExistenceSelector implements InternalSelector {
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return shape.hasTrait(traitId) ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return input.hasTrait(traitId) ? ContainsShape.YES : ContainsShape.NO;
+    }
 }

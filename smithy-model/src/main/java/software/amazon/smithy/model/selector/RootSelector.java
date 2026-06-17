@@ -16,11 +16,9 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 final class RootSelector implements InternalSelector {
 
-    private final InternalSelector selector;
     private final int id;
 
-    RootSelector(InternalSelector selector, int id) {
-        this.selector = selector;
+    RootSelector(int id) {
         this.id = id;
     }
 
@@ -38,6 +36,11 @@ final class RootSelector implements InternalSelector {
     @Override
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return context.getRootResult(id).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
+    }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return context.getRootResult(id).isEmpty() ? ContainsShape.NO : ContainsShape.YES;
     }
 
     @Override

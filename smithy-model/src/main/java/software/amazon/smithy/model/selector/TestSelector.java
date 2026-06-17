@@ -32,4 +32,27 @@ final class TestSelector implements InternalSelector {
         // Continue to receive shapes because other shapes could match.
         return Response.CONTINUE;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        // `:test` emits the input iff any child emits. A definite YES or NO is side-effect-free by contract, so
+        // fall back to a full push only when a child cannot answer without running.
+        if (selectors.size() == 1) {
+            return selectors.get(0).emitsAnyOptimization(context, input);
+        }
+
+        for (InternalSelector predicate : selectors) {
+            switch (predicate.emitsAnyOptimization(context, input)) {
+                case YES:
+                    return ContainsShape.YES;
+                case MAYBE:
+                    return ContainsShape.MAYBE;
+                case NO:
+                default:
+                    break;
+            }
+        }
+
+        return ContainsShape.NO;
+    }
 }

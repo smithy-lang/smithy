@@ -276,7 +276,7 @@ final class SelectorParser extends SimpleParser {
                             line(),
                             column());
                 }
-                InternalSelector root = new RootSelector(selectors.get(0), roots.size());
+                InternalSelector root = new RootSelector(roots.size());
                 roots.add(selectors.get(0));
                 return root;
             case "topdown":
