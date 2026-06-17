@@ -332,15 +332,14 @@ final class SelectorParser extends SimpleParser {
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
 
         if (next == ']') {
-            TraitExistenceSelector traitSelector = TraitExistenceSelector.tryCreate(path);
-            return traitSelector != null ? traitSelector : AttributeSelector.existence(path);
+            return AttributeSelector.create(path, null, null, false);
         }
 
         AttributeComparator comparator = parseComparator(next);
         List<String> values = parseAttributeValues();
         boolean insensitive = parseCaseInsensitiveToken();
         expect(']');
-        return new AttributeSelector(path, values, comparator, insensitive);
+        return AttributeSelector.create(path, values, comparator, insensitive);
     }
 
     private boolean parseCaseInsensitiveToken() {

@@ -19,59 +19,77 @@ import software.amazon.smithy.model.traits.Trait;
  */
 final class AttributeSelector implements InternalSelector {
 
-    private final List<String> path;
     private final List<AttributeValue> expected;
     private final AttributeComparator comparator;
     private final boolean caseInsensitive;
     private final Function<Model, Collection<? extends Shape>> optimizer;
+    private final AttributePathExtractor extractor;
 
-    // When this selector is a plain "[trait|<name>]" existence check, the trait's ShapeId is resolved once here at
-    // parse time. The hot path can then test the shape directly instead of rebuilding the absolute name and looking
-    // the ShapeId up in a cache on every shape. Null when the fast path does not apply.
-    private final ShapeId traitExistenceId;
+    private AttributeSelector(
+            List<AttributeValue> expected,
+            AttributeComparator comparator,
+            boolean caseInsensitive,
+            Function<Model, Collection<? extends Shape>> optimizer,
+            AttributePathExtractor extractor
+    ) {
+        this.expected = expected;
+        this.comparator = comparator;
+        this.caseInsensitive = caseInsensitive;
+        this.optimizer = optimizer;
+        this.extractor = extractor;
+    }
 
-    AttributeSelector(
+    /**
+     * Single factory for creating the best selector for an attribute expression.
+     *
+     * <p>This consolidates all the "is this a trait path?" logic into one place. For the common
+     * {@code [trait|X]} existence check (no comparator, path depth 2), it returns a
+     * {@link TraitExistenceSelector} that uses a direct {@code hasTrait} call. For comparator cases
+     * targeting a trait, it precompiles the ShapeId and uses a starting-shape optimizer. Everything
+     * else falls back to the generic path-walking machinery.
+     *
+     * @param path The parsed attribute path segments.
+     * @param values The expected comparison values (null for existence checks).
+     * @param comparator The comparator (null for existence checks).
+     * @param caseInsensitive Whether the comparison is case-insensitive.
+     * @return The best InternalSelector for this attribute expression.
+     */
+    static InternalSelector create(
             List<String> path,
-            List<String> expected,
+            List<String> values,
             AttributeComparator comparator,
             boolean caseInsensitive
     ) {
-        this.path = path;
-        this.caseInsensitive = caseInsensitive;
-        this.comparator = comparator;
+        boolean isTraitPath = path.size() >= 2 && path.get(0).equals("trait") && !path.get(1).startsWith("(");
 
-        // Create the valid values of the expected selector.
-        if (expected == null) {
-            this.expected = Collections.emptyList();
+        // Plain [trait|X] existence check has specialized node with direct hasTrait.
+        if (comparator == null && isTraitPath && path.size() == 2) {
+            return new TraitExistenceSelector(ShapeId.from(Trait.makeAbsoluteName(path.get(1))));
+        }
+
+        // Build the expected AttributeValues for comparator cases.
+        List<AttributeValue> expectedValues;
+        if (values == null) {
+            expectedValues = Collections.emptyList();
         } else {
-            this.expected = new ArrayList<>(expected.size());
-            for (String validValue : expected) {
-                this.expected.add(AttributeValue.literal(validValue));
+            expectedValues = new ArrayList<>(values.size());
+            for (String v : values) {
+                expectedValues.add(AttributeValue.literal(v));
             }
         }
 
-        // Optimization for loading shapes with a specific trait.
-        // This optimization can only be applied when there's no comparator,
-        // and it doesn't matter how deep into the trait the selector descends.
-        if (comparator == null
-                && path.size() >= 2
-                && path.get(0).equals("trait") // only match on traits
-                && !path.get(1).startsWith("(")) { // don't match projections
-            // The trait name might be relative to the prelude, so ensure it's absolute.
+        // Determine starting-shape optimizer.
+        Function<Model, Collection<? extends Shape>> optimizer;
+        if (comparator == null && isTraitPath) {
             ShapeId trait = ShapeId.from(Trait.makeAbsoluteName(path.get(1)));
             optimizer = model -> model.getShapesWithTrait(trait);
-            // The per-shape existence fast path only applies when the path stops at the trait itself
-            // (e.g., "[trait|http]"). Deeper paths (e.g., "[trait|range|min]") still need to walk into
-            // the trait's node value.
-            this.traitExistenceId = path.size() == 2 ? trait : null;
         } else {
             optimizer = Model::toSet;
-            this.traitExistenceId = null;
         }
-    }
 
-    static AttributeSelector existence(List<String> path) {
-        return new AttributeSelector(path, null, null, false);
+        // Precompile path extraction.
+        AttributePathExtractor extractor = AttributePathExtractor.compile(path);
+        return new AttributeSelector(expectedValues, comparator, caseInsensitive, optimizer, extractor);
     }
 
     @Override
@@ -89,15 +107,7 @@ final class AttributeSelector implements InternalSelector {
     }
 
     private boolean matchesAttribute(Shape shape, Context stack) {
-        // Fast path for plain "[trait|<name>]" existence checks: avoids rebuilding the trait ShapeId and
-        // allocating the AttributeValue path chain on every shape. This mirrors the semantics of resolving the
-        // path to a trait NodeValue, which is considered present only when the trait's node is not a null node.
-        if (traitExistenceId != null) {
-            Trait trait = shape.findTrait(traitExistenceId).orElse(null);
-            return trait != null && !trait.toNode().isNullNode();
-        }
-
-        AttributeValue lhs = AttributeValue.shape(shape, stack.getVars()).getPath(path);
+        AttributeValue lhs = extractor.extract(shape, stack.getVars());
 
         if (comparator == null) {
             return lhs.isPresent();
