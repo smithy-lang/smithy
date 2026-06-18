@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a `shapeClosures` metadata key that allows users to define closures of shapes that are not necessarily rooted in a service shape. This is primarily motivated by the desire to code-generate types without service or client framing, but is left open enough to be used for other purposes.",
-  "pull_requests": [
-    "[#3148](https://github.com/smithy-lang/smithy/pull/3148)"
-  ]
-}

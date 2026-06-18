@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Optimized selectors",
-  "pull_requests": [
-    "[#3171](https://github.com/smithy-lang/smithy/pull/3171)"
-  ]
-}

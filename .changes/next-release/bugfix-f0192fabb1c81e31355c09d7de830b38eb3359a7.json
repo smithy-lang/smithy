@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Adds a warning when using the private trait on a mixin member, clarifying that it does not prevent the member from being inherited or modified by inheritors.",
-  "pull_requests": [
-    "[#3139](https://github.com/smithy-lang/smithy/pull/3139)"
-  ]
-}

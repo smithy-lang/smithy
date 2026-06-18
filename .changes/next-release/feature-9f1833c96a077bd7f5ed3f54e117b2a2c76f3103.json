@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added a `--check` option to the `smithy format` command that fails when any file would be modified.",
-  "pull_requests": [
-    "[#3141](https://github.com/smithy-lang/smithy/pull/3141)"
-  ]
-}

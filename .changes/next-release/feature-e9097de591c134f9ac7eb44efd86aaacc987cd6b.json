@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "The `smithy format` CLI command now falls back to the `sources` defined in `smithy-build.json` when no positional arguments are provided, allowing it to be run with no arguments inside a configured Smithy project.",
-  "pull_requests": [
-    "[#3143](https://github.com/smithy-lang/smithy/pull/3143)"
-  ]
-}

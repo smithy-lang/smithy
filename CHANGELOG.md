@@ -1,5 +1,68 @@
 # Smithy Changelog
 
+## 1.72.0 (2026-06-18)
+
+### Features
+
+- Added test cases for errors in AWS JSON protocols using different namespaces
+  ([#3157](https://github.com/smithy-lang/smithy/pull/3157))
+- Optimized selectors ([#3171](https://github.com/smithy-lang/smithy/pull/3171))
+- Added support for services to declare non-default operation names (e.g.,
+  AddTagsToResource) for tagging operations at the service level in the
+  `tagEnabled` trait. Tag API discovery and validation honor the override before
+  falling back to default-named operations.
+  ([#3130](https://github.com/smithy-lang/smithy/pull/3130))
+- Added an optional `message` property to waiter acceptors that allows
+  extracting a human-readable message from the operation output via a JMESPath
+  expression. The expression must resolve to a string or array of strings and is
+  only valid on failure state acceptors.
+  ([#3151](https://github.com/smithy-lang/smithy/pull/3151))
+- Updated tags member names validation in input/output structures to allow "map"
+  suffix variants. ([#3129](https://github.com/smithy-lang/smithy/pull/3129))
+- Optimized selector parsing
+  ([#3175](https://github.com/smithy-lang/smithy/pull/3175))
+- The `smithy format` CLI command now falls back to the `sources` defined in
+  `smithy-build.json` when no positional arguments are provided, allowing it to
+  be run with no arguments inside a configured Smithy project.
+  ([#3143](https://github.com/smithy-lang/smithy/pull/3143))
+- Added a `--check` option to the `smithy format` command that fails when any
+  file would be modified.
+  ([#3141](https://github.com/smithy-lang/smithy/pull/3141))
+- Added a `shapeClosures` metadata key that allows users to define closures of
+  shapes that are not necessarily rooted in a service shape. This is primarily
+  motivated by the desire to code-generate types without service or client
+  framing, but is left open enough to be used for other purposes.
+  ([#3148](https://github.com/smithy-lang/smithy/pull/3148))
+- Added a new `metadata` trait that allows model authors to declare types for
+  metadata keys that will be automatically validated when building models.
+  ([#3078](https://github.com/smithy-lang/smithy/pull/3078))
+
+### Bug Fixes
+
+- Fixes a formatter bug where some trait/node values weren't spread across
+  multiple lines ([#3140](https://github.com/smithy-lang/smithy/pull/3140))
+- Adds a validation event for when a private resource shape is referenced
+  outside of its namespace using the resource target elision syntax.
+  ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
+- Fixed the `AddedRequiredMember` diff evaluator so that it no longer flags new
+  members marked with the `@clientOptional` trait, which is the sanctioned way
+  to add a `@required` member without breaking generated client code.
+  ([#3166](https://github.com/smithy-lang/smithy/pull/3166))
+- Fixed an exponential search space growth in
+  MemberShouldReferenceResourceValidator
+  ([#3149](https://github.com/smithy-lang/smithy/pull/3149))
+- Adds a warning when using the private trait on a mixin member, clarifying that
+  it does not prevent the member from being inherited or modified by inheritors.
+  ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
+- Fixed a bug where comments trailing unused imports were being improperly
+  removed during formatting.
+  ([#3152](https://github.com/smithy-lang/smithy/pull/3152))
+
+### Other
+
+- Formatted all smithy source files and added a formatting task to ensure they
+  stay up to date. ([#3141](https://github.com/smithy-lang/smithy/pull/3142))
+
 ## 1.71.0 (2026-05-14)
 
 ### Features

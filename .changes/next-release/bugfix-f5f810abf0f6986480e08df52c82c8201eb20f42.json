@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixed the `AddedRequiredMember` diff evaluator so that it no longer flags new members marked with the `@clientOptional` trait, which is the sanctioned way to add a `@required` member without breaking generated client code.",
-  "pull_requests": [
-    "[#3166](https://github.com/smithy-lang/smithy/pull/3166)"
-  ]
-}
