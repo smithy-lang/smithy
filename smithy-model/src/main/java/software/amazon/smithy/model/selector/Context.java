@@ -22,9 +22,9 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 final class Context {
 
-    NeighborProviderIndex neighborIndex;
     private final Model model;
     private final List<Set<Shape>> roots;
+    private NeighborProviderIndex neighborIndex;
 
     // Selector variables are addressed by a dense integer slot assigned at parse time rather than by name. This lets
     // the hot path (storing and getting variables) use plain array indexing instead of hash map lookups, and lets the
@@ -50,6 +50,15 @@ final class Context {
         this.roots = roots;
         this.variableIndices = variableIndices;
         this.variableSlots = (Set<Shape>[]) new Set<?>[variableIndices.size()];
+    }
+
+    NeighborProviderIndex getNeighborIndex() {
+        NeighborProviderIndex result = neighborIndex;
+        if (result == null) {
+            result = NeighborProviderIndex.of(model);
+            neighborIndex = result;
+        }
+        return result;
     }
 
     /**
