@@ -36,13 +36,6 @@ jobs:
         distribution: 'corretto'
         cache: gradle
 
-    - name: Setup Node
-      uses: actions/setup-node@v6
-      with:
-        node-version: latest
-        cache: npm
-        cache-dependency-path: "docs/landing-page/package-lock.json"
-
     - name: Build JavaDocs
       # run if 'javadocs' is not set to false 
       if: ${{ !contains(inputs.javadocs, 'false') }}

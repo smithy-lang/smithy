@@ -1,1 +1,0 @@
-# Smithy Landing Page
