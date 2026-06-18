@@ -38,4 +38,9 @@ final class NotSelector implements InternalSelector {
                 return ContainsShape.MAYBE;
         }
     }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }

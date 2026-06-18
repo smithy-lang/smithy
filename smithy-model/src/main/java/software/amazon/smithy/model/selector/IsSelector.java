@@ -53,4 +53,14 @@ final class IsSelector implements InternalSelector {
         }
         return union != null ? union : allShapes;
     }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        for (InternalSelector selector : selectors) {
+            if (!selector.isOutputSubsetOfInput()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
