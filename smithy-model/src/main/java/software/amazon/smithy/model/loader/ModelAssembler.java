@@ -260,10 +260,11 @@ public final class ModelAssembler {
         Objects.requireNonNull(importPath, "The importPath provided to ModelAssembler#addImport was null");
 
         if (Files.isDirectory(importPath)) {
-            try (Stream<Path> files = Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
-                    .filter(p -> !p.equals(importPath))
-                    .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))) {
-                files.forEach(this::addImport);
+            // Files.walk already recurses the entire subtree, so only regular files need to be forwarded to
+            // addImport. Recursing into each emitted subdirectory (the previous behavior) re-walked every directory
+            // once per level of nesting and performed redundant isDirectory/isRegularFile stat calls on each entry.
+            try (Stream<Path> files = Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)) {
+                files.filter(Files::isRegularFile).forEach(this::addImport);
             } catch (IOException e) {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
