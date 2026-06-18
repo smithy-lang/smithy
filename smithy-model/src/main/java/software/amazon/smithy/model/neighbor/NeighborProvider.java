@@ -140,24 +140,31 @@ public interface NeighborProvider {
      * @return Returns the reverse neighbor provider.
      */
     static NeighborProvider reverse(Model model, NeighborProvider forwardProvider) {
-        // Note: this method previously needed lots of intermediate representations
-        // stored in memory to create a Map<ShapeId, List<RelationShip>> that contains
-        // only unique relationships. It was done using Stream, distinct, and groupingBy.
-        // However, when trying to load ridiculously large models, that approach consumes
-        // tons of heap. This approach allocates as little as possible (I think), but
-        // does require creating an ArrayList copy of a Set each time neighbors are returned.
-        Map<ShapeId, Set<Relationship>> targetedFrom = new HashMap<>();
-
-        for (Shape shape : model.toSet()) {
+        // Build the reverse adjacency using Sets to dedup relationships without holding the large intermediate
+        // representations that a Stream/distinct/groupingBy approach would require on very large models. Each Set is
+        // then frozen into an unmodifiable List once, so per-lookup reads return the prebuilt list directly instead
+        // of allocating an ArrayList copy of the Set on every getNeighbors call (this provider is queried per shape
+        // across many validators, so that per-call copy was a significant source of transient garbage).
+        Set<Shape> shapes = model.toSet();
+        Map<ShapeId, Set<Relationship>> building = new HashMap<>(shapes.size());
+        for (Shape shape : shapes) {
             for (Relationship rel : forwardProvider.getNeighbors(shape)) {
-                targetedFrom.computeIfAbsent(rel.getNeighborShapeId(), id -> new HashSet<>()).add(rel);
+                ShapeId target = rel.getNeighborShapeId();
+                Set<Relationship> set = building.get(target);
+                if (set == null) {
+                    set = new HashSet<>();
+                    building.put(target, set);
+                }
+                set.add(rel);
             }
         }
 
-        return shape -> {
-            Set<Relationship> shapes = targetedFrom.get(shape.getId());
-            return shapes == null ? Collections.emptyList() : ListUtils.copyOf(shapes);
-        };
+        Map<ShapeId, List<Relationship>> targetedFrom = new HashMap<>(building.size());
+        for (Map.Entry<ShapeId, Set<Relationship>> entry : building.entrySet()) {
+            targetedFrom.put(entry.getKey(), ListUtils.copyOf(entry.getValue()));
+        }
+
+        return shape -> targetedFrom.getOrDefault(shape.getId(), Collections.emptyList());
     }
 
     /**
