@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -55,10 +54,13 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             ShapeType.SHORT);
     private static final Set<ShapeType> TOKEN_SHAPES = SetUtils.of(ShapeType.STRING, ShapeType.MAP);
     private static final Set<ShapeType> DANGER_TOKEN_SHAPES = SetUtils.of(ShapeType.MAP);
-    private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
     private static final String DEEPLY_NESTED = "DeeplyNested";
     private static final String SHOULD_NOT_BE_REQUIRED = "ShouldNotBeRequired";
     private static final String WRONG_SHAPE_TYPE = "WrongShapeType";
+    private static final InputTokenValidator INPUT_TOKEN_VALIDATOR = new InputTokenValidator();
+    private static final PageSizeValidator PAGE_SIZE_VALIDATOR = new PageSizeValidator();
+    private static final OutputTokenValidator OUTPUT_TOKEN_VALIDATOR = new OutputTokenValidator();
+    private static final ItemValidator ITEM_VALIDATOR = new ItemValidator();
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -84,22 +86,22 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Validate input.
-        events.addAll(validateMember(opIndex, model, null, operation, trait, new InputTokenValidator()));
-        events.addAll(validateMember(opIndex, model, null, operation, trait, new PageSizeValidator()));
+        events.addAll(validateMember(opIndex, model, null, operation, trait, INPUT_TOKEN_VALIDATOR));
+        events.addAll(validateMember(opIndex, model, null, operation, trait, PAGE_SIZE_VALIDATOR));
 
         // Validate output.
-        events.addAll(validateMember(opIndex, model, null, operation, trait, new OutputTokenValidator()));
-        events.addAll(validateMember(opIndex, model, null, operation, trait, new ItemValidator()));
+        events.addAll(validateMember(opIndex, model, null, operation, trait, OUTPUT_TOKEN_VALIDATOR));
+        events.addAll(validateMember(opIndex, model, null, operation, trait, ITEM_VALIDATOR));
 
         if (events.isEmpty()) {
             model.shapes(ServiceShape.class).forEach(svc -> {
-                if (topDownIndex.getContainedOperations(svc).contains(operation)) {
+                if (topDownIndex.getContainedOperations(svc, false).contains(operation)) {
                     // Create a merged trait if one is present on the service.
                     PaginatedTrait merged = svc.getTrait(PaginatedTrait.class).map(trait::merge).orElse(trait);
-                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new InputTokenValidator()));
-                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new PageSizeValidator()));
-                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new OutputTokenValidator()));
-                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new ItemValidator()));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, INPUT_TOKEN_VALIDATOR));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, PAGE_SIZE_VALIDATOR));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, OUTPUT_TOKEN_VALIDATOR));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, ITEM_VALIDATOR));
                 }
             });
         }
@@ -219,7 +221,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             }
         }
 
-        if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
+        if (validator.pathsAllowed() && hasMoreThanTwoParts(memberPath)) {
             events.add(warning(operation,
                     trait,
                     String.format(
@@ -232,6 +234,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    private boolean hasMoreThanTwoParts(String memberPath) {
+        return memberPath.indexOf('.') != memberPath.lastIndexOf('.');
     }
 
     private enum Optionality {
