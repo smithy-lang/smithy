@@ -41,6 +41,7 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             TraitFactory traitFactory,
             Model prelude,
             boolean allowUnknownTraits,
+            boolean quietUnknownTraits,
             Consumer<ValidationEvent> validationEventListener,
             ValidationEventDecorator decorator
     ) {
@@ -65,7 +66,7 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
         this.prelude = prelude;
         shapeMap = new LoaderShapeMap(prelude, events);
-        traitMap = new LoaderTraitMap(traitFactory, events, allowUnknownTraits);
+        traitMap = new LoaderTraitMap(traitFactory, events, allowUnknownTraits, quietUnknownTraits);
 
         this.visitor = new LoadOperation.Visitor() {
             @Override
