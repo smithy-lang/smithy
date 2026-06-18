@@ -231,8 +231,9 @@
 <li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shape-closures.html">18. Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html">19. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html">20. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
@@ -358,7 +359,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1694,7 +1695,6 @@ namespace using a relative shape ID.</p>
 <span class="kd">namespace </span><span class="nc">smithy.api</span>
 
 <span class="c">// --- The following shapes are publicly available prelude shapes.</span>
-
 <span class="kd">string </span><span class="nc">String</span>
 
 <span class="kd">blob </span><span class="nc">Blob</span>
@@ -1748,13 +1748,17 @@ namespace using a relative shape ID.</p>
 <span class="kd">structure </span><span class="nc">Unit</span><span class="w"> </span>{}
 
 <span class="c">// --- Shapes below are traits and the private shapes that define them.</span>
-
 <span class="c">/// Makes a shape a trait.</span>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(simpleType, list, map, structure, union)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/structurallyExclusive&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/structurallyExclusive&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">        </span>{
 <span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/conflicts&quot;</span>
 <span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
@@ -1897,7 +1901,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure[trait|trait]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">protocolDefinition</span><span class="w"> </span>{
@@ -1926,7 +1932,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure[trait|trait]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">authDefinition</span><span class="w"> </span>{
@@ -1939,7 +1947,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@authDefinition</span>
@@ -1950,7 +1960,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@authDefinition</span>
@@ -1961,7 +1973,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@authDefinition</span>
@@ -1973,7 +1987,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@authDefinition</span>
@@ -2037,6 +2053,122 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="vc">Severity</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span>
 }
 
+<span class="c">/// Defines a type for a metadata key.</span>
+<span class="c">///</span>
+<span class="c">/// If a matching key is defined in the model, its value will be validated</span>
+<span class="c">/// according to the targeted shape.</span>
+<span class="c">///</span>
+<span class="c">/// The type for any metadata key MUST only be defined once.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dataType :not([trait|input]) :not([trait|output])&quot;</span>)
+<span class="kd">structure </span><span class="nc">metadata</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The metadata key to validate. Each key MUST only be defined once.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="c">/// Defines named closures of shapes that consumers like code generators can</span>
+<span class="c">/// reference by id.</span>
+<span class="nt">@private</span>
+<span class="nt">@metadata</span>(<span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;shapeClosures&quot;</span>)
+<span class="kd">list </span><span class="nc">ShapeClosures</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ShapeClosure</span>
+}
+
+<span class="c">/// A defined closure of shapes that consumers like code generators can</span>
+<span class="c">/// reference by id.</span>
+<span class="nt">@private</span>
+<span class="kd">structure </span><span class="nc">ShapeClosure</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The namespaced identifier of the closure. Used by consumers to refer</span>
+<span class="w">    </span><span class="c">/// to this closure. The id follows the same format as a shape id, MUST</span>
+<span class="w">    </span><span class="c">/// be unique across all closures in the model, and MUST NOT refer to a</span>
+<span class="w">    </span><span class="c">/// shape that exists in the model.</span>
+<span class="w">    </span><span class="c">///</span>
+<span class="w">    </span><span class="c">/// This identifier is not intended to be semantically significant. The</span>
+<span class="w">    </span><span class="c">/// requirement for a namespace is intended to reduce the chance for naming</span>
+<span class="w">    </span><span class="c">/// collisions, not to suggest the namespace that any generated artifacts</span>
+<span class="w">    </span><span class="c">/// must be generated into.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">ClosureId</span>
+
+<span class="w">    </span><span class="c">/// Namespaces whose shapes are included in the closure.</span>
+<span class="w">    </span><span class="py">includeNamespaces</span><span class="p">:</span><span class="w"> </span><span class="vc">Namespaces</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>[]
+
+<span class="w">    </span><span class="c">/// A Smithy selector whose matched shapes are included in the closure.</span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="w">    </span><span class="py">includeBySelector</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// Disambiguates shape name conflicts in the closure. Map keys are</span>
+<span class="w">    </span><span class="c">/// shape ids contained in the closure, and map values are the</span>
+<span class="w">    </span><span class="c">/// disambiguated shape names (without a namespace) to use in the</span>
+<span class="w">    </span><span class="c">/// context of the closure. Each given map value MUST match the</span>
+<span class="w">    </span><span class="c">/// `Identifier` production used for shape ids. Renaming a shape</span>
+<span class="w">    </span><span class="c">/// does not give the shape a new shape id.</span>
+<span class="w">    </span><span class="c">///</span>
+<span class="w">    </span><span class="c">/// - No renamed shape name can case-insensitively match any other</span>
+<span class="w">    </span><span class="c">///   renamed shape name or the name of a non-renamed shape contained</span>
+<span class="w">    </span><span class="c">///   in the closure.</span>
+<span class="w">    </span><span class="c">/// - Member shapes MAY NOT be renamed.</span>
+<span class="w">    </span><span class="c">/// - Service, resource, and operation shapes MAY NOT be renamed.</span>
+<span class="w">    </span><span class="c">///   Renaming shapes is intended for incidental naming conflicts,</span>
+<span class="w">    </span><span class="c">///   not for renaming the fundamental concepts of an API.</span>
+<span class="w">    </span><span class="c">/// - Shapes from other namespaces marked as private MAY be renamed.</span>
+<span class="w">    </span><span class="c">/// - A rename MUST use a name that is case-sensitively different</span>
+<span class="w">    </span><span class="c">///   from the original shape id name.</span>
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span><span class="vc">Renames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>{}
+}
+
+<span class="c">/// An identifier for a closure. This matches the shape id format.</span>
+<span class="nt">@private</span>
+<span class="c">// The idRef trait is being used here to validate format.</span>
+<span class="nt">@idRef</span>(<span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>)
+<span class="kd">string </span><span class="nc">ClosureId</span>
+
+<span class="c">/// A list of Smithy namespaces.</span>
+<span class="nt">@private</span>
+<span class="nt">@uniqueItems</span>
+<span class="kd">list </span><span class="nc">Namespaces</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="c">/// Disambiguates shape name conflicts in a closure. Map keys are</span>
+<span class="c">/// shape ids contained in the closure, and map values are the</span>
+<span class="c">/// disambiguated shape names (without a namespace) to use in the</span>
+<span class="c">/// context of the closure. Each given map value MUST match the</span>
+<span class="c">/// `Identifier` production used for shape ids. Renaming a shape</span>
+<span class="c">/// does not give the shape a new shape id.</span>
+<span class="c">///</span>
+<span class="c">/// - No renamed shape name can case-insensitively match any other</span>
+<span class="c">///   renamed shape name or the name of a non-renamed shape contained</span>
+<span class="c">///   in the closure.</span>
+<span class="c">/// - Member shapes MAY NOT be renamed.</span>
+<span class="c">/// - Service, resource, and operation shapes MAY NOT be renamed.</span>
+<span class="c">///   Renaming shapes is intended for incidental naming conflicts,</span>
+<span class="c">///   not for renaming the fundamental concepts of an API.</span>
+<span class="c">/// - Shapes from other namespaces marked as private MAY be renamed.</span>
+<span class="c">/// - A rename MUST use a name that is case-sensitively different</span>
+<span class="c">///   from the original shape id name.</span>
+<span class="nt">@private</span>
+<span class="kd">map </span><span class="nc">Renames</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The id of the shape to rename.</span>
+<span class="w">    </span><span class="nt">@idRef</span>(
+<span class="w">        </span><span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not(:is(member, service, resource, operation))&quot;</span>
+<span class="w">        </span><span class="py">errorMessage</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Renames must target shapes that are in the model and must not target </span><span class="se">\</span>
+<span class="s2">            services, resources, operations, or members.&quot;&quot;&quot;</span>
+<span class="w">    </span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// The new name for the shape.</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">Identifier</span>
+}
+
+<span class="c">/// A string matching the `Identifier` ABNF production used for shape names.</span>
+<span class="nt">@private</span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;^(_+[a-zA-Z0-9]|[a-zA-Z])</span><span class="se">\\</span><span class="s2">w*$&quot;</span>)
+<span class="kd">string </span><span class="nc">Identifier</span>
+
 <span class="c">/// Provides a structure member with a default value. When added to root</span>
 <span class="c">/// level shapes, requires that every targeting structure member defines the</span>
 <span class="c">/// same default value on the member or sets a default of null.</span>
@@ -2049,7 +2181,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member [trait|default]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">addedDefault</span><span class="w"> </span>{}
@@ -2070,7 +2204,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">optionalAuth</span><span class="w"> </span>{}
@@ -2113,7 +2249,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">trait</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">enum </span><span class="nc">error</span><span class="w"> </span>{
@@ -2125,7 +2263,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure[trait|error]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">retryable</span><span class="w"> </span>{
@@ -2138,7 +2278,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">idempotent</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">readonly</span><span class="w"> </span>{}
@@ -2150,7 +2292,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">readonly</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">idempotent</span><span class="w"> </span>{}
@@ -2161,7 +2305,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; :test(member &gt; string)&quot;</span>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@notProperty</span>
@@ -2185,7 +2331,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(structure, union) &gt; member&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">string </span><span class="nc">jsonName</span>
@@ -2196,7 +2344,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; :test(member &gt; :test(boolean, number, string, timestamp))&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">xmlNamespace</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">xmlAttribute</span><span class="w"> </span>{}
@@ -2206,7 +2356,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(structure, union) &gt; :test(member &gt; :test(list, map))&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">xmlFlattened</span><span class="w"> </span>{}
@@ -2216,7 +2368,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(structure, union, member)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@pattern</span>(<span class="s2">&quot;^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$&quot;</span>)
@@ -2227,7 +2381,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(service, member, simpleType, list, map, structure, union)&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">xmlAttribute</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">xmlNamespace</span><span class="w"> </span>{
@@ -2254,7 +2410,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(blob, string)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">string </span><span class="nc">mediaType</span>
@@ -2302,7 +2460,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; :test(member[trait|required] &gt; string)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
@@ -2332,7 +2492,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(blob, union)&quot;</span>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;target&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">streaming</span><span class="w"> </span>{}
@@ -2341,7 +2503,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;blob[trait|streaming]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">requiresLength</span><span class="w"> </span>{}
@@ -2359,9 +2523,7 @@ namespace using a relative shape ID.</p>
 <span class="c">/// value on a client, the client must use the user-configured value regardless of</span>
 <span class="c">/// whether it is greater or less than `timeoutMillis`. Similarly, if the user</span>
 <span class="c">/// configures a timeout value for a request, clients must use that value.</span>
-<span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
-)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>)
 <span class="nt">@unstable</span>
 <span class="kd">structure </span><span class="nc">longPoll</span><span class="w"> </span>{
 <span class="w">    </span><span class="c">/// The amount of time in milliseconds that a client should wait for a response.</span>
@@ -2392,7 +2554,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="c">// enums, but that validation happens in code to provide better error</span>
 <span class="w">    </span><span class="c">// messages.</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
@@ -2476,9 +2640,7 @@ namespace using a relative shape ID.</p>
 
 <span class="c">/// Marks a structure member as required, meaning a value for the member MUST</span>
 <span class="c">/// be present.</span>
-<span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>
-)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>)
 <span class="kd">structure </span><span class="nc">required</span><span class="w"> </span>{}
 
 <span class="c">/// Configures a structure member&#39;s resource property mapping behavior.</span>
@@ -2486,8 +2648,12 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">resourceIdentifier</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">property</span><span class="w"> </span>{
@@ -2499,7 +2665,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(operation -[input, output]-&gt; structure &gt; member, [trait|trait])&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@notProperty</span>
@@ -2511,7 +2679,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[input, output]-&gt; structure &gt; member :test(&gt; structure)&quot;</span>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@notProperty</span>
@@ -2531,7 +2701,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(list, map)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">sparse</span><span class="w"> </span>{}
@@ -2541,7 +2713,10 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list :not(&gt; member ~&gt; :is(float, double, document))&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">sparse</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">uniqueItems</span><span class="w"> </span>{}
@@ -2556,14 +2731,39 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is(service, operation)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/inputToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/outputToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NOTE&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NOTE&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/pageSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/pageSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/inputToken&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/outputToken&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NOTE&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/items&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NOTE&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/pageSize&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/pageSize&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">paginated</span><span class="w"> </span>{
@@ -2600,10 +2800,21 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/method&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/uri&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
-<span class="w">        </span>{<span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/code&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/method&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/uri&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/code&quot;</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span>
+<span class="w">        </span>}
 <span class="w">        </span>{
 <span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/code&quot;</span>
 <span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
@@ -2634,7 +2845,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member[trait|required] :test(&gt; :test(string, number, boolean, timestamp))&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">httpLabel</span><span class="w"> </span>{}
@@ -2647,7 +2860,9 @@ namespace using a relative shape ID.</p>
 <span class="s2">        &gt; list &gt; member &gt; :test(string, number, boolean, timestamp))&quot;&quot;&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
@@ -2661,7 +2876,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">httpQueryParams</span><span class="w"> </span>{}
@@ -2673,7 +2890,9 @@ namespace using a relative shape ID.</p>
 <span class="s2">        list &gt; member &gt; :test(boolean, number, string, timestamp)))&quot;&quot;&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
@@ -2687,7 +2906,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">string </span><span class="nc">httpPrefixHeaders</span>
@@ -2698,7 +2919,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span><span class="p">,</span><span class="w"> </span><span class="vc">httpResponseCode</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">httpPayload</span><span class="w"> </span>{}
@@ -2707,7 +2930,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure[trait|error]&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">integer </span><span class="nc">httpError</span>
@@ -2720,7 +2945,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">httpLabel</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQuery</span><span class="p">,</span><span class="w"> </span><span class="vc">httpHeader</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPrefixHeaders</span><span class="p">,</span><span class="w"> </span><span class="vc">httpPayload</span><span class="p">,</span><span class="w"> </span><span class="vc">httpQueryParams</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">httpResponseCode</span><span class="w"> </span>{}
@@ -2729,7 +2956,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">cors</span><span class="w"> </span>{
@@ -2781,7 +3010,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">eventHeader</span>]
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">eventPayload</span><span class="w"> </span>{}
@@ -2793,7 +3024,9 @@ namespace using a relative shape ID.</p>
 <span class="s2">        :test(member &gt; :test(boolean, byte, short, integer, long, blob, string, timestamp))&quot;&quot;&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">eventPayload</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">eventHeader</span><span class="w"> </span>{}
@@ -2823,7 +3056,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:test(timestamp, member &gt; timestamp)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">enum </span><span class="nc">timestampFormat</span><span class="w"> </span>{
@@ -2845,7 +3080,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">endpoint</span><span class="w"> </span>{
@@ -2862,7 +3099,9 @@ namespace using a relative shape ID.</p>
 <span class="nt">@trait</span>(
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; :test(member[trait|required] &gt; string)&quot;</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;any&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">hostLabel</span><span class="w"> </span>{}
@@ -2886,7 +3125,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">output</span><span class="p">,</span><span class="w"> </span><span class="vc">error</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">input</span><span class="w"> </span>{}
@@ -2896,7 +3137,9 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">input</span><span class="p">,</span><span class="w"> </span><span class="vc">error</span>]
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>
+<span class="w">        </span>}
 <span class="w">    </span>]
 )
 <span class="kd">structure </span><span class="nc">output</span><span class="w"> </span>{}

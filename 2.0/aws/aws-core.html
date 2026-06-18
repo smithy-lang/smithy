@@ -231,8 +231,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/shape-closures.html">18. Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">19. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">20. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
@@ -358,7 +359,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1689,13 +1690,20 @@ members:</p>
 <td><p>Set to true to indicate that the service does not have default tagging
 operations that create, read, update, and delete tags on resources.</p></td>
 </tr>
+<tr class="row-odd"><td><p>apiConfig</p></td>
+<td><p><a class="reference internal" href="#service-taggable-apiconfig-structure"><span class="std std-ref">Taggable service API config structure</span></a></p></td>
+<td><p>Specifies non-default operation names for the service-wide tagging
+APIs. Any unset member falls back to the default-named operation.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 <p>The default operations for resource tagging operations are named TagResource,
 UntagResource, and ListTagsForResource. All three operations are required to be
 in the service, and each operation must satisfy corresponding validation
-constraints unless <code class="docutils literal notranslate"><span class="pre">disableDefaultOperations</span></code> is set to <strong>true</strong>.</p>
+constraints unless <code class="docutils literal notranslate"><span class="pre">disableDefaultOperations</span></code> is set to <strong>true</strong>. The
+<code class="docutils literal notranslate"><span class="pre">apiConfig</span></code> member allows a service to use non-default operation names for
+any of the three slots; an unset slot falls back to the default name.</p>
 <p>The following is a minimal snippet showing the inclusion of the named required
 operations for the <code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code>  Weather service.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tagEnabled</span>
@@ -1713,10 +1721,11 @@ tag associations on a resource:</p>
 <li><p>Must have exactly one input member that targets a string shape and has a
 member name that matches <code class="docutils literal notranslate"><span class="pre">^([R|r]esource)?([A|a]rn|ARN)$</span></code> to accept
 the resource ARN.</p></li>
-<li><p>Must have exactly one input member that targets a list shape, with list
-member targeting a structure that consists of two members that target a
-string shape representing the tag key or name and the tag value. This
-member name must match: <code class="docutils literal notranslate"><span class="pre">^[T|t]ag(s|[L|l]ist)$</span></code></p></li>
+<li><p>Must have exactly one input member that targets either a list shape (with
+list member targeting a structure of two string members representing the
+tag key and tag value) or a map shape with string keys and values. This
+member name must match: <code class="docutils literal notranslate"><span class="pre">^[T|t]ag(s|s?[M|m]ap|[L|l]ist)$</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">tags</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TagList</span></code>, <code class="docutils literal notranslate"><span class="pre">tagMap</span></code>, <code class="docutils literal notranslate"><span class="pre">tagsMap</span></code>).</p></li>
 </ul>
 <p>The following snippet is a valid definition of a tag resource operation and
 its input:</p>
@@ -1773,10 +1782,11 @@ resource.</p>
 <li><p>Must have exactly one input member that targets a string shape and has a
 member name that matches: <code class="docutils literal notranslate"><span class="pre">^([R|r]esource)?([A|a]rn|ARN)$</span></code> to accept
 the resource ARN.</p></li>
-<li><p>Must have exactly one output member that targets a list shape, with list
-member targeting a structure that consists of two members that target a
-string shape representing the tag key or name and the tag value. This
-member name must match: <code class="docutils literal notranslate"><span class="pre">^[T|t]ag(s|[L|l]ist)$</span></code></p></li>
+<li><p>Must have exactly one output member that targets either a list shape (with
+list member targeting a structure of two string members representing the
+tag key and tag value) or a map shape with string keys and values. This
+member name must match: <code class="docutils literal notranslate"><span class="pre">^[T|t]ag(s|s?[M|m]ap|[L|l]ist)$</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">tags</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TagList</span></code>, <code class="docutils literal notranslate"><span class="pre">tagMap</span></code>, <code class="docutils literal notranslate"><span class="pre">tagsMap</span></code>).</p></li>
 </ul>
 <p>The following snippet is an example of the list tags for resource operation and
 its input:</p>
@@ -1813,6 +1823,63 @@ through the operates attached to the service.</p>
 <span class="w">    </span>}
 }
 </pre></div>
+</div>
+<p>A service that uses non-default operation names can specify them via
+<code class="docutils literal notranslate"><span class="pre">apiConfig</span></code>. Each member is independently optional; a slot left unset falls
+back to the default-named operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tagEnabled</span>(<span class="py">apiConfig</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">tagApi</span><span class="p">:</span><span class="w"> </span><span class="vc">AddTagsToResource</span>
+<span class="w">    </span><span class="py">untagApi</span><span class="p">:</span><span class="w"> </span><span class="vc">RemoveTagsFromResource</span>
+<span class="w">    </span><span class="py">listTagsApi</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeTagsForResource</span>
+})
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">AddTagsToResource</span><span class="p">,</span><span class="w"> </span><span class="vc">RemoveTagsFromResource</span><span class="p">,</span><span class="w"> </span><span class="vc">DescribeTagsForResource</span>]
+}
+</pre></div>
+</div>
+</section>
+<section id="taggable-service-api-config-structure">
+<span id="service-taggable-apiconfig-structure"></span><h3>Taggable service API config structure<a class="headerlink" href="#taggable-service-api-config-structure" title="Link to this heading">¶</a></h3>
+<p>Configuration structure for specifying service-wide tagging operations when
+non-default operation names are used. Any unset member falls back to the
+default-named operation (<code class="docutils literal notranslate"><span class="pre">TagResource</span></code>, <code class="docutils literal notranslate"><span class="pre">UntagResource</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ListTagsForResource</span></code> respectively).</p>
+<p><strong>Properties</strong></p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 10.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tagApi</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ShapeID</span></code></p></td>
+<td><p><strong>Optional</strong> Defines the service-wide operation that creates and
+updates tags on resources. The value MUST be a valid <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>
+that targets an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape bound to the service.</p></td>
+</tr>
+<tr class="row-odd"><td><p>untagApi</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ShapeID</span></code></p></td>
+<td><p><strong>Optional</strong> Defines the service-wide operation that removes tags
+from resources. The value MUST be a valid <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that
+targets an <code class="docutils literal notranslate"><span class="pre">operation</span></code> shape bound to the service.</p></td>
+</tr>
+<tr class="row-even"><td><p>listTagsApi</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ShapeID</span></code></p></td>
+<td><p><strong>Optional</strong> Defines the service-wide operation that lists tags on
+resources. The value MUST be a valid <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a> that targets an
+<code class="docutils literal notranslate"><span class="pre">operation</span></code> shape bound to the service.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </section>
@@ -2454,6 +2521,7 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#tagresource"><code class="docutils literal notranslate"><span class="pre">TagResource</span></code></a></li>
 <li><a class="reference internal" href="#untagresource"><code class="docutils literal notranslate"><span class="pre">UntagResource</span></code></a></li>
 <li><a class="reference internal" href="#listtagsforresource"><code class="docutils literal notranslate"><span class="pre">ListTagsForResource</span></code></a></li>
+<li><a class="reference internal" href="#taggable-service-api-config-structure">Taggable service API config structure</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-api-taggable-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait</a><ul>

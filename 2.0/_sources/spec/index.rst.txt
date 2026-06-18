@@ -54,5 +54,6 @@ Table of contents
     endpoint-traits
     selectors
     model-validation
+    shape-closures
     idl
     json-ast

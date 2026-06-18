@@ -25,6 +25,7 @@
 - [Resource traits](https://smithy.io/2.0/spec/resource-traits.html)
 - [Selectors](https://smithy.io/2.0/spec/selectors.html)
 - [Service types](https://smithy.io/2.0/spec/service-types.html)
+- [Shape closures](https://smithy.io/2.0/spec/shape-closures.html)
 - [Simple types](https://smithy.io/2.0/spec/simple-types.html)
 - [Streaming](https://smithy.io/2.0/spec/streaming.html)
 - [Type refinement traits](https://smithy.io/2.0/spec/type-refinement-traits.html)

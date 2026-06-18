@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Trait index" href="../trait-index.html"><link rel="prev" title="18. Smithy IDL" href="idl.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Trait index" href="../trait-index.html"><link rel="prev" title="19. Smithy IDL" href="idl.html">
         <link rel="prefetch" href="../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>19. JSON AST - Smithy 2.0</title>
+        <title>20. JSON AST - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -231,8 +231,9 @@
 <li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">19. JSON AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shape-closures.html">18. Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="idl.html">19. Smithy IDL</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">20. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
@@ -358,7 +359,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -454,7 +455,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="json-ast">
-<span id="id1"></span><h1><span class="section-number">19. </span>JSON AST<a class="headerlink" href="#json-ast" title="Link to this heading">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">20. </span>JSON AST<a class="headerlink" href="#json-ast" title="Link to this heading">¶</a></h1>
 <p>Smithy models written using the Smithy IDL have an isomorphic JSON
 abstract syntax tree (AST) representation that can be used to more easily
 integrate Smithy into languages and tools that do not have a Smithy IDL
@@ -468,7 +469,7 @@ over the Smithy IDL is that relative and forward references never need to
 be resolved.</p></li>
 </ul>
 <section id="top-level-properties">
-<span id="ast-top-level-properties"></span><h2><span class="section-number">19.1. </span>Top level properties<a class="headerlink" href="#top-level-properties" title="Link to this heading">¶</a></h2>
+<span id="ast-top-level-properties"></span><h2><span class="section-number">20.1. </span>Top level properties<a class="headerlink" href="#top-level-properties" title="Link to this heading">¶</a></h2>
 <p>Smithy JSON models are objects that can contain the following top-level
 properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -506,7 +507,7 @@ value is the metadata value to assign to the key.</p></td>
 </div>
 </section>
 <section id="ast-shapes">
-<span id="id2"></span><h2><span class="section-number">19.2. </span>AST shapes<a class="headerlink" href="#ast-shapes" title="Link to this heading">¶</a></h2>
+<span id="id2"></span><h2><span class="section-number">20.2. </span>AST shapes<a class="headerlink" href="#ast-shapes" title="Link to this heading">¶</a></h2>
 <p>AST <a class="reference internal" href="model.html#shapes"><span class="std std-ref">shapes</span></a> are defined using objects that always contain
 a <code class="docutils literal notranslate"><span class="pre">type</span></code> property to define the shape type or <code class="docutils literal notranslate"><span class="pre">apply</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -550,7 +551,7 @@ the value to assign to the trait.</p>
 </div>
 </section>
 <section id="simple-shapes">
-<h2><span class="section-number">19.3. </span>Simple shapes<a class="headerlink" href="#simple-shapes" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">20.3. </span>Simple shapes<a class="headerlink" href="#simple-shapes" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">Simple shapes</span></a> are defined as an object. The following
 example defines a shape for each simple type:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -601,7 +602,7 @@ example defines a shape for each simple type:</p>
 </div>
 </section>
 <section id="list-shapes">
-<h2><span class="section-number">19.4. </span>List shapes<a class="headerlink" href="#list-shapes" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">20.4. </span>List shapes<a class="headerlink" href="#list-shapes" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">List</span></a> shapes have a required <code class="docutils literal notranslate"><span class="pre">member</span></code> property that is an
 <a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a>.</p>
 <p>The following example defines a list with a string member:</p>
@@ -620,7 +621,7 @@ example defines a shape for each simple type:</p>
 </div>
 </section>
 <section id="ast-member">
-<span id="id3"></span><h2><span class="section-number">19.5. </span>AST member<a class="headerlink" href="#ast-member" title="Link to this heading">¶</a></h2>
+<span id="id3"></span><h2><span class="section-number">20.5. </span>AST member<a class="headerlink" href="#ast-member" title="Link to this heading">¶</a></h2>
 <p>An <em>AST member definition</em> defines a member of a shape. It is a special
 kind of <a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a> that also
 contains an optional <code class="docutils literal notranslate"><span class="pre">traits</span></code> property that defines traits attached to
@@ -654,7 +655,7 @@ trait.</p>
 </div>
 </section>
 <section id="ast-shape-reference">
-<span id="id4"></span><h2><span class="section-number">19.6. </span>AST shape reference<a class="headerlink" href="#ast-shape-reference" title="Link to this heading">¶</a></h2>
+<span id="id4"></span><h2><span class="section-number">20.6. </span>AST shape reference<a class="headerlink" href="#ast-shape-reference" title="Link to this heading">¶</a></h2>
 <p>An <em>AST shape reference</em> is an object with a single property, <code class="docutils literal notranslate"><span class="pre">target</span></code>
 that maps to an absolute shape ID.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -684,7 +685,7 @@ list of a service shape.</p>
 </div>
 </section>
 <section id="map-shape">
-<h2><span class="section-number">19.7. </span>Map shape<a class="headerlink" href="#map-shape" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">20.7. </span>Map shape<a class="headerlink" href="#map-shape" title="Link to this heading">¶</a></h2>
 <p>A <a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">Map</span></a> shape has a required <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>
 <a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a>. The shape referenced by the <code class="docutils literal notranslate"><span class="pre">key</span></code> member
 MUST target a string shape.</p>
@@ -707,7 +708,7 @@ MUST target a string shape.</p>
 </div>
 </section>
 <section id="structure-union-enum-and-intenum-shapes">
-<h2><span class="section-number">19.8. </span>Structure, union, enum, and intEnum shapes<a class="headerlink" href="#structure-union-enum-and-intenum-shapes" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">20.8. </span>Structure, union, enum, and intEnum shapes<a class="headerlink" href="#structure-union-enum-and-intenum-shapes" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">Structure</span></a>, <a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">union</span></a>, <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a>, and
 <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a> shapes are defined with a <code class="docutils literal notranslate"><span class="pre">members</span></code> property that
 contains a map of member names to <a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a> definitions.
@@ -799,7 +800,7 @@ member:</p>
 </div>
 </section>
 <section id="service-shape">
-<span id="service-ast-shape"></span><h2><span class="section-number">19.9. </span>Service shape<a class="headerlink" href="#service-shape" title="Link to this heading">¶</a></h2>
+<span id="service-ast-shape"></span><h2><span class="section-number">20.9. </span>Service shape<a class="headerlink" href="#service-shape" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="service-types.html#service"><span class="std std-ref">Service</span></a> shapes are defined using an object. Service
 shapes defined in JSON support the same properties as the Smithy IDL.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -889,7 +890,7 @@ a <a class="reference internal" href="aggregate-types.html#structure"><span clas
 </div>
 </section>
 <section id="resource-shape">
-<span id="resource-ast-shape"></span><h2><span class="section-number">19.10. </span>Resource shape<a class="headerlink" href="#resource-shape" title="Link to this heading">¶</a></h2>
+<span id="resource-ast-shape"></span><h2><span class="section-number">20.10. </span>Resource shape<a class="headerlink" href="#resource-shape" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="service-types.html#resource"><span class="std std-ref">Resource</span></a> shapes are defined using an object. Resource
 shapes defined in JSON support the same properties as the Smithy IDL.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1017,7 +1018,7 @@ Each reference MUST target a resource.</p></td>
 </div>
 </section>
 <section id="operation-shape">
-<span id="operation-ast-shape"></span><h2><span class="section-number">19.11. </span>Operation shape<a class="headerlink" href="#operation-shape" title="Link to this heading">¶</a></h2>
+<span id="operation-ast-shape"></span><h2><span class="section-number">20.11. </span>Operation shape<a class="headerlink" href="#operation-shape" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="service-types.html#operation"><span class="std std-ref">Operation</span></a> shapes are defined using an object with the
 following properties:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1106,7 +1107,7 @@ shape that is marked with the <a class="reference internal" href="type-refinemen
 </div>
 </section>
 <section id="mixins">
-<h2><span class="section-number">19.12. </span>Mixins<a class="headerlink" href="#mixins" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">20.12. </span>Mixins<a class="headerlink" href="#mixins" title="Link to this heading">¶</a></h2>
 <p>All shapes in the <code class="docutils literal notranslate"><span class="pre">shapes</span></code> map can contain a <code class="docutils literal notranslate"><span class="pre">mixins</span></code> property that
 defines the <a class="reference internal" href="mixins.html#mixins"><span class="std std-ref">Mixins</span></a> that are added to the shape. <code class="docutils literal notranslate"><span class="pre">mixins</span></code> is an
 array of <a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">shape references</span></a> that target shapes
@@ -1144,7 +1145,7 @@ marked with the <a class="reference internal" href="type-refinement-traits.html#
 </div>
 </section>
 <section id="ast-apply-type">
-<span id="ast-apply"></span><h2><span class="section-number">19.13. </span>AST apply type<a class="headerlink" href="#ast-apply-type" title="Link to this heading">¶</a></h2>
+<span id="ast-apply"></span><h2><span class="section-number">20.13. </span>AST apply type<a class="headerlink" href="#ast-apply-type" title="Link to this heading">¶</a></h2>
 <p>Traits can be applied to shapes outside of their definition by setting
 <code class="docutils literal notranslate"><span class="pre">type</span></code> to <code class="docutils literal notranslate"><span class="pre">apply</span></code>. The <code class="docutils literal notranslate"><span class="pre">apply</span></code> type does not actually define a shape
 for the shape ID; the shape ID MUST reference a shape to which traits are
@@ -1194,7 +1195,7 @@ applied. The <code class="docutils literal notranslate"><span class="pre">apply<
                   <span>Previous</span>
                 </div>
                 
-                <div class="title"><span class="section-number">18. </span>Smithy IDL</div>
+                <div class="title"><span class="section-number">19. </span>Smithy IDL</div>
                 
               </div>
             </a>
@@ -1235,20 +1236,20 @@ applied. The <code class="docutils literal notranslate"><span class="pre">apply<
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">19. JSON AST</a><ul>
-<li><a class="reference internal" href="#top-level-properties">19.1. Top level properties</a></li>
-<li><a class="reference internal" href="#ast-shapes">19.2. AST shapes</a></li>
-<li><a class="reference internal" href="#simple-shapes">19.3. Simple shapes</a></li>
-<li><a class="reference internal" href="#list-shapes">19.4. List shapes</a></li>
-<li><a class="reference internal" href="#ast-member">19.5. AST member</a></li>
-<li><a class="reference internal" href="#ast-shape-reference">19.6. AST shape reference</a></li>
-<li><a class="reference internal" href="#map-shape">19.7. Map shape</a></li>
-<li><a class="reference internal" href="#structure-union-enum-and-intenum-shapes">19.8. Structure, union, enum, and intEnum shapes</a></li>
-<li><a class="reference internal" href="#service-shape">19.9. Service shape</a></li>
-<li><a class="reference internal" href="#resource-shape">19.10. Resource shape</a></li>
-<li><a class="reference internal" href="#operation-shape">19.11. Operation shape</a></li>
-<li><a class="reference internal" href="#mixins">19.12. Mixins</a></li>
-<li><a class="reference internal" href="#ast-apply-type">19.13. AST apply type</a></li>
+<li><a class="reference internal" href="#">20. JSON AST</a><ul>
+<li><a class="reference internal" href="#top-level-properties">20.1. Top level properties</a></li>
+<li><a class="reference internal" href="#ast-shapes">20.2. AST shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes">20.3. Simple shapes</a></li>
+<li><a class="reference internal" href="#list-shapes">20.4. List shapes</a></li>
+<li><a class="reference internal" href="#ast-member">20.5. AST member</a></li>
+<li><a class="reference internal" href="#ast-shape-reference">20.6. AST shape reference</a></li>
+<li><a class="reference internal" href="#map-shape">20.7. Map shape</a></li>
+<li><a class="reference internal" href="#structure-union-enum-and-intenum-shapes">20.8. Structure, union, enum, and intEnum shapes</a></li>
+<li><a class="reference internal" href="#service-shape">20.9. Service shape</a></li>
+<li><a class="reference internal" href="#resource-shape">20.10. Resource shape</a></li>
+<li><a class="reference internal" href="#operation-shape">20.11. Operation shape</a></li>
+<li><a class="reference internal" href="#mixins">20.12. Mixins</a></li>
+<li><a class="reference internal" href="#ast-apply-type">20.13. AST apply type</a></li>
 </ul>
 </li>
 </ul>

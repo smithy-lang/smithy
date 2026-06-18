@@ -231,8 +231,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/shape-closures.html">18. Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">19. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">20. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
@@ -358,7 +359,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -2170,6 +2171,41 @@ Smithy will automatically detect every media type used in a service by
 collecting all of the <a class="reference internal" href="../../spec/protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a> values for all members marked
 with <a class="reference internal" href="../../spec/http-bindings.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>.</p>
 </section>
+<section id="minimum-compression-size">
+<h3>Minimum compression size<a class="headerlink" href="#minimum-compression-size" title="Link to this heading">¶</a></h3>
+<p>The minimum payload size in bytes at which compression is applied on an
+API Gateway REST API can be set using the
+<a class="reference internal" href="../../aws/amazon-apigateway.html#aws-apigateway-minimumcompressionsize-trait"><span class="std std-ref">aws.apigateway#minimumCompressionSize trait</span></a>. The value must be
+between 0 and 10485760 bytes (10 MB), inclusive. Smithy will add the
+value of the trait to the generated OpenAPI document as the top-level
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html">x-amazon-apigateway-minimum-compression-size</a> extension.</p>
+<p>The following Smithy model enables compression on payloads of 1024 bytes
+or larger:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#minimumCompressionSize</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
+
+<span class="nt">@restJson1</span>
+<span class="nt">@minimumCompressionSize</span>(<span class="m">1024</span>)
+<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span>
+}
+</pre></div>
+</div>
+<p>is converted to the following OpenAPI model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.0.2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Example&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;x-amazon-apigateway-minimum-compression-size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 <section id="request-validators">
 <span id="apigateway-request-validators"></span><h3>Request validators<a class="headerlink" href="#request-validators" title="Link to this heading">¶</a></h3>
 <p>Amazon API Gateway can perform request validation before forwarding a request
@@ -2229,6 +2265,28 @@ applied to a resource shape, then all operations of the resource and all child
 resources inherit the applied integration. If either trait is applied to an
 operation, then the operation uses a specific integration that overrides any
 integration inherited from a resource or service.</p>
+<p>The following <code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait fields map directly to
+<code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-integration</span></code> OpenAPI extension fields:</p>
+<dl class="simple">
+<dt>tlsConfig</dt><dd><p>Maps to <code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-integration.tlsConfig</span></code> in the OpenAPI
+output. Contains the <code class="docutils literal notranslate"><span class="pre">insecureSkipVerification</span></code> boolean member. When
+set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, API Gateway skips verification that the certificate for
+an integration endpoint is issued by a supported certificate authority.
+Supported only for HTTP and HTTP_PROXY integration types.</p>
+</dd>
+<dt>responseTransferMode</dt><dd><p>Maps to <code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-integration.responseTransferMode</span></code> in the
+OpenAPI output. Specifies how the response payload is transferred between
+the integration and the caller. Valid values are <code class="docutils literal notranslate"><span class="pre">BUFFERED</span></code> and
+<code class="docutils literal notranslate"><span class="pre">STREAM</span></code>.</p>
+</dd>
+<dt>integrationTarget</dt><dd><p>Maps to <code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-integration.integrationTarget</span></code> in the
+OpenAPI output. The ARN of an <a class="reference external" href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">Application Load Balancer (ALB)</a> or
+<a class="reference external" href="https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html">Network Load Balancer (NLB)</a> listener for private integrations using
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-vpc-links-v2.html">VPC Links V2</a>. Values containing <code class="docutils literal notranslate"><span class="pre">${...}</span></code> syntax are automatically
+wrapped in an <a class="reference external" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/intrinsic-function-reference-sub.html">Fn::Sub</a> intrinsic function for CloudFormation
+substitution. See <a class="reference internal" href="#openapi-cfn-substitutions"><span class="std std-ref">AWS CloudFormation substitutions</span></a>.</p>
+</dd>
+</dl>
 </section>
 <section id="cors-functionality">
 <h3>CORS functionality<a class="headerlink" href="#cors-functionality" title="Link to this heading">¶</a></h3>
@@ -2532,7 +2590,7 @@ to use <a class="reference external" href="https://docs.aws.amazon.com/AWSCloudF
 replace this unknown data at deployment-time.</p>
 <p>When the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-apigateway-openapi</span></code> library
 is loaded on the classpath, Smithy will treat specific, well-known parts
-of an OpenAPI specification as an <a class="reference external" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html">Fn::Sub</a>. This allows Smithy models
+of an OpenAPI specification as an <a class="reference external" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/intrinsic-function-reference-sub.html">Fn::Sub</a>. This allows Smithy models
 to refer to variables that aren't available until a stack is created
 using the format of <code class="docutils literal notranslate"><span class="pre">${x}</span></code> where &quot;x&quot; is the variable name.</p>
 <p>Smithy will automatically wrap the following locations of an OpenAPI
@@ -2545,6 +2603,7 @@ uses the <code class="docutils literal notranslate"><span class="pre">Fn::Sub</s
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/connectionId</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/credentials</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/uri</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/integrationTarget</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*</span></code></p></li>
 </ul>
 <div class="admonition note">
@@ -3018,6 +3077,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 </ul>
 </li>
 <li><a class="reference internal" href="#binary-types">Binary types</a></li>
+<li><a class="reference internal" href="#minimum-compression-size">Minimum compression size</a></li>
 <li><a class="reference internal" href="#request-validators">Request validators</a></li>
 <li><a class="reference internal" href="#integrations">Integrations</a></li>
 <li><a class="reference internal" href="#cors-functionality">CORS functionality</a></li>

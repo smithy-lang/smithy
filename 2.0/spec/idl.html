@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="19. JSON AST" href="json-ast.html"><link rel="prev" title="17. Model validation" href="model-validation.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="20. JSON AST" href="json-ast.html"><link rel="prev" title="18. Shape closures" href="shape-closures.html">
         <link rel="prefetch" href="../_static/smithy.svg" as="image">
         <link rel="prefetch" href="../_static/smithy-dark.svg" as="image">
 
     <link rel="shortcut icon" href="../_static/favicon.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>18. Smithy IDL - Smithy 2.0</title>
+        <title>19. Smithy IDL - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -231,8 +231,9 @@
 <li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">18. Smithy IDL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shape-closures.html">18. Shape closures</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">19. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json-ast.html">20. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
@@ -358,7 +359,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.1.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><input aria-label="Toggle navigation of TypeScript" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -454,13 +455,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="smithy-idl">
-<span id="idl"></span><h1><span class="section-number">18. </span>Smithy IDL<a class="headerlink" href="#smithy-idl" title="Link to this heading">¶</a></h1>
+<span id="idl"></span><h1><span class="section-number">19. </span>Smithy IDL<a class="headerlink" href="#smithy-idl" title="Link to this heading">¶</a></h1>
 <p>Smithy models are defined using either the Smithy interface definition language
 (IDL) or the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON abstract syntax tree</span></a> (AST). This document
 defines the <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5234.html"><strong>ABNF</strong></a> grammar and syntax for defining models with the
 Smithy IDL.</p>
 <section id="smithy-idl-overview">
-<h2><span class="section-number">18.1. </span>Smithy IDL overview<a class="headerlink" href="#smithy-idl-overview" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">19.1. </span>Smithy IDL overview<a class="headerlink" href="#smithy-idl-overview" title="Link to this heading">¶</a></h2>
 <p>The Smithy IDL is made up of 3, ordered sections, each of which is optional:</p>
 <ol class="arabic simple">
 <li><p><strong>Control section</strong>; defines parser directives like which version of the
@@ -518,7 +519,7 @@ or traits to refer to shapes in other namespaces using a shorter name.</p></li>
 </div>
 </section>
 <section id="lexical-notes">
-<h2><span class="section-number">18.2. </span>Lexical notes<a class="headerlink" href="#lexical-notes" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">19.2. </span>Lexical notes<a class="headerlink" href="#lexical-notes" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
 line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>).</p></li>
@@ -529,7 +530,7 @@ easier to read (for example, in complex traits defined on a single line).</p></l
 </ul>
 </section>
 <section id="smithy-idl-abnf">
-<span id="id1"></span><h2><span class="section-number">18.3. </span>Smithy IDL ABNF<a class="headerlink" href="#smithy-idl-abnf" title="Link to this heading">¶</a></h2>
+<span id="id1"></span><h2><span class="section-number">19.3. </span>Smithy IDL ABNF<a class="headerlink" href="#smithy-idl-abnf" title="Link to this heading">¶</a></h2>
 <p>The Smithy IDL is defined by the following ABNF which uses case-sensitive
 string support defined in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7405.html"><strong>RFC 7405</strong></a>.</p>
 <pre class="productionlist highlight">
@@ -918,7 +919,7 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
 </div>
 </section>
 <section id="comments">
-<span id="id2"></span><h2><span class="section-number">18.4. </span>Comments<a class="headerlink" href="#comments" title="Link to this heading">¶</a></h2>
+<span id="id2"></span><h2><span class="section-number">19.4. </span>Comments<a class="headerlink" href="#comments" title="Link to this heading">¶</a></h2>
 <p>A <a class="reference internal" href="#grammar-token-smithy-Comment"><code class="xref std std-token docutils literal notranslate"><span class="pre">comment</span></code></a> can appear at any place between tokens where
 whitespace (<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:WS</span></code></a>) can appear. Comments in Smithy are defined using two
 forward slashes followed by any character. A newline terminates a comment.</p>
@@ -938,7 +939,7 @@ using a special <a class="reference internal" href="#documentation-comment"><spa
 </div>
 </section>
 <section id="control-section">
-<span id="control-statement"></span><h2><span class="section-number">18.5. </span>Control section<a class="headerlink" href="#control-section" title="Link to this heading">¶</a></h2>
+<span id="control-statement"></span><h2><span class="section-number">19.5. </span>Control section<a class="headerlink" href="#control-section" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="#grammar-token-smithy-ControlSection"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">section</span></code></a> of a model contains
 <a class="reference internal" href="#grammar-token-smithy-ControlStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a> that apply parser directives
 to a <em>specific IDL file</em>. Because control statements influence parsing, they
@@ -979,7 +980,7 @@ the model file.</p></td>
 </div>
 <p>Implementations MUST ignore unknown control statements.</p>
 <section id="version-statement">
-<span id="smithy-version"></span><h3><span class="section-number">18.5.1. </span>Version statement<a class="headerlink" href="#version-statement" title="Link to this heading">¶</a></h3>
+<span id="smithy-version"></span><h3><span class="section-number">19.5.1. </span>Version statement<a class="headerlink" href="#version-statement" title="Link to this heading">¶</a></h3>
 <p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
 versioning scheme. A version requirement is specified for a model file using
 the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
@@ -1035,7 +1036,7 @@ supported by the tool loading the models.</p>
 </section>
 </section>
 <section id="metadata-section">
-<span id="id3"></span><h2><span class="section-number">18.6. </span>Metadata section<a class="headerlink" href="#metadata-section" title="Link to this heading">¶</a></h2>
+<span id="id3"></span><h2><span class="section-number">19.6. </span>Metadata section<a class="headerlink" href="#metadata-section" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="#grammar-token-smithy-MetadataSection"><code class="xref std std-token docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">section</span></code></a> is used to apply untyped
 <a class="reference internal" href="model.html#metadata"><span class="std std-ref">metadata</span></a> to the entire model. A <a class="reference internal" href="#grammar-token-smithy-MetadataStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:MetadataStatement</span></code></a>
 consists of the metadata key to set, followed by <code class="docutils literal notranslate"><span class="pre">=</span></code>, followed by the
@@ -1080,11 +1081,11 @@ to the prelude namespace, <code class="docutils literal notranslate"><span class
 </div>
 </section>
 <section id="shape-section">
-<h2><span class="section-number">18.7. </span>Shape section<a class="headerlink" href="#shape-section" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">19.7. </span>Shape section<a class="headerlink" href="#shape-section" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="#grammar-token-smithy-ShapeSection"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">section</span></code></a> of the IDL is used to define
 shapes and apply traits to shapes.</p>
 <section id="namespaces">
-<span id="id4"></span><h3><span class="section-number">18.7.1. </span>Namespaces<a class="headerlink" href="#namespaces" title="Link to this heading">¶</a></h3>
+<span id="id4"></span><h3><span class="section-number">19.7.1. </span>Namespaces<a class="headerlink" href="#namespaces" title="Link to this heading">¶</a></h3>
 <p>Shapes can only be defined after a namespace is declared. A namespace is
 declared using a <a class="reference internal" href="#grammar-token-smithy-NamespaceStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span> <span class="pre">statement</span></code></a>. Only
 one namespace can appear per file.</p>
@@ -1114,7 +1115,7 @@ one namespace can appear per file.</p>
 </div>
 </section>
 <section id="referring-to-shapes">
-<span id="use-statement"></span><h3><span class="section-number">18.7.2. </span>Referring to shapes<a class="headerlink" href="#referring-to-shapes" title="Link to this heading">¶</a></h3>
+<span id="use-statement"></span><h3><span class="section-number">19.7.2. </span>Referring to shapes<a class="headerlink" href="#referring-to-shapes" title="Link to this heading">¶</a></h3>
 <p>The <a class="reference internal" href="#grammar-token-smithy-UseSection"><code class="xref std std-token docutils literal notranslate"><span class="pre">use</span> <span class="pre">section</span></code></a> of the IDL is used to import shapes
 into the current namespace so that they can be referred to using a
 <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">relative shape ID</span></a>. The <a class="reference internal" href="#grammar-token-smithy-UseStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">UseStatement</span></code></a>s
@@ -1155,7 +1156,7 @@ shapes imported with a <code class="docutils literal notranslate"><span class="p
 <li><p>Shapes IDs with members names cannot be imported with a use statement.</p></li>
 </ol>
 <section id="relative-shape-id-resolution">
-<span id="relative-shape-id"></span><h4><span class="section-number">18.7.2.1. </span>Relative shape ID resolution<a class="headerlink" href="#relative-shape-id-resolution" title="Link to this heading">¶</a></h4>
+<span id="relative-shape-id"></span><h4><span class="section-number">19.7.2.1. </span>Relative shape ID resolution<a class="headerlink" href="#relative-shape-id-resolution" title="Link to this heading">¶</a></h4>
 <p>Relative shape IDs are resolved using the following process:</p>
 <ol class="arabic simple">
 <li><p>If a <a class="reference internal" href="#grammar-token-smithy-UseStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:UseStatement</span></code></a> has imported a shape with the same name,
@@ -1215,7 +1216,7 @@ to.</p>
 </div>
 </section>
 <section id="syntactic-shape-ids">
-<span id="id5"></span><h4><span class="section-number">18.7.2.2. </span>Syntactic shape IDs<a class="headerlink" href="#syntactic-shape-ids" title="Link to this heading">¶</a></h4>
+<span id="id5"></span><h4><span class="section-number">19.7.2.2. </span>Syntactic shape IDs<a class="headerlink" href="#syntactic-shape-ids" title="Link to this heading">¶</a></h4>
 <p>Unquoted string values that are not object keys in the Smithy IDL are
 considered lexical shape IDs and are resolved to absolute shape IDs using the
 process defined in <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>.</p>
@@ -1315,10 +1316,10 @@ reference can be ignored.</p>
 </section>
 </section>
 <section id="defining-shapes">
-<h3><span class="section-number">18.7.3. </span>Defining shapes<a class="headerlink" href="#defining-shapes" title="Link to this heading">¶</a></h3>
+<h3><span class="section-number">19.7.3. </span>Defining shapes<a class="headerlink" href="#defining-shapes" title="Link to this heading">¶</a></h3>
 <p>Shapes are defined using a <a class="reference internal" href="#grammar-token-smithy-ShapeStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:ShapeStatement</span></code></a>.</p>
 <section id="simple-shapes">
-<span id="idl-simple"></span><h4><span class="section-number">18.7.3.1. </span>Simple shapes<a class="headerlink" href="#simple-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-simple"></span><h4><span class="section-number">19.7.3.1. </span>Simple shapes<a class="headerlink" href="#simple-shapes" title="Link to this heading">¶</a></h4>
 <p><a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">Simple shapes</span></a> are defined using a
 <a class="reference internal" href="#grammar-token-smithy-SimpleShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:SimpleShape</span></code></a>.</p>
 <p>The following example defines a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape:</p>
@@ -1376,7 +1377,7 @@ reference can be ignored.</p>
 </div>
 </section>
 <section id="enum-shapes">
-<span id="idl-enum"></span><h4><span class="section-number">18.7.3.2. </span>Enum shapes<a class="headerlink" href="#enum-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-enum"></span><h4><span class="section-number">19.7.3.2. </span>Enum shapes<a class="headerlink" href="#enum-shapes" title="Link to this heading">¶</a></h4>
 <p>The <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a> shape is defined using an <a class="reference internal" href="#grammar-token-smithy-EnumShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:EnumShape</span></code></a>.</p>
 <p>The following example defines an <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a> shape:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -1428,7 +1429,7 @@ traits:</p>
 </div>
 </section>
 <section id="intenum-shapes">
-<span id="idl-int-enum"></span><h4><span class="section-number">18.7.3.3. </span>IntEnum shapes<a class="headerlink" href="#intenum-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-int-enum"></span><h4><span class="section-number">19.7.3.3. </span>IntEnum shapes<a class="headerlink" href="#intenum-shapes" title="Link to this heading">¶</a></h4>
 <p>The <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a> shape is defined using an
 <a class="reference internal" href="#grammar-token-smithy-EnumShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:EnumShape</span></code></a>.</p>
 <div class="admonition note">
@@ -1470,7 +1471,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 </section>
 <section id="list-shapes">
-<span id="idl-list"></span><h4><span class="section-number">18.7.3.4. </span>List shapes<a class="headerlink" href="#list-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-list"></span><h4><span class="section-number">19.7.3.4. </span>List shapes<a class="headerlink" href="#list-shapes" title="Link to this heading">¶</a></h4>
 <p>A <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-smithy-AggregateShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:AggregateShape</span></code></a>.</p>
 <p>The following example defines a list with a string member from the
 <a class="reference internal" href="model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
@@ -1545,7 +1546,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 </section>
 <section id="map-shapes">
-<span id="idl-map"></span><h4><span class="section-number">18.7.3.5. </span>Map shapes<a class="headerlink" href="#map-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-map"></span><h4><span class="section-number">19.7.3.5. </span>Map shapes<a class="headerlink" href="#map-shapes" title="Link to this heading">¶</a></h4>
 <p>A <a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-smithy-AggregateShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:AggregateShape</span></code></a>.</p>
 <p>The following example defines a map of strings to integers:</p>
 <div class="tab-set docutils">
@@ -1635,7 +1636,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 </section>
 <section id="structure-shapes">
-<span id="idl-structure"></span><h4><span class="section-number">18.7.3.6. </span>Structure shapes<a class="headerlink" href="#structure-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-structure"></span><h4><span class="section-number">19.7.3.6. </span>Structure shapes<a class="headerlink" href="#structure-shapes" title="Link to this heading">¶</a></h4>
 <p>A <a class="reference internal" href="aggregate-types.html#structure"><span class="std std-ref">structure</span></a> shape is defined using a
 <a class="reference internal" href="#grammar-token-smithy-AggregateShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:AggregateShape</span></code></a>.</p>
 <p>The following example defines a structure with two members:</p>
@@ -1739,7 +1740,7 @@ member. The following example:</p>
 </div>
 </section>
 <section id="union-shapes">
-<span id="idl-union"></span><h4><span class="section-number">18.7.3.7. </span>Union shapes<a class="headerlink" href="#union-shapes" title="Link to this heading">¶</a></h4>
+<span id="idl-union"></span><h4><span class="section-number">19.7.3.7. </span>Union shapes<a class="headerlink" href="#union-shapes" title="Link to this heading">¶</a></h4>
 <p>A <a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">union</span></a> shape is defined using a <a class="reference internal" href="#grammar-token-smithy-AggregateShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:AggregateShape</span></code></a>.</p>
 <p>The following example defines a union shape with several members:</p>
 <div class="tab-set docutils">
@@ -1788,7 +1789,7 @@ member. The following example:</p>
 </div>
 </section>
 <section id="service-shape">
-<span id="idl-service"></span><h4><span class="section-number">18.7.3.8. </span>Service shape<a class="headerlink" href="#service-shape" title="Link to this heading">¶</a></h4>
+<span id="idl-service"></span><h4><span class="section-number">19.7.3.8. </span>Service shape<a class="headerlink" href="#service-shape" title="Link to this heading">¶</a></h4>
 <p>A service shape is defined using a <a class="reference internal" href="#grammar-token-smithy-EntityShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:EntityShape</span></code></a> and the provided
 <a class="reference internal" href="#grammar-token-smithy-NodeObject"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:NodeObject</span></code></a> supports the same properties defined in the
 <a class="reference internal" href="service-types.html#service"><span class="std std-ref">service specification</span></a>.</p>
@@ -1832,7 +1833,7 @@ a resource named <code class="docutils literal notranslate"><span class="pre">Mo
 </div>
 </section>
 <section id="operation-shape">
-<span id="idl-operation"></span><h4><span class="section-number">18.7.3.9. </span>Operation shape<a class="headerlink" href="#operation-shape" title="Link to this heading">¶</a></h4>
+<span id="idl-operation"></span><h4><span class="section-number">19.7.3.9. </span>Operation shape<a class="headerlink" href="#operation-shape" title="Link to this heading">¶</a></h4>
 <p>An operation shape is defined using an <a class="reference internal" href="#grammar-token-smithy-OperationShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:OperationShape</span></code></a> and
 the same properties defined in the <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">operation specification</span></a>.</p>
 <p>The following example defines an operation shape that accepts an input
@@ -1880,7 +1881,7 @@ can potentially return the <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <section id="inline-input-output-shapes">
-<span id="idl-inline-input-output"></span><h5><span class="section-number">18.7.3.9.1. </span>Inline input / output shapes<a class="headerlink" href="#inline-input-output-shapes" title="Link to this heading">¶</a></h5>
+<span id="idl-inline-input-output"></span><h5><span class="section-number">19.7.3.9.1. </span>Inline input / output shapes<a class="headerlink" href="#inline-input-output-shapes" title="Link to this heading">¶</a></h5>
 <p>The input and output properties of operations can be defined using a more
 succinct, inline syntax.</p>
 <p>A structure defined using inline syntax is automatically marked with the
@@ -1970,7 +1971,7 @@ shape with the <code class="docutils literal notranslate"><span class="pre">Outp
 </section>
 </section>
 <section id="resource-shape">
-<span id="idl-resource"></span><h4><span class="section-number">18.7.3.10. </span>Resource shape<a class="headerlink" href="#resource-shape" title="Link to this heading">¶</a></h4>
+<span id="idl-resource"></span><h4><span class="section-number">19.7.3.10. </span>Resource shape<a class="headerlink" href="#resource-shape" title="Link to this heading">¶</a></h4>
 <p>A resource shape is defined using a <a class="reference internal" href="#grammar-token-smithy-EntityShape"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:EntityShape</span></code></a> and the
 provided <a class="reference internal" href="#grammar-token-smithy-NodeObject"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:NodeObject</span></code></a> supports the same properties defined in the
 <a class="reference internal" href="service-types.html#resource"><span class="std std-ref">resource specification</span></a>.</p>
@@ -2019,7 +2020,7 @@ repeat the target definition.</p>
 </div>
 </section>
 <section id="mixins">
-<span id="idl-mixins"></span><h4><span class="section-number">18.7.3.11. </span>Mixins<a class="headerlink" href="#mixins" title="Link to this heading">¶</a></h4>
+<span id="idl-mixins"></span><h4><span class="section-number">19.7.3.11. </span>Mixins<a class="headerlink" href="#mixins" title="Link to this heading">¶</a></h4>
 <p><a class="reference internal" href="mixins.html#mixins"><span class="std std-ref">Mixins</span></a> can be added to a shape using the optional
 <a class="reference internal" href="#grammar-token-smithy-Mixins"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Mixins</span></code></a> clause of a shape definition.</p>
 <p>For example:</p>
@@ -2042,7 +2043,7 @@ repeat the target definition.</p>
 </div>
 </section>
 <section id="target-elision">
-<span id="idl-target-elision"></span><h4><span class="section-number">18.7.3.12. </span>Target Elision<a class="headerlink" href="#target-elision" title="Link to this heading">¶</a></h4>
+<span id="idl-target-elision"></span><h4><span class="section-number">19.7.3.12. </span>Target Elision<a class="headerlink" href="#target-elision" title="Link to this heading">¶</a></h4>
 <p>Having to completely redefine a <a class="reference internal" href="service-types.html#resource-identifiers"><span class="std std-ref">resource identifier</span></a>
 to use it in a structure or redefine a member from a <a class="reference internal" href="mixins.html#mixins"><span class="std std-ref">mixin</span></a> to add
 additional traits can be cumbersome and potentially error-prone. Target elision
@@ -2127,7 +2128,7 @@ be checked first. The following example is invalid:</p>
 </section>
 </section>
 <section id="documentation-comment">
-<span id="id6"></span><h3><span class="section-number">18.7.4. </span>Documentation comment<a class="headerlink" href="#documentation-comment" title="Link to this heading">¶</a></h3>
+<span id="id6"></span><h3><span class="section-number">19.7.4. </span>Documentation comment<a class="headerlink" href="#documentation-comment" title="Link to this heading">¶</a></h3>
 <p><a class="reference internal" href="#grammar-token-smithy-DocumentationComment"><code class="xref std std-token docutils literal notranslate"><span class="pre">Documentation</span> <span class="pre">comments</span></code></a> are a
 special kind of <a class="reference internal" href="#grammar-token-smithy-Comment"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Comment</span></code></a> that provide
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation</span></a> for shapes. A documentation
@@ -2202,7 +2203,7 @@ documentation comment comes before the traits applied to a shape:</p>
 in the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
 </section>
 <section id="applying-traits">
-<span id="idl-applying-traits"></span><h3><span class="section-number">18.7.5. </span>Applying traits<a class="headerlink" href="#applying-traits" title="Link to this heading">¶</a></h3>
+<span id="idl-applying-traits"></span><h3><span class="section-number">19.7.5. </span>Applying traits<a class="headerlink" href="#applying-traits" title="Link to this heading">¶</a></h3>
 <p>Trait values immediately preceding a shape definition are applied to the
 shape. The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="#grammar-token-smithy-UseStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:UseStatement</span></code></a>s
 and the current namespace in exactly the same way as
@@ -2241,7 +2242,7 @@ and the current namespace in exactly the same way as
 </div>
 </div>
 <section id="trait-values">
-<span id="id7"></span><h4><span class="section-number">18.7.5.1. </span>Trait values<a class="headerlink" href="#trait-values" title="Link to this heading">¶</a></h4>
+<span id="id7"></span><h4><span class="section-number">19.7.5.1. </span>Trait values<a class="headerlink" href="#trait-values" title="Link to this heading">¶</a></h4>
 <p>The value that can be provided for a trait depends on its type. A value for a
 trait is defined by enclosing the value in parenthesis, provided as a
 <a class="reference internal" href="#node-values"><span class="std std-ref">node value</span></a>. Trait values MUST adhere to the JSON type
@@ -2262,7 +2263,7 @@ members.</p>
 </div>
 </section>
 <section id="structure-map-and-union-trait-value-syntax">
-<span id="structured-trait-values"></span><h4><span class="section-number">18.7.5.2. </span>Structure, map, and union trait value syntax<a class="headerlink" href="#structure-map-and-union-trait-value-syntax" title="Link to this heading">¶</a></h4>
+<span id="structured-trait-values"></span><h4><span class="section-number">19.7.5.2. </span>Structure, map, and union trait value syntax<a class="headerlink" href="#structure-map-and-union-trait-value-syntax" title="Link to this heading">¶</a></h4>
 <p>A special syntax is provided for structure, map, and union traits that
 allows placing key-value pairs directly inside of the trait parenthesis.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@structuredTrait</span>(<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>)
@@ -2274,7 +2275,7 @@ allows placing key-value pairs directly inside of the trait parenthesis.</p>
 </div>
 </section>
 <section id="omitted-trait-values">
-<h4><span class="section-number">18.7.5.3. </span>Omitted trait values<a class="headerlink" href="#omitted-trait-values" title="Link to this heading">¶</a></h4>
+<h4><span class="section-number">19.7.5.3. </span>Omitted trait values<a class="headerlink" href="#omitted-trait-values" title="Link to this heading">¶</a></h4>
 <p>An applied trait with no value, with or without empty parenthesis, assumes
 a default value based on the shape of the trait.</p>
 <p>If a value is omitted for a <code class="docutils literal notranslate"><span class="pre">structure</span></code> or <code class="docutils literal notranslate"><span class="pre">map</span></code>, the value defaults to an empty
@@ -2387,7 +2388,7 @@ object (<code class="docutils literal notranslate"><span class="pre">{}</span></
 shape of the trait.</p>
 </section>
 <section id="apply-statement">
-<span id="id8"></span><h4><span class="section-number">18.7.5.4. </span>Apply statement<a class="headerlink" href="#apply-statement" title="Link to this heading">¶</a></h4>
+<span id="id8"></span><h4><span class="section-number">19.7.5.4. </span>Apply statement<a class="headerlink" href="#apply-statement" title="Link to this heading">¶</a></h4>
 <p>Traits can be applied to shapes outside of a shape's definition using an
 <a class="reference internal" href="#grammar-token-smithy-ApplyStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:ApplyStatement</span></code></a>.</p>
 <p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to the
@@ -2479,7 +2480,7 @@ definition.</p>
 </section>
 </section>
 <section id="node-values">
-<span id="id9"></span><h2><span class="section-number">18.8. </span>Node values<a class="headerlink" href="#node-values" title="Link to this heading">¶</a></h2>
+<span id="id9"></span><h2><span class="section-number">19.8. </span>Node values<a class="headerlink" href="#node-values" title="Link to this heading">¶</a></h2>
 <p><em>Node values</em> are analogous to JSON values. Node values are used to define
 <a class="reference internal" href="model.html#metadata"><span class="std std-ref">metadata</span></a> and <a class="reference internal" href="model.html#traits"><span class="std std-ref">trait values</span></a>. Smithy's
 node values have many advantages over JSON: comments, unquoted keys, unquoted
@@ -2539,7 +2540,7 @@ number. The following examples define several <code class="docutils literal notr
 <li><p><code class="docutils literal notranslate"><span class="pre">null</span></code>: The value is treated like a JSON <code class="docutils literal notranslate"><span class="pre">null</span></code></p></li>
 </ul>
 <section id="string-values">
-<h3><span class="section-number">18.8.1. </span>String values<a class="headerlink" href="#string-values" title="Link to this heading">¶</a></h3>
+<h3><span class="section-number">19.8.1. </span>String values<a class="headerlink" href="#string-values" title="Link to this heading">¶</a></h3>
 <p>A <code class="docutils literal notranslate"><span class="pre">NodeValue</span></code> can contain <a class="reference internal" href="#grammar-token-smithy-NodeStringValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:NodeStringValue</span></code></a> productions that all
 define strings.</p>
 <p class="rubric">New lines</p>
@@ -2555,7 +2556,7 @@ treated like equivalent string values when loaded into the
 <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
 </section>
 <section id="string-escape-characters">
-<span id="id10"></span><h3><span class="section-number">18.8.2. </span>String escape characters<a class="headerlink" href="#string-escape-characters" title="Link to this heading">¶</a></h3>
+<span id="id10"></span><h3><span class="section-number">19.8.2. </span>String escape characters<a class="headerlink" href="#string-escape-characters" title="Link to this heading">¶</a></h3>
 <p>The Smithy IDL supports escape sequences only within quoted strings.  The following
 escape sequences are allowed:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2618,7 +2619,7 @@ escape sequences are allowed:</p>
 <p>Any other sequence following a backslash is an error.</p>
 </section>
 <section id="text-blocks">
-<span id="id11"></span><h3><span class="section-number">18.8.3. </span>Text blocks<a class="headerlink" href="#text-blocks" title="Link to this heading">¶</a></h3>
+<span id="id11"></span><h3><span class="section-number">19.8.3. </span>Text blocks<a class="headerlink" href="#text-blocks" title="Link to this heading">¶</a></h3>
 <p>A text block is a string literal that can span multiple lines and automatically
 removes any incidental whitespace. Smithy text blocks are heavily inspired by
 text blocks defined in <a class="reference external" href="https://openjdk.java.net/jeps/355">JEP 355</a>.</p>
@@ -2663,7 +2664,7 @@ not including a trailing new line:</p>
 </pre></div>
 </div>
 <section id="incidental-white-space-removal">
-<span id="incidental-whitespace"></span><h4><span class="section-number">18.8.3.1. </span>Incidental white space removal<a class="headerlink" href="#incidental-white-space-removal" title="Link to this heading">¶</a></h4>
+<span id="incidental-whitespace"></span><h4><span class="section-number">19.8.3.1. </span>Incidental white space removal<a class="headerlink" href="#incidental-white-space-removal" title="Link to this heading">¶</a></h4>
 <p>Smithy will re-indent the content of a text block by removing all
 incidental whitespace using the following algorithm:</p>
 <ol class="arabic">
@@ -2728,7 +2729,7 @@ left margin):</p>
 </ol>
 </section>
 <section id="significant-trailing-line">
-<h4><span class="section-number">18.8.3.2. </span>Significant trailing line<a class="headerlink" href="#significant-trailing-line" title="Link to this heading">¶</a></h4>
+<h4><span class="section-number">19.8.3.2. </span>Significant trailing line<a class="headerlink" href="#significant-trailing-line" title="Link to this heading">¶</a></h4>
 <p>The last line of text block content is used when determining the common
 whitespace prefix.</p>
 <p>Consider the following example:</p>
@@ -2762,7 +2763,7 @@ is equivalent to the following:</p>
 </div>
 </section>
 <section id="escapes-in-text-blocks">
-<h4><span class="section-number">18.8.3.3. </span>Escapes in text blocks<a class="headerlink" href="#escapes-in-text-blocks" title="Link to this heading">¶</a></h4>
+<h4><span class="section-number">19.8.3.3. </span>Escapes in text blocks<a class="headerlink" href="#escapes-in-text-blocks" title="Link to this heading">¶</a></h4>
 <p>Text blocks support all of the <a class="reference internal" href="#string-escape-characters"><span class="std std-ref">string escape characters</span></a>
 of other strings. The use of three double quotes allows unescaped double quotes
 (&quot;) to appear in text blocks. The following text block is interpreted as
@@ -2829,18 +2830,18 @@ example is interpreted as <code class="docutils literal notranslate"><span class
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title"><span class="section-number">19. </span>JSON AST</div>
+                <div class="title"><span class="section-number">20. </span>JSON AST</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="model-validation.html">
+          <a class="prev-page" href="shape-closures.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title"><span class="section-number">17. </span>Model validation</div>
+                <div class="title"><span class="section-number">18. </span>Shape closures</div>
                 
               </div>
             </a>
@@ -2881,58 +2882,58 @@ example is interpreted as <code class="docutils literal notranslate"><span class
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">18. Smithy IDL</a><ul>
-<li><a class="reference internal" href="#smithy-idl-overview">18.1. Smithy IDL overview</a></li>
-<li><a class="reference internal" href="#lexical-notes">18.2. Lexical notes</a></li>
-<li><a class="reference internal" href="#smithy-idl-abnf">18.3. Smithy IDL ABNF</a></li>
-<li><a class="reference internal" href="#comments">18.4. Comments</a></li>
-<li><a class="reference internal" href="#control-section">18.5. Control section</a><ul>
-<li><a class="reference internal" href="#version-statement">18.5.1. Version statement</a></li>
+<li><a class="reference internal" href="#">19. Smithy IDL</a><ul>
+<li><a class="reference internal" href="#smithy-idl-overview">19.1. Smithy IDL overview</a></li>
+<li><a class="reference internal" href="#lexical-notes">19.2. Lexical notes</a></li>
+<li><a class="reference internal" href="#smithy-idl-abnf">19.3. Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#comments">19.4. Comments</a></li>
+<li><a class="reference internal" href="#control-section">19.5. Control section</a><ul>
+<li><a class="reference internal" href="#version-statement">19.5.1. Version statement</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#metadata-section">18.6. Metadata section</a></li>
-<li><a class="reference internal" href="#shape-section">18.7. Shape section</a><ul>
-<li><a class="reference internal" href="#namespaces">18.7.1. Namespaces</a></li>
-<li><a class="reference internal" href="#referring-to-shapes">18.7.2. Referring to shapes</a><ul>
-<li><a class="reference internal" href="#relative-shape-id-resolution">18.7.2.1. Relative shape ID resolution</a></li>
-<li><a class="reference internal" href="#syntactic-shape-ids">18.7.2.2. Syntactic shape IDs</a></li>
+<li><a class="reference internal" href="#metadata-section">19.6. Metadata section</a></li>
+<li><a class="reference internal" href="#shape-section">19.7. Shape section</a><ul>
+<li><a class="reference internal" href="#namespaces">19.7.1. Namespaces</a></li>
+<li><a class="reference internal" href="#referring-to-shapes">19.7.2. Referring to shapes</a><ul>
+<li><a class="reference internal" href="#relative-shape-id-resolution">19.7.2.1. Relative shape ID resolution</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids">19.7.2.2. Syntactic shape IDs</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#defining-shapes">18.7.3. Defining shapes</a><ul>
-<li><a class="reference internal" href="#simple-shapes">18.7.3.1. Simple shapes</a></li>
-<li><a class="reference internal" href="#enum-shapes">18.7.3.2. Enum shapes</a></li>
-<li><a class="reference internal" href="#intenum-shapes">18.7.3.3. IntEnum shapes</a></li>
-<li><a class="reference internal" href="#list-shapes">18.7.3.4. List shapes</a></li>
-<li><a class="reference internal" href="#map-shapes">18.7.3.5. Map shapes</a></li>
-<li><a class="reference internal" href="#structure-shapes">18.7.3.6. Structure shapes</a></li>
-<li><a class="reference internal" href="#union-shapes">18.7.3.7. Union shapes</a></li>
-<li><a class="reference internal" href="#service-shape">18.7.3.8. Service shape</a></li>
-<li><a class="reference internal" href="#operation-shape">18.7.3.9. Operation shape</a><ul>
-<li><a class="reference internal" href="#inline-input-output-shapes">18.7.3.9.1. Inline input / output shapes</a></li>
+<li><a class="reference internal" href="#defining-shapes">19.7.3. Defining shapes</a><ul>
+<li><a class="reference internal" href="#simple-shapes">19.7.3.1. Simple shapes</a></li>
+<li><a class="reference internal" href="#enum-shapes">19.7.3.2. Enum shapes</a></li>
+<li><a class="reference internal" href="#intenum-shapes">19.7.3.3. IntEnum shapes</a></li>
+<li><a class="reference internal" href="#list-shapes">19.7.3.4. List shapes</a></li>
+<li><a class="reference internal" href="#map-shapes">19.7.3.5. Map shapes</a></li>
+<li><a class="reference internal" href="#structure-shapes">19.7.3.6. Structure shapes</a></li>
+<li><a class="reference internal" href="#union-shapes">19.7.3.7. Union shapes</a></li>
+<li><a class="reference internal" href="#service-shape">19.7.3.8. Service shape</a></li>
+<li><a class="reference internal" href="#operation-shape">19.7.3.9. Operation shape</a><ul>
+<li><a class="reference internal" href="#inline-input-output-shapes">19.7.3.9.1. Inline input / output shapes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#resource-shape">18.7.3.10. Resource shape</a></li>
-<li><a class="reference internal" href="#mixins">18.7.3.11. Mixins</a></li>
-<li><a class="reference internal" href="#target-elision">18.7.3.12. Target Elision</a></li>
+<li><a class="reference internal" href="#resource-shape">19.7.3.10. Resource shape</a></li>
+<li><a class="reference internal" href="#mixins">19.7.3.11. Mixins</a></li>
+<li><a class="reference internal" href="#target-elision">19.7.3.12. Target Elision</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#documentation-comment">18.7.4. Documentation comment</a></li>
-<li><a class="reference internal" href="#applying-traits">18.7.5. Applying traits</a><ul>
-<li><a class="reference internal" href="#trait-values">18.7.5.1. Trait values</a></li>
-<li><a class="reference internal" href="#structure-map-and-union-trait-value-syntax">18.7.5.2. Structure, map, and union trait value syntax</a></li>
-<li><a class="reference internal" href="#omitted-trait-values">18.7.5.3. Omitted trait values</a></li>
-<li><a class="reference internal" href="#apply-statement">18.7.5.4. Apply statement</a></li>
+<li><a class="reference internal" href="#documentation-comment">19.7.4. Documentation comment</a></li>
+<li><a class="reference internal" href="#applying-traits">19.7.5. Applying traits</a><ul>
+<li><a class="reference internal" href="#trait-values">19.7.5.1. Trait values</a></li>
+<li><a class="reference internal" href="#structure-map-and-union-trait-value-syntax">19.7.5.2. Structure, map, and union trait value syntax</a></li>
+<li><a class="reference internal" href="#omitted-trait-values">19.7.5.3. Omitted trait values</a></li>
+<li><a class="reference internal" href="#apply-statement">19.7.5.4. Apply statement</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#node-values">18.8. Node values</a><ul>
-<li><a class="reference internal" href="#string-values">18.8.1. String values</a></li>
-<li><a class="reference internal" href="#string-escape-characters">18.8.2. String escape characters</a></li>
-<li><a class="reference internal" href="#text-blocks">18.8.3. Text blocks</a><ul>
-<li><a class="reference internal" href="#incidental-white-space-removal">18.8.3.1. Incidental white space removal</a></li>
-<li><a class="reference internal" href="#significant-trailing-line">18.8.3.2. Significant trailing line</a></li>
-<li><a class="reference internal" href="#escapes-in-text-blocks">18.8.3.3. Escapes in text blocks</a></li>
+<li><a class="reference internal" href="#node-values">19.8. Node values</a><ul>
+<li><a class="reference internal" href="#string-values">19.8.1. String values</a></li>
+<li><a class="reference internal" href="#string-escape-characters">19.8.2. String escape characters</a></li>
+<li><a class="reference internal" href="#text-blocks">19.8.3. Text blocks</a><ul>
+<li><a class="reference internal" href="#incidental-white-space-removal">19.8.3.1. Incidental white space removal</a></li>
+<li><a class="reference internal" href="#significant-trailing-line">19.8.3.2. Significant trailing line</a></li>
+<li><a class="reference internal" href="#escapes-in-text-blocks">19.8.3.3. Escapes in text blocks</a></li>
 </ul>
 </li>
 </ul>
