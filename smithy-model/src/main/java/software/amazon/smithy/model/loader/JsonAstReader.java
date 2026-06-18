@@ -55,9 +55,19 @@ final class JsonAstReader implements AstReader {
     private static final int DEDUP_SIZE = 512; // power of two
     private static final int DEDUP_MASK = DEDUP_SIZE - 1;
 
+    // Longer-string dedup cache (see endCaptureLongDeduped). Strings up to this length are deduplicated by hashing
+    // the captured buffer slice and comparing against the cached string's characters, so a cache hit allocates
+    // nothing. This catches the many repeated long strings in models (shape-ID targets like "smithy.api#String",
+    // recurring trait values) that exceed the 8-char packed-key fast path. The cap bounds the per-miss comparison
+    // cost and avoids retaining very long one-off strings (e.g. documentation) in the cache.
+    private static final int MAX_LONG_DEDUP_CHARS = 64;
+    private static final int LONG_DEDUP_SIZE = 1024; // power of two
+    private static final int LONG_DEDUP_MASK = LONG_DEDUP_SIZE - 1;
+
     private static final class StringDedupCache {
         final long[] keys = new long[DEDUP_SIZE];
         final String[] vals = new String[DEDUP_SIZE];
+        final String[] longVals = new String[LONG_DEDUP_SIZE];
     }
 
     // One cache per thread, reused across parses without clearing (the packed key is exact, so a
@@ -97,6 +107,7 @@ final class JsonAstReader implements AstReader {
     // Dedup cache arrays, fetched from the per-thread pool on the first short string.
     private long[] dedupKeys;
     private String[] dedupVals;
+    private String[] longDedupVals;
 
     private JsonAstReader(String filename, Reader reader, boolean allowComments, int bufferSize) {
         if (reader == null) {
@@ -719,7 +730,7 @@ final class JsonAstReader implements AstReader {
             return "";
         }
         if (len > MAX_DEDUP_CHARS) {
-            return endCapture();
+            return len <= MAX_LONG_DEDUP_CHARS ? endCaptureLongDeduped(start, len) : endCapture();
         }
 
         long key = 0;
@@ -750,6 +761,47 @@ final class JsonAstReader implements AstReader {
         keys[slot] = key;
         vals[slot] = s;
         return s;
+    }
+
+    // Deduplicates captured strings longer than the packed-key fast path by hashing the buffer slice and comparing
+    // it against the single cached string in its slot. A hit returns the cached String without allocating; a miss
+    // allocates once and overwrites the slot. captureStart has not yet been reset when this is called.
+    private String endCaptureLongDeduped(int start, int len) {
+        captureStart = -1;
+
+        // FNV-1a hash over the captured slice.
+        int h = 0x811c9dc5;
+        for (int i = 0; i < len; i++) {
+            h = (h ^ buffer[start + i]) * 0x01000193;
+        }
+        int slot = (h ^ (h >>> 16)) & LONG_DEDUP_MASK;
+
+        String[] longVals = this.longDedupVals;
+        if (longVals == null) {
+            longVals = this.longDedupVals = DEDUP_CACHE.get().longVals;
+        }
+
+        String cached = longVals[slot];
+        if (cached != null && matchesSlice(cached, start, len)) {
+            return cached;
+        }
+
+        String s = new String(buffer, start, len);
+        longVals[slot] = s;
+        return s;
+    }
+
+    // True if the cached string equals buffer[start, start+len) character-for-character, without allocating.
+    private boolean matchesSlice(String cached, int start, int len) {
+        if (cached.length() != len) {
+            return false;
+        }
+        for (int i = 0; i < len; i++) {
+            if (cached.charAt(i) != buffer[start + i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void captureTokenLocation() {
