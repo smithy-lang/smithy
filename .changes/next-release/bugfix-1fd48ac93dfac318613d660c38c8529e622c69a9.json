@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixed several formatter bugs that mishandled docs and comments around member value assignments and shape boundaries.",
-  "pull_requests": [
-    "https://github.com/smithy-lang/smithy/pull/3132"
-  ]
-}

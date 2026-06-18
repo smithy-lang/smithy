@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added `SmithyBuildConfig#toModelAssembler` and `SmithyBuild#toProjectedModel` APIs to load and project a model directly from a build config.",
-  "pull_requests": [
-    "https://github.com/smithy-lang/smithy/pull/3135"
-  ]
-}

@@ -25,6 +25,9 @@
   `smithy-build.json` when no positional arguments are provided, allowing it to
   be run with no arguments inside a configured Smithy project.
   ([#3143](https://github.com/smithy-lang/smithy/pull/3143))
+- Added `SmithyBuildConfig#toModelAssembler` and `SmithyBuild#toProjectedModel`
+  APIs to load and project a model directly from a build config.
+  ([#3135](https://github.com/smithy-lang/smithy/pull/3135))
 - Added a `--check` option to the `smithy format` command that fails when any
   file would be modified.
   ([#3141](https://github.com/smithy-lang/smithy/pull/3141))
@@ -36,6 +39,9 @@
 - Added a new `metadata` trait that allows model authors to declare types for
   metadata keys that will be automatically validated when building models.
   ([#3078](https://github.com/smithy-lang/smithy/pull/3078))
+- Added validation to ensure every operation binds all required rules engine
+  parameters, emitting a `RuleSetParameter.Operation.RequiredMissing` error.
+  ([#3153](https://github.com/smithy-lang/smithy/pull/3153))
 
 ### Bug Fixes
 
@@ -44,6 +50,9 @@
 - Adds a validation event for when a private resource shape is referenced
   outside of its namespace using the resource target elision syntax.
   ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
+- Fixed several formatter bugs that mishandled docs and comments around member
+  value assignments and shape boundaries.
+  ([#3132](https://github.com/smithy-lang/smithy/pull/3132))
 - Fixed the `AddedRequiredMember` diff evaluator so that it no longer flags new
   members marked with the `@clientOptional` trait, which is the sanctioned way
   to add a `@required` member without breaking generated client code.
@@ -61,7 +70,7 @@
 ### Other
 
 - Formatted all smithy source files and added a formatting task to ensure they
-  stay up to date. ([#3141](https://github.com/smithy-lang/smithy/pull/3142))
+  stay up to date. ([#3142](https://github.com/smithy-lang/smithy/pull/3142))
 
 ## 1.71.0 (2026-05-14)
 

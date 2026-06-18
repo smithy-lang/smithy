@@ -12,7 +12,7 @@
       "type": "other",
       "description": "Formatted all smithy source files and added a formatting task to ensure they stay up to date.",
       "pull_requests": [
-        "[#3141](https://github.com/smithy-lang/smithy/pull/3142)"
+        "[#3142](https://github.com/smithy-lang/smithy/pull/3142)"
       ]
     },
     {
@@ -41,6 +41,13 @@
       "description": "Adds a validation event for when a private resource shape is referenced outside of its namespace using the resource target elision syntax.",
       "pull_requests": [
         "[#3139](https://github.com/smithy-lang/smithy/pull/3139)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed several formatter bugs that mishandled docs and comments around member value assignments and shape boundaries.",
+      "pull_requests": [
+        "[#3132](https://github.com/smithy-lang/smithy/pull/3132)"
       ]
     },
     {
@@ -76,6 +83,13 @@
       "description": "Fixed the `AddedRequiredMember` diff evaluator so that it no longer flags new members marked with the `@clientOptional` trait, which is the sanctioned way to add a `@required` member without breaking generated client code.",
       "pull_requests": [
         "[#3166](https://github.com/smithy-lang/smithy/pull/3166)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added `SmithyBuildConfig#toModelAssembler` and `SmithyBuild#toProjectedModel` APIs to load and project a model directly from a build config.",
+      "pull_requests": [
+        "[#3135](https://github.com/smithy-lang/smithy/pull/3135)"
       ]
     },
     {
@@ -118,6 +132,13 @@
       "description": "Fixed a bug where comments trailing unused imports were being improperly removed during formatting.",
       "pull_requests": [
         "[#3152](https://github.com/smithy-lang/smithy/pull/3152)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added validation to ensure every operation binds all required rules engine parameters, emitting a `RuleSetParameter.Operation.RequiredMissing` error.",
+      "pull_requests": [
+        "[#3153](https://github.com/smithy-lang/smithy/pull/3153)"
       ]
     }
   ],
