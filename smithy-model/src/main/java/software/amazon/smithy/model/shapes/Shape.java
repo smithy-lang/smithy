@@ -191,7 +191,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
     protected final void validateMemberShapeIds() {
         for (MemberShape member : members()) {
-            if (!member.getId().toString().startsWith(getId().toString())) {
+            if (!member.getId().isMemberOf(getId())) {
                 ShapeId expected = getId().withMember(member.getMemberName());
                 throw new SourceException(String.format(
                         "Expected the `%s` member of `%s` to have an ID of `%s` but found `%s`",
