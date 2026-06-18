@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    font-family: "Schibsted Grotesk", sans-serif;
+    background:
+      radial-gradient(620px 420px at 86% 12%, rgba(255,90,81,.18), transparent 60%),
+      radial-gradient(700px 520px at 6% 108%, rgba(223,35,29,.14), transparent 62%),
+      #14110f;
+    color: #f4efe9;
+    overflow: hidden;
+    position: relative;
+  }
+  /* hairline frame */
+  .frame {
+    position: absolute; inset: 28px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+  }
+  .wrap {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 84px;
+  }
+  .brand { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+  .brand img { width: 64px; height: 64px; display: block; }
+  .brand .name { font-size: 40px; font-weight: 700; letter-spacing: -.02em; }
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 19px; font-weight: 500; letter-spacing: .26em;
+    text-transform: uppercase; color: #ff5a51; margin-bottom: 22px;
+  }
+  h1 {
+    font-size: 84px; font-weight: 800; line-height: 1.02; letter-spacing: -.035em;
+  }
+  h1 .hl { color: #ff5a51; }
+  .sub {
+    margin-top: 30px; font-size: 27px; line-height: 1.4; color: #a89f95;
+    max-width: 880px;
+  }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="wrap">
+    <div class="brand">
+      <img src="assets/smithy-anvil.svg" alt="">
+      <span class="name">Smithy</span>
+    </div>
+    <div class="eyebrow">One model. Every language.</div>
+    <h1>Build services.<br>Build SDKs.<br>Build with <span class="hl">Smithy</span>.</h1>
+    <div class="sub">Open-source language for defining services and SDKs. One model generates clients, servers, and docs.</div>
+  </div>
+</body>
+</html>
