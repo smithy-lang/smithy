@@ -6,7 +6,6 @@ package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceException;
@@ -116,7 +115,7 @@ final class JsonAstLoader {
         SourceLocation modelLocation = reader.currentLocation();
         reader.startObject();
 
-        Keys topLevelKeys = new Keys();
+        List<String> additionalProperties = null;
         boolean isModel = false;
 
         // The version drives version-specific shape/trait validation, so it must be applied before any
@@ -125,7 +124,7 @@ final class JsonAstLoader {
         Node deferredShapes = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            topLevelKeys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, TOP_LEVEL_PROPERTIES);
             switch (key) {
                 case SMITHY: {
                     String versionString = reader.expectStringValue("`smithy` member");
@@ -164,7 +163,7 @@ final class JsonAstLoader {
             loadDeferredShapes(deferredShapes);
         }
 
-        checkAdditionalProperties(topLevelKeys.list, null, TOP_LEVEL_PROPERTIES, modelLocation);
+        checkAdditionalProperties(additionalProperties, null, TOP_LEVEL_PROPERTIES, modelLocation);
         return true;
     }
 
@@ -355,26 +354,26 @@ final class JsonAstLoader {
     // ===== Shape kinds. Each consumes the remaining members of the (already type-read) shape object. =====
 
     private void loadApply(ShapeId id, SourceLocation location) {
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, APPLY_PROPERTIES);
             if (TRAITS.equals(key)) {
                 applyTraitsFromCursor(id);
             } else {
                 reader.skipValue();
             }
         }
-        checkAdditionalProperties(keys.list, id, APPLY_PROPERTIES, location);
+        checkAdditionalProperties(additionalProperties, id, APPLY_PROPERTIES, location);
     }
 
     private void loadSimpleShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         builder.id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, SIMPLE_PROPERTY_NAMES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -387,17 +386,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, SIMPLE_PROPERTY_NAMES, location);
+        checkAdditionalProperties(additionalProperties, id, SIMPLE_PROPERTY_NAMES, location);
         operations.accept(operation);
     }
 
     private void loadNamedMemberShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         builder.id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, NAMED_MEMBER_SHAPE_PROPERTY_NAMES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -413,17 +412,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, NAMED_MEMBER_SHAPE_PROPERTY_NAMES, location);
+        checkAdditionalProperties(additionalProperties, id, NAMED_MEMBER_SHAPE_PROPERTY_NAMES, location);
         operations.accept(operation);
     }
 
     private void loadCollection(ShapeId id, SourceLocation location, CollectionShape.Builder<?, ?> builder) {
         builder.id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, COLLECTION_PROPERTY_NAMES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -439,17 +438,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, COLLECTION_PROPERTY_NAMES, location);
+        checkAdditionalProperties(additionalProperties, id, COLLECTION_PROPERTY_NAMES, location);
         operations.accept(operation);
     }
 
     private void loadMap(ShapeId id, SourceLocation location) {
         MapShape.Builder builder = MapShape.builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, MAP_PROPERTY_NAMES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -468,17 +467,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, MAP_PROPERTY_NAMES, location);
+        checkAdditionalProperties(additionalProperties, id, MAP_PROPERTY_NAMES, location);
         operations.accept(operation);
     }
 
     private void loadOperation(ShapeId id, SourceLocation location) {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, OPERATION_PROPERTY_NAMES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -500,17 +499,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, OPERATION_PROPERTY_NAMES, location);
+        checkAdditionalProperties(additionalProperties, id, OPERATION_PROPERTY_NAMES, location);
         operations.accept(operation);
     }
 
     private void loadResource(ShapeId id, SourceLocation location) {
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, RESOURCE_PROPERTIES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -556,17 +555,17 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, RESOURCE_PROPERTIES, location);
+        checkAdditionalProperties(additionalProperties, id, RESOURCE_PROPERTIES, location);
         operations.accept(operation);
     }
 
     private void loadService(ShapeId id, SourceLocation location) {
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
-        Keys keys = new Keys(TYPE);
+        List<String> additionalProperties = null;
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, SERVICE_PROPERTIES);
             switch (key) {
                 case TRAITS:
                     applyTraitsFromCursor(id);
@@ -594,7 +593,7 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, id, SERVICE_PROPERTIES, location);
+        checkAdditionalProperties(additionalProperties, id, SERVICE_PROPERTIES, location);
         operations.accept(operation);
     }
 
@@ -649,13 +648,13 @@ final class JsonAstLoader {
         }
         SourceLocation memberLocation = reader.currentLocation();
         MemberShape.Builder builder = MemberShape.builder().source(memberLocation).id(memberId);
-        Keys keys = new Keys();
+        List<String> additionalProperties = null;
         ShapeId target = null;
         boolean sawTarget = false;
         reader.startObject();
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, MEMBER_PROPERTIES);
             switch (key) {
                 case TARGET:
                     target = expectShapeId(reader.expectStringValue("`target` member"), reader.currentLocation());
@@ -669,7 +668,7 @@ final class JsonAstLoader {
                     break;
             }
         }
-        checkAdditionalProperties(keys.list, memberId, MEMBER_PROPERTIES, memberLocation);
+        checkAdditionalProperties(additionalProperties, memberId, MEMBER_PROPERTIES, memberLocation);
         if (!sawTarget) {
             throw new SourceException("Missing expected member `target`.", memberLocation);
         }
@@ -705,13 +704,13 @@ final class JsonAstLoader {
                     reader.currentLocation());
         }
         SourceLocation location = reader.currentLocation();
-        Keys keys = new Keys();
+        List<String> additionalProperties = null;
         ShapeId target = null;
         boolean sawTarget = false;
         reader.startObject();
         String key;
         while ((key = reader.nextKey()) != null) {
-            keys.add(key);
+            additionalProperties = addAdditionalProperty(additionalProperties, key, REFERENCE_PROPERTIES);
             if (TARGET.equals(key)) {
                 target = expectShapeId(reader.expectStringValue("`target` member"), reader.currentLocation());
                 sawTarget = true;
@@ -719,7 +718,7 @@ final class JsonAstLoader {
                 reader.skipValue();
             }
         }
-        checkAdditionalProperties(keys.list, id, REFERENCE_PROPERTIES, location);
+        checkAdditionalProperties(additionalProperties, id, REFERENCE_PROPERTIES, location);
         if (!sawTarget) {
             throw new SourceException("Missing expected member `target`.", location);
         }
@@ -795,21 +794,22 @@ final class JsonAstLoader {
         operations.accept(new LoadOperation.Event(event));
     }
 
+    private List<String> addAdditionalProperty(List<String> additional, String key, Collection<String> allowed) {
+        if (!allowed.contains(key)) {
+            if (additional == null) {
+                additional = new ArrayList<>();
+            }
+            additional.add(key);
+        }
+        return additional;
+    }
+
     private void checkAdditionalProperties(
-            List<String> keys,
+            List<String> additional,
             ShapeId shape,
             Collection<String> allowed,
             SourceLocation location
     ) {
-        List<String> additional = null;
-        for (String key : keys) {
-            if (!allowed.contains(key)) {
-                if (additional == null) {
-                    additional = new ArrayList<>();
-                }
-                additional.add(key);
-            }
-        }
         if (additional != null) {
             String message = String.format(
                     "Expected an object with possible properties of %s, but found additional properties: %s",
@@ -822,19 +822,6 @@ final class JsonAstLoader {
                     .sourceLocation(location)
                     .shapeId(shape)
                     .build());
-        }
-    }
-
-    // Accumulates the member keys seen in an object for the additional-properties check.
-    private static final class Keys {
-        final List<String> list = new ArrayList<>();
-
-        Keys(String... initial) {
-            Collections.addAll(list, initial);
-        }
-
-        void add(String key) {
-            list.add(key);
         }
     }
 }
