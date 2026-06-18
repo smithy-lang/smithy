@@ -115,6 +115,15 @@ public interface Selector {
     }
 
     /**
+     * Returns true if this selector can only emit shapes that were provided as input.
+     *
+     * @return Returns true if this selector's output is always a subset of its input.
+     */
+    default boolean isOutputSubsetOfInput() {
+        return false;
+    }
+
+    /**
      * Matches a selector to a set of shapes and receives each matched shape
      * with the variables that were set when the shape was matched.
      *

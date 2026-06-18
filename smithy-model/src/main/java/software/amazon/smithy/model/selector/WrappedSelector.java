@@ -68,7 +68,7 @@ final class WrappedSelector implements Selector {
         Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
 
         if (isParallel(startingShapes)) {
-            return shapes(model).collect(Collectors.toSet());
+            return shapes(model, startingContext).collect(Collectors.toSet());
         } else {
             // This is more optimized than using shapes() for smaller models that aren't parallelized.
             Set<Shape> result = new HashSet<>();
@@ -87,6 +87,11 @@ final class WrappedSelector implements Selector {
 
     private boolean isParallel(Collection<? extends Shape> startingShapes) {
         return startingShapes.size() >= PARALLEL_THRESHOLD;
+    }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return delegate.isOutputSubsetOfInput();
     }
 
     @Override

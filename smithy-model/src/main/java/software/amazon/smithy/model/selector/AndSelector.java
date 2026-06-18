@@ -70,6 +70,11 @@ final class AndSelector {
         }
 
         @Override
+        public boolean isOutputSubsetOfInput() {
+            return leftSelector.isOutputSubsetOfInput() && rightSelector.isOutputSubsetOfInput();
+        }
+
+        @Override
         public Collection<? extends Shape> getStartingShapes(Model model) {
             return leftSelector.getStartingShapes(model);
         }

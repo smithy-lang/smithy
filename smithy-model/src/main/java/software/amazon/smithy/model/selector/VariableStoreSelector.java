@@ -36,4 +36,9 @@ final class VariableStoreSelector implements InternalSelector {
         // Now send the received shape to the next receiver.
         return next.apply(context, shape);
     }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }

@@ -145,6 +145,19 @@ interface InternalSelector {
     }
 
     /**
+     * Returns true if this selector can only emit shapes that were provided as input.
+     *
+     * <p>This is useful for callers that only need to test a known set of candidate shapes. Pure filter selectors
+     * can be evaluated with just the candidates, while selectors that traverse to other shapes must still start from
+     * the whole model to discover whether a candidate appears in their output.
+     *
+     * @return Returns true if this selector's output is always a subset of its input.
+     */
+    default boolean isOutputSubsetOfInput() {
+        return false;
+    }
+
+    /**
      * Receives shapes from an InternalSelector.
      */
     interface Receiver {

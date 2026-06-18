@@ -55,4 +55,9 @@ final class TestSelector implements InternalSelector {
 
         return ContainsShape.NO;
     }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }

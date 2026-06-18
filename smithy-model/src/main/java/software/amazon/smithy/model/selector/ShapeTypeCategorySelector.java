@@ -38,4 +38,9 @@ final class ShapeTypeCategorySelector implements InternalSelector {
     public ContainsShape emitsAnyOptimization(Context context, Shape input) {
         return shapeCategory.isInstance(input) ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }
