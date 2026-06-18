@@ -23,7 +23,7 @@ final class RecursiveNeighborSelector implements InternalSelector {
 
     @Override
     public Response push(Context context, Shape shape, Receiver next) {
-        Walker walker = new Walker(context.neighborIndex.getProvider());
+        Walker walker = new Walker(context.getNeighborIndex().getProvider());
         Iterator<Shape> shapeIterator = walker.iterateShapes(shape, ONLY_DIRECTED);
 
         while (shapeIterator.hasNext()) {
