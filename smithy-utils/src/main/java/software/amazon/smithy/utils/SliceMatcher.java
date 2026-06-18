@@ -86,8 +86,7 @@ public final class SliceMatcher {
             return -1;
         }
 
-        outer:
-        for (int candidate : byLength[bucket]) {
+        outer: for (int candidate : byLength[bucket]) {
             char[] keyword = keywords[candidate];
             for (int i = 0; i < length; i++) {
                 if (chars[offset + i] != keyword[i]) {
