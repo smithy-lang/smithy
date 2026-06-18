@@ -7,7 +7,6 @@ SHELL         := /bin/bash
 install:
 	python3 -m venv build/venv
 	source build/venv/bin/activate && pip3 install -e .
-	(cd landing-page && npm install)
 
 clean:
 	-rm -rf build/* install
@@ -18,15 +17,12 @@ html1:
 html2:
 	@source build/venv/bin/activate && $(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) -W --keep-going -n $(O)
 
-build-landing-page:
-	cd landing-page && npm run build
-
 llms-txt: html2
 	python3 generate_llms_txt.py
 
-html: html2 html1 build-landing-page merge-versions llms-txt
+html: html2 html1 merge-versions llms-txt
 
-serve: 
+serve:
 	npx http-server build/html
 
 merge-versions:
@@ -34,7 +30,10 @@ merge-versions:
 	cp -R "build/1.0/html" "build/html/1.0"
 	cp -R "build/2.0/html" "build/html/2.0"
 	cp -R root/* "build/html"
-	cp -R landing-page/dist/* "build/html/"
+	# Landing page: a single self-contained static page (no build step).
+	# Ship only the page + its assets (not README.md or the _og-card source).
+	cp landing/index.html "build/html/"
+	cp -R landing/assets "build/html/"
 
 openhtml:
 	open "build/html/index.html"

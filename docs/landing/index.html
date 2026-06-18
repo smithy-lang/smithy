@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smithy: Build services. Build SDKs. Build with Smithy.</title>
+<meta name="description" content="Smithy is an open-source language for defining services and SDKs. One model generates type-safe clients, servers, and docs across ten languages." />
+<link rel="canonical" href="https://smithy.io/" />
+
+<!-- Branded mobile browser chrome, per OS color scheme -->
+<meta name="theme-color" content="#14110f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#faf7f2" media="(prefers-color-scheme: light)" />
+
+<!-- Open Graph (link previews in Slack, LinkedIn, iMessage, etc.) -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Smithy" />
+<meta property="og:url" content="https://smithy.io/" />
+<meta property="og:title" content="Smithy: Build services. Build SDKs." />
+<meta property="og:description" content="Smithy is an open-source language for defining services and SDKs. One model generates type-safe clients, servers, and docs across ten languages." />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://smithy.io/assets/og-cover.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Smithy: an open-source language for building services and SDKs." />
+<!-- Twitter / X card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Smithy: Build services. Build SDKs." />
+<meta name="twitter:description" content="Smithy is an open-source language for defining services and SDKs. One model generates type-safe clients, servers, and docs across ten languages." />
+<meta name="twitter:image" content="https://smithy.io/assets/og-cover.png" />
+<meta name="twitter:image:alt" content="Smithy: an open-source language for building services and SDKs." />
+
+<!-- Favicon: the Smithy anvil mark -->
+<link rel="icon" type="image/svg+xml" href="assets/smithy-anvil.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192x192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180x180.png" />
+
+<!-- Reveal-on-scroll is gated behind html.js. Added here in <head> BEFORE paint
+     so there is no flash. Skipped under prefers-reduced-motion so content is
+     never stuck at opacity:0. Static render (no JS) shows everything. -->
+<script>
+  (function () {
+    var el = document.documentElement;
+    try {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) el.classList.add('js');
+      // Theme: saved localStorage wins; otherwise honour the OS preference.
+      // Default markup is data-mode="dark"; only switch to light when chosen.
+      var saved = localStorage.getItem('smithy-mode');
+      if (saved === 'light' || saved === 'dark') {
+        el.setAttribute('data-mode', saved);
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        el.setAttribute('data-mode', 'light');
+      }
+    } catch (e) {}
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- FIXED fonts across all palette variants: Schibsted Grotesk (display/UI) +
+     JetBrains Mono (code). Do NOT change these in variants. -->
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ===========================================================================
+   SMITHY LANDING — EMBER (P1)
+   ---------------------------------------------------------------------------
+   Palette variant of the canonical template. Brand-true, warm, crafted:
+   Smithy red is the confident hero accent on warm charcoal/parchment neutrals.
+   --accent-2 == --accent (red) for this palette. ONLY the two PALETTE TOKEN
+   blocks below carry color; the rest of the stylesheet references var(--token).
+
+   TOKEN VOCABULARY (find/replace targets) ----------------------------------
+     PAGE / SURFACES
+       --bg            page background
+       --surface       cards, nav, panels (raised from bg)
+       --surface-2     deeper insets (chips, table rows, code wells in light UI)
+       --border        hairline borders / dividers
+       --text          primary foreground text
+       --muted         secondary / supporting text
+     ACCENTS (brand)
+       --accent        primary brand accent (Smithy red)
+       --accent-bright accent hover / active (brighter)
+       --accent-2      secondary / co-accent. In EMBER == --accent.
+       --glow          rgba() for the single ambient hero glow (palette-colored)
+     CODE PANELS (intentionally DARK in BOTH light & dark mode — hard rule)
+       --code-bg       code/terminal/diff outermost background
+       --code-surface  code chrome (tab bar, gutter, header strips)
+       --code-text     default code foreground
+       --code-muted    comments / secondary code text / inactive tabs
+       --tok-key       syntax: keywords ($version, service, resource, operation)
+       --tok-trait     syntax: @traits  (MUST be the accent red — Smithy signature)
+       --tok-type      syntax: types / shape identifiers (String, CityId)
+       --tok-str       syntax: strings
+       --tok-punc      syntax: punctuation / braces
+       --tok-num       syntax: numbers
+       --ln            code line-number color
+   --------------------------------------------------------------------------- */
+
+/* ===================== PALETTE TOKENS — DARK MODE ========================= */
+/* EMBER (P1): warm charcoal neutrals, confident Smithy red hero accent.       */
+html[data-mode="dark"] {
+  --bg:            #14110f;
+  --surface:       #1d1916;
+  --surface-2:     #262019;
+  --border:        rgba(255,255,255,.08);
+  --text:          #f4efe9;
+  --muted:         #a89f95;
+
+  --accent:        #df231d;   /* fills / borders / icons (non-text use) */
+  --accent-bright: #ff4339;   /* brighter accent for TEXT on dark (AA) + code tokens */
+  --accent-hover:  #cf1e18;   /* solid-button hover fill — keeps WHITE label AA (5.45:1) */
+  --accent-text:   #ff5a51;   /* accent used as NORMAL-SIZE TEXT — AA on --bg */
+  --accent-2:      #df231d;   /* == --accent in EMBER */
+  --glow:          rgba(223,35,29,.22);
+  --ring:          #ff6f66;   /* focus ring — high contrast vs surfaces & accent fills */
+
+  /* Code panels — DARK in both modes */
+  --code-bg:       #0f0c0b;
+  --code-surface:  #181311;
+  --code-text:     #ece5dd;
+  --code-muted:    #8a7f74;
+  --tok-key:       #d9a48c;   /* warm-neutral so the red @trait stays the focal token */
+  --tok-trait:     #ff4339;   /* accent red — Smithy signature (the one saturated red) */
+  --tok-type:      #e7c98a;
+  --tok-str:       #9fd29a;
+  --tok-punc:      #9b9088;
+  --tok-num:       #e0a36a;   /* kept neutral-ish; not pink/magenta */
+  --ln:            #6f655c;   /* line numbers: >=3:1 on --code-bg (informational) */
+  --code-accent:   #ff5a51;   /* in-panel accent (prompt/keywords/tags) — mode-stable, AA on --code-bg */
+}
+
+/* ===================== PALETTE TOKENS — LIGHT MODE ======================== */
+/* EMBER (P1): warm parchment surfaces, deepened red for AA on light bg.       */
+html[data-mode="light"] {
+  --bg:            #faf7f2;
+  --surface:       #ffffff;
+  --surface-2:     #f3ede4;
+  --border:        #e7e0d6;
+  --text:          #1a1714;
+  --muted:         #6b6258;
+
+  --accent:        #c41c16;   /* deepened for AA on warm light surfaces */
+  --accent-bright: #b01810;   /* hover DARKENS in light mode -> stays >=4.5:1 as text */
+  --accent-hover:  #b8170f;   /* solid-button hover fill — WHITE label 6.63:1 */
+  --accent-text:   #c41c16;   /* 5.58:1 on --bg; same as resting link */
+  --accent-2:      #c41c16;   /* == --accent in EMBER */
+  --glow:          rgba(207,31,25,.16);
+  --ring:          #c41c16;   /* focus ring vs light surfaces */
+
+  /* Code panels stay DARK even in light mode (hard rule) */
+  --code-bg:       #0f0c0b;
+  --code-surface:  #181311;
+  --code-text:     #ece5dd;
+  --code-muted:    #8a7f74;
+  --tok-key:       #d9a48c;
+  --tok-trait:     #ff4339;
+  --tok-type:      #e7c98a;
+  --tok-str:       #9fd29a;
+  --tok-punc:      #9b9088;
+  --tok-num:       #e0a36a;
+  --ln:            #6f655c;
+  --code-accent:   #ff5a51;   /* in-panel accent — identical in both modes (panels are always dark) */
+}
+
+/* ===========================================================================
+   NON-COLOR FOUNDATIONS  (no hardcoded colors past this point)
+   =========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html[data-mode="dark"]  { color-scheme: dark; }
+html[data-mode="light"] { color-scheme: light; }
+/* Reduced motion: collapse every animation/transition to imperceptible. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root {
+  --font-display: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --maxw: 1180px;
+  --gutter: clamp(20px, 5vw, 72px);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.08; letter-spacing: -.02em; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent-text); text-decoration: none; }   /* solid links only */
+a:hover { color: var(--accent-bright); }
+img { display: block; max-width: 100%; }
+::selection { background: var(--accent); color: #fff; }
+
+/* Focus ring: high-contrast color + a bg-colored halo so it is always visible,
+   including when focus lands on an accent-colored fill (e.g. .btn-primary). */
+:focus-visible {
+  outline: 2.5px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 5px var(--bg);
+}
+/* Skip link */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+}
+.skip-link:focus {
+  left: var(--gutter); top: 8px; z-index: 100;
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 10px 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--accent); border-radius: 8px;
+  font-weight: 600;
+}
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12.5px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent-text);
+}
+.muted { color: var(--muted); }
+
+/* ---------- Buttons (SOLID fills only — no gradients) ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: .5em;
+  font-family: var(--font-display);
+  font-weight: 600; font-size: 15.5px;
+  padding: .72em 1.3em;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background .18s var(--ease), color .18s var(--ease),
+              border-color .18s var(--ease), transform .18s var(--ease);
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-text); }
+.btn .arrow, .feature-link .arrow { transition: transform .2s var(--ease); }
+.btn:hover .arrow, .feature-link:hover .arrow { transform: translateX(3px); }
+
+/* ===========================================================================
+   NAV
+   =========================================================================== */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 13px var(--gutter);
+  display: flex; align-items: center; gap: 22px;
+}
+.brand { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
+.brand .wordmark { height: 22px; width: auto; }
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+  margin-left: 14px; flex: 1;
+}
+.nav-links a {
+  color: var(--muted);
+  font-size: 14.5px; font-weight: 500;
+  padding: 7px 12px; border-radius: 8px;
+  min-height: 44px; display: inline-flex; align-items: center;
+  transition: color .15s, background .15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); }
+.nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+/* Shared square icon control (theme toggle + GitHub link) */
+.icon-btn {
+  width: 44px; height: 44px;
+  display: inline-grid; place-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.icon-btn:hover, .icon-btn:focus-visible { border-color: var(--accent); color: var(--accent-text); }
+.icon-btn svg { width: 18px; height: 18px; }
+/* Show sun in dark mode (click → go light); moon in light mode */
+html[data-mode="dark"] .toggle .i-moon { display: none; }
+html[data-mode="light"] .toggle .i-sun { display: none; }
+
+/* ---------- Mobile menu (hamburger) ---------- */
+.nav-menu-btn {
+  display: none;
+  width: 44px; height: 44px;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.nav-menu-btn:hover { border-color: var(--accent); color: var(--accent-text); }
+.nav-menu-btn svg { width: 20px; height: 20px; }
+.mobile-menu {
+  display: none;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+}
+.mobile-menu.open { display: block; }
+.mobile-menu-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 10px var(--gutter) 18px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.mobile-menu a {
+  color: var(--text); font-weight: 500; font-size: 16px;
+  min-height: 44px; display: flex; align-items: center;
+  padding: 4px 0;
+}
+.mobile-menu a:not(.btn):hover { color: var(--accent-text); }
+.mobile-menu .btn-primary { color: #fff; margin-top: 10px; justify-content: center; min-height: 44px; }
+.mobile-menu .btn-primary:hover { color: #fff; }
+
+@media (max-width: 860px) {
+  .nav-links { display: none; }
+  .nav-right .btn-primary { display: none; }
+  .nav-menu-btn { display: inline-grid; }
+}
+
+/* ===========================================================================
+   HERO
+   =========================================================================== */
+.hero { position: relative; padding: clamp(56px, 9vw, 104px) 0 clamp(40px, 6vw, 72px); overflow: hidden; }
+/* Ember glow anchored to the CONTENT box (not the viewport edge): its left edge
+   tracks the right third of the centered .wrap (behind the editor column) but is
+   capped by min() so on viewports narrower than --maxw it never shoves off-screen.
+   560px ~= half the 720px blob, so the blob CENTRE sits ~160px inside the content
+   right edge at any width up to 2560px — never floating in the empty margin. */
+.hero-glow {
+  position: absolute; pointer-events: none; z-index: 0;
+  top: clamp(-40px, -8%, -6%);
+  left: min(
+    calc(50% + (var(--maxw) / 2) - 560px),
+    calc(100% - 540px)
+  );
+  width: min(720px, 86vw); height: min(720px, 86vw);
+  background: radial-gradient(circle at center, var(--glow), transparent 60%);
+  filter: blur(2px);
+}
+.hero .wrap { position: relative; z-index: 1; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.12fr 1.04fr;
+  gap: clamp(32px, 4vw, 56px);
+  align-items: start;
+}
+.hero-grid > * { min-width: 0; }
+.hero-copy { max-width: 560px; padding-top: clamp(8px, 1.5vw, 28px); }
+.hero h1 {
+  /* Cap so each <br>-split phrase ("Build services." etc.) holds on one line. */
+  font-size: clamp(30px, 6.2vw, 56px);
+  font-weight: 800; letter-spacing: -.03em; line-height: 1.05;
+  margin: 18px 0 0;
+  overflow-wrap: break-word; hyphens: manual;
+}
+.hero h1 .hl { color: var(--accent-text); }
+.hero-sub {
+  font-size: clamp(16.5px, 1.6vw, 19.5px);
+  color: var(--muted);
+  margin-top: 22px; max-width: 50ch;
+}
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 32px; }
+/* Truthful, scannable credibility cues under the hero CTAs */
+.hero-trust { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 26px 0 0; padding: 0; }
+.hero-trust li { position: relative; padding-left: 18px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .04em; color: var(--muted); }
+.hero-trust li::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* ---------- Editor / code panel (DARK in both modes) ---------- */
+.editor {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 30px 70px -30px rgba(0,0,0,.65), 0 2px 0 0 rgba(255,255,255,.02) inset;
+  font-family: var(--font-mono);
+}
+.editor-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 15px;
+  background: var(--code-surface);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.dots { display: flex; gap: 7px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,.16); }
+.dots i:first-child { background: var(--accent); }
+.editor-file {
+  margin-left: 6px;
+  color: var(--code-text);
+  font-size: 13px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.editor-file::before {
+  content: ""; width: 13px; height: 13px; border-radius: 3px;
+  background: var(--accent); opacity: .85;
+}
+.editor-body {
+  margin: 0; padding: 18px 20px 22px;
+  font-size: 13.5px; line-height: 1.85;
+  color: var(--code-text);
+  max-width: 100%;
+  overflow-x: auto;
+  counter-reset: ln;
+  tab-size: 4;
+}
+.editor-body .row { display: block; white-space: pre; }
+.editor-body .row::before {
+  counter-increment: ln; content: counter(ln);
+  display: inline-block; width: 2.1em; margin-right: 1.4em;
+  text-align: right; color: var(--ln); user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+/* syntax tokens */
+.tk { color: var(--tok-key); }      /* keyword */
+.tt { color: var(--tok-trait); font-weight: 600; }  /* @trait */
+.ty { color: var(--tok-type); }     /* type / identifier */
+.ts { color: var(--tok-str); }      /* string */
+.tp { color: var(--tok-punc); }     /* punctuation */
+.tm { color: var(--code-muted); }   /* member name / dim */
+
+@media (max-width: 920px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 38px; }
+  .hero-copy { max-width: none; }
+  .editor { min-width: 0; }
+  /* On stacked layouts read as a soft top-corner ember rather than a misplaced blob */
+  .hero-glow {
+    left: auto; right: -12%; top: -6%;
+    width: min(520px, 80vw); height: min(520px, 80vw);
+  }
+}
+/* Keep the hero crisp for high-contrast users */
+@media (prefers-contrast: more) {
+  .hero-glow { display: none; }
+}
+/* Ultra-wide: let content breathe instead of an island at 1920/2560 */
+@media (min-width: 1800px) {
+  :root { --maxw: 1320px; }
+  /* Cap so the longest phrase ("Build with Smithy.") fits the copy column
+     and never overflows toward the editor. */
+  .hero h1 { font-size: 64px; }
+}
+
+/* ===========================================================================
+   "ONE MODEL, EVERY TARGET" FAN-OUT
+   =========================================================================== */
+.fanout { padding: clamp(40px, 6vw, 70px) 0; border-top: 1px solid var(--border); }
+.fanout-head { text-align: center; max-width: 720px; margin: 0 auto; }
+/* Heading fits on one line when the viewport allows, wraps naturally otherwise.
+   Paragraph stays narrower for comfortable reading measure. */
+.fanout-head h2 { font-size: clamp(24px, 3vw, 33px); margin-top: 12px; text-wrap: balance; }
+.fanout-head p { color: var(--muted); margin-top: 12px; max-width: 560px; margin-inline: auto; text-wrap: balance; }
+
+.fanout-head .inline-code {
+  font-family: var(--font-mono); font-size: .9em;
+  color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  padding: 1px 6px; border-radius: 5px;
+}
+
+/* ---------- Build pipeline: model -> smithy build -> outputs ---------- */
+.pipe {
+  --pgap: clamp(12px, 1.6vw, 18px);   /* gap between the 4 output boxes */
+  --pdrop: clamp(14px, 1.8vw, 18px);  /* drop from horizontal rail into each box */
+  --fan-gap: clamp(22px, 3vw, 32px);  /* total gap build -> output row */
+  margin-top: clamp(36px, 5vw, 52px);
+  display: flex; flex-direction: column; align-items: center;
+}
+.pipe-node {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.pipe-source {
+  flex-direction: column; gap: 9px;
+  padding: 20px 30px;
+}
+.pipe-source .anvil { width: 38px; height: 38px; }
+.pipe-source .pipe-label { font-weight: 600; font-size: 14px; }
+.pipe-source code { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+
+/* The build node: a terminal-dark command pill, the focal accent moment */
+.pipe-build {
+  gap: 11px; padding: 14px 26px;
+  background: var(--code-bg);
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 9%, transparent),
+              0 18px 40px -22px rgba(0,0,0,.7);
+}
+.pipe-build .pipe-prompt { font-family: var(--font-mono); font-weight: 700; color: var(--code-accent); }
+.pipe-build .pipe-cmd { font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--code-text); }
+
+/* Connector stems */
+.pipe-stem { width: 2px; height: clamp(20px, 3vw, 30px); background: var(--accent); opacity: .4; }
+/* build -> rail: paints ONLY down to the horizontal rail, then a transparent
+   margin covers the remaining drop so no line shows in the empty center gap. */
+.pipe-stem-fan { height: calc(var(--fan-gap) - var(--pdrop)); margin-bottom: var(--pdrop); }
+
+/* Output branches */
+.pipe-outputs {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--pgap);
+  width: 100%; max-width: 760px;
+  position: relative;
+}
+/* horizontal rail spanning exactly first-column-center to last-column-center.
+   For a 4-col grid: column center inset = (100% - 3*gap) / 8. */
+.pipe-outputs::before {
+  content: ""; position: absolute; top: calc(-1 * var(--pdrop));
+  left: calc((100% - 3 * var(--pgap)) / 8);
+  right: calc((100% - 3 * var(--pgap)) / 8);
+  height: 2px;
+  background: var(--accent); opacity: .4;
+}
+.pipe-out {
+  position: relative;
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  text-align: center;
+  padding: 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+/* short drop connecting each output up to the rail (heights match the rail top) */
+.pipe-out::before {
+  content: ""; position: absolute; top: calc(-1 * var(--pdrop));
+  left: 50%; transform: translateX(-1px); width: 2px; height: var(--pdrop);
+  background: var(--accent); opacity: .4;
+}
+.pipe-out-title { font-weight: 600; font-size: 14.5px; color: var(--text); }
+.pipe-out-note { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .02em; color: var(--muted); }
+
+/* Language strip, captioned and tied to Client SDKs */
+.pipe-langs { width: 100%; margin-top: clamp(26px, 3.5vw, 38px); }
+.pipe-langs-label {
+  display: block; text-align: center;
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+}
+
+.fan-targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+.chip {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 16px 8px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px; color: var(--muted); font-weight: 500;
+  text-decoration: none;
+  transition: transform .2s var(--ease), border-color .2s, color .2s;
+}
+.chip:hover, .chip:focus-visible { transform: translateY(-3px); border-color: var(--accent); color: var(--text); }
+.chip .logo { width: 30px; height: 30px; display: grid; place-items: center; }
+/* Absolute px caps (not %) so tall logos like Java's Duke can't overflow the box */
+.chip .logo img { max-width: 30px; max-height: 30px; width: auto; height: auto; object-fit: contain; }
+/* monochrome logos that need to read on both surfaces are wrapped in .mono */
+.chip .logo.mono img { filter: var(--logo-tint); }
+
+@media (max-width: 620px) {
+  /* Outputs go 2-up; drop the horizontal rail so connectors don't misalign */
+  .pipe-outputs { grid-template-columns: repeat(2, 1fr); max-width: 420px; }
+  .pipe-outputs::before { display: none; }
+  .pipe-out::before { display: none; }
+}
+
+/* ===========================================================================
+   FEATURE ROWS
+   =========================================================================== */
+.features { padding: clamp(20px, 4vw, 40px) 0 clamp(40px, 6vw, 70px); }
+.feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(30px, 5vw, 76px);
+  align-items: center;
+  padding: clamp(40px, 6vw, 78px) 0;
+  border-top: 1px solid var(--border);
+}
+.feature > * { min-width: 0; }
+.feature:nth-child(even) .feature-media { order: -1; }
+.feature-copy h3 { font-size: clamp(23px, 2.8vw, 33px); margin-top: 14px; }
+.feature-copy p { color: var(--muted); margin-top: 14px; max-width: 46ch; }
+.feature-num {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  color: var(--accent-text); letter-spacing: .04em;
+}
+.feature-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 20px; min-height: 44px; font-weight: 600; font-size: 15px;
+}
+
+@media (max-width: 820px) {
+  .feature { grid-template-columns: 1fr; gap: 28px; }
+  .feature:nth-child(even) .feature-media { order: 0; }
+  .feature-media { min-width: 0; }
+}
+
+/* ---------- Shared dark-chrome mockup frame ---------- */
+.mock {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  box-shadow: 0 26px 60px -32px rgba(0,0,0,.6);
+}
+.mock-bar {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 14px;
+  background: var(--code-surface);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  color: var(--code-muted);
+  font-size: 12.5px;
+}
+.mock-bar .dots i { width: 10px; height: 10px; }
+.mock-body { padding: 16px 18px; font-size: 13px; line-height: 1.7; color: var(--code-text); overflow-x: auto; }
+.mock-body .code-pre { margin: 8px 0 0; }
+
+/* tabs (protocol) */
+.tabs { display: flex; gap: 4px; padding: 10px 14px 0; background: var(--code-surface); overflow-x: auto; }
+.tab {
+  font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
+  padding: 8px 12px; min-height: 44px; border-radius: 8px 8px 0 0;
+  color: var(--code-muted); cursor: pointer; white-space: nowrap; flex: 0 0 auto;
+  border: 1px solid transparent; border-bottom: none;
+  background: transparent;
+}
+.tab[aria-selected="true"] {
+  color: var(--code-text);
+  background: var(--code-bg);
+  border-color: rgba(255,255,255,.08);
+}
+.tabpanel { display: none; }
+.tabpanel.active { display: block; }
+.json .k { color: var(--tok-type); }
+.json .s { color: var(--tok-str); }
+.json .p { color: var(--tok-punc); }
+.json .n { color: var(--tok-num); }
+
+/* terminal */
+.term-line { display: flex; gap: 9px; white-space: pre-wrap; }
+.term-line.sub { padding-left: 22px; }
+.term-line .prompt { color: var(--code-accent); }
+.ok { color: var(--tok-str); }
+.err { color: var(--tok-trait); font-weight: 600; }
+.dim { color: var(--code-muted); }
+.rule-tag {
+  display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 5px;
+  background: color-mix(in srgb, var(--tok-trait) 22%, transparent);
+  color: var(--code-accent); border: 1px solid color-mix(in srgb, var(--tok-trait) 42%, transparent);
+}
+
+/* diff */
+.diff .row { display: block; white-space: pre; padding: 0 4px; border-radius: 3px; }
+.diff .add { background: color-mix(in srgb, var(--tok-str) 16%, transparent); color: var(--tok-str); }
+.diff .add::before { content: "+ "; color: var(--tok-str); }
+.diff .ctx::before { content: "  "; }
+.diff .ctx { color: var(--code-muted); }
+.badge-compat {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  padding: 5px 11px; border-radius: 999px;
+  color: var(--tok-str);
+  background: color-mix(in srgb, var(--tok-str) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tok-str) 38%, transparent);
+}
+
+/* resource tree */
+.tree { list-style: none; margin: 0; padding: 4px 2px; font-size: 13px; }
+.tree li { padding: 3px 0; color: var(--code-text); }
+.tree .indent { padding-left: 24px; position: relative; }
+.tree .indent.deep { padding-left: 48px; }
+.tree .indent::before {
+  content: ""; position: absolute; left: 8px; top: 0; bottom: 50%;
+  width: 1px; background: rgba(255,255,255,.12);
+}
+.tree .indent::after {
+  content: ""; position: absolute; left: 8px; top: 50%;
+  width: 11px; height: 1px; background: rgba(255,255,255,.12);
+}
+.node-svc { color: var(--tok-key); }
+.node-res {
+  display: inline-flex; align-items: center; gap: 7px;
+  color: var(--code-text); font-weight: 600;
+  padding: 2px 9px; margin: 1px 0; border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.node-op { color: var(--tok-type); }
+.node-op .verb { color: var(--code-muted); }
+.tree .kw { color: var(--code-accent); font-weight: 600; }
+
+/* ===========================================================================
+   QUOTE
+   =========================================================================== */
+.quote { padding: clamp(50px, 8vw, 96px) 0; border-top: 1px solid var(--border); }
+.quote .wrap { max-width: 900px; }
+.quote blockquote {
+  margin: 0; font-size: clamp(21px, 2.8vw, 31px);
+  font-weight: 500; line-height: 1.35; letter-spacing: -.02em;
+  font-style: italic;
+  padding-left: clamp(20px, 3vw, 34px);
+  border-left: 3px solid var(--accent);
+}
+.quote blockquote .mk { color: var(--accent-text); font-style: normal; }
+.quote cite {
+  display: block; margin-top: 26px;
+  font-style: normal; font-family: var(--font-mono);
+  font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted);
+}
+.quote cite strong { color: var(--text); }
+
+/* ===========================================================================
+   LANGUAGE SHOWCASE
+   =========================================================================== */
+.langs { padding: clamp(40px, 6vw, 74px) 0; border-top: 1px solid var(--border); overflow: hidden; }
+.langs-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.langs-head h2 { font-size: clamp(24px, 3vw, 34px); margin-top: 12px; }
+.langs-group { margin-top: 34px; }
+.langs-group .glabel {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono); font-size: 12.5px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+}
+.langs-group .glabel::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.langs-group .glabel .count { color: var(--accent-text); }
+
+/* Static wrapping rows — each language listed once (no duplicate marquee set). */
+.lang-row {
+  list-style: none; margin: 18px 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 12px;
+}
+
+.lang-row > li { display: flex; }
+.lang-pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 11px 17px 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 14.5px; font-weight: 500; color: var(--text);
+  text-decoration: none;
+  transition: transform .2s var(--ease), border-color .2s, color .2s;
+  flex-shrink: 0;
+}
+.lang-pill:hover, .lang-pill:focus-visible { transform: translateY(-2px); border-color: var(--accent); color: var(--text); }
+/* discoverability: a ↗ reveals on hover/focus to signal these open the repo */
+.lang-pill::after {
+  content: "↗"; font-size: 12px; color: var(--accent-text);
+  max-width: 0; overflow: hidden; opacity: 0;
+  transition: max-width .2s var(--ease), opacity .2s var(--ease);
+}
+.lang-pill:hover::after, .lang-pill:focus-visible::after { max-width: 1em; opacity: 1; }
+.lang-pill .logo { width: 22px; height: 22px; display: grid; place-items: center; }
+.lang-pill .logo img { max-width: 22px; max-height: 22px; width: auto; height: auto; object-fit: contain; }
+.lang-pill .logo.mono img { filter: var(--logo-tint); }
+
+/* ===========================================================================
+   FOOTER
+   =========================================================================== */
+/* Closing CTA band */
+.cta-end { padding: clamp(48px, 8vw, 92px) 0; border-top: 1px solid var(--border); text-align: center; }
+.cta-end h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -.02em; }
+.cta-end p { margin-top: 12px; }
+.cta-end .hero-ctas { justify-content: center; margin-top: 28px; }
+
+.footer { border-top: 1px solid var(--border); padding: clamp(40px, 6vw, 64px) 0 40px; background: var(--surface); }
+.footer-grid { display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; }
+.footer-grid > * { min-width: 0; }
+.footer-brand { display: flex; align-items: center; gap: 11px; }
+.footer-brand .wordmark { height: 22px; }
+.footer p.tag { color: var(--muted); margin-top: 14px; font-size: 14.5px; max-width: 34ch; }
+.footer-nav { display: flex; gap: clamp(30px, 6vw, 70px); flex-wrap: wrap; }
+.footer-col h3 {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 14px;
+}
+.footer-col a { display: flex; align-items: center; color: var(--text); font-size: 14.5px; min-height: 44px; padding: 4px 0; font-weight: 500; }
+.footer-col a:hover { color: var(--accent-text); }
+.footer-bottom {
+  margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  color: var(--muted); font-size: 13.5px;
+}
+
+/* ===========================================================================
+   REVEAL ON SCROLL — only active when html.js (JS on + motion allowed).
+   Without .js, .reveal has NO transform/opacity, so static render = visible.
+   =========================================================================== */
+.js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.js .reveal.in { opacity: 1; transform: none; }
+.js .reveal.d1 { transition-delay: .08s; }
+.js .reveal.d2 { transition-delay: .16s; }
+
+/* logo tint for monochrome marks so they read on either surface */
+html[data-mode="dark"]  { --logo-tint: brightness(0) invert(1) opacity(.85); }
+html[data-mode="light"] { --logo-tint: brightness(0) opacity(.78); }
+</style>
+</head>
+
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================ NAV ============================
+     CANONICAL LINK SET: the primary nav links below are the "top tasks"
+     subset of the full sitemap in the footer; the mobile menu re-uses the
+     same hrefs. Keep nav, mobile menu, and footer in sync. The full list of
+     valid link targets is documented in this directory's README.md. -->
+<header class="nav">
+  <nav class="nav-inner" aria-label="Primary">
+    <a class="brand" href="/" aria-label="Smithy home">
+      <img class="wordmark" id="wordmark" src="assets/smithy-dark.svg" alt="Smithy" />
+    </a>
+    <div class="nav-links">
+      <a href="/2.0/index.html">Documentation</a>
+      <a href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+      <a href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </div>
+    <div class="nav-right">
+      <a class="icon-btn" href="https://github.com/smithy-lang/smithy" target="_blank" rel="noopener" aria-label="Smithy on GitHub">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" width="18" height="18">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+      </a>
+      <button class="toggle icon-btn" id="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>
+        </svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+      <a class="btn btn-primary" href="/2.0/quickstart.html">Get Started</a>
+      <button class="nav-menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="i-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+        <svg class="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:none">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a href="/2.0/index.html">Documentation</a>
+      <a href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+      <a href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+      <a href="https://github.com/smithy-lang/smithy">GitHub</a>
+      <a class="btn btn-primary" href="/2.0/quickstart.html">Get Started</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <h1>Build services.<br />Build SDKs.<br />Build with <span class="hl">Smithy</span>.</h1>
+          <p class="hero-sub">Define your API once in a clear, protocol-agnostic language. Smithy generates type-safe clients, servers, and docs across ten languages from a single model, and it powers the APIs and SDKs at AWS.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="/2.0/quickstart.html">Get Started <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="/2.0/index.html">Read the docs</a>
+          </div>
+          <ul class="hero-trust" aria-label="About Smithy">
+            <li>Open source, Apache 2.0</li>
+            <li>Created and used at AWS</li>
+            <li>10+ languages</li>
+          </ul>
+        </div>
+
+        <!-- DARK editor panel — hand-spanned Smithy IDL, @traits in --tok-trait -->
+        <div class="editor reveal d1" role="img" aria-label="Code example: a Smithy IDL model (weather.smithy) defining a Weather service with a City resource and a read-only GetCity operation whose input and output use required members.">
+          <div class="editor-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="editor-file">weather.smithy</span>
+          </div>
+          <pre class="editor-body"><code><span class="row"><span class="tk">$version</span><span class="tp">:</span> <span class="ts">"2"</span></span><span class="row"><span class="tk">namespace</span> <span class="ty">example.weather</span></span><span class="row"> </span><span class="row"><span class="tk">service</span> <span class="ty">Weather</span> <span class="tp">{</span></span><span class="row">    <span class="tm">version</span><span class="tp">:</span> <span class="ts">"2006-03-01"</span></span><span class="row">    <span class="tm">resources</span><span class="tp">:</span> <span class="tp">[</span><span class="ty">City</span><span class="tp">]</span></span><span class="row"><span class="tp">}</span></span><span class="row"> </span><span class="row"><span class="tk">resource</span> <span class="ty">City</span> <span class="tp">{</span></span><span class="row">    <span class="tm">identifiers</span><span class="tp">: {</span> <span class="tm">cityId</span><span class="tp">:</span> <span class="ty">CityId</span> <span class="tp">}</span></span><span class="row">    <span class="tm">read</span><span class="tp">:</span> <span class="ty">GetCity</span></span><span class="row">    <span class="tm">list</span><span class="tp">:</span> <span class="ty">ListCities</span></span><span class="row"><span class="tp">}</span></span><span class="row"> </span><span class="row"><span class="tt">@readonly</span></span><span class="row"><span class="tk">operation</span> <span class="ty">GetCity</span> <span class="tp">{</span></span><span class="row">    <span class="tm">input</span> <span class="tp">:= {</span></span><span class="row">        <span class="tt">@required</span></span><span class="row">        <span class="tm">cityId</span><span class="tp">:</span> <span class="ty">CityId</span></span><span class="row">    <span class="tp">}</span></span><span class="row">    <span class="tm">output</span> <span class="tp">:= {</span></span><span class="row">        <span class="tt">@required</span></span><span class="row">        <span class="tm">name</span><span class="tp">:</span> <span class="ty">String</span></span><span class="row">    <span class="tp">}</span></span><span class="row"><span class="tp">}</span></span></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ONE MODEL, EVERY TARGET ===================== -->
+  <section class="fanout">
+    <div class="wrap">
+      <div class="fanout-head reveal">
+        <h2>Write your API once. Generate everything.</h2>
+        <p>One model in. SDKs, servers, docs, and OpenAPI out. <code class="inline-code">smithy build</code> does the rest.</p>
+      </div>
+
+      <!-- Build pipeline: model -> smithy build -> outputs. Accurate to how
+           smithy build orchestrates projections + plugins (per Smithy team). -->
+      <div class="pipe reveal d1">
+        <div class="pipe-node pipe-source">
+          <img class="anvil" src="assets/smithy-anvil.svg" alt="" aria-hidden="true" />
+          <span class="pipe-label">Smithy model</span>
+          <code>weather.smithy</code>
+        </div>
+
+        <div class="pipe-stem" aria-hidden="true"></div>
+
+        <div class="pipe-node pipe-build">
+          <span class="pipe-prompt" aria-hidden="true">$</span>
+          <span class="pipe-cmd">smithy build</span>
+        </div>
+
+        <div class="pipe-stem pipe-stem-fan" aria-hidden="true"></div>
+
+        <ul class="pipe-outputs" aria-label="Generated artifacts">
+          <li class="pipe-out">
+            <span class="pipe-out-title">Client SDKs</span>
+            <span class="pipe-out-note">10 languages</span>
+          </li>
+          <li class="pipe-out">
+            <span class="pipe-out-title">Servers</span>
+            <span class="pipe-out-note">TypeScript, Java</span>
+          </li>
+          <li class="pipe-out">
+            <span class="pipe-out-title">Documentation</span>
+            <span class="pipe-out-note">API reference</span>
+          </li>
+          <li class="pipe-out">
+            <span class="pipe-out-title">OpenAPI</span>
+            <span class="pipe-out-note">&amp; JSON Schema</span>
+          </li>
+        </ul>
+
+        <div class="pipe-langs">
+          <span class="pipe-langs-label">Client SDKs ship in ten languages</span>
+          <div class="fan-targets" role="list" aria-label="Client SDK languages">
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-typescript" target="_blank" rel="noopener" aria-label="TypeScript code generator on GitHub"><span class="logo"><img src="assets/icons/ts.svg" alt="" /></span>TypeScript</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-python" target="_blank" rel="noopener" aria-label="Python code generator on GitHub"><span class="logo"><img src="assets/icons/python.svg" alt="" /></span>Python</a>
+            <a class="chip" role="listitem" href="https://github.com/aws/smithy-go" target="_blank" rel="noopener" aria-label="Go code generator on GitHub"><span class="logo mono"><img src="assets/icons/go.svg" alt="" /></span>Go</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-rs" target="_blank" rel="noopener" aria-label="Rust code generator on GitHub"><span class="logo mono"><img src="assets/icons/rust.svg" alt="" /></span>Rust</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-kotlin" target="_blank" rel="noopener" aria-label="Kotlin code generator on GitHub"><span class="logo"><img src="assets/icons/kotlin.svg" alt="" /></span>Kotlin</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-swift" target="_blank" rel="noopener" aria-label="Swift code generator on GitHub"><span class="logo"><img src="assets/icons/swift.svg" alt="" /></span>Swift</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-java" target="_blank" rel="noopener" aria-label="Java code generator on GitHub"><span class="logo"><img src="assets/icons/duke.svg" alt="" /></span>Java</a>
+            <a class="chip" role="listitem" href="https://github.com/disneystreaming/smithy4s" target="_blank" rel="noopener" aria-label="Scala code generator on GitHub"><span class="logo"><img src="assets/icons/scala.svg" alt="" /></span>Scala</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-ruby" target="_blank" rel="noopener" aria-label="Ruby code generator on GitHub"><span class="logo"><img src="assets/icons/ruby.png" alt="" /></span>Ruby</a>
+            <a class="chip" role="listitem" href="https://github.com/smithy-lang/smithy-dafny" target="_blank" rel="noopener" aria-label="Dafny code generator on GitHub"><span class="logo"><img src="assets/icons/dafny.svg" alt="" /></span>Dafny</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FEATURES ============================ -->
+  <section class="features">
+    <div class="wrap">
+
+      <!-- 1 · Protocol-agnostic -->
+      <article class="feature">
+        <div class="feature-copy reveal">
+          <span class="feature-num">01</span>
+          <h3>Protocol-agnostic by design</h3>
+          <p>One model describes the shapes; the protocol decides the wire format. The same service serves REST JSON, RPC v2 CBOR, AWS JSON, and query/XML, so you can adopt new protocols without touching the model.</p>
+          <a class="feature-link" href="/2.0/spec/index.html">Explore protocols <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="feature-media reveal d1">
+          <div class="mock">
+            <div class="tabs" role="tablist" aria-label="Wire format">
+              <button class="tab" role="tab" id="tab-rest" aria-selected="true" aria-controls="panel-rest">REST JSON</button>
+              <button class="tab" role="tab" id="tab-rpc" aria-selected="false" aria-controls="panel-rpc">RPC v2 CBOR</button>
+              <button class="tab" role="tab" id="tab-awsjson" aria-selected="false" aria-controls="panel-awsjson">AWS JSON</button>
+              <button class="tab" role="tab" id="tab-query" aria-selected="false" aria-controls="panel-query">AWS Query</button>
+            </div>
+            <div class="mock-body json">
+              <div class="tabpanel active" id="panel-rest" role="tabpanel" aria-labelledby="tab-rest">
+<div class="term-line dim">GET /cities/sea-01</div>
+<div class="term-line dim">content-type: application/json</div>
+<pre class="code-pre">{
+  <span class="k">"name"</span><span class="p">:</span> <span class="s">"Seattle"</span><span class="p">,</span>
+  <span class="k">"coordinates"</span><span class="p">:</span> {
+    <span class="k">"latitude"</span><span class="p">:</span> <span class="n">47.6062</span><span class="p">,</span>
+    <span class="k">"longitude"</span><span class="p">:</span> <span class="n">-122.3321</span>
+  }
+}</pre>
+              </div>
+              <div class="tabpanel" id="panel-rpc" role="tabpanel" aria-labelledby="tab-rpc" hidden>
+<div class="term-line dim">POST /service/Weather/operation/GetCity</div>
+<div class="term-line dim">smithy-protocol: rpc-v2-cbor</div>
+<pre class="code-pre"><span class="dim">// CBOR is binary; shown decoded</span>
+<span class="p">{</span>
+  <span class="k">name</span><span class="p">:</span> <span class="s">"Seattle"</span><span class="p">,</span>
+  <span class="k">coordinates</span><span class="p">:</span> <span class="p">{</span> <span class="k">latitude</span><span class="p">:</span> <span class="n">47.6062</span><span class="p">,</span> <span class="k">longitude</span><span class="p">:</span> <span class="n">-122.3321</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+              </div>
+              <div class="tabpanel" id="panel-awsjson" role="tabpanel" aria-labelledby="tab-awsjson" hidden>
+<div class="term-line dim">POST /</div>
+<div class="term-line dim">x-amz-target: Weather.GetCity</div>
+<div class="term-line dim">content-type: application/x-amz-json-1.0</div>
+<pre class="code-pre">{
+  <span class="k">"name"</span><span class="p">:</span> <span class="s">"Seattle"</span><span class="p">,</span>
+  <span class="k">"coordinates"</span><span class="p">:</span> <span class="p">{</span> <span class="k">"latitude"</span><span class="p">:</span> <span class="n">47.6062</span><span class="p">,</span> <span class="k">"longitude"</span><span class="p">:</span> <span class="n">-122.3321</span> <span class="p">}</span>
+}</pre>
+              </div>
+              <div class="tabpanel" id="panel-query" role="tabpanel" aria-labelledby="tab-query" hidden>
+<div class="term-line dim">POST / · application/x-www-form-urlencoded</div>
+<div class="term-line dim">Action=GetCity&amp;cityId=sea-01</div>
+<pre class="code-pre"><span class="dim">&lt;!-- XML response --&gt;</span>
+<span class="p">&lt;</span><span class="ty">GetCityResult</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="k">name</span><span class="p">&gt;</span>Seattle<span class="p">&lt;/</span><span class="k">name</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="k">coordinates</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="k">latitude</span><span class="p">&gt;</span><span class="n">47.6062</span><span class="p">&lt;/</span><span class="k">latitude</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="k">coordinates</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="ty">GetCityResult</span><span class="p">&gt;</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 · Codify & enforce API governance -->
+      <article class="feature">
+        <div class="feature-copy reveal">
+          <span class="feature-num">02</span>
+          <h3>Declarative API governance</h3>
+          <p>Your standards live in the model, not in an external linter, so they are validated by <code class="inline-code">smithy build</code> itself and cannot be bypassed. Share the rules org-wide and catch design and quality issues before your customers do.</p>
+          <a class="feature-link" href="/2.0/guides/index.html">Read the guides <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="feature-media reveal d1">
+          <div class="mock">
+            <div class="mock-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>zsh: smithy build</span></div>
+            <div class="mock-body" role="img" aria-label="Terminal: smithy build validates 142 shapes, then fails with one error, MissingPaginatedTrait, because ListCities returns a list but is not annotated @paginated.">
+<div class="term-line"><span class="prompt">$</span><span>smithy build</span></div>
+<div class="term-line dim">Validating model (142 shapes)…</div>
+<div class="term-line"><span class="ok">✓</span><span class="dim">RestJson1 protocol traits resolved</span></div>
+<div class="term-line"><span class="ok">✓</span><span class="dim">All operations have documentation</span></div>
+<div class="term-line"><span class="ok">✓</span><span class="dim">Pagination tokens type-checked</span></div>
+<div class="term-line"><span class="err">✕ ERROR</span><span><span class="rule-tag">MissingPaginatedTrait</span></span></div>
+<div class="term-line dim sub">ListCities returns a list but is not @paginated</div>
+<div class="term-line dim sub">at example.weather#ListCities (weather.smithy:24)</div>
+<div class="term-line"><span class="err">1 error</span><span class="dim">, 0 warnings. Build failed.</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 · Designed to evolve -->
+      <article class="feature">
+        <div class="feature-copy reveal">
+          <span class="feature-num">03</span>
+          <h3>Backward-compatible evolution</h3>
+          <p>Extend the meta-model through traits to capture more about your services without breaking changes. Smithy checks every revision for backward compatibility.</p>
+          <a class="feature-link" href="/2.0/spec/model.html">Explore traits <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="feature-media reveal d1">
+          <div class="mock">
+            <div class="mock-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>weather.smithy · diff</span></div>
+            <div class="mock-body diff" role="img" aria-label="Diff of weather.smithy: adding the @retryable trait to the ThrottlingError shape. This is a backward-compatible change with no breaking change.">
+<span class="row ctx"><span class="tt">@error</span>(<span class="ty">"client"</span>)</span>
+<span class="row add"><span class="tt">@retryable</span></span>
+<span class="row ctx"><span class="tk">structure</span> ThrottlingError {</span>
+<span class="row ctx">    <span class="tt">@required</span> message: String</span>
+<span class="row ctx">}</span>
+              <div class="badge-compat">✓ Backward-compatible. No breaking change.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 · Resource-based -->
+      <article class="feature">
+        <div class="feature-copy reveal">
+          <span class="feature-num">04</span>
+          <h3>Resource-based modeling</h3>
+          <p>Model your API as resources and operations. Smithy uses that structure to generate richer artifacts, from CloudFormation schemas to type-safe SDKs and docs.</p>
+          <a class="feature-link" href="/2.0/spec/service-types.html">Model resources <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="feature-media reveal d1">
+          <div class="mock">
+            <div class="mock-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>model explorer</span></div>
+            <div class="mock-body" role="img" aria-label="Resource tree for the Weather service: a City resource with read GetCity and list ListCities operations, plus a top-level GetCurrentTime operation.">
+              <ul class="tree">
+                <li><span class="node-svc">service</span> Weather</li>
+                <li class="indent"><span class="node-res"><img src="assets/smithy-anvil.svg" alt="" aria-hidden="true" style="width:13px;height:13px"/>resource City</span></li>
+                <li class="indent deep"><span class="kw">read</span> · <span class="node-op">GetCity</span></li>
+                <li class="indent deep"><span class="kw">list</span> · <span class="node-op">ListCities</span></li>
+                <li class="indent"><span class="node-op"><span class="verb">operation</span> GetCurrentTime</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============================ QUOTE ============================ -->
+  <section class="quote">
+    <div class="wrap reveal">
+      <blockquote>
+        <span class="mk" aria-hidden="true">“</span>Smithy is the cornerstone of cross-team collaboration in our organization. The simplicity of the base language, rich extensibility, and the ease of writing correct tooling make it a must-try for organizations that want to evolve their APIs safely and efficiently.<span class="mk" aria-hidden="true">”</span>
+      </blockquote>
+      <cite><strong>SiriusXM</strong></cite>
+    </div>
+  </section>
+
+  <!-- ===================== LANGUAGE SHOWCASE ===================== -->
+  <section class="langs">
+    <div class="wrap">
+      <div class="langs-head reveal">
+        <div>
+          <span class="eyebrow">Supported languages</span>
+          <h2>Clients and servers, in your language.</h2>
+        </div>
+        <p class="muted" style="max-width:36ch">One model compiles to idiomatic, type-safe code. No hand-written glue.</p>
+      </div>
+
+      <div class="langs-group clients reveal d1">
+        <div class="glabel">Clients <span class="count">· 10</span></div>
+        <ul class="lang-row">
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-typescript" target="_blank" rel="noopener" aria-label="TypeScript on GitHub"><span class="logo"><img src="assets/icons/ts.svg" alt=""/></span>TypeScript</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-python" target="_blank" rel="noopener" aria-label="Python on GitHub"><span class="logo"><img src="assets/icons/python.svg" alt=""/></span>Python</a></li>
+          <li><a class="lang-pill" href="https://github.com/aws/smithy-go" target="_blank" rel="noopener" aria-label="Go on GitHub"><span class="logo mono"><img src="assets/icons/go.svg" alt=""/></span>Go</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-rs" target="_blank" rel="noopener" aria-label="Rust on GitHub"><span class="logo mono"><img src="assets/icons/rust.svg" alt=""/></span>Rust</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-kotlin" target="_blank" rel="noopener" aria-label="Kotlin on GitHub"><span class="logo"><img src="assets/icons/kotlin.svg" alt=""/></span>Kotlin</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-swift" target="_blank" rel="noopener" aria-label="Swift on GitHub"><span class="logo"><img src="assets/icons/swift.svg" alt=""/></span>Swift</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-java" target="_blank" rel="noopener" aria-label="Java on GitHub"><span class="logo"><img src="assets/icons/duke.svg" alt=""/></span>Java</a></li>
+          <li><a class="lang-pill" href="https://github.com/disneystreaming/smithy4s" target="_blank" rel="noopener" aria-label="Scala on GitHub"><span class="logo"><img src="assets/icons/scala.svg" alt=""/></span>Scala</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-ruby" target="_blank" rel="noopener" aria-label="Ruby on GitHub"><span class="logo"><img src="assets/icons/ruby.png" alt=""/></span>Ruby</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-dafny" target="_blank" rel="noopener" aria-label="Dafny on GitHub"><span class="logo"><img src="assets/icons/dafny.svg" alt=""/></span>Dafny</a></li>
+        </ul>
+      </div>
+
+      <div class="langs-group servers reveal d2">
+        <div class="glabel">Servers <span class="count">· 4</span></div>
+        <ul class="lang-row">
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-typescript" target="_blank" rel="noopener" aria-label="TypeScript on GitHub"><span class="logo"><img src="assets/icons/ts.svg" alt=""/></span>TypeScript</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-python" target="_blank" rel="noopener" aria-label="Python on GitHub"><span class="logo"><img src="assets/icons/python.svg" alt=""/></span>Python</a></li>
+          <li><a class="lang-pill" href="https://github.com/aws/smithy-go" target="_blank" rel="noopener" aria-label="Go on GitHub"><span class="logo mono"><img src="assets/icons/go.svg" alt=""/></span>Go</a></li>
+          <li><a class="lang-pill" href="https://github.com/smithy-lang/smithy-rs" target="_blank" rel="noopener" aria-label="Rust on GitHub"><span class="logo mono"><img src="assets/icons/rust.svg" alt=""/></span>Rust</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLOSING CTA ===================== -->
+  <section class="cta-end">
+    <div class="wrap reveal">
+      <h2>Build your first SDK in minutes.</h2>
+      <p class="muted">Start with the quickstart, or read the full specification.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="/2.0/quickstart.html">Get Started <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="/2.0/spec/index.html">Read the specification</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img class="wordmark" id="wordmark-footer" src="assets/smithy-dark.svg" alt="Smithy" />
+        </div>
+        <p class="tag">An open-source IDL for services and SDKs. Forged at AWS, built in the open.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-col">
+          <h3>Learn</h3>
+          <a href="/2.0/index.html">Documentation</a>
+          <a href="/2.0/quickstart.html">Quick Start</a>
+          <a href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+        </div>
+        <div class="footer-col">
+          <h3>Community</h3>
+          <a href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+          <a href="https://github.com/smithy-lang/smithy">GitHub</a>
+          <a href="https://github.com/smithy-lang/smithy/issues">Issues</a>
+        </div>
+        <div class="footer-col">
+          <h3>Build</h3>
+          <a href="/2.0/guides/index.html">Guides</a>
+          <a href="/2.0/spec/index.html">Specification</a>
+          <a href="/implementations.html">CLI &amp; Tools</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="copyright-year">2024</span> Smithy contributors. Apache 2.0.</span>
+      <span>Maintained by AWS &amp; the open-source community.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  /* ---------- Copyright year (auto-updates) ---------- */
+  var yearEl = document.getElementById('copyright-year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  /* ---------- Theme toggle ---------- */
+  var toggle = document.getElementById('theme-toggle');
+  var marks = [document.getElementById('wordmark'), document.getElementById('wordmark-footer')];
+
+  // wordmark: light-text mark on dark bg, dark-text mark on light bg.
+  // aria-pressed = "dark mode active"; aria-label always states the next action.
+  function syncTheme() {
+    var dark = root.getAttribute('data-mode') === 'dark';
+    var src = dark ? 'assets/smithy-dark.svg' : 'assets/smithy.svg';
+    marks.forEach(function (m) { if (m) m.setAttribute('src', src); });
+    if (toggle) {
+      toggle.setAttribute('aria-pressed', String(dark));
+      toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  syncTheme(); // set correct initial src/label for whatever mode we booted in
+
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      var next = root.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-mode', next);
+      // Clicking sets an explicit override that wins over the system preference.
+      try { localStorage.setItem('smithy-mode', next); } catch (e) {}
+      syncTheme();
+    });
+  }
+
+  /* ---------- Follow the system theme live ---------- */
+  // When the user has NOT set an explicit override, track OS light/dark changes
+  // as they happen (e.g. macOS auto day/night), not just at first paint.
+  try {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var onSchemeChange = function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem('smithy-mode'); } catch (err) {}
+      if (saved === 'light' || saved === 'dark') return; // explicit override wins
+      root.setAttribute('data-mode', e.matches ? 'dark' : 'light');
+      syncTheme();
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onSchemeChange);
+    else if (mq.addListener) mq.addListener(onSchemeChange); // older Safari
+  } catch (e) {}
+
+  /* ---------- Mobile menu ---------- */
+  var menuBtn = document.getElementById('menu-btn');
+  var menu = document.getElementById('mobile-menu');
+  function setMenu(open) {
+    if (!menuBtn || !menu) return;
+    menu.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    var iOpen = menuBtn.querySelector('.i-open');
+    var iClose = menuBtn.querySelector('.i-close');
+    if (iOpen) iOpen.style.display = open ? 'none' : '';
+    if (iClose) iClose.style.display = open ? '' : 'none';
+    if (open) {
+      var first = menu.querySelector('a');
+      if (first) first.focus();
+    }
+  }
+  if (menuBtn && menu) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(menuBtn.getAttribute('aria-expanded') !== 'true');
+    });
+    // close on link activation
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) { setMenu(false); menuBtn.focus(); }
+    });
+    // Esc closes and returns focus to the button
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') {
+        setMenu(false);
+        menuBtn.focus();
+      }
+    });
+    // closing when resizing up to desktop avoids a stuck-open panel
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 860 && menuBtn.getAttribute('aria-expanded') === 'true') setMenu(false);
+    });
+  }
+
+  /* ---------- Protocol tabs (ARIA tabs widget + roving tabindex) ---------- */
+  document.querySelectorAll('[role="tablist"]').forEach(function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+
+    function activate(tab, setFocus) {
+      var group = tab.closest('.mock');
+      group.querySelectorAll('[role="tab"]').forEach(function (t) {
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      group.querySelectorAll('.tabpanel').forEach(function (p) { p.classList.remove('active'); p.hidden = true; });
+      tab.setAttribute('aria-selected', 'true');
+      tab.setAttribute('tabindex', '0');
+      var panel = document.getElementById(tab.getAttribute('aria-controls'));
+      if (panel) { panel.classList.add('active'); panel.hidden = false; }
+      if (setFocus) tab.focus();
+    }
+
+    // initial roving tabindex
+    tabs.forEach(function (t) {
+      t.setAttribute('tabindex', t.getAttribute('aria-selected') === 'true' ? '0' : '-1');
+      t.addEventListener('click', function () { activate(t, false); });
+    });
+
+    list.addEventListener('keydown', function (e) {
+      var i = tabs.indexOf(document.activeElement);
+      if (i === -1) return;
+      var next = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = tabs[(i + 1) % tabs.length];
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); activate(next, true); }
+    });
+  });
+
+  /* ---------- Reveal on scroll — only when html.js (JS on + motion allowed) ---------- */
+  if (root.classList.contains('js') && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>
