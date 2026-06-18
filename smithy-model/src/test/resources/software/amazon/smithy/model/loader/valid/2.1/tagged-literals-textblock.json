@@ -4,7 +4,7 @@
         "smithy.example#ZipCode": {
             "type": "string",
             "traits": {
-                "smithy.api#pattern": "^\\d{5}(-\\d{4})?$\n"
+                "smithy.api#pattern": "^\\d{5}(-\\d{4})?$"
             }
         },
         "smithy.example#CborExample": {

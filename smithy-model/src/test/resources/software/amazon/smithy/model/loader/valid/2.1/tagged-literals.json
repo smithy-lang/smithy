@@ -16,7 +16,7 @@
         "smithy.example#QuoteInRegex": {
             "type": "string",
             "traits": {
-                "smithy.api#pattern": "a\"b"
+                "smithy.api#pattern": "a\\\"b"
             }
         },
         "smithy.example#TaggedLiteralsExample": {

@@ -2575,8 +2575,9 @@ Smithy defines the following built-in tags:
     * - Tag
       - Description
     * - ``#re``
-      - Regular expression literal. Backslash sequences are passed through
-        literally, allowing regex patterns to be written without double-escaping.
+      - Regular expression literal. All characters are passed through literally
+        with no escape evaluation. Newlines are stripped, allowing patterns to
+        span multiple lines in text blocks.
     * - ``#b``
       - Binary literal. Interprets the string as a sequence of bytes using
         hex escapes (``\xHH``), octal escapes (``\OOO``), and named escapes.
@@ -2598,11 +2599,11 @@ tagged string literals require version 2.1 or later.
 ``#re`` tag
 -----------
 
-The ``#re`` tag treats backslash sequences as literal characters rather than
-escape sequences. This allows regular expression patterns to be written
-naturally without double-escaping. Only ``\"`` (escaped quote) and ``\\``
-(escaped backslash) are interpreted; all other ``\X`` sequences are passed
-through as two literal characters.
+The ``#re`` tag passes all characters through literally without any escape
+evaluation. This allows regular expression patterns to be written naturally
+without double-escaping. Newlines are stripped from the content, so patterns
+in text blocks are concatenated across lines. To match a newline character in
+the regex, use ``\n``.
 
 .. code-block:: smithy
 
@@ -2616,17 +2617,31 @@ The above is equivalent to:
     @pattern("^\\d{5}(-\\d{4})?$")
     string ZipCode
 
-Text blocks can be used with ``#re`` for multiline patterns. Escaped newlines
-(a backslash immediately before a newline) are removed from the output,
-allowing long patterns to be split across lines:
+.. rubric:: Escaping in ``#re``
+
+Because the content is passed through literally, the only special handling is
+at the tokenizer level: a ``\"`` sequence prevents the string from being
+terminated but is included in the output as-is. In regular expressions,
+``\"`` is equivalent to ``"`` so this does not change the pattern's meaning.
+In text blocks, quotes do not need escaping.
+
+.. rubric:: Text blocks
+
+In text blocks, newlines are stripped and lines are concatenated. This lets
+you split long patterns across multiple lines without any special syntax:
 
 .. code-block:: smithy
 
     @pattern(#re """
-        ^\d{5}\
-        (-\d{4})?$
+        [A-Z]:\\\\
+        ([\w\s\d]+\\)*
+        ([\w\s\d]+(\.[\w\d]+)?)?
         """)
-    string ZipCode
+    string WindowsPath
+
+The above produces the pattern ``[A-Z]:\\\\([\w\s\d]+\\)*([\w\s\d]+(\.[\w\d]+)?)?``
+with all lines joined together. If you need a literal newline in your regex,
+use ``\n``.
 
 
 ``#b`` tag

@@ -64,32 +64,14 @@ final class TaggedStringLiteral {
     }
 
     /**
-     * Scans regex string contents. {@code \"} produces a literal double quote,
-     * {@code \\} produces a literal backslash, and all other backslash sequences
-     * are passed through as two literal characters.
+     * Scans regex string contents. All characters are passed through literally
+     * except newlines which are stripped, allowing multiline patterns in text blocks.
      */
     private static Result scanRegexContents(CharSequence lexeme) {
         StringBuilder result = new StringBuilder(lexeme.length());
         for (int i = 0; i < lexeme.length(); i++) {
             char c = lexeme.charAt(i);
-            if (c == '\\' && i + 1 < lexeme.length()) {
-                char next = lexeme.charAt(i + 1);
-                if (next == '"') {
-                    result.append('"');
-                    i++;
-                } else if (next == '\\') {
-                    result.append('\\');
-                    i++;
-                } else if (next == '\n') {
-                    // Escaped newline: skip both backslash and newline.
-                    i++;
-                } else {
-                    // Pass through literally as two characters.
-                    result.append(c);
-                    result.append(next);
-                    i++;
-                }
-            } else {
+            if (c != '\n') {
                 result.append(c);
             }
         }

@@ -426,7 +426,7 @@ class DefaultTokenizer implements IdlTokenizer {
     }
 
     /**
-     * Reads raw content between quotes without applying escape processing.
+     * Reads raw content between quotes without evaluating escape sequences.
      */
     private CharSequence parseRawStringContents(boolean triple) {
         int start = parser.position();

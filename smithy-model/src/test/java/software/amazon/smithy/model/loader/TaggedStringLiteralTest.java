@@ -27,9 +27,11 @@ public class TaggedStringLiteralTest {
         return Stream.of(
                 Arguments.of("^\\d{5}$", "^\\d{5}$"),
                 Arguments.of("\\w+\\s\\d", "\\w+\\s\\d"),
-                Arguments.of("\\\\", "\\"),
-                Arguments.of("\\\"", "\""),
-                Arguments.of("a\\\"b", "a\"b"),
+                // Backslashes pass through literally (no escape processing)
+                Arguments.of("\\\\", "\\\\"),
+                // Escaped quote passes through literally (tokenizer handles termination)
+                Arguments.of("\\\"", "\\\""),
+                Arguments.of("a\\\"b", "a\\\"b"),
                 Arguments.of("hello", "hello"),
                 Arguments.of("", ""),
                 Arguments.of("[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}", "[a-z]+\\.(\\d{1,3}\\.){3}\\d{1,3}"));
@@ -44,17 +46,28 @@ public class TaggedStringLiteralTest {
     }
 
     @Test
-    public void regexEscapedNewlineIsRemoved() {
-        TaggedStringLiteral.Result result = TaggedStringLiteral.scan("re", "abc\\\ndef", false);
+    public void regexNewlinesAreStripped() {
+        // Newlines are stripped automatically (no backslash needed)
+        TaggedStringLiteral.Result result = TaggedStringLiteral.scan("re", "abc\ndef", false);
         assertThat(result.stringValue.toString(), equalTo("abcdef"));
     }
 
     @Test
-    public void regexTextBlock() {
+    public void regexTextBlockStripsNewlinesAndConcatenatesLines() {
         // Text block raw content starts with \n (as it comes from the tokenizer).
+        // After text block normalization, lines are concatenated by stripping newlines.
         TaggedStringLiteral.Result result = TaggedStringLiteral.scan("re", "\n    ^\\d{5}$\n    ", true);
         assertThat(result.token, is(IdlToken.STRING));
-        assertThat(result.stringValue.toString(), equalTo("^\\d{5}$\n"));
+        assertThat(result.stringValue.toString(), equalTo("^\\d{5}$"));
+    }
+
+    @Test
+    public void regexTextBlockMultilinePattern() {
+        // Multiline pattern: lines are joined without needing trailing backslash
+        TaggedStringLiteral.Result result = TaggedStringLiteral.scan("re",
+                "\n    [A-Z]:\\\\\\\\\n    ([\\w\\s\\d]+\\\\)*\n    ", true);
+        assertThat(result.token, is(IdlToken.STRING));
+        assertThat(result.stringValue.toString(), equalTo("[A-Z]:\\\\\\\\([\\w\\s\\d]+\\\\)*"));
     }
 
     // --- #b tag tests ---
