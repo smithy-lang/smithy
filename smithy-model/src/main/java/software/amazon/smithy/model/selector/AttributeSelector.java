@@ -106,6 +106,11 @@ final class AttributeSelector implements InternalSelector {
         }
     }
 
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
+
     private boolean matchesAttribute(Shape shape, Context stack) {
         AttributeValue lhs = extractor.extract(shape, stack.getVars());
 

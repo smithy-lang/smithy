@@ -56,6 +56,11 @@ final class IdentitySelector implements Selector {
     }
 
     @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "*";
     }

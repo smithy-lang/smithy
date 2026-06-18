@@ -1219,4 +1219,76 @@ public class SelectorTest {
                 () -> Selector.parse("string ) extra"));
         assertThat(e.getMessage(), containsString(")"));
     }
+
+    @Test
+    public void detectsWhenOutputIsSubsetOfInput() {
+        // Pure filters only ever emit shapes that were pushed into them.
+        assertThat(Selector.parse("string").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse("[trait|trait]").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse("[id=smithy.api#String]").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse(":not([trait|trait])").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse(":test([trait|trait])").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse(":is(string, integer)").isOutputSubsetOfInput(), equalTo(true));
+        // A :test/:not that reaches out to neighbors or variables internally is still a filter: it only emits the
+        // shape that was pushed in, so it remains a subset of the input.
+        assertThat(Selector.parse(":test(~> operation)").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse("structure :not(> member)").isOutputSubsetOfInput(), equalTo(true));
+        // Reverse neighbors inside :test/:not only drive the boolean decision; the emitted shape is still the input.
+        assertThat(Selector.parse(":test(<)").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse("string :test(< member)").isOutputSubsetOfInput(), equalTo(true));
+        assertThat(Selector.parse(":not(<-[mixin]-)").isOutputSubsetOfInput(), equalTo(true));
+        // A trailing filter after a mapping selector keeps the chain non-subset because the mapping selector in the
+        // middle emits shapes other than the input.
+        assertThat(Selector.parse("$a(string) :test(${a})").isOutputSubsetOfInput(), equalTo(true));
+    }
+
+    @Test
+    public void detectsWhenOutputIsNotSubsetOfInput() {
+        // Selectors that emit shapes other than the input (neighbors, variable contents, roots) are not subsets.
+        assertThat(Selector.parse("> member").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("<").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("< member").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("<-[mixin]-").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("~> operation").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("service ~> operation").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse("${a}").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse(":root(string)").isOutputSubsetOfInput(), equalTo(false));
+        // Any mapping selector anywhere in the chain makes the whole chain non-subset.
+        assertThat(Selector.parse("structure > member").isOutputSubsetOfInput(), equalTo(false));
+        assertThat(Selector.parse(":is(string, > member)").isOutputSubsetOfInput(), equalTo(false));
+    }
+
+    @Test
+    public void restrictingStartingShapesDoesNotChangeSubsetSelectorResults() {
+        // The TraitTargetValidator optimization relies on this: for a subset-of-input selector, evaluating against a
+        // restricted set of starting shapes yields the same membership for those shapes as evaluating the whole
+        // model. Verify across filters, negation, neighbor-reaching tests, and unions.
+        List<String> subsetSelectors = ListUtils.of(
+                "operation",
+                "structure",
+                "[trait|http]",
+                ":not([trait|http])",
+                ":test(~> member)",
+                ":test(<)",
+                "member :test(<)",
+                ":is(operation, structure, member)",
+                "operation :not([trait|http])");
+
+        for (String expression : subsetSelectors) {
+            Selector selector = Selector.parse(expression);
+            assertThat(expression + " should be subset-of-input", selector.isOutputSubsetOfInput(), equalTo(true));
+
+            Set<Shape> all = selector.select(httpModel);
+            // Restricting the starting shapes to the full model must not change the result...
+            Set<Shape> viaFullStartingContext = selector.select(httpModel,
+                    new Selector.StartingContext(httpModel.toSet()));
+            assertThat(expression, viaFullStartingContext, equalTo(all));
+
+            // ...and restricting to just the shapes that already matched must return exactly those shapes, since a
+            // subset selector never emits anything outside its input.
+            Set<Shape> viaMatchedStartingContext = selector.select(httpModel,
+                    new Selector.StartingContext(all));
+            assertThat(expression, viaMatchedStartingContext, equalTo(all));
+        }
+    }
 }
