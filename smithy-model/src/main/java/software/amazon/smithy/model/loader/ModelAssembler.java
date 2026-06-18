@@ -62,6 +62,18 @@ public final class ModelAssembler {
     public static final String ALLOW_UNKNOWN_TRAITS = "assembler.allowUnknownTraits";
 
     /**
+     * Suppresses the "unable to resolve trait" validation events that are emitted when a trait is applied but its
+     * definition is not present in the model.
+     *
+     * <p>This is only honored together with {@link #ALLOW_UNKNOWN_TRAITS} (otherwise unknown traits are errors that
+     * must be reported). When set to {@code true}, the loader skips constructing these {@code WARNING} events
+     * entirely, which avoids materializing a {@link ValidationEvent} (and its formatted message) per unresolved
+     * trait. This is useful for tools that load large models with intentionally absent trait definitions and do not
+     * care about these warnings (for example, querying a model with a selector).
+     */
+    public static final String ALLOW_UNKNOWN_TRAITS_QUIET = "assembler.allowUnknownTraitsQuiet";
+
+    /**
      * Sets {@link URLConnection#setUseCaches} to false.
      *
      * <p>When running in a build environment, using caches can cause exceptions
@@ -521,6 +533,7 @@ public final class ModelAssembler {
                 traitFactory,
                 prelude,
                 areUnknownTraitsAllowed(),
+                areUnknownTraitsQuiet(),
                 validationEventListener,
                 decorator);
         List<ValidationEvent> events = processor.events();
@@ -601,5 +614,10 @@ public final class ModelAssembler {
     private boolean areUnknownTraitsAllowed() {
         Object allowUnknown = properties.get(ModelAssembler.ALLOW_UNKNOWN_TRAITS);
         return allowUnknown != null && (boolean) allowUnknown;
+    }
+
+    private boolean areUnknownTraitsQuiet() {
+        Object quiet = properties.get(ModelAssembler.ALLOW_UNKNOWN_TRAITS_QUIET);
+        return quiet != null && (boolean) quiet;
     }
 }
