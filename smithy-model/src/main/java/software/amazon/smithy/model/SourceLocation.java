@@ -16,7 +16,6 @@ public final class SourceLocation implements FromSourceLocation, Comparable<Sour
     private final String filename;
     private final int line;
     private final int column;
-    private int hash;
 
     public SourceLocation(String filename, int line, int column) {
         this.filename = Objects.requireNonNull(filename);
@@ -72,19 +71,18 @@ public final class SourceLocation implements FromSourceLocation, Comparable<Sour
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof SourceLocation && toString().equals(other.toString());
+        if (other == this) {
+            return true;
+        } else if (!(other instanceof SourceLocation)) {
+            return false;
+        }
+        SourceLocation o = (SourceLocation) other;
+        return line == o.line && column == o.column && filename.equals(o.filename);
     }
 
     @Override
     public int hashCode() {
-        int h = hash;
-
-        if (h == 0) {
-            h = 1 + filename.hashCode() + line * 17 + column;
-            hash = h;
-        }
-
-        return h;
+        return 1 + filename.hashCode() + line * 17 + column;
     }
 
     @Override
