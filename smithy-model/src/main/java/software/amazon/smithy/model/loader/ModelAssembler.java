@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -566,13 +570,7 @@ public final class ModelAssembler {
         }
 
         // Load model files into the processor.
-        for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
-            try {
-                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue(), stringTable);
-            } catch (SourceException e) {
-                processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
-            }
-        }
+        loadModelFiles(processor);
 
         // Register manually added traits. Do this after loading any other sources of shapes
         // so that traits can be applied to them.
@@ -603,6 +601,103 @@ public final class ModelAssembler {
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e));
             return new ValidatedResult<>(transformed, events);
+        }
+    }
+
+    // Parses the registered model files and feeds their operations into the processor. Parsing is CPU-bound and
+    // independent per file, so it is done in parallel when there is more than one file; the order-sensitive processor
+    // is always fed sequentially in deterministic input order. Set the "smithy.parallelLoad" system property to
+    // "false" to force sequential parsing.
+    private void loadModelFiles(LoadOperationProcessor processor) {
+        if (inputStreamModels.size() > 1 && !"false".equals(System.getProperty("smithy.parallelLoad"))) {
+            loadModelFilesInParallel(processor);
+        } else {
+            for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
+                loadModelFile(processor, entry.getKey(), entry.getValue(), stringTable);
+            }
+        }
+    }
+
+    private void loadModelFile(
+            Consumer<LoadOperation> consumer,
+            String filename,
+            Supplier<InputStream> contents,
+            StringTable table
+    ) {
+        try {
+            ModelLoader.load(traitFactory, properties, filename, consumer, contents, table);
+        } catch (SourceException e) {
+            consumer.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
+        }
+    }
+
+    private void loadModelFilesInParallel(LoadOperationProcessor processor) {
+        List<Map.Entry<String, Supplier<InputStream>>> entries = new ArrayList<>(inputStreamModels.entrySet());
+        BufferingConsumer[] consumers = new BufferingConsumer[entries.size()];
+
+        ExecutorService pool = Executors.newWorkStealingPool();
+        try {
+            List<Future<?>> futures = new ArrayList<>(entries.size());
+            for (int i = 0; i < entries.size(); i++) {
+                Map.Entry<String, Supplier<InputStream>> entry = entries.get(i);
+                BufferingConsumer consumer = new BufferingConsumer(processor);
+                consumers[i] = consumer;
+                // StringTable is not thread-safe, so each parse task gets its own.
+                futures.add(pool
+                        .submit(() -> loadModelFile(consumer, entry.getKey(), entry.getValue(), new StringTable())));
+            }
+            for (Future<?> future : futures) {
+                future.get();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ModelImportException("Interrupted while loading models", e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            throw cause instanceof RuntimeException
+                    ? (RuntimeException) cause
+                    : new ModelImportException("Failed to load models", cause);
+        } finally {
+            pool.shutdown();
+        }
+
+        // Feed each file's buffered operations into the processor sequentially, in deterministic input order.
+        for (BufferingConsumer consumer : consumers) {
+            consumer.drain();
+        }
+    }
+
+    /**
+     * Collects the operations parsed from one model file so they can be fed into the processor later.
+     *
+     * <p>After {@link #drain()}, the consumer forwards directly to the processor. This matters because a loader's
+     * forward-reference callbacks can emit additional operations (such as the {@code ApplyTrait} produced by an
+     * {@code apply} statement) when they resolve at build time, long after parsing finished; those late operations
+     * must reach the live processor rather than the now-drained buffer.
+     */
+    private static final class BufferingConsumer implements Consumer<LoadOperation> {
+        private final LoadOperationProcessor processor;
+        private List<LoadOperation> buffer = new ArrayList<>();
+
+        BufferingConsumer(LoadOperationProcessor processor) {
+            this.processor = processor;
+        }
+
+        @Override
+        public void accept(LoadOperation operation) {
+            if (buffer == null) {
+                processor.accept(operation);
+            } else {
+                buffer.add(operation);
+            }
+        }
+
+        void drain() {
+            List<LoadOperation> drained = buffer;
+            buffer = null;
+            for (LoadOperation operation : drained) {
+                processor.accept(operation);
+            }
         }
     }
 
