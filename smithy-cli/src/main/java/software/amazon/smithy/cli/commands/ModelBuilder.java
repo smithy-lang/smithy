@@ -157,6 +157,9 @@ final class ModelBuilder {
 
             if (validationMode == Validator.Mode.QUIET_CORE_ONLY) {
                 assembler.disableValidation();
+                // This mode discards non-core/sub-threshold events anyway, so don't pay to construct the loader's
+                // "unable to resolve trait" warnings when unknown traits are already being allowed.
+                assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS_QUIET, true);
             }
 
             // Emit status updates.
