@@ -170,35 +170,130 @@ final class LoaderShapeMap {
             modelBuilder.addShapes(shape);
         }
 
-        for (ShapeId id : sort()) {
+        // Determine the buildable shapes in dependency order.
+        List<ShapeId> sorted = sort();
+        List<ShapeId> buildOrder = new ArrayList<>(sorted.size());
+        for (ShapeId id : sorted) {
             // If the shape isn't in `shapes` that means it isn't defined at all. ApplyMixins will
             // emit a specific error regarding the missing mixin.
             if (!createdShapes.containsKey(id) && shapes.containsKey(id)) {
-                buildIntoModel(shapes.get(id), modelBuilder, unclaimedTraits, createdShapeMap);
+                buildOrder.add(id);
+            }
+        }
+
+        // Building a shape is independent of building any other shape unless one mixes in another (a mixin parent
+        // must be present in the model builder first). When no shape in this batch depends on another shape in the
+        // same batch, every shape can be built in parallel; the resulting shapes are then added to the model builder
+        // sequentially in dependency order to keep conflict resolution and event ordering deterministic.
+        if (buildOrder.size() > 1 && ParallelLoading.isEnabled() && !hasIntraBatchMixinDependencies(buildOrder)) {
+            buildShapesInParallel(buildOrder, modelBuilder, unclaimedTraits, createdShapeMap);
+        } else {
+            for (ShapeId id : buildOrder) {
+                buildIntoModel(shapes.get(id), modelBuilder, unclaimedTraits, createdShapeMap, events);
             }
         }
     }
 
-    // Build each pending shape in the wrapper and perform conflict resolution.
-    private void buildIntoModel(
-            ShapeWrapper wrapper,
-            Model.Builder builder,
-            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
-            Function<ShapeId, Shape> createdShapeMap
-    ) {
-        Shape built = null;
-        for (LoadOperation.DefineShape shape : wrapper) {
-            if (validateShapeVersion(shape)) {
-                Shape newShape = buildShape(shape, unclaimedTraits, createdShapeMap);
-                if (newShape != null) {
-                    if (validateConflicts(shape.toShapeId(), newShape, built)) {
-                        built = newShape;
+    // True if any shape in the batch mixes in another shape that is also being built in this batch. When false,
+    // every shape's mixin parents (if any) are already in the model builder, so the batch can be built in parallel.
+    private boolean hasIntraBatchMixinDependencies(List<ShapeId> buildOrder) {
+        Set<ShapeId> batch = new HashSet<>(buildOrder);
+        for (ShapeId id : buildOrder) {
+            for (LoadOperation.DefineShape shape : shapes.get(id)) {
+                for (ShapeId dependency : shape.dependencies()) {
+                    if (batch.contains(dependency)) {
+                        return true;
                     }
                 }
             }
         }
-        if (built != null) {
-            builder.addShape(built);
+        return false;
+    }
+
+    private void buildShapesInParallel(
+            List<ShapeId> buildOrder,
+            Model.Builder modelBuilder,
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> createdShapeMap
+    ) {
+        int n = buildOrder.size();
+        BuiltShape[] results = new BuiltShape[n];
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newWorkStealingPool();
+        try {
+            List<java.util.concurrent.Future<?>> futures = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) {
+                final int index = i;
+                final ShapeWrapper wrapper = shapes.get(buildOrder.get(i));
+                futures.add(pool.submit(() ->
+                        results[index] = buildWrapper(wrapper, unclaimedTraits, createdShapeMap)));
+            }
+            for (java.util.concurrent.Future<?> future : futures) {
+                future.get();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted while building shapes", e);
+        } catch (java.util.concurrent.ExecutionException e) {
+            Throwable cause = e.getCause();
+            throw cause instanceof RuntimeException ? (RuntimeException) cause
+                    : new RuntimeException("Failed to build shapes", cause);
+        } finally {
+            pool.shutdown();
+        }
+
+        // Apply results sequentially in dependency order: add to the builder and merge collected events.
+        for (BuiltShape result : results) {
+            events.addAll(result.events);
+            if (result.shape != null) {
+                modelBuilder.addShape(result.shape);
+            }
+        }
+    }
+
+    // Builds every DefineShape in a wrapper off-thread, performing conflict resolution among them, and returns the
+    // winning shape plus any events produced, without touching shared state.
+    private BuiltShape buildWrapper(
+            ShapeWrapper wrapper,
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> createdShapeMap
+    ) {
+        List<ValidationEvent> sink = new ArrayList<>();
+        Shape built = null;
+        for (LoadOperation.DefineShape shape : wrapper) {
+            if (validateShapeVersion(shape, sink)) {
+                Shape newShape = buildShape(shape, unclaimedTraits, createdShapeMap, sink);
+                if (newShape != null && validateConflicts(shape.toShapeId(), newShape, built, sink)) {
+                    built = newShape;
+                }
+            }
+        }
+        return new BuiltShape(built, sink);
+    }
+
+    private static final class BuiltShape {
+        final Shape shape;
+        final List<ValidationEvent> events;
+
+        BuiltShape(Shape shape, List<ValidationEvent> events) {
+            this.shape = shape;
+            this.events = events;
+        }
+    }
+
+    // Build each pending shape in the wrapper and perform conflict resolution (sequential path).
+    private void buildIntoModel(
+            ShapeWrapper wrapper,
+            Model.Builder builder,
+            Function<ShapeId, Map<ShapeId, Trait>> unclaimedTraits,
+            Function<ShapeId, Shape> createdShapeMap,
+            List<ValidationEvent> sink
+    ) {
+        BuiltShape result = buildWrapper(wrapper, unclaimedTraits, createdShapeMap);
+        if (sink != result.events) {
+            sink.addAll(result.events);
+        }
+        if (result.shape != null) {
+            builder.addShape(result.shape);
         }
     }
 
@@ -242,9 +337,9 @@ final class LoaderShapeMap {
         }
     }
 
-    private boolean validateShapeVersion(LoadOperation.DefineShape operation) {
+    private boolean validateShapeVersion(LoadOperation.DefineShape operation, List<ValidationEvent> sink) {
         if (!operation.version.isShapeTypeSupported(operation.getShapeType())) {
-            events.add(ValidationEvent.builder()
+            sink.add(ValidationEvent.builder()
                     .severity(Severity.ERROR)
                     .id(Validator.MODEL_ERROR)
                     .shapeId(operation.toShapeId())
@@ -258,7 +353,7 @@ final class LoaderShapeMap {
         return true;
     }
 
-    private boolean validateConflicts(ShapeId id, Shape built, Shape previous) {
+    private boolean validateConflicts(ShapeId id, Shape built, Shape previous, List<ValidationEvent> sink) {
         if (previous != null && built != null) {
             if (!previous.equals(built)) {
                 // Create a small diff to make it easier to diagnose conflicts.
@@ -289,13 +384,13 @@ final class LoaderShapeMap {
                     joiner.add("Members differ: " + built.getAllMembers().keySet()
                             + " vs " + previous.getAllMembers().keySet());
                 }
-                events.add(LoaderUtils.onShapeConflict(id,
+                sink.add(LoaderUtils.onShapeConflict(id,
                         built.getSourceLocation(),
                         previous.getSourceLocation(),
                         joiner.toString()));
                 return false;
             } else if (!LoaderUtils.isSameLocation(built, previous)) {
-                events.add(ValidationEvent.builder()
+                sink.add(ValidationEvent.builder()
                         .id(Validator.MODEL_ERROR + ".IgnoredDuplicateDefinition")
                         .severity(Severity.NOTE)
                         .sourceLocation(previous.getSourceLocation())
@@ -312,46 +407,47 @@ final class LoaderShapeMap {
     private Shape buildShape(
             LoadOperation.DefineShape defineShape,
             Function<ShapeId, Map<ShapeId, Trait>> traitClaimer,
-            Function<ShapeId, Shape> createdShapeMap
+            Function<ShapeId, Shape> createdShapeMap,
+            List<ValidationEvent> sink
     ) {
         try {
             AbstractShapeBuilder<?, ?> builder = defineShape.builder();
-            ModelInteropTransformer.patchShapeBeforeBuilding(defineShape, builder, events);
+            ModelInteropTransformer.patchShapeBeforeBuilding(defineShape, builder, sink);
 
             for (MemberShape.Builder memberBuilder : defineShape.memberBuilders().values()) {
                 for (ShapeModifier modifier : defineShape.modifiers()) {
                     modifier.modifyMember(builder, memberBuilder, traitClaimer, createdShapeMap);
                 }
-                MemberShape member = buildMember(memberBuilder);
+                MemberShape member = buildMember(memberBuilder, sink);
                 if (member != null) {
                     // Adding a member may throw, but we want to continue execution, so we collect all
                     // errors that occur.
                     try {
                         builder.addMember(member);
                     } catch (SourceException e) {
-                        events.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
+                        sink.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
                     }
                 }
             }
 
             for (ShapeModifier modifier : defineShape.modifiers()) {
                 modifier.modifyShape(builder, defineShape.memberBuilders(), traitClaimer, createdShapeMap);
-                events.addAll(modifier.getEvents());
+                sink.addAll(modifier.getEvents());
             }
 
             return builder.build();
         } catch (SourceException e) {
-            events.add(ValidationEvent.fromSourceException(e, "", defineShape.toShapeId()));
+            sink.add(ValidationEvent.fromSourceException(e, "", defineShape.toShapeId()));
             return null;
         }
     }
 
-    private MemberShape buildMember(MemberShape.Builder builder) {
+    private MemberShape buildMember(MemberShape.Builder builder, List<ValidationEvent> sink) {
         try {
             return builder.build();
         } catch (IllegalStateException e) {
             if (builder.getTarget() == null) {
-                events.add(ValidationEvent.builder()
+                sink.add(ValidationEvent.builder()
                         .severity(Severity.ERROR)
                         .id(Validator.MODEL_ERROR)
                         .shapeId(builder.getId())
@@ -363,7 +459,7 @@ final class LoaderShapeMap {
             }
             throw e;
         } catch (SourceException e) {
-            events.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
+            sink.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
             return null;
         }
     }

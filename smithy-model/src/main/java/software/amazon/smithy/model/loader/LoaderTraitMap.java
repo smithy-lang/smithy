@@ -175,11 +175,16 @@ final class LoaderTraitMap {
     // Traits can be applied to synthesized members inherited from mixins. Applying these traits is deferred until
     // the point in which mixin members are synthesized into shapes.
     Map<ShapeId, Trait> claimTraitsForShape(ShapeId id) {
-        if (!unclaimed.containsKey(id)) {
+        Map<ShapeId, Trait> result = unclaimed.get(id);
+        if (result == null) {
             return Collections.emptyMap();
         }
-        claimed.add(id);
-        return unclaimed.get(id);
+        // Synchronized because shapes are built in parallel and each claims its traits. `unclaimed` is only read
+        // here (never mutated during the build phase), so only the `claimed` set needs guarding.
+        synchronized (claimed) {
+            claimed.add(id);
+        }
+        return result;
     }
 
     // Emit events if any traits were applied to shapes that weren't found in the model.

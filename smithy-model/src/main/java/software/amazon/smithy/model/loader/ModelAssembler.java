@@ -609,7 +609,7 @@ public final class ModelAssembler {
     // is always fed sequentially in deterministic input order. Set the "smithy.parallelLoad" system property to
     // "false" to force sequential parsing.
     private void loadModelFiles(LoadOperationProcessor processor) {
-        if (inputStreamModels.size() > 1 && !"false".equals(System.getProperty("smithy.parallelLoad"))) {
+        if (inputStreamModels.size() > 1 && ParallelLoading.isEnabled()) {
             loadModelFilesInParallel(processor);
         } else {
             for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
