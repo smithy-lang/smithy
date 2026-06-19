@@ -67,6 +67,21 @@ public class EnumShapeTest {
     }
 
     @Test
+    public void redirectsEnumTraitLookupsToTheSyntheticTrait() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
+        EnumShape shape = builder.addMember("foo", "bar").build();
+
+        // The enum trait is stored as the synthetic enum trait, but every accessor for smithy.api#enum must redirect
+        // to it consistently. hasTrait(ShapeId) in particular looks IDs up directly in the trait map, so it has to
+        // honor the redirect like findTrait, getTrait, and the other hasTrait overloads (regression check).
+        assertTrue(shape.hasTrait(EnumTrait.ID));
+        assertTrue(shape.hasTrait(EnumTrait.class));
+        assertTrue(shape.hasTrait("smithy.api#enum"));
+        assertTrue(shape.findTrait(EnumTrait.ID).isPresent());
+        assertTrue(shape.getTrait(EnumTrait.class).isPresent());
+    }
+
+    @Test
     public void addMemberShape() {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         MemberShape member = MemberShape.builder()
