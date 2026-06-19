@@ -1219,4 +1219,47 @@ public class SelectorTest {
                 () -> Selector.parse("string ) extra"));
         assertThat(e.getMessage(), containsString(")"));
     }
+
+    // Enum shapes store their enum trait as the synthetic enum trait rather than smithy.api#enum, so selectors that
+    // match on the enum trait have to account for the redirect. These guard against a regression where [trait|enum]
+    // stopped matching enum shapes.
+    @Test
+    public void matchesEnumShapesWithTraitEnumSelector() {
+        Model model = Model.assembler()
+                .addImport(SelectorTest.class.getResource("enum-shapes.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Top-level [trait|enum] exercises the getStartingShapes optimization.
+        Set<String> matches = ids(model, "[trait|enum]");
+
+        assertThat(matches, hasItem("smithy.example#Suit"));
+        assertThat(matches, not(hasItem("smithy.example#PlainString")));
+    }
+
+    @Test
+    public void matchesEnumShapesWithNestedTraitEnumSelector() {
+        Model model = Model.assembler()
+                .addImport(SelectorTest.class.getResource("enum-shapes.smithy"))
+                .assemble()
+                .unwrap();
+
+        // A wrapped [trait|enum] exercises the per-shape hasTrait path instead of the starting-shape optimization.
+        Set<String> matches = ids(model, "[id|namespace=smithy.example]:test(string, enum):test([trait|enum])");
+
+        assertThat(matches, contains("smithy.example#Suit"));
+    }
+
+    @Test
+    public void excludesEnumShapesWithNegatedTraitEnumSelector() {
+        Model model = Model.assembler()
+                .addImport(SelectorTest.class.getResource("enum-shapes.smithy"))
+                .assemble()
+                .unwrap();
+
+        // :not([trait|enum]) on enum shapes also relies on the per-shape hasTrait redirect.
+        Set<String> matches = ids(model, "[id|namespace=smithy.example]:test(string, enum):not([trait|enum])");
+
+        assertThat(matches, contains("smithy.example#PlainString"));
+    }
 }

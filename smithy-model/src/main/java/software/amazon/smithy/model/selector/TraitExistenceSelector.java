@@ -5,9 +5,13 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 
 /**
  * Specialized selector for the extremely common {@code [trait|X]} existence check.
@@ -29,7 +33,19 @@ final class TraitExistenceSelector implements InternalSelector {
 
     @Override
     public Collection<? extends Shape> getStartingShapes(Model model) {
-        return model.getShapesWithTrait(traitId);
+        Set<Shape> shapes = model.getShapesWithTrait(traitId);
+        // Enum shapes carry the synthetic enum trait rather than smithy.api#enum, so the trait index does not list
+        // them under smithy.api#enum. Include them when matching on the enum trait so this starting-shape
+        // optimization doesn't skip every enum shape (which their hasTrait check would otherwise match).
+        if (traitId.equals(EnumTrait.ID)) {
+            Set<Shape> enumShapes = model.getShapesWithTrait(SyntheticEnumTrait.ID);
+            if (!enumShapes.isEmpty()) {
+                Set<Shape> combined = new LinkedHashSet<>(shapes);
+                combined.addAll(enumShapes);
+                return combined;
+            }
+        }
+        return shapes;
     }
 
     @Override
