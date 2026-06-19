@@ -19,6 +19,21 @@ plugins {
 
 description = "This module implements the Smithy command line interface."
 
+// EXPERIMENTAL(call): the bundled smithy-java runtime requires Java 21. Select a Java 21 toolchain
+// explicitly so Gradle itself can still run under the repository's usual JDK 17 environment while
+// compiling and testing this module with the required compiler. The published CLI now requires 21.
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+tasks.compileJava {
+    options.release.set(21)
+}
+tasks.compileTestJava {
+    options.release.set(21)
+}
+
 extra["displayName"] = "Smithy :: CLI"
 extra["moduleName"] = "software.amazon.smithy.cli"
 
@@ -28,14 +43,14 @@ configurePublishing {
 
 // JDK 25 is required for the Leyden AOT cache (JEP 483/514: ahead-of-time class loading & linking),
 // which the runtime image uses in place of the older AppCDS archive to speed up CLI startup.
+// EXPERIMENTAL(call): smithy-java independently requires Java 21, so the bundled JRE must be at
+// least 21 anyway; 25 satisfies both requirements.
 val imageJreVersion = "25"
 val correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-$imageJreVersion"
 
 // Building the runtime *image* requires JDK 25+: it bundles a JDK 25 JRE and generates a JDK 25 AOT
-// cache, and jlink/the AOT steps need a matching toolchain. This only applies to the image tasks, not
-// to compiling or testing the CLI (which, like the rest of the monorepo, build on 17+), so the check is
-// enforced lazily per-task rather than at configuration time -- otherwise plain `build`/`test` would
-// fail on an older JDK that's perfectly fine for them.
+// cache, and jlink/the AOT steps need a matching toolchain. This only applies to image tasks. Normal
+// compile/test tasks use the Java 21 toolchain selected above even when Gradle itself runs on JDK 17.
 fun requireJava25ForImage() {
     val current = JavaVersion.current()
     check(current.isCompatibleWith(JavaVersion.VERSION_25)) {
@@ -75,6 +90,60 @@ dependencies {
     implementation(libs.maven.resolver.transport.file)
     implementation(libs.maven.resolver.transport.http)
     implementation(libs.slf4j.jul) // Route slf4j used by Maven through JUL like the rest of Smithy.
+
+    // ===== EXPERIMENTAL: `smithy call` command =====
+    // AWS + Smithy trait packages needed to load real AWS models with full fidelity (endpoint
+    // rules, waiters, IAM, CloudFormation, protocols). These are sibling projects in this repo.
+    //
+    // Like smithy-model/build/diff/syntax above, these are declared as both `implementation` (for
+    // compilation) and `shadow` (so they land in the runtime image), and are EXCLUDED from the
+    // shaded jar below. They must stay as separate jars in the image: each Smithy jar ships a
+    // `META-INF/smithy/manifest` listing its trait models, and shading would collide those manifests
+    // so only one jar's models would be discoverable.
+    val callTraits = listOf(
+        ":smithy-aws-traits",
+        ":smithy-protocol-traits",
+        ":smithy-rules-engine",
+        ":smithy-aws-endpoints",
+        ":smithy-waiters",
+        ":smithy-aws-iam-traits",
+        ":smithy-aws-cloudformation-traits",
+    )
+    callTraits.forEach {
+        implementation(project(it))
+        shadow(project(it))
+    }
+
+    // smithy-java runtime that actually performs the call. The auth modules (aws-sigv4,
+    // aws-credential-chain, aws-config) are NOT on Maven Central yet, so this resolves the whole
+    // set from Maven local (~/.m2) at the locally-published version. Native auth only -- no AWS
+    // SDK v2 bridge. Kept as separate jars in the image (not shaded) for the same manifest reason.
+    val smithyJavaVersion = "1.4.0"
+    val smithyJava = listOf(
+        "dynamic-client",
+        "client-http",
+        "json-codec",
+        "aws-client-restjson",
+        "aws-client-awsjson",
+        "aws-client-restxml",
+        "client-rpcv2-cbor",
+        "client-rpcv2-json",
+        "aws-client-core",
+        "aws-client-rulesengine", // AWS endpoint resolution at runtime
+        "aws-client-s3", // S3 virtual-host bucket addressing (AutoClientPlugin)
+        "aws-sigv4", // SigV4 signer + SigV4AuthScheme
+        "aws-credential-chain", // native profile/env credentials (pulls aws-config, aws-auth-api, auth-api)
+        "http-api", // HttpResponse, used by the --debug response dumper
+        "io", // DataStream, used by the --debug response dumper
+        "rulesengine", // Bytecode / RulesEngineBuilder, for precompiling endpoint rules at registration
+        "client-rulesengine", // RulesEngineSettings.BYTECODE context key
+        "jmespath", // --query: JMESPath filtering of output documents
+        "cbor-codec", // compact CBOR encoding of --continue pagination tokens
+    )
+    smithyJava.forEach {
+        implementation("software.amazon.smithy.java:$it:$smithyJavaVersion")
+        shadow("software.amazon.smithy.java:$it:$smithyJavaVersion")
+    }
 
     testImplementation(libs.mockserver)
 }
@@ -129,7 +198,8 @@ System.setProperty("SMITHY_BINARY", smithyBinary)
 
 runtime {
     addOptions("--compress", "2", "--strip-debug", "--no-header-files", "--no-man-pages")
-    addModules("java.logging", "java.xml", "java.naming", "jdk.crypto.ec")
+    // EXPERIMENTAL(call): java.net.http is required by smithy-java's JDK HttpClient transport.
+    addModules("java.logging", "java.xml", "java.naming", "jdk.crypto.ec", "java.net.http")
 
     launcher {
         // This script is a combination of the default startup script used by the badass runtime
@@ -151,6 +221,9 @@ runtime {
                 // default it prints [error][aot] lines to stderr on every run. Silence that log so a cache
                 // that failed to ship degrades quietly instead of spamming the user.
                 "-Xlog:aot=off",
+                // Cap JIT at C1: the CLI is short-lived, so C2's profiling/recompilation never pays off.
+                // Combined with the AOT cache above, this measurably cuts startup. Override via JAVA_OPTS if needed.
+                "-XX:TieredStopAtLevel=1",
             )
     }
 
@@ -240,6 +313,18 @@ tasks {
             exclude(project(":smithy-build"))
             exclude(project(":smithy-diff"))
             exclude(project(":smithy-syntax"))
+
+            // EXPERIMENTAL(call): keep the trait packages and the smithy-java runtime out of the
+            // shaded jar so they remain separate jars in the runtime image. Shading them together
+            // would collide each jar's META-INF/smithy/manifest, hiding most trait models.
+            exclude(project(":smithy-aws-traits"))
+            exclude(project(":smithy-protocol-traits"))
+            exclude(project(":smithy-rules-engine"))
+            exclude(project(":smithy-aws-endpoints"))
+            exclude(project(":smithy-waiters"))
+            exclude(project(":smithy-aws-iam-traits"))
+            exclude(project(":smithy-aws-cloudformation-traits"))
+            exclude(dependency("software.amazon.smithy.java:.*:.*"))
         }
     }
 
