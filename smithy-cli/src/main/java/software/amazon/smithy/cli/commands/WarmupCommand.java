@@ -231,6 +231,10 @@ final class WarmupCommand implements Command {
 
             new ValidateCommand("a", (c, e) -> resolver).execute(arguments, env);
             new BuildCommand("a", (c, e) -> resolver).execute(arguments, env);
+
+            // Warm up the `call` command's class graph (model assembly, dynamic client, AWS rules
+            // engine, auth detection, SigV4, codec) so those classes land in the AppCDS archive too.
+            CallCommand.warmup(env.classLoader());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -41,7 +41,9 @@ public final class SmithyCommand implements Command {
                 deprecated1To2Command,
                 new WarmupCommand(getName()),
                 new InitCommand(getName()),
-                new LockCommand(getName(), dependencyResolverFactory));
+                new LockCommand(getName(), dependencyResolverFactory),
+                new CallCommand(getName()),
+                new RegisterCommand(getName(), dependencyResolverFactory));
     }
 
     @Override
