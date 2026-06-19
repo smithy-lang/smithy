@@ -65,7 +65,8 @@ public class TaggedStringLiteralTest {
     public void regexTextBlockMultilinePattern() {
         // Multiline pattern: lines are joined without needing trailing backslash
         TaggedStringLiteral.Result result = TaggedStringLiteral.scan("re",
-                "\n    [A-Z]:\\\\\\\\\n    ([\\w\\s\\d]+\\\\)*\n    ", true);
+                "\n    [A-Z]:\\\\\\\\\n    ([\\w\\s\\d]+\\\\)*\n    ",
+                true);
         assertThat(result.token, is(IdlToken.STRING));
         assertThat(result.stringValue.toString(), equalTo("[A-Z]:\\\\\\\\([\\w\\s\\d]+\\\\)*"));
     }
