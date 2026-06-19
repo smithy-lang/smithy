@@ -66,11 +66,19 @@ final class SelectCommand implements Command {
         arguments.addReceiver(new BuildOptions());
         arguments.addReceiver(new Options());
 
+        // --name queries a pre-built, pre-validated registration, so it must NOT go through
+        // ClasspathAction (which loads a cwd smithy-build.json and resolves Maven deps). It also can't be
+        // combined with the filesystem-model-loading flags, which would be silently ignored otherwise.
+        // The branch is decided after args are parsed (inside the delegate), since --name is consumed by
+        // the receiver during parsing, not before.
+        ClasspathAction classpathAction = new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader);
         CommandAction action = HelpActionWrapper.fromCommand(
                 this,
                 parentCommandName,
                 this::getDocumentation,
-                new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
+                (args, e) -> args.getReceiver(Options.class).name != null
+                        ? runWithRegistration(args, e)
+                        : classpathAction.apply(args, e));
 
         return action.apply(arguments, env);
     }
@@ -82,6 +90,7 @@ final class SelectCommand implements Command {
 
     private static final class Options implements ArgumentReceiver {
         private Selector selector;
+        private String name;
         private final List<ShapeId> showTraits = new ArrayList<>();
         private final Set<Show> show = new TreeSet<>();
 
@@ -163,6 +172,8 @@ final class SelectCommand implements Command {
         @Override
         public Consumer<String> testParameter(String name) {
             switch (name) {
+                case "--name":
+                    return value -> this.name = value;
                 case "--selector":
                     return value -> selector = Selector.parse(value);
                 case "--show-traits":
@@ -192,6 +203,12 @@ final class SelectCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
+            printer.param("--name",
+                    null,
+                    "NAME",
+                    "Query a service registered with `smithy register` by name, instead of loading models from "
+                            + "the filesystem. Cannot be combined with model paths, --config, or --discover "
+                            + "(the registered model is already built and validated).");
             printer.param("--selector",
                     null,
                     "SELECTOR",
@@ -231,7 +248,44 @@ final class SelectCommand implements Command {
                 .validationMode(Validator.Mode.QUIET_CORE_ONLY)
                 .defaultSeverity(Severity.DANGER)
                 .build();
+        return select(model, arguments, env);
+    }
 
+    /**
+     * Runs the selector against a model registered with {@code smithy register}, loaded from its
+     * pre-built (with-docs) artifact. The artifact is already assembled and validated, so the
+     * filesystem model-loading flags don't apply and are rejected rather than silently ignored.
+     */
+    private int runWithRegistration(Arguments arguments, Env env) {
+        Options options = arguments.getReceiver(Options.class);
+        rejectFilesystemFlags(arguments);
+
+        CallProfiles.Profile profile = CallProfiles.load(options.name).orElseThrow(() -> new CliError(
+                "'" + options.name + "' is not a registered service. See `smithy register --list`."));
+        java.nio.file.Path artifact = CallProfiles.modelArtifact(options.name);
+        if (!java.nio.file.Files.isRegularFile(artifact)) {
+            throw new CliError("Registration '" + options.name + "' has no built model artifact. "
+                    + "Re-run `smithy register --name " + options.name + " ...` to rebuild it.");
+        }
+        Model model = CallArtifacts.loadArtifactModel(artifact, env.classLoader());
+        return select(model, arguments, env);
+    }
+
+    /** Errors if any filesystem model-loading flag is combined with --name (they'd be ignored). */
+    private void rejectFilesystemFlags(Arguments arguments) {
+        if (!arguments.getPositional().isEmpty()) {
+            throw new CliError("--name cannot be combined with model paths: the registered model is used.");
+        }
+        if (arguments.getReceiver(ConfigOptions.class).hasExplicitConfig()) {
+            throw new CliError("--name cannot be combined with --config: the registered model is used.");
+        }
+        DiscoveryOptions discovery = arguments.getReceiver(DiscoveryOptions.class);
+        if (discovery.discover() || discovery.discoverClasspath() != null) {
+            throw new CliError("--name cannot be combined with --discover: the registered model is used.");
+        }
+    }
+
+    private int select(Model model, Arguments arguments, Env env) {
         Options options = arguments.getReceiver(Options.class);
         Selector selector = options.selector();
         OutputFormat outputFormat = OutputFormat.determineFormat(options);
