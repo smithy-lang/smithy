@@ -1,0 +1,71 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package software.amazon.smithy.model.loader.smf;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+/**
+ * Describes what to selectively load from an SMF file.
+ *
+ * <p>For the dynamic client use case: load a service shape (with only its
+ * common errors expanded) and specific operations (with their full transitive
+ * closure).
+ */
+@SmithyUnstableApi
+public final class SelectiveLoadRequest {
+
+    private final ShapeId service;
+    private final Set<ShapeId> operations;
+
+    private SelectiveLoadRequest(Builder builder) {
+        this.service = builder.service;
+        this.operations = builder.operations.copy();
+    }
+
+    public ShapeId getService() {
+        return service;
+    }
+
+    public Set<ShapeId> getOperations() {
+        return operations;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private ShapeId service;
+        private final BuilderRef<Set<ShapeId>> operations = BuilderRef.forOrderedSet();
+
+        public Builder service(ShapeId service) {
+            this.service = service;
+            return this;
+        }
+
+        public Builder addOperation(ShapeId operation) {
+            this.operations.get().add(operation);
+            return this;
+        }
+
+        public Builder operations(Set<ShapeId> operations) {
+            this.operations.clear();
+            this.operations.get().addAll(operations);
+            return this;
+        }
+
+        public SelectiveLoadRequest build() {
+            if (service == null) {
+                throw new IllegalStateException("service is required");
+            }
+            return new SelectiveLoadRequest(this);
+        }
+    }
+}

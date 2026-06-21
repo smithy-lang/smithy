@@ -57,3 +57,4 @@ Table of contents
     shape-closures
     idl
     json-ast
+    smf
