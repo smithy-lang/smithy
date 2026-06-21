@@ -91,11 +91,16 @@ public class SmfLoadingBenchmark {
             Files.write(smfFile, smfBytes);
 
             System.out.printf("[Setup] %s: JSON=%,d bytes, SMF=%,d bytes%n",
-                    service, jsonBytes.length, smfBytes.length);
+                    service,
+                    jsonBytes.length,
+                    smfBytes.length);
 
             // Set up selective load request: service + one representative operation
-            ShapeId serviceId = model.getServiceShapes().stream()
-                    .findFirst().get().getId();
+            ShapeId serviceId = model.getServiceShapes()
+                    .stream()
+                    .findFirst()
+                    .get()
+                    .getId();
             ShapeId operationId = getRepresentativeOperation(service);
             selectiveRequest = SelectiveLoadRequest.builder()
                     .service(serviceId)

@@ -4,8 +4,6 @@
  */
 package software.amazon.smithy.model.loader.smf;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.BuilderRef;

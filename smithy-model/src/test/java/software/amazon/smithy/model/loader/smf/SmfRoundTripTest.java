@@ -451,14 +451,17 @@ public class SmfRoundTripTest {
     public void selectiveLoadWithServiceAndOperations() {
         Model model = Model.builder()
                 .putMetadataProperty("validators", Node.fromNodes())
-                .addShape(StructureShape.builder().id("com.example#CommonError")
+                .addShape(StructureShape.builder()
+                        .id("com.example#CommonError")
                         .addMember("message", ShapeId.from("smithy.api#String"))
                         .build())
-                .addShape(StructureShape.builder().id("com.example#Input1")
+                .addShape(StructureShape.builder()
+                        .id("com.example#Input1")
                         .addMember("id", ShapeId.from("smithy.api#String"))
                         .build())
                 .addShape(StructureShape.builder().id("com.example#Output1").build())
-                .addShape(StructureShape.builder().id("com.example#Input2")
+                .addShape(StructureShape.builder()
+                        .id("com.example#Input2")
                         .addMember("name", ShapeId.from("smithy.api#String"))
                         .build())
                 .addShape(StructureShape.builder().id("com.example#Output2").build())
@@ -492,10 +495,11 @@ public class SmfRoundTripTest {
         byte[] data = SmfWriter.write(model);
 
         // Load only the service + Op1 — should get service, Op1, Input1, Output1, CommonError
-        Model selective = SmfReader.readSelective(data, SelectiveLoadRequest.builder()
-                .service(ShapeId.from("com.example#MyService"))
-                .addOperation(ShapeId.from("com.example#Op1"))
-                .build());
+        Model selective = SmfReader.readSelective(data,
+                SelectiveLoadRequest.builder()
+                        .service(ShapeId.from("com.example#MyService"))
+                        .addOperation(ShapeId.from("com.example#Op1"))
+                        .build());
 
         // Service shape present
         assertNotNull(selective.getShape(ShapeId.from("com.example#MyService")).orElse(null));
@@ -515,35 +519,43 @@ public class SmfRoundTripTest {
     @Test
     public void selectiveLoadWithMetadataAndManyShapes() {
         Model.Builder mb = Model.builder();
-        mb.putMetadataProperty("suppressions", Node.fromNodes(
-                Node.objectNode()
-                        .withMember("id", Node.from("SomeRule"))
-                        .withMember("namespace", Node.from("*"))));
+        mb.putMetadataProperty("suppressions",
+                Node.fromNodes(
+                        Node.objectNode()
+                                .withMember("id", Node.from("SomeRule"))
+                                .withMember("namespace", Node.from("*"))));
 
         ServiceShape.Builder svc = ServiceShape.builder()
-                .id("com.example#BigService").version("1.0");
+                .id("com.example#BigService")
+                .version("1.0");
         for (int i = 0; i < 50; i++) {
-            mb.addShape(StructureShape.builder().id("com.example#In" + i)
-                    .addMember("id", ShapeId.from("smithy.api#String")).build());
+            mb.addShape(StructureShape.builder()
+                    .id("com.example#In" + i)
+                    .addMember("id", ShapeId.from("smithy.api#String"))
+                    .build());
             mb.addShape(StructureShape.builder().id("com.example#Out" + i).build());
-            mb.addShape(OperationShape.builder().id("com.example#Op" + i)
+            mb.addShape(OperationShape.builder()
+                    .id("com.example#Op" + i)
                     .input(ShapeId.from("com.example#In" + i))
                     .output(ShapeId.from("com.example#Out" + i))
                     .build());
             svc.addOperation("com.example#Op" + i);
         }
-        mb.addShape(StructureShape.builder().id("com.example#Err")
-                .addMember("msg", ShapeId.from("smithy.api#String")).build());
+        mb.addShape(StructureShape.builder()
+                .id("com.example#Err")
+                .addMember("msg", ShapeId.from("smithy.api#String"))
+                .build());
         svc.addError("com.example#Err");
         mb.addShape(svc.build());
 
         Model model = mb.build();
         byte[] data = SmfWriter.write(model);
 
-        Model selective = SmfReader.readSelective(data, SelectiveLoadRequest.builder()
-                .service(ShapeId.from("com.example#BigService"))
-                .addOperation(ShapeId.from("com.example#Op3"))
-                .build());
+        Model selective = SmfReader.readSelective(data,
+                SelectiveLoadRequest.builder()
+                        .service(ShapeId.from("com.example#BigService"))
+                        .addOperation(ShapeId.from("com.example#Op3"))
+                        .build());
 
         assertNotNull(selective.getShape(ShapeId.from("com.example#BigService")).orElse(null));
         assertNotNull(selective.getShape(ShapeId.from("com.example#Op3")).orElse(null));

@@ -704,7 +704,6 @@ public final class SmfReader {
         return index;
     }
 
-
     private void skipMetadata() {
         int count = readVarUInt();
         for (int i = 0; i < count; i++) {
@@ -837,7 +836,7 @@ public final class SmfReader {
         int count = readVarUInt();
         for (int i = 0; i < count; i++) {
             readVarUInt(); // shapeId
-            pos++;         // shapeType
+            pos++; // shapeType
             readVarUInt(); // byteOffset
             readVarUInt(); // byteLength
             int neighborCount = readVarUInt();
