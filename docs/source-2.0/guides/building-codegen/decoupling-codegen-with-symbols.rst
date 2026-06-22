@@ -334,11 +334,12 @@ The simplest way to implement a ``SymbolProvider`` is to also implement
 
     package software.amazon.smithy.python.codegen;
 
+    import java.util.Map;
     import java.util.logging.Logger;
     import software.amazon.smithy.codegen.core.SymbolProvider;
     import software.amazon.smithy.model.Model;
-    import software.amazon.smithy.model.shapes.ServiceShape;
     import software.amazon.smithy.model.shapes.Shape;
+    import software.amazon.smithy.model.shapes.ShapeId;
     import software.amazon.smithy.model.shapes.ShapeVisitor;
 
     final class SymbolVisitor implements SymbolProvider, ShapeVisitor<Symbol> {
@@ -347,12 +348,14 @@ The simplest way to implement a ``SymbolProvider`` is to also implement
 
         private final Model model;
         private final MySettings settings;
-        private final ServiceShape service;
+        private final Map<ShapeId, String> renames;
 
-        SymbolVisitor(Model model, MySettings settings) {
+        SymbolVisitor(Model model, MySettings settings, Map<ShapeId, String> renames) {
             this.model = model;
             this.settings = settings;
-            this.service = model.expectShape(settings.getService(), ServiceShape.class);
+            // Sourced from the directive's getRenames() so naming works whether
+            // generation is driven by a service or a shape closure.
+            this.renames = renames;
         }
 
         @Override
@@ -394,8 +397,12 @@ The simplest way to implement a ``SymbolProvider`` is to also implement
         }
 
         private String getDefaultShapeName(Shape shape) {
-            // Use the service-aliased name and ensure it's capitalized.
-            return StringUtils.capitalize(shape.getId().getName(service));
+            // Use the rename for this shape if there is one, otherwise its plain
+            // name, and ensure it's capitalized. Works for both service- and
+            // closure-driven generation.
+            ShapeId id = shape.getId();
+            String name = renames.getOrDefault(id, id.getName());
+            return StringUtils.capitalize(name);
         }
 
         // TODO implement other ShapeVisitor methods.
@@ -421,36 +428,38 @@ namespaces, and member names through the appropriate escaper. For
 example:
 
 .. code-block:: java
-    :emphasize-lines: 4,8-11,18
+    :emphasize-lines: 4,8-11,19
 
     final class SymbolVisitor implements SymbolProvider, ShapeVisitor<Symbol> {
 
         // ... other properties
         private final ReservedWords escaper;
 
-        SymbolVisitor(Model model, MySettings settings) {
+        SymbolVisitor(Model model, MySettings settings, Map<ShapeId, String> renames) {
             // ... other setup
             this.escaper = new ReservedWordsBuilder()
-                .put("function", service.getId().getName() + "Function")
-                .put("throw", service.getId().getName() + "Throw")
+                .put("function", settings.getNamespace() + "Function")
+                .put("throw", settings.getNamespace() + "Throw")
                 .build();
         }
 
         // other methods...
 
         private String getDefaultShapeName(Shape shape) {
-            String name = StringUtils.capitalize(shape.getId().getName(service));
+            ShapeId id = shape.getId();
+            String name = StringUtils.capitalize(renames.getOrDefault(id, id.getName()));
             return escaper.escape(name);
         }
     }
 
 .. note::
 
-    These examples assume a service is driving code generation. When code
-    generation is driven by a :ref:`shape closure <shape-closures>`, there is
-    no service for the symbol provider to use: resolve names with
-    ``ShapeId#getName()`` (applying any closure renames from
-    ``ShapeClosureIndex``) rather than ``ShapeId#getName(ServiceShape)``.
+    Names are resolved through the ``renames`` map rather than from a
+    ``ServiceShape`` so the symbol provider works in every generation mode. The
+    map comes from the directive's ``getRenames()`` (see
+    :ref:`directive-service-access`); it holds the service's renames in
+    service-driven generation and the closure's renames when generation is
+    driven by a :ref:`shape closure <shape-closures>`.
 
 While you can manually define the mapping for each reserved word, a
 simpler method is to create an algorithm for automatically handling
@@ -470,8 +479,8 @@ file and your escaping function.
 .. code-block:: java
 
     Function<String, String> escaper = word -> {
-        // Returns something like "MyServiceFunction".
-        return service.getId().getName() + StringUtils.capitalize(word);
+        // Returns something like "MyNamespaceFunction".
+        return settings.getNamespace() + StringUtils.capitalize(word);
     });
 
     URL wordsFile = getClass().getResource("reservedwords.txt");

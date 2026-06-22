@@ -68,10 +68,11 @@ The ``closure`` property defines the ID of the
 ``service`` and ``closure`` optionality
 ---------------------------------------
 
-Generators should make both ``service`` and ``closure`` optional. The
-generator must fail if both are set. If neither are set, the
-generator may attempt to find every service in the model. If only a
-single service is found in the model, it is used for code generation. If
+Generators should make both ``service`` and ``closure`` optional. Setting
+both enables :ref:`combined mode <combined-codegen>`, where the closure is
+the generated set and the service is the primary service. If neither are
+set, the generator may attempt to find every service in the model. If only
+a single service is found in the model, it is used for code generation. If
 multiple services are found, the generator should fail and require an
 explicit service or closure ID.
 

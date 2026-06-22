@@ -92,6 +92,17 @@ public abstract class Directive<S> {
     }
 
     /**
+     * Gets the service being generated, failing if there is none.
+     *
+     * @return Returns the service being generated.
+     * @throws CodegenException if there is no service because code generation is
+     *  driven by a shape closure rather than a service.
+     */
+    public final ServiceShape expectService() {
+        return service();
+    }
+
+    /**
      * Gets the ID of the shape closure being generated, if code generation is
      * driven by a shape closure.
      *

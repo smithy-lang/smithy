@@ -51,11 +51,17 @@ and running a generator into specific methods.
 
         default void generateResource(GenerateResourceDirective<C, S> directive) {}
 
+        default void generateOperation(GenerateOperationDirective<C, S> directive) {}
+
         void generateStructure(GenerateStructureDirective<C, S> directive);
 
         void generateError(GenerateErrorDirective<C, S> directive);
 
         void generateUnion(GenerateUnionDirective<C, S> directive);
+
+        default void generateList(GenerateListDirective<C, S> directive) {}
+
+        default void generateMap(GenerateMapDirective<C, S> directive) {}
 
         void generateEnumShape(GenerateEnumDirective<C, S> directive);
 
@@ -132,8 +138,8 @@ in a Smithy-Build plugin using the data provided by
         // Assuming service() returns a configured service shape ID.
         runner.service(settings.service());
 
-        // Alternatively, codegen can be driven by a shape closure instead
-        // of a service.
+        // Codegen can also be driven by a shape closure, either on its own
+        // or alongside a service to enable combined mode.
         // runner.shapeClosure(settings.closure());
 
         // Configure the director to perform some common model transforms.
@@ -267,6 +273,28 @@ most important things to note for a code generator are:
   the shapes being generated have case-insensitively conflicting names (taking
   closure-defined renames into account).
 
+.. _combined-codegen:
+
+Combining a service and a shape closure
+========================================
+
+A service and a shape closure can be set together, enabling "combined mode".
+The shape closure is the set of shapes that gets generated, and the service is
+designated the primary service. The service must be a member of the closure,
+otherwise code generation should fail.
+
+To enable it, set both on the director:
+
+.. code-block:: java
+
+    runner.service(settings.service());
+    runner.shapeClosure(settings.closure());
+
+This is useful when the generated set must include standalone shapes that are
+not reachable from the service while still generating the service itself. In
+combined mode the directive's ``getService()`` returns the service and
+``getShapeClosureId()`` returns the closure ID.
+
 .. _directed-type-codegen:
 
 Generating only data shapes
@@ -283,6 +311,37 @@ This mode composes with either source.
 
     Code generators are expected to not attempt to generate any service or
     client scaffolding when this mode is enabled.
+
+
+.. _directive-service-access:
+
+Accessing the service from a directive
+======================================
+
+Because code generation can be driven by a service or a shape closure, the
+``service`` of a ``Directive`` is no longer guaranteed to be present. The
+directive provides accessors that make this explicit:
+
+* ``getService()`` returns an ``Optional<ServiceShape>`` and is the safe way to
+  access the service. It is empty when generation is driven by a shape closure
+  with no primary service.
+* ``expectService()`` returns the ``ServiceShape``, throwing a
+  ``CodegenException`` when there is none. Use this only where a service is
+  guaranteed, such as in service-driven generation.
+* ``getShapeClosureId()`` returns the ``Optional<String>`` ID of the shape
+  closure driving generation, if any.
+* ``getRenames()`` returns the ``Map<ShapeId, String>`` of renames that apply to
+  the shapes being generated. These mirror the generated set: the closure's
+  renames in closure or combined mode, otherwise the primary service's renames.
+  Prefer this over reading renames from a service so naming works in every mode.
+
+.. note::
+
+    The older ``service()`` accessor is deprecated. It now throws a
+    ``CodegenException`` rather than returning ``null`` when generation is driven
+    by a shape closure, so existing generators keep their behavior in
+    service-driven generation but must migrate to ``getService()`` or
+    ``expectService()`` to support shape closures.
 
 
 Tips for using ``DirectedCodegen``

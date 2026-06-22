@@ -223,7 +223,8 @@ client or server.
 Type generation can be driven by a service, generating the data shapes
 in that :ref:`service's closure <service-closure>`. It can also be driven
 by a :ref:`shape closure <shape-closures>`, which defines a set of shapes
-to generate without requiring a service to anchor them.
+to generate without requiring a service to anchor them, or by both at once
+in :ref:`combined mode <combined-codegen>`.
 
 Generators that only want to emit data shapes can enable
 :ref:`type codegen <directed-type-codegen>`, which never generates
