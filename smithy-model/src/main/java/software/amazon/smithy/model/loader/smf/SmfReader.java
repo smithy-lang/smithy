@@ -64,6 +64,9 @@ public final class SmfReader {
     private int pos;
     private String[] symbols;
     private ShapeId[] shapeIds;
+    // Lazy symbol support: store (offset << 32 | length) for local symbols
+    private long[] symbolOffsets;
+    private int sharedSize;
     private final long[] varIntOut = new long[2];
     private final Map<ShapeId, List<ShapeId>> pendingMixins = new LinkedHashMap<>();
     private final TraitFactory traitFactory;
@@ -569,72 +572,133 @@ public final class SmfReader {
         readHeader();
         readSymbolTable();
 
-        Map<ShapeId, IndexEntry> shapeIndex = readShapeIndexWithNeighbors();
+        // Resolve root symrefs (only these need ShapeId.from)
+        int serviceSym = findSymRef(request.getService());
+        int[] opSyms = new int[request.getOperations().size()];
+        int opIdx = 0;
+        for (ShapeId opId : request.getOperations()) {
+            opSyms[opIdx++] = findSymRef(opId);
+        }
 
-        // Compute closure using shape types from the index:
-        // - Service shape included; only its non-operation, non-resource neighbors
-        //   (i.e., error structures) are followed
-        // - Requested operations get full closure expansion
-        Set<ShapeId> closure = new LinkedHashSet<>();
-        Queue<ShapeId> queue = new ArrayDeque<>();
+        // Scan index linearly, building compact arrays for closure computation.
+        // We use symref integers throughout to avoid ShapeId allocation.
+        int entryCount = readVarUInt();
+        int[] entrySyms = new int[entryCount];
+        byte[] entryTypes = new byte[entryCount];
+        int[] entryOffsets = new int[entryCount];
+        int[] entryLengths = new int[entryCount];
+        int[] neighborStarts = new int[entryCount];
+        int[] neighborCounts = new int[entryCount];
+        // Flat array of all neighbor symrefs
+        int totalNeighbors = 0;
+        // First pass: count total neighbors
+        int indexStart = pos;
+        for (int i = 0; i < entryCount; i++) {
+            readVarUInt(); // shapeId sym
+            pos++; // shapeType
+            readVarUInt(); // offset
+            readVarUInt(); // length
+            int nc = readVarUInt();
+            totalNeighbors += nc;
+            for (int n = 0; n < nc; n++) {
+                readVarUInt();
+            }
+        }
+        int indexEnd = pos;
 
-        closure.add(request.getService());
+        // Second pass: fill arrays
+        int[] allNeighbors = new int[totalNeighbors];
+        pos = indexStart;
+        int neighborPos = 0;
+        for (int i = 0; i < entryCount; i++) {
+            entrySyms[i] = readVarUInt();
+            require(1);
+            entryTypes[i] = buf[pos++];
+            entryOffsets[i] = readVarUInt();
+            entryLengths[i] = readVarUInt();
+            int nc = readVarUInt();
+            neighborCounts[i] = nc;
+            neighborStarts[i] = neighborPos;
+            for (int n = 0; n < nc; n++) {
+                allNeighbors[neighborPos++] = readVarUInt();
+            }
+        }
 
-        // Follow service neighbors that are NOT operations or resources (those are errors)
-        IndexEntry svcEntry = shapeIndex.get(request.getService());
-        if (svcEntry != null) {
-            for (ShapeId neighborId : svcEntry.neighbors) {
-                IndexEntry neighborEntry = shapeIndex.get(neighborId);
-                if (neighborEntry == null) {
+        // Build symref -> entry index lookup (sparse: only populate for existing entries)
+        // Use a simple array if symbol count is manageable
+        int[] symToEntry = new int[symbols.length];
+        java.util.Arrays.fill(symToEntry, -1);
+        for (int i = 0; i < entryCount; i++) {
+            symToEntry[entrySyms[i]] = i;
+        }
+
+        // Compute closure using integer symrefs
+        Set<Integer> closureSyms = new LinkedHashSet<>();
+        Queue<Integer> queue = new ArrayDeque<>();
+
+        closureSyms.add(serviceSym);
+
+        // Service neighbors: skip operations and resources
+        int svcIdx = symToEntry[serviceSym];
+        if (svcIdx >= 0) {
+            int start = neighborStarts[svcIdx];
+            int count = neighborCounts[svcIdx];
+            for (int n = start; n < start + count; n++) {
+                int neighborSym = allNeighbors[n];
+                int neighborIdx = neighborSym < symToEntry.length ? symToEntry[neighborSym] : -1;
+                if (neighborIdx < 0) {
                     continue;
                 }
-                // Skip operations and resources — only follow error structures
-                if (neighborEntry.shapeType == SmfConstants.SHAPE_OPERATION
-                        || neighborEntry.shapeType == SmfConstants.SHAPE_RESOURCE) {
+                if (entryTypes[neighborIdx] == SmfConstants.SHAPE_OPERATION
+                        || entryTypes[neighborIdx] == SmfConstants.SHAPE_RESOURCE) {
                     continue;
                 }
-                if (closure.add(neighborId)) {
-                    queue.add(neighborId);
+                if (closureSyms.add(neighborSym)) {
+                    queue.add(neighborSym);
                 }
             }
         }
 
-        // Add requested operations for full closure expansion
-        for (ShapeId opId : request.getOperations()) {
-            if (closure.add(opId)) {
-                queue.add(opId);
+        // Add requested operations
+        for (int opSym : opSyms) {
+            if (closureSyms.add(opSym)) {
+                queue.add(opSym);
             }
         }
 
         // Expand transitive closure
         while (!queue.isEmpty()) {
-            ShapeId id = queue.poll();
-            IndexEntry entry = shapeIndex.get(id);
-            if (entry == null) {
+            int sym = queue.poll();
+            int idx = sym < symToEntry.length ? symToEntry[sym] : -1;
+            if (idx < 0) {
                 continue;
             }
-            for (ShapeId neighbor : entry.neighbors) {
-                if (closure.add(neighbor)) {
-                    queue.add(neighbor);
+            int start = neighborStarts[idx];
+            int count = neighborCounts[idx];
+            for (int n = start; n < start + count; n++) {
+                int neighborSym = allNeighbors[n];
+                if (closureSyms.add(neighborSym)) {
+                    queue.add(neighborSym);
                 }
             }
         }
 
-        // Skip metadata to reach shapes section
+        // Collect offsets for shapes in closure, sorted for sequential reading
+        List<int[]> toLoad = new ArrayList<>(); // [offset, length, symref]
+        for (int sym : closureSyms) {
+            int idx = sym < symToEntry.length ? symToEntry[sym] : -1;
+            if (idx >= 0) {
+                toLoad.add(new int[]{entryOffsets[idx], entryLengths[idx], entrySyms[idx]});
+            }
+        }
+        toLoad.sort((a, b) -> Integer.compare(a[0], b[0]));
+
+        // Skip metadata
+        pos = indexEnd;
         int flags = buf[SmfConstants.OFFSET_FLAGS] & 0xFF;
         if ((flags & SmfConstants.FLAG_HAS_METADATA) != 0) {
             skipMetadata();
         }
-
-        // Collect and sort offsets for sequential reading
-        List<IndexEntry> toLoad = new ArrayList<>();
-        for (ShapeId id : closure) {
-            IndexEntry entry = shapeIndex.get(id);
-            if (entry != null) {
-                toLoad.add(entry);
-            }
-        }
-        toLoad.sort((a, b) -> Integer.compare(a.offset, b.offset));
 
         // Sequential pass: parse only shapes in the closure
         int shapeCount = readVarUInt();
@@ -645,7 +709,7 @@ public final class SmfReader {
         for (int i = 0; i < shapeCount && loadIdx < toLoad.size(); i++) {
             int shapeIdSym = readVarUInt();
             int byteLength = readVarUInt();
-            if (currentOffset == toLoad.get(loadIdx).offset) {
+            if (currentOffset == toLoad.get(loadIdx)[0]) {
                 int endPos = pos + byteLength;
                 int shapeType = buf[pos++] & 0xFF;
                 ShapeId shapeId = shapeIdAt(shapeIdSym);
@@ -663,6 +727,19 @@ public final class SmfReader {
         }
 
         return builder.build();
+    }
+
+    /**
+     * Find the symref for a ShapeId by scanning symbols.
+     */
+    private int findSymRef(ShapeId id) {
+        String target = id.toString();
+        for (int i = 1; i < symbols.length; i++) {
+            if (target.equals(symbolAt(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static final class IndexEntry {
@@ -790,7 +867,7 @@ public final class SmfReader {
 
     private void readSymbolTable() {
         int sharedTableId = readVarUInt();
-        int sharedSize = 0;
+        sharedSize = 0;
         if (sharedTableId != 0) {
             int sharedTableVersion = readVarUInt();
             if (sharedTableVersion > SmfSharedSymbols.VERSION) {
@@ -802,27 +879,31 @@ public final class SmfReader {
         }
 
         int localCount = readCount();
-        symbols = new String[1 + sharedSize + localCount];
-        shapeIds = new ShapeId[symbols.length];
+        int totalSize = 1 + sharedSize + localCount;
+        symbols = new String[totalSize];
+        shapeIds = new ShapeId[totalSize];
+        symbolOffsets = new long[totalSize];
 
         // ID 0 = reserved
         symbols[0] = null;
 
-        // Shared symbols
+        // Shared symbols (already materialized constants)
         for (int i = 0; i < sharedSize; i++) {
             symbols[i + 1] = SmfSharedSymbols.SYMBOLS[i];
         }
 
-        // Local symbols
+        // Local symbols: record byte offsets, defer String creation
         int localStart = 1 + sharedSize;
         for (int i = 0; i < localCount; i++) {
-            symbols[localStart + i] = readString();
+            int len = readVarUInt();
+            symbolOffsets[localStart + i] = ((long) pos << 32) | (len & 0xFFFFFFFFL);
+            pos += len;
         }
 
-        // Pre-parse ShapeIds
-        for (int i = 1; i < symbols.length; i++) {
+        // Pre-parse shared ShapeIds (they're already known strings)
+        for (int i = 1; i <= sharedSize; i++) {
             String s = symbols[i];
-            if (s != null && s.indexOf('#') > 0) {
+            if (s.indexOf('#') > 0) {
                 shapeIds[i] = ShapeId.from(s);
             }
         }
@@ -1248,7 +1329,15 @@ public final class SmfReader {
         if (id <= 0 || id >= symbols.length) {
             throw new SmfFormatException("Invalid symbol ID: " + id);
         }
-        return symbols[id];
+        String s = symbols[id];
+        if (s == null) {
+            long packed = symbolOffsets[id];
+            int off = (int) (packed >>> 32);
+            int len = (int) packed;
+            s = new String(buf, off, len, java.nio.charset.StandardCharsets.UTF_8);
+            symbols[id] = s;
+        }
+        return s;
     }
 
     private ShapeId shapeIdAt(int id) {
@@ -1257,8 +1346,13 @@ public final class SmfReader {
         }
         ShapeId result = shapeIds[id];
         if (result == null) {
-            throw new SmfFormatException("Symbol " + id + " ('" + symbols[id]
-                    + "') is not a valid shape ID");
+            String s = symbolAt(id);
+            if (s.indexOf('#') <= 0) {
+                throw new SmfFormatException("Symbol " + id + " ('" + s
+                        + "') is not a valid shape ID");
+            }
+            result = ShapeId.from(s);
+            shapeIds[id] = result;
         }
         return result;
     }
