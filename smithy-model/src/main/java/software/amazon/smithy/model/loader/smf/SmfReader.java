@@ -580,77 +580,35 @@ public final class SmfReader {
             opSyms[opIdx++] = findSymRef(opId);
         }
 
-        // Scan index linearly, building compact arrays for closure computation.
-        // We use symref integers throughout to avoid ShapeId allocation.
+        // Read fixed-size index: entryCount + totalNeighbors, then table + neighbors
         int entryCount = readVarUInt();
-        int[] entrySyms = new int[entryCount];
-        byte[] entryTypes = new byte[entryCount];
-        int[] entryOffsets = new int[entryCount];
-        int[] entryLengths = new int[entryCount];
-        int[] neighborStarts = new int[entryCount];
-        int[] neighborCounts = new int[entryCount];
-        // Flat array of all neighbor symrefs
-        int totalNeighbors = 0;
-        // First pass: count total neighbors
-        int indexStart = pos;
-        for (int i = 0; i < entryCount; i++) {
-            readVarUInt(); // shapeId sym
-            pos++; // shapeType
-            readVarUInt(); // offset
-            readVarUInt(); // length
-            int nc = readVarUInt();
-            totalNeighbors += nc;
-            for (int n = 0; n < nc; n++) {
-                readVarUInt();
-            }
-        }
-        int indexEnd = pos;
+        int totalNeighborCount = readVarUInt();
+        int tableStart = pos;
+        int neighborsArrayStart = tableStart + entryCount * SmfConstants.INDEX_ENTRY_SIZE;
+        int indexEnd = neighborsArrayStart + totalNeighborCount * 4;
 
-        // Second pass: fill arrays
-        int[] allNeighbors = new int[totalNeighbors];
-        pos = indexStart;
-        int neighborPos = 0;
-        for (int i = 0; i < entryCount; i++) {
-            entrySyms[i] = readVarUInt();
-            require(1);
-            entryTypes[i] = buf[pos++];
-            entryOffsets[i] = readVarUInt();
-            entryLengths[i] = readVarUInt();
-            int nc = readVarUInt();
-            neighborCounts[i] = nc;
-            neighborStarts[i] = neighborPos;
-            for (int n = 0; n < nc; n++) {
-                allNeighbors[neighborPos++] = readVarUInt();
-            }
-        }
-
-        // Build symref -> entry index lookup (sparse: only populate for existing entries)
-        // Use a simple array if symbol count is manageable
-        int[] symToEntry = new int[symbols.length];
-        java.util.Arrays.fill(symToEntry, -1);
-        for (int i = 0; i < entryCount; i++) {
-            symToEntry[entrySyms[i]] = i;
-        }
-
-        // Compute closure using integer symrefs
+        // Compute closure using binary search on the sorted fixed-size table.
+        // No need to build any intermediate arrays or hashmaps.
         Set<Integer> closureSyms = new LinkedHashSet<>();
         Queue<Integer> queue = new ArrayDeque<>();
 
         closureSyms.add(serviceSym);
 
         // Service neighbors: skip operations and resources
-        int svcIdx = symToEntry[serviceSym];
+        int svcIdx = binarySearchIndex(tableStart, entryCount, serviceSym);
         if (svcIdx >= 0) {
-            int start = neighborStarts[svcIdx];
-            int count = neighborCounts[svcIdx];
-            for (int n = start; n < start + count; n++) {
-                int neighborSym = allNeighbors[n];
-                int neighborIdx = neighborSym < symToEntry.length ? symToEntry[neighborSym] : -1;
+            int entryPos = tableStart + svcIdx * SmfConstants.INDEX_ENTRY_SIZE;
+            int nStart = readInt32LE(entryPos + 9);
+            int nCount = readInt16LE(entryPos + 13);
+            for (int n = 0; n < nCount; n++) {
+                int neighborSym = readInt32LE(neighborsArrayStart + (nStart + n) * 4);
+                int neighborIdx = binarySearchIndex(tableStart, entryCount, neighborSym);
                 if (neighborIdx < 0) {
                     continue;
                 }
-                if (entryTypes[neighborIdx] == SmfConstants.SHAPE_OPERATION
-                        || entryTypes[neighborIdx] == SmfConstants.SHAPE_RESOURCE) {
+                byte neighborType = buf[tableStart + neighborIdx * SmfConstants.INDEX_ENTRY_SIZE + 4];
+                if (neighborType == SmfConstants.SHAPE_OPERATION
+                        || neighborType == SmfConstants.SHAPE_RESOURCE) {
                     continue;
                 }
                 if (closureSyms.add(neighborSym)) {
@@ -666,29 +624,31 @@ public final class SmfReader {
             }
         }
 
-        // Expand transitive closure
+        // Expand transitive closure via binary search
         while (!queue.isEmpty()) {
             int sym = queue.poll();
-            int idx = sym < symToEntry.length ? symToEntry[sym] : -1;
+            int idx = binarySearchIndex(tableStart, entryCount, sym);
             if (idx < 0) {
                 continue;
             }
-            int start = neighborStarts[idx];
-            int count = neighborCounts[idx];
-            for (int n = start; n < start + count; n++) {
-                int neighborSym = allNeighbors[n];
+            int entryPos = tableStart + idx * SmfConstants.INDEX_ENTRY_SIZE;
+            int nStart = readInt32LE(entryPos + 9);
+            int nCount = readInt16LE(entryPos + 13);
+            for (int n = 0; n < nCount; n++) {
+                int neighborSym = readInt32LE(neighborsArrayStart + (nStart + n) * 4);
                 if (closureSyms.add(neighborSym)) {
                     queue.add(neighborSym);
                 }
             }
         }
 
-        // Collect offsets for shapes in closure, sorted for sequential reading
-        List<int[]> toLoad = new ArrayList<>(); // [offset, length, symref]
+        // Collect offsets for shapes in closure
+        List<int[]> toLoad = new ArrayList<>(); // [offset, symref]
         for (int sym : closureSyms) {
-            int idx = sym < symToEntry.length ? symToEntry[sym] : -1;
+            int idx = binarySearchIndex(tableStart, entryCount, sym);
             if (idx >= 0) {
-                toLoad.add(new int[]{entryOffsets[idx], entryLengths[idx], entrySyms[idx]});
+                int entryPos = tableStart + idx * SmfConstants.INDEX_ENTRY_SIZE;
+                toLoad.add(new int[]{readInt32LE(entryPos + 5), sym});
             }
         }
         toLoad.sort((a, b) -> Integer.compare(a[0], b[0]));
@@ -712,7 +672,7 @@ public final class SmfReader {
             int byteLength = readVarUInt();
             int endPos = pos + byteLength;
             int shapeType = buf[pos++] & 0xFF;
-            ShapeId shapeId = shapeIdAt(entry[2]);
+            ShapeId shapeId = shapeIdAt(entry[1]);
             List<Trait> traits = readTraits(shapeId);
             Shape shape = buildShape(shapeId, shapeType, traits);
             if (shape != null) {
@@ -758,22 +718,59 @@ public final class SmfReader {
         if ((flags & SmfConstants.FLAG_HAS_SHAPE_INDEX) == 0) {
             return new LinkedHashMap<>();
         }
-        int count = readVarUInt();
-        Map<ShapeId, IndexEntry> index = new LinkedHashMap<>(count);
-        for (int i = 0; i < count; i++) {
-            ShapeId id = shapeIdAt(readVarUInt());
-            require(1);
-            byte shapeType = buf[pos++];
-            int offset = readVarUInt();
-            int length = readVarUInt();
-            int neighborCount = readVarUInt();
-            List<ShapeId> neighbors = new ArrayList<>(neighborCount);
-            for (int n = 0; n < neighborCount; n++) {
-                neighbors.add(shapeIdAt(readVarUInt()));
+        int entryCount = readVarUInt();
+        int totalNeighbors = readVarUInt();
+        int tableStart = pos;
+        int neighborsStart = tableStart + entryCount * SmfConstants.INDEX_ENTRY_SIZE;
+
+        Map<ShapeId, IndexEntry> index = new LinkedHashMap<>(entryCount);
+        for (int i = 0; i < entryCount; i++) {
+            int entryPos = tableStart + i * SmfConstants.INDEX_ENTRY_SIZE;
+            int sym = readInt32LE(entryPos);
+            byte shapeType = buf[entryPos + 4];
+            int offset = readInt32LE(entryPos + 5);
+            int nStart = readInt32LE(entryPos + 9);
+            int nCount = readInt16LE(entryPos + 13);
+
+            ShapeId id = shapeIdAt(sym);
+            List<ShapeId> neighbors = new ArrayList<>(nCount);
+            for (int n = 0; n < nCount; n++) {
+                neighbors.add(shapeIdAt(readInt32LE(neighborsStart + (nStart + n) * 4)));
             }
-            index.put(id, new IndexEntry(id, shapeType, offset, length, neighbors));
+            index.put(id, new IndexEntry(id, shapeType, offset, 0, neighbors));
         }
+        pos = neighborsStart + totalNeighbors * 4;
         return index;
+    }
+
+    private int readInt32LE(int p) {
+        return (buf[p] & 0xFF) | ((buf[p + 1] & 0xFF) << 8)
+                | ((buf[p + 2] & 0xFF) << 16) | ((buf[p + 3] & 0xFF) << 24);
+    }
+
+    private int readInt16LE(int p) {
+        return (buf[p] & 0xFF) | ((buf[p + 1] & 0xFF) << 8);
+    }
+
+    /**
+     * Binary search the fixed-size index table for a symref.
+     * Returns the entry index or -1 if not found.
+     */
+    private int binarySearchIndex(int tableStart, int entryCount, int symref) {
+        int lo = 0;
+        int hi = entryCount - 1;
+        while (lo <= hi) {
+            int mid = (lo + hi) >>> 1;
+            int midSym = readInt32LE(tableStart + mid * SmfConstants.INDEX_ENTRY_SIZE);
+            if (midSym < symref) {
+                lo = mid + 1;
+            } else if (midSym > symref) {
+                hi = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
     }
 
     private void skipMetadata() {
@@ -909,17 +906,9 @@ public final class SmfReader {
         if ((flags & SmfConstants.FLAG_HAS_SHAPE_INDEX) == 0) {
             return;
         }
-        int count = readVarUInt();
-        for (int i = 0; i < count; i++) {
-            readVarUInt(); // shapeId
-            pos++; // shapeType
-            readVarUInt(); // byteOffset
-            readVarUInt(); // byteLength
-            int neighborCount = readVarUInt();
-            for (int n = 0; n < neighborCount; n++) {
-                readVarUInt(); // neighborId
-            }
-        }
+        int entryCount = readVarUInt();
+        int neighborCount = readVarUInt();
+        pos += entryCount * SmfConstants.INDEX_ENTRY_SIZE + neighborCount * 4;
     }
 
     private void readMetadata(Model.Builder builder) {

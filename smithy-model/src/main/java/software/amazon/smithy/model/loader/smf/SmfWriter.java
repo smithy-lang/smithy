@@ -250,22 +250,61 @@ public final class SmfWriter {
     }
 
     private void writeShapeIndex(List<byte[]> shapeBytes) {
-        writeVarUInt(shapes.size());
+        // Build index data: collect entries sorted by symref for binary search
+        int[][] entries = new int[shapes.size()][]; // [symref, type, offset, neighborStart, neighborCount]
+        List<int[]> allNeighbors = new ArrayList<>();
         int offset = 0;
         for (int i = 0; i < shapes.size(); i++) {
             Shape shape = shapes.get(i);
-            writeVarUInt(symRef(shape.getId().toString()));
-            ensure(1);
-            buf[pos++] = SmfConstants.shapeTypeToByte(shape.getType());
-            writeVarUInt(offset);
-            writeVarUInt(shapeBytes.get(i).length);
-            // Write neighbor list (dependency graph)
+            int sym = symRef(shape.getId().toString());
             List<ShapeId> neighbors = getNeighbors(shape);
-            writeVarUInt(neighbors.size());
+            int neighborStart = allNeighbors.size();
             for (ShapeId neighbor : neighbors) {
-                writeVarUInt(symRef(neighbor.toString()));
+                allNeighbors.add(new int[]{symRef(neighbor.toString())});
             }
+            entries[i] = new int[]{sym, SmfConstants.shapeTypeToByte(shape.getType()) & 0xFF,
+                    offset, neighborStart, neighbors.size()};
             offset += shapeBytes.get(i).length;
+        }
+        // Sort by symref for binary search
+        java.util.Arrays.sort(entries, (a, b) -> Integer.compare(a[0], b[0]));
+
+        // Write: entryCount + totalNeighborCount + fixed-size table + flat neighbors
+        writeVarUInt(entries.length);
+        writeVarUInt(allNeighbors.size());
+
+        // Fixed-size entry table (15 bytes each)
+        ensure(entries.length * SmfConstants.INDEX_ENTRY_SIZE);
+        for (int[] e : entries) {
+            // symref: 4 bytes LE
+            buf[pos++] = (byte) e[0];
+            buf[pos++] = (byte) (e[0] >> 8);
+            buf[pos++] = (byte) (e[0] >> 16);
+            buf[pos++] = (byte) (e[0] >> 24);
+            // type: 1 byte
+            buf[pos++] = (byte) e[1];
+            // offset: 4 bytes LE
+            buf[pos++] = (byte) e[2];
+            buf[pos++] = (byte) (e[2] >> 8);
+            buf[pos++] = (byte) (e[2] >> 16);
+            buf[pos++] = (byte) (e[2] >> 24);
+            // neighborStart: 4 bytes LE
+            buf[pos++] = (byte) e[3];
+            buf[pos++] = (byte) (e[3] >> 8);
+            buf[pos++] = (byte) (e[3] >> 16);
+            buf[pos++] = (byte) (e[3] >> 24);
+            // neighborCount: 2 bytes LE
+            buf[pos++] = (byte) e[4];
+            buf[pos++] = (byte) (e[4] >> 8);
+        }
+
+        // Flat neighbor array (4 bytes each)
+        ensure(allNeighbors.size() * 4);
+        for (int[] n : allNeighbors) {
+            buf[pos++] = (byte) n[0];
+            buf[pos++] = (byte) (n[0] >> 8);
+            buf[pos++] = (byte) (n[0] >> 16);
+            buf[pos++] = (byte) (n[0] >> 24);
         }
     }
 

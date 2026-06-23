@@ -367,32 +367,36 @@ includes a neighbor list (dependency graph) for each shape. This enables
 computing the transitive closure of any shape without parsing shape bodies.
 Present only if the `has-shape-index` flag is set in the header.
 
+The index uses fixed-size entries sorted by symbol reference to enable
+O(log N) binary search for selective loading without scanning all entries.
+
 ```
 VarUInt       entryCount
-IndexEntry[]  entries (entryCount entries, in the same order as shapes)
+VarUInt       totalNeighborCount
+byte[]        fixedEntryTable (entryCount × 15 bytes, sorted by symref)
+uint32LE[]    neighborArray (totalNeighborCount × 4 bytes)
 ```
 
-Each IndexEntry:
+Each fixed-size entry (15 bytes):
 
 ```
-SymRef    shapeId
-byte      shapeType (same enum as Shape Type Enum in the shapes section)
-VarUInt   byteOffset (offset in bytes from the first shape's first byte
-                      in the shapes section, i.e., after the shapeCount
-                      VarUInt that begins the section)
-VarUInt   byteLength (total bytes for this shape, including the shape's
-                      own shapeId and byteLength fields)
-VarUInt   neighborCount
-SymRef[]  neighborIds (neighborCount entries, shape IDs directly
-                       referenced by this shape)
+Offset  Size  Field
+0       4     symref (uint32 LE, symbol table index of the shape ID)
+4       1     shapeType (same enum as Shape Type Enum)
+5       4     byteOffset (uint32 LE, offset from first shape's first byte
+                          in the shapes section)
+9       4     neighborStart (uint32 LE, index into the flat neighbor array)
+13      2     neighborCount (uint16 LE, number of neighbors)
 ```
 
+The flat neighbor array stores all neighbor symrefs as packed uint32 LE
+values. Each entry's neighbors are at
+`neighborArray[neighborStart .. neighborStart + neighborCount]`.
+
+Entries are sorted by `symref` in ascending order to enable binary search.
 The `shapeType` byte enables the selective loading algorithm to classify
 shapes (service, operation, structure, etc.) during closure computation
-without parsing shape bodies. This costs 1 byte per shape in the index
-(~5KB for a 5,000-shape model) but eliminates the need to seek into the
-shapes section when determining which neighbors to follow for a service
-or resource.
+without parsing shape bodies.
 
 The neighbor list contains all shape IDs that this shape directly references:
 member targets, operation input/output/errors, resource lifecycle operations,

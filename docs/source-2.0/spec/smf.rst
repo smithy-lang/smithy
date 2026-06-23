@@ -144,27 +144,31 @@ minimize VarUInt encoding size.
 Shape index
 -----------
 
-Present only if the ``has-shape-index`` flag is set. Maps shape IDs to
-byte offsets within the shapes section for selective loading.
+Present only if the ``has-shape-index`` flag is set. Uses fixed-size entries
+sorted by symbol reference to enable O(log N) binary search for selective
+loading.
 
 .. code-block:: none
 
     VarUInt       entryCount
-    IndexEntry[]  entries
+    VarUInt       totalNeighborCount
+    byte[]        fixedEntryTable (entryCount × 15 bytes, sorted by symref)
+    uint32LE[]    neighborArray (totalNeighborCount × 4 bytes)
 
-Each IndexEntry:
+Each fixed-size entry (15 bytes):
 
 .. code-block:: none
 
-    SymRef    shapeId
-    byte      shapeType
-    VarUInt   byteOffset (from first shape's first byte, after shapeCount)
-    VarUInt   byteLength
-    VarUInt   neighborCount
-    SymRef[]  neighborIds
+    Offset  Size  Field
+    0       4     symref (uint32 LE)
+    4       1     shapeType
+    5       4     byteOffset (uint32 LE, from first shape's first byte)
+    9       4     neighborStart (uint32 LE, index into neighbor array)
+    13      2     neighborCount (uint16 LE)
 
-The ``shapeType`` byte enables the selective loading algorithm to classify
-shapes during closure computation without parsing shape bodies.
+The flat neighbor array stores all neighbor symrefs as packed uint32 LE
+values. The ``shapeType`` byte enables the selective loading algorithm to
+classify shapes during closure computation without parsing shape bodies.
 
 
 .. _smf-shapes-section:

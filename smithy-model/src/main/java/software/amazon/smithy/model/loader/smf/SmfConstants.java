@@ -76,6 +76,9 @@ final class SmfConstants {
     static final int RES_HAS_DELETE = 0x10;
     static final int RES_HAS_LIST = 0x20;
 
+    // Fixed-size index entry: symref(4) + type(1) + offset(4) + neighborStart(4) + neighborCount(2) = 15
+    static final int INDEX_ENTRY_SIZE = 15;
+
     private SmfConstants() {}
 
     /**
