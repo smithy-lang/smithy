@@ -693,37 +693,32 @@ public final class SmfReader {
         }
         toLoad.sort((a, b) -> Integer.compare(a[0], b[0]));
 
-        // Skip metadata
+        // Skip metadata to find shapes section start
         pos = indexEnd;
         int flags = buf[SmfConstants.OFFSET_FLAGS] & 0xFF;
         if ((flags & SmfConstants.FLAG_HAS_METADATA) != 0) {
             skipMetadata();
         }
 
-        // Sequential pass: parse only shapes in the closure
-        int shapeCount = readVarUInt();
+        // Skip shapeCount VarUInt to get dataStart
+        readVarUInt(); // shapeCount (not needed — we know which shapes to load)
         int dataStart = pos;
+
+        // Direct seeks: jump to each shape by offset, no scanning
         Model.Builder builder = Model.builder();
-        int loadIdx = 0;
-        int currentOffset = 0;
-        for (int i = 0; i < shapeCount && loadIdx < toLoad.size(); i++) {
-            int shapeIdSym = readVarUInt();
+        for (int[] entry : toLoad) {
+            pos = dataStart + entry[0];
+            readVarUInt(); // shapeId symref (skip — we already have it from index)
             int byteLength = readVarUInt();
-            if (currentOffset == toLoad.get(loadIdx)[0]) {
-                int endPos = pos + byteLength;
-                int shapeType = buf[pos++] & 0xFF;
-                ShapeId shapeId = shapeIdAt(shapeIdSym);
-                List<Trait> traits = readTraits(shapeId);
-                Shape shape = buildShape(shapeId, shapeType, traits);
-                if (shape != null) {
-                    builder.addShape(shape);
-                }
-                pos = endPos;
-                loadIdx++;
-            } else {
-                pos += byteLength;
+            int endPos = pos + byteLength;
+            int shapeType = buf[pos++] & 0xFF;
+            ShapeId shapeId = shapeIdAt(entry[2]);
+            List<Trait> traits = readTraits(shapeId);
+            Shape shape = buildShape(shapeId, shapeType, traits);
+            if (shape != null) {
+                builder.addShape(shape);
             }
-            currentOffset = pos - dataStart;
+            pos = endPos;
         }
 
         return builder.build();
