@@ -51,7 +51,8 @@ public class SmfSelectiveProfile {
         }
 
         long sum = 0;
-        for (long t : times) sum += t;
+        for (long t : times)
+            sum += t;
         double avgMs = (sum / iterations) / 1_000_000.0;
         System.out.printf("Average selective load: %.2f ms%n%n", avgMs);
 
@@ -115,6 +116,7 @@ public class SmfSelectiveProfile {
         System.out.println("Phase breakdown:");
         System.out.printf("  Overhead (header + symbols + index scan + closure, no shapes): %.2f ms%n", overheadMs);
         System.out.printf("  Full (with shape parsing):                                    %.2f ms%n", fullMs);
-        System.out.printf("  Shape parsing (difference):                                   %.2f ms%n", fullMs - overheadMs);
+        System.out.printf("  Shape parsing (difference):                                   %.2f ms%n",
+                fullMs - overheadMs);
     }
 }

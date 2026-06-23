@@ -648,7 +648,7 @@ public final class SmfReader {
             int idx = binarySearchIndex(tableStart, entryCount, sym);
             if (idx >= 0) {
                 int entryPos = tableStart + idx * SmfConstants.INDEX_ENTRY_SIZE;
-                toLoad.add(new int[]{readInt32LE(entryPos + 5), sym});
+                toLoad.add(new int[] {readInt32LE(entryPos + 5), sym});
             }
         }
         toLoad.sort((a, b) -> Integer.compare(a[0], b[0]));
@@ -745,7 +745,8 @@ public final class SmfReader {
 
     private int readInt32LE(int p) {
         return (buf[p] & 0xFF) | ((buf[p + 1] & 0xFF) << 8)
-                | ((buf[p + 2] & 0xFF) << 16) | ((buf[p + 3] & 0xFF) << 24);
+                | ((buf[p + 2] & 0xFF) << 16)
+                | ((buf[p + 3] & 0xFF) << 24);
     }
 
     private int readInt16LE(int p) {

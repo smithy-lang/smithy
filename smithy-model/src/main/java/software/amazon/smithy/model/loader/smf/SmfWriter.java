@@ -260,10 +260,13 @@ public final class SmfWriter {
             List<ShapeId> neighbors = getNeighbors(shape);
             int neighborStart = allNeighbors.size();
             for (ShapeId neighbor : neighbors) {
-                allNeighbors.add(new int[]{symRef(neighbor.toString())});
+                allNeighbors.add(new int[] {symRef(neighbor.toString())});
             }
-            entries[i] = new int[]{sym, SmfConstants.shapeTypeToByte(shape.getType()) & 0xFF,
-                    offset, neighborStart, neighbors.size()};
+            entries[i] = new int[] {sym,
+                    SmfConstants.shapeTypeToByte(shape.getType()) & 0xFF,
+                    offset,
+                    neighborStart,
+                    neighbors.size()};
             offset += shapeBytes.get(i).length;
         }
         // Sort by symref for binary search
