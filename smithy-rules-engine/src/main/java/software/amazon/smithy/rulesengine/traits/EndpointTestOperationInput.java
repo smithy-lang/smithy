@@ -7,7 +7,9 @@ package software.amazon.smithy.rulesengine.traits;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -16,7 +18,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * A description of a service operation and input used to verify an endpoint rule-set test case.
  */
 @SmithyUnstableApi
-public final class EndpointTestOperationInput implements FromSourceLocation,
+public final class EndpointTestOperationInput implements ToNode, FromSourceLocation,
         ToSmithyBuilder<EndpointTestOperationInput> {
     private final SourceLocation sourceLocation;
     private final String operationName;
@@ -30,10 +32,6 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
         this.operationParams = builder.operationParams;
         this.builtInParams = builder.builtInParams;
         this.clientParams = builder.clientParams;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public String getOperationName() {
@@ -50,6 +48,22 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
 
     public ObjectNode getClientParams() {
         return clientParams;
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        builder.withMember("operationName", Node.from(operationName));
+        if (operationParams != null) {
+            builder.withMember("operationParams", operationParams);
+        }
+        if (builtInParams != null) {
+            builder.withMember("builtInParams", builtInParams);
+        }
+        if (clientParams != null) {
+            builder.withMember("clientParams", clientParams);
+        }
+        return builder.build();
     }
 
     @Override
@@ -85,6 +99,20 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
                 .operationParams(operationParams)
                 .builtInParams(builtInParams)
                 .clientParams(clientParams);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static EndpointTestOperationInput fromNode(Node node) {
+        ObjectNode obj = node.expectObjectNode();
+        Builder builder = builder().sourceLocation(node);
+        obj.expectStringMember("operationName", builder::operationName);
+        obj.getObjectMember("operationParams", builder::operationParams);
+        obj.getObjectMember("builtInParams", builder::builtInParams);
+        obj.getObjectMember("clientParams", builder::clientParams);
+        return builder.build();
     }
 
     public static final class Builder implements SmithyBuilder<EndpointTestOperationInput> {
