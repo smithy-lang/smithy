@@ -5,7 +5,6 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -292,7 +291,7 @@ public class TaggedStringLiteralTest {
         assertThat(TaggedStringLiteral.hasHandler("unknown"), is(false));
     }
 
-`    // --- Helpers ---
+    // --- Helpers ---
 
     private static String base64(String s) {
         return Base64.getEncoder().encodeToString(s.getBytes(StandardCharsets.UTF_8));
