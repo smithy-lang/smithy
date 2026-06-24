@@ -15,7 +15,7 @@ dependencies = [
 
     # Used by new docs
     "sphinx-inline-tabs==2025.12.21.14",
-    "Sphinx-Substitution-Extensions==2026.1.12",
+    "Sphinx-Substitution-Extensions==2026.6.17",
 
     "sphinx_copybutton==0.5.2",
     "sphinx-autobuild==2025.8.25",
