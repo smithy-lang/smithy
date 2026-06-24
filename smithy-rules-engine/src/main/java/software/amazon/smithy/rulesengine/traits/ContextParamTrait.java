@@ -5,7 +5,7 @@
 package software.amazon.smithy.rulesengine.traits;
 
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -38,10 +38,9 @@ public final class ContextParamTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     protected Node createNode() {
-        NodeMapper mapper = new NodeMapper();
-        mapper.disableToNodeForClass(ContextParamTrait.class);
-        mapper.setOmitEmptyValues(true);
-        return mapper.serialize(this).expectObjectNode();
+        return Node.objectNodeBuilder()
+                .withMember("name", name)
+                .build();
     }
 
     @Override
@@ -58,10 +57,10 @@ public final class ContextParamTrait extends AbstractTrait implements ToSmithyBu
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            NodeMapper mapper = new NodeMapper();
-            mapper.disableFromNodeForClass(ContextParamTrait.class);
-            mapper.setOmitEmptyValues(true);
-            ContextParamTrait trait = mapper.deserialize(value, ContextParamTrait.class);
+            ObjectNode obj = value.expectObjectNode();
+            Builder builder = builder().sourceLocation(value);
+            obj.expectStringMember("name", builder::name);
+            ContextParamTrait trait = builder.build();
             trait.setNodeCache(value);
             return trait;
         }

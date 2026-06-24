@@ -326,6 +326,6 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
     }
 
     Map<ShapeId, Trait> getTraits() {
-        return traits.get();
+        return traits.copy();
     }
 }

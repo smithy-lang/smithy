@@ -6,6 +6,9 @@ package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -15,7 +18,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * A service client context parameter definition.
  */
 @SmithyUnstableApi
-public final class ClientContextParamDefinition implements ToSmithyBuilder<ClientContextParamDefinition> {
+public final class ClientContextParamDefinition implements ToNode, ToSmithyBuilder<ClientContextParamDefinition> {
     private final ShapeType type;
     private final String documentation;
 
@@ -24,16 +27,22 @@ public final class ClientContextParamDefinition implements ToSmithyBuilder<Clien
         this.documentation = builder.documentation;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public ShapeType getType() {
         return type;
     }
 
     public Optional<String> getDocumentation() {
         return Optional.ofNullable(documentation);
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
+                .withMember("type", type.toString());
+        if (documentation != null) {
+            builder.withMember("documentation", documentation);
+        }
+        return builder.build();
     }
 
     public Builder toBuilder() {
@@ -57,6 +66,18 @@ public final class ClientContextParamDefinition implements ToSmithyBuilder<Clien
         }
         ClientContextParamDefinition that = (ClientContextParamDefinition) o;
         return getType() == that.getType() && Objects.equals(getDocumentation(), that.getDocumentation());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static ClientContextParamDefinition fromNode(Node node) {
+        ObjectNode obj = node.expectObjectNode();
+        Builder builder = builder();
+        obj.expectStringMember("type", s -> builder.type(ShapeType.fromString(s).orElse(null)));
+        obj.getStringMember("documentation", builder::documentation);
+        return builder.build();
     }
 
     public static final class Builder implements SmithyBuilder<ClientContextParamDefinition> {

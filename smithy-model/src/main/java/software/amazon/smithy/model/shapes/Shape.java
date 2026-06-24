@@ -61,7 +61,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         id = SmithyBuilder.requiredState("id", builder.getId());
         validateShapeId(expectMemberSegments);
 
-        introducedTraits = MapUtils.copyOf(builder.getTraits());
+        introducedTraits = builder.getTraits();
         mixins = MapUtils.orderedCopyOf(builder.getMixins());
 
         if (mixins.isEmpty()) {

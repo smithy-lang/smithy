@@ -4,12 +4,17 @@
  */
 package software.amazon.smithy.rulesengine.traits;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -20,7 +25,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An endpoint test-case expectation.
  */
 @SmithyUnstableApi
-public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuilder<ExpectedEndpoint> {
+public final class ExpectedEndpoint implements ToNode, FromSourceLocation, ToSmithyBuilder<ExpectedEndpoint> {
     private final SourceLocation sourceLocation;
     private final String url;
     private final Map<String, List<String>> headers;
@@ -33,10 +38,6 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         this.properties = builder.properties.copy();
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public String getUrl() {
         return url;
     }
@@ -47,6 +48,35 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
 
     public Map<String, Node> getProperties() {
         return properties;
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        if (url != null) {
+            builder.withMember("url", url);
+        }
+        if (!headers.isEmpty()) {
+            ObjectNode.Builder headersBuilder = ObjectNode.builder();
+            for (Map.Entry<String, List<String>> kvp : headers.entrySet()) {
+                StringNode headerName = Node.from(kvp.getKey());
+                ArrayNode.Builder valuesBuilder = ArrayNode.builder();
+                for (String value : kvp.getValue()) {
+                    valuesBuilder.withValue(Node.from(value));
+                }
+                headersBuilder.withMember(headerName, valuesBuilder.build());
+            }
+            builder.withMember("headers", headersBuilder.build());
+        }
+        if (!properties.isEmpty()) {
+            ObjectNode.Builder propertiesBuilder = ObjectNode.builder();
+            for (Map.Entry<String, Node> kvp : properties.entrySet()) {
+                propertiesBuilder.withMember(kvp.getKey(), kvp.getValue());
+            }
+            builder.withMember("properties", propertiesBuilder.build());
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -96,6 +126,32 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
                                     2)));
         }
         return sb.toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static ExpectedEndpoint fromNode(Node node) {
+        ObjectNode obj = node.expectObjectNode();
+        Builder builder = builder().sourceLocation(node);
+        obj.expectStringMember("url", builder::url);
+        obj.getObjectMember("headers", headersNode -> {
+            for (Map.Entry<String, Node> entry : headersNode.getStringMap().entrySet()) {
+                List<String> values = new ArrayList<>();
+                entry.getValue()
+                        .expectArrayNode()
+                        .getElements()
+                        .forEach(n -> values.add(n.expectStringNode().getValue()));
+                builder.putHeader(entry.getKey(), values);
+            }
+        });
+        obj.getObjectMember("properties", propsNode -> {
+            for (Map.Entry<String, Node> entry : propsNode.getStringMap().entrySet()) {
+                builder.putProperty(entry.getKey(), entry.getValue());
+            }
+        });
+        return builder.build();
     }
 
     public static final class Builder implements SmithyBuilder<ExpectedEndpoint> {
