@@ -260,6 +260,8 @@ performance), the remaining 30-40% matters.
 ├────────────────────────────────┤
 │ Symbol Table                   │
 ├────────────────────────────────┤
+│ Trait Value Table              │
+├────────────────────────────────┤
 │ Shape Index (optional)         │
 ├────────────────────────────────┤
 │ Metadata Section               │
@@ -359,6 +361,28 @@ reader and writer. The shared table is never transmitted in the file.
 Writers SHOULD assign local symbol IDs in descending frequency order (most
 frequently referenced strings get the lowest IDs) to minimize VarUInt
 encoding size.
+
+### Trait Value Table
+
+The trait value table deduplicates trait values that appear multiple times
+across shapes. Each unique trait value is stored once in this table and
+referenced by index from within shape trait encodings.
+
+```
+VarUInt         valueCount
+DynamicValue[]  values (valueCount complete encoded values)
+```
+
+In the shapes section, each trait is encoded as:
+
+```
+SymRef    traitId
+VarUInt   traitValueRef (index into the trait value table)
+```
+
+This replaces inline `DynamicValue` encoding with a compact integer reference.
+Annotation traits (`{}`) that appear thousands of times are stored once and
+referenced by a 1-2 byte VarUInt instead of being encoded inline each time.
 
 ### Shape Index
 

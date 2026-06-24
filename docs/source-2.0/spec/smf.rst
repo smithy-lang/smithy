@@ -56,6 +56,8 @@ File structure
     ├────────────────────────────────┤
     │ Symbol Table                   │
     ├────────────────────────────────┤
+    │ Trait Value Table              │
+    ├────────────────────────────────┤
     │ Shape Index (optional)         │
     ├────────────────────────────────┤
     │ Metadata Section               │
@@ -136,6 +138,24 @@ to shared table entries, IDs S+1 through S+L correspond to local symbols.
 
 Writers SHOULD assign local symbol IDs in descending frequency order to
 minimize VarUInt encoding size.
+
+
+.. _smf-trait-value-table:
+
+-----------------
+Trait value table
+-----------------
+
+Deduplicates trait values that appear multiple times across shapes. Each
+unique value is stored once and referenced by index.
+
+.. code-block:: none
+
+    VarUInt         valueCount
+    DynamicValue[]  values (valueCount encoded values)
+
+In shapes, each trait is encoded as ``SymRef traitId`` + ``VarUInt valueRef``
+(index into this table) instead of an inline ``DynamicValue``.
 
 
 .. _smf-shape-index:
