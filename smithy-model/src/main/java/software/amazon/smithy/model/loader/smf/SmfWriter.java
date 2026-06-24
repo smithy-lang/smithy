@@ -6,8 +6,10 @@ package software.amazon.smithy.model.loader.smf;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -45,6 +47,8 @@ public final class SmfWriter {
     private final List<Shape> shapes;
     private final Map<String, Integer> symbolIndex;
     private final List<String> localSymbols;
+    private final Map<ByteBuffer, Integer> traitValueIndex;
+    private final List<byte[]> traitValues;
     private byte[] buf;
     private int pos;
 
@@ -54,6 +58,8 @@ public final class SmfWriter {
         this.shapes = new ArrayList<>();
         this.symbolIndex = new HashMap<>();
         this.localSymbols = new ArrayList<>();
+        this.traitValueIndex = new HashMap<>();
+        this.traitValues = new ArrayList<>();
         this.buf = new byte[4096];
         this.pos = 0;
     }
@@ -75,6 +81,7 @@ public final class SmfWriter {
     private byte[] serialize() {
         collectShapes();
         buildSymbolTable();
+        buildTraitValueTable();
 
         // Phase 1: serialize each shape independently to get byte lengths
         List<byte[]> shapeBytes = new ArrayList<>(shapes.size());
@@ -90,6 +97,7 @@ public final class SmfWriter {
         pos = 0;
         writeHeader();
         writeSymbolTable();
+        writeTraitValueTable();
         writeShapeIndex(shapeBytes);
         writeMetadataSection();
         writeShapesSection(shapeBytes);
@@ -165,6 +173,70 @@ public final class SmfWriter {
         for (Map.Entry<String, Integer> entry : SmfSharedSymbols.REVERSE_INDEX.entrySet()) {
             symbolIndex.put(entry.getKey(), entry.getValue());
         }
+    }
+
+    private final Map<Node, Integer> nodeToTraitValueRef = new HashMap<>();
+
+    private void buildTraitValueTable() {
+        for (Shape shape : shapes) {
+            for (Map.Entry<ShapeId, Trait> entry : shape.getAllTraits().entrySet()) {
+                if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
+                    continue;
+                }
+                internTraitValue(entry.getValue().toNode());
+            }
+            for (MemberShape member : shape.members()) {
+                for (Map.Entry<ShapeId, Trait> entry : member.getAllTraits().entrySet()) {
+                    if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
+                        continue;
+                    }
+                    internTraitValue(entry.getValue().toNode());
+                }
+            }
+        }
+    }
+
+    private void internTraitValue(Node value) {
+        if (nodeToTraitValueRef.containsKey(value)) {
+            return;
+        }
+        // Serialize the value to bytes using a temporary buffer
+        int savedPos = pos;
+        pos = 0;
+        writeDynamicValue(value);
+        byte[] encoded = new byte[pos];
+        System.arraycopy(buf, 0, encoded, 0, pos);
+        pos = savedPos;
+
+        ByteBuffer key = ByteBuffer.wrap(encoded);
+        Integer existing = traitValueIndex.get(key);
+        if (existing != null) {
+            nodeToTraitValueRef.put(value, existing);
+            return;
+        }
+        int idx = traitValues.size();
+        traitValueIndex.put(key, idx);
+        traitValues.add(encoded);
+        nodeToTraitValueRef.put(value, idx);
+    }
+
+    private int getTraitValueRef(Node value) {
+        Integer ref = nodeToTraitValueRef.get(value);
+        if (ref != null) {
+            return ref;
+        }
+        // Fallback: serialize and look up by bytes
+        int savedPos = pos;
+        pos = 0;
+        writeDynamicValue(value);
+        byte[] encoded = new byte[pos];
+        System.arraycopy(buf, 0, encoded, 0, pos);
+        pos = savedPos;
+        ref = traitValueIndex.get(ByteBuffer.wrap(encoded));
+        if (ref == null) {
+            throw new IllegalStateException("Trait value not interned");
+        }
+        return ref;
     }
 
     private void countSymbol(Map<String, int[]> freq, String s) {
@@ -249,6 +321,15 @@ public final class SmfWriter {
         }
     }
 
+    private void writeTraitValueTable() {
+        writeVarUInt(traitValues.size());
+        for (byte[] value : traitValues) {
+            ensure(value.length);
+            System.arraycopy(value, 0, buf, pos, value.length);
+            pos += value.length;
+        }
+    }
+
     private void writeShapeIndex(List<byte[]> shapeBytes) {
         // Build index data: collect entries sorted by symref for binary search
         int[][] entries = new int[shapes.size()][]; // [symref, type, offset, neighborStart, neighborCount]
@@ -270,7 +351,7 @@ public final class SmfWriter {
             offset += shapeBytes.get(i).length;
         }
         // Sort by symref for binary search
-        java.util.Arrays.sort(entries, (a, b) -> Integer.compare(a[0], b[0]));
+        Arrays.sort(entries, (a, b) -> Integer.compare(a[0], b[0]));
 
         // Write: entryCount + totalNeighborCount + fixed-size table + flat neighbors
         writeVarUInt(entries.length);
@@ -453,7 +534,7 @@ public final class SmfWriter {
                 continue;
             }
             writeVarUInt(symRef(entry.getKey().toString()));
-            writeDynamicValue(entry.getValue().toNode());
+            writeVarUInt(getTraitValueRef(entry.getValue().toNode()));
         }
     }
 

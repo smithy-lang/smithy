@@ -67,6 +67,7 @@ public final class SmfReader {
     // Lazy symbol support: store (offset << 32 | length) for local symbols
     private long[] symbolOffsets;
     private int sharedSize;
+    private Node[] traitValues;
     private final long[] varIntOut = new long[2];
     private final Map<ShapeId, List<ShapeId>> pendingMixins = new LinkedHashMap<>();
     private final TraitFactory traitFactory;
@@ -171,6 +172,7 @@ public final class SmfReader {
         }
         readHeader();
         readSymbolTable();
+        readTraitValueTable();
         skipShapeIndex();
         Model.Builder builder = Model.builder();
         readMetadata(builder);
@@ -207,6 +209,7 @@ public final class SmfReader {
         }
         readHeader();
         readSymbolTable();
+        readTraitValueTable();
         skipShapeIndex();
 
         handler.modelVersion();
@@ -241,7 +244,7 @@ public final class SmfReader {
         List<Trait> shapeTraits = new ArrayList<>(traitCount);
         for (int t = 0; t < traitCount; t++) {
             ShapeId traitId = shapeIdAt(readVarUInt());
-            Node traitValue = readDynamicValue();
+            Node traitValue = traitValueAt(readVarUInt());
             Trait trait = traitFactory.createTrait(traitId, id, traitValue)
                     .orElseGet(() -> new DynamicTrait(traitId, traitValue));
             shapeTraits.add(trait);
@@ -337,7 +340,7 @@ public final class SmfReader {
             int memberTraitCount = readVarUInt();
             for (int t = 0; t < memberTraitCount; t++) {
                 ShapeId traitId = shapeIdAt(readVarUInt());
-                Node traitValue = readDynamicValue();
+                Node traitValue = traitValueAt(readVarUInt());
                 Trait trait = traitFactory.createTrait(traitId, id.withMember(memberName), traitValue)
                         .orElseGet(() -> new DynamicTrait(traitId, traitValue));
                 mb.addTrait(trait);
@@ -361,7 +364,7 @@ public final class SmfReader {
         int memberTraitCount = readVarUInt();
         for (int t = 0; t < memberTraitCount; t++) {
             ShapeId traitId = shapeIdAt(readVarUInt());
-            Node traitValue = readDynamicValue();
+            Node traitValue = traitValueAt(readVarUInt());
             Trait trait = traitFactory.createTrait(traitId, id.withMember("member"), traitValue)
                     .orElseGet(() -> new DynamicTrait(traitId, traitValue));
             mb.addTrait(trait);
@@ -377,7 +380,7 @@ public final class SmfReader {
         int keyTraitCount = readVarUInt();
         for (int t = 0; t < keyTraitCount; t++) {
             ShapeId traitId = shapeIdAt(readVarUInt());
-            Node traitValue = readDynamicValue();
+            Node traitValue = traitValueAt(readVarUInt());
             keyMb.addTrait(traitFactory.createTrait(traitId, id.withMember("key"), traitValue)
                     .orElseGet(() -> new DynamicTrait(traitId, traitValue)));
         }
@@ -387,7 +390,7 @@ public final class SmfReader {
         int valTraitCount = readVarUInt();
         for (int t = 0; t < valTraitCount; t++) {
             ShapeId traitId = shapeIdAt(readVarUInt());
-            Node traitValue = readDynamicValue();
+            Node traitValue = traitValueAt(readVarUInt());
             valMb.addTrait(traitFactory.createTrait(traitId, id.withMember("value"), traitValue)
                     .orElseGet(() -> new DynamicTrait(traitId, traitValue)));
         }
@@ -496,6 +499,7 @@ public final class SmfReader {
         }
         readHeader();
         readSymbolTable();
+        readTraitValueTableLazy();
 
         // Read shape index with neighbor lists
         Map<ShapeId, IndexEntry> shapeIndex = readShapeIndexWithNeighbors();
@@ -571,6 +575,7 @@ public final class SmfReader {
         }
         readHeader();
         readSymbolTable();
+        readTraitValueTableLazy();
 
         // Resolve root symrefs (only these need ShapeId.from)
         int serviceSym = findSymRef(request.getService());
@@ -902,6 +907,45 @@ public final class SmfReader {
         }
     }
 
+    private int[] traitValueOffsets;
+
+    private void readTraitValueTable() {
+        int count = readVarUInt();
+        traitValues = new Node[count];
+        for (int i = 0; i < count; i++) {
+            traitValues[i] = readDynamicValue();
+        }
+    }
+
+    private void readTraitValueTableLazy() {
+        int count = readVarUInt();
+        traitValues = new Node[count];
+        traitValueOffsets = new int[count];
+        for (int i = 0; i < count; i++) {
+            traitValueOffsets[i] = pos;
+            skipDynamicValue();
+        }
+    }
+
+    private Node traitValueAt(int ref) {
+        Node v = traitValues[ref];
+        if (v == null) {
+            int savedPos = pos;
+            pos = traitValueOffsets[ref];
+            v = readDynamicValue();
+            traitValues[ref] = v;
+            pos = savedPos;
+        }
+        return v;
+    }
+
+    private void skipTraitValueTable() {
+        int count = readVarUInt();
+        for (int i = 0; i < count; i++) {
+            skipDynamicValue();
+        }
+    }
+
     private void skipShapeIndex() {
         int flags = buf[SmfConstants.OFFSET_FLAGS] & 0xFF;
         if ((flags & SmfConstants.FLAG_HAS_SHAPE_INDEX) == 0) {
@@ -953,7 +997,8 @@ public final class SmfReader {
         List<Trait> traits = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             ShapeId traitId = shapeIdAt(readVarUInt());
-            Node value = readDynamicValue();
+            int valueRef = readVarUInt();
+            Node value = traitValueAt(valueRef);
             Trait trait = traitFactory.createTrait(traitId, target, value)
                     .orElseGet(() -> new DynamicTrait(traitId, value));
             traits.add(trait);
