@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
-import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -43,7 +42,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class SmfWriter {
 
     private final Model model;
-    private final boolean stripDocs;
     private final List<Shape> shapes;
     private final Map<String, Integer> symbolIndex;
     private final List<String> localSymbols;
@@ -52,9 +50,8 @@ public final class SmfWriter {
     private byte[] buf;
     private int pos;
 
-    private SmfWriter(Model model, boolean stripDocs) {
+    private SmfWriter(Model model) {
         this.model = model;
-        this.stripDocs = stripDocs;
         this.shapes = new ArrayList<>();
         this.symbolIndex = new HashMap<>();
         this.localSymbols = new ArrayList<>();
@@ -68,14 +65,7 @@ public final class SmfWriter {
      * Writes a model to SMF bytes.
      */
     public static byte[] write(Model model) {
-        return new SmfWriter(model, false).serialize();
-    }
-
-    /**
-     * Writes a model to SMF bytes, optionally stripping documentation.
-     */
-    public static byte[] write(Model model, boolean stripDocs) {
-        return new SmfWriter(model, stripDocs).serialize();
+        return new SmfWriter(model).serialize();
     }
 
     private byte[] serialize() {
@@ -136,18 +126,12 @@ public final class SmfWriter {
         for (Shape shape : shapes) {
             countSymbol(freq, shape.getId().toString());
             for (Map.Entry<ShapeId, Trait> entry : shape.getAllTraits().entrySet()) {
-                if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
-                    continue;
-                }
                 countSymbol(freq, entry.getKey().toString());
             }
             for (MemberShape member : shape.members()) {
                 countSymbol(freq, member.getMemberName());
                 countSymbol(freq, member.getTarget().toString());
                 for (Map.Entry<ShapeId, Trait> entry : member.getAllTraits().entrySet()) {
-                    if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
-                        continue;
-                    }
                     countSymbol(freq, entry.getKey().toString());
                 }
             }
@@ -180,16 +164,10 @@ public final class SmfWriter {
     private void buildTraitValueTable() {
         for (Shape shape : shapes) {
             for (Map.Entry<ShapeId, Trait> entry : shape.getAllTraits().entrySet()) {
-                if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
-                    continue;
-                }
                 internTraitValue(entry.getValue().toNode());
             }
             for (MemberShape member : shape.members()) {
                 for (Map.Entry<ShapeId, Trait> entry : member.getAllTraits().entrySet()) {
-                    if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
-                        continue;
-                    }
                     internTraitValue(entry.getValue().toNode());
                 }
             }
@@ -525,14 +503,8 @@ public final class SmfWriter {
 
     private void writeTraits(Map<ShapeId, Trait> traits) {
         int count = traits.size();
-        if (stripDocs) {
-            count -= traits.containsKey(DocumentationTrait.ID) ? 1 : 0;
-        }
         writeVarUInt(count);
         for (Map.Entry<ShapeId, Trait> entry : traits.entrySet()) {
-            if (stripDocs && entry.getKey().equals(DocumentationTrait.ID)) {
-                continue;
-            }
             writeVarUInt(symRef(entry.getKey().toString()));
             writeVarUInt(getTraitValueRef(entry.getValue().toNode()));
         }
