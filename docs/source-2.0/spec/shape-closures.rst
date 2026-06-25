@@ -86,6 +86,9 @@ value is a list of ``ShapeClosure`` structures with the following members:
           MAY be renamed.
         * A rename MUST use a name that is case-sensitively different
           from the original shape ID name.
+    * - documentation
+      - ``string``
+      - Documentation for the closure in the CommonMark_ format.
 
 A closure MUST define at least one of ``includeNamespaces`` or
 ``includeBySelector``.
@@ -120,3 +123,5 @@ operate on. For example, a code generator might generate types for every
 shape in the named closure, or the
 :ref:`includeClosures <includeClosures-transform>` build transform might
 filter the model down to those shapes.
+
+.. _CommonMark: https://spec.commonmark.org/
