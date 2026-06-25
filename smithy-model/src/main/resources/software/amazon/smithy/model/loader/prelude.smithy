@@ -428,6 +428,9 @@ structure ShapeClosure {
     /// - A rename MUST use a name that is case-sensitively different
     ///   from the original shape id name.
     rename: Renames = {}
+
+    /// Documentation for the shape closure in CommonMark format.
+    documentation: CommonMark
 }
 
 /// An identifier for a closure. This matches the shape id format.
@@ -475,6 +478,11 @@ map Renames {
     /// The new name for the shape.
     value: Identifier
 }
+
+/// A string containing CommonMark-formatted text.
+@externalDocumentation("CommonMark Specification": "https://commonmark.org/")
+@mediaType("text/markdown; charset=UTF-8; variant=CommonMark")
+string CommonMark
 
 /// A string matching the `Identifier` ABNF production used for shape names.
 @private
