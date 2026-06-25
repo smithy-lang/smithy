@@ -193,7 +193,7 @@ public class SmfRoundTripTest {
                         .build())
                 .build();
 
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         Set<ShapeId> roots = Collections.singleton(
                 ShapeId.from("com.example#Recursive"));
         Model selective = SmfReader.readSelective(data, roots);
@@ -222,7 +222,7 @@ public class SmfRoundTripTest {
                 .assemble()
                 .unwrap();
 
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         Model loaded = SmfReader.read(data);
 
         Shape myStruct = loaded.expectShape(ShapeId.from("com.example#MyStruct"));
@@ -246,7 +246,7 @@ public class SmfRoundTripTest {
                         .addMember("middle", ShapeId.from("smithy.api#String"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         Model result = SmfReader.read(data);
 
         Shape original = model.expectShape(ShapeId.from("com.example#Ordered"));
@@ -283,7 +283,7 @@ public class SmfRoundTripTest {
                 .addShape(OperationShape.builder().id("com.example#OtherOp").build())
                 .build();
 
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
 
         // Selectively load only GetThing
         Set<ShapeId> roots = Collections.singleton(
@@ -302,7 +302,7 @@ public class SmfRoundTripTest {
     }
 
     private void assertRoundTrip(Model original) {
-        byte[] data = SmfWriter.write(original);
+        byte[] data = SmfWriter.builder().build().serialize(original);
         Model loaded = SmfReader.read(data);
 
         // Compare shape IDs (excluding prelude shapes)
@@ -368,7 +368,7 @@ public class SmfRoundTripTest {
                 .assemble()
                 .unwrap();
 
-        byte[] data = SmfWriter.write(original);
+        byte[] data = SmfWriter.builder().build().serialize(original);
 
         // Path 1: SmfReader.read() (direct)
         Model viaRead = SmfReader.read(data);
@@ -433,7 +433,7 @@ public class SmfRoundTripTest {
         }
         Model original = mb.build();
 
-        byte[] data = SmfWriter.write(original);
+        byte[] data = SmfWriter.builder().build().serialize(original);
         Model loaded = SmfReader.read(data);
 
         for (int i = 0; i < memberSets.length; i++) {
@@ -492,7 +492,7 @@ public class SmfRoundTripTest {
                         .build())
                 .build();
 
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
 
         // Load only the service + Op1 — should get service, Op1, Input1, Output1, CommonError
         Model selective = SmfReader.readSelective(data,
@@ -549,7 +549,7 @@ public class SmfRoundTripTest {
         mb.addShape(svc.build());
 
         Model model = mb.build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
 
         Model selective = SmfReader.readSelective(data,
                 SelectiveLoadRequest.builder()

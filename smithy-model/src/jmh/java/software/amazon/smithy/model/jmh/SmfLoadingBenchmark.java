@@ -86,7 +86,7 @@ public class SmfLoadingBenchmark {
             Files.write(jsonFile, jsonBytes);
 
             // Write SMF file
-            smfBytes = SmfWriter.write(model);
+            smfBytes = SmfWriter.builder().build().serialize(model);
             smfFile = Files.createTempFile("bench-" + service, ".smf");
             Files.write(smfFile, smfBytes);
 

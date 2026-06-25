@@ -72,7 +72,7 @@ public class SmfAwsModelRoundTripTest {
                 .unwrap();
 
         // Write to SMF and read back
-        byte[] smfBytes = SmfWriter.write(original);
+        byte[] smfBytes = SmfWriter.builder().build().serialize(original);
         Model loaded = SmfReader.read(smfBytes);
 
         // Compare non-prelude shapes

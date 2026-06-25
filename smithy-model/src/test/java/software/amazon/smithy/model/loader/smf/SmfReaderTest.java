@@ -54,7 +54,7 @@ public class SmfReaderTest {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         Model result = SmfReader.read(data);
         assertNotNull(result);
         assertNotNull(result.expectShape(ShapeId.from("com.example#Foo")));
@@ -65,7 +65,7 @@ public class SmfReaderTest {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Bar").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         Path tempFile = Files.createTempFile("test", ".smf");
         try {
             Files.write(tempFile, data);
@@ -84,7 +84,7 @@ public class SmfReaderTest {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         // Corrupt a byte in the middle of the data
         data[data.length / 2] ^= 0xFF;
         assertThrows(SmfFormatException.class, () -> SmfReader.read(data));
@@ -95,7 +95,7 @@ public class SmfReaderTest {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = SmfWriter.builder().build().serialize(model);
         // Chop off the CRC bytes
         byte[] truncated = new byte[data.length - 4];
         System.arraycopy(data, 0, truncated, 0, truncated.length);

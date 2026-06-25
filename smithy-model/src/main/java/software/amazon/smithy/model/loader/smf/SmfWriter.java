@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -33,24 +35,56 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Writes a fully resolved Smithy Model to SMF binary format.
+ *
+ * <p>Use the {@link Builder} to configure filtering options that control
+ * which shapes, traits, and metadata are serialized.
  */
 @SmithyUnstableApi
 public final class SmfWriter {
 
-    private final Model model;
-    private final List<Shape> shapes;
-    private final Map<String, Integer> symbolIndex;
-    private final List<String> localSymbols;
-    private final Map<ByteBuffer, Integer> traitValueIndex;
-    private final List<byte[]> traitValues;
+    private final Predicate<String> metadataFilter;
+    private final Predicate<Shape> shapeFilter;
+    private final Predicate<Trait> traitFilter;
+
+    private Model model;
+    private List<Shape> shapes;
+    private Map<String, Integer> symbolIndex;
+    private List<String> localSymbols;
+    private Map<ByteBuffer, Integer> traitValueIndex;
+    private List<byte[]> traitValues;
     private byte[] buf;
     private int pos;
 
-    private SmfWriter(Model model) {
+    private SmfWriter(Builder builder) {
+        this.metadataFilter = builder.metadataFilter;
+        if (!builder.includePrelude) {
+            this.shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        } else {
+            this.shapeFilter = builder.shapeFilter;
+        }
+        this.traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
+    }
+
+    /**
+     * @return Returns a builder used to create a {@link SmfWriter}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Serializes a model to SMF bytes.
+     *
+     * @param model Model to serialize.
+     * @return SMF encoded bytes.
+     */
+    public byte[] serialize(Model model) {
         this.model = model;
         this.shapes = new ArrayList<>();
         this.symbolIndex = new HashMap<>();
@@ -59,16 +93,10 @@ public final class SmfWriter {
         this.traitValues = new ArrayList<>();
         this.buf = new byte[4096];
         this.pos = 0;
+        return doSerialize();
     }
 
-    /**
-     * Writes a model to SMF bytes.
-     */
-    public static byte[] write(Model model) {
-        return new SmfWriter(model).serialize();
-    }
-
-    private byte[] serialize() {
+    private byte[] doSerialize() {
         collectShapes();
         buildSymbolTable();
         buildTraitValueTable();
@@ -107,7 +135,7 @@ public final class SmfWriter {
 
     private void collectShapes() {
         for (Shape shape : model.toSet()) {
-            if (shape.getType() != ShapeType.MEMBER && !Prelude.isPreludeShape(shape)) {
+            if (shape.getType() != ShapeType.MEMBER && shapeFilter.test(shape)) {
                 shapes.add(shape);
             }
         }
@@ -118,21 +146,27 @@ public final class SmfWriter {
         // Count frequency of all strings that will be referenced as SymRefs
         Map<String, int[]> freq = new LinkedHashMap<>();
 
-        // Metadata keys
+        // Metadata keys (only those that pass the filter)
         for (String key : model.getMetadata().keySet()) {
-            countSymbol(freq, key);
+            if (metadataFilter.test(key)) {
+                countSymbol(freq, key);
+            }
         }
 
         for (Shape shape : shapes) {
             countSymbol(freq, shape.getId().toString());
             for (Map.Entry<ShapeId, Trait> entry : shape.getAllTraits().entrySet()) {
-                countSymbol(freq, entry.getKey().toString());
+                if (traitFilter.test(entry.getValue())) {
+                    countSymbol(freq, entry.getKey().toString());
+                }
             }
             for (MemberShape member : shape.members()) {
                 countSymbol(freq, member.getMemberName());
                 countSymbol(freq, member.getTarget().toString());
                 for (Map.Entry<ShapeId, Trait> entry : member.getAllTraits().entrySet()) {
-                    countSymbol(freq, entry.getKey().toString());
+                    if (traitFilter.test(entry.getValue())) {
+                        countSymbol(freq, entry.getKey().toString());
+                    }
                 }
             }
             countShapeSpecificSymbols(freq, shape);
@@ -164,11 +198,15 @@ public final class SmfWriter {
     private void buildTraitValueTable() {
         for (Shape shape : shapes) {
             for (Map.Entry<ShapeId, Trait> entry : shape.getAllTraits().entrySet()) {
-                internTraitValue(entry.getValue().toNode());
+                if (traitFilter.test(entry.getValue())) {
+                    internTraitValue(entry.getValue().toNode());
+                }
             }
             for (MemberShape member : shape.members()) {
                 for (Map.Entry<ShapeId, Trait> entry : member.getAllTraits().entrySet()) {
-                    internTraitValue(entry.getValue().toNode());
+                    if (traitFilter.test(entry.getValue())) {
+                        internTraitValue(entry.getValue().toNode());
+                    }
                 }
             }
         }
@@ -283,11 +321,20 @@ public final class SmfWriter {
         buf[pos++] = 2; // Smithy major version
         buf[pos++] = 0; // Smithy minor version
         int flags = 0;
-        if (!model.getMetadata().isEmpty()) {
+        if (hasFilteredMetadata()) {
             flags |= SmfConstants.FLAG_HAS_METADATA;
         }
         flags |= SmfConstants.FLAG_HAS_SHAPE_INDEX; // always write index for now
         buf[pos++] = (byte) flags;
+    }
+
+    private boolean hasFilteredMetadata() {
+        for (String key : model.getMetadata().keySet()) {
+            if (metadataFilter.test(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void writeSymbolTable() {
@@ -412,11 +459,17 @@ public final class SmfWriter {
 
     private void writeMetadataSection() {
         Map<String, Node> metadata = model.getMetadata();
-        if (metadata.isEmpty()) {
+        List<Map.Entry<String, Node>> filtered = new ArrayList<>();
+        for (Map.Entry<String, Node> entry : metadata.entrySet()) {
+            if (metadataFilter.test(entry.getKey())) {
+                filtered.add(entry);
+            }
+        }
+        if (filtered.isEmpty()) {
             return;
         }
-        writeVarUInt(metadata.size());
-        for (Map.Entry<String, Node> entry : metadata.entrySet()) {
+        writeVarUInt(filtered.size());
+        for (Map.Entry<String, Node> entry : filtered) {
             writeVarUInt(symRef(entry.getKey()));
             writeDynamicValue(entry.getValue());
         }
@@ -502,9 +555,14 @@ public final class SmfWriter {
     }
 
     private void writeTraits(Map<ShapeId, Trait> traits) {
-        int count = traits.size();
-        writeVarUInt(count);
+        List<Map.Entry<ShapeId, Trait>> filtered = new ArrayList<>();
         for (Map.Entry<ShapeId, Trait> entry : traits.entrySet()) {
+            if (traitFilter.test(entry.getValue())) {
+                filtered.add(entry);
+            }
+        }
+        writeVarUInt(filtered.size());
+        for (Map.Entry<ShapeId, Trait> entry : filtered) {
             writeVarUInt(symRef(entry.getKey().toString()));
             writeVarUInt(getTraitValueRef(entry.getValue().toNode()));
         }
@@ -764,6 +822,72 @@ public final class SmfWriter {
             byte[] newBuf = new byte[newLen];
             System.arraycopy(buf, 0, newBuf, 0, pos);
             buf = newBuf;
+        }
+    }
+
+    /**
+     * Builder used to create {@link SmfWriter}.
+     */
+    public static final class Builder implements SmithyBuilder<SmfWriter> {
+        private Predicate<String> metadataFilter = FunctionalUtils.alwaysTrue();
+        private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
+        private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
+        private boolean includePrelude = false;
+
+        private Builder() {}
+
+        /**
+         * Predicate that determines if a metadata key is serialized.
+         *
+         * @param metadataFilter Predicate that accepts a metadata key.
+         * @return Returns the builder.
+         */
+        public Builder metadataFilter(Predicate<String> metadataFilter) {
+            this.metadataFilter = Objects.requireNonNull(metadataFilter);
+            return this;
+        }
+
+        /**
+         * Predicate that determines if a shape is serialized.
+         *
+         * @param shapeFilter Predicate that accepts a shape.
+         * @return Returns the builder.
+         */
+        public Builder shapeFilter(Predicate<Shape> shapeFilter) {
+            this.shapeFilter = Objects.requireNonNull(shapeFilter);
+            return this;
+        }
+
+        /**
+         * Sets a predicate that filters trait instances from serialized shapes.
+         *
+         * <p>Note that this does not filter out trait definitions. It only filters
+         * out instances of traits from being serialized on shapes.
+         *
+         * @param traitFilter Predicate that filters trait instances.
+         * @return Returns the builder.
+         */
+        public Builder traitFilter(Predicate<Trait> traitFilter) {
+            this.traitFilter = Objects.requireNonNull(traitFilter);
+            return this;
+        }
+
+        /**
+         * Enables or disables including the prelude in the serialized model.
+         *
+         * <p>By default, the prelude is not included.
+         *
+         * @param includePrelude Whether the prelude should be included.
+         * @return Returns the builder.
+         */
+        public Builder includePrelude(boolean includePrelude) {
+            this.includePrelude = includePrelude;
+            return this;
+        }
+
+        @Override
+        public SmfWriter build() {
+            return new SmfWriter(this);
         }
     }
 }

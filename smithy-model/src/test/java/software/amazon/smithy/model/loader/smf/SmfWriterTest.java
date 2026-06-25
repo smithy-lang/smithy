@@ -5,10 +5,10 @@
 package software.amazon.smithy.model.loader.smf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -26,12 +26,16 @@ import software.amazon.smithy.model.traits.RequiredTrait;
 
 public class SmfWriterTest {
 
+    private static byte[] serialize(Model model) {
+        return SmfWriter.builder().build().serialize(model);
+    }
+
     @Test
     public void writesValidHeader() {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
 
         // Magic: SMBY
         assertEquals('S', data[0] & 0xFF);
@@ -51,7 +55,7 @@ public class SmfWriterTest {
                 .putMetadataProperty("foo", software.amazon.smithy.model.node.Node.from("bar"))
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertTrue((data[7] & SmfConstants.FLAG_HAS_METADATA) != 0);
     }
 
@@ -60,19 +64,25 @@ public class SmfWriterTest {
         Model model = Model.builder()
                 .addShape(StringShape.builder().id("com.example#Foo").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertEquals(0, data[7] & SmfConstants.FLAG_HAS_METADATA);
     }
 
     @Test
-    public void documentationStrippedFlagSet() {
+    public void traitFilterStripsDocs() {
         Model model = Model.builder()
                 .addShape(StringShape.builder()
                         .id("com.example#Foo")
                         .addTrait(new DocumentationTrait("hello"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model, true);
+        byte[] data = SmfWriter.builder()
+                .traitFilter(trait -> !trait.toShapeId().equals(DocumentationTrait.ID))
+                .build()
+                .serialize(model);
+        Model loaded = SmfReader.read(data);
+        assertFalse(loaded.expectShape(ShapeId.from("com.example#Foo"))
+                .hasTrait(DocumentationTrait.class));
     }
 
     @Test
@@ -83,8 +93,11 @@ public class SmfWriterTest {
                         .addTrait(new DocumentationTrait("A very long documentation string"))
                         .build())
                 .build();
-        byte[] full = SmfWriter.write(model, false);
-        byte[] stripped = SmfWriter.write(model, true);
+        byte[] full = serialize(model);
+        byte[] stripped = SmfWriter.builder()
+                .traitFilter(trait -> !trait.toShapeId().equals(DocumentationTrait.ID))
+                .build()
+                .serialize(model);
         assertTrue(stripped.length < full.length);
     }
 
@@ -93,7 +106,7 @@ public class SmfWriterTest {
         Model model = Model.builder()
                 .addShape(BlobShape.builder().id("com.example#MyBlob").build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
         assertTrue(data.length > SmfConstants.HEADER_SIZE);
     }
@@ -107,7 +120,7 @@ public class SmfWriterTest {
                         .addMember("age", ShapeId.from("smithy.api#Integer"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
         assertTrue(data.length > SmfConstants.HEADER_SIZE);
     }
@@ -123,7 +136,7 @@ public class SmfWriterTest {
                         .output(ShapeId.from("com.example#Output"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
         assertTrue(data.length > SmfConstants.HEADER_SIZE);
     }
@@ -136,7 +149,7 @@ public class SmfWriterTest {
                         .version("2023-01-01")
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
         assertTrue(data.length > SmfConstants.HEADER_SIZE);
     }
@@ -149,7 +162,7 @@ public class SmfWriterTest {
                         .member(ShapeId.from("smithy.api#String"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
     }
 
@@ -162,7 +175,7 @@ public class SmfWriterTest {
                         .value(ShapeId.from("smithy.api#Integer"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
     }
 
@@ -178,7 +191,7 @@ public class SmfWriterTest {
                                 .build())
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
     }
 
@@ -191,21 +204,14 @@ public class SmfWriterTest {
                         .member(ShapeId.from("smithy.api#String"))
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
-        // The local symbol table should not contain "smithy.api#String"
-        String content = new String(data, StandardCharsets.UTF_8);
-        // After the header + shared table ref, local symbols are written.
-        // "smithy.api#String" should NOT appear as a raw string in the file
-        // because it's referenced by shared symbol ID.
-        // (This is a rough check — the string might appear in other contexts)
-        // A more precise check would decode the symbol table section.
+        byte[] data = serialize(model);
         assertNotNull(data);
     }
 
     @Test
     public void outputIsNonEmpty() {
         Model model = Model.builder().build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         // Even an empty model has header + symbol table + index + shapes section
         assertTrue(data.length >= SmfConstants.HEADER_SIZE);
     }
@@ -233,7 +239,7 @@ public class SmfWriterTest {
                         .addProperty("name", "smithy.api#String")
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         assertNotNull(data);
         // Round-trip to verify
         Model loaded = software.amazon.smithy.model.loader.smf.SmfReader.read(data);
@@ -261,7 +267,7 @@ public class SmfWriterTest {
                         .putRename(ShapeId.from("com.example#Collision"), "RenamedCollision")
                         .build())
                 .build();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         Model loaded = SmfReader.read(data);
         ServiceShape svc = loaded.expectShape(ShapeId.from("com.example#MyService"),
                 ServiceShape.class);
@@ -280,7 +286,7 @@ public class SmfWriterTest {
                                 + "float MyFloat\n")
                 .assemble()
                 .unwrap();
-        byte[] data = SmfWriter.write(model);
+        byte[] data = serialize(model);
         Model loaded = SmfReader.read(data);
         assertNotNull(loaded.expectShape(ShapeId.from("com.example#MyFloat")));
     }
