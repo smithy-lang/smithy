@@ -21,10 +21,14 @@ public final class SelectiveLoadRequest {
 
     private final ShapeId service;
     private final Set<ShapeId> operations;
+    private final boolean verifyCrc;
+    private final ClassLoader classLoader;
 
     private SelectiveLoadRequest(Builder builder) {
         this.service = builder.service;
         this.operations = builder.operations.copy();
+        this.verifyCrc = builder.verifyCrc;
+        this.classLoader = builder.classLoader;
     }
 
     public ShapeId getService() {
@@ -35,6 +39,14 @@ public final class SelectiveLoadRequest {
         return operations;
     }
 
+    public boolean getVerifyCrc() {
+        return verifyCrc;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -42,6 +54,8 @@ public final class SelectiveLoadRequest {
     public static final class Builder {
         private ShapeId service;
         private final BuilderRef<Set<ShapeId>> operations = BuilderRef.forOrderedSet();
+        private boolean verifyCrc = true;
+        private ClassLoader classLoader;
 
         public Builder service(ShapeId service) {
             this.service = service;
@@ -56,6 +70,16 @@ public final class SelectiveLoadRequest {
         public Builder operations(Set<ShapeId> operations) {
             this.operations.clear();
             this.operations.get().addAll(operations);
+            return this;
+        }
+
+        public Builder verifyCrc(boolean verifyCrc) {
+            this.verifyCrc = verifyCrc;
+            return this;
+        }
+
+        public Builder classLoader(ClassLoader classLoader) {
+            this.classLoader = classLoader;
             return this;
         }
 

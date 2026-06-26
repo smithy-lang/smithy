@@ -105,6 +105,7 @@ public class SmfLoadingBenchmark {
             selectiveRequest = SelectiveLoadRequest.builder()
                     .service(serviceId)
                     .addOperation(operationId)
+                    .verifyCrc(false)
                     .build();
         }
 
@@ -180,6 +181,6 @@ public class SmfLoadingBenchmark {
      */
     @Benchmark
     public Model loadSmfSelective(ModelState state) {
-        return SmfReader.readSelective(state.smfBytes, state.selectiveRequest, false);
+        return SmfReader.readSelective(state.smfBytes, state.selectiveRequest);
     }
 }

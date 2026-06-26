@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -176,36 +175,6 @@ public class SmfRoundTripTest {
     }
 
     @Test
-    public void selectiveLoadingHandlesRecursiveShapes() {
-        Model model = Model.builder()
-                .addShape(MapShape.builder()
-                        .id("com.example#ValueMap")
-                        .key(ShapeId.from("smithy.api#String"))
-                        .value(ShapeId.from("com.example#Recursive"))
-                        .build())
-                .addShape(StructureShape.builder()
-                        .id("com.example#Recursive")
-                        .addMember("children", ShapeId.from("com.example#ValueMap"))
-                        .addMember("value", ShapeId.from("smithy.api#String"))
-                        .build())
-                .addShape(StructureShape.builder()
-                        .id("com.example#Unrelated")
-                        .build())
-                .build();
-
-        byte[] data = SmfWriter.builder().build().serialize(model);
-        Set<ShapeId> roots = Collections.singleton(
-                ShapeId.from("com.example#Recursive"));
-        Model selective = SmfReader.readSelective(data, roots);
-
-        // Both recursive shapes should be loaded
-        assertNotNull(selective.getShape(ShapeId.from("com.example#Recursive")).orElse(null));
-        assertNotNull(selective.getShape(ShapeId.from("com.example#ValueMap")).orElse(null));
-        // Unrelated should not
-        assertFalse(selective.getShape(ShapeId.from("com.example#Unrelated")).isPresent());
-    }
-
-    @Test
     public void roundTripPreservesMixins() {
         // Build a model with a mixin applied
         Model model = Model.assembler()
@@ -256,49 +225,6 @@ public class SmfRoundTripTest {
                 original.getMemberNames(),
                 loaded.getMemberNames(),
                 "Member order must be preserved");
-    }
-
-    @Test
-    public void selectiveLoadingLoadsOnlyTransitiveClosure() {
-        Model model = Model.builder()
-                .addShape(StructureShape.builder()
-                        .id("com.example#Input")
-                        .addMember("id", ShapeId.from("smithy.api#String"))
-                        .build())
-                .addShape(StructureShape.builder()
-                        .id("com.example#Output")
-                        .addMember("name", ShapeId.from("smithy.api#String"))
-                        .build())
-                .addShape(StructureShape.builder().id("com.example#Error").build())
-                .addShape(OperationShape.builder()
-                        .id("com.example#GetThing")
-                        .input(ShapeId.from("com.example#Input"))
-                        .output(ShapeId.from("com.example#Output"))
-                        .addError("com.example#Error")
-                        .build())
-                .addShape(StructureShape.builder()
-                        .id("com.example#Unrelated")
-                        .addMember("x", ShapeId.from("smithy.api#Integer"))
-                        .build())
-                .addShape(OperationShape.builder().id("com.example#OtherOp").build())
-                .build();
-
-        byte[] data = SmfWriter.builder().build().serialize(model);
-
-        // Selectively load only GetThing
-        Set<ShapeId> roots = Collections.singleton(
-                ShapeId.from("com.example#GetThing"));
-        Model selective = SmfReader.readSelective(data, roots);
-
-        // Should have GetThing + Input + Output + Error (transitive closure)
-        assertNotNull(selective.getShape(ShapeId.from("com.example#GetThing")).orElse(null));
-        assertNotNull(selective.getShape(ShapeId.from("com.example#Input")).orElse(null));
-        assertNotNull(selective.getShape(ShapeId.from("com.example#Output")).orElse(null));
-        assertNotNull(selective.getShape(ShapeId.from("com.example#Error")).orElse(null));
-
-        // Should NOT have Unrelated or OtherOp
-        assertFalse(selective.getShape(ShapeId.from("com.example#Unrelated")).isPresent());
-        assertFalse(selective.getShape(ShapeId.from("com.example#OtherOp")).isPresent());
     }
 
     private void assertRoundTrip(Model original) {

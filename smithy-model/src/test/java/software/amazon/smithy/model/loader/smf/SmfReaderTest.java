@@ -6,6 +6,7 @@ package software.amazon.smithy.model.loader.smf;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,5 +101,41 @@ public class SmfReaderTest {
         byte[] truncated = new byte[data.length - 4];
         System.arraycopy(data, 0, truncated, 0, truncated.length);
         assertThrows(SmfFormatException.class, () -> SmfReader.read(truncated));
+    }
+
+    @Test
+    public void selectiveLoadingIncludesTraitDefinitions() {
+        // Model with a custom protocol trait definition applied to a service
+        Model model = Model.assembler()
+                .addUnparsedModel("test.smithy",
+                        "$version: \"2\"\n"
+                                + "namespace com.example\n"
+                                + "@trait\n"
+                                + "@protocolDefinition\n"
+                                + "structure myProtocol {}\n"
+                                + "@myProtocol\n"
+                                + "service MyService {\n"
+                                + "    version: \"2024-01-01\"\n"
+                                + "    operations: [GetThing]\n"
+                                + "}\n"
+                                + "operation GetThing {\n"
+                                + "    input := { id: String }\n"
+                                + "    output := { name: String }\n"
+                                + "}\n")
+                .assemble()
+                .unwrap();
+
+        byte[] data = SmfWriter.builder().build().serialize(model);
+
+        // Selective load via SelectiveLoadRequest (service + operation)
+        Model selective = SmfReader.readSelective(data,
+                SelectiveLoadRequest.builder()
+                        .service(ShapeId.from("com.example#MyService"))
+                        .addOperation(ShapeId.from("com.example#GetThing"))
+                        .build());
+
+        // The trait definition shape must be present
+        assertTrue(selective.getShape(ShapeId.from("com.example#myProtocol")).isPresent(),
+                "Trait definition shape should be included in selective load");
     }
 }

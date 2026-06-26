@@ -131,19 +131,6 @@ public final class SmfReader {
     }
 
     /**
-     * Reads SMF bytes and returns a Model containing only the shapes in the
-     * given set plus their transitive closure (all shapes reachable via target
-     * references from the selected shapes).
-     *
-     * @param data SMF bytes.
-     * @param rootShapeIds The initial set of shape IDs to load.
-     * @return A Model containing the transitive closure of the requested shapes.
-     */
-    public static Model readSelective(byte[] data, Set<ShapeId> rootShapeIds) {
-        return new SmfReader(data, TraitFactory.createServiceFactory(), true).deserializeSelective(rootShapeIds);
-    }
-
-    /**
      * Reads SMF bytes and returns a Model containing the service shape (with
      * only its common errors expanded) and the specified operations with their
      * full transitive closure.
@@ -151,18 +138,15 @@ public final class SmfReader {
      * <p>This is the primary entry point for dynamic client selective loading.
      *
      * @param data SMF bytes.
-     * @param request The selective load request specifying service and operations.
+     * @param request The selective load request specifying service, operations, and options.
      * @return A Model containing the service, requested operations, and their closures.
      */
     public static Model readSelective(byte[] data, SelectiveLoadRequest request) {
-        return readSelective(data, request, true);
-    }
-
-    /**
-     * Reads selectively, optionally skipping CRC verification.
-     */
-    public static Model readSelective(byte[] data, SelectiveLoadRequest request, boolean verifyCrc) {
-        return new SmfReader(data, TraitFactory.createServiceFactory(), verifyCrc)
+        ClassLoader cl = request.getClassLoader();
+        TraitFactory tf = cl != null
+                ? TraitFactory.createServiceFactory(cl)
+                : TraitFactory.createServiceFactory();
+        return new SmfReader(data, tf, request.getVerifyCrc())
                 .deserializeSelectiveForService(request);
     }
 
@@ -188,7 +172,7 @@ public final class SmfReader {
                 Shape shape = withoutMixins.expectShape(entry.getKey());
                 @SuppressWarnings("unchecked")
                 AbstractShapeBuilder<?, Shape> shapeBuilder =
-                        (AbstractShapeBuilder<?, Shape>) Shape.shapeToBuilder(shape);
+                        Shape.shapeToBuilder(shape);
                 for (ShapeId mixinId : entry.getValue()) {
                     Shape mixinShape = withoutMixins.getShape(mixinId).orElse(null);
                     if (mixinShape != null) {
@@ -493,82 +477,6 @@ public final class SmfReader {
         }
     }
 
-    private Model deserializeSelective(Set<ShapeId> rootShapeIds) {
-        if (verifyCrc) {
-            verifyCrc();
-        }
-        readHeader();
-        readSymbolTable();
-        readTraitValueTableLazy();
-
-        // Read shape index with neighbor lists
-        Map<ShapeId, IndexEntry> shapeIndex = readShapeIndexWithNeighbors();
-
-        // Compute transitive closure using only the neighbor graph (no shape parsing)
-        Set<ShapeId> closure = new LinkedHashSet<>(rootShapeIds);
-        Queue<ShapeId> queue = new ArrayDeque<>(rootShapeIds);
-        while (!queue.isEmpty()) {
-            ShapeId id = queue.poll();
-            IndexEntry entry = shapeIndex.get(id);
-            if (entry == null) {
-                continue; // not in this file (prelude or missing)
-            }
-            for (ShapeId neighbor : entry.neighbors) {
-                if (closure.add(neighbor)) {
-                    queue.add(neighbor);
-                }
-            }
-        }
-
-        // Collect offsets and sort for sequential reading
-        List<IndexEntry> toLoad = new ArrayList<>();
-        for (ShapeId id : closure) {
-            IndexEntry entry = shapeIndex.get(id);
-            if (entry != null) {
-                toLoad.add(entry);
-            }
-        }
-        toLoad.sort((a, b) -> Integer.compare(a.offset, b.offset));
-
-        // Skip metadata
-        int flags = buf[SmfConstants.OFFSET_FLAGS] & 0xFF;
-        if ((flags & SmfConstants.FLAG_HAS_METADATA) != 0) {
-            skipMetadata();
-        }
-
-        // Record start of shapes section
-        int shapesStart = pos;
-        int shapeCount = readVarUInt();
-
-        // Sequential pass: parse only shapes in the closure
-        Model.Builder builder = Model.builder();
-        int loadIdx = 0;
-        int currentOffset = 0;
-        for (int i = 0; i < shapeCount && loadIdx < toLoad.size(); i++) {
-            int shapeIdSym = readVarUInt();
-            int byteLength = readVarUInt();
-            if (currentOffset == toLoad.get(loadIdx).offset) {
-                // This shape is in our closure — parse it
-                int endPos = pos + byteLength;
-                int shapeType = buf[pos++] & 0xFF;
-                ShapeId shapeId = shapeIdAt(shapeIdSym);
-                List<Trait> traits = readTraits(shapeId);
-                Shape shape = buildShape(shapeId, shapeType, traits);
-                if (shape != null) {
-                    builder.addShape(shape);
-                }
-                pos = endPos;
-                loadIdx++;
-            } else {
-                // Skip this shape
-                pos += byteLength;
-            }
-            currentOffset = pos - shapesStart - LEB128.varUIntSize(shapeCount);
-        }
-
-        return builder.build();
-    }
-
     private Model deserializeSelectiveForService(SelectiveLoadRequest request) {
         if (verifyCrc) {
             verifyCrc();
@@ -686,6 +594,57 @@ public final class SmfReader {
             pos = endPos;
         }
 
+        // Second pass: load trait definition shapes referenced by loaded shapes.
+        // Iterate until no new trait definitions are discovered.
+        Set<Integer> loadedSyms = new LinkedHashSet<>(closureSyms);
+        List<int[]> traitShapesToLoad = new ArrayList<>();
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            traitShapesToLoad.clear();
+            for (Shape shape : builder.getCurrentShapes().values()) {
+                for (ShapeId traitId : shape.getAllTraits().keySet()) {
+                    int traitSym = findSymRef(traitId);
+                    if (traitSym > 0 && loadedSyms.add(traitSym)) {
+                        int idx = binarySearchIndex(tableStart, entryCount, traitSym);
+                        if (idx >= 0) {
+                            int entryPos = tableStart + idx * SmfConstants.INDEX_ENTRY_SIZE;
+                            traitShapesToLoad.add(new int[] {readInt32LE(entryPos + 5), traitSym});
+                            changed = true;
+                        }
+                    }
+                }
+                for (MemberShape member : shape.members()) {
+                    for (ShapeId traitId : member.getAllTraits().keySet()) {
+                        int traitSym = findSymRef(traitId);
+                        if (traitSym > 0 && loadedSyms.add(traitSym)) {
+                            int idx = binarySearchIndex(tableStart, entryCount, traitSym);
+                            if (idx >= 0) {
+                                int entryPos = tableStart + idx * SmfConstants.INDEX_ENTRY_SIZE;
+                                traitShapesToLoad.add(new int[] {readInt32LE(entryPos + 5), traitSym});
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            traitShapesToLoad.sort((a, b) -> Integer.compare(a[0], b[0]));
+            for (int[] entry : traitShapesToLoad) {
+                pos = dataStart + entry[0];
+                readVarUInt();
+                int byteLength = readVarUInt();
+                int endPos = pos + byteLength;
+                int shapeType = buf[pos++] & 0xFF;
+                ShapeId shapeId = shapeIdAt(entry[1]);
+                List<Trait> traits = readTraits(shapeId);
+                Shape shape = buildShape(shapeId, shapeType, traits);
+                if (shape != null) {
+                    builder.addShape(shape);
+                }
+                pos = endPos;
+            }
+        }
+
         return builder.build();
     }
 
@@ -700,52 +659,6 @@ public final class SmfReader {
             }
         }
         return -1;
-    }
-
-    private static final class IndexEntry {
-        final ShapeId id;
-        final byte shapeType;
-        final int offset;
-        final int length;
-        final List<ShapeId> neighbors;
-
-        IndexEntry(ShapeId id, byte shapeType, int offset, int length, List<ShapeId> neighbors) {
-            this.id = id;
-            this.shapeType = shapeType;
-            this.offset = offset;
-            this.length = length;
-            this.neighbors = neighbors;
-        }
-    }
-
-    private Map<ShapeId, IndexEntry> readShapeIndexWithNeighbors() {
-        int flags = buf[SmfConstants.OFFSET_FLAGS] & 0xFF;
-        if ((flags & SmfConstants.FLAG_HAS_SHAPE_INDEX) == 0) {
-            return new LinkedHashMap<>();
-        }
-        int entryCount = readVarUInt();
-        int totalNeighbors = readVarUInt();
-        int tableStart = pos;
-        int neighborsStart = tableStart + entryCount * SmfConstants.INDEX_ENTRY_SIZE;
-
-        Map<ShapeId, IndexEntry> index = new LinkedHashMap<>(entryCount);
-        for (int i = 0; i < entryCount; i++) {
-            int entryPos = tableStart + i * SmfConstants.INDEX_ENTRY_SIZE;
-            int sym = readInt32LE(entryPos);
-            byte shapeType = buf[entryPos + 4];
-            int offset = readInt32LE(entryPos + 5);
-            int nStart = readInt32LE(entryPos + 9);
-            int nCount = readInt16LE(entryPos + 13);
-
-            ShapeId id = shapeIdAt(sym);
-            List<ShapeId> neighbors = new ArrayList<>(nCount);
-            for (int n = 0; n < nCount; n++) {
-                neighbors.add(shapeIdAt(readInt32LE(neighborsStart + (nStart + n) * 4)));
-            }
-            index.put(id, new IndexEntry(id, shapeType, offset, 0, neighbors));
-        }
-        pos = neighborsStart + totalNeighbors * 4;
-        return index;
     }
 
     private int readInt32LE(int p) {
