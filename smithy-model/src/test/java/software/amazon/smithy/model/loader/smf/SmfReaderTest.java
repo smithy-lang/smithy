@@ -138,4 +138,78 @@ public class SmfReaderTest {
         assertTrue(selective.getShape(ShapeId.from("com.example#myProtocol")).isPresent(),
                 "Trait definition shape should be included in selective load");
     }
+
+    @Test
+    public void smfLoadedViaAssemblerMergesWithIdenticalShapes() throws Exception {
+        // Create a model, serialize to SMF, then load both the SMF and
+        // the original source together — should not conflict.
+        String smithy = "$version: \"2\"\n"
+                + "namespace com.example\n"
+                + "structure Foo {\n"
+                + "    @required\n"
+                + "    name: String\n"
+                + "}\n";
+
+        Model original = Model.assembler()
+                .addUnparsedModel("test.smithy", smithy)
+                .assemble()
+                .unwrap();
+
+        byte[] smfData = SmfWriter.builder().build().serialize(original);
+        Path smfFile = Files.createTempFile("test", ".smf");
+        try {
+            Files.write(smfFile, smfData);
+
+            // Load SMF alongside the same source — no conflicts expected
+            Model combined = Model.assembler()
+                    .addUnparsedModel("test.smithy", smithy)
+                    .addImport(smfFile)
+                    .assemble()
+                    .unwrap();
+
+            assertNotNull(combined.expectShape(ShapeId.from("com.example#Foo")));
+            assertTrue(combined.expectShape(ShapeId.from("com.example#Foo$name"))
+                    .hasTrait("smithy.api#required"));
+        } finally {
+            Files.deleteIfExists(smfFile);
+        }
+    }
+
+    @Test
+    public void smfLoadedViaAssemblerHandlesMixinShapes() throws Exception {
+        // Model with mixins: SMF has flattened members. Loading SMF alone
+        // through the assembler should produce a valid model.
+        String smithy = "$version: \"2\"\n"
+                + "namespace com.example\n"
+                + "@mixin\n"
+                + "structure Base {\n"
+                + "    id: String\n"
+                + "}\n"
+                + "structure Concrete with [Base] {\n"
+                + "    name: String\n"
+                + "}\n";
+
+        Model original = Model.assembler()
+                .addUnparsedModel("test.smithy", smithy)
+                .assemble()
+                .unwrap();
+
+        byte[] smfData = SmfWriter.builder().build().serialize(original);
+        Path smfFile = Files.createTempFile("test", ".smf");
+        try {
+            Files.write(smfFile, smfData);
+
+            // Load SMF alone through the assembler
+            Model loaded = Model.assembler()
+                    .addImport(smfFile)
+                    .assemble()
+                    .unwrap();
+
+            assertNotNull(loaded.expectShape(ShapeId.from("com.example#Concrete")));
+            assertTrue(loaded.getShape(ShapeId.from("com.example#Concrete$id")).isPresent());
+            assertTrue(loaded.getShape(ShapeId.from("com.example#Concrete$name")).isPresent());
+        } finally {
+            Files.deleteIfExists(smfFile);
+        }
+    }
 }
