@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.model.loader;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -196,8 +197,8 @@ final class TaggedStringLiteral {
             if (millis == 0) {
                 return Result.ofNumber(epochSecond);
             }
-            double value = epochSecond + millis / 1000.0;
-            return Result.ofNumber(value);
+            BigDecimal epochSecondWithMillis = BigDecimal.valueOf(epochSecond).add(BigDecimal.valueOf(millis, 3));
+            return Result.ofNumber(epochSecondWithMillis);
         } catch (DateTimeParseException e) {
             throw new RuntimeException("Invalid RFC 3339 timestamp: " + lexeme);
         }
