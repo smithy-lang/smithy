@@ -40,8 +40,9 @@ def generate_redirects(app):
         return
 
     if not (type(app.builder) == StandaloneHTMLBuilder or type(app.builder) == DirectoryHTMLBuilder):
-        app.warn("The 'sphinxcontib-redirects' plugin is only supported "
-                 "by the 'html' and 'dirhtml' builder, but you are using '%s'. Skipping..." % type(app.builder))
+        LOGGER.info("The 'sphinxcontrib-redirects' plugin is only supported "
+                    "by the 'html' and 'dirhtml' builder, but you are using '%s'. Skipping..." % type(app.builder))
+        return
 
     dirhtml = False
     if type(app.builder) == DirectoryHTMLBuilder:

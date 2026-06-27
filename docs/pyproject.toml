@@ -11,7 +11,7 @@ version = "1.0.0"
 dependencies = [
     "sphinx==9.1.0",
     "pygments==2.20.0",
-    "furo==2025.12.19",
+    "sphinx-book-theme==1.2.0",
 
     # Used by new docs
     "sphinx-inline-tabs==2025.12.21.14",
@@ -29,3 +29,6 @@ dependencies = [
 
 [project.entry-points."pygments.lexers"]
 smithy = "smithy.lexer:SmithyLexer"
+
+[project.entry-points."pygments.styles"]
+ember = "smithy.ember_style:EmberStyle"

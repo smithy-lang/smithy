@@ -1,0 +1,22 @@
+{#
+  Overrides sphinx-book-theme's page-toc.html.
+
+  SBT copy-pasted this component from pydata to make the title configurable, but
+  its copy dropped the `bd-toc-nav` class that pydata's current template puts on
+  the <nav>. The <body> still sets `data-bs-spy="scroll" data-bs-target=".bd-toc-nav"`,
+  so without that class Bootstrap scrollspy targets nothing and the right-hand
+  "On this page" highlight tracks erratically (e.g. top-level entries never
+  activate). We restore `bd-toc-nav` here while keeping SBT's configurable title.
+-#}
+{% set page_toc = generate_toc_html() %}
+{%- if page_toc | length >= 1 %}
+{%- set page_navigation_heading_id = unique_html_id("pst-page-navigation-heading") -%}
+  <div
+    id="{{ page_navigation_heading_id }}"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> {{ translate(theme_toc_title) }}
+  </div>
+  <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="{{ page_navigation_heading_id }}">
+    {{ page_toc }}
+  </nav>
+{%- endif %}
