@@ -30,35 +30,6 @@ Smithy
 * Find out more about Smithy models and this example in the :doc:`quickstart`.
 * Find the source code on `Github <https://github.com/smithy-lang/smithy>`_.
 
-
-Features
-========
-
-.. hlist::
-    :columns: 2
-
-    * .. rubric:: 🤖  Protocol-agnostic
-
-      Smithy is designed to work with any programming language, describe
-      services running in any environment, and work with any kind of
-      transport or serialization format.
-    * .. rubric:: 🧬  Designed to evolve
-
-      Smithy is extended through traits. Smithy's extensible meta-model
-      can evolve and capture more information about services without
-      breaking changes.
-    * .. rubric:: ⚖ Codify and enforce API governance
-
-      Customizable API standards help to automatically ensure that APIs
-      meet customer expectations. Validation rules can be shared and
-      applied to all APIs in an organization.
-    * .. rubric:: 🖇️  Resource based
-
-      Smithy models are defined by resources and operations. Defining
-      services with resources helps lead to better APIs and provides
-      rich information for model transformations.
-
-
 FAQ
 ===
 
@@ -136,12 +107,8 @@ What can Smithy do today?
 
 See https://github.com/smithy-lang/awesome-smithy.
 
-
-Read more
-=========
-
 .. toctree::
-    :maxdepth: 1
+    :hidden:
 
     quickstart
     spec/index
@@ -153,7 +120,7 @@ Read more
 
 .. toctree::
     :caption: Languages
-    :maxdepth: 1
+    :hidden:
 
     languages/java/index
     languages/typescript/index
@@ -165,7 +132,7 @@ Read more
 
 .. toctree::
     :caption: Project
-    :maxdepth: 1
+    :hidden:
 
     Source code <https://github.com/smithy-lang/smithy>
     Awesome Smithy <https://github.com/smithy-lang/awesome-smithy>

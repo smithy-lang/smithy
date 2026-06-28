@@ -1,75 +1,465 @@
-/* Headings aren't separated enough. */
-h2, h3 {
-    margin-top: 1.75rem;
+/* ===========================================================================
+ * Smithy "Ember" theme for the Sphinx Book Theme (pydata-based).
+ *
+ * Re-skins the theme to match the smithy.io landing page (docs/landing/): the
+ * warm Ember palette (charcoal / parchment with a single Smithy-red accent)
+ * and the landing typography (Schibsted Grotesk + JetBrains Mono), so the docs
+ * read as one continuous site with the homepage. Token values mirror
+ * docs/landing/BRAND.md — keep them in sync when the brand evolves.
+ *
+ * pydata exposes its palette through --pst-color-* variables and toggles modes
+ * with the html[data-theme="light"|"dark"] attribute.
+ * ======================================================================== */
+
+/* ---------- Typography (matches the landing page) ---------- */
+:root {
+    --pst-font-family-base: "Schibsted Grotesk", var(--pst-font-family-base-system);
+    --pst-font-family-heading: "Schibsted Grotesk", var(--pst-font-family-base-system);
+    --pst-font-family-monospace: "JetBrains Mono", var(--pst-font-family-monospace-system);
 }
 
-h4, h5, h6, h7, h8 {
-    margin-top: 2rem;
+/* Headings ~10% smaller than the theme defaults (h1 2.625 / h2 2.125 /
+ * h3 1.75 / h4 1.5 / h5 1.25 / h6 1rem). */
+:root {
+    --pst-font-size-h1: 2.36rem;
+    --pst-font-size-h2: 1.91rem;
+    --pst-font-size-h3: 1.58rem;
+    --pst-font-size-h4: 1.35rem;
+    --pst-font-size-h5: 1.13rem;
+    --pst-font-size-h6: 0.9rem;
 }
 
-/* Tables don't have enough padding. */
-table.docutils td, table.docutils th {
-    padding: 0.3rem 0.6rem;
+/* Body prose ~10% larger. Scoped to the article so headings (which set their
+ * own sizes) and the sidebars are unaffected. */
+.bd-article p,
+.bd-article li,
+.bd-article dd,
+.bd-article dt {
+    font-size: 1.1rem;
 }
 
-/* Admonitions have no padding for some reason. */
-.admonition, .topic {
-    padding-left: 1rem;
+/* Code text ~10% larger than the theme's .875em default. */
+.bd-article .highlight pre,
+.bd-article code.literal,
+.bd-content .highlight pre,
+.bd-content code.literal {
+    font-size: 0.96em;
 }
-/* The heading of an admonition needs to account for the added padding. */
-p.admonition-title, p.topic-title {
-    margin-left: -1rem;
+
+/* When line numbers are shown, add space between the number column and the
+ * code (theme leaves them cramped). */
+.highlight td.linenos,
+.highlight .linenos {
+    padding-right: 1rem;
 }
-/* Adjust icons to account for added padding. */
-p.admonition-title:before,
-p.topic-title:before {
-    top: 0.5rem;
+
+/* ---------- Ember palette: light mode (warm parchment) ---------- */
+html[data-theme="light"] {
+    /* Smithy red is the single accent: links, primary UI, inline code. */
+    --pst-color-primary: #c41c16;
+    --pst-color-primary-highlight: #b01810;
+    --pst-color-link: #c41c16;
+    --pst-color-link-hover: #b01810;
+    --pst-color-secondary: #c41c16;
+    --pst-color-accent: #c41c16;
+    --pst-color-inline-code: #c41c16;
+    /* Cross-reference / code links (a > code, e.g. .xref literals) default to a
+     * teal-blue; use the Smithy link red. */
+    --pst-color-inline-code-links: #c41c16;
+
+    --pst-color-background: #faf7f2;   /* page background (parchment) */
+    --pst-color-on-background: #ffffff; /* navbar / header surface */
+    --pst-color-surface: #f3ede4;      /* sidebars, insets */
+    --pst-color-border: #e7e0d6;
+    --pst-color-border-muted: #efe8de;
+    --pst-color-text-base: #1a1714;
+    --pst-color-text-muted: #6b6258;
+    --pst-color-heading: #1a1714;
+    /* Anchor :target highlight (jumped-to definition/footnote/line). Theme
+     * default is a clashing yellow-orange; use a soft Smithy-red wash. */
+    --pst-color-target: #f6dcd9;
+
+    /* Table text matches the warm body prose (theme default is #14181e). The
+     * zebra rows already alternate (#ffffff vs #f3ede4) in light mode. */
+    --pst-color-table: #564e44;
+}
+
+/* ---------- Ember palette: dark mode (warm charcoal) ---------- */
+html[data-theme="dark"] {
+    /* Brighter red reads as text/links on the dark charcoal background. */
+    --pst-color-primary: #ff5a51;
+    --pst-color-primary-highlight: #ff4339;
+    --pst-color-link: #ff5a51;
+    --pst-color-link-hover: #ff4339;
+    --pst-color-secondary: #ff5a51;
+    --pst-color-accent: #ff5a51;
+    --pst-color-inline-code: #ff8079;
+    /* Cross-reference / code links — Smithy link red for dark mode. */
+    --pst-color-inline-code-links: #ff5a51;
+
+    --pst-color-background: #14110f;   /* page background (charcoal) */
+    --pst-color-on-background: #1d1916; /* navbar / header surface */
+    --pst-color-surface: #1d1916;      /* sidebars, insets */
+    --pst-color-border: rgba(255, 255, 255, 0.10);
+    --pst-color-border-muted: rgba(255, 255, 255, 0.06);
+    --pst-color-text-base: #f4efe9;
+    --pst-color-text-muted: #a89f95;
+    --pst-color-heading: #f4efe9;
+    /* Anchor :target highlight — soft dark Smithy-red wash instead of the
+     * theme's clashing olive/orange. */
+    --pst-color-target: #3a201d;
+
+    /* Table text matches the warm body prose (theme default is stark #fff),
+     * and the zebra rows need two distinct backgrounds: our --surface and
+     * --on-background are both #1d1916, so striping was invisible. Give the
+     * alternating row a slightly lighter warm tone. */
+    --pst-color-table: #d3c6b3;
+    --pst-color-table-row-zebra-low-bg: #14110f;   /* page background */
+    --pst-color-table-row-zebra-high-bg: #1a1613;  /* barely lighter — subtle stripe */
+}
+
+/* Body prose color comes from Bootstrap's --bs-body-color (set on <body>),
+ * which the per-mode --pst-color-* overrides above don't touch. Set the prose
+ * color directly on the content container, per mode, so text reads warm and
+ * slightly dimmer/browner than the near-black / off-white headings, like the
+ * landing page. Headings keep --pst-color-heading and so stay full-contrast. */
+html[data-theme="light"] .bd-article {
+    color: #564e44;   /* warm brown, a touch lighter/less saturated than before */
+}
+
+html[data-theme="dark"] .bd-article {
+    color: #d3c6b3;   /* warm tan, ~15% whiter/less brown than before, still dimmer than #f4efe9 headings */
+}
+
+/* Roomier body line spacing for readable prose. */
+.bd-article p,
+.bd-article li,
+.bd-article dd {
+    line-height: 1.75;
+}
+
+/* Headings use the same color as body text. */
+html[data-theme="light"] .bd-article :is(h1, h2, h3, h4, h5, h6) {
+    color: #564e44;
+}
+
+html[data-theme="dark"] .bd-article :is(h1, h2, h3, h4, h5, h6) {
+    color: #e6d8c4;
+}
+
+/* ---------- Logo: the wordmark otherwise fills the full 4rem header; cap it
+ * to 22px to match the landing-page nav wordmark exactly. ---------- */
+.navbar-brand img,
+.navbar-brand .logo__image {
+    height: 22px;
+    max-height: 22px;
+}
+
+/* Space between the logo and the nav links to the right of it, matching the
+ * landing page nav (gap between brand and links). */
+.bd-header .navbar-header-items__start {
+    margin-right: 22px;
+}
+
+/* Trim the article's top padding (theme default is 1.5rem) and roughly double
+ * the horizontal padding (theme default is padding-left: 2rem, no right) so the
+ * body content is better separated from the left and right column navs. */
+.bd-main .bd-content .bd-article-container .bd-article {
+    padding-top: 1rem;
+    padding-left: 3rem;
+    padding-right: 2.6rem;
+}
+
+/* ---------- Headings: set in Fira Mono for a technical, spec-like feel.
+ * Fira Mono ships 400/500/700, so use 500 for headings. ---------- */
+.bd-article h1,
+.bd-article h2,
+.bd-article h3,
+.bd-article h4,
+.bd-article h5,
+.bd-article h6 {
+    font-family: "Fira Mono", var(--pst-font-family-monospace);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* Code blocks get a slightly roomier line-height than the theme's tight
+ * default. Pygments emits `html[data-theme="…"] .highlight pre { 125% }`, so
+ * match that selector shape (and add a class) to win on specificity. */
+html[data-theme="light"] .bd-article .highlight pre,
+html[data-theme="light"] .bd-content .highlight pre,
+html[data-theme="dark"] .bd-article .highlight pre,
+html[data-theme="dark"] .bd-content .highlight pre {
+    line-height: 140%;
+}
+
+/* ---------- Tables: pydata draws a 2px header underline in
+ * --pst-color-primary, which is now Smithy red and far too loud. Replace it
+ * with a muted, washed-out brown that sits quietly against the parchment /
+ * charcoal backgrounds. ---------- */
+/* Table cell text uses Bootstrap's --bs-table-color (defaults to the stark
+ * emphasis color — white in dark mode). Point it at the warm body prose color
+ * so tables match the surrounding text. */
+html[data-theme="light"] .bd-article table.table,
+html[data-theme="light"] .bd-content table.table {
+    --bs-table-color: #564e44;
+    --bs-table-striped-color: #564e44;
+    /* The column separators use --pst-color-table-inner-border, which is a
+     * blue-gray by default; retint to the warm Ember border. */
+    --pst-color-table-inner-border: var(--pst-color-border);
+}
+html[data-theme="dark"] .bd-article table.table,
+html[data-theme="dark"] .bd-content table.table {
+    --bs-table-color: #d3c6b3;
+    --bs-table-striped-color: #d3c6b3;
+    --pst-color-table-inner-border: var(--pst-color-border);
+}
+
+html[data-theme="light"] .bd-article table.table thead tr,
+html[data-theme="light"] .bd-content table.table thead tr {
+    border-bottom: 1px solid #e3dccf;
+}
+
+html[data-theme="dark"] .bd-article table.table thead tr,
+html[data-theme="dark"] .bd-content table.table thead tr {
+    border-bottom: 1px solid rgba(168, 159, 149, 0.18);
+}
+
+/* ---------- Code blocks & admonition bodies: in dark mode the code-block
+ * caption bar shows the near-black page background, but the code body
+ * (pygments gruvbox #282828) and admonition bodies (#1d1916) render lighter,
+ * so the body looks paler than its header. Pull the bodies down to the same
+ * dark code-panel color used on the landing page so block + header match.
+ * The admonition *title* bars keep their tinted backgrounds. ---------- */
+html[data-theme="dark"] .bd-article div.highlight,
+html[data-theme="dark"] .bd-article pre,
+html[data-theme="dark"] .bd-article .highlight-smithy,
+html[data-theme="dark"] .bd-article div.code-block-caption,
+html[data-theme="dark"] .bd-article div.literal-block-wrapper,
+html[data-theme="dark"] .bd-content div.highlight,
+html[data-theme="dark"] .bd-content pre,
+html[data-theme="dark"] .bd-content div.code-block-caption {
+    background-color: #19120d;
+}
+
+/* ---------- Shape references in code: underline shape identifiers
+ * (Name.Variable.Class .vc — the gold #e7c98a tokens) with a faint 25%-opacity
+ * underline so they read as named references without a heavy chip. ---------- */
+.highlight .vc {
+    text-decoration: underline;
+    text-decoration-color: rgba(231, 201, 138, 0.25);
+    text-underline-offset: 0.2em;
+}
+
+/* ---------- Admonitions: drop the colored left accent bar and instead give
+ * them the same 1px border (and radius) that wraps code blocks, for a
+ * consistent boxed look. ---------- */
+.bd-article .admonition,
+.bd-article div.admonition,
+.bd-content .admonition,
+.bd-content div.admonition {
+    border-left: none;
+    border: 1px solid var(--pst-color-border);
+    border-radius: .25rem;
+}
+
+/* Use a single flat per-type background for the whole admonition. The title's
+ * own background (including the per-type tinted ones the theme sets with higher
+ * specificity, e.g. div.admonition.tip > .admonition-title) is cleared so the
+ * box reads as one uniform color from title to body. */
+.bd-article div.admonition > .admonition-title,
+.bd-content div.admonition > .admonition-title {
+    background-color: transparent !important;
+}
+
+/* The background tint is half-strength (mixed 50% into the page background),
+ * but element opacity is NOT used so the text, title, icons, and inline code
+ * stay fully opaque. */
+.bd-article .admonition,
+.bd-content .admonition {
+    background-color: color-mix(in srgb, var(--pst-color-info-bg) 30%, var(--pst-color-background));   /* default / note */
+}
+/* "See also" is informational-neutral, so use a flat grey surface. */
+.bd-article .admonition.seealso,
+.bd-content .admonition.seealso {
+    background-color: color-mix(in srgb, var(--pst-color-surface) 30%, var(--pst-color-background));
+}
+.bd-article .admonition.attention,
+.bd-article .admonition.important,
+.bd-content .admonition.attention,
+.bd-content .admonition.important {
+    background-color: color-mix(in srgb, var(--pst-color-attention-bg) 30%, var(--pst-color-background));
+}
+.bd-article .admonition.caution,
+.bd-article .admonition.warning,
+.bd-content .admonition.caution,
+.bd-content .admonition.warning {
+    background-color: color-mix(in srgb, var(--pst-color-warning-bg) 30%, var(--pst-color-background));
+}
+.bd-article .admonition.danger,
+.bd-article .admonition.error,
+.bd-content .admonition.danger,
+.bd-content .admonition.error {
+    background-color: color-mix(in srgb, var(--pst-color-danger-bg) 30%, var(--pst-color-background));
+}
+.bd-article .admonition.hint,
+.bd-article .admonition.tip,
+.bd-content .admonition.hint,
+.bd-content .admonition.tip {
+    background-color: color-mix(in srgb, var(--pst-color-success-bg) 30%, var(--pst-color-background));
+}
+.bd-article .admonition.admonition-todo,
+.bd-content .admonition.admonition-todo {
+    background-color: color-mix(in srgb, var(--pst-color-secondary-bg) 30%, var(--pst-color-background));
+}
+
+/* ---------- Slight shadow below tables so they lift gently off the page. ---- */
+.bd-article table.table,
+.bd-content table.table {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- Prev/next page links: a little separation from the content. ---- */
+.prev-next-footer {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ---------- Left (primary) sidebar: thicker divider rule, matching the footer
+ * top border (same width and color). ---------- */
+.bd-sidebar-primary {
+    border-right: 3px solid var(--pst-color-border);
+}
+
+/* ---------- Footer: give the copyright / author line more breathing room and
+ * mute the text so it recedes. The theme draws the top border in a hardcoded
+ * light #ccc with `footer.bd-footer-content` specificity; match that selector
+ * shape so our override wins, using the theme border color and matching the
+ * left-nav rule width. ---------- */
+footer.bd-footer-content {
+    padding: 2rem 1.5rem;
+    border-top: 3px solid var(--pst-color-border);
+}
+
+.bd-footer-content .footer-item p,
+.bd-footer-content .copyright,
+.bd-footer-content .component-author {
+    color: var(--pst-color-text-muted);
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+/* ---------- Tabbed content (sphinx-inline-tabs): the selected tab and its
+ * underline default to a sky blue; use Smithy red. The border under the whole
+ * tab row defaults to a near-white #e6e6e6; darken it to ~#555. ---------- */
+.tab-set {
+    --tabs--label-text--active: var(--pst-color-primary);
+    --tabs--label-text--active--hover: var(--pst-color-primary);
+    --tabs--label-border--active: var(--pst-color-primary);
+    --tabs--label-border--active--hover: var(--pst-color-primary);
+    --tabs--border: #555;
+}
+
+/* ---------- Content tweaks carried over from the previous theme ---------- */
+
+/* Headings aren't separated enough. All headings below h1 get a generous,
+ * uniform top margin, plus ~20% more space below the heading (theme default
+ * is 1.05rem). */
+.bd-article h2,
+.bd-article h3,
+.bd-article h4,
+.bd-article h5,
+.bd-article h6 {
+    margin-top: 3.45rem;
+    /* A top border above every heading below h1, with padding so the heading
+     * text sits clear of the line. */
+    border-top: 1px solid var(--pst-color-border);
+    padding-top: 3rem;
+}
+
+/* No border when a heading sits directly under another heading (a subsection
+ * whose <section> immediately follows the parent heading, with no prose
+ * between) — two stacked borders look wrong. Drop the border and its padding. */
+.bd-article :is(h1, h2, h3, h4, h5) + section > :is(h2, h3, h4, h5, h6):first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.bd-article h1,
+.bd-article h2,
+.bd-article h3,
+.bd-article h4,
+.bd-article h5,
+.bd-article h6 {
+    margin-bottom: 1.45rem;
+}
+
+/* No top margin on the page title. */
+.bd-article h1 {
+    margin-top: 0;
+}
+
+/* More breathing room below code examples and definition lists. */
+.bd-article div.literal-block-wrapper,
+.bd-article div[class*="highlight-"],
+.bd-content div.literal-block-wrapper,
+.bd-content div[class*="highlight-"] {
+    margin-bottom: 2rem;
+}
+
+.bd-article dl,
+.bd-content dl {
+    margin-bottom: 2rem;
+}
+
+/* More breathing room below tables and lists in the article body. Scoped to
+ * .bd-article so the right-hand page-toc (also built from <ul>) is untouched,
+ * and nested lists (a <ul>/<ol> inside an <li>) reset to 0 so the margin
+ * doesn't compound at the end of multi-level lists. */
+.bd-article table.table,
+.bd-article ul,
+.bd-article ol {
+    margin-bottom: 2rem;
+}
+
+.bd-article li > ul,
+.bd-article li > ol {
+    margin-bottom: 0;
 }
 
 /* More padding for rubrics. */
-p.rubric {
+.bd-article p.rubric {
     margin-top: 2rem;
 }
 
-/* Better styling of definition lists */
-.content dt {
+/* Better styling of definition lists. */
+.bd-article dt {
     font-weight: 600;
 }
 
-.content dd {
+.bd-article dd {
     margin-bottom: 1rem;
 }
 
 /* TOC tree captions were small and all-caps. */
-.toctree-wrapper.compound .caption,
-.toctree-wrapper.compound :not(.caption) > .caption-text {
+.bd-article .toctree-wrapper.compound .caption,
+.bd-article .toctree-wrapper.compound :not(.caption) > .caption-text {
     font-size: 1.5rem;
     margin: 1rem 0;
     text-transform: none;
 }
 
-/* Production list pre's need padding to match what is used for .codecell0. */
-pre.productionlist {
+/* Production list pre's need padding to match what is used for code blocks. */
+.bd-article pre.productionlist {
     padding: .625rem .875rem;
 }
 
-pre.productionlist code.literal {
+.bd-article pre.productionlist code.literal {
     background: none;
     font-size: 100%;
 }
 
-/* Add a border between h2 sections of content. */
-.section:not(:last-child):has(h2) {
-    padding-bottom: 1em;
-    border-bottom: 1px solid var(--color-background-border)
-}
-
-.tab-set {
+.bd-article .tab-set {
     margin-bottom: 1.5rem;
-}
-
-@media not print, (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) .highlight .hll {
-        background-color: rgba(235, 218, 177, 0.10);
-    }
 }

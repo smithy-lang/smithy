@@ -17,8 +17,9 @@ extensions = [
 ]
 templates_path = ["../_templates", "../root"]
 
-pygments_style = "default"
-pygments_dark_style = "gruvbox-dark"
+# Pygments highlight styles are set per light/dark mode via html_theme_options
+# below (pydata/sphinx-book-theme convention), not the top-level options furo
+# used.
 
 todo_include_todos = False
 smartquotes = False
@@ -32,44 +33,87 @@ myst_enable_extensions = [
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "furo"
+html_theme = "sphinx_book_theme"
 language = "en"
 
 html_static_path = ["../_static"]
 html_css_files = ["custom.css"]
 html_favicon = "../_static/favicon.svg"
 
+# Publish the raw page source with a .txt suffix (e.g. quickstart.rst.txt) so
+# the "View source" header button opens it as plain text in the browser rather
+# than triggering a download, which a bare .rst can do on static hosts.
+html_copy_source = True
+html_show_sourcelink = True
+html_sourcelink_suffix = ".txt"
+
 html_theme_options = {
-    "light_logo": "smithy.svg",
-    "dark_logo": "smithy-dark.svg",
-    "light_css_variables": {
-        "admonition-font-size": "100%",
-        "admonition-title-font-size": "100%",
-        "color-brand-primary": "#C44536",
-        "color-brand-content": "#00808b",
-        "color-announcement-background": "#f8f8f8",
-        "color-announcement-text": "#383838",
+    # Light/dark wordmarks, resolved from html_static_path. No "text" label is
+    # set: the wordmark already says "Smithy", so adding text would be a second
+    # mark (BRAND.md: never place a second mark next to the wordmark).
+    "logo": {
+        "image_light": "_static/smithy.svg",
+        "image_dark": "_static/smithy-dark.svg",
     },
-    "dark_css_variables": {
-        "color-brand-primary": "#ed9d13",
-        "color-brand-content": "#58d3ff",
-        "color-announcement-background": "##1a1c1e;",
-    },
-    "footer_icons": [
+    # The wordmark links to the site root (the landing page), not the docs root.
+    # A root-relative "/" resolves to the server origin, so it points at the
+    # smithy.io landing page in production and the local landing page under
+    # `make serve` (build/html/index.html) without hardcoding the domain.
+    "logo_link": "/",
+    # "Edit this page" / repository button. path_to_docs is overridden
+    # per-version in the source-1.0/source-2.0 conf files.
+    "repository_url": "https://github.com/smithy-lang/smithy",
+    "repository_branch": "main",
+    "path_to_docs": "docs/source-2.0",
+    "use_edit_page_button": True,
+    "use_repository_button": True,
+    "use_issues_button": True,
+    # We add our own "View source" button (see _add_local_source_button) that
+    # opens the raw .rst served from the site itself, rather than the built-in
+    # GitHub blob link, so leave use_source_button off.
+    "use_source_button": False,
+    "use_download_button": False,
+    "use_fullscreen_button": False,
+    # GitHub icon in the navbar.
+    "icon_links": [
         {
             "name": "GitHub",
             "url": "https://github.com/smithy-lang/smithy",
-            "html": """
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            """,
-            "class": "",
-        }
+            "icon": "fa-brands fa-github",
+            "type": "fontawesome",
+        },
     ],
-    "source_repository": "https://github.com/smithy-lang/smithy/",
-    "source_branch": "main",
-    "sidebar_hide_name": True,
+    # Restore a horizontal top header that mirrors the smithy.io landing page
+    # (the sphinx-book-theme base blanks these slots and puts nav in the left
+    # sidebar). Logo on the left; the homepage's Documentation / Examples /
+    # Awesome Smithy links in the center; theme switcher + GitHub icon at the
+    # end. The center links live in _templates/components/smithy-navbar-nav.html
+    # so we show just those three rather than the whole doc toctree.
+    "navbar_start": ["navbar-logo"],
+    "navbar_center": ["components/smithy-navbar-nav.html"],
+    "navbar_end": ["search-button-field", "theme-switcher", "navbar-icon-links"],
+    "navbar_align": "left",
+    # sphinx-book-theme puts a "toggle primary sidebar" button in the article
+    # header, but with our restored pydata top header there are now two
+    # .primary-toggle buttons and the theme JS only wires the first (the one in
+    # the top header). The article-header copy is visible on desktop but dead,
+    # so remove it; the top-header toggle still handles the mobile sidebar.
+    "article_header_start": [],
+    "show_navbar_depth": 1,
+    "show_toc_level": 2,
+    # Custom "Ember" syntax theme (smithy/ember_style.py) matching the landing
+    # page's code panels. Code panels are dark in both modes (BRAND.md), so the
+    # same dark Ember style is used for light and dark.
+    "pygments_light_style": "ember",
+    "pygments_dark_style": "ember",
+}
+
+# The sphinx-book-theme default left sidebar repeats the logo, icon links, and
+# search box at the top (navbar-logo / icon-links / search-button-field). Those
+# now live in the top header (see navbar_* above), so drop them here and keep
+# the sidebar to just the navigation tree.
+html_sidebars = {
+    "**": ["sbt-sidebar-nav.html"],
 }
 
 # Disable the copy button on code blocks using the "no-copybutton" class.
@@ -127,8 +171,61 @@ replacements = [
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer)
     sphinx.connect("source-read", source_read_handler)
+    _harden_pydata_short_link()
+    # Runs after sphinx-book-theme populates header_buttons (priority 501).
+    sphinx.connect("html-page-context", _add_local_source_button, priority=502)
     for placeholder, replacement in replacements:
         print("Finding and replacing '" + placeholder + "' with '" + replacement + "'")
+
+
+# Adds a "View source" button to the article header that opens the page's raw
+# reStructuredText served from the site itself (the _sources/ copy Sphinx emits
+# when html_copy_source is on), rather than linking out to GitHub. This relies
+# on sphinx-book-theme's header_buttons context list.
+def _add_local_source_button(app, pagename, templatename, context, doctree):
+    if not context.get("show_source") or not context.get("has_source"):
+        return
+    sourcename = context.get("sourcename")
+    header_buttons = context.get("header_buttons")
+    if not sourcename or header_buttons is None:
+        return
+    source_url = context["pathto"]("_sources/" + sourcename, resource=True)
+    header_buttons.append(
+        {
+            "type": "link",
+            "url": source_url,
+            "tooltip": "View page source",
+            # No text: show just the icon (the tooltip names it on hover).
+            "text": "",
+            "icon": "fas fa-code",
+            "label": "source-file-button",
+        }
+    )
+
+
+# The pydata-sphinx-theme "ShortenLinkTransform" (which shortens bare
+# github/gitlab links) runs urlparse() unguarded on every bare link in the
+# docs. Our rules-engine spec autolinks an IPv6 example URL ("https://[fe80::1]")
+# whose trailing whitespace makes urlparse raise "Invalid IPv6 URL", aborting
+# the whole build. The transform only ever cares about github.com/gitlab.com
+# hosts, so we wrap its run() to swallow unparseable URIs and leave them as-is.
+def _harden_pydata_short_link():
+    try:
+        from pydata_sphinx_theme.short_link import ShortenLinkTransform
+    except ImportError:
+        return
+
+    original_run = ShortenLinkTransform.run
+
+    def safe_run(self, **kwargs):
+        try:
+            return original_run(self, **kwargs)
+        except ValueError:
+            # An unparseable bare URL (e.g. an IPv6 literal example) is not a
+            # link we'd shorten anyway; leave the document untouched.
+            return None
+
+    ShortenLinkTransform.run = safe_run
 
 
 # Rewrites placeholders with computed value
