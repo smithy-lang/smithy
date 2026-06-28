@@ -161,6 +161,15 @@ html[data-theme="dark"] .bd-article :is(h1, h2, h3, h4, h5, h6) {
     margin-right: 22px;
 }
 
+/* sphinx-book-theme hides the pydata header sidebar toggle unconditionally.
+ * Re-enable the primary toggle at the same breakpoint where pydata turns the
+ * primary sidebar into an off-canvas panel. */
+@media (max-width: 959.98px) {
+    .bd-header button.primary-toggle {
+        display: inline-flex;
+    }
+}
+
 /* Trim the article's top padding (theme default is 1.5rem) and roughly double
  * the horizontal padding (theme default is padding-left: 2rem, no right) so the
  * body content is better separated from the left and right column navs. */

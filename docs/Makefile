@@ -27,6 +27,7 @@ serve:
 
 merge-versions:
 	mkdir -p build/html
+	rm -rf "build/html/1.0" "build/html/2.0"
 	cp -R "build/1.0/html" "build/html/1.0"
 	cp -R "build/2.0/html" "build/html/2.0"
 	cp -R root/* "build/html"

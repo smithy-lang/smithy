@@ -38,6 +38,7 @@ language = "en"
 
 html_static_path = ["../_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["custom.js"]
 html_favicon = "../_static/favicon.svg"
 
 # Publish the raw page source with a .txt suffix (e.g. quickstart.rst.txt) so
@@ -101,10 +102,11 @@ html_theme_options = {
     "article_header_start": [],
     "show_navbar_depth": 1,
     "show_toc_level": 2,
-    # Custom "Ember" syntax theme (smithy/ember_style.py) matching the landing
-    # page's code panels. Code panels are dark in both modes (BRAND.md), so the
-    # same dark Ember style is used for light and dark.
-    "pygments_light_style": "ember",
+    # Dark mode uses the custom "Ember" syntax theme (smithy/ember_style.py),
+    # which is tuned for a dark code panel. In light mode pydata renders the
+    # code panel on a light surface, where Ember's light-on-dark tokens wash
+    # out, so light mode uses the high-contrast built-in "xcode" style instead.
+    "pygments_light_style": "xcode",
     "pygments_dark_style": "ember",
 }
 
