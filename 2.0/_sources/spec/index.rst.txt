@@ -34,7 +34,6 @@ Table of contents
 =================
 
 .. toctree::
-    :numbered:
     :maxdepth: 1
 
     model
