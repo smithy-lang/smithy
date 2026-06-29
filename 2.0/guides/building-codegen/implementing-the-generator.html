@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=6d64b6a6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -61,11 +61,10 @@
   <meta name="docsearch:version" content="2.0" />
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
-<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono.
-     Fira Mono is used for headings. -->
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   
   
@@ -637,6 +636,11 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-directedcodegen-using-a-codegendirector">Running <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> using a <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-settings-class">Creating a settings class</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-codegencontext-class">Creating a <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-for-a-single-service">Generating for a single service</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-for-a-shape-closure">Generating for a shape closure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-a-service-and-a-shape-closure">Combining a service and a shape closure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-only-data-shapes">Generating only data shapes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-the-service-from-a-directive">Accessing the service from a directive</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-using-directedcodegen">Tips for using <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code></a></li>
 </ul>
             </nav>
@@ -690,11 +694,17 @@ and running a generator into specific methods.</p>
 
 <span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateResource</span><span class="p">(</span><span class="n">GenerateResourceDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateOperation</span><span class="p">(</span><span class="n">GenerateOperationDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateStructure</span><span class="p">(</span><span class="n">GenerateStructureDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateError</span><span class="p">(</span><span class="n">GenerateErrorDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateUnion</span><span class="p">(</span><span class="n">GenerateUnionDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateList</span><span class="p">(</span><span class="n">GenerateListDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateMap</span><span class="p">(</span><span class="n">GenerateMapDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateEnumShape</span><span class="p">(</span><span class="n">GenerateEnumDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
@@ -763,8 +773,12 @@ in a Smithy-Build plugin using the data provided by
 <span class="w">    </span><span class="n">MylangSettings</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runner</span><span class="p">.</span><span class="na">settings</span><span class="p">(</span><span class="n">MylangSettings</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
 <span class="w">                                              </span><span class="n">context</span><span class="p">.</span><span class="na">getSettings</span><span class="p">());</span>
 
-<span class="w">    </span><span class="c1">// Assuming service() returns the configured service shape ID.</span>
+<span class="w">    </span><span class="c1">// Assuming service() returns a configured service shape ID.</span>
 <span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">service</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// Codegen can also be driven by a shape closure, either on its own</span>
+<span class="w">    </span><span class="c1">// or alongside a service to enable combined mode.</span>
+<span class="w">    </span><span class="c1">// runner.shapeClosure(settings.closure());</span>
 
 <span class="w">    </span><span class="c1">// Configure the director to perform some common model transforms.</span>
 <span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">performDefaultCodegenTransforms</span><span class="p">();</span>
@@ -795,9 +809,11 @@ shapes that reference them)</p></li>
 <h2>Creating a settings class<a class="headerlink" href="#creating-a-settings-class" title="Link to this heading">#</a></h2>
 <p>A code generator uses a settings object to configure the generator in
 Smithy-Build and during directed code generation. At a minimum, this
-class should have a <code class="docutils literal notranslate"><span class="pre">ShapeId</span></code> for the service to generate.</p>
+class should have a <code class="docutils literal notranslate"><span class="pre">ShapeId</span></code> for the service to generate and/or a
+closure ID for the closure to generate.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MylangSettings</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">closureId</span><span class="p">;</span>
 
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">service</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
@@ -805,6 +821,14 @@ class should have a <code class="docutils literal notranslate"><span class="pre"
 
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">service</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">closure</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">closureId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">closureId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">closureId</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">closure</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">closureId</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -834,6 +858,109 @@ generator. This can be done using a Java record, POJO, builder, etc.</p>
 <p><code class="docutils literal notranslate"><span class="pre">DirectedCodegen#createContext</span></code> is responsible for creating a
 <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>. Ensure that the data provided by your <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>
 are available using the data available to <code class="docutils literal notranslate"><span class="pre">CreateContextDirective</span></code>.</p>
+</section>
+<section id="generating-for-a-single-service">
+<h2>Generating for a single service<a class="headerlink" href="#generating-for-a-single-service" title="Link to this heading">#</a></h2>
+<p>Code generators will typically generate code for interacting with a single,
+specific service. To do this, simply call <code class="docutils literal notranslate"><span class="pre">runner.service(...)</span></code> to set the
+service that code generation will be directed from.</p>
+<p>When generating code from a service shape, all shapes in that
+<a class="reference internal" href="../../spec/service-types.html#service-closure"><span class="std std-ref">service's closure</span></a> will be in scope for generation.
+Other services and shapes may be present in the model, but generation directives
+for shapes outside the closure will not be invoked.</p>
+</section>
+<section id="generating-for-a-shape-closure">
+<h2>Generating for a shape closure<a class="headerlink" href="#generating-for-a-shape-closure" title="Link to this heading">#</a></h2>
+<p>Code generators can additionally be driven by a
+<a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">shape closure</span></a>. Like a
+<a class="reference internal" href="../../spec/service-types.html#service-closure"><span class="std std-ref">service's closure</span></a>, a shape closure defines the set of
+shapes that are in scope for generation. Code generators can use a shape closure
+to drive code generation by calling <code class="docutils literal notranslate"><span class="pre">runner.shapeClosure(...)</span></code> with the ID of
+the closure to generate.</p>
+<p>Shape closures are distinct from service closures in a number of ways, but the
+most important things to note for a code generator are:</p>
+<ul>
+<li><p>There is no guarantee that there is exactly one service. A shape closure may
+have any number of service shapes.</p>
+<p>Not all generators may be able to represent multiple service shapes in their
+outputs. Generators that support output without service shapes can enable
+<a class="reference internal" href="#directed-type-codegen"><span class="std std-ref">type codegen</span></a> to generate code for just the data
+shapes in the closure.</p>
+</li>
+<li><p>Since multiple services are supported, <code class="docutils literal notranslate"><span class="pre">performDefaultCodegenTransforms</span></code>
+does not apply service-defined errors to operations.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">service</span></code> property of a <code class="docutils literal notranslate"><span class="pre">Directive</span></code> refers to the top-level service
+configured to drive code generation. This will not be present in shape
+closure driven generation.</p>
+<p>As a result, the <code class="docutils literal notranslate"><span class="pre">shape</span></code> property of <code class="docutils literal notranslate"><span class="pre">GenerateServiceDirective</span></code> must be
+used when generating services for closures. For the sake of simplicity, it is
+recommended to use the <code class="docutils literal notranslate"><span class="pre">shape</span></code> property even in service-based generation
+where both properties refer to the same shape.</p>
+</li>
+<li><p>There is no guarantee that shape names in the closure are case-insensitively
+unique across namespaces. Service closures enforce this behavior, but it is
+optional in shape closures. Generators that cannot represent such conflicts
+can call <code class="docutils literal notranslate"><span class="pre">runner.requireCaseInsensitiveNames()</span></code> to fail code generation when
+the shapes being generated have case-insensitively conflicting names (taking
+closure-defined renames into account).</p></li>
+</ul>
+</section>
+<section id="combining-a-service-and-a-shape-closure">
+<span id="combined-codegen"></span><h2>Combining a service and a shape closure<a class="headerlink" href="#combining-a-service-and-a-shape-closure" title="Link to this heading">#</a></h2>
+<p>A service and a shape closure can be set together, enabling &quot;combined mode&quot;.
+The shape closure is the set of shapes that gets generated, and the service is
+designated the primary service. The service must be a member of the closure,
+otherwise code generation should fail.</p>
+<p>To enable it, set both on the director:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">service</span><span class="p">());</span>
+<span class="n">runner</span><span class="p">.</span><span class="na">shapeClosure</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">closure</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>This is useful when the generated set must include standalone shapes that are
+not reachable from the service while still generating the service itself. In
+combined mode the directive's <code class="docutils literal notranslate"><span class="pre">getService()</span></code> returns the service and
+<code class="docutils literal notranslate"><span class="pre">getShapeClosureId()</span></code> returns the closure ID.</p>
+</section>
+<section id="generating-only-data-shapes">
+<span id="directed-type-codegen"></span><h2>Generating only data shapes<a class="headerlink" href="#generating-only-data-shapes" title="Link to this heading">#</a></h2>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">runner.generateDataShapesOnly()</span></code> enables &quot;type codegen&quot;, where only
+the shapes that carry data are generated. Service, resource, and operation
+shapes are never generated, even when they are present in the generated closure.
+Operation input and output shapes as well as error shapes are still generated.</p>
+<p>This mode composes with either source.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Code generators are expected to not attempt to generate any service or
+client scaffolding when this mode is enabled.</p>
+</div>
+</section>
+<section id="accessing-the-service-from-a-directive">
+<span id="directive-service-access"></span><h2>Accessing the service from a directive<a class="headerlink" href="#accessing-the-service-from-a-directive" title="Link to this heading">#</a></h2>
+<p>Because code generation can be driven by a service or a shape closure, the
+<code class="docutils literal notranslate"><span class="pre">service</span></code> of a <code class="docutils literal notranslate"><span class="pre">Directive</span></code> is no longer guaranteed to be present. The
+directive provides accessors that make this explicit:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">getService()</span></code> returns an <code class="docutils literal notranslate"><span class="pre">Optional&lt;ServiceShape&gt;</span></code> and is the safe way to
+access the service. It is empty when generation is driven by a shape closure
+with no primary service.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expectService()</span></code> returns the <code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code>, throwing a
+<code class="docutils literal notranslate"><span class="pre">CodegenException</span></code> when there is none. Use this only where a service is
+guaranteed, such as in service-driven generation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getShapeClosureId()</span></code> returns the <code class="docutils literal notranslate"><span class="pre">Optional&lt;String&gt;</span></code> ID of the shape
+closure driving generation, if any.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">getRenames()</span></code> returns the <code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code> of renames that apply to
+the shapes being generated. These mirror the generated set: the closure's
+renames in closure or combined mode, otherwise the primary service's renames.
+Prefer this over reading renames from a service so naming works in every mode.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The older <code class="docutils literal notranslate"><span class="pre">service()</span></code> accessor is deprecated. It now throws a
+<code class="docutils literal notranslate"><span class="pre">CodegenException</span></code> rather than returning <code class="docutils literal notranslate"><span class="pre">null</span></code> when generation is driven
+by a shape closure, so existing generators keep their behavior in
+service-driven generation but must migrate to <code class="docutils literal notranslate"><span class="pre">getService()</span></code> or
+<code class="docutils literal notranslate"><span class="pre">expectService()</span></code> to support shape closures.</p>
+</div>
 </section>
 <section id="tips-for-using-directedcodegen">
 <h2>Tips for using <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#tips-for-using-directedcodegen" title="Link to this heading">#</a></h2>
@@ -908,6 +1035,11 @@ data you need.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-directedcodegen-using-a-codegendirector">Running <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> using a <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-settings-class">Creating a settings class</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-codegencontext-class">Creating a <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-for-a-single-service">Generating for a single service</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-for-a-shape-closure">Generating for a shape closure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-a-service-and-a-shape-closure">Combining a service and a shape closure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-only-data-shapes">Generating only data shapes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-the-service-from-a-directive">Accessing the service from a directive</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-using-directedcodegen">Tips for using <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code></a></li>
 </ul>
   </nav></div>

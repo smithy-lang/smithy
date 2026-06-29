@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=6d64b6a6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -61,11 +61,10 @@
   <meta name="docsearch:version" content="2.0" />
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
-<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono.
-     Fira Mono is used for headings. -->
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   
   
@@ -633,6 +632,8 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-name-codegen-plugins">How to name codegen plugins</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-properties">Recommended properties</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#service"><code class="docutils literal notranslate"><span class="pre">service</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#closure"><code class="docutils literal notranslate"><span class="pre">closure</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#service-and-closure-optionality"><code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">closure</span></code> optionality</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#protocol-client-and-type-codegen-only"><code class="docutils literal notranslate"><span class="pre">protocol</span></code> (client and type codegen only)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edition"><code class="docutils literal notranslate"><span class="pre">edition</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relativedate-client-and-type-codegen-only"><code class="docutils literal notranslate"><span class="pre">relativeDate</span></code> (client and type codegen only)</a></li>
@@ -699,11 +700,22 @@ choose to introduce any other properties as needed.</p>
 example, <code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#Weather&quot;</span></code>). Smithy models can contain
 multiple services. Providing a <code class="docutils literal notranslate"><span class="pre">service</span></code> shape ID tells code
 generators which service to generate.</p>
-<p>Generators may choose to make <code class="docutils literal notranslate"><span class="pre">service</span></code> optional. If optional, the
-generator will attempt to find every service in the model. If only a
-single service is found in the model, it is used for code generation. If
+</section>
+<section id="closure">
+<h3><code class="docutils literal notranslate"><span class="pre">closure</span></code><a class="headerlink" href="#closure" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">closure</span></code> property defines the ID of the
+<a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">shape closure</span></a> to generate (for example,
+<code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#Events&quot;</span></code>).</p>
+</section>
+<section id="service-and-closure-optionality">
+<h3><code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">closure</span></code> optionality<a class="headerlink" href="#service-and-closure-optionality" title="Link to this heading">#</a></h3>
+<p>Generators should make both <code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">closure</span></code> optional. Setting
+both enables <a class="reference internal" href="implementing-the-generator.html#combined-codegen"><span class="std std-ref">combined mode</span></a>, where the closure is
+the generated set and the service is the primary service. If neither are
+set, the generator may attempt to find every service in the model. If only
+a single service is found in the model, it is used for code generation. If
 multiple services are found, the generator should fail and require an
-explicit service shape ID.</p>
+explicit service or closure ID.</p>
 </section>
 <section id="protocol-client-and-type-codegen-only">
 <h3><code class="docutils literal notranslate"><span class="pre">protocol</span></code> (client and type codegen only)<a class="headerlink" href="#protocol-client-and-type-codegen-only" title="Link to this heading">#</a></h3>
@@ -930,6 +942,8 @@ provided to the plugin to the generator can be done in
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-name-codegen-plugins">How to name codegen plugins</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-properties">Recommended properties</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#service"><code class="docutils literal notranslate"><span class="pre">service</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#closure"><code class="docutils literal notranslate"><span class="pre">closure</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#service-and-closure-optionality"><code class="docutils literal notranslate"><span class="pre">service</span></code> and <code class="docutils literal notranslate"><span class="pre">closure</span></code> optionality</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#protocol-client-and-type-codegen-only"><code class="docutils literal notranslate"><span class="pre">protocol</span></code> (client and type codegen only)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edition"><code class="docutils literal notranslate"><span class="pre">edition</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relativedate-client-and-type-codegen-only"><code class="docutils literal notranslate"><span class="pre">relativeDate</span></code> (client and type codegen only)</a></li>

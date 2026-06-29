@@ -391,8 +391,9 @@ service, and the resources contained in the service.
 Computing a service closure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The closure of shapes connected to a service are the shapes that will be
-code generated. You can compute this closure using a
+When generation is driven by a service, the closure of shapes connected to that
+service are the shapes that will be code generated. You can compute this closure
+using a
 `Walker <https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java>`__:
 
 .. code-block:: java
@@ -412,6 +413,14 @@ You can get the entire set of operations contained in a service using a
 
     :ref:`directedcodegen` automatically handles this for you.
 
+.. note::
+
+    Code generation can also be driven by a :ref:`shape closure <shape-closures>`,
+    on its own or alongside a service. The shapes in a shape closure are computed
+    for you by ``ShapeClosureIndex``
+    (``ShapeClosureIndex.of(model).getShapesInClosure(id)``) rather than by
+    walking from a service.
+
 
 Service renames
 ~~~~~~~~~~~~~~~
@@ -420,9 +429,9 @@ Services might need to "rename" shapes in order to disambiguate shapes
 that share the same name. This is done so that namespaces in the Smithy
 model do no need to have a 1:1 namespace mapping in generated code. When
 determining the name of a shape for use in codegen, never rely on the
-shape ID directly, but rather first check if the shape was renamed
-within the closure of a service. This can be done by passing a
-``ServiceShape`` into ``ShapeId#getName``:
+shape ID directly, but rather first check if the shape was renamed. In
+service-driven generation this can be done by passing a ``ServiceShape`` into
+``ShapeId#getName``:
 
 .. code-block:: java
 
@@ -431,6 +440,15 @@ within the closure of a service. This can be done by passing a
 
    // Bad!
    String badCodegenName = someShapeId.getName();
+
+.. note::
+
+    :ref:`Shape closures <shape-closures>` can also rename shapes. When a shape
+    closure drives code generation, get the renames from
+    ``ShapeClosureIndex.of(model).getRenames(closureId)`` and fall back to
+    ``ShapeId#getName`` when a shape has no rename. The directive's
+    ``getRenames()`` resolves to the right source in every mode, including
+    combined mode.
 
 
 Operation

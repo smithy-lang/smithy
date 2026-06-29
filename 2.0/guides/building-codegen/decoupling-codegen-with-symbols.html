@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=6d64b6a6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -61,11 +61,10 @@
   <meta name="docsearch:version" content="2.0" />
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
-<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono.
-     Fira Mono is used for headings. -->
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   
   
@@ -971,11 +970,12 @@ language are accounted for during codegen.</p>
 <code class="docutils literal notranslate"><span class="pre">ShapeVisitor</span></code>. The basic setup will look something like this:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">software.amazon.smithy.python.codegen</span><span class="p">;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.util.logging.Logger</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.codegen.core.SymbolProvider</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ServiceShape</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ShapeVisitor</span><span class="p">;</span>
 
 <span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SymbolVisitor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
@@ -984,12 +984,14 @@ language are accounted for during codegen.</p>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">ShapeId</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renames</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">ShapeId</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renames</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span>
-<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">getService</span><span class="p">(),</span><span class="w"> </span><span class="n">ServiceShape</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// Sourced from the directive&#39;s getRenames() so naming works whether</span>
+<span class="w">        </span><span class="c1">// generation is driven by a service or a shape closure.</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">renames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">renames</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
@@ -1031,8 +1033,12 @@ language are accounted for during codegen.</p>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getDefaultShapeName</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// Use the service-aliased name and ensure it&#39;s capitalized.</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">(</span><span class="n">service</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">// Use the rename for this shape if there is one, otherwise its plain</span>
+<span class="w">        </span><span class="c1">// name, and ensure it&#39;s capitalized. Works for both service- and</span>
+<span class="w">        </span><span class="c1">// closure-driven generation.</span>
+<span class="w">        </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">();</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">renames</span><span class="p">.</span><span class="na">getOrDefault</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// TODO implement other ShapeVisitor methods.</span>
@@ -1059,22 +1065,32 @@ example:</p>
 <span class="w">    </span><span class="c1">// ... other properties</span>
 <span class="hll"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ReservedWords</span><span class="w"> </span><span class="n">escaper</span><span class="p">;</span>
 </span>
-<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">ShapeId</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renames</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// ... other setup</span>
 <span class="hll"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span>
-</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Function&quot;</span><span class="p">)</span>
-</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;throw&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Throw&quot;</span><span class="p">)</span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Function&quot;</span><span class="p">)</span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;throw&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Throw&quot;</span><span class="p">)</span>
 </span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </span><span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// other methods...</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getDefaultShapeName</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">(</span><span class="n">service</span><span class="p">));</span>
+<span class="w">        </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">();</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">renames</span><span class="p">.</span><span class="na">getOrDefault</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">.</span><span class="na">getName</span><span class="p">()));</span>
 <span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">escaper</span><span class="p">.</span><span class="na">escape</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
 </span><span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Names are resolved through the <code class="docutils literal notranslate"><span class="pre">renames</span></code> map rather than from a
+<code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code> so the symbol provider works in every generation mode. The
+map comes from the directive's <code class="docutils literal notranslate"><span class="pre">getRenames()</span></code> (see
+<a class="reference internal" href="implementing-the-generator.html#directive-service-access"><span class="std std-ref">Accessing the service from a directive</span></a>); it holds the service's renames in
+service-driven generation and the closure's renames when generation is
+driven by a <a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">shape closure</span></a>.</p>
 </div>
 <p>While you can manually define the mapping for each reserved word, a
 simpler method is to create an algorithm for automatically handling
@@ -1089,8 +1105,8 @@ throw
 <p><code class="docutils literal notranslate"><span class="pre">ReservedWordsBuilder</span></code> can be configured to escape words using the
 file and your escaping function.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Returns something like &quot;MyServiceFunction&quot;.</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">word</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Returns something like &quot;MyNamespaceFunction&quot;.</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">word</span><span class="p">);</span>
 <span class="p">});</span>
 
 <span class="n">URL</span><span class="w"> </span><span class="n">wordsFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">&quot;reservedwords.txt&quot;</span><span class="p">);</span>

@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=6d64b6a6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -61,11 +61,10 @@
   <meta name="docsearch:version" content="2.0" />
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
-<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono.
-     Fira Mono is used for headings. -->
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   
   
@@ -657,7 +656,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-trait-to-every-shape">Add a trait to every shape</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flattening-mixins">Flattening mixins</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copying-service-errors-to-operation-errors">Copying service errors to operation errors</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-shapes-not-in-the-closure-of-a-service">Remove shapes not in the closure of a service</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-shapes-not-in-the-target-closure">Remove shapes not in the target closure</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selectors">Selectors</a><ul class="visible nav section-nav flex-column">
@@ -1086,15 +1085,29 @@ generation harder.</p>
 </pre></div>
 </div>
 </section>
-<section id="remove-shapes-not-in-the-closure-of-a-service">
-<h3>Remove shapes not in the closure of a service<a class="headerlink" href="#remove-shapes-not-in-the-closure-of-a-service" title="Link to this heading">#</a></h3>
+<section id="remove-shapes-not-in-the-target-closure">
+<h3>Remove shapes not in the target closure<a class="headerlink" href="#remove-shapes-not-in-the-target-closure" title="Link to this heading">#</a></h3>
 <p>Smithy models can contain multiple services and shapes that aren't connected
 to any service. Code generation is often easier if you remove shapes from the
-model that are not connected to the service being generated.</p>
+model that are not in the closure being generated.</p>
+<p>When generating a service, the closure is the set of shapes connected to that
+service. A <code class="docutils literal notranslate"><span class="pre">Walker</span></code> can be used to easily filter out other shapes:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span>
 <span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span>
 <span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">closure</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">shape</span><span class="p">));</span>
 </pre></div>
+</div>
+<p>When generating a <a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">shape closure</span></a>, use
+<code class="docutils literal notranslate"><span class="pre">ModelTransformer.includeClosures</span></code> to reduce the model to one or more named
+closures:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">includeClosures</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;smithy.example#Events&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> resolves the closure of shapes to generate for you,
+whether code generation is driven by a service or a shape closure, so you
+typically only need to do this when working with the model directly.</p>
 </div>
 </section>
 </section>
@@ -1247,7 +1260,7 @@ repeatedly. For example don't do this:</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-trait-to-every-shape">Add a trait to every shape</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flattening-mixins">Flattening mixins</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copying-service-errors-to-operation-errors">Copying service errors to operation errors</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-shapes-not-in-the-closure-of-a-service">Remove shapes not in the closure of a service</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-shapes-not-in-the-target-closure">Remove shapes not in the target closure</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selectors">Selectors</a><ul class="visible nav section-nav flex-column">

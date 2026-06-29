@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=6d64b6a6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -61,11 +61,10 @@
   <meta name="docsearch:version" content="2.0" />
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
-<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono.
-     Fira Mono is used for headings. -->
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   
   
@@ -1037,8 +1036,9 @@ service supports, which auth schemes it supports, the operations of the
 service, and the resources contained in the service.</p>
 <section id="computing-a-service-closure">
 <h4>Computing a service closure<a class="headerlink" href="#computing-a-service-closure" title="Link to this heading">#</a></h4>
-<p>The closure of shapes connected to a service are the shapes that will be
-code generated. You can compute this closure using a
+<p>When generation is driven by a service, the closure of shapes connected to that
+service are the shapes that will be code generated. You can compute this closure
+using a
 <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java">Walker</a>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span>
 <span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span>
@@ -1054,6 +1054,14 @@ code generated. You can compute this closure using a
 <p class="admonition-title">Tip</p>
 <p><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles this for you.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Code generation can also be driven by a <a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">shape closure</span></a>,
+on its own or alongside a service. The shapes in a shape closure are computed
+for you by <code class="docutils literal notranslate"><span class="pre">ShapeClosureIndex</span></code>
+(<code class="docutils literal notranslate"><span class="pre">ShapeClosureIndex.of(model).getShapesInClosure(id)</span></code>) rather than by
+walking from a service.</p>
+</div>
 </section>
 <section id="service-renames">
 <h4>Service renames<a class="headerlink" href="#service-renames" title="Link to this heading">#</a></h4>
@@ -1061,15 +1069,24 @@ code generated. You can compute this closure using a
 that share the same name. This is done so that namespaces in the Smithy
 model do no need to have a 1:1 namespace mapping in generated code. When
 determining the name of a shape for use in codegen, never rely on the
-shape ID directly, but rather first check if the shape was renamed
-within the closure of a service. This can be done by passing a
-<code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code> into <code class="docutils literal notranslate"><span class="pre">ShapeId#getName</span></code>:</p>
+shape ID directly, but rather first check if the shape was renamed. In
+service-driven generation this can be done by passing a <code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code> into
+<code class="docutils literal notranslate"><span class="pre">ShapeId#getName</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Good!</span>
 <span class="n">String</span><span class="w"> </span><span class="n">goodCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">(</span><span class="n">someServiceShape</span><span class="p">);</span>
 
 <span class="c1">// Bad!</span>
 <span class="n">String</span><span class="w"> </span><span class="n">badCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../../spec/shape-closures.html#shape-closures"><span class="std std-ref">Shape closures</span></a> can also rename shapes. When a shape
+closure drives code generation, get the renames from
+<code class="docutils literal notranslate"><span class="pre">ShapeClosureIndex.of(model).getRenames(closureId)</span></code> and fall back to
+<code class="docutils literal notranslate"><span class="pre">ShapeId#getName</span></code> when a shape has no rename. The directive's
+<code class="docutils literal notranslate"><span class="pre">getRenames()</span></code> resolves to the right source in every mode, including
+combined mode.</p>
 </div>
 </section>
 </section>
