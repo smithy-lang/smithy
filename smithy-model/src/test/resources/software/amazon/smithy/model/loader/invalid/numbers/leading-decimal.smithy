@@ -1,4 +1,4 @@
-// Syntax error at line 7, column 7: Expected one of LBRACE('{'), LBRACKET('['), TEXT_BLOCK('"""'), STRING('"'), NUMBER, IDENTIFIER; but found DOT('.') | Model
+// Syntax error at line 7, column 7: Expected one of LBRACE('{'), LBRACKET('['), TEXT_BLOCK('"""'), STRING('"'), NUMBER, IDENTIFIER, TAG('#'); but found DOT('.') | Model
 namespace smithy.example
 
 @trait
