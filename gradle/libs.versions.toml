@@ -8,8 +8,10 @@ smithy-gradle = "1.4.0"
 assertj = "3.27.7"
 prettier4j = "0.3.0"
 maven-resolver-provider = "3.9.16"
-# TODO: upgrade major version
-maven-resolver = "1.9.27"
+# Resolver 2.x core, paired with the Maven 3.9.x provider via maven-resolver-supplier-mvn3.
+# Staying on the Maven 3 provider keeps the Java 8 baseline, upgrading to Maven 4 will
+# require bumping the runtime Java version to 17.
+maven-resolver = "2.0.18"
 slf4j = "2.0.18"
 mockserver = "7.2.0"
 compile-testing = "0.23.0"
@@ -32,7 +34,16 @@ maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util"
 maven-resolver-impl = { module = "org.apache.maven.resolver:maven-resolver-impl", version.ref =  "maven-resolver" }
 maven-resolver-connector-basic = { module = "org.apache.maven.resolver:maven-resolver-connector-basic", version.ref =  "maven-resolver" }
 maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-resolver-transport-file", version.ref =  "maven-resolver" }
-maven-resolver-transport-http = { module = "org.apache.maven.resolver:maven-resolver-transport-http", version.ref =  "maven-resolver" }
+
+# Resolver 2.x replaced transport-http with transport-apache (same Apache HttpClient 4.5 engine).
+# There's now alternate http transport implementations, but for now we're keeping the same
+# behavior.
+maven-resolver-transport-apache = { module = "org.apache.maven.resolver:maven-resolver-transport-apache", version.ref =  "maven-resolver" }
+
+# Supplier replaces the removed DefaultServiceLocator bootstrap. The mvn3 variant keeps Maven 3
+# semantics. We may eventually want to upgrade to Maven 4, but that'll require a runtime Java
+# version bump to 17+.
+maven-resolver-supplier = { module = "org.apache.maven.resolver:maven-resolver-supplier-mvn3", version.ref =  "maven-resolver" }
 
 slf4j-jul = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j" }
 
