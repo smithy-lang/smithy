@@ -1,0 +1,22 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#ZipCode": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^\\d{5}(-\\d{4})?$"
+            }
+        },
+        "smithy.example#CborExample": {
+            "type": "structure",
+            "members": {
+                "pngHeader": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "iVBORw0KGgo="
+                    }
+                }
+            }
+        }
+    }
+}

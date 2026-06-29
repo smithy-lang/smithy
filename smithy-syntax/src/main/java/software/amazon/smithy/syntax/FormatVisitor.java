@@ -541,6 +541,15 @@ final class FormatVisitor {
                 return Doc.text(tree.concatTokens());
             }
 
+            case TAGGED_LITERAL: {
+                // Render as "#tag content" with exactly one space.
+                TreeCursor tagToken = cursor.getFirstChild(TreeType.TOKEN);
+                TreeCursor stringToken = cursor.getLastChild(TreeType.TOKEN);
+                return Doc.text(tagToken.getTree().concatTokens())
+                        .append(Doc.text(" "))
+                        .append(Doc.text(stringToken.getTree().concatTokens()));
+            }
+
             case COMMENT: {
                 // Render comments based on their token type so banners (4+ slashes like `//////`)
                 // are preserved as content rather than re-segmented. Plain comments use the `//`

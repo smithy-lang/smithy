@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -312,5 +313,115 @@ public class TokenizerTest {
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo(""));
         assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("\"\""));
         assertThat(tokenizer.getCurrentTokenSpan(), is(2));
+    }
+
+    // --- Tagged string literals ---
+
+    @Test
+    public void tokenizesReTagAsTagPlusRawString() {
+        IdlTokenizer t = IdlTokenizer.create("#re \"^\\d{5}$\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#re"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("^\\d{5}$"));
+    }
+
+    @Test
+    public void tokenizesReTaggedTextBlock() {
+        String model = "#re \"\"\"\n"
+                + "    ^\\d{5}$\n"
+                + "    \"\"\"";
+        IdlTokenizer t = IdlTokenizer.create(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#re"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
+    }
+
+    @Test
+    public void tokenizesBTagAsTagPlusRawString() {
+        IdlTokenizer t = IdlTokenizer.create("#b \"Hello world\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#b"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("Hello world"));
+    }
+
+    @Test
+    public void tokenizesHexTextBlock() {
+        String model = "#hex \"\"\"\n"
+                + "    81 # array(1)\n"
+                + "    \"\"\"";
+        IdlTokenizer t = IdlTokenizer.create(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#hex"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
+    }
+
+    @Test
+    public void tokenizesTimestampTag() {
+        IdlTokenizer t = IdlTokenizer.create("#timestamp \"2024-01-01T00:00:00Z\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        assertThat(t.getCurrentTokenLexeme().toString(), equalTo("#timestamp"));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("2024-01-01T00:00:00Z"));
+    }
+
+    // --- Disambiguation ---
+
+    @Test
+    public void poundStillWorksAsToken() {
+        IdlTokenizer t = IdlTokenizer.create("#");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
+    }
+
+    @Test
+    public void poundFollowedByIdentifierWithoutString() {
+        IdlTokenizer t = IdlTokenizer.create("#re foo");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
+    }
+
+    @Test
+    public void poundFollowedByNonIdentifier() {
+        IdlTokenizer t = IdlTokenizer.create("#123");
+        assertThat(t.getCurrentToken(), is(IdlToken.POUND));
+    }
+
+    // --- Raw string escape handling ---
+
+    @Test
+    public void rawStringPreservesEscapedQuote() {
+        // #re "a\"b" — the \" keeps the quote from terminating the string,
+        // raw content includes the backslash and quote.
+        IdlTokenizer t = IdlTokenizer.create("#re \"a\\\"b\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("a\\\"b"));
+    }
+
+    @Test
+    public void rawStringPreservesBackslashAtEnd() {
+        // #re "foo\\" — escaped backslash before closing quote
+        IdlTokenizer t = IdlTokenizer.create("#re \"foo\\\\\"");
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_STRING));
+        assertThat(t.getCurrentTokenStringSlice().toString(), equalTo("foo\\\\"));
+    }
+
+    @Test
+    public void rawTextBlockAllowsUnescapedQuotes() {
+        // In text blocks, lone " doesn't need escaping.
+        String model = "#re \"\"\"\n    a\"b\n    \"\"\"";
+        IdlTokenizer t = IdlTokenizer.create(model);
+        assertThat(t.getCurrentToken(), is(IdlToken.TAG));
+        t.next();
+        assertThat(t.getCurrentToken(), is(IdlToken.RAW_TEXT_BLOCK));
+        assertThat(t.getCurrentTokenStringSlice().toString(), containsString("a\"b"));
     }
 }

@@ -1,0 +1,52 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#Ssn": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^\\d{3}-\\d{2}-\\d{4}$"
+            }
+        },
+        "smithy.example#Word": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "\\w+"
+            }
+        },
+        "smithy.example#QuoteInRegex": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "a\\\"b"
+            }
+        },
+        "smithy.example#TaggedLiteralsExample": {
+            "type": "structure",
+            "members": {
+                "startDate": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#default": 1704067200
+                    }
+                },
+                "avatar": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "LlBORw0KGgo="
+                    }
+                },
+                "quoted": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "YSJi"
+                    }
+                },
+                "header": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": "iVBORw=="
+                    }
+                }
+            }
+        }
+    }
+}
