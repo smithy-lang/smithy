@@ -95,9 +95,13 @@ final class TransformCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param(FORMAT_LONG, FORMAT_SHORT, "FORMAT",
+            printer.param(FORMAT_LONG,
+                    FORMAT_SHORT,
+                    "FORMAT",
                     "Output format: ast (JSON AST, default) or smf (binary).");
-            printer.param(OUTPUT_OPTION, null, "DIR",
+            printer.param(OUTPUT_OPTION,
+                    null,
+                    "DIR",
                     "Output directory. Defaults to build/smithy.");
             printer.option(FLATTEN_OPTION, null, "Flattens and removes mixins from the model.");
         }
