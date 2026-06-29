@@ -73,7 +73,8 @@ dependencies {
     implementation(libs.maven.resolver.impl)
     implementation(libs.maven.resolver.connector.basic)
     implementation(libs.maven.resolver.transport.file)
-    implementation(libs.maven.resolver.transport.http)
+    implementation(libs.maven.resolver.transport.apache)
+    implementation(libs.maven.resolver.supplier)
     implementation(libs.slf4j.jul) // Route slf4j used by Maven through JUL like the rest of Smithy.
 
     testImplementation(libs.mockserver)
@@ -217,6 +218,16 @@ tasks {
         archiveClassifier.set("")
 
         mergeServiceFiles()
+
+        // Maven Resolver ships Sisu component indexes under META-INF/sisu. Merge them like service files so
+        // the class names they list are relocated alongside the relocated bytecode. Otherwise the index points
+        // at the original org.apache.maven.* names that no longer exist in the shaded jar.
+        //
+        // Strictly speaking, we don't *need* to do this. The CLI will probably work just fine without doing
+        // this. But it's a build time thing that doesn't take long and makes the output more technically correct.
+        mergeServiceFiles {
+            path = "META-INF/sisu"
+        }
 
         // Shade dependencies to prevent conflicts with other dependencies.
         relocate("org.slf4j", "software.amazon.smithy.cli.shaded.slf4j")
