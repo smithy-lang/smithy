@@ -19,7 +19,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: gradle/actions/wrapper-validation@v6
 
       - name: Set up JDK ${{ matrix.java }}
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check Smithy formatting
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: gradle/actions/wrapper-validation@v6
 
       - name: Set up JDK 17
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build CLI executables
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # The CLI runtime image bundles a JDK 25 JRE and generates a JDK 25 Leyden AOT cache during the
       # build, so jlink and the AOT steps require JDK 25 (the rest of the build still runs on 17+).
@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Build
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Set up Python 3.x
       uses: actions/setup-python@v6
@@ -122,12 +122,12 @@ jobs:
     name: Build AWS API Models
     steps:
       - name: Checkout Smithy
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: 'smithy'
 
       - name: Checkout api-models-aws
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: aws/api-models-aws
           path: api-models-aws

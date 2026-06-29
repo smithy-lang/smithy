@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo 
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Setup
       run: |
         mkdir -p $ARTIFACTS_DIR
@@ -77,7 +77,7 @@ jobs:
     needs: build-docs
     steps:
     - name: Checkout GitHub pages branch
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         ref: 'gh-pages'
     - name: Download artifacts
