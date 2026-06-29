@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1655,6 +1656,36 @@ final class CallCommand implements Command {
     /** Max body bytes embedded in an @http block under --wire full before truncation. */
     private static final int WIRE_BODY_LIMIT = 4 * 1024 * 1024;
 
+    // Known Authorization scheme tokens that are safe to echo in the @http block. The scheme is shown so a
+    // reader can see *how* the request authenticated, but the credential material after it is always
+    // redacted. An allow-list is deliberate: the scheme token is only revealed when it matches a
+    // recognized scheme, so an unrecognized or malformed Authorization header is redacted whole rather
+    // than risk leaking a secret sitting in the first token. Compared case-insensitively.
+    private static final Set<String> KNOWN_AUTH_SCHEMES = Set.of(
+            "aws4-hmac-sha256",
+            "basic",
+            "bearer",
+            "digest",
+            "negotiate",
+            "ntlm");
+
+    /**
+     * Redacts an Authorization header value while preserving a recognized scheme token. For a known
+     * scheme (see {@link #KNOWN_AUTH_SCHEMES}) the result is {@code "<scheme> <redacted>"}; anything else
+     * (no scheme token, or an unrecognized one) is redacted whole as {@code "<redacted>"} so an unexpected
+     * format can't leak the credential. Note sigv4's {@code "AWS4-HMAC-SHA256 ... Credential=AKIA...,
+     * Signature=..."} carries the access key id and signature after the scheme, so only the scheme token
+     * is ever shown.
+     */
+    static String redactAuthorization(String value) {
+        int sp = value.indexOf(' ');
+        String scheme = sp < 0 ? value : value.substring(0, sp);
+        if (!scheme.isEmpty() && KNOWN_AUTH_SCHEMES.contains(scheme.toLowerCase(Locale.ROOT))) {
+            return scheme + " <redacted>";
+        }
+        return "<redacted>";
+    }
+
     /**
      * A single captured HTTP message side (request or response): headers plus the raw payload bytes.
      * Streaming bodies are flagged but never buffered. {@link #toDocument} renders the summary/full
@@ -1685,8 +1716,9 @@ final class CallCommand implements Command {
             }
             Map<String, Document> hdrs = new LinkedHashMap<>();
             for (var e : headers.entrySet()) {
-                // Never echo the Authorization header's signature material.
-                String v = e.getKey().equalsIgnoreCase("authorization") ? "<redacted>"
+                // Never echo the Authorization header's credential material, but keep the scheme visible.
+                String v = e.getKey().equalsIgnoreCase("authorization")
+                        ? redactAuthorization(String.join(", ", e.getValue()))
                         : String.join(", ", e.getValue());
                 hdrs.put(e.getKey(), Document.of(v));
             }

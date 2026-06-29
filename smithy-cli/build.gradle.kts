@@ -20,8 +20,12 @@ plugins {
 description = "This module implements the Smithy command line interface."
 
 // EXPERIMENTAL(call): override the Java 8 release set by smithy.java-conventions because the
-// bundled smithy-java runtime requires Java 21.
+// bundled smithy-java runtime requires Java 21. Tests reference the call command (and thus the same
+// smithy-java deps), so the test source set needs the same release.
 tasks.compileJava {
+    options.release.set(21)
+}
+tasks.compileTestJava {
     options.release.set(21)
 }
 
