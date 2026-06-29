@@ -10,7 +10,7 @@ prettier4j = "0.3.0"
 maven-resolver-provider = "3.9.16"
 # TODO: upgrade major version
 maven-resolver = "1.9.27"
-slf4j = "1.7.36"
+slf4j = "2.0.18"
 mockserver = "7.2.0"
 compile-testing = "0.23.0"
 json-schema = "1.12.1"
