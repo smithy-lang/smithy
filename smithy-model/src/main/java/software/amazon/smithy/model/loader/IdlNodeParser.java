@@ -52,12 +52,14 @@ final class IdlNodeParser {
      */
     static Node expectAndSkipNode(IdlModelLoader loader, SourceLocation location) {
         IdlInternalTokenizer tokenizer = loader.getTokenizer();
+
         IdlToken token = tokenizer.expect(IdlToken.STRING,
                 IdlToken.TEXT_BLOCK,
                 IdlToken.NUMBER,
                 IdlToken.IDENTIFIER,
                 IdlToken.LBRACE,
-                IdlToken.LBRACKET);
+                IdlToken.LBRACKET,
+                IdlToken.TAG);
 
         switch (token) {
             case STRING:
@@ -75,8 +77,38 @@ final class IdlNodeParser {
             case LBRACE:
                 return parseObjectNode(loader, location);
             case LBRACKET:
-            default:
                 return parseArrayNode(loader, location);
+            case TAG:
+            default:
+                return parseTaggedLiteral(loader, location);
+        }
+    }
+
+    private static Node parseTaggedLiteral(IdlModelLoader loader, SourceLocation location) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
+
+        if (!loader.getModelVersion().supportsTaggedLiterals()) {
+            throw loader.syntax("Tagged string literals require Smithy IDL version 2.1 or later");
+        }
+
+        // Extract tag name from the TAG lexeme (e.g., "#re" -> "re").
+        String tag = tokenizer.getCurrentTokenLexeme().toString().substring(1);
+        if (!TaggedStringLiteral.hasHandler(tag)) {
+            throw loader.syntax("Unknown tagged literal: #" + tag);
+        }
+
+        tokenizer.next();
+        tokenizer.expect(IdlToken.RAW_STRING, IdlToken.RAW_TEXT_BLOCK);
+        boolean isTextBlock = tokenizer.getCurrentToken() == IdlToken.RAW_TEXT_BLOCK;
+        CharSequence rawContent = tokenizer.getCurrentTokenStringSlice();
+        tokenizer.next();
+
+        TaggedStringLiteral.Result result = TaggedStringLiteral.scan(tag, rawContent, isTextBlock);
+        switch (result.token) {
+            case NUMBER:
+                return new NumberNode(result.numberValue, location);
+            default:
+                return new StringNode(result.stringValue.toString(), location);
         }
     }
 

@@ -1,0 +1,16 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#re": {
+            "type": "string"
+        },
+        "smithy.example#usesRe": {
+            "type": "structure",
+            "members": {
+                "re": {
+                    "target": "smithy.example#re"
+                }
+            }
+        }
+    }
+}

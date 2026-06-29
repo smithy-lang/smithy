@@ -40,6 +40,9 @@ public enum IdlToken {
     AT("@"),
     STRING("\""),
     TEXT_BLOCK("\"\"\""),
+    RAW_STRING("\""),
+    RAW_TEXT_BLOCK("\"\"\""),
+    TAG("#"),
     COLON(":"),
     WALRUS(":="),
     IDENTIFIER(""),
@@ -76,5 +79,19 @@ public enum IdlToken {
 
     public boolean isWhitespace() {
         return false;
+    }
+
+    /**
+     * Returns true if this token is a string (either regular or raw).
+     */
+    public boolean isString() {
+        return this == STRING || this == RAW_STRING;
+    }
+
+    /**
+     * Returns true if this token is a text block (either regular or raw).
+     */
+    public boolean isTextBlock() {
+        return this == TEXT_BLOCK || this == RAW_TEXT_BLOCK;
     }
 }

@@ -274,7 +274,7 @@ final class IdlStringLexer {
         return endPosition >= startPosition ? line.subSequence(startPosition, endPosition + 1) : null;
     }
 
-    private static boolean isValidNormalCharacter(char c, boolean isTextBlock) {
+    static boolean isValidNormalCharacter(char c, boolean isTextBlock) {
         // Valid normal characters are the unescaped characters defined in the
         // QuotedChar grammar:
         // https://smithy.io/2.0/spec/idl.html#grammar-token-smithy-QuotedChar
@@ -285,5 +285,18 @@ final class IdlStringLexer {
                 || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
                 || (c >= 0x23 && c <= 0x5b) // "#" - "["
                 || c >= 0x5d; // "]"+
+    }
+
+    /**
+     * Normalizes line endings and applies text block formatting without processing escape sequences.
+     */
+    static CharSequence normalizeAndFormat(CharSequence lexeme, boolean isTextBlock) {
+        lexeme = normalizeLineEndings(lexeme);
+        if (isTextBlock) {
+            StringBuilder buffer = new StringBuilder();
+            formatTextBlock(lexeme, buffer);
+            lexeme = buffer;
+        }
+        return lexeme;
     }
 }

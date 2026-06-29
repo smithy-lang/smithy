@@ -22,6 +22,7 @@ class DefaultTokenizer implements IdlTokenizer {
     private CharSequence currentTokenStringSlice;
     private CharSequence currentTextBlockContents;
     private String currentTokenError;
+    private boolean nextIsRawString;
 
     DefaultTokenizer(String filename, CharSequence model) {
         this.filename = filename;
@@ -142,6 +143,11 @@ class DefaultTokenizer implements IdlTokenizer {
         currentTokenLine = parser.line();
         currentTokenStart = parser.position();
         currentTokenEnd = currentTokenStart;
+
+        if (nextIsRawString) {
+            return parseRawString();
+        }
+
         int c = parser.peek();
 
         switch (c) {
@@ -178,7 +184,7 @@ class DefaultTokenizer implements IdlTokenizer {
             case ')':
                 return singleCharToken(IdlToken.RPAREN);
             case '#':
-                return singleCharToken(IdlToken.POUND);
+                return parsePoundOrTag();
             case '=':
                 return singleCharToken(IdlToken.EQUAL);
             case ':':
@@ -355,6 +361,96 @@ class DefaultTokenizer implements IdlTokenizer {
         }
         currentTokenEnd = parser.position();
         return currentTokenType;
+    }
+
+    private IdlToken parsePoundOrTag() {
+        int savedPos = parser.position();
+        int savedLine = parser.line();
+        int savedCol = parser.column();
+
+        parser.skip(); // skip '#'
+
+        if (!ParserUtils.isIdentifierStart(parser.peek())) {
+            currentTokenEnd = parser.position();
+            return currentTokenType = IdlToken.POUND;
+        }
+
+        // Read the identifier.
+        parser.consumeWhile(ParserUtils::isValidIdentifierCharacter);
+        int afterTag = parser.position();
+        String tag = parser.sliceFrom(savedPos + 1);
+
+        // Only recognize known tags to avoid conflicting with shape IDs.
+        if (!TaggedStringLiteral.hasHandler(tag)) {
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Skip optional spaces between tag and string.
+        parser.sp();
+
+        if (parser.peek() != '"') {
+            // Not followed by a string, rewind and emit POUND.
+            parser.rewind(savedPos, savedLine, savedCol);
+            return singleCharToken(IdlToken.POUND);
+        }
+
+        // Emit TAG token (lexeme is #identifier). The string will be next.
+        currentTokenEnd = afterTag;
+        nextIsRawString = true;
+        return currentTokenType = IdlToken.TAG;
+    }
+
+    private IdlToken parseRawString() {
+        nextIsRawString = false;
+        parser.skip(); // skip first quote
+        boolean isTextBlock = false;
+
+        if (parser.peek() == '"') {
+            parser.skip(); // skip second quote
+            if (parser.peek() == '"') {
+                parser.skip(); // skip third quote — text block
+                isTextBlock = true;
+            } else {
+                // Empty string "".
+                currentTokenEnd = parser.position();
+                currentTokenStringSlice = "";
+                return currentTokenType = IdlToken.RAW_STRING;
+            }
+        }
+
+        CharSequence rawContent = parseRawStringContents(isTextBlock);
+        currentTokenEnd = parser.position();
+        currentTokenStringSlice = rawContent;
+        return currentTokenType = isTextBlock ? IdlToken.RAW_TEXT_BLOCK : IdlToken.RAW_STRING;
+    }
+
+    /**
+     * Reads raw content between quotes without evaluating escape sequences.
+     */
+    private CharSequence parseRawStringContents(boolean triple) {
+        int start = parser.position();
+
+        while (!parser.eof()) {
+            char next = parser.peek();
+            if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
+                break;
+            }
+            parser.skip();
+            if (next == '\\') {
+                parser.skip();
+            }
+        }
+
+        CharSequence result = parser.borrowSliceFrom(start);
+        parser.expect('"');
+
+        if (triple) {
+            parser.expect('"');
+            parser.expect('"');
+        }
+
+        return result;
     }
 
     private IdlToken parseString() {
