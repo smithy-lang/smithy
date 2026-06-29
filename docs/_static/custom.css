@@ -179,19 +179,6 @@ html[data-theme="dark"] .bd-article :is(h1, h2, h3, h4, h5, h6) {
     padding-right: 2.6rem;
 }
 
-/* ---------- Headings: set in Fira Mono for a technical, spec-like feel.
- * Fira Mono ships 400/500/700, so use 500 for headings. ---------- */
-.bd-article h1,
-.bd-article h2,
-.bd-article h3,
-.bd-article h4,
-.bd-article h5,
-.bd-article h6 {
-    font-family: "Fira Mono", var(--pst-font-family-monospace);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-}
-
 /* Code blocks get a slightly roomier line-height than the theme's tight
  * default. Pygments emits `html[data-theme="…"] .highlight pre { 125% }`, so
  * match that selector shape (and add a class) to win on specificity. */
