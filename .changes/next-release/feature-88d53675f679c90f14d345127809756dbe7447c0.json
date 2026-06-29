@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added Smithy Model Format (SMF) as a developer preview, a compact binary serialization of Smithy models that provides 3-6x faster full-model loading and up to 23x faster selective loading for dynamic client use cases.",
+  "pull_requests": [
+    "[#3184](https://github.com/smithy-lang/smithy/pull/3184)"
+  ]
+}

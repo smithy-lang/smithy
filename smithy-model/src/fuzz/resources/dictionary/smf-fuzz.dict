@@ -1,0 +1,195 @@
+# SMF Fuzz Dictionary
+# Provides interesting byte sequences for coverage-guided fuzzing of SmfReader.
+
+# ---- SMF Magic Number ----
+# Valid magic "SMBY"
+"\x53\x4D\x46\x00"
+
+# ---- Format and Smithy Versions ----
+# Format version 1
+"\x01"
+# Smithy 2.0
+"\x02\x00"
+# Smithy 1.0
+"\x01\x00"
+
+# ---- Header Flags ----
+# No flags
+"\x00"
+# has-metadata
+"\x01"
+# documentation-stripped
+"\x02"
+# Both flags
+"\x03"
+
+# ---- Valid minimal header (SMBY + v1 + smithy 2.0 + no flags) ----
+"\x53\x4D\x46\x00\x01\x02\x00\x00"
+
+# ---- Shape Type Bytes ----
+# blob
+"\x00"
+# boolean
+"\x01"
+# string
+"\x02"
+# structure
+"\x12"
+# union
+"\x13"
+# operation
+"\x14"
+# resource
+"\x15"
+# service
+"\x16"
+# enum
+"\x0D"
+# intEnum
+"\x0E"
+# list
+"\x0F"
+# map
+"\x11"
+# Invalid shape type (just past valid range)
+"\x17"
+"\xFF"
+
+# ---- Dynamic Value Tags ----
+# null
+"\x00"
+# false
+"\x01"
+# true
+"\x02"
+# integer
+"\x03"
+# double
+"\x04"
+# string
+"\x05"
+# list
+"\x06"
+# object
+"\x07"
+# empty object (annotation trait)
+"\x08"
+# symbol string
+"\x09"
+# big integer
+"\x0A"
+# big decimal
+"\x0B"
+# Invalid value tag
+"\x0C"
+"\xFF"
+
+# ---- VarUInt Boundaries ----
+# 0 (single byte)
+"\x00"
+# 1
+"\x01"
+# 127 (max single byte)
+"\x7F"
+# 128 (two bytes)
+"\x80\x01"
+# 255
+"\xFF\x01"
+# 256
+"\x80\x02"
+# 16383 (max two bytes)
+"\xFF\x7F"
+# 16384 (three bytes)
+"\x80\x80\x01"
+# Max valid VarUInt (5 bytes, 0xFFFFFFFF)
+"\xFF\xFF\xFF\xFF\x0F"
+# Invalid: 6-byte VarUInt (overflow)
+"\x80\x80\x80\x80\x80\x01"
+
+# ---- VarInt (zigzag) Boundaries ----
+# 0 -> zigzag 0
+"\x00"
+# -1 -> zigzag 1
+"\x01"
+# 1 -> zigzag 2
+"\x02"
+# -64 -> zigzag 127
+"\x7F"
+# 64 -> zigzag 128
+"\x80\x01"
+# Long.MAX_VALUE (10 bytes)
+"\xFE\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01"
+# Long.MIN_VALUE (10 bytes)
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01"
+
+# ---- Shared Symbol Table ----
+# sharedTableId = 1 (smithy-core)
+"\x01"
+# sharedTableVersion = 1
+"\x01"
+# sharedTableId = 0 (no shared table)
+"\x00"
+
+# ---- Common Patterns ----
+# Zero count (empty list/members/traits)
+"\x00"
+# Count of 1
+"\x01"
+# Count of 2
+"\x02"
+
+# ---- Operation Flags ----
+# No input/output/errors
+"\x00"
+# has-input only
+"\x01"
+# has-output only
+"\x02"
+# has-input + has-output
+"\x03"
+# has-input + has-output + has-errors
+"\x07"
+
+# ---- Resource Lifecycle Flags ----
+# No lifecycle ops
+"\x00"
+# All lifecycle ops
+"\x3F"
+# Just read
+"\x04"
+
+# ---- IEEE 754 Double (little-endian) ----
+# 0.0
+"\x00\x00\x00\x00\x00\x00\x00\x00"
+# 1.0
+"\x00\x00\x00\x00\x00\x00\xF0\x3F"
+# -1.0
+"\x00\x00\x00\x00\x00\x00\xF0\xBF"
+# NaN
+"\x00\x00\x00\x00\x00\x00\xF8\x7F"
+# Infinity
+"\x00\x00\x00\x00\x00\x00\xF0\x7F"
+
+# ---- UTF-8 Strings ----
+# Empty string (length 0)
+"\x00"
+# "a" (length 1)
+"\x01\x61"
+# Multi-byte UTF-8: é (length 2)
+"\x02\xC3\xA9"
+# 4-byte UTF-8: 𝄞 (length 4)
+"\x04\xF0\x9D\x84\x9E"
+
+# ---- Prefabricated valid shape (simple string, no traits, no mixins) ----
+# SymRef(81) + byteLength(2) + shapeType(string=0x02) + traitCount(0) + mixinCount(0)
+"\xD1\x00\x02\x02\x00\x00"
+
+# ---- Prefabricated annotation trait ----
+# SymRef for smithy.api#required (ID 22) + empty object value
+"\x16\x08"
+
+# ---- Truncation patterns (to test bounds checking) ----
+# Just the magic, nothing else
+"\x53\x4D\x46\x00"
+# Header + partial symbol table
+"\x53\x4D\x46\x00\x01\x02\x00\x00\x01\x01"

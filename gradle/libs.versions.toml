@@ -20,6 +20,7 @@ jazzer = "0.30.0"
 jreleaser = "1.25.0"
 runtime = "2.0.1"
 gradle-checksum = "1.4.0"
+aws-api-models = "1.0.221"
 
 [libraries]
 prettier4j = { module = "com.opencastsoftware:prettier4j", version.ref = "prettier4j" }
@@ -54,6 +55,9 @@ jazzer-junit = { module = "com.code-intelligence:jazzer-junit", version.ref = "j
 spotbugs = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
 spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmh" }
+
+# Integration testing
+aws-api-models-bom = { module = "software.amazon.api.models:all", version.ref = "aws-api-models" }
 
 [plugins]
 smithy-jar = { id = "software.amazon.smithy.gradle.smithy-jar", version.ref = "smithy-gradle" }
