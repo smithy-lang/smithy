@@ -1,5 +1,7 @@
 {
   "type": "documentation",
   "description": "Updated resource docs to recommend against using the literal `id` as a resource name, since it can cause confusion in child resources.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3198](https://github.com/smithy-lang/smithy/pull/3198)"
+  ]
 }
