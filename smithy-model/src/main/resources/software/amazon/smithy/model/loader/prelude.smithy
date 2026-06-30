@@ -480,6 +480,7 @@ map Renames {
 }
 
 /// A string containing CommonMark-formatted text.
+@private
 @externalDocumentation("CommonMark Specification": "https://commonmark.org/")
 @mediaType("text/markdown; charset=UTF-8; variant=CommonMark")
 string CommonMark
