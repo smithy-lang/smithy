@@ -27,6 +27,7 @@ import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
+import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -87,7 +88,10 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
                         new GetterGenerator(writer, directive.symbolProvider(), directive.model(), directive.shape())
                                 .run();
                         directive.shape()
-                                .accept(new NestedClassVisitor(writer, directive.symbolProvider(), directive.model()));
+                                .accept(new NestedClassVisitor(writer,
+                                        directive.symbolProvider(),
+                                        directive.model(),
+                                        directive.context().settings()));
                         new BuilderGenerator(writer,
                                 directive.symbol(),
                                 directive.symbolProvider(),
@@ -184,11 +188,18 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
         private final TraitCodegenWriter writer;
         private final SymbolProvider symbolProvider;
         private final Model model;
+        private final TraitCodegenSettings settings;
 
-        private NestedClassVisitor(TraitCodegenWriter writer, SymbolProvider symbolProvider, Model model) {
+        private NestedClassVisitor(
+                TraitCodegenWriter writer,
+                SymbolProvider symbolProvider,
+                Model model,
+                TraitCodegenSettings settings
+        ) {
             this.writer = writer;
             this.symbolProvider = symbolProvider;
             this.model = model;
+            this.settings = settings;
         }
 
         @Override
@@ -213,7 +224,7 @@ class TraitGenerator implements Consumer<GenerateTraitDirective> {
 
         @Override
         public Void unionShape(UnionShape shape) {
-            new UnionShapeGenerator().writeNestedClasses(shape, writer, symbolProvider, model);
+            new UnionShapeGenerator().writeNestedClasses(shape, writer, symbolProvider, model, settings);
             writer.newLine();
             return null;
         }

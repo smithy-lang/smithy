@@ -466,7 +466,7 @@ public class LoadsFromModelTest {
                 // Unions
                 Arguments.of("unions/union-trait.smithy",
                         UnionTrait.class,
-                        MapUtils.of("getValue", ListUtils.of("1"))),
+                        MapUtils.of("getContents", ListUtils.of("1"))),
                 // Strings
                 Arguments.of("string-trait.smithy",
                         StringTrait.class,
