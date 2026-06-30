@@ -449,6 +449,21 @@ property, all of the identifiers of the parent resource MUST be repeated
 verbatim in the child resource, and the child resource MAY introduce any
 number of additional identifiers.
 
+.. important::
+
+    Because child resources must inherit all identifiers of their parent
+    resources, it is recommended to avoid using the literal ``id`` or other
+    ambiguous terms as an identifier name. Child resources will inherit that
+    identifier, which may cause confusion since it refers to the parent
+    resource.
+
+    Instead, ``id`` SHOULD be prefixed with the resource name. For example,
+    ``forecastId`` is preferable to ``id`` for a resource named ``Forecast``.
+
+    If necessary, the :ref:`resourceIdentifier trait <resourceIdentifier-trait>`
+    may be used to bind operation input or output members to an identifier even
+    if the member name does not match.
+
 :dfn:`Parent identifiers` are the identifiers of the parent of a resource.
 All parent identifiers MUST be bound as identifiers in the input of every
 operation bound as a child to a resource. :dfn:`Child identifiers` are the
@@ -637,7 +652,7 @@ Explicit identifier bindings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Explicit identifier bindings* are defined by applying the
-:ref:`resourceIdentifier-trait` to a member of the input of for an
+:ref:`resourceIdentifier-trait` to a member of the input of an
 operation bound to a resource. Explicit bindings are necessary when the name of
 the input structure member differs from the name of the resource identifier to
 which the input member corresponds.

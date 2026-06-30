@@ -243,7 +243,7 @@ Let's compose these shapes together to create our representation of an order:
 
     /// An Order, which has an id, a status, and the type of coffee ordered
     structure Order {
-        id: Uuid
+        orderId: Uuid
         coffeeType: CoffeeType
         status: OrderStatus
     }
@@ -260,7 +260,7 @@ and its operations with :ref:`resources <resource>`. Instead of the above struct
     /// An Order resource, which has a unique id and describes an order by the type of coffee
     /// and the order's status
     resource Order {
-        identifiers: { id: Uuid }
+        identifiers: { orderId: Uuid }
         properties: { coffeeType: CoffeeType, status: OrderStatus }
         read: GetOrder // <--- we will create this next!
         create: CreateOrder  // <--- we will create this next!
@@ -284,7 +284,7 @@ represent the state of an instance. In this case, we will only define a subset o
 
         output := for Order {
             @required
-            $id
+            $orderId
 
             @required
             $coffeeType
@@ -296,17 +296,17 @@ represent the state of an instance. In this case, we will only define a subset o
 
     /// Retrieve an order
     @readonly
-    @http(method: "GET", uri: "/order/{id}")
+    @http(method: "GET", uri: "/order/{orderId}")
     operation GetOrder {
         input := for Order {
             @httpLabel
             @required
-            $id
+            $orderId
         }
 
         output := for Order {
             @required
-            $id
+            $orderId
 
             @required
             $coffeeType
@@ -493,7 +493,7 @@ the server imports the generated code from. Let's take a look at the core of the
         }
 
         async GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): Promise<GetOrderServerOutput> {
-            console.log(`getting an order (${input.id})...`)
+            console.log(`getting an order (${input.orderId})...`)
             // TODO: Implement me!
             return;
         }
@@ -563,7 +563,7 @@ and updates this queue. Let's implement order submission, or ``CreateOrder``:
 
             console.log(`created order: ${JSON.stringify(order)}`)
             return {
-                id: order.orderId,
+                orderId: order.orderId,
                 coffeeType: order.coffeeType,
                 status: order.status
             }
@@ -576,19 +576,19 @@ through the ``GetOrder`` operation. Let's implement it now:
     :caption: ``server/src/CoffeeShop.ts``
 
         async GetOrder(input: GetOrderServerInput, context: CoffeeShopContext): Promise<GetOrderServerOutput> {
-            console.log(`getting an order (${input.id})...`)
-            if (context.orders.has(input.id)) {
-                const order = context.orders.get(input.id)
+            console.log(`getting an order (${input.orderId})...`)
+            if (context.orders.has(input.orderId)) {
+                const order = context.orders.get(input.orderId)
                 return {
-                    id: order.orderId,
+                    orderId: order.orderId,
                     coffeeType: order.coffeeType,
                     status: order.status
                 }
             } else {
-                console.log(`order (${input.id}) does not exist.`)
+                console.log(`order (${input.orderId}) does not exist.`)
                 throw new OrderNotFound({
-                    message: `order ${input.id} not found.`,
-                    orderId: input.id
+                    message: `order ${input.orderId} not found.`,
+                    orderId: input.orderId
                 })
             }
         }
@@ -712,7 +712,7 @@ After creating the order, you should get response like:
         // metadata, such as response code, added by the client
       },
       coffeeType: 'DRIP', // <--- the type of coffee we ordered
-      id: 'ee97e900-d8dd-4770-904c-3d175cda90c3',  // <--- the order id
+      orderId: 'ee97e900-d8dd-4770-904c-3d175cda90c3',  // <--- the order id
       status: 'IN_PROGRESS' // <--- the order status
     }
 
@@ -721,7 +721,7 @@ The order should be ready by the time you submit this next command. Let's retrie
 .. code-block:: TypeScript
     :caption: ``repl``
 
-    await client.getOrder({ id: '<PUT YOUR ORDER-ID HERE!>' }) // <--- make sure to replace with your id
+    await client.getOrder({ orderId: '<PUT YOUR ORDER-ID HERE!>' }) // <--- make sure to replace with your id
 
 Once you execute the command, you should see your order information:
 
@@ -733,7 +733,7 @@ Once you execute the command, you should see your order information:
         // ...
       },
       coffeeType: 'DRIP', // <--- the type of coffee we ordered
-      id: 'ee97e900-d8dd-4770-904c-3d175cda90c3',  // <--- the order id
+      orderId: 'ee97e900-d8dd-4770-904c-3d175cda90c3',  // <--- the order id
       status: 'COMPLETED' // <--- the order status, which should be 'COMPLETED'
     }
 

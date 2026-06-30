@@ -556,7 +556,7 @@ The mixin trait is a structure that contains the following members:
 
     @mixin
     structure BaseUser {
-        id: String
+        userId: String
     }
 
     structure UserDetails with [BaseUser] {
