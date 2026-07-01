@@ -31,12 +31,12 @@
   ([#3156](https://github.com/smithy-lang/smithy/pull/3156))
 - Added validation to ensure every operation binds all required rules engine
   parameters, emitting a `RuleSetParameter.Operation.RequiredMissing` error.
-  (https://github.com/smithy-lang/smithy/pull/3153)
+  ([#3153](https://github.com/smithy-lang/smithy/pull/3153))
 - Updated tags member names validation in input/output structures to allow "map"
   suffix variants. ([#3129](https://github.com/smithy-lang/smithy/pull/3129))
 - Added `SmithyBuildConfig#toModelAssembler` and `SmithyBuild#toProjectedModel`
   APIs to load and project a model directly from a build config.
-  (https://github.com/smithy-lang/smithy/pull/3135)
+  ([#3135](https://github.com/smithy-lang/smithy/pull/3135))
 - The `smithy format` CLI command now falls back to the `sources` defined in
   `smithy-build.json` when no positional arguments are provided, allowing it to
   be run with no arguments inside a configured Smithy project.
@@ -67,7 +67,7 @@
   ([#3149](https://github.com/smithy-lang/smithy/pull/3149))
 - Fixed several formatter bugs that mishandled docs and comments around member
   value assignments and shape boundaries.
-  (https://github.com/smithy-lang/smithy/pull/3132)
+  ([#3132](https://github.com/smithy-lang/smithy/pull/3132))
 - Adds a warning when using the private trait on a mixin member, clarifying that
   it does not prevent the member from being inherited or modified by inheritors.
   ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
@@ -100,7 +100,7 @@
 ### Other
 
 - Formatted all smithy source files and added a formatting task to ensure they
-  stay up to date. ([#3141](https://github.com/smithy-lang/smithy/pull/3142))
+  stay up to date. ([#3142](https://github.com/smithy-lang/smithy/pull/3142))
 - Upgraded maven-resolver to 2.x. This is a transparent change to smithy-cli
   users, including those who supply their own dependency resolver
   implementation. ([#3194](https://github.com/smithy-lang/smithy/pull/3194))
@@ -4651,3 +4651,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+
