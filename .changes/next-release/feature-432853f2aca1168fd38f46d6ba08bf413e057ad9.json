@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Optimized model loading by ~50% by fixing a path traversal bug, reducing JSON allocations, reducing ShapeID string allocations, improving ShapeId and Model blackboard caches, optimizing selectors based on relevance, and skipping construction of suppressed unresolved-trait validation events.",
-  "pull_requests": [
-    "[#3176](https://github.com/smithy-lang/smithy/pull/3176)"
-  ]
-}

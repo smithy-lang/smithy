@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added validation to ensure every operation binds all required rules engine parameters, emitting a `RuleSetParameter.Operation.RequiredMissing` error.",
-  "pull_requests": [
-    "https://github.com/smithy-lang/smithy/pull/3153"
-  ]
-}

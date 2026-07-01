@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Added a new getter for generated union trait values with a covariant return type to address the issue of the old getters erasing value types. The old getters are still around by default, but are deprecated. They may be omitted entirely via a plugin setting.",
-  "pull_requests": [
-      "[#3196](https://github.com/smithy-lang/smithy/pull/3196)"
-  ]
-}

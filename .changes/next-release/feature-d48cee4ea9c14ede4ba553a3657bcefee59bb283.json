@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Added missing EnumShape hasTrait override.",
-  "pull_requests": [
-    "[#3183](https://github.com/smithy-lang/smithy/pull/3183)"
-  ]
-}
