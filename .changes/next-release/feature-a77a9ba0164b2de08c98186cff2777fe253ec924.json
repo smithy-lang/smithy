@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added the ability to drive directed code generation from a metadata-defined shape closure instead of a service.",
-  "pull_requests": [
-    "[#3156](https://github.com/smithy-lang/smithy/pull/3156)"
-  ]
-}

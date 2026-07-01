@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added support for services to declare non-default operation names (e.g., AddTagsToResource) for tagging operations at the service level in the `tagEnabled` trait. Tag API discovery and validation honor the override before falling back to default-named operations.",
-  "pull_requests": [
-    "[#3130](https://github.com/smithy-lang/smithy/pull/3130)"
-  ]
-}

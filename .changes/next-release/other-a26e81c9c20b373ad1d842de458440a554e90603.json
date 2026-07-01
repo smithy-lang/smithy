@@ -1,7 +1,0 @@
-{
-  "type": "other",
-  "description": "Upgraded maven-resolver to 2.x. This is a transparent change to smithy-cli users, including those who supply their own dependency resolver implementation.",
-  "pull_requests": [
-    "[#3194](https://github.com/smithy-lang/smithy/pull/3194)"
-  ]
-}

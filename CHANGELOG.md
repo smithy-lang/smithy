@@ -1,5 +1,110 @@
 # Smithy Changelog
 
+## 1.72.0 (2026-07-01)
+
+### Features
+
+- Updated CLI to use JDK 25 and AOT cache instead of AppCDS
+  ([#3186](https://github.com/smithy-lang/smithy/pull/3186))
+- Optimized model loading by ~50% by fixing a path traversal bug, reducing JSON
+  allocations, reducing ShapeID string allocations, improving ShapeId and Model
+  blackboard caches, optimizing selectors based on relevance, and skipping
+  construction of suppressed unresolved-trait validation events.
+  ([#3176](https://github.com/smithy-lang/smithy/pull/3176))
+- Added a new `metadata` trait that allows model authors to declare types for
+  metadata keys that will be automatically validated when building models.
+  ([#3078](https://github.com/smithy-lang/smithy/pull/3078))
+- Added an optional `message` property to waiter acceptors that allows
+  extracting a human-readable message from the operation output via a JMESPath
+  expression. The expression must resolve to a string or array of strings and is
+  only valid on failure state acceptors.
+  ([#3151](https://github.com/smithy-lang/smithy/pull/3151))
+- Added a `shapeClosures` metadata key that allows users to define closures of
+  shapes that are not necessarily rooted in a service shape. This is primarily
+  motivated by the desire to code-generate types without service or client
+  framing, but is left open enough to be used for other purposes.
+  ([#3148](https://github.com/smithy-lang/smithy/pull/3148))
+- Optimized selector parsing
+  ([#3175](https://github.com/smithy-lang/smithy/pull/3175))
+- Added a `generateDataShapesOnly` mode to `CodegenDirector` that generates only
+  data shapes (skipping service, resource, and operation shapes).
+  ([#3156](https://github.com/smithy-lang/smithy/pull/3156))
+- Added validation to ensure every operation binds all required rules engine
+  parameters, emitting a `RuleSetParameter.Operation.RequiredMissing` error.
+  (https://github.com/smithy-lang/smithy/pull/3153)
+- Updated tags member names validation in input/output structures to allow "map"
+  suffix variants. ([#3129](https://github.com/smithy-lang/smithy/pull/3129))
+- Added `SmithyBuildConfig#toModelAssembler` and `SmithyBuild#toProjectedModel`
+  APIs to load and project a model directly from a build config.
+  (https://github.com/smithy-lang/smithy/pull/3135)
+- The `smithy format` CLI command now falls back to the `sources` defined in
+  `smithy-build.json` when no positional arguments are provided, allowing it to
+  be run with no arguments inside a configured Smithy project.
+  ([#3143](https://github.com/smithy-lang/smithy/pull/3143))
+- Added test cases for errors in AWS JSON protocols using different namespaces
+  ([#3157](https://github.com/smithy-lang/smithy/pull/3157))
+- Added a `--check` option to the `smithy format` command that fails when any
+  file would be modified.
+  ([#3141](https://github.com/smithy-lang/smithy/pull/3141))
+- Added the ability to drive directed code generation from a metadata-defined
+  shape closure instead of a service.
+  ([#3156](https://github.com/smithy-lang/smithy/pull/3156))
+- Optimized selectors ([#3171](https://github.com/smithy-lang/smithy/pull/3171))
+- Improved model loading performance by replacing NodeMapper with direct Node
+  API calls in rules-engine traits and eliminating unnecessary trait map copies
+  during shape construction.
+  ([#3185](https://github.com/smithy-lang/smithy/pull/3185))
+- Added support for services to declare non-default operation names (e.g.,
+  AddTagsToResource) for tagging operations at the service level in the
+  `tagEnabled` trait. Tag API discovery and validation honor the override before
+  falling back to default-named operations.
+  ([#3130](https://github.com/smithy-lang/smithy/pull/3130))
+
+### Bug Fixes
+
+- Fixed an exponential search space growth in
+  MemberShouldReferenceResourceValidator
+  ([#3149](https://github.com/smithy-lang/smithy/pull/3149))
+- Fixed several formatter bugs that mishandled docs and comments around member
+  value assignments and shape boundaries.
+  (https://github.com/smithy-lang/smithy/pull/3132)
+- Adds a warning when using the private trait on a mixin member, clarifying that
+  it does not prevent the member from being inherited or modified by inheritors.
+  ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
+- Fixes a formatter bug where some trait/node values weren't spread across
+  multiple lines ([#3140](https://github.com/smithy-lang/smithy/pull/3140))
+- Adds a validation event for when a private resource shape is referenced
+  outside of its namespace using the resource target elision syntax.
+  ([#3139](https://github.com/smithy-lang/smithy/pull/3139))
+- Added a new getter for generated union trait values with a covariant return
+  type to address the issue of the old getters erasing value types. The old
+  getters are still around by default, but are deprecated. They may be omitted
+  entirely via a plugin setting.
+  ([#3196](https://github.com/smithy-lang/smithy/pull/3196))
+- Added missing EnumShape hasTrait override.
+  ([#3183](https://github.com/smithy-lang/smithy/pull/3183))
+- Fixed a bug where comments trailing unused imports were being improperly
+  removed during formatting.
+  ([#3152](https://github.com/smithy-lang/smithy/pull/3152))
+- Fixed the `AddedRequiredMember` diff evaluator so that it no longer flags new
+  members marked with the `@clientOptional` trait, which is the sanctioned way
+  to add a `@required` member without breaking generated client code.
+  ([#3166](https://github.com/smithy-lang/smithy/pull/3166))
+
+### Documentation
+
+- Updated resource docs to recommend against using the literal `id` as a
+  resource name, since it can cause confusion in child resources.
+  ([#3198](https://github.com/smithy-lang/smithy/pull/3198))
+
+### Other
+
+- Formatted all smithy source files and added a formatting task to ensure they
+  stay up to date. ([#3141](https://github.com/smithy-lang/smithy/pull/3142))
+- Upgraded maven-resolver to 2.x. This is a transparent change to smithy-cli
+  users, including those who supply their own dependency resolver
+  implementation. ([#3194](https://github.com/smithy-lang/smithy/pull/3194))
+
 ## 1.71.0 (2026-05-14)
 
 ### Features

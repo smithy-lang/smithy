@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Improved model loading performance by replacing NodeMapper with direct Node API calls in rules-engine traits and eliminating unnecessary trait map copies during shape construction.",
-  "pull_requests": [
-    "[#3185](https://github.com/smithy-lang/smithy/pull/3185)"
-  ]
-}
