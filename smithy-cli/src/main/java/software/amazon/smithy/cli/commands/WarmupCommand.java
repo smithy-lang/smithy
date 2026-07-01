@@ -103,12 +103,12 @@ final class WarmupCommand implements Command {
         Path bin = javaHome.resolve("bin");
         Path windowsBinary = bin.resolve("java.exe");
         Path posixBinary = bin.resolve("java");
-        Path aotCacheFile = lib.resolve("smithy.aot");
-        Path aotConfigFile = lib.resolve("smithy.aotconf");
+        Path jsaFile = lib.resolve("smithy.jsa");
+        Path classListFile = lib.resolve("classlist");
 
-        // Delete the cache and config before regenerating them.
-        aotConfigFile.toFile().delete();
-        aotCacheFile.toFile().delete();
+        // Delete the archive and classlist before regenerating them.
+        classListFile.toFile().delete();
+        jsaFile.toFile().delete();
 
         if (!Files.isDirectory(bin)) {
             throw new CliError("$JAVA_HOME/bin directory not found: " + bin);
@@ -127,38 +127,41 @@ final class WarmupCommand implements Command {
             // Run the command in a temp directory to avoid building whatever project the cwd might be in.
             Path baseDir = Files.createTempDirectory("smithy-warmup");
 
-            LOGGER.info("Recording AOT configuration");
+            LOGGER.info("Building class list");
             callJava(Phase.CLASSES,
                     isDebug,
                     printer,
                     baseDir,
                     baseArgs,
-                    "-XX:AOTMode=record",
-                    "-XX:AOTConfiguration=" + aotConfigFile,
+                    "-Xshare:off",
+                    "-XX:DumpLoadedClassList=" + classListFile,
                     SmithyCli.class.getName(),
                     "warmup");
 
-            LOGGER.info("Creating AOT cache from configuration");
-            callJava(null,
+            LOGGER.info("Building archive from classlist");
+            callJava(Phase.WRAPPER,
                     isDebug,
                     printer,
                     baseDir,
                     baseArgs,
-                    "-XX:AOTMode=create",
-                    "-XX:AOTConfiguration=" + aotConfigFile,
-                    "-XX:AOTCache=" + aotCacheFile);
+                    "-XX:SharedClassListFile=" + classListFile,
+                    "-Xshare:dump",
+                    "-XX:SharedArchiveFile=" + jsaFile,
+                    SmithyCli.class.getName(),
+                    "warmup");
 
-            LOGGER.info("Validating that the cache was created correctly");
+            LOGGER.info("Validating that the archive was created correctly");
             callJava(null,
                     isDebug,
                     printer,
                     baseDir,
                     baseArgs,
-                    "-XX:AOTCache=" + aotCacheFile,
+                    "-Xshare:on",
+                    "-XX:SharedArchiveFile=" + jsaFile,
                     SmithyCli.class.getName(),
                     "--help");
 
-            aotConfigFile.toFile().delete();
+            classListFile.toFile().delete();
             return 0;
         } catch (IOException e) {
             throw new CliError("Error running warmup command", 1, e);
