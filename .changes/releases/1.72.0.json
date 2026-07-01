@@ -16,13 +16,6 @@
       ]
     },
     {
-      "type": "feature",
-      "description": "Updated CLI to use JDK 25 and AOT cache instead of AppCDS",
-      "pull_requests": [
-        "[#3186](https://github.com/smithy-lang/smithy/pull/3186)"
-      ]
-    },
-    {
       "type": "bugfix",
       "description": "Fixed several formatter bugs that mishandled docs and comments around member value assignments and shape boundaries.",
       "pull_requests": [
