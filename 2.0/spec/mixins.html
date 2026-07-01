@@ -665,7 +665,7 @@ shape.</p>
 
 <span class="nt">@mixin</span>
 <span class="kd">structure </span><span class="nc">UserIdentifiersMixin</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
 <span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserIdentifiersMixin</span>]<span class="w"> </span>{
@@ -676,7 +676,7 @@ shape.</p>
 <p>Multiple mixins can be applied:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span>
 <span class="kd">structure </span><span class="nc">UserIdentifiersMixin</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
 <span class="nt">@mixin</span>
@@ -1182,7 +1182,7 @@ input and output shapes to be shared goes against the goal of the
 
 <span class="kd">operation </span><span class="nc">GetUsername</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">ValidatedOperation</span>]<span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>

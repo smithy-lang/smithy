@@ -1123,6 +1123,19 @@ single identifier named <code class="docutils literal notranslate"><span class="
 property, all of the identifiers of the parent resource MUST be repeated
 verbatim in the child resource, and the child resource MAY introduce any
 number of additional identifiers.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Because child resources must inherit all identifiers of their parent
+resources, it is recommended to avoid using the literal <code class="docutils literal notranslate"><span class="pre">id</span></code> or other
+ambiguous terms as an identifier name. Child resources will inherit that
+identifier, which may cause confusion since it refers to the parent
+resource.</p>
+<p>Instead, <code class="docutils literal notranslate"><span class="pre">id</span></code> SHOULD be prefixed with the resource name. For example,
+<code class="docutils literal notranslate"><span class="pre">forecastId</span></code> is preferable to <code class="docutils literal notranslate"><span class="pre">id</span></code> for a resource named <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>.</p>
+<p>If necessary, the <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a>
+may be used to bind operation input or output members to an identifier even
+if the member name does not match.</p>
+</div>
 <p><em class="dfn">Parent identifiers</em> are the identifiers of the parent of a resource.
 All parent identifiers MUST be bound as identifiers in the input of every
 operation bound as a child to a resource. <em class="dfn">Child identifiers</em> are the
@@ -1283,7 +1296,7 @@ input member named &quot;forecastId&quot; that targets <code class="docutils lit
 <section id="explicit-identifier-bindings">
 <h4>Explicit identifier bindings<a class="headerlink" href="#explicit-identifier-bindings" title="Link to this heading">#</a></h4>
 <p><em>Explicit identifier bindings</em> are defined by applying the
-<a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> to a member of the input of for an
+<a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> to a member of the input of an
 operation bound to a resource. Explicit bindings are necessary when the name of
 the input structure member differs from the name of the resource identifier to
 which the input member corresponds.</p>

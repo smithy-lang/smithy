@@ -903,12 +903,12 @@ details.</p>
 }
 
 <span class="nt">@cognitoUserPoolsScopes</span>([<span class="s2">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;profile&quot;</span>])
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things/{id}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things/{thingId}&quot;</span>)
 <span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpLabel</span>
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">thingId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
 }
 </pre></div>

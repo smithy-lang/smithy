@@ -262,12 +262,12 @@ details.
     }
 
     @cognitoUserPoolsScopes(["email", "profile"])
-    @http(method: "GET", uri: "/things/{id}")
+    @http(method: "GET", uri: "/things/{thingId}")
     operation GetThing {
         input := {
             @httpLabel
             @required
-            id: String
+            thingId: String
         }
     }
 

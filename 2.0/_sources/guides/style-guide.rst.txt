@@ -191,6 +191,14 @@ Member names
 Member names use a strict form of lowerCamelCase (e.g., "xmlRequest", "fooId").
 
 
+Resource identifier names
+-------------------------
+
+Resource identifiers should not use the literal ``id`` or other ambiguous
+terms as a name. An identifier name in the form ``<resource>Id`` should be
+preferred. (For example, ``forecastId`` for a resource named ``Forecast``.)
+
+
 Trait names
 -----------
 

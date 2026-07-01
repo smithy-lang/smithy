@@ -907,7 +907,7 @@ we defined earlier.</p>
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/order.smithy</span></code></span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// An Order, which has an id, a status, and the type of coffee ordered</span>
 <span class="kd">structure </span><span class="nc">Order</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span>
+<span class="w">    </span><span class="py">orderId</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span>
 <span class="w">    </span><span class="py">coffeeType</span><span class="p">:</span><span class="w"> </span><span class="vc">CoffeeType</span>
 <span class="w">    </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">OrderStatus</span>
 }
@@ -924,7 +924,7 @@ and its operations with <a class="reference internal" href="../spec/service-type
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// An Order resource, which has a unique id and describes an order by the type of coffee</span>
 <span class="c">/// and the order&#39;s status</span>
 <span class="kd">resource </span><span class="nc">Order</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">orderId</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">coffeeType</span><span class="p">:</span><span class="w"> </span><span class="vc">CoffeeType</span><span class="p">,</span><span class="w"> </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">OrderStatus</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetOrder</span><span class="w"> </span><span class="c">// &lt;--- we will create this next!</span>
 <span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateOrder</span><span class="w">  </span><span class="c">// &lt;--- we will create this next!</span>
@@ -948,7 +948,7 @@ represent the state of an instance. In this case, we will only define a subset o
 
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Order</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="nl">$id</span>
+<span class="w">        </span><span class="nl">$orderId</span>
 
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$coffeeType</span>
@@ -960,17 +960,17 @@ represent the state of an instance. In this case, we will only define a subset o
 
 <span class="c">/// Retrieve an order</span>
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/order/{id}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/order/{orderId}&quot;</span>)
 <span class="kd">operation </span><span class="nc">GetOrder</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Order</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpLabel</span>
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="nl">$id</span>
+<span class="w">        </span><span class="nl">$orderId</span>
 <span class="w">    </span>}
 
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Order</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="nl">$id</span>
+<span class="w">        </span><span class="nl">$orderId</span>
 
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$coffeeType</span>
@@ -1156,7 +1156,7 @@ the server imports the generated code from. Let's take a look at the core of the
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">GetOrder</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetOrderServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">GetOrderServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`getting an order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">)...`</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`getting an order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="si">}</span><span class="sb">)...`</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// TODO: Implement me!</span>
 <span class="w">        </span><span class="k">return</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1226,7 +1226,7 @@ and updates this queue. Let's implement order submission, or <code class="docuti
 
 <span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`created order: </span><span class="si">${</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">order</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">order.orderId</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="kt">order.orderId</span><span class="p">,</span>
 <span class="w">            </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="kt">order.coffeeType</span><span class="p">,</span>
 <span class="w">            </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">order.status</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1239,19 +1239,19 @@ through the <code class="docutils literal notranslate"><span class="pre">GetOrde
 <div class="literal-block-wrapper docutils container" id="id23">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">server/src/CoffeeShop.ts</span></code></span><a class="headerlink" href="#id23" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">GetOrder</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetOrderServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">GetOrderServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`getting an order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">)...`</span><span class="p">)</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">orders</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">orders</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`getting an order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="si">}</span><span class="sb">)...`</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">orders</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">orders</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="p">)</span>
 <span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">order.orderId</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="kt">order.orderId</span><span class="p">,</span>
 <span class="w">                </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="kt">order.coffeeType</span><span class="p">,</span>
 <span class="w">                </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">order.status</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">) does not exist.`</span><span class="p">)</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`order (</span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="si">}</span><span class="sb">) does not exist.`</span><span class="p">)</span>
 <span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">OrderNotFound</span><span class="p">({</span>
-<span class="w">                </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="sb">`order </span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb"> not found.`</span><span class="p">,</span>
-<span class="w">                </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="kt">input.id</span>
+<span class="w">                </span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="sb">`order </span><span class="si">${</span><span class="nx">input</span><span class="p">.</span><span class="nx">orderId</span><span class="si">}</span><span class="sb"> not found.`</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="kt">input.orderId</span>
 <span class="w">            </span><span class="p">})</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1374,7 +1374,7 @@ Let's try submitting an order:</p>
 <span class="w">      </span><span class="c1">// metadata, such as response code, added by the client</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;DRIP&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
-<span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
+<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
 <span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;IN_PROGRESS&#39;</span><span class="w"> </span><span class="c1">// &lt;--- the order status</span>
 <span class="w">  </span><span class="p">}</span>
 </pre></div>
@@ -1383,7 +1383,7 @@ Let's try submitting an order:</p>
 <p>The order should be ready by the time you submit this next command. Let's retrieve the order:</p>
 <div class="literal-block-wrapper docutils container" id="id35">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">repl</span></code></span><a class="headerlink" href="#id35" title="Link to this code">#</a></div>
-<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&lt;PUT YOUR ORDER-ID HERE!&gt;&#39;</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">// &lt;--- make sure to replace with your id</span>
+<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&lt;PUT YOUR ORDER-ID HERE!&gt;&#39;</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">// &lt;--- make sure to replace with your id</span>
 </pre></div>
 </div>
 </div>
@@ -1395,7 +1395,7 @@ Let's try submitting an order:</p>
 <span class="w">      </span><span class="c1">// ...</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;DRIP&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
-<span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
+<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
 <span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;COMPLETED&#39;</span><span class="w"> </span><span class="c1">// &lt;--- the order status, which should be &#39;COMPLETED&#39;</span>
 <span class="w">  </span><span class="p">}</span>
 </pre></div>
