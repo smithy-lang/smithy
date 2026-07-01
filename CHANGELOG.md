@@ -4,12 +4,11 @@
 
 ### Features
 
-- Updated CLI to use JDK 25 and AOT cache instead of AppCDS
-  ([#3186](https://github.com/smithy-lang/smithy/pull/3186))
 - Optimized model loading by ~50% by fixing a path traversal bug, reducing JSON
   allocations, reducing ShapeID string allocations, improving ShapeId and Model
   blackboard caches, optimizing selectors based on relevance, and skipping
-  construction of suppressed unresolved-trait validation events.
+  construction of suppressed unr
+- esolved-trait validation events.
   ([#3176](https://github.com/smithy-lang/smithy/pull/3176))
 - Added a new `metadata` trait that allows model authors to declare types for
   metadata keys that will be automatically validated when building models.
