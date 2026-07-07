@@ -38,15 +38,6 @@ allprojects {
     version = libraryVersion
 }
 
-// Aggregator that runs `smithyFormat` on every subproject that registers it.
-tasks.register("smithyFormat") {
-    group = "formatting"
-    description = "Runs smithyFormat on all subprojects that have it."
-    dependsOn(provider {
-        subprojects.mapNotNull { it.tasks.findByName("smithyFormat") }
-    })
-}
-
 // Consolidated Javadoc creation
 afterEvaluate {
     tasks {

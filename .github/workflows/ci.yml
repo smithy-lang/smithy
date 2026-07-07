@@ -61,19 +61,7 @@ jobs:
           cache: gradle
 
       - name: Check Smithy formatting
-        # The convention-driven smithyFormat tasks honor -PsmithyFormatCheck and fail
-        # without writing. The four packages on smithy-jar's bundled smithyFormat task
-        # need to wait for that to get plumbed through the gradle plugin, so for now
-        # they use git to check changes.
-        run: ./gradlew smithyFormat -PsmithyFormatCheck --stacktrace
-
-      - name: Assert no formatting changes from smithy-jar packages
-        run: |
-          if ! git diff --quiet; then
-            echo "::error::smithyFormat rewrote files in smithy-jar-managed packages. Run './gradlew smithyFormat' locally and commit the result."
-            git diff
-            exit 1
-          fi
+        run: ./gradlew smithyFormat --check --stacktrace
 
   cli-distributions:
     runs-on: ubuntu-latest
