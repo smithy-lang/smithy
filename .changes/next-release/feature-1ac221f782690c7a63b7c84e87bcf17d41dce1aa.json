@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `skills/` directory of reviewable, instruction-only Agent Skills for AI coding agents. The `smithy-docs-navigator` skill teaches agents to read the published llms.txt index and each page's reStructuredText source instead of a lossy web-fetch. Skills are plain files installed by the user into their own agent; nothing is bundled into a build artifact.",
+  "pull_requests": [
+    "[#3209](https://github.com/smithy-lang/smithy/pull/3209)"
+  ]
+}
