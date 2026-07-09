@@ -14,6 +14,8 @@ idref/idref-list.smithy
 idref/idref-list-member.smithy
 idref/idref-map.smithy
 idref/idref-map-member.smithy
+idref/idref-key-map.smithy
+idref/idref-nested-key-map.smithy
 idref/idref-string.smithy
 idref/idref-struct-with-nested-refs.smithy
 idref/idref-struct-with-nested-member-refs.smithy

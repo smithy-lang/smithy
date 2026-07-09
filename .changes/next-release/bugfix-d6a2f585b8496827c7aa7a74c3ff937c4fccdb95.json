@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed trait code generation for maps with an `@idRef` key, which produced uncompilable code. The generated `createNode()` and `fromNode()` methods hard-coded the map entry key type as `String` instead of deriving it from the key shape, which is a `ShapeId` for an `@idRef` key.",
+  "pull_requests": []
+}

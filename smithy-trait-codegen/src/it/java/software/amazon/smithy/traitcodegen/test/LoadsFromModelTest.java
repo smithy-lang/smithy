@@ -18,12 +18,14 @@ import com.example.traits.enums.MyIntEnumTrait;
 import com.example.traits.enums.SomeEnum;
 import com.example.traits.enums.StringEnumTrait;
 import com.example.traits.enums.SuitTrait;
+import com.example.traits.idref.IdRefKeyMapTrait;
 import com.example.traits.idref.IdRefListTrait;
 import com.example.traits.idref.IdRefMapTrait;
 import com.example.traits.idref.IdRefMemberListTrait;
 import com.example.traits.idref.IdRefMemberMapTrait;
 import com.example.traits.idref.IdRefMemberStructTrait;
 import com.example.traits.idref.IdRefMemberStructWithNestedIdsTrait;
+import com.example.traits.idref.IdRefNestedKeyMapTrait;
 import com.example.traits.idref.IdRefStringTrait;
 import com.example.traits.idref.IdRefStructTrait;
 import com.example.traits.idref.IdRefStructWithNestedIdsTrait;
@@ -164,6 +166,13 @@ public class LoadsFromModelTest {
                 Arguments.of("idref/idref-map-member.smithy",
                         IdRefMemberMapTrait.class,
                         MapUtils.of("getValues", MapUtils.of("a", TARGET_ONE, "b", TARGET_TWO))),
+                Arguments.of("idref/idref-key-map.smithy",
+                        IdRefKeyMapTrait.class,
+                        MapUtils.of("getValues", MapUtils.of(TARGET_ONE, "a", TARGET_TWO, "b"))),
+                Arguments.of("idref/idref-nested-key-map.smithy",
+                        IdRefNestedKeyMapTrait.class,
+                        MapUtils.of("getValues",
+                                MapUtils.of("outer", MapUtils.of(TARGET_ONE, "a", TARGET_TWO, "b")))),
                 Arguments.of("idref/idref-struct.smithy",
                         IdRefStructTrait.class,
                         MapUtils.of("getFieldA", Optional.of(TARGET_ONE))),
