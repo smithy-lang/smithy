@@ -43,12 +43,14 @@ dependencies {
     implementation(project(":smithy-build"))
     implementation(project(":smithy-diff"))
     implementation(project(":smithy-syntax", "shadow"))
+    implementation(project(":smithy-ai"))
 
     // This is needed to ensure the above dependencies are added to the runtime image.
     shadow(project(":smithy-model"))
     shadow(project(":smithy-build"))
     shadow(project(":smithy-diff"))
     shadow(project(":smithy-syntax"))
+    shadow(project(":smithy-ai"))
 
     // These maven resolver dependencies are shaded into the smithy-cli JAR.
     implementation(libs.maven.resolver.provider)
@@ -219,6 +221,7 @@ tasks {
             exclude(project(":smithy-build"))
             exclude(project(":smithy-diff"))
             exclude(project(":smithy-syntax"))
+            exclude(project(":smithy-ai"))
         }
     }
 

@@ -1,0 +1,53 @@
+{
+  "_comment": "Curated overlay appended to llms.txt by generate_llms_txt.py. Hand-maintained links the mechanical source-2.0 walk cannot produce: prominent in-spec references (including backward compatibility), example projects, per-language code generators, and tooling. Links prefer raw README/markdown (LLM-readable text) over repo landing pages, and use each repo's real default branch (smithy-python is 'develop', others 'main'). Notes are deliberately coarse and durable (lifecycle role, language, client/server scope, maturity) so they do not drift with each release; point at the repo for current feature detail. All URLs verified to resolve (HTTP 200).",
+  "sections": [
+    {
+      "heading": "Key references",
+      "note": "The pages most often needed when authoring or evolving a model.",
+      "links": [
+        {"title": "Trait index (every trait, one page)", "url": "https://smithy.io/2.0/trait-index.html", "note": "rendered index; the .rst source is a build-time directive"},
+        {"title": "Evolving Models (backward compatibility guide)", "url": "https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/evolving-models.rst", "note": "how to change a model without breaking customers"},
+        {"title": "Breaking change rules (breakingChanges trait member)", "url": "https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/spec/model.rst", "note": "machine-checkable backward-compat rules for traits"},
+        {"title": "Smithy IDL", "url": "https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/spec/idl.rst"},
+        {"title": "Selectors", "url": "https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/spec/selectors.rst"},
+        {"title": "Constraint traits", "url": "https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/spec/constraint-traits.rst"}
+      ]
+    },
+    {
+      "heading": "Examples",
+      "note": "Runnable projects. Start from the index, then the per-language example.",
+      "links": [
+        {"title": "smithy-examples (index of all examples)", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-examples/main/README.md", "note": "quickstart, conversion, custom traits, projections, shared models, linting"},
+        {"title": "Java examples", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-examples/main/smithy-java-examples/README.md"},
+        {"title": "Rust examples", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-examples/main/smithy-rs-examples/README.md"},
+        {"title": "TypeScript examples", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-examples/main/smithy-typescript-examples/README.md"},
+        {"title": "Kotlin examples", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-examples/main/smithy-kotlin-examples/README.MD"},
+        {"title": "awesome-smithy (community resources)", "url": "https://raw.githubusercontent.com/smithy-lang/awesome-smithy/main/README.md", "note": "curated list of build tools, generators, and resources"}
+      ]
+    },
+    {
+      "heading": "Code generators by language",
+      "note": "Pick the generator for your target language; the README is the entry point. Consult each repo for the current list of supported protocols and features.",
+      "links": [
+        {"title": "smithy-java", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-java/main/README.md", "note": "codegen (Java): client and server; stable"},
+        {"title": "smithy-rs", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-rs/main/README.md", "note": "codegen (Rust): client, server, and the AWS SDK for Rust; stable"},
+        {"title": "smithy-kotlin", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-kotlin/main/README.md", "note": "codegen (Kotlin): client; stable"},
+        {"title": "smithy-swift", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-swift/main/README.md", "note": "codegen (Swift): client; stable"},
+        {"title": "smithy-ruby", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-ruby/main/README.md", "note": "codegen (Ruby)"},
+        {"title": "smithy-typescript", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-typescript/main/README.md", "note": "codegen (TypeScript): client and server (SSDK); in development"},
+        {"title": "smithy-python", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-python/develop/README.md", "note": "codegen and core modules (Python); in development - see ROADMAP below"},
+        {"title": "smithy-python roadmap", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-python/develop/ROADMAP.md", "note": "current status and planned Python features"}
+      ]
+    },
+    {
+      "heading": "Tooling",
+      "links": [
+        {"title": "smithy-cli", "url": "https://smithy.io/2.0/guides/smithy-cli/index.html", "note": "build, validate, diff, and select over a model"},
+        {"title": "smithy-language-server", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-language-server/main/README.md", "note": "LSP: editor navigation and diagnostics"},
+        {"title": "smithy-gradle-plugin", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-gradle-plugin/main/README.md", "note": "run Smithy builds from Gradle"},
+        {"title": "smithy-vscode", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-vscode/main/README.md", "note": "VS Code syntax highlighting"},
+        {"title": "smithy-intellij-plugin", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-intellij-plugin/main/README.md", "note": "IntelliJ language support"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `smithy ai` command and a publishable `smithy-ai` module for installing Smithy knowledge skills into AI agent harnesses. The bundled `smithy-docs-navigator` skill teaches agents to read the published llms.txt index and each page's reStructuredText source instead of a lossy web-fetch.",
+  "pull_requests": [
+    "[#3208](https://github.com/smithy-lang/smithy/pull/3208)"
+  ]
+}
