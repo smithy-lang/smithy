@@ -48,8 +48,8 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
         }
         return Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
-                .withMember("version", Node.from(version))
                 .withMember("testCases", builder.build())
+                .withMember("version", Node.from(version))
                 .build();
     }
 

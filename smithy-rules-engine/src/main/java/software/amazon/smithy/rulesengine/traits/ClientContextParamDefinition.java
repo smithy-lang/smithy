@@ -37,11 +37,11 @@ public final class ClientContextParamDefinition implements ToNode, ToSmithyBuild
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember("type", type.toString());
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
         if (documentation != null) {
             builder.withMember("documentation", documentation);
         }
+        builder.withMember("type", type.toString());
         return builder.build();
     }
 
