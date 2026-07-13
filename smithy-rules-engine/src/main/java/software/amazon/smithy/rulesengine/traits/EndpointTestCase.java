@@ -55,11 +55,9 @@ public final class EndpointTestCase implements ToNode, FromSourceLocation, ToSmi
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        ObjectNode.Builder builder = ObjectNode.builder();
         builder.withOptionalMember("documentation", getDocumentation().map(Node::from));
-        if (params != null && !params.isEmpty()) {
-            builder.withMember("params", params);
-        }
+        builder.withMember("expect", expect.toNode());
         if (!operationInputs.isEmpty()) {
             ArrayNode.Builder operationInputsBuilder = ArrayNode.builder();
             for (EndpointTestOperationInput operationInput : operationInputs) {
@@ -67,7 +65,10 @@ public final class EndpointTestCase implements ToNode, FromSourceLocation, ToSmi
             }
             builder.withMember("operationInputs", operationInputsBuilder.build());
         }
-        return builder.withMember("expect", expect.toNode()).build();
+        if (params != null && !params.isEmpty()) {
+            builder.withMember("params", params);
+        }
+        return builder.build();
     }
 
     @Override

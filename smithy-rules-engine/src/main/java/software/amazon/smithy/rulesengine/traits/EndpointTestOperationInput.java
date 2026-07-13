@@ -53,15 +53,15 @@ public final class EndpointTestOperationInput implements ToNode, FromSourceLocat
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
-        builder.withMember("operationName", Node.from(operationName));
-        if (operationParams != null) {
-            builder.withMember("operationParams", operationParams);
-        }
-        if (builtInParams != null) {
+        if (builtInParams != null && !builtInParams.isEmpty()) {
             builder.withMember("builtInParams", builtInParams);
         }
-        if (clientParams != null) {
+        if (clientParams != null && !clientParams.isEmpty()) {
             builder.withMember("clientParams", clientParams);
+        }
+        builder.withMember("operationName", Node.from(operationName));
+        if (operationParams != null && !operationParams.isEmpty()) {
+            builder.withMember("operationParams", operationParams);
         }
         return builder.build();
     }

@@ -53,9 +53,6 @@ public final class ExpectedEndpoint implements ToNode, FromSourceLocation, ToSmi
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
-        if (url != null) {
-            builder.withMember("url", url);
-        }
         if (!headers.isEmpty()) {
             ObjectNode.Builder headersBuilder = ObjectNode.builder();
             for (Map.Entry<String, List<String>> kvp : headers.entrySet()) {
@@ -75,7 +72,9 @@ public final class ExpectedEndpoint implements ToNode, FromSourceLocation, ToSmi
             }
             builder.withMember("properties", propertiesBuilder.build());
         }
-
+        if (url != null) {
+            builder.withMember("url", url);
+        }
         return builder.build();
     }
 
