@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Reordered the in the rules-engine traits members to match what NodeMapper outputs to avoid spurious diff changes",
-  "pull_requests": [
-    "https://github.com/smithy-lang/smithy/pull/3210"
-  ]
-}
