@@ -4,14 +4,24 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "wednesday"
+      time: "10:00"
+    cooldown:
+      default-days: 7
     labels:
      - "dependencies"
      - "no-changelog-needed"
+
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "wednesday"
+      time: "10:00"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "software.amazon.smithy.gradle.smithy-jar"
     labels:
      - "dependencies"
      - "no-changelog-needed"
@@ -23,6 +33,7 @@ updates:
     ignore:
       - dependency-name: "com.opencastsoftware:prettier4j"
         versions: [ "0.3.1", "0.3.2" ]
+
   - package-ecosystem: "pip"
     directories:
       - "/docs"
@@ -30,6 +41,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "wednesday"
+      time: "10:00"
+    cooldown:
+      default-days: 7
     labels:
      - "dependencies"
      - "no-changelog-needed"
