@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed trait code generation for shapes with an `@idRef`-annotated member or member's target, which produced uncompilable code. The generated default value for a member didn't respect `@idRef` trait on member or member's target and generated vanilla string literal, while generated member type is `ShapeId`.",
+  "pull_requests": [
+    "https://github.com/smithy-lang/smithy/pull/3214"
+  ]
+}
