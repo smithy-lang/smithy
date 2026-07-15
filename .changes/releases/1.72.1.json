@@ -1,0 +1,20 @@
+{
+  "version": "1.72.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fixed trait code generation for maps with an `@idRef` key, which produced uncompilable code. The generated `createNode()` and `fromNode()` methods hard-coded the map entry key type as `String` instead of deriving it from the key shape, which is a `ShapeId` for an `@idRef` key.",
+      "pull_requests": [
+        "[#3207](https://github.com/smithy-lang/smithy/pull/3207)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Reordered the in the rules-engine traits members to match what NodeMapper outputs to avoid spurious diff changes",
+      "pull_requests": [
+        "https://github.com/smithy-lang/smithy/pull/3210"
+      ]
+    }
+  ],
+  "date": "2026-07-13"
+}

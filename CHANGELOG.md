@@ -1,5 +1,18 @@
 # Smithy Changelog
 
+## 1.72.1 (2026-07-13)
+
+### Bug Fixes
+
+- Fixed trait code generation for maps with an `@idRef` key, which produced
+  uncompilable code. The generated `createNode()` and `fromNode()` methods
+  hard-coded the map entry key type as `String` instead of deriving it from the
+  key shape, which is a `ShapeId` for an `@idRef` key.
+  ([#3207](https://github.com/smithy-lang/smithy/pull/3207))
+- Reordered the in the rules-engine traits members to match what NodeMapper
+  outputs to avoid spurious diff changes
+  (https://github.com/smithy-lang/smithy/pull/3210)
+
 ## 1.72.0 (2026-07-01)
 
 ### Features
@@ -7,8 +20,7 @@
 - Optimized model loading by ~50% by fixing a path traversal bug, reducing JSON
   allocations, reducing ShapeID string allocations, improving ShapeId and Model
   blackboard caches, optimizing selectors based on relevance, and skipping
-  construction of suppressed unr
-- esolved-trait validation events.
+  construction of suppressed unresolved-trait validation events.
   ([#3176](https://github.com/smithy-lang/smithy/pull/3176))
 - Added a new `metadata` trait that allows model authors to declare types for
   metadata keys that will be automatically validated when building models.
@@ -4650,4 +4662,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-
