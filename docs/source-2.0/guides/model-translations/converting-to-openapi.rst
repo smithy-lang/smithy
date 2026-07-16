@@ -1454,6 +1454,7 @@ of a Smithy model into an OpenAPI specification.
 Refer to `Converting to OpenAPI with smithy-build`_ for more detailed information about using the plugin and Gradle.
 
 .. smithy-trait:: smithy.openapi#specificationExtension
+    :package: smithy-openapi-traits
 .. _specification-extension-trait:
 
 ``specificationExtension`` trait

@@ -7,6 +7,7 @@ AWS Authentication Traits
 This document defines AWS authentication schemes.
 
 .. smithy-trait:: aws.auth#sigv4
+    :package: smithy-aws-traits
 .. _aws.auth#sigv4-trait:
 
 ------------------------
@@ -61,6 +62,7 @@ unauthenticated request.
 
 
 .. smithy-trait:: aws.auth#sigv4a
+    :package: smithy-aws-traits
 .. _aws.auth#sigv4a-trait:
 
 -------------------------
@@ -120,6 +122,7 @@ supports signatures for multi-region API requests.
 
 
 .. smithy-trait:: aws.auth#unsignedPayload
+    :package: smithy-aws-traits
 .. _aws.auth#unsignedPayload-trait:
 
 ----------------------------------
@@ -165,6 +168,7 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 
 
 .. smithy-trait:: aws.auth#cognitoUserPools
+    :package: smithy-aws-traits
 .. _aws.auth#cognitoUserPools-trait:
 
 -----------------------------------
@@ -214,6 +218,7 @@ See also
 
 
 .. smithy-trait:: aws.auth#cognitoUserPoolsScopes
+    :package: smithy-aws-traits
 .. _aws.auth#cognitoUserPoolsScopes-trait:
 
 -----------------------------------------

@@ -6,6 +6,7 @@ Various AWS-specific traits are used to integrate Smithy models with other
 AWS products like AWS CloudFormation and tools like the AWS SDKs.
 
 .. smithy-trait:: aws.api#service
+    :package: smithy-aws-traits
 .. _aws.api#service-trait:
 
 -------------------------
@@ -258,6 +259,7 @@ value SHOULD begin with ``AWS/`` and the value after SHOULD be PascalCased.
 
 
 .. smithy-trait:: aws.api#arn
+    :package: smithy-aws-traits
 .. _aws.api#arn-trait:
 
 ---------------------
@@ -445,6 +447,7 @@ resource.
 
 
 .. smithy-trait:: aws.api#arnReference
+    :package: smithy-aws-traits
 .. _aws.api#arnReference-trait:
 
 ------------------------------
@@ -529,6 +532,7 @@ previous example:
 
 
 .. smithy-trait:: aws.api#data
+    :package: smithy-aws-traits
 .. _aws.api#data-trait:
 
 ----------------------
@@ -630,6 +634,7 @@ applied through the ``aws.api#data`` trait.
 
 
 .. smithy-trait:: aws.api#controlPlane
+    :package: smithy-aws-traits
 .. _aws.api#controlPlane-trait:
 
 ------------------------------
@@ -664,6 +669,7 @@ plane unless an operation or resource is marked with the
 
 
 .. smithy-trait:: aws.api#dataPlane
+    :package: smithy-aws-traits
 .. _aws.api#dataPlane-trait:
 
 ---------------------------
@@ -710,6 +716,7 @@ following traits provide the information needed to perform this.
 
 
 .. smithy-trait:: aws.api#clientEndpointDiscovery
+    :package: smithy-aws-traits
 .. _client-endpoint-discovery-trait:
 
 ``aws.api#clientEndpointDiscovery`` trait
@@ -759,6 +766,7 @@ The operation output MUST contain a member ``Endpoints`` that is a list of
 
 
 .. smithy-trait:: aws.api#clientDiscoveredEndpoint
+    :package: smithy-aws-traits
 .. _client-discovered-endpoint-trait:
 
 ``aws.api#clientDiscoveredEndpoint`` trait
@@ -792,6 +800,7 @@ following members:
 
 
 .. smithy-trait:: aws.api#clientEndpointDiscoveryId
+    :package: smithy-aws-traits
 .. _client-endpoint-discovery-id-trait:
 
 ``aws.api#clientEndpointDiscoveryId`` trait
@@ -936,6 +945,7 @@ Clients SHOULD scope the cache globally or to a specific client instance.
 
 
 .. smithy-trait:: aws.protocols#httpChecksum
+    :package: smithy-aws-traits
 .. _aws.protocols#httpChecksum-trait:
 
 ------------------------------------
@@ -1292,6 +1302,7 @@ trait.
 
 
 .. smithy-trait:: aws.api#tagEnabled
+    :package: smithy-aws-traits
 .. _tagEnabled-trait:
 
 ----------------------------
@@ -1523,6 +1534,7 @@ default-named operation (``TagResource``, ``UntagResource``,
 
 
 .. smithy-trait:: aws.api#taggable
+    :package: smithy-aws-traits
 .. _taggable-trait:
 
 --------------------------
@@ -1658,6 +1670,7 @@ if applicable.
 
 
 .. smithy-trait:: aws.api#awsChunked
+    :package: smithy-aws-traits
 .. _aws.api#awsChunked-trait:
 
 -------------------------------

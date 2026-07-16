@@ -8,6 +8,7 @@ This specification defines the ``aws.protocols#restXml`` protocol.
 
 
 .. smithy-trait:: aws.protocols#restXml
+    :package: smithy-aws-traits
 .. _aws.protocols#restXml-trait:
 
 -------------------------------

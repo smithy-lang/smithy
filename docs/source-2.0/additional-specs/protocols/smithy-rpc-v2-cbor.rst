@@ -8,6 +8,7 @@ This specification defines the ``smithy.protocols#rpcv2Cbor`` protocol. This
 protocol is used to expose services that serialize RPC payloads as CBOR.
 
 .. smithy-trait:: smithy.protocols#rpcv2Cbor
+    :package: smithy-protocol-traits
 .. _smithy.protocols#rpcv2Cbor-trait:
 
 
