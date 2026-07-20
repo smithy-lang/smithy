@@ -51,6 +51,9 @@ jobs:
                 # the checkout faster, but also makes it harder to accidentally
                 # run code from the PR branch.
                 sparse-checkout: .changes/next-release
+                # New setting introduced in checkout v7. Set to `true` to avoid
+                # workflow failure in external contributors' PRs.
+                allow-unsafe-pr-checkout: true
 
             # This is needed so that the changelog tool can check the diff for
             # newly-introduced changes by comparing its head against that of
