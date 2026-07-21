@@ -57,6 +57,7 @@ structures/structure-trait.smithy
 structures/struct-with-listofmap-trait.smithy
 structures/struct-with-uniqueitems-list-trait.smithy
 structures/struct-with-idref-member-trait.smithy
+structures/struct-with-idref-member-trait-with-defaults.smithy
 structures/struct-member-with-timestamp-format-trait.smithy
 structures/struct-with-enum-default-trait.smithy
 structures/struct-with-union-trait.smithy
