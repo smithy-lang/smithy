@@ -1,5 +1,5 @@
 [versions]
-junit = "6.1.1"
+junit = "6.1.2"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
