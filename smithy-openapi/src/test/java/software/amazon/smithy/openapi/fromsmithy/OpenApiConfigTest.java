@@ -81,4 +81,13 @@ public class OpenApiConfigTest {
         assertThat(config.getJsonSchemaVersion(), equalTo(JsonSchemaVersion.DRAFT2020_12));
     }
 
+    @Test
+    public void correctlySetsUseOperationInputOutputShapeNames() {
+        Node mappedTest = Node.objectNode().withMember("useOperationInputOutputShapeNames", true);
+
+        OpenApiConfig config = OpenApiConfig.fromNode(mappedTest);
+
+        assertThat(config.getUseOperationInputOutputShapeNames(), equalTo(true));
+    }
+
 }
