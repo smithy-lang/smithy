@@ -30,6 +30,7 @@ features, and built-ins have been available since version 1.0. Any feature, func
 the feature's introduction version must be less than or equal to the trait version.
 
 .. smithy-trait:: smithy.rules#endpointRuleSet
+    :package: smithy-rules-engine
 .. _smithy.rules#endpointRuleSet-trait:
 
 --------------------------------------
@@ -83,6 +84,7 @@ empty set of conditions to provide a more meaningful default or error depending
 on the scenario.
 
 .. smithy-trait:: smithy.rules#endpointBdd
+    :package: smithy-rules-engine
 .. _smithy.rules#endpointBdd-trait:
 
 ----------------------------------
@@ -923,6 +925,7 @@ The following two expressions are equivalent:
 
 
 .. smithy-trait:: smithy.rules#endpointTests
+    :package: smithy-rules-engine
 .. _smithy.rules#endpointTests-trait:
 
 ------------------------------------

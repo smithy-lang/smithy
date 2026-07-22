@@ -11,6 +11,7 @@ Authentication and authorization
 --------------------------------
 
 .. smithy-trait:: aws.apigateway#apiKeyRequired
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#apiKeyRequired-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,6 +53,7 @@ but not on ``HealthCheck``:
     customers.
 
 .. smithy-trait:: aws.apigateway#apiKeySource
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#apiKeySource-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,6 +106,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
     customers.
 
 .. smithy-trait:: aws.apigateway#authorizer
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#authorizer-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,6 +138,7 @@ See also
     customers.
 
 .. smithy-trait:: aws.apigateway#authorizers
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#authorizers-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -316,6 +320,7 @@ Method and response handling
 ----------------------------
 
 .. smithy-trait:: aws.apigateway#gatewayResponses
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#gatewayResponses-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -408,6 +413,7 @@ CORS-generated headers. Review the merged output to confirm the
 effective headers match your intent.
 
 .. smithy-trait:: aws.apigateway#minimumCompressionSize
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#minimumCompressionSize-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -442,6 +448,7 @@ The following example sets the minimum compression size to 10240 bytes:
     }
 
 .. smithy-trait:: aws.apigateway#requestValidator
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#requestValidator-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -510,6 +517,7 @@ Integrations
 ------------
 
 .. smithy-trait:: aws.apigateway#integration
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#integration-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -706,6 +714,7 @@ operation within the service.
     customers.
 
 .. smithy-trait:: aws.apigateway#mockIntegration
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#mockIntegration-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -817,6 +826,7 @@ API endpoint and access control
 -------------------------------
 
 .. smithy-trait:: aws.apigateway#apiTlsPolicy
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#apiTlsPolicy-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -884,6 +894,7 @@ endpoint access mode:
     customers.
 
 .. smithy-trait:: aws.apigateway#endpointConfiguration
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#endpointConfiguration-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -967,6 +978,7 @@ requires ``dualstack`` for private endpoints.
     customers.
 
 .. smithy-trait:: aws.apigateway#resourcePolicy
+    :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#resourcePolicy-trait:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

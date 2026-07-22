@@ -461,6 +461,7 @@ following process:
 
 
 .. smithy-trait:: aws.protocols#awsQuery
+    :package: smithy-aws-traits
 .. _aws.protocols#awsQuery-trait:
 
 --------------------------------
@@ -495,6 +496,7 @@ See
 
 
 .. smithy-trait:: aws.protocols#awsQueryError
+    :package: smithy-aws-traits
 .. _aws.protocols#awsQueryError-trait:
 
 -------------------------------------
@@ -559,6 +561,7 @@ The following example defines an error that uses a custom "Code" of
 
 
 .. smithy-trait:: aws.protocols#awsQueryCompatible
+    :package: smithy-aws-traits
 .. _aws.protocols#awsQueryCompatible-trait:
 
 ------------------------------------------

@@ -27,6 +27,7 @@ following client pseudocode:
 
 
 .. smithy-trait:: smithy.waiters#waitable
+    :package: smithy-waiters
 .. _smithy.waiters#waitable-trait:
 
 ``smithy.waiters#waitable`` trait

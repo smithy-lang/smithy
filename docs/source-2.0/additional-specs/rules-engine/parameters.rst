@@ -137,6 +137,7 @@ following rule set:
 
 
 .. smithy-trait:: smithy.rules#clientContextParams
+    :package: smithy-rules-engine
 .. _smithy.rules#clientContextParams-trait:
 
 ``smithy.rules#clientContextParams`` trait
@@ -196,6 +197,7 @@ configurable values:
     }
 
 .. smithy-trait:: smithy.rules#staticContextParams
+    :package: smithy-rules-engine
 .. _smithy.rules#staticContextParams-trait:
 
 ``smithy.rules#staticContextParams`` trait
@@ -249,6 +251,7 @@ operation:
 
 
 .. smithy-trait:: smithy.rules#operationContextParams
+    :package: smithy-rules-engine
 .. _smithy.rules#operationContextParams-trait:
 
 ``smithy.rules#operationContextParams`` trait
@@ -330,6 +333,7 @@ to a subset of JMESPath:
 
 
 .. smithy-trait:: smithy.rules#contextParam
+    :package: smithy-rules-engine
 .. _smithy.rules#contextParam-trait:
 
 ``smithy.rules#contextParam`` trait

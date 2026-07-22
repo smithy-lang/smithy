@@ -20,6 +20,7 @@ These traits often express contracts using higher-level constructs and simpler b
 Services will usually check these contracts outside of service frameworks in more efficient ways.
 
 .. smithy-trait:: smithy.contracts#conditions
+    :package: smithy-contract-traits
 .. _conditions-trait:
 
 --------------------

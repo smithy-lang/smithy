@@ -8,6 +8,7 @@ This specification defines the ``smithy.protocols#rpcv2Json`` protocol. This
 protocol is used to expose services that serialize RPC payloads as JSON.
 
 .. smithy-trait:: smithy.protocols#rpcv2Json
+    :package: smithy-protocol-traits
 .. _smithy.protocols#rpcv2Json-trait:
 
 
