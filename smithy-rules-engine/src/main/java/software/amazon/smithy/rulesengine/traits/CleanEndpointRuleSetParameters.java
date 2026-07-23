@@ -22,10 +22,16 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
+import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.evaluation.TestEvaluator;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 import software.amazon.smithy.rulesengine.transforms.CompileBdd;
@@ -94,7 +100,7 @@ public final class CleanEndpointRuleSetParameters implements ModelTransformerPlu
         }
 
         // Prune rules that reference orphaned parameters.
-        List<Rule> prunedRules = pruneRules(ruleSet.getRules(), orphanedParams);
+        List<Rule> retainedRules = pruneRules(ruleSet.getRules(), orphanedParams);
 
         // Remove orphaned parameter declarations.
         Parameters.Builder paramsBuilder = Parameters.builder();
@@ -106,7 +112,7 @@ public final class CleanEndpointRuleSetParameters implements ModelTransformerPlu
 
         EndpointRuleSet updatedRuleSet = ruleSet.toBuilder()
                 .parameters(paramsBuilder.build())
-                .rules(prunedRules)
+                .rules(retainedRules)
                 .build();
 
         EndpointRuleSetTrait updatedTrait = endpointRuleSetTrait.toBuilder()
@@ -123,7 +129,8 @@ public final class CleanEndpointRuleSetParameters implements ModelTransformerPlu
         // Clean endpoint tests that reference orphaned parameters.
         if (service.hasTrait(EndpointTestsTrait.ID)) {
             EndpointTestsTrait testsTrait = service.expectTrait(EndpointTestsTrait.class);
-            serviceBuilder.addTrait(cleanEndpointTests(testsTrait, orphanedParams));
+            EndpointTestsTrait cleanedTests = cleanEndpointTests(testsTrait, orphanedParams, updatedRuleSet);
+            serviceBuilder.addTrait(cleanedTests);
         }
 
         return serviceBuilder.build();
@@ -132,24 +139,25 @@ public final class CleanEndpointRuleSetParameters implements ModelTransformerPlu
     private List<Rule> pruneRules(List<Rule> rules, Set<String> orphanedParams) {
         List<Rule> result = new ArrayList<>(rules.size());
         for (Rule rule : rules) {
-            Rule pruned = pruneRule(rule, orphanedParams);
-            if (pruned != null) {
-                result.add(pruned);
+            Rule retainedRule = pruneRule(rule, orphanedParams);
+            if (retainedRule != null) {
+                result.add(retainedRule);
             }
         }
         return result;
     }
 
     private Rule pruneRule(Rule rule, Set<String> orphanedParams) {
-        // Drop the rule if any of its conditions reference an orphaned parameter.
+        // Conditions gate every rule type, a condition referencing an orphaned parameter drops the
+        // rule (and, for a tree rule, its whole subtree).
         if (conditionsReferenceOrphanedParam(rule.getConditions(), orphanedParams)) {
             return null;
         }
 
         if (rule instanceof TreeRule) {
-            List<Rule> prunedChildren = pruneRules(((TreeRule) rule).getRules(), orphanedParams);
+            List<Rule> retainedChildren = pruneRules(((TreeRule) rule).getRules(), orphanedParams);
             // Drop the tree rule if all of its children were pruned.
-            if (prunedChildren.isEmpty()) {
+            if (retainedChildren.isEmpty()) {
                 return null;
             }
             // Always rebuild with the surviving children rather than trying to detect "unchanged"
@@ -157,32 +165,86 @@ public final class CleanEndpointRuleSetParameters implements ModelTransformerPlu
             return Rule.builder(rule)
                     .conditions(rule.getConditions())
                     .description(rule.getDocumentation().orElse(null))
-                    .treeRule(prunedChildren);
+                    .treeRule(retainedChildren);
         }
 
-        // Leaf rules do not need to be pruned.
+        // A leaf rule can also reference a parameter in its value: an endpoint rule's URL, headers,
+        // or properties, or an error rule's error expression.
+        if (leafValueReferencesOrphanedParam(rule, orphanedParams)) {
+            return null;
+        }
+
         return rule;
+    }
+
+    private boolean leafValueReferencesOrphanedParam(Rule rule, Set<String> orphanedParams) {
+        if (rule instanceof EndpointRule) {
+            Endpoint endpoint = ((EndpointRule) rule).getEndpoint();
+            if (referencesOrphanedParam(endpoint.getUrl().getReferences(), orphanedParams)) {
+                return true;
+            }
+            for (List<Expression> headerValues : endpoint.getHeaders().values()) {
+                for (Expression headerValue : headerValues) {
+                    if (referencesOrphanedParam(headerValue.getReferences(), orphanedParams)) {
+                        return true;
+                    }
+                }
+            }
+            for (Literal property : endpoint.getProperties().values()) {
+                if (referencesOrphanedParam(property.getReferences(), orphanedParams)) {
+                    return true;
+                }
+            }
+        } else if (rule instanceof ErrorRule) {
+            return referencesOrphanedParam(((ErrorRule) rule).getError().getReferences(), orphanedParams);
+        }
+        return false;
     }
 
     private boolean conditionsReferenceOrphanedParam(List<Condition> conditions, Set<String> orphanedParams) {
         for (Condition condition : conditions) {
-            for (String reference : condition.getFunction().getReferences()) {
-                if (orphanedParams.contains(reference)) {
-                    return true;
-                }
+            if (referencesOrphanedParam(condition.getFunction().getReferences(), orphanedParams)) {
+                return true;
             }
         }
         return false;
     }
 
-    private EndpointTestsTrait cleanEndpointTests(EndpointTestsTrait testsTrait, Set<String> orphanedParams) {
+    private boolean referencesOrphanedParam(Set<String> references, Set<String> orphanedParams) {
+        for (String reference : references) {
+            if (orphanedParams.contains(reference)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private EndpointTestsTrait cleanEndpointTests(
+            EndpointTestsTrait testsTrait,
+            Set<String> orphanedParams,
+            EndpointRuleSet updatedRuleSet
+    ) {
         List<EndpointTestCase> cleanedCases = new ArrayList<>();
         for (EndpointTestCase testCase : testsTrait.getTestCases()) {
-            if (!testCaseReferencesOrphanedParam(testCase, orphanedParams)) {
+            // Static check: drop test cases that explicitly set an orphaned parameter.
+            if (testCaseReferencesOrphanedParam(testCase, orphanedParams)) {
+                continue;
+            }
+            // Dynamic check: a test case can also rely on an orphaned parameter implicitly.
+            if (testCasePasses(updatedRuleSet, testCase)) {
                 cleanedCases.add(testCase);
             }
         }
         return testsTrait.toBuilder().testCases(cleanedCases).build();
+    }
+
+    private boolean testCasePasses(EndpointRuleSet ruleSet, EndpointTestCase testCase) {
+        try {
+            TestEvaluator.evaluate(ruleSet, testCase);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     private boolean testCaseReferencesOrphanedParam(EndpointTestCase testCase, Set<String> orphanedParams) {

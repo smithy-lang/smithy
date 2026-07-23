@@ -175,6 +175,9 @@ public class CleanEndpointRuleSetParametersTest {
 
         assertFalse(paramNames.contains("StreamARN"));
         assertFalse(paramNames.contains("OperationType"));
+
+        // DefaultArn is bound only by OperationA; despite having a default it must be removed.
+        assertFalse(paramNames.contains("DefaultArn"));
         assertTrue(paramNames.contains("Region"));
         assertTrue(paramNames.contains("Bucket"));
         assertTrue(paramNames.contains("endpoint"));
@@ -184,9 +187,51 @@ public class CleanEndpointRuleSetParametersTest {
         assertTrue(endpointUrlExists(ruleSet.getRules(), "https://special.{Region}.example.com"));
         assertTrue(endpointUrlExists(ruleSet.getRules(), "https://bucket.{Region}.example.com"));
 
+        // The DefaultArn leaf is not gated by any condition referencing DefaultArn, so it can only
+        // be pruned by scanning the rule's endpoint value. It must be gone.
+        assertFalse(endpointUrlExists(ruleSet.getRules(), "https://{DefaultArn}.arn.example.com"));
+
+        // Leaves whose header or property references DefaultArn must also be pruned.
+        assertFalse(endpointUrlExists(ruleSet.getRules(), "https://header.{Region}.example.com"));
+        assertFalse(endpointUrlExists(ruleSet.getRules(), "https://property.{Region}.example.com"));
+
+        // A leaf whose header and property reference only the in-scope Region must survive.
+        assertTrue(endpointUrlExists(ruleSet.getRules(), "https://safe.{Region}.example.com"));
+
         // Empty-tree collapse
         assertFalse(endpointUrlExists(ruleSet.getRules(), "https://control.example.com"));
         assertFalse(endpointUrlExists(ruleSet.getRules(), "https://data.example.com"));
+
+        // The cleaned model must validate.
+        Model pruned = transformer.removeUnreferencedShapes(transformed);
+        ValidatedResult<Model> result = Model.assembler()
+                .discoverModels(CleanEndpointRuleSetParametersTest.class.getClassLoader())
+                .addModel(pruned)
+                .assemble();
+        result.getValidationEvents(Severity.ERROR)
+                .forEach(event -> assertFalse(event.getId().startsWith("RuleSetParameter")));
+        assertFalse(result.isBroken());
+    }
+
+    @Test
+    public void dynamicallyPrunesTestCaseImplicitlyDependingOnOrphanedDefault() {
+        Model model = Model.assembler()
+                .discoverModels(CleanEndpointRuleSetParametersTest.class.getClassLoader())
+                .addImport(CleanEndpointRuleSetParametersTest.class.getResource(
+                        "clean-ruleset-params-implicit-default-model.smithy"))
+                .assemble()
+                .unwrap();
+        ShapeId serviceId = ShapeId.from("smithy.example#ImplicitDefaultService");
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model transformed = transformer.filterShapes(model, shape -> !shape.getId().equals(OPERATION_A));
+
+        ServiceShape service = transformed.expectShape(serviceId, ServiceShape.class);
+        EndpointTestsTrait testsTrait = service.expectTrait(EndpointTestsTrait.class);
+
+        // Only the regional test case (which does not depend on DefaultArn) survives.
+        assertEquals(1, testsTrait.getTestCases().size());
+        assertTrue(testsTrait.getTestCases().get(0).getDocumentation().orElse("").contains("Regional endpoint"));
 
         // The cleaned model must validate.
         Model pruned = transformer.removeUnreferencedShapes(transformed);

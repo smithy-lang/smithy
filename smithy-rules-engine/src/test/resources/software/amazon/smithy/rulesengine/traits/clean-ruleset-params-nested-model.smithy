@@ -22,6 +22,7 @@ apply NestedEndpointService @endpointRuleSet({
         Bucket: {type: "string", documentation: "The bucket name"},
         StreamARN: {type: "string", documentation: "The stream ARN"},
         OperationType: {type: "string", documentation: "Type of operation"},
+        DefaultArn: {type: "string", required: true, default: "default-arn", documentation: "A defaulted ARN"},
         endpoint: {type: "string", builtIn: "SDK::Endpoint", documentation: "Override endpoint"}
     },
     rules: [
@@ -106,6 +107,48 @@ apply NestedEndpointService @endpointRuleSet({
                             "type": "endpoint"
                         }
                     ]
+                },
+                {
+                    "documentation": "Header ref leaf (level 2) - a header references DefaultArn",
+                    "conditions": [
+                        {"fn": "stringEquals", "argv": [{"ref": "Region"}, "header-region"]}
+                    ],
+                    "endpoint": {
+                        "url": "https://header.{Region}.example.com",
+                        "properties": {},
+                        "headers": {"x-arn": ["{DefaultArn}"]}
+                    },
+                    "type": "endpoint"
+                },
+                {
+                    "documentation": "Property ref leaf (level 2) - a property references DefaultArn",
+                    "conditions": [
+                        {"fn": "stringEquals", "argv": [{"ref": "Region"}, "property-region"]}
+                    ],
+                    "endpoint": {
+                        "url": "https://property.{Region}.example.com",
+                        "properties": {"arnProp": "{DefaultArn}"},
+                        "headers": {}
+                    },
+                    "type": "endpoint"
+                },
+                {
+                    "documentation": "Safe leaf (level 2) - header and property reference only in-scope Region, must survive",
+                    "conditions": [
+                        {"fn": "stringEquals", "argv": [{"ref": "Region"}, "safe-region"]}
+                    ],
+                    "endpoint": {
+                        "url": "https://safe.{Region}.example.com",
+                        "properties": {"regionProp": "{Region}"},
+                        "headers": {"x-region": ["{Region}"]}
+                    },
+                    "type": "endpoint"
+                },
+                {
+                    "documentation": "Defaulted ARN leaf (level 2) - no condition references DefaultArn, but the URL does",
+                    "conditions": [],
+                    "endpoint": {"url": "https://{DefaultArn}.arn.example.com", "properties": {}, "headers": {}},
+                    "type": "endpoint"
                 }
             ]
         },
@@ -120,7 +163,8 @@ apply NestedEndpointService @endpointRuleSet({
 
 @staticContextParams(
     Region: {value: "us-east-1"},
-    OperationType: {value: "control"}
+    OperationType: {value: "control"},
+    DefaultArn: {value: "operation-a-arn"}
 )
 operation OperationA {
     input: OperationAInput
