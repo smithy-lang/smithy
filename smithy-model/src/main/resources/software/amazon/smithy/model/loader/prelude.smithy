@@ -618,7 +618,23 @@ structure readonly {}
         }
     ]
 )
-structure idempotent {}
+structure idempotent {
+    /// Describes the errors returned when the operation is called and the
+    /// resource already exists. Applicable to create lifecycle operations.
+    /// An empty list indicates the operation returns a successful response.
+    exists: IdempotentErrors
+
+    /// Describes the errors returned when the operation is called and the
+    /// resource does not exist. Applicable to delete lifecycle operations.
+    /// An empty list indicates the operation returns a successful response.
+    notFound: IdempotentErrors
+}
+
+@private
+list IdempotentErrors {
+    @idRef(selector: "[trait|error]")
+    member: String
+}
 
 /// Defines the input member of an operation that is used by the server to
 /// identify and discard replayed requests.

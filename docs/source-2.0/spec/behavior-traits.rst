@@ -73,13 +73,69 @@ Summary
 Trait selector
     ``operation``
 Value type
-    Annotation trait
+    ``structure``
 Conflicts with
     :ref:`readonly-trait`
+
+The ``idempotent`` trait is a structure that supports the following optional
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - exists
+      - ``[string]``
+      - Describes the errors returned when the operation is called and the
+        resource already exists. Each entry is a shape ID that MUST reference
+        a shape with the :ref:`error-trait` that is also in the operation's
+        ``errors`` list. An empty list indicates the operation returns a
+        successful response. When omitted, the behavior is unspecified.
+    * - notFound
+      - ``[string]``
+      - Describes the errors returned when the operation is called and the
+        resource does not exist. Each entry is a shape ID that MUST reference
+        a shape with the :ref:`error-trait` that is also in the operation's
+        ``errors`` list. An empty list indicates the operation returns a
+        successful response. When omitted, the behavior is unspecified.
+
+The ``exists`` and ``notFound`` properties are mutually exclusive; only one
+may be specified on a given operation.
+
+When applied without any properties, the trait indicates idempotency without
+specifying the response behavior for unexpected resource states. This is fully
+backwards compatible with existing uses of the trait:
 
 .. code-block:: smithy
 
     @idempotent
+    operation DeleteSomething {
+        input: DeleteSomethingInput
+        output: DeleteSomethingOutput
+    }
+
+The following example uses ``exists`` to indicate that a create operation
+returns a ``ConflictException`` when the resource already exists:
+
+.. code-block:: smithy
+
+    @idempotent(exists: ["smithy.example#ConflictException"])
+    operation CreateSomething {
+        input: CreateSomethingInput
+        output: CreateSomethingOutput
+        errors: [ConflictException]
+    }
+
+The following example uses ``notFound`` with an empty list to indicate that
+a delete operation returns a successful response when the resource does not
+exist:
+
+.. code-block:: smithy
+
+    @idempotent(notFound: [])
     operation DeleteSomething {
         input: DeleteSomethingInput
         output: DeleteSomethingOutput

@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "\"Extended the `@idempotent` trait with optional `exists` and `notFound` properties to declare the errors returned when encountering unexpected resource states.\"",
+  "pull_requests": [
+    "[#3218](https://github.com/smithy-lang/smithy/pull/3218)"
+  ]
+}
