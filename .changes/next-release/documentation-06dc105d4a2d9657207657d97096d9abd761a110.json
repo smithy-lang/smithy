@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Add design doc proposing SSE (text/event-stream) framing for event streams",
+  "pull_requests": [
+    "[#3229](https://github.com/smithy-lang/smithy/pull/3229)"
+  ]
+}
