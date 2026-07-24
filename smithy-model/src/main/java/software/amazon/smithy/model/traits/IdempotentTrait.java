@@ -56,6 +56,15 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
     }
 
     /**
+     * Gets the errors returned when the resource already exists, or {@code null} if not defined.
+     *
+     * @return The exists errors list, or {@code null} if not defined.
+     */
+    public List<ShapeId> getExistsOrNull() {
+        return exists;
+    }
+
+    /**
      * Gets the errors returned when the resource does not exist.
      *
      * <p>When present, an empty list indicates the operation returns a
@@ -65,6 +74,15 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
      */
     public Optional<List<ShapeId>> getNotFound() {
         return Optional.ofNullable(notFound);
+    }
+
+    /**
+     * Gets the errors returned when the resource does not exist, or {@code null} if not defined.
+     *
+     * @return The notFound errors list, or {@code null} if not defined.
+     */
+    public List<ShapeId> getNotFoundOrNull() {
+        return notFound;
     }
 
     @Override
