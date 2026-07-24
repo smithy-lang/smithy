@@ -2,11 +2,17 @@ $version: "2"
 
 namespace smithy.example
 
-@idempotent(exists: ["smithy.example#ConflictException", "smithy.example#AlreadyExistsException"])
+@idempotent(
+    exists: [ConflictException, AlreadyExistsException]
+)
 operation CreateThing {
     input: CreateThingInput
     output: CreateThingOutput
-    errors: [ConflictException, AlreadyExistsException, ValidationException]
+    errors: [
+        ConflictException
+        AlreadyExistsException
+        ValidationException
+    ]
 }
 
 @input

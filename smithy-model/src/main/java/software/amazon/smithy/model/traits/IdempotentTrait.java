@@ -4,13 +4,14 @@
  */
 package software.amazon.smithy.model.traits;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -29,13 +30,13 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
     private final List<ShapeId> notFound;
 
     private IdempotentTrait(Builder builder) {
-        super(ID, builder.sourceLocation);
-        this.exists = builder.exists;
-        this.notFound = builder.notFound;
+        super(ID, builder.getSourceLocation());
+        this.exists = builder.exists.hasValue() ? builder.exists.copy() : null;
+        this.notFound = builder.notFound.hasValue() ? builder.notFound.copy() : null;
     }
 
-    public IdempotentTrait(ObjectNode node) {
-        this(builder().sourceLocation(node.getSourceLocation()).fromNode(node));
+    public IdempotentTrait(ObjectNode object) {
+        this(fromNode(object));
     }
 
     public IdempotentTrait() {
@@ -55,6 +56,15 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
     }
 
     /**
+     * Gets the errors returned when the resource already exists, or {@code null} if not defined.
+     *
+     * @return The exists errors list, or {@code null} if not defined.
+     */
+    public List<ShapeId> getExistsOrNull() {
+        return exists;
+    }
+
+    /**
      * Gets the errors returned when the resource does not exist.
      *
      * <p>When present, an empty list indicates the operation returns a
@@ -66,30 +76,59 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
         return Optional.ofNullable(notFound);
     }
 
+    /**
+     * Gets the errors returned when the resource does not exist, or {@code null} if not defined.
+     *
+     * @return The notFound errors list, or {@code null} if not defined.
+     */
+    public List<ShapeId> getNotFoundOrNull() {
+        return notFound;
+    }
+
     @Override
     protected Node createNode() {
         ObjectNode.Builder nodeBuilder = Node.objectNodeBuilder();
-        if (exists != null) {
-            nodeBuilder.withMember(EXISTS, shapeIdListToNode(exists));
-        }
-        if (notFound != null) {
-            nodeBuilder.withMember(NOT_FOUND, shapeIdListToNode(notFound));
-        }
+        setArrayMember(nodeBuilder, exists, EXISTS);
+        setArrayMember(nodeBuilder, notFound, NOT_FOUND);
         return nodeBuilder.build();
     }
 
-    private static ArrayNode shapeIdListToNode(List<ShapeId> ids) {
-        return ids.stream()
-                .map(id -> Node.from(id.toString()))
-                .collect(ArrayNode.collect());
+    private static void setArrayMember(ObjectNode.Builder nodeBuilder, List<ShapeId> errors, String key) {
+        if (errors == null) {
+            return;
+        }
+        if (errors.isEmpty()) {
+            nodeBuilder.withMember(key, ArrayNode.arrayNode());
+        } else {
+            ArrayNode.Builder builder = ArrayNode.builder();
+            for (ShapeId shapeId : errors) {
+                builder.withValue(Node.from(shapeId.toString()));
+            }
+            nodeBuilder.withMember(key, builder.build());
+        }
     }
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .sourceLocation(getSourceLocation())
-                .exists(exists)
-                .notFound(notFound);
+        return new Builder(this);
+    }
+
+    /**
+     * Creates a {@link IdempotentTrait} from a {@link Node}.
+     *
+     * @param node Node to create the IdempotentTrait from.
+     * @return Returns the created IdempotentTrait.
+     * @throws ExpectationNotMetException if the given Node is invalid.
+     */
+    public static IdempotentTrait fromNode(Node node) {
+        return fromNode(node.expectObjectNode()).build();
+    }
+
+    private static Builder fromNode(ObjectNode node) {
+        Builder builder = builder().sourceLocation(node);
+        node.getArrayMember(EXISTS, ShapeId::fromNode, builder::exists)
+                .getArrayMember(NOT_FOUND, ShapeId::fromNode, builder::notFound);
+        return builder;
     }
 
     public static Builder builder() {
@@ -102,44 +141,76 @@ public final class IdempotentTrait extends AbstractTrait implements ToSmithyBuil
         }
 
         @Override
-        public Trait createTrait(ShapeId target, Node value) {
-            IdempotentTrait result = new IdempotentTrait(value.expectObjectNode());
+        public IdempotentTrait createTrait(ShapeId target, Node value) {
+            IdempotentTrait result = IdempotentTrait.fromNode(value);
             result.setNodeCache(value);
             return result;
         }
     }
 
+    /**
+     * Builder for {@link IdempotentTrait}.
+     */
     public static final class Builder extends AbstractTraitBuilder<IdempotentTrait, Builder> {
-        private List<ShapeId> exists;
-        private List<ShapeId> notFound;
+        private final BuilderRef<List<ShapeId>> exists = BuilderRef.forList();
+        private final BuilderRef<List<ShapeId>> notFound = BuilderRef.forList();
 
         private Builder() {}
 
-        @Override
-        public IdempotentTrait build() {
-            return new IdempotentTrait(this);
+        private Builder(IdempotentTrait idempotentTrait) {
+            if (idempotentTrait.exists != null) {
+                exists.setBorrowed(idempotentTrait.exists);
+            }
+            if (idempotentTrait.notFound != null) {
+                notFound.setBorrowed(idempotentTrait.notFound);
+            }
         }
 
         public Builder exists(List<ShapeId> exists) {
-            this.exists = exists;
+            clearExists();
+            this.exists.get().addAll(exists);
+            return this;
+        }
+
+        public Builder clearExists() {
+            this.exists.get().clear();
+            return this;
+        }
+
+        public Builder addExists(ShapeId value) {
+            this.exists.get().add(value);
+            return this;
+        }
+
+        public Builder removeExists(ShapeId value) {
+            this.exists.get().remove(value);
             return this;
         }
 
         public Builder notFound(List<ShapeId> notFound) {
-            this.notFound = notFound;
+            clearNotFound();
+            this.notFound.get().addAll(notFound);
             return this;
         }
 
-        Builder fromNode(ObjectNode node) {
-            node.getArrayMember(EXISTS).ifPresent(arr -> {
-                exists = Collections.unmodifiableList(
-                        arr.getElementsAs(n -> ShapeId.from(n.expectStringNode().getValue())));
-            });
-            node.getArrayMember(NOT_FOUND).ifPresent(arr -> {
-                notFound = Collections.unmodifiableList(
-                        arr.getElementsAs(n -> ShapeId.from(n.expectStringNode().getValue())));
-            });
+        public Builder clearNotFound() {
+            this.notFound.get().clear();
             return this;
+        }
+
+        public Builder addNotFound(ShapeId value) {
+            this.notFound.get().add(value);
+            return this;
+        }
+
+        public Builder removeNotFound(ShapeId value) {
+            this.notFound.get().remove(value);
+            return this;
+        }
+
+        @Override
+        public IdempotentTrait build() {
+            return new IdempotentTrait(this);
         }
     }
 }

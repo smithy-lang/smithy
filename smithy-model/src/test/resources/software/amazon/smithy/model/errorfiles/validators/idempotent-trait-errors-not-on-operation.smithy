@@ -2,11 +2,15 @@ $version: "2"
 
 namespace smithy.example
 
-@idempotent(exists: ["smithy.example#NotOnOperationException"])
+@idempotent(
+    exists: [NotOnOperationException]
+)
 operation CreateThing {
     input: CreateThingInput
     output: CreateThingOutput
-    errors: [ConflictException]
+    errors: [
+        ConflictException
+    ]
 }
 
 @input
