@@ -102,12 +102,15 @@ members:
         ``errors`` list. An empty list indicates the operation returns a
         successful response. When omitted, the behavior is unspecified.
 
+.. note::
+    Only operation-level errors can be used in the ``exists`` and ``notFound``
+    properties. Common errors defined in the service shape are not permitted.
+
 The ``exists`` and ``notFound`` properties are mutually exclusive; only one
 may be specified on a given operation.
 
 When applied without any properties, the trait indicates idempotency without
-specifying the response behavior for unexpected resource states. This is fully
-backwards compatible with existing uses of the trait:
+specifying the response behavior for unexpected resource states.
 
 .. code-block:: smithy
 
@@ -122,7 +125,7 @@ returns a ``ConflictException`` when the resource already exists:
 
 .. code-block:: smithy
 
-    @idempotent(exists: ["smithy.example#ConflictException"])
+    @idempotent(exists: [ConflictException])
     operation CreateSomething {
         input: CreateSomethingInput
         output: CreateSomethingOutput
