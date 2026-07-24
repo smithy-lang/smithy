@@ -1,1 +1,1 @@
-[ERROR] smithy.example#CreateThing: The `exists` property references error `smithy.example#NotOnOperationException`, but it is not in the operation's errors list. Expected one of: [smithy.example#ConflictException] | IdempotentTrait
+[ERROR] smithy.example#CreateThing: The `exists` property references error `smithy.example#NotOnOperationException`, but it is not in the operation's errors list. Expected one of `smithy.example#ConflictException` | IdempotentTrait
