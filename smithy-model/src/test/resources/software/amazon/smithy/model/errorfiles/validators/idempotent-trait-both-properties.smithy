@@ -3,13 +3,16 @@ $version: "2"
 namespace smithy.example
 
 @idempotent(
-    exists: ["smithy.example#ConflictException"]
-    notFound: ["smithy.example#NotFoundException"]
+    exists: [ConflictException]
+    notFound: [NotFoundException]
 )
 operation PutItem {
     input: PutItemInput
     output: PutItemOutput
-    errors: [ConflictException, NotFoundException]
+    errors: [
+        ConflictException
+        NotFoundException
+    ]
 }
 
 @input

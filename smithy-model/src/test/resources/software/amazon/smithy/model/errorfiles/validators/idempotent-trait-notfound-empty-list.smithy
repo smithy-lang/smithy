@@ -2,7 +2,9 @@ $version: "2"
 
 namespace smithy.example
 
-@idempotent(notFound: [])
+@idempotent(
+    notFound: []
+)
 operation DeleteBucket {
     input: DeleteBucketInput
     output: DeleteBucketOutput

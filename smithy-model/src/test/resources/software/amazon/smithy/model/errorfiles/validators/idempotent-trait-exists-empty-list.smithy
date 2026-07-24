@@ -2,7 +2,9 @@ $version: "2"
 
 namespace smithy.example
 
-@idempotent(exists: [])
+@idempotent(
+    exists: []
+)
 operation CreateBucket {
     input: CreateBucketInput
     output: CreateBucketOutput

@@ -2,11 +2,15 @@ $version: "2"
 
 namespace smithy.example
 
-@idempotent(notFound: ["smithy.example#WrongException"])
+@idempotent(
+    notFound: ["smithy.example#WrongException"]
+)
 operation DeleteThing {
     input: DeleteThingInput
     output: DeleteThingOutput
-    errors: [ResourceNotFoundException]
+    errors: [
+        ResourceNotFoundException
+    ]
 }
 
 @input

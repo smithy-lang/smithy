@@ -6,7 +6,9 @@ namespace smithy.example
 operation DeleteThing {
     input: DeleteThingInput
     output: DeleteThingOutput
-    errors: [ResourceNotFoundException]
+    errors: [
+        ResourceNotFoundException
+    ]
 }
 
 @input
