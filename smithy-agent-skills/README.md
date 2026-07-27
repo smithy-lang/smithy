@@ -40,8 +40,8 @@ For a manual installation, the destination differs per harness:
 
 - **Claude Code**: copy the skill folder into `~/.claude/skills/` (personal) or
   `.claude/skills/` (project). It loads immediately with no restart.
-- **Codex**: copy the skill folder into `~/.agents/skills/` (user) or
-  `.agents/skills/` (repo), then restart Codex.
+- **Codex**: copy the skill folder into `~/.codex/skills/` (user) or
+  `.codex/skills/` (repo), then restart Codex.
 - **Kiro**: open the *Agent Steering & Skills* panel, choose **Import a skill**,
   then **GitHub**, and point it at the skill's subdirectory
   (`smithy-agent-skills/src/main/resources/skills/smithy-docs-navigator/`), not
