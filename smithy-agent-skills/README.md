@@ -16,7 +16,7 @@ build time.
 
 | Skill | What it does |
 |-------|--------------|
-| [`smithy-docs-navigator`](src/main/resources/skills/smithy-docs-navigator/SKILL.md) | Answers Smithy questions from the authoritative `.rst` docs source instead of a lossy web-fetch. |
+| [`smithy-docs-navigator`](src/main/resources/skills/smithy-docs-navigator/SKILL.md) | Answers Smithy questions from the authoritative `.rst` and `.md` docs sources instead of a lossy web-fetch. |
 
 ## Installing a skill (direct copy)
 

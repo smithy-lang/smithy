@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Generate llms.txt from Smithy RST documentation files.
+"""Generate llms.txt from Smithy documentation source files.
 
-Finds every .rst file under source-2.0/, extracts each page's title, pairs
-it with the page's raw reStructuredText source URL on GitHub, and writes a
-structured llms.txt suitable for indexing by the AWS Knowledge MCP.
+Finds every .rst and .md file under source-2.0/, extracts each page's title,
+pairs it with the page's raw source URL on GitHub, and writes a structured
+llms.txt suitable for indexing by the AWS Knowledge MCP.
 
-Links point at the .rst source rather than the rendered .html: the .rst
-is the complete, version-matched text, whereas an agent's web-fetch of
-the rendered HTML is lossy when it summarizes. The result is also the
+Links point at source files rather than rendered HTML. The result is also the
 index the smithy-docs-navigator skill reads.
 """
+
+from __future__ import annotations
 
 import json
 import os
@@ -33,12 +33,21 @@ SECTIONS: list[tuple[str | None, str | None]] = [
 ]
 
 RST_TITLE_RE: re.Pattern[str] = re.compile(r"^([=\-~`#\"^+*:.!'_]{2,})\s*$")
+MARKDOWN_TITLE_RE: re.Pattern[str] = re.compile(r"^#\s+(.+?)\s*#*\s*$")
+SOURCE_EXTENSIONS: tuple[str, ...] = (".rst", ".md")
 
 
 def extract_title(filepath: str) -> str | None:
-    """Extract the first RST heading from a file."""
+    """Extract the first reStructuredText or Markdown heading from a file."""
     with open(filepath, encoding="utf-8") as f:
         lines = f.readlines()
+
+    if filepath.endswith(".md"):
+        for line in lines:
+            match = MARKDOWN_TITLE_RE.match(line.rstrip())
+            if match:
+                return match.group(1)
+        return None
 
     for i, line in enumerate(lines):
         if not RST_TITLE_RE.match(line.rstrip()):
@@ -52,8 +61,8 @@ def extract_title(filepath: str) -> str | None:
     return None
 
 
-def rst_path_to_url(on_disk_path: str, docs_dir: str) -> str:
-    """Convert an on-disk RST path to its raw .rst source URL.
+def source_path_to_url(on_disk_path: str, docs_dir: str) -> str:
+    """Convert an on-disk documentation path to its raw source URL.
 
     Resolves symlinks first: some pages under source-2.0/ are symlinks into
     source-shared/ (e.g. languages/typescript/ts-ssdk/), and raw.githubusercontent.com
@@ -65,13 +74,13 @@ def rst_path_to_url(on_disk_path: str, docs_dir: str) -> str:
     return f"{RAW_BASE}/{rel}"
 
 
-# Pages whose .rst source contains only a build-time directive and no readable
+# Pages whose source contains only a build-time directive and no readable
 # text. Skip them here, and let llms_extra.json link their rendered .html instead.
 EXCLUDE_PAGES: set[str] = {"trait-index.rst"}
 
 
 def collect_pages(source_dir: str) -> dict[str, tuple[str, str]]:
-    """Find every .rst file under source_dir.
+    """Find every documentation source file under source_dir.
 
     Returns {source-relative path: (title, raw source URL)}. The key stays the
     source-2.0-relative path so section classification works; the URL is built
@@ -81,7 +90,7 @@ def collect_pages(source_dir: str) -> dict[str, tuple[str, str]]:
     pages: dict[str, tuple[str, str]] = {}
     for root, _, files in os.walk(source_dir, followlinks=True):
         for fname in sorted(files):
-            if not fname.endswith(".rst"):
+            if not fname.endswith(SOURCE_EXTENSIONS):
                 continue
             full = os.path.join(root, fname)
             rel = os.path.relpath(full, source_dir).replace(os.sep, "/")
@@ -89,7 +98,7 @@ def collect_pages(source_dir: str) -> dict[str, tuple[str, str]]:
                 continue
             title = extract_title(full)
             if title:
-                pages[rel] = (title, rst_path_to_url(full, docs_dir))
+                pages[rel] = (title, source_path_to_url(full, docs_dir))
     return pages
 
 
@@ -150,11 +159,11 @@ def generate(source_dir: str, output_path: str, overlay: dict | None = None) -> 
         " language. Smithy models define a service as a collection of resources,"
         " operations, and shapes.",
         "",
-        "> Links point at the reStructuredText source (.rst): it is the complete,"
-        " version-matched text, whereas a summarized web-fetch of the rendered HTML"
-        " drops exact rules. When changing an existing model, consult the Evolving"
-        " Models guide under Key references first - it explains which changes are"
-        " backward compatible and which break customers.",
+        "> Links point at the documentation source (.rst or .md), which preserves"
+        " exact rules that a summarized web-fetch of rendered HTML can drop. When"
+        " changing an existing model, consult the Evolving Models guide under Key"
+        " references first - it explains which changes are backward compatible and"
+        " which break customers.",
         "",
     ]
 
