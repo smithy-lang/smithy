@@ -18,24 +18,25 @@ build time.
 |-------|--------------|
 | [`smithy-docs-navigator`](src/main/resources/skills/smithy-docs-navigator/SKILL.md) | Answers Smithy questions from the authoritative `.rst` and `.md` docs sources instead of a lossy web-fetch. |
 
-## Installing a skill (direct copy)
+## Working with agents
 
-The skills follow the [Agent Skills](https://agentskills.io) format, so the same
-`SKILL.md` works across Claude Code, Codex, Kiro, and other compatible harnesses.
-There is no installer to run. Prompt your own agent and have it set the skill up
-for you — paste this into any compatible harness:
+1. Ask your agent to install the Smithy docs-navigator skill from this
+   repository.
+2. Ask it to use the skill for its next Smithy task.
+
+A good generic prompt is:
 
 ```
-Install the Smithy docs-navigator agent skill for me. Read
+Install and use the Smithy docs-navigator skill. Read
 smithy-agent-skills/src/main/resources/skills/smithy-docs-navigator/SKILL.md
 from the smithy-lang/smithy repository, then copy the
 smithy-agent-skills/src/main/resources/skills/smithy-docs-navigator/ folder into
-my agent's skills directory for this harness. Show me the file first so I can
-review it before you install it.
+this harness's skills directory. Review SKILL.md before copying it.
 ```
 
-The agent copies the folder into the right place for your harness. If you prefer
-to install by hand, the destination differs per harness:
+The skills follow the [Agent Skills](https://agentskills.io) format, so the same
+folder works across Claude Code, Codex, Kiro, and other compatible harnesses.
+For a manual installation, the destination differs per harness:
 
 - **Claude Code**: copy the skill folder into `~/.claude/skills/` (personal) or
   `.claude/skills/` (project). It loads immediately with no restart.
