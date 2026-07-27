@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-picked links appended to the end of llms.txt. generate_llms_txt.py only lists the .rst pages inside this repo's docs/source-2.0/ directory, so anything outside that - examples, per-language code generators, and tooling in other smithy-lang repos - has to be listed here by hand. This file also highlights the few pages that matter most when writing or changing a model, since the generated list gives every page equal weight. Each entry has a short note saying why an agent would want it.",
+  "_comment": "Hand-picked links appended to the end of llms.txt. generate_llms_txt.py lists the .rst and .md pages inside this repo's docs/source-2.0/ directory, so anything outside that - examples, per-language code generators, and tooling in other smithy-lang repos - has to be listed here by hand. This file also highlights the few pages that matter most when writing or changing a model, since the generated list gives every page equal weight. Each entry has a short note saying why an agent would want it.",
   "sections": [
     {
       "heading": "Key references",
@@ -27,15 +27,15 @@
     },
     {
       "heading": "Code generators by language",
-      "note": "Pick the generator for your target language. The README is the entry point, and each repo lists its current supported protocols and features.",
+      "note": "Pick the generator for your target language. Start with its README, then follow the project documentation for current protocols, features, and stability.",
       "links": [
-        {"title": "smithy-java", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-java/main/README.md", "note": "codegen (Java): client and server, stable"},
-        {"title": "smithy-rs", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-rs/main/README.md", "note": "codegen (Rust): client, server, and the AWS SDK for Rust; stable"},
-        {"title": "smithy-kotlin", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-kotlin/main/README.md", "note": "codegen (Kotlin): client, stable"},
-        {"title": "smithy-swift", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-swift/main/README.md", "note": "codegen (Swift): client, stable"},
+        {"title": "smithy-java", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-java/main/README.md", "note": "codegen (Java): clients are stable; server modules are developer preview"},
+        {"title": "smithy-rs", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-rs/main/README.md", "note": "codegen (Rust): client, server, and the AWS SDK for Rust; interfaces are unstable"},
+        {"title": "smithy-kotlin", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-kotlin/main/README.md", "note": "codegen (Kotlin): client"},
+        {"title": "smithy-swift", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-swift/main/README.md", "note": "codegen (Swift): client"},
         {"title": "smithy-ruby", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-ruby/main/README.md", "note": "codegen (Ruby)"},
-        {"title": "smithy-typescript", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-typescript/main/README.md", "note": "codegen (TypeScript): client and server (SSDK), in development"},
-        {"title": "smithy-python", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-python/develop/README.md", "note": "codegen and core modules (Python), in development - see ROADMAP below"},
+        {"title": "smithy-typescript", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-typescript/main/README.md", "note": "codegen (TypeScript): client and server (SSDK), developer preview"},
+        {"title": "smithy-python", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-python/develop/README.md", "note": "codegen and core modules (Python): unstable and not yet for production - see ROADMAP below"},
         {"title": "smithy-python roadmap", "url": "https://raw.githubusercontent.com/smithy-lang/smithy-python/develop/ROADMAP.md", "note": "current status and planned Python features"}
       ]
     },

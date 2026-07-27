@@ -39,14 +39,17 @@ folder works across Claude Code, Codex, Kiro, and other compatible harnesses.
 For a manual installation, the destination differs per harness:
 
 - **Claude Code**: copy the skill folder into `~/.claude/skills/` (personal) or
-  `.claude/skills/` (project). It loads immediately with no restart.
-- **Codex**: copy the skill folder into `~/.codex/skills/` (user) or
-  `.codex/skills/` (repo), then restart Codex.
-- **Kiro**: open the *Agent Steering & Skills* panel, choose **Import a skill**,
-  then **GitHub**, and point it at the skill's subdirectory
+  `.claude/skills/` (project). Claude Code detects changes automatically; restart
+  only if the top-level skills directory did not already exist.
+- **Codex**: copy the skill folder into `~/.agents/skills/` (user) or
+  `.agents/skills/` (repo). Codex detects changes automatically; restart if the
+  skill does not appear.
+- **Kiro**: open the *Agent Steering & Skills* panel, select **+**, choose
+  **Import a skill**, then **GitHub**, and point it at the skill's subdirectory
   (`smithy-agent-skills/src/main/resources/skills/smithy-docs-navigator/`), not
-  the repository root. You can also copy the folder into `~/.kiro/skills/`
-  (global) or `.kiro/skills/` (workspace).
+  the repository root. GitHub import supports public repositories. You can also
+  copy the folder into `~/.kiro/skills/` (global) or `.kiro/skills/`
+  (workspace); imported skills work immediately.
 
 Copying the folder (rather than referencing it live) gives you an inspectable,
 pinned copy you have reviewed.

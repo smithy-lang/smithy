@@ -52,11 +52,12 @@ published Smithy specification and ecosystem are covered here.
   when passed through a summarizing fetch, drops the exact rules you need. Read
   the source.
 - **`llms.txt` is the one index.** Published at `https://smithy.io/2.0/llms.txt`,
-  its links already point at each page's canonical `.rst` or `.md` source,
-  including resolved symlink targets. Beyond the spec pages it lists curated
+  its generated documentation links point at each page's canonical `.rst` or
+  `.md` source, including resolved symlink targets. It also lists curated
   **Key references** (including backward compatibility), **Examples and
   resources**, **Code generators by language** (with each generator's language
-  and maturity), and **Tooling**. There is no separate map to install.
+  and status where documented), and **Tooling**. There is no separate map to
+  install.
 - **Read with a non-summarizing tool.** Routing source text back through a
   summarizing web-fetch loses fidelity just as the HTML did. Use a raw fetch.
 
