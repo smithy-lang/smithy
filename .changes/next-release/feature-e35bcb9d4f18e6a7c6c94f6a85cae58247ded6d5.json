@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a versioned smithy-agent-skills artifact that packages reviewable Agent Skills, starting with smithy-docs-navigator for navigating Smithy documentation.",
+  "pull_requests": [
+    "[#3209](https://github.com/smithy-lang/smithy/pull/3209)"
+  ]
+}
