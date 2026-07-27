@@ -47,6 +47,13 @@ union MyUnion {
     // Note that this uses a conflicting structure name with
     // GreetingStruct, so it must be renamed in the service.
     renamedStructureValue: aws.protocoltests.restjson.nested#GreetingStruct
+
+    unionValue: NestedUnion
+}
+
+/// A union used to test unions nested inside unions.
+union NestedUnion {
+    stringValue: String
 }
 
 apply JsonUnions @httpRequestTests([
@@ -245,6 +252,28 @@ apply JsonUnions @httpRequestTests([
             }
         }
     }
+    {
+        id: "RestJsonSerializeNestedUnionValue"
+        documentation: "Serializes a nested union value"
+        protocol: restJson1
+        method: "PUT"
+        uri: "/JsonUnions"
+        body: """
+            {
+                "contents": {
+                    "unionValue": {
+                        "stringValue": "foo"
+                    }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "Content-Type": "application/json" }
+        params: {
+            contents: {
+                unionValue: { stringValue: "foo" }
+            }
+        }
+    }
 ])
 
 apply JsonUnions @httpResponseTests([
@@ -409,6 +438,27 @@ apply JsonUnions @httpResponseTests([
         params: {
             contents: {
                 structureValue: { hi: "hello" }
+            }
+        }
+    }
+    {
+        id: "RestJsonDeserializeNestedUnionValue"
+        documentation: "Deserializes a nested union value"
+        protocol: restJson1
+        code: 200
+        body: """
+            {
+                "contents": {
+                    "unionValue": {
+                        "stringValue": "foo"
+                    }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "Content-Type": "application/json" }
+        params: {
+            contents: {
+                unionValue: { stringValue: "foo" }
             }
         }
     }
