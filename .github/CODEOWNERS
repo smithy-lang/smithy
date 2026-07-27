@@ -1,2 +1,7 @@
 # Add core contributors to all prs by default
 * @smithy-lang/smithy
+
+# Agent skills are instruction content shipped to AI agents. Every change under
+# the skills/ directory requires core-team review; this is the trust boundary for
+# the content, independent of how the skills are distributed.
+/smithy-agent-skills/src/main/resources/skills/ @smithy-lang/smithy

@@ -8,6 +8,7 @@ pluginManagement {
 
 rootProject.name = "smithy"
 
+include(":smithy-agent-skills")
 include(":smithy-aws-iam-traits")
 include(":smithy-aws-traits")
 include(":smithy-aws-apigateway-traits")

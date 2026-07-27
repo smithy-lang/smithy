@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `skills/` directory of Agent Skills that teach AI coding agents to work with Smithy, starting with `smithy-docs-navigator` for navigating the docs. The skills are also published as the `software.amazon.smithy:smithy-agent-skills` artifact, versioned with each release, for consumers who want them as a dependency instead of copying the files.",
+  "pull_requests": [
+    "[#3209](https://github.com/smithy-lang/smithy/pull/3209)"
+  ]
+}
