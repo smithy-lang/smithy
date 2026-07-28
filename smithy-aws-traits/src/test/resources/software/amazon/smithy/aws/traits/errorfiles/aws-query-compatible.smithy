@@ -6,6 +6,7 @@ use aws.protocols#awsQueryCompatible
 use aws.protocols#awsQueryError
 use aws.protocols#awsJson1_0
 use smithy.protocols#rpcv2Cbor
+use smithy.protocols#rpcv2Json
 
 @awsQueryCompatible
 @awsJson1_0
@@ -26,6 +27,13 @@ structure InvalidThingException {
 @awsQueryCompatible
 @rpcv2Cbor
 service MyService2 {
+    version: "2020-02-05",
+    errors: [InvalidThingException]
+}
+
+@awsQueryCompatible
+@rpcv2Json
+service MyService3 {
     version: "2020-02-05",
     errors: [InvalidThingException]
 }
