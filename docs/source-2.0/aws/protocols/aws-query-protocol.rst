@@ -572,15 +572,23 @@ Summary
     trait.
 
     The ``awsQueryCompatible`` trait allows services to backward compatibly
-    migrate from ``awsQuery`` to :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>`
-    without removing values defined in the ``awsQueryError`` trait.
+    migrate from ``awsQuery`` to other wire protocols without removing values
+    defined in the ``awsQueryError`` trait.
 
     This trait adds the ``x-amzn-query-error`` header in the form of
     ``Code;Fault`` to error responses. ``Code`` is the value defined in the
     :ref:`awsQueryError <aws.protocols#awsQueryError-trait>`, and ``Fault`` is
     one of ``Sender`` or ``Receiver``.
 Trait selector
-    ``service :test([trait|aws.protocols#awsJson1_0], [trait|smithy.protocols#rpcv2Cbor])``
+    .. code-block:: none
+
+        service :test([trait|aws.protocols#awsJson1_0],
+                      [trait|smithy.protocols#rpcv2Cbor],
+                      [trait|smithy.protocols#rpcv2Json])
+
+    A service with the :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>`,
+    :ref:`rpcv2Cbor <smithy.protocols#rpcv2Cbor-trait>`, or
+    :ref:`rpcv2Json <smithy.protocols#rpcv2Json-trait>` protocol.
 Value type
     Annotation trait
 
