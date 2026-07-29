@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -22,6 +23,9 @@ final class FormatVisitor {
 
     // Used to handle extracting comments out of whitespace of prior statements.
     private Doc pendingComments = Doc.empty();
+
+    // Widest member index in the SHAPE_MEMBERS container currently being rendered.
+    private int memberIndexWidth;
 
     FormatVisitor(int width) {
         this.width = width;
@@ -171,14 +175,27 @@ final class FormatVisitor {
             }
 
             case SHAPE_MEMBERS: {
-                return renderMembers(cursor, TreeType.SHAPE_MEMBER);
+                int previousWidth = memberIndexWidth;
+                memberIndexWidth = findMemberIndexWidth(cursor);
+                try {
+                    return renderMembers(cursor, TreeType.SHAPE_MEMBER);
+                } finally {
+                    memberIndexWidth = previousWidth;
+                }
             }
 
             case SHAPE_MEMBER: {
                 return visit(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS))
+                        .append(visit(cursor.getFirstChild(TreeType.MEMBER_INDEX)))
                         .append(visit(cursor.getFirstChild(TreeType.ELIDED_SHAPE_MEMBER)))
                         .append(visit(cursor.getFirstChild(TreeType.EXPLICIT_SHAPE_MEMBER)))
                         .append(visit(cursor.getFirstChild(TreeType.VALUE_ASSIGNMENT)));
+            }
+
+            case MEMBER_INDEX: {
+                String lexeme = cursor.getFirstChild(TreeType.NUMBER).getTree().concatTokens();
+                int padding = Math.max(0, memberIndexWidth - lexeme.length());
+                return Doc.text(StringUtils.repeat(' ', padding) + lexeme + ". ");
             }
 
             case EXPLICIT_SHAPE_MEMBER: {
@@ -331,13 +348,12 @@ final class FormatVisitor {
             }
 
             case TRAIT_STATEMENTS: {
-                return Doc.intersperse(
-                        Doc.line(),
-                        cursor.children()
-                                // Skip WS nodes that have no comments.
-                                .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
-                                .map(this::visit))
-                        .append(tree.isEmpty() ? Doc.empty() : Doc.line());
+                List<TreeCursor> statements = cursor.children()
+                        // Skip WS nodes that have no comments.
+                        .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
+                        .collect(Collectors.toList());
+                return Doc.intersperse(Doc.line(), statements.stream().map(this::visit))
+                        .append(statements.isEmpty() ? Doc.empty() : Doc.line());
             }
 
             case TRAIT: {
@@ -845,6 +861,17 @@ final class FormatVisitor {
 
         Doc open = Formatter.LINE_OR_SPACE.append(Formatter.LBRACE);
         return renderBlock(open, Formatter.RBRACE, Doc.intersperse(separator, memberDocs));
+    }
+
+    private static int findMemberIndexWidth(TreeCursor container) {
+        int result = 0;
+        for (TreeCursor member : container.getChildrenByType(TreeType.SHAPE_MEMBER)) {
+            TreeCursor index = member.getFirstChild(TreeType.MEMBER_INDEX);
+            if (index != null) {
+                result = Math.max(result, index.getFirstChild(TreeType.NUMBER).getTree().concatTokens().length());
+            }
+        }
+        return result;
     }
 
     // Renders control, metadata, and use sections so that each statement has a leading and trailing newline

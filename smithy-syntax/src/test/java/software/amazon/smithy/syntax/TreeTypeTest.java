@@ -557,6 +557,58 @@ public class TreeTypeTest {
                 TreeType.SHAPE_MEMBER,
                 TreeType.TRAIT_STATEMENTS,
                 TreeType.EXPLICIT_SHAPE_MEMBER);
+
+        String indexedExplicit = "@foo\n1 . foo: Bar";
+        TokenTree indexedExplicitTree = getTree(TreeType.SHAPE_MEMBER, indexedExplicit);
+        assertTreeIsValid(indexedExplicitTree);
+        rootAndChildTypesEqual(indexedExplicitTree,
+                TreeType.SHAPE_MEMBER,
+                TreeType.TRAIT_STATEMENTS,
+                TreeType.MEMBER_INDEX,
+                TreeType.EXPLICIT_SHAPE_MEMBER);
+
+        String indexedElided = "10.$foo";
+        TokenTree indexedElidedTree = getTree(TreeType.SHAPE_MEMBER, indexedElided);
+        assertTreeIsValid(indexedElidedTree);
+        rootAndChildTypesEqual(indexedElidedTree,
+                TreeType.SHAPE_MEMBER,
+                TreeType.TRAIT_STATEMENTS,
+                TreeType.MEMBER_INDEX,
+                TreeType.ELIDED_SHAPE_MEMBER);
+    }
+
+    @Test
+    public void memberIndex() {
+        TokenTree noSpaces = getTree(TreeType.MEMBER_INDEX, "1.");
+        assertTreeIsValid(noSpaces);
+        rootAndChildTypesEqual(
+                noSpaces,
+                TreeType.MEMBER_INDEX,
+                TreeType.NUMBER,
+                TreeType.TOKEN);
+
+        // Magnitude is checked during semantic model assembly, not lossless syntax parsing.
+        TokenTree spaces = getTree(TreeType.MEMBER_INDEX, "99999999999999999999 \t. \t");
+        assertTreeIsValid(spaces);
+        rootAndChildTypesEqual(
+                spaces,
+                TreeType.MEMBER_INDEX,
+                TreeType.NUMBER,
+                TreeType.SP,
+                TreeType.TOKEN,
+                TreeType.SP);
+    }
+
+    @Test
+    public void losslessMemberIndexParsingIsVersionAgnostic() {
+        String idl = "$version: \"2.0\"\n"
+                + "namespace com.foo\n"
+                + "structure Example {\n"
+                + "    1. member: String\n"
+                + "}\n";
+        CapturingTokenizer tokenizer = new CapturingTokenizer(IdlTokenizer.create(idl));
+        TreeType.IDL.parse(tokenizer);
+        assertTreeIsValid(tokenizer.getRoot());
     }
 
     @Test
@@ -1609,6 +1661,17 @@ public class TreeTypeTest {
         String notColon = "foo = Bar";
         TokenTree notColonTree = getTree(TreeType.EXPLICIT_SHAPE_MEMBER, notColon);
         assertTreeIsInvalid(notColonTree);
+    }
+
+    @Test
+    public void invalidMemberIndex() {
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "0."));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "01."));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "-1."));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1.0."));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1e2."));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1:"));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1 member:"));
     }
 
     @Test

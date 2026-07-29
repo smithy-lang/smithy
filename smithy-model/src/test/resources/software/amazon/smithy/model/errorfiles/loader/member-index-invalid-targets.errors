@@ -1,0 +1,3 @@
+[ERROR] smithy.protocols#InvalidList$member: Trait `smithy.protocols#idx` cannot be applied to `smithy.protocols#InvalidList$member`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.protocols#InvalidMap$key: Trait `smithy.protocols#idx` cannot be applied to `smithy.protocols#InvalidMap$key`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.protocols#InvalidMap$value: Trait `smithy.protocols#idx` cannot be applied to `smithy.protocols#InvalidMap$value`. This trait may only be applied to | TraitTarget

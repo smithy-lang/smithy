@@ -25,6 +25,14 @@ public final class ParserUtils {
      * @return Returns the parsed number lexeme.
      */
     public static String parseNumber(SimpleParser parser) {
+        return parseNumber(parser, false);
+    }
+
+    static String parseNumberToken(SimpleParser parser) {
+        return parseNumber(parser, true);
+    }
+
+    private static String parseNumber(SimpleParser parser, boolean allowTrailingDotDelimiter) {
         int startPosition = parser.position();
         char current = parser.peek();
 
@@ -39,7 +47,7 @@ public final class ParserUtils {
 
         // Consume decimals.
         char peek = parser.peek();
-        if (peek == '.') {
+        if (peek == '.' && !(allowTrailingDotDelimiter && !isDigit(parser.peek(1)))) {
             parser.skip();
             if (parser.consumeWhile(ParserUtils::isDigit) == 0) {
                 throw parser.syntax(createInvalidString(parser, startPosition, "'.' must be followed by a digit"));

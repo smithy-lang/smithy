@@ -349,12 +349,36 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 TRAIT_STATEMENTS.parse(tokenizer);
+                if (tokenizer.getCurrentToken() == IdlToken.NUMBER) {
+                    MEMBER_INDEX.parse(tokenizer);
+                }
                 if (tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.DOLLAR) == IdlToken.DOLLAR) {
                     ELIDED_SHAPE_MEMBER.parse(tokenizer);
                 } else {
                     EXPLICIT_SHAPE_MEMBER.parse(tokenizer);
                 }
                 parseOptionalValueAssignment(tokenizer);
+            });
+        }
+    },
+
+    MEMBER_INDEX {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                // The lossless parser validates the ABNF but not the idx trait's integer range.
+                // Semantic model assembly rejects member indexes that do not fit in a Smithy integer.
+                CharSequence lexeme = tokenizer.getCurrentTokenLexeme();
+                if (!isMemberIndexLexeme(lexeme)) {
+                    throw new ModelSyntaxException(
+                            "Member indexes must match `[1-9][0-9]*`",
+                            tokenizer.getCurrentTokenLocation());
+                }
+                NUMBER.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.DOT);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
             });
         }
     },
@@ -1199,6 +1223,19 @@ public enum TreeType {
         if (tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL) {
             VALUE_ASSIGNMENT.parse(tokenizer);
         }
+    }
+
+    private static boolean isMemberIndexLexeme(CharSequence lexeme) {
+        if (lexeme.length() == 0 || lexeme.charAt(0) < '1' || lexeme.charAt(0) > '9') {
+            return false;
+        }
+        for (int i = 1; i < lexeme.length(); i++) {
+            char c = lexeme.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected static void operationInputOutputDefinition(CapturingTokenizer tokenizer) {

@@ -19,6 +19,7 @@ import java.util.function.Function;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
@@ -47,6 +48,7 @@ import software.amazon.smithy.utils.ListUtils;
 
 final class IdlModelLoader {
 
+    private static final String IDX_TRAIT = "smithy.protocols#idx";
     private static final String PUT_KEY = "put";
     private static final String CREATE_KEY = "create";
     private static final String READ_KEY = "read";
@@ -777,6 +779,10 @@ final class IdlModelLoader {
             }
         }
 
+        Node memberIndex = parseOptionalMemberIndex();
+        if (memberIndex != null) {
+            memberLocation = tokenizer.getCurrentTokenLocation();
+        }
         boolean isTargetElided = tokenizer.getCurrentToken() == IdlToken.DOLLAR;
         if (isTargetElided) {
             tokenizer.expect(IdlToken.DOLLAR);
@@ -834,6 +840,84 @@ final class IdlModelLoader {
         // Only add the member once fully parsed.
         operation.addMember(memberBuilder);
         addTraits(memberBuilder.getId(), memberTraits);
+        if (memberIndex != null) {
+            onDeferredTrait(memberBuilder.getId(), IDX_TRAIT, memberIndex, false);
+        }
+    }
+
+    private Node parseOptionalMemberIndex() {
+        if (tokenizer.getCurrentToken() != IdlToken.NUMBER) {
+            return null;
+        }
+        if (!modelVersion.supportsMemberIndexes()) {
+            throw syntax("Member index syntax requires Smithy IDL version 2.1 or later");
+        }
+
+        SourceLocation location = tokenizer.getCurrentTokenLocation();
+        int value = parseMemberIndexValue(tokenizer.getCurrentTokenLexeme(), location);
+
+        tokenizer.next();
+        tokenizer.skipSpaces();
+        tokenizer.expect(IdlToken.DOT);
+        tokenizer.next();
+        tokenizer.skipSpaces();
+        return new NumberNode(value, location);
+    }
+
+    private int parseMemberIndexValue(CharSequence lexeme, SourceLocation location) {
+        if (isNonPositiveInteger(lexeme)) {
+            throw invalidMemberIndex(location);
+        }
+        if (lexeme.length() == 0 || lexeme.charAt(0) < '1' || lexeme.charAt(0) > '9') {
+            throw malformedMemberIndex(location);
+        }
+
+        int value = lexeme.charAt(0) - '0';
+        for (int i = 1; i < lexeme.length(); i++) {
+            char c = lexeme.charAt(i);
+            if (c < '0' || c > '9') {
+                throw malformedMemberIndex(location);
+            }
+            int digit = c - '0';
+            if (value > (Integer.MAX_VALUE - digit) / 10) {
+                throw LoaderUtils.idlSyntaxError(
+                        "Member indexes must be less than or equal to " + Integer.MAX_VALUE,
+                        location);
+            }
+            value = value * 10 + digit;
+        }
+        return value;
+    }
+
+    private boolean isNonPositiveInteger(CharSequence lexeme) {
+        if (lexeme.length() == 1 && lexeme.charAt(0) == '0') {
+            return true;
+        } else if (lexeme.length() < 2 || lexeme.charAt(0) != '-') {
+            return false;
+        }
+
+        char firstDigit = lexeme.charAt(1);
+        if (firstDigit == '0') {
+            return lexeme.length() == 2;
+        } else if (firstDigit < '1' || firstDigit > '9') {
+            return false;
+        }
+
+        for (int i = 2; i < lexeme.length(); i++) {
+            char c = lexeme.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private ModelSyntaxException invalidMemberIndex(SourceLocation location) {
+        return LoaderUtils.idlSyntaxError("Member indexes must be integers greater than zero", location);
+    }
+
+    private ModelSyntaxException malformedMemberIndex(SourceLocation location) {
+        return LoaderUtils.idlSyntaxError("Member indexes must match [1-9][0-9]*", location);
     }
 
     /**

@@ -63,6 +63,7 @@ public final class Formatter {
         root = new SortUseStatements().apply(root);
         root = new RelocateMemberComments().apply(root);
         root = new FixBadDocComments().apply(root);
+        root = new CanonicalizeMemberIndexes().apply(root);
         root = new RemoveUnusedUseStatements().apply(root);
 
         // Strip trailing spaces from each line.
