@@ -1,0 +1,13 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.protocols#idx": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member"
+                }
+            }
+        }
+    }
+}

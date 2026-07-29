@@ -336,7 +336,7 @@ class DefaultTokenizer implements IdlTokenizer {
 
     private IdlToken parseNumber() {
         try {
-            currentTokenNumber = NumberUtils.parseNumber(ParserUtils.parseNumber(parser));
+            currentTokenNumber = NumberUtils.parseNumber(ParserUtils.parseNumberToken(parser));
             currentTokenEnd = parser.position();
             return currentTokenType = IdlToken.NUMBER;
         } catch (RuntimeException e) {

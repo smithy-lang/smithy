@@ -38,7 +38,8 @@ enum Version {
                     | Feature.DEFAULT
                     | Feature.RESOURCE_PROPERTIES
                     | Feature.INLINE_COLLECTIONS
-                    | Feature.TAGGED_LITERALS);
+                    | Feature.TAGGED_LITERALS
+                    | Feature.MEMBER_INDEXES);
 
     private final String label;
     private final int features;
@@ -146,6 +147,15 @@ enum Version {
     }
 
     /**
+     * Checks if this version of the IDL supports member index syntax.
+     *
+     * @return Returns true if this version supports member indexes.
+     */
+    boolean supportsMemberIndexes() {
+        return supports(Feature.MEMBER_INDEXES);
+    }
+
+    /**
      * Checks if the given shape type is supported in this version.
      *
      * @param shapeType The shape type to check.
@@ -248,6 +258,7 @@ enum Version {
         static final int RESOURCE_PROPERTIES = 1 << 4;
         static final int INLINE_COLLECTIONS = 1 << 5;
         static final int TAGGED_LITERALS = 1 << 6;
+        static final int MEMBER_INDEXES = 1 << 7;
         static final int ALL = ~0;
 
         private Feature() {}
