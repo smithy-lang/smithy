@@ -1,0 +1,9 @@
+[ERROR] smithy.example#Duplicate$second: Duplicate idx value "1" | IndexedTrait
+[ERROR] smithy.example#Gaps$third: idx must start at 1 and increase with no gaps, but no members were found for idx 2 | IndexedTrait
+[ERROR] smithy.example#Gaps$fifth: idx must start at 1 and increase with no gaps, but no members were found for idx 4 | IndexedTrait
+[ERROR] smithy.example#NonOneStart$second: idx must start at 1 and increase with no gaps, but no members were found for idx 1 | IndexedTrait
+[ERROR] smithy.example#Partial$second: Shape `smithy.example#Partial` contains an idx trait, but its member `smithy.example#Partial$second` is missing an idx trait | IndexedTrait
+[ERROR] smithy.example#UsesMixin$local: idx must start at 1 and increase with no gaps, but no members were found for idx 1 | IndexedTrait
+[ERROR] smithy.example#UsesMixin$inherited: Shape `smithy.example#UsesMixin` contains an idx trait, but its member `smithy.example#UsesMixin$inherited` is missing an idx trait | IndexedTrait
+[ERROR] smithy.example#GetInput$missing: Structure `smithy.example#GetInput` is in the closure of an indexed service, but its member `smithy.example#GetInput$missing` is missing an idx trait | IndexedTrait
+[ERROR] smithy.example#GetOutput$missing: Structure `smithy.example#GetOutput` is in the closure of an indexed service, but its member `smithy.example#GetOutput$missing` is missing an idx trait | IndexedTrait
