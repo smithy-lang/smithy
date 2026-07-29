@@ -1,0 +1,93 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.protocols#idx": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member"
+                }
+            }
+        },
+        "smithy.protocols#Common": {
+            "type": "structure",
+            "members": {
+                "inherited": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.protocols#Indexed": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.protocols#Common"
+                }
+            ],
+            "members": {
+                "first": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {},
+                        "smithy.protocols#idx": 1
+                    }
+                },
+                "second": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#default": "value",
+                        "smithy.protocols#idx": 12
+                    }
+                },
+                "index2147483644": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.protocols#idx": 2147483644
+                    }
+                },
+                "index2147483645": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.protocols#idx": 2147483645
+                    }
+                },
+                "index2147483646": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.protocols#idx": 2147483646
+                    }
+                },
+                "equal": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.protocols#idx": 20
+                    }
+                },
+                "values": {
+                    "target": "smithy.protocols#_SyntheticListOfString",
+                    "traits": {
+                        "smithy.protocols#idx": 2147483647
+                    }
+                }
+            }
+        },
+        "smithy.protocols#Indexed$inherited": {
+            "type": "apply",
+            "traits": {
+                "smithy.protocols#idx": 3
+            }
+        },
+        "smithy.protocols#_SyntheticListOfString": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.synthetic#generated": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,1 @@
+The lossless formatter must not assume that IDL 2.1 syntax is valid in a future major version.
