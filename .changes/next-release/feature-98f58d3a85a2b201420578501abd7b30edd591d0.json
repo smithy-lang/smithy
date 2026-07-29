@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added the new `idx` trait to declare the expected wire order of a shape's members as well as the new `indexed` trait to declare that every structure and union in the closure of a service MUST be indexed.",
+  "pull_requests": []
+}

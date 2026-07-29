@@ -1,0 +1,1 @@
+[ERROR] smithy.example#IndexRange$index65536: Error validating trait `smithy.protocols#idx`: Value provided for `smithy.protocols#idx` must be less than or equal to 65535, but found 65536 | TraitValue.Target.InvalidRange
