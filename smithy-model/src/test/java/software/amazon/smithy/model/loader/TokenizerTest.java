@@ -47,6 +47,29 @@ public class TokenizerTest {
     }
 
     @Test
+    public void tokenizesIntegerFollowedByDot() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("1.member 1.0");
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
+        assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("1"));
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.DOT));
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
+        assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("member"));
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.SPACE));
+
+        tokenizer.next();
+        assertThat(tokenizer.getCurrentToken(), is(IdlToken.NUMBER));
+        assertThat(tokenizer.getCurrentTokenLexeme().toString(), equalTo("1.0"));
+    }
+
+    @Test
     public void tokenizesSingleCharacterLexemes() {
         String contents = "\t\r\n\r,@$.:{}()[]# ";
         IdlTokenizer tokenizer = IdlTokenizer.create(contents);

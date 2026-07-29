@@ -31,24 +31,19 @@ public class ParseAndFormatTest {
     @MethodSource("tests")
     public void testRunner(Path filename) {
         Path formattedFile = Paths.get(filename.toString().replace(".smithy", ".formatted.smithy"));
+        Path importsFile = Paths.get(filename.toString().replace(".smithy", ".imports.json"));
+        Path syntaxOnlyFile = Paths.get(filename.toString().replace(".smithy", ".syntax-only"));
         if (!Files.exists(formattedFile)) {
             formattedFile = filename;
         }
 
         // Ensure that the tests can be parsed by smithy-model too.
-        Model.assembler()
-                .addImport(filename)
-                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
-                .disableValidation()
-                .assemble()
-                .unwrap();
-        if (!formattedFile.equals(filename)) {
-            Model.assembler()
-                    .addImport(formattedFile)
-                    .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
-                    .disableValidation()
-                    .assemble()
-                    .unwrap();
+        // Syntax-only cases cover future IDL versions not yet supported by semantic assembly.
+        if (!Files.exists(syntaxOnlyFile)) {
+            assemble(filename, importsFile);
+            if (!formattedFile.equals(filename)) {
+                assemble(formattedFile, importsFile);
+            }
         }
 
         String model = IoUtils.readUtf8File(filename);
@@ -64,6 +59,17 @@ public class ParseAndFormatTest {
         TokenTree reTree = TokenTree.of(reTokenizer);
         String reformatted = Formatter.format(reTree, 120);
         assertEquals(expected, reformatted, "Formatter is not idempotent for " + formattedFile);
+    }
+
+    private void assemble(Path model, Path imports) {
+        ModelAssembler assembler = Model.assembler()
+                .addImport(model)
+                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                .disableValidation();
+        if (Files.exists(imports)) {
+            assembler.addImport(imports);
+        }
+        assembler.assemble().unwrap();
     }
 
     public static List<Path> tests() throws Exception {

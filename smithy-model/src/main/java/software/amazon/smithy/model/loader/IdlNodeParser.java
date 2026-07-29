@@ -71,8 +71,15 @@ final class IdlNodeParser {
                 String shapeId = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
                 return createIdentifier(loader, shapeId, location);
             case NUMBER:
+                SourceLocation numberLocation = tokenizer.getCurrentTokenLocation();
+                String numberLexeme = tokenizer.getCurrentTokenLexeme().toString();
                 Number number = tokenizer.getCurrentTokenNumberValue();
                 tokenizer.next();
+                if (tokenizer.getCurrentToken() == IdlToken.DOT) {
+                    throw LoaderUtils.idlSyntaxError(
+                            "Invalid number '" + numberLexeme + ".': '.' must be followed by a digit",
+                            numberLocation);
+                }
                 return new NumberNode(number, location);
             case LBRACE:
                 return parseObjectNode(loader, location);

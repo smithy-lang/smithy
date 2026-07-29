@@ -481,6 +481,13 @@ documentation for :ref:`shape types <shapes>`.
    referencing a separately defined shape. The assembler creates a synthetic
    shape for the inline declaration.
 
+.. versionadded:: 2.1
+   A member can be prefixed with a positive integer and a period as shorthand
+   for the :ref:`idx trait <idx-trait>`. For example, ``1. name: String`` is
+   equivalent to applying ``@idx(1)`` to ``name``. The shorthand is an IDL 2.1
+   feature, but the ``idx`` and ``indexed`` traits themselves can be used in
+   any supported model or IDL version.
+
 
 .. _shape-id:
 

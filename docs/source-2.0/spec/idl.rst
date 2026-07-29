@@ -204,8 +204,9 @@ string support defined in :rfc:`7405`.
     AggregateTypeName       :%s"list" / %s"map" / %s"union" / %s"structure"
     ForResource             :`SP` %s"for" `SP` `ShapeId`
     ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
-    ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`)
-                            :   [`ValueAssignment`]
+    ShapeMember             :`TraitStatements` [`MemberIndex`]
+                            :   (`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
+    MemberIndex             :%x31-39 *(DIGIT) [`SP`] "." [`SP`]
     ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `MemberTarget`
     ElidedShapeMember       :"$" `Identifier`
     MemberTarget            :`ShapeId` / `InlineListTarget` / `InlineMapTarget`
@@ -225,6 +226,16 @@ string support defined in :rfc:`7405`.
 .. versionadded:: 2.1
    The ``MemberTarget``, ``InlineListTarget``, and ``InlineMapTarget``
    productions were added to support inline collection declarations.
+
+.. versionadded:: 2.1
+   The ``MemberIndex`` production was added to provide shorthand for the
+   :ref:`idx trait <idx-trait>`.
+
+   The grammar does not limit the number of digits in a member index, so
+   syntax-only tools can parse and format values of any magnitude. When
+   assembling a semantic model, the value MUST fit in a Smithy ``integer`` and
+   therefore MUST NOT exceed 2147483647. The :ref:`idx trait <idx-trait>`
+   further constrains valid member indexes to values no greater than 65535.
 
 .. versionadded:: 2.1
    The ``TaggedStringLiteral`` production was added to support tagged
@@ -371,7 +382,8 @@ version greater than or equal to ``2.1`` and less than ``3.0``:
    <idl-inline-collections>`, which allow list and map shapes to be declared
    directly in member target positions, and :ref:`tagged string literals
    <tagged-string-literals>`, which provide alternative syntax for expressing
-   regex patterns, binary data, hex dumps, and timestamps.
+   regex patterns, binary data, hex dumps, and timestamps. It also introduces
+   :ref:`member index shorthand <idx-trait>`.
 
 .. rubric:: Version compatibility
 

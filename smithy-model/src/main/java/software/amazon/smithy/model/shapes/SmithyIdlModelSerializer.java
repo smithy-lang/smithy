@@ -55,6 +55,7 @@ import software.amazon.smithy.utils.StringUtils;
 public final class SmithyIdlModelSerializer {
     private static final String DEFAULT_INLINE_INPUT_SUFFIX = "Input";
     private static final String DEFAULT_INLINE_OUTPUT_SUFFIX = "Output";
+    private static final ShapeId IDX_TRAIT = ShapeId.from("smithy.protocols#idx");
 
     private final Predicate<String> metadataFilter;
     private final Predicate<Shape> shapeFilter;
@@ -73,6 +74,9 @@ public final class SmithyIdlModelSerializer {
     private enum TraitFeature {
         /** Inline documentation traits with other traits as opposed to using /// syntax. */
         NO_SPECIAL_DOCS_SYNTAX,
+
+        /** Serialize idx as an explicit trait instead of using member index syntax. */
+        NO_IDX_SYNTAX,
 
         /** Serializing a member, so special default syntax can be used. */
         MEMBER;
@@ -667,6 +671,21 @@ public final class SmithyIdlModelSerializer {
             }
         }
 
+        private Integer getMemberIndex(Map<ShapeId, Trait> traits) {
+            Trait trait = traits.get(IDX_TRAIT);
+            if (trait == null || !traitFilter.test(trait) || !trait.toNode().isNumberNode()) {
+                return null;
+            }
+            try {
+                return trait.toNode()
+                        .expectNumberNode()
+                        .getValue()
+                        .intValue();
+            } catch (ArithmeticException e) {
+                return null;
+            }
+        }
+
         private String renderInlineCollectionTarget(ShapeId targetId) {
             Shape target = model.expectShape(targetId);
             if (target.isListShape()) {
@@ -719,15 +738,24 @@ public final class SmithyIdlModelSerializer {
                 // The @enumValue trait is serialized using the `=` IDL syntax, so remove it here.
                 introducedTraits.remove(EnumValueTrait.ID);
 
+                // Filter before selecting an apply form to avoid emitting an empty apply statement.
+                introducedTraits.values().removeIf(FunctionalUtils.not(traitFilter));
+
                 // Use short form for a single trait, and block form for multiple traits.
                 if (introducedTraits.size() == 1) {
                     codeWriter.writeInline("apply $I ", member.getId());
-                    serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                    serializeTraits(
+                            introducedTraits,
+                            TraitFeature.NO_SPECIAL_DOCS_SYNTAX,
+                            TraitFeature.NO_IDX_SYNTAX);
                     codeWriter.write("");
                 } else if (!introducedTraits.isEmpty()) {
                     codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
                         // Only serialize local traits, and don't use special documentation syntax here.
-                        serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
+                        serializeTraits(
+                                introducedTraits,
+                                TraitFeature.NO_SPECIAL_DOCS_SYNTAX,
+                                TraitFeature.NO_IDX_SYNTAX);
                     }).write("");
                 }
             }
@@ -739,7 +767,11 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
             boolean noSpecialDocsSyntax = TraitFeature.NO_SPECIAL_DOCS_SYNTAX.hasFeature(traitFeatures);
+            boolean noIdxSyntax = TraitFeature.NO_IDX_SYNTAX.hasFeature(traitFeatures);
             boolean isMember = TraitFeature.MEMBER.hasFeature(traitFeatures);
+            Integer memberIndex = isMember && !noIdxSyntax
+                    ? getMemberIndex(traits)
+                    : null;
 
             // The documentation trait always needs to be serialized first since it uses special syntax.
             if (!noSpecialDocsSyntax && traits.containsKey(DocumentationTrait.ID)) {
@@ -763,9 +795,15 @@ public final class SmithyIdlModelSerializer {
                             return !isMember || !(trait instanceof DefaultTrait);
                         }
                     })
+                    .filter(trait -> memberIndex == null || !trait.toShapeId().equals(IDX_TRAIT))
                     .filter(traitFilter)
                     .sorted(traitComparator)
                     .forEach(this::serializeTrait);
+
+            // Write the shorthand syntax for the idx trait.
+            if (memberIndex != null) {
+                codeWriter.writeInline("$L. ", memberIndex);
+            }
         }
 
         private void serializeDocumentation(String documentation) {
