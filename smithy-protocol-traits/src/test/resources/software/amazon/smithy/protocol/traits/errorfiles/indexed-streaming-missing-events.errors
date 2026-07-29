@@ -1,0 +1,2 @@
+[ERROR] smithy.example#StreamUnion$first: Structure `smithy.example#StreamUnion` is in the closure of an indexed service, but its member `smithy.example#StreamUnion$first` is missing an idx trait | IndexedTrait
+[ERROR] smithy.example#StreamUnion$second: Structure `smithy.example#StreamUnion` is in the closure of an indexed service, but its member `smithy.example#StreamUnion$second` is missing an idx trait | IndexedTrait
