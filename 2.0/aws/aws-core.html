@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../_static/documentation_options.js?v=60dbed4a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
@@ -50,6 +50,7 @@
     <script src="../_static/tabs.js?v=3ee01567"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'aws/aws-core';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="../_static/custom.js?v=0fa699fc"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -59,6 +60,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
 <!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
@@ -66,19 +73,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -104,7 +111,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -160,6 +167,16 @@
     
     <div class="navbar-header-items__end">
       
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
       
         <div class="navbar-item">
 
@@ -171,11 +188,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -188,8 +212,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -197,6 +220,15 @@
     
   </div>
   
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
   
 
   
@@ -258,11 +290,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -275,8 +314,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -627,8 +665,8 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sdkid"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-an-sdk-service-id">Choosing an SDK service ID</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-sdk-service-id-for-client-naming">Using SDK service ID for client naming</a></li>
@@ -642,20 +680,20 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cloudwatchnamespace"><code class="docutils literal notranslate"><span class="pre">cloudWatchNamespace</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#format-of-an-arn">Format of an ARN</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relative-arn-templates">Relative ARN templates</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-an-arn-as-a-resource-identifier">Using an ARN as a resource identifier</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-classifications">Data Classifications</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-controlplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-dataplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#client-endpoint-discovery">Client Endpoint Discovery</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#client-endpoint-discovery">Client Endpoint Discovery</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientendpointdiscovery-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientdiscoveredendpoint-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientendpointdiscoveryid-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
@@ -666,7 +704,7 @@
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait-behavior">Client behavior</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-checksum-algorithms">Supported checksum algorithms</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#http-request-checksums">HTTP request checksums</a></li>
@@ -683,19 +721,19 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behavior-with-httpchecksumrequired">Behavior with <span class="xref std std-ref">httpChecksumRequired</span></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-tagenabled-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-tagenabled-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tagresource"><code class="docutils literal notranslate"><span class="pre">TagResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#untagresource"><code class="docutils literal notranslate"><span class="pre">UntagResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#listtagsforresource"><code class="docutils literal notranslate"><span class="pre">ListTagsForResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#taggable-service-api-config-structure">Taggable service API config structure</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-taggable-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-taggable-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#taggable-resource-api-config-structure">Taggable resource API config structure</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-awschunked-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#awsChunked</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">Appendix</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">Appendix</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
@@ -733,6 +771,8 @@ generate AWS SDK client classes and the namespace used in ARNs.</p>
 <li><p><a class="reference internal" href="#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a></p></li>
 <li><p><a class="reference internal" href="#service-cloudwatch-namespace"><span class="std std-ref">cloudWatchNamespace</span></a></p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The following example defines an AWS service that uses the default values of
@@ -927,6 +967,8 @@ value SHOULD begin with <code class="docutils literal notranslate"><span class="
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait is a structure that supports the following
 members:</p>
@@ -1103,6 +1145,8 @@ resource.</p>
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>Smithy models can refer to AWS resources using ARNs. The
 <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> can be applied to a string shape to indicate
@@ -1189,6 +1233,8 @@ previous example:</p>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
 <code class="docutils literal notranslate"><span class="pre">tagging</span></code>, or <code class="docutils literal notranslate"><span class="pre">permissions</span></code>. See <a class="reference internal" href="#data-classifications"><span class="std std-ref">Data Classifications</span></a> for more
 information.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>Data classifications are resolved hierarchically: the data classification
@@ -1305,6 +1351,8 @@ the <em>control plane</em>.</p>
 </dd>
 <dt>Conflicts with</dt><dd><p><a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>This trait is effectively inherited by shapes bound within a service or
 resource. When applied to a service or resource shape, all resources and
@@ -1332,6 +1380,8 @@ the <em>data plane</em>.</p>
 <dt>Value type</dt><dd><p>Annotation trait</p>
 </dd>
 <dt>Conflicts with</dt><dd><p><a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>This trait is effectively inherited by shapes bound within a service or
@@ -1365,6 +1415,8 @@ returned when the endpoint being accessed has expired.</p>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait is a structure that supports the
@@ -1420,6 +1472,8 @@ should use the client's endpoint discovery logic.</p>
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait is a structure that supports the
 following members:</p>
@@ -1457,6 +1511,8 @@ operation input should be used to discover an endpoint for the service.</p>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation[trait|aws.api#clientDiscoveredEndpoint]</span> <span class="pre">-[input]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member[trait|required]</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
 </dd>
 <dt>Trait value</dt><dd><p>Annotation trait</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 </section>
@@ -1585,6 +1641,8 @@ validation.</p>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpChecksum</span></code> trait is a structure that contains the following members:</p>
@@ -1916,6 +1974,8 @@ services.</p>
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code> trait is a structure that supports the following
 members:</p>
@@ -2141,6 +2201,8 @@ the resource has an <a class="reference internal" href="#aws-api-arn-trait"><spa
 </dd>
 <dt>Trait value</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait is a structure that supports the following
 members:</p>
@@ -2283,6 +2345,8 @@ that contains metadata about the content transferred, such as checksums.</p>
 <p><em>A blob shape marked with the streaming trait</em></p>
 </dd>
 <dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>aws-chunked encoding is a mechanism to collect metadata about a data stream
@@ -2688,8 +2752,8 @@ existing AWS services.</p>
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sdkid"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-an-sdk-service-id">Choosing an SDK service ID</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-sdk-service-id-for-client-naming">Using SDK service ID for client naming</a></li>
@@ -2703,20 +2767,20 @@ existing AWS services.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cloudwatchnamespace"><code class="docutils literal notranslate"><span class="pre">cloudWatchNamespace</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#format-of-an-arn">Format of an ARN</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relative-arn-templates">Relative ARN templates</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-an-arn-as-a-resource-identifier">Using an ARN as a resource identifier</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-classifications">Data Classifications</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-controlplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-dataplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#client-endpoint-discovery">Client Endpoint Discovery</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#client-endpoint-discovery">Client Endpoint Discovery</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientendpointdiscovery-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientdiscoveredendpoint-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-clientendpointdiscoveryid-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
@@ -2727,7 +2791,7 @@ existing AWS services.</p>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#httpChecksum</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-protocols-httpchecksum-trait-behavior">Client behavior</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-checksum-algorithms">Supported checksum algorithms</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#http-request-checksums">HTTP request checksums</a></li>
@@ -2744,19 +2808,19 @@ existing AWS services.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behavior-with-httpchecksumrequired">Behavior with <span class="xref std std-ref">httpChecksumRequired</span></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-tagenabled-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-tagenabled-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#tagEnabled</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tagresource"><code class="docutils literal notranslate"><span class="pre">TagResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#untagresource"><code class="docutils literal notranslate"><span class="pre">UntagResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#listtagsforresource"><code class="docutils literal notranslate"><span class="pre">ListTagsForResource</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#taggable-service-api-config-structure">Taggable service API config structure</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-taggable-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-taggable-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#taggable</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#taggable-resource-api-config-structure">Taggable resource API config structure</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-api-awschunked-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#awsChunked</span></code> trait</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">Appendix</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">Appendix</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
@@ -2808,8 +2872,8 @@ By Amazon Web Services
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

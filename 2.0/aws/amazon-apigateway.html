@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../_static/documentation_options.js?v=60dbed4a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
@@ -50,6 +50,7 @@
     <script src="../_static/tabs.js?v=3ee01567"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'aws/amazon-apigateway';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="../_static/custom.js?v=0fa699fc"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -59,6 +60,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
 <!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
@@ -66,19 +73,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -104,7 +111,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -160,6 +167,16 @@
     
     <div class="navbar-header-items__end">
       
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
       
         <div class="navbar-item">
 
@@ -171,11 +188,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -188,8 +212,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -197,6 +220,15 @@
     
   </div>
   
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
   
 
   
@@ -258,11 +290,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -275,8 +314,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -627,8 +665,8 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication-and-authorization">Authentication and authorization</a><ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication-and-authorization">Authentication and authorization</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apikeyrequired-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeyRequired</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-authorizer-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
@@ -638,7 +676,7 @@
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-and-response-handling">Method and response handling</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-and-response-handling">Method and response handling</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-gatewayresponses-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#gatewayResponses</span></code> trait</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Validation</a></li>
 </ul>
@@ -647,12 +685,12 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-requestvalidator-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrations">Integrations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrations">Integrations</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-integration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apitlspolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-endpointconfiguration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Validation</a></li>
@@ -662,7 +700,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-traits-from-other-namespaces">Related traits from other namespaces</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-trait-data-types">Shared trait data types</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-trait-data-types">Shared trait data types</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contenthandling-string">ContentHandling string</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requestparameters-structure">requestParameters structure</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requesttemplates-structure">requestTemplates structure</a></li>
@@ -703,6 +741,8 @@ plan enforcement.</p>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">Create and Use Usage Plans with API Keys</a> for more information on
 API key enforcement</p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The following example requires an API key on the <code class="docutils literal notranslate"><span class="pre">ListItems</span></code> operation
@@ -765,6 +805,8 @@ usage plans and API keys</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html">x-amazon-apigateway-api-key-source</a> for how this relates to OpenAPI</p></li>
 </ul>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The following example sets the <code class="docutils literal notranslate"><span class="pre">X-API-Key</span></code> header as the API key source.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -807,6 +849,8 @@ authentication, which is configured through <code class="docutils literal notran
 <code class="docutils literal notranslate"><span class="pre">&#64;authorizer</span></code>.</p></li>
 </ul>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -836,6 +880,8 @@ declared through <code class="docutils literal notranslate"><span class="pre">aw
 <li><p><a class="reference internal" href="aws-auth.html#aws-auth-cognitouserpoolsscopes-trait"><span class="std std-ref">aws.auth#cognitoUserPoolsScopes trait</span></a> for per-operation OAuth
 scopes on Cognito-authorized operations.</p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>An <em>authorizer</em> definition is a structure that supports the following members:</p>
@@ -1021,6 +1067,8 @@ extension</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/supported-gateway-response-types.html">Gateway response types</a> for the list of valid response type keys</p></li>
 </ul>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">GatewayResponse</span></code> structure supports the following members:</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -1118,6 +1166,8 @@ on an API Gateway REST API.</p>
 to OpenAPI</p></li>
 </ul>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The following example sets the minimum compression size to 10240 bytes:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -1176,6 +1226,8 @@ to OpenAPI</p></li>
 to OpenAPI</p></li>
 </ul>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The following example enables request validation on a service:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -1222,6 +1274,8 @@ to OpenAPI</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html">x-amazon-apigateway-integration</a> for details on how this looks
 to OpenAPI</p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait is a structure that supports the
@@ -1433,6 +1487,8 @@ customers.</p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait is a structure that supports the
 following members:</p>
@@ -1547,6 +1603,8 @@ endpoint can be accessed.</p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait is a structure that supports the
 following members:</p>
@@ -1628,6 +1686,8 @@ endpoint types</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html">x-amazon-apigateway-endpoint-configuration</a> for the related
 OpenAPI extension</p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait is a structure that
@@ -1715,6 +1775,8 @@ invoke the API.</p>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-resource-policies.html">Resource policies for REST APIs</a> for more information</p></li>
 <li><p><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html">x-amazon-apigateway-policy</a> for how this relates to OpenAPI</p></li>
 </ul>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -2150,8 +2212,8 @@ integration response to two <code class="docutils literal notranslate"><span cla
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication-and-authorization">Authentication and authorization</a><ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication-and-authorization">Authentication and authorization</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apikeyrequired-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeyRequired</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-authorizer-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
@@ -2161,7 +2223,7 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-and-response-handling">Method and response handling</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-and-response-handling">Method and response handling</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-gatewayresponses-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#gatewayResponses</span></code> trait</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Validation</a></li>
 </ul>
@@ -2170,12 +2232,12 @@ integration response to two <code class="docutils literal notranslate"><span cla
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-requestvalidator-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrations">Integrations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrations">Integrations</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-integration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apitlspolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-endpointconfiguration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Validation</a></li>
@@ -2185,7 +2247,7 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-traits-from-other-namespaces">Related traits from other namespaces</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-trait-data-types">Shared trait data types</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-trait-data-types">Shared trait data types</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contenthandling-string">ContentHandling string</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requestparameters-structure">requestParameters structure</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requesttemplates-structure">requestTemplates structure</a></li>
@@ -2243,8 +2305,8 @@ By Amazon Web Services
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

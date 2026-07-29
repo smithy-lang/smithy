@@ -129,6 +129,7 @@ MQTT topic templates MUST adhere to the following constraints:
 
 
 .. smithy-trait:: smithy.mqtt#publish
+    :package: smithy-mqtt-traits
 .. _smithy.mqtt#publish-trait:
 
 -----------------------------
@@ -201,6 +202,7 @@ Publish validation
 
 
 .. smithy-trait:: smithy.mqtt#subscribe
+    :package: smithy-mqtt-traits
 .. _smithy.mqtt#subscribe-trait:
 
 -------------------------------
@@ -295,6 +297,7 @@ Subscribe validation
 
 
 .. smithy-trait:: smithy.mqtt#topicLabel
+    :package: smithy-mqtt-traits
 .. _smithy.mqtt#topicLabel-trait:
 
 --------------------------------

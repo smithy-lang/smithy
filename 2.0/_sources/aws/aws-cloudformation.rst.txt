@@ -20,6 +20,7 @@ Interface`_ to build, register, and deploy `resource providers`_.
 
 
 .. smithy-trait:: aws.cloudformation#cfnResource
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnResource-trait:
 
 ----------------------------------------
@@ -141,6 +142,7 @@ of these structures can be excluded by applying the :ref:`aws.cloudformation#cfn
 
 
 .. smithy-trait:: aws.cloudformation#cfnExcludeProperty
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnExcludeProperty-trait:
 
 -----------------------------------------------
@@ -340,6 +342,7 @@ The computed resource property mutabilities are:
 
 
 .. smithy-trait:: aws.cloudformation#cfnMutability
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnMutability-trait:
 
 ------------------------------------------
@@ -548,6 +551,7 @@ derivable ``secret`` and ``password`` properties as write only:
 
 
 .. smithy-trait:: aws.cloudformation#cfnName
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnName-trait:
 
 ------------------------------------
@@ -592,6 +596,7 @@ the following property names are derived from it:
 
 
 .. smithy-trait:: aws.cloudformation#cfnAdditionalIdentifier
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnAdditionalIdentifier-trait:
 
 ----------------------------------------------------
@@ -657,6 +662,7 @@ The following example defines a CloudFormation resource that has the
     }
 
 .. smithy-trait:: aws.cloudformation#cfnDefaultValue
+    :package: smithy-aws-cloudformation-traits
 .. _aws.cloudformation#cfnDefaultValue-trait:
 
 --------------------------------------------

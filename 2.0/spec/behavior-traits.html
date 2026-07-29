@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=f465e7c3" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../_static/documentation_options.js?v=60dbed4a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
@@ -50,6 +50,7 @@
     <script src="../_static/tabs.js?v=3ee01567"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'spec/behavior-traits';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="../_static/custom.js?v=0fa699fc"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -59,6 +60,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
 <script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
 <script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
 <!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
@@ -66,19 +73,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -104,7 +111,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -160,6 +167,16 @@
     
     <div class="navbar-header-items__end">
       
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
       
         <div class="navbar-item">
 
@@ -171,11 +188,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -188,8 +212,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -197,6 +220,15 @@
     
   </div>
   
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
   
 
   
@@ -258,11 +290,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -275,8 +314,7 @@
           
           
           
-          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -627,8 +665,8 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotency">Idempotency</a><ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotency">Idempotency</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotencytoken-trait"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotent-trait"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#longpoll-trait"><code class="docutils literal notranslate"><span class="pre">longPoll</span></code> trait</a></li>
@@ -636,7 +674,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retryable-trait"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#paginated-trait"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination-behavior">Pagination Behavior</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-behavior">Client behavior</a></li>
@@ -644,7 +682,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backward-compatibility">Backward compatibility</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compression">Compression</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compression">Compression</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requestcompression-trait"><code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-compression-behavior">Request compression behavior</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-implementation">Client Implementation</a></li>
@@ -686,6 +724,8 @@ identify and discard replayed requests.</p>
 </dd>
 <dt>Value type</dt><dd><p>Annotation trait</p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
 </dl>
 <p>Only a single member of the input of an operation can be targeted by the
 <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait; only top-level structure members of the input of an
@@ -720,12 +760,77 @@ request.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
 </dd>
-<dt>Value type</dt><dd><p>Annotation trait</p>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
 <dt>Conflicts with</dt><dd><p><a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
 </dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait is a structure that supports the following optional
+members:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>exists</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Describes the errors returned when the operation is called and the
+resource already exists. Each entry is a shape ID that MUST reference
+a shape with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> that is also in the operation's
+<code class="docutils literal notranslate"><span class="pre">errors</span></code> list. An empty list indicates the operation returns a
+successful response. When omitted, the behavior is unspecified.</p></td>
+</tr>
+<tr class="row-odd"><td><p>notFound</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[string]</span></code></p></td>
+<td><p>Describes the errors returned when the operation is called and the
+resource does not exist. Each entry is a shape ID that MUST reference
+a shape with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> that is also in the operation's
+<code class="docutils literal notranslate"><span class="pre">errors</span></code> list. An empty list indicates the operation returns a
+successful response. When omitted, the behavior is unspecified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only operation-level errors can be used in the <code class="docutils literal notranslate"><span class="pre">exists</span></code> and <code class="docutils literal notranslate"><span class="pre">notFound</span></code>
+properties. Common errors defined in the service shape are not permitted.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">exists</span></code> and <code class="docutils literal notranslate"><span class="pre">notFound</span></code> properties are mutually exclusive; only one
+may be specified on a given operation.</p>
+<p>When applied without any properties, the trait indicates idempotency without
+specifying the response behavior for unexpected resource states.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span>
+}
+</pre></div>
+</div>
+<p>The following example uses <code class="docutils literal notranslate"><span class="pre">exists</span></code> to indicate that a create operation
+returns a <code class="docutils literal notranslate"><span class="pre">ConflictException</span></code> when the resource already exists:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>(<span class="py">exists</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ConflictException</span>])
+<span class="kd">operation </span><span class="nc">CreateSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateSomethingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateSomethingOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ConflictException</span>]
+}
+</pre></div>
+</div>
+<p>The following example uses <code class="docutils literal notranslate"><span class="pre">notFound</span></code> with an empty list to indicate that
+a delete operation returns a successful response when the resource does not
+exist:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>(<span class="py">notFound</span><span class="p">:</span><span class="w"> </span>[])
 <span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span>
@@ -749,6 +854,8 @@ information to become available.</p>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
 </dd>
 </dl>
 <div class="admonition warning">
@@ -810,6 +917,8 @@ wait for a response. This must be greater than 0.</p></td>
 </dd>
 <dt>Conflicts with</dt><dd><p><a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a></p>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
@@ -828,6 +937,8 @@ wait for a response. This must be greater than 0.</p></td>
 <p><em>A structure shape with the error trait</em></p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
 </dd>
 </dl>
 <p>The retryable trait is a structure that contains the following members:</p>
@@ -880,6 +991,8 @@ invocations might be necessary to retrieve all results.</p>
 <p><em>An operation or service</em></p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
 </dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait is a structure that contains the following members:</p>
@@ -1186,6 +1299,8 @@ length of the compressed data to set the <code class="docutils literal notransla
 case-insensitive, supported compression algorithm values.</p></li>
 </ol>
 </dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait is a structure that contains the following
 members:</p>
@@ -1389,8 +1504,8 @@ clients may continue sending compressed requests.</p>
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotency">Idempotency</a><ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotency">Idempotency</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotencytoken-trait"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idempotent-trait"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#longpoll-trait"><code class="docutils literal notranslate"><span class="pre">longPoll</span></code> trait</a></li>
@@ -1398,7 +1513,7 @@ clients may continue sending compressed requests.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retryable-trait"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#paginated-trait"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination-behavior">Pagination Behavior</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-behavior">Client behavior</a></li>
@@ -1406,7 +1521,7 @@ clients may continue sending compressed requests.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backward-compatibility">Backward compatibility</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compression">Compression</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compression">Compression</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requestcompression-trait"><code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#request-compression-behavior">Request compression behavior</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-implementation">Client Implementation</a></li>
@@ -1461,8 +1576,8 @@ By Amazon Web Services
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

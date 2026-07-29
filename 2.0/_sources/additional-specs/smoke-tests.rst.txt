@@ -28,6 +28,7 @@ generated clients against live services to ensure core functionality is working,
 and continues to work as the client and service evolve.
 
 .. smithy-trait:: smithy.test#smokeTests
+    :package: smithy-smoke-test-traits
 .. _smokeTests-trait:
 
 ----------

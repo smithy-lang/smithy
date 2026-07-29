@@ -26,6 +26,7 @@ for a specific protocol.
 
 
 .. smithy-trait:: smithy.test#eventStreamTests
+    :package: smithy-protocol-test-traits
 .. _eventStreamTests-trait:
 
 -----------------
