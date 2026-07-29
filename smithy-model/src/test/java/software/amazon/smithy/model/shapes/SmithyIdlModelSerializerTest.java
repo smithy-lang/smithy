@@ -150,6 +150,40 @@ public class SmithyIdlModelSerializerTest {
     }
 
     @Test
+    public void traitFilterCanRemoveIdxTraitShorthand() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/cases/member-indexes.smithy"))
+                .assemble()
+                .unwrap();
+
+        String result = SmithyIdlModelSerializer.builder()
+                .traitFilter(trait -> !trait.toShapeId().equals(ShapeId.from("smithy.protocols#idx")))
+                .build()
+                .serialize(model)
+                .get(Paths.get("smithy.protocols.smithy"));
+
+        assertThat(result, containsString("value: String"));
+        assertThat(result, not(containsString("1. value")));
+        assertThat(result, not(containsString("@idx")));
+    }
+
+    @Test
+    public void disablesIdxSyntaxForApplyStatements() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/cases/member-indexes.smithy"))
+                .assemble()
+                .unwrap();
+
+        String result = SmithyIdlModelSerializer.builder()
+                .build()
+                .serialize(model)
+                .get(Paths.get("smithy.protocols.smithy"));
+
+        assertThat(result, containsString("apply Mixed$inherited @idx(7)"));
+        assertThat(result, not(containsString("7. $inherited")));
+    }
+
+    @Test
     public void basePathAppliesToMetadataOnlyModel() {
         Path basePath = Paths.get("/tmp/smithytest");
         Model model = Model.assembler()

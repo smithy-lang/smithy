@@ -257,6 +257,162 @@ The following steps are taken to determine the serialization format of a
     liberally can cause other tooling to improperly interpret the timestamp.
 
 
+.. _indexed-shapes:
+
+Indexed shapes
+==============
+
+Some protocols serialize members in a predetermined order so that parsing can
+be made more efficient and wire size can be made more compact. Smithy member
+declaration order has no semantic meaning and can change when a model is
+transformed or converted between representations. Indexed shapes assign
+explicit, stable wire indexes to members, allowing protocols to use a compact,
+ordered representation without relying on source declaration order.
+
+
+.. smithy-trait:: smithy.protocols#idx
+    :package: smithy-protocol-traits
+.. _idx-trait:
+
+``idx`` trait
+-------------
+
+Summary
+    Defines the stable wire index of a structure or union member.
+Trait selector
+    ``:is(structure, union) :not([trait|mixin]) > member``
+
+    *Any member of a structure or union that is not a mixin*
+Value type
+    ``integer`` between 1 and 65535, inclusive
+
+If any member of a structure or union has the ``idx`` trait, every member of
+that shape MUST have a unique ``idx`` value. Values MUST start at 1 and
+increase without gaps.
+
+Changing an existing member's ``idx`` value is a non backward-compatible change
+because it changes the member's wire index. New members are assigned the next
+contiguous value so that existing member indexes remain stable.
+
+Mixins MUST NOT apply ``idx`` to their members. A structure or union that
+uses a mixin MUST index the elided members it consumes:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use smithy.protocols#idx
+
+    @mixin
+    structure Identified {
+        id: String
+    }
+
+    structure Record with [Identified] {
+        @idx(2)
+        value: String
+
+        @idx(1)
+        $id
+    }
+
+Members marked with :ref:`eventHeader <eventHeader-trait>` or
+:ref:`eventPayload <eventPayload-trait>` are exempt from the requirement to
+have an index. Members that target a streaming blob or union are also exempt.
+
+Member index shorthand
+~~~~~~~~~~~~~~~~~~~~~~
+
+IDL 2.1 adds a member-index shorthand that places a positive integer and period
+before an explicit or elided member:
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    structure Record {
+        2. value: String
+        1. id: String
+    }
+
+This example is equivalent to applying the absolute
+``@idx`` trait to each member. It does not require a ``use`` statement, but does
+require that the `smithy-protocol-traits` model is available.
+
+The shorthand syntax and explicit ``@idx`` trait SHOULD NOT be used together.
+If the shorthand and an explicit ``@idx`` application are both used on the
+same member, equal values are treated as a redundant trait application while
+different values produce the normal conflicting-trait error.
+
+Only the shorthand is an IDL 2.1 feature. The ``idx`` trait itself is
+independent of IDL 2.1:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    use smithy.protocols#idx
+
+    structure Record {
+        @idx(2)
+        value: String
+
+        @idx(1)
+        id: String
+    }
+
+
+.. smithy-trait:: smithy.protocols#indexed
+    :package: smithy-protocol-traits
+.. _indexed-trait:
+
+``indexed`` trait
+-----------------
+
+Summary
+    Requires structures and unions in a service closure to use stable member
+    indexes.
+Trait selector
+    ``service``
+
+    *Any service*
+Value type
+    Annotation trait
+
+Every member of every non-mixin structure and union in the
+:ref:`service closure <service-closure>` of an ``indexed`` service MUST be
+targeted by the :ref:`idx trait <idx-trait>`, unless one of its explicit
+exemptions apply.
+
+The following service uses the IDL 2.1 shorthand, but ``indexed`` can also be
+used with explicit ``idx`` traits in earlier IDL versions:
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    use smithy.protocols#indexed
+
+    @indexed
+    service Example {
+        version: "2026-01-01"
+        operations: [GetRecord]
+    }
+
+    operation GetRecord {
+        output: Record
+    }
+
+    structure Record {
+        1. id: String
+        2. value: String
+    }
+
+
 .. _xml-bindings:
 
 XML bindings

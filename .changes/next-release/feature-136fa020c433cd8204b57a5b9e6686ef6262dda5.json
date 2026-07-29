@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added syntax sugar for `idx` traits so that indexes can be defined more concisely. Models serialized with `SmithyIdlModelSerializer` will use this syntax by default and the Smithy formatter will update IDL 2.1+ models to use it.",
+  "pull_requests": []
+}

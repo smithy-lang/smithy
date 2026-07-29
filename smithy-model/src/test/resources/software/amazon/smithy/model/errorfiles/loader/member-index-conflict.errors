@@ -1,0 +1,1 @@
+[ERROR] smithy.protocols#Indexed$first: Conflicting `smithy.protocols#idx` trait found on shape `smithy.protocols#Indexed$first`. | Model

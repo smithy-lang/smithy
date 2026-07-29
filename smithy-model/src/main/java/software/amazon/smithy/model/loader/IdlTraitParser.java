@@ -11,7 +11,6 @@ import java.util.Map;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NullNode;
-import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -176,10 +175,9 @@ final class IdlTraitParser {
                 tokenizer.skipWsAndDocs();
                 return textBlockResult;
             case NUMBER:
-                Number number = tokenizer.getCurrentTokenNumberValue();
-                tokenizer.next();
+                Node numberResult = IdlNodeParser.expectAndSkipNode(loader, location);
                 tokenizer.skipWsAndDocs();
-                return new NumberNode(number, location);
+                return numberResult;
             case TAG:
                 Node tagResult = IdlNodeParser.expectAndSkipNode(loader, location);
                 tokenizer.skipWsAndDocs();
