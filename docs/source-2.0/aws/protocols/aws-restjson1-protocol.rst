@@ -11,6 +11,7 @@ status codes.
 
 
 .. smithy-trait:: aws.protocols#restJson1
+    :package: smithy-aws-traits
 .. _aws.protocols#restJson1-trait:
 
 ---------------------------------

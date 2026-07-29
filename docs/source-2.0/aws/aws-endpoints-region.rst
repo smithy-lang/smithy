@@ -50,6 +50,7 @@ Dual stack Endpoints
     <https://docs.aws.amazon.com/vpc/latest/userguide/aws-ipv6-support.html>`_.
 
 .. smithy-trait:: aws.endpoints#endpointsModifier
+    :package: smithy-aws-endpoints
 .. _aws.endpoints#endpointsModifier-trait:
 
 -----------------------------------------
@@ -113,6 +114,7 @@ can also support configuration settings.
 
 
 .. smithy-trait:: aws.endpoints#standardRegionalEndpoints
+    :package: smithy-aws-endpoints
 .. _aws.endpoints#standardRegionalEndpoints-trait:
 
 -------------------------------------------------
@@ -244,6 +246,7 @@ A ``RegionSpecialCase`` object contains the following properties:
       - Overrides the signingRegion used for this region.
 
 .. smithy-trait:: aws.endpoints#standardPartitionalEndpoints
+    :package: smithy-aws-endpoints
 .. _aws.endpoints#standardPartitionalEndpoints-trait:
 
 ----------------------------------------------------
@@ -340,6 +343,7 @@ A ``PartitionEndpointSpecialCase`` object contains the following properties:
       - When ``true``, the special case will apply to fips endpoint variants.
 
 .. smithy-trait:: aws.endpoints#dualStackOnlyEndpoints
+    :package: smithy-aws-endpoints
 .. _aws.endpoints#dualStackOnlyEndpoints-trait:
 
 ----------------------------------------------
@@ -374,6 +378,7 @@ is dual stack only:
      }
 
 .. smithy-trait:: aws.endpoints#rulesBasedEndpoints
+    :package: smithy-aws-endpoints
 .. _aws.endpoints#rulesBasedEndpoints-trait:
 
 -------------------------------------------

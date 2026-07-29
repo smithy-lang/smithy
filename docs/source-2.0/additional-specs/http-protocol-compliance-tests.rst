@@ -59,6 +59,7 @@ constraints:
 
 
 .. smithy-trait:: smithy.test#httpRequestTests
+    :package: smithy-protocol-test-traits
 .. _httpRequestTests-trait:
 
 ----------------
@@ -316,6 +317,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
 
 .. smithy-trait:: smithy.test#httpResponseTests
+    :package: smithy-protocol-test-traits
 .. _httpResponseTests-trait:
 
 -----------------
@@ -523,6 +525,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
 
 .. smithy-trait:: smithy.test#httpMalformedRequestTests
+    :package: smithy-protocol-test-traits
 .. _httpMalformedRequestTests-trait:
 
 -------------------------

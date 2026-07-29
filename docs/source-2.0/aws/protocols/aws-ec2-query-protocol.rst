@@ -8,6 +8,7 @@ This specification defines the ``aws.protocols#ec2`` protocol.
 
 
 .. smithy-trait:: aws.protocols#ec2Query
+    :package: smithy-aws-traits
 .. _aws.protocols#ec2Query-trait:
 
 --------------------------------
@@ -47,6 +48,7 @@ Value type
 
 
 .. smithy-trait:: aws.protocols#ec2QueryName
+    :package: smithy-aws-traits
 .. _aws.protocols#ec2QueryName-trait:
 
 ------------------------------------
