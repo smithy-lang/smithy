@@ -650,8 +650,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // Synthesize a schema for the body of the request.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        String contextName = context.getService().getContextualName(operation);
-        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName) + "RequestContent";
+        String synthesizedName = getRequestDocumentName(context, operation);
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
@@ -892,9 +891,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         //
         // **NOTE: this same blurb applies to why we do this on input.**
         Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-        String contextName = context.getService().getContextualName(operationOrError);
-        String synthesizedName = stripNonAlphaNumericCharsIfNecessary(context, contextName)
-                + "ResponseContent";
+        String synthesizedName = getResponseDocumentName(context, operationOrError, operation);
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
@@ -902,6 +899,29 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .build();
 
         responseBuilder.putContent(mediaType, mediaTypeObject);
+    }
+
+    private String getRequestDocumentName(Context<T> context, OperationShape operation) {
+        if (context.getConfig().getUseOperationInputOutputShapeNames()
+                && !operation.getInputShape().equals(operation.getOutputShape())) {
+            String shapeName = context.getService().getContextualName(operation.getInputShape());
+            return stripNonAlphaNumericCharsIfNecessary(context, shapeName);
+        }
+
+        String contextName = context.getService().getContextualName(operation);
+        return stripNonAlphaNumericCharsIfNecessary(context, contextName) + "RequestContent";
+    }
+
+    private String getResponseDocumentName(Context<T> context, Shape operationOrError, OperationShape operation) {
+        if (operationOrError instanceof OperationShape
+                && context.getConfig().getUseOperationInputOutputShapeNames()
+                && !operation.getOutputShape().equals(operation.getInputShape())) {
+            String shapeName = context.getService().getContextualName(operation.getOutputShape());
+            return stripNonAlphaNumericCharsIfNecessary(context, shapeName);
+        }
+
+        String contextName = context.getService().getContextualName(operationOrError);
+        return stripNonAlphaNumericCharsIfNecessary(context, contextName) + "ResponseContent";
     }
 
     private String stripNonAlphaNumericCharsIfNecessary(Context<T> context, String name) {

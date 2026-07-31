@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added an OpenAPI setting to name synthesized operation input and output content schemas after their Smithy structure names.",
+  "pull_requests": [
+    "[#3182](https://github.com/smithy-lang/smithy/pull/3182)"
+  ]
+}
