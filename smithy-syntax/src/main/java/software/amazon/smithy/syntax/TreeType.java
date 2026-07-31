@@ -375,10 +375,9 @@ public enum TreeType {
                             tokenizer.getCurrentTokenLocation());
                 }
                 NUMBER.parse(tokenizer);
-                optionalSpaces(tokenizer);
                 tokenizer.expect(IdlToken.DOT);
                 tokenizer.next();
-                optionalSpaces(tokenizer);
+                SP.parse(tokenizer);
             });
         }
     },

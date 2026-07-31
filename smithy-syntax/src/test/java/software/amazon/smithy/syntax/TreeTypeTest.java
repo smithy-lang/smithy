@@ -558,7 +558,7 @@ public class TreeTypeTest {
                 TreeType.TRAIT_STATEMENTS,
                 TreeType.EXPLICIT_SHAPE_MEMBER);
 
-        String indexedExplicit = "@foo\n1 . foo: Bar";
+        String indexedExplicit = "@foo\n1. foo: Bar";
         TokenTree indexedExplicitTree = getTree(TreeType.SHAPE_MEMBER, indexedExplicit);
         assertTreeIsValid(indexedExplicitTree);
         rootAndChildTypesEqual(indexedExplicitTree,
@@ -567,7 +567,7 @@ public class TreeTypeTest {
                 TreeType.MEMBER_INDEX,
                 TreeType.EXPLICIT_SHAPE_MEMBER);
 
-        String indexedElided = "10.$foo";
+        String indexedElided = "10. $foo";
         TokenTree indexedElidedTree = getTree(TreeType.SHAPE_MEMBER, indexedElided);
         assertTreeIsValid(indexedElidedTree);
         rootAndChildTypesEqual(indexedElidedTree,
@@ -579,22 +579,22 @@ public class TreeTypeTest {
 
     @Test
     public void memberIndex() {
-        TokenTree noSpaces = getTree(TreeType.MEMBER_INDEX, "1.");
-        assertTreeIsValid(noSpaces);
+        TokenTree singleSpace = getTree(TreeType.MEMBER_INDEX, "1. ");
+        assertTreeIsValid(singleSpace);
         rootAndChildTypesEqual(
-                noSpaces,
+                singleSpace,
                 TreeType.MEMBER_INDEX,
                 TreeType.NUMBER,
-                TreeType.TOKEN);
+                TreeType.TOKEN,
+                TreeType.SP);
 
         // Magnitude is checked during semantic model assembly, not lossless syntax parsing.
-        TokenTree spaces = getTree(TreeType.MEMBER_INDEX, "99999999999999999999 \t. \t");
+        TokenTree spaces = getTree(TreeType.MEMBER_INDEX, "99999999999999999999. \t");
         assertTreeIsValid(spaces);
         rootAndChildTypesEqual(
                 spaces,
                 TreeType.MEMBER_INDEX,
                 TreeType.NUMBER,
-                TreeType.SP,
                 TreeType.TOKEN,
                 TreeType.SP);
     }
@@ -1672,6 +1672,8 @@ public class TreeTypeTest {
         assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1e2."));
         assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1:"));
         assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1 member:"));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1 . member: String"));
+        assertTreeIsInvalid(getTree(TreeType.MEMBER_INDEX, "1.member: String"));
     }
 
     @Test
