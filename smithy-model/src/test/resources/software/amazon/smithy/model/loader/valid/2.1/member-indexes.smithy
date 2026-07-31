@@ -15,7 +15,7 @@ structure Indexed with [Common] {
     @required
     1. first: String
 
-    12 . second : String = "value",
+    12. second : String = "value",
 
     2147483644. index2147483644: String
     2147483645. index2147483645: String

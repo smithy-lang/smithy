@@ -216,7 +216,7 @@ The shape member grammar is updated as follows:
 ```abnf
 ShapeMember = TraitStatements [MemberIndex]
               (ExplicitShapeMember / ElidedShapeMember) [ValueAssignment]
-MemberIndex = %x31-39 *(DIGIT) [`SP`] "." [`SP`]
+MemberIndex = %x31-39 *(DIGIT) "." `SP`
 ```
 
 The grammar accepts one or more ASCII digits, with a nonzero first digit.
