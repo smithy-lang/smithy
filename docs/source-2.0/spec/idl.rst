@@ -206,7 +206,7 @@ string support defined in :rfc:`7405`.
     ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
     ShapeMember             :`TraitStatements` [`MemberIndex`]
                             :   (`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
-    MemberIndex             :%x31-39 *(DIGIT) [`SP`] "." [`SP`]
+    MemberIndex             :%x31-39 *(DIGIT) "." `SP`
     ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `MemberTarget`
     ElidedShapeMember       :"$" `Identifier`
     MemberTarget            :`ShapeId` / `InlineListTarget` / `InlineMapTarget`
