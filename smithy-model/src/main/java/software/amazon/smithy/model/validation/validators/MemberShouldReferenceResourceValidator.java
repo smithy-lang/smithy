@@ -9,6 +9,7 @@ import static java.lang.String.format;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,9 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
     public List<ValidationEvent> validate(Model model) {
         // There are usually far fewer resources than members, precompute the identifiers
         // so various short circuits can be added.
-        Set<String> identifierNames = getAllIdentifierNames(model);
+        Map<String, Map<ShapeId, Set<ShapeId>>> resourceIdsByIdentifier = getResourceIdsByIdentifier(model);
         // Short circuit validating all the members if we don't have any resources to test.
-        if (identifierNames.isEmpty()) {
+        if (resourceIdsByIdentifier.isEmpty()) {
             return ListUtils.of();
         }
 
@@ -51,7 +52,8 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         List<ValidationEvent> events = new ArrayList<>();
         for (MemberShape member : model.getMemberShapes()) {
             // Only the known identifier names can match for this, skip names that we don't know.
-            if (!identifierNames.contains(member.getMemberName())) {
+            Map<ShapeId, Set<ShapeId>> candidateTargets = resourceIdsByIdentifier.get(member.getMemberName());
+            if (candidateTargets == null) {
                 continue;
             }
             // Only strings can be identifiers, so skip non-String targets.
@@ -59,7 +61,16 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
                 continue;
             }
 
-            Set<ShapeId> potentialReferences = computePotentialReferences(model, reverseProvider, member);
+            Set<ShapeId> candidateResources = candidateTargets.get(member.getTarget());
+            if (candidateResources == null) {
+                continue;
+            }
+
+            Set<ShapeId> potentialReferences = computePotentialReferences(
+                    model,
+                    reverseProvider,
+                    member,
+                    candidateResources);
             if (!potentialReferences.isEmpty()) {
                 events.add(warning(member,
                         format("This member appears to reference the following resources without "
@@ -71,15 +82,24 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         return events;
     }
 
-    private Set<String> getAllIdentifierNames(Model model) {
-        Set<String> identifierNames = new HashSet<>();
+    private Map<String, Map<ShapeId, Set<ShapeId>>> getResourceIdsByIdentifier(Model model) {
+        Map<String, Map<ShapeId, Set<ShapeId>>> result = new HashMap<>();
         for (ResourceShape resource : model.getResourceShapes()) {
-            identifierNames.addAll(resource.getIdentifiers().keySet());
+            for (Map.Entry<String, ShapeId> identifier : resource.getIdentifiers().entrySet()) {
+                result.computeIfAbsent(identifier.getKey(), key -> new HashMap<>())
+                        .computeIfAbsent(identifier.getValue(), key -> new HashSet<>())
+                        .add(resource.getId());
+            }
         }
-        return identifierNames;
+        return result;
     }
 
-    private Set<ShapeId> computePotentialReferences(Model model, NeighborProvider reverseProvider, MemberShape member) {
+    private Set<ShapeId> computePotentialReferences(
+            Model model,
+            NeighborProvider reverseProvider,
+            MemberShape member,
+            Set<ShapeId> candidateResources
+    ) {
         // Exclude any resources already in `@references` on the member or container structure.
         Set<ShapeId> resourcesToIgnore = new HashSet<>();
         ignoreReferencedResources(member, resourcesToIgnore);
@@ -97,17 +117,14 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
 
         // Check each resource in the model for something missed.
         Set<ShapeId> potentialResources = new HashSet<>();
-        for (ResourceShape resource : model.getResourceShapes()) {
+        for (ShapeId resourceId : candidateResources) {
             // Exclude members bound to resource hierarchies from generating events,
             // including for resources that are within the same hierarchy.
-            if (resourcesToIgnore.contains(resource.getId())) {
+            if (resourcesToIgnore.contains(resourceId)) {
                 continue;
             }
 
-            // This member matches the identifier for the resource we're checking, add it to a list.
-            if (isIdentifierMatch(resource, member)) {
-                potentialResources.add(resource.getId());
-            }
+            potentialResources.add(resourceId);
         }
 
         // Clean up any resources added through other paths that should be ignored.
@@ -162,9 +179,4 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         }
     }
 
-    private boolean isIdentifierMatch(ResourceShape resource, MemberShape member) {
-        Map<String, ShapeId> identifiers = resource.getIdentifiers();
-        return identifiers.containsKey(member.getMemberName())
-                && identifiers.get(member.getMemberName()).equals(member.getTarget());
-    }
 }

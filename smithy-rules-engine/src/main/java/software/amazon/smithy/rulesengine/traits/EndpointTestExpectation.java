@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -16,7 +19,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An endpoint test case expectation.
  */
 @SmithyUnstableApi
-public final class EndpointTestExpectation implements FromSourceLocation, ToSmithyBuilder<EndpointTestExpectation> {
+public final class EndpointTestExpectation
+        implements ToNode, FromSourceLocation, ToSmithyBuilder<EndpointTestExpectation> {
     private final SourceLocation sourceLocation;
     private final String error;
     private final ExpectedEndpoint endpoint;
@@ -27,16 +31,23 @@ public final class EndpointTestExpectation implements FromSourceLocation, ToSmit
         this.endpoint = builder.endpoint;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public Optional<String> getError() {
         return Optional.ofNullable(error);
     }
 
     public Optional<ExpectedEndpoint> getEndpoint() {
         return Optional.ofNullable(endpoint);
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        if (error != null) {
+            builder.withMember("error", Node.from(error));
+        } else if (endpoint != null) {
+            builder.withMember("endpoint", endpoint.toNode());
+        }
+        return builder.build();
     }
 
     @Override
@@ -67,6 +78,18 @@ public final class EndpointTestExpectation implements FromSourceLocation, ToSmit
         }
         EndpointTestExpectation that = (EndpointTestExpectation) o;
         return Objects.equals(getError(), that.getError()) && Objects.equals(getEndpoint(), that.getEndpoint());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static EndpointTestExpectation fromNode(Node node) {
+        ObjectNode obj = node.expectObjectNode();
+        Builder builder = builder().sourceLocation(node);
+        obj.getStringMember("error", builder::error);
+        obj.getMember("endpoint", ExpectedEndpoint::fromNode, builder::endpoint);
+        return builder.build();
     }
 
     public static final class Builder implements SmithyBuilder<EndpointTestExpectation> {

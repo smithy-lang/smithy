@@ -485,18 +485,35 @@ After flattening the error hierarchy, the above model is equivalent to:
     }
 
 
-Remove shapes not in the closure of a service
----------------------------------------------
+Remove shapes not in the target closure
+---------------------------------------
 
 Smithy models can contain multiple services and shapes that aren't connected
 to any service. Code generation is often easier if you remove shapes from the
-model that are not connected to the service being generated.
+model that are not in the closure being generated.
+
+When generating a service, the closure is the set of shapes connected to that
+service. A ``Walker`` can be used to easily filter out other shapes:
 
 .. code-block:: java
 
     Walker walker = new Walker(someModel);
     Set<Shape> closure = walker.walkShapes(someService);
     model = ModelTransformer.create().removeShapesIf(shape -> !closure.contains(shape));
+
+When generating a :ref:`shape closure <shape-closures>`, use
+``ModelTransformer.includeClosures`` to reduce the model to one or more named
+closures:
+
+.. code-block:: java
+
+    model = ModelTransformer.create().includeClosures(model, List.of("smithy.example#Events"));
+
+.. note::
+
+    :ref:`directedcodegen` resolves the closure of shapes to generate for you,
+    whether code generation is driven by a service or a shape closure, so you
+    typically only need to do this when working with the model directly.
 
 .. _codegen-selectors:
 

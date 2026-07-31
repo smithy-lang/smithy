@@ -27,8 +27,24 @@ import software.amazon.smithy.model.traits.TitleTrait;
 public final class GenerateServiceDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<ServiceShape, C, S> {
 
-    GenerateServiceDirective(C context, ServiceShape service) {
-        super(context, service, service);
+    /**
+     * @param context Codegen context.
+     * @param service The service shape that is driving code generation, or null when
+     *  code generation is driven by a shape closure.
+     * @param shapeClosureId The shape closure that is driving code generation, or null
+     *  when code generation is driven by a service.
+     * @param shape The service shape to generate. This is the same as {@code service}
+     *  when a service is driving code generation, but differs when a service shape is
+     *  generated as part of a shape closure.
+     */
+    GenerateServiceDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            ServiceShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 
     /**
@@ -65,7 +81,7 @@ public final class GenerateServiceDirective<C extends CodegenContext<S, ?, ?>, S
         Map<ShapeId, PaginationInfo> result = new TreeMap<>();
         PaginatedIndex index = PaginatedIndex.of(model());
         for (OperationShape operation : operations()) {
-            index.getPaginationInfo(service(), operation).ifPresent(i -> result.put(operation.getId(), i));
+            index.getPaginationInfo(shape(), operation).ifPresent(i -> result.put(operation.getId(), i));
         }
         return result;
     }

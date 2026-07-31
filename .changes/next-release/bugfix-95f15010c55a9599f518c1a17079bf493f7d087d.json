@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixes a formatter bug where some trait/node values weren't spread across multiple lines",
-  "pull_requests": [
-    "[#3140](https://github.com/smithy-lang/smithy/pull/3140)"
-  ]
-}

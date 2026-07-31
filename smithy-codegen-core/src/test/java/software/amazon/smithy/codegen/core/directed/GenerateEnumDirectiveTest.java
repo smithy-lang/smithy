@@ -14,7 +14,7 @@ public class GenerateEnumDirectiveTest {
         BooleanShape shape = BooleanShape.builder().id("smithy.example#Foo").build();
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new GenerateEnumDirective<TestContext, TestSettings>(null, null, shape);
+            new GenerateEnumDirective<TestContext, TestSettings>(null, null, null, false, shape);
         });
     }
 }

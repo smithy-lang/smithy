@@ -6,6 +6,7 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,11 +84,21 @@ public final class TraitTargetValidator extends AbstractValidator {
             Selector selector,
             List<ShapeId> traits
     ) {
-        Set<Shape> matches = selector.select(model);
+        Set<Shape> matches;
+        if (selector.isOutputSubsetOfInput()) {
+            Set<Shape> candidates = new HashSet<>();
+            for (ShapeId traitId : traits) {
+                candidates.addAll(model.getShapesWithTrait(traitId));
+            }
+            matches = selector.select(model, new Selector.StartingContext(candidates));
+        } else {
+            matches = selector.select(model);
+        }
 
         for (ShapeId traitId : traits) {
             // Find all shapes that have the used trait applied to it.
-            for (Shape shape : model.getShapesWithTrait(traitId)) {
+            Set<Shape> shapes = model.getShapesWithTrait(traitId);
+            for (Shape shape : shapes) {
                 // Emit events when a shape is applied to something that didn't match the selector.
                 if (!matches.contains(shape)) {
                     // Strip out newlines with successive spaces.

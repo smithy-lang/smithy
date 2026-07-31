@@ -37,27 +37,18 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
             Model model,
             S settings,
             ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
             SymbolProvider symbolProvider,
             FileManifest fileManifest,
             FileManifest sharedFileManifest,
             List<I> integrations
     ) {
-        super(model, settings, service);
+        super(model, settings, service, shapeClosureId, generateDataShapesOnly);
         this.symbolProvider = symbolProvider;
         this.fileManifest = fileManifest;
         this.sharedFileManifest = sharedFileManifest;
         this.integrations = Collections.unmodifiableList(integrations);
-    }
-
-    CreateContextDirective(
-            Model model,
-            S settings,
-            ServiceShape service,
-            SymbolProvider symbolProvider,
-            FileManifest fileManifest,
-            List<I> integrations
-    ) {
-        this(model, settings, service, symbolProvider, fileManifest, null, integrations);
     }
 
     /**
@@ -105,10 +96,15 @@ public final class CreateContextDirective<S, I extends SmithyIntegration<S, ?, ?
      * Get a map of supported protocols on the service shape in the form of shape ID to
      * the definition of the trait.
      *
+     * <p>When code generation is driven by a shape closure rather than a service, there
+     * is no service to query and this returns an empty map.
+     *
      * @return Returns the protocol shape IDs of the service.
      * @see ServiceIndex
      */
     public Map<ShapeId, Trait> supportedProtocols() {
-        return ServiceIndex.of(model()).getProtocols(service());
+        return getService()
+                .map(service -> ServiceIndex.of(model()).getProtocols(service))
+                .orElseGet(Collections::emptyMap);
     }
 }

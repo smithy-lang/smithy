@@ -53,7 +53,7 @@ public class GenerateServiceDirectiveTest {
 
     private GenerateServiceDirective<TestContext, TestSettings> createDirective(String modelFile, ShapeId serviceId) {
         TestContext context = TestContext.create(modelFile, serviceId);
-        return new GenerateServiceDirective<>(context, context.service());
+        return new GenerateServiceDirective<>(context, context.service(), null, false, context.service());
     }
 
     private GenerateServiceDirective<TestContext, TestSettings> createDirective(String modelFile) {

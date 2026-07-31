@@ -17,7 +17,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  */
 public final class GenerateResourceDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<ResourceShape, C, S> {
-    GenerateResourceDirective(C context, ServiceShape service, ResourceShape shape) {
-        super(context, service, shape);
+    GenerateResourceDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            ResourceShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 }

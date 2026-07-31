@@ -7,7 +7,7 @@ package software.amazon.smithy.rulesengine.traits;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -40,9 +40,11 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
 
     @Override
     protected Node createNode() {
-        NodeMapper mapper = new NodeMapper();
-        mapper.setOmitEmptyValues(true);
-        return mapper.serialize(getParameters()).expectObjectNode();
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        for (Map.Entry<String, StaticContextParamDefinition> entry : parameters.entrySet()) {
+            builder.withMember(entry.getKey(), entry.getValue().toNode());
+        }
+        return builder.build();
     }
 
     @Override
@@ -57,10 +59,9 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            NodeMapper mapper = new NodeMapper();
             Map<String, StaticContextParamDefinition> parameters = new LinkedHashMap<>();
             value.expectObjectNode().getMembers().forEach((stringNode, node) -> {
-                parameters.put(stringNode.getValue(), mapper.deserialize(node, StaticContextParamDefinition.class));
+                parameters.put(stringNode.getValue(), StaticContextParamDefinition.fromNode(node));
             });
             StaticContextParamsTrait trait = builder()
                     .sourceLocation(value)

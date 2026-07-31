@@ -25,6 +25,7 @@ Principal traits
 ----------------
 
 .. smithy-trait:: aws.iam#supportedPrincipalTypes
+    :package: smithy-aws-iam-traits
 .. _aws.iam#supportedPrincipalTypes-trait:
 
 ``aws.iam#supportedPrincipalTypes`` trait
@@ -76,6 +77,7 @@ Action traits
 -------------
 
 .. smithy-trait:: aws.iam#iamAction
+    :package: smithy-aws-iam-traits
 .. _aws.iam#iamAction-trait:
 
 ``aws.iam#iamAction`` trait
@@ -195,6 +197,7 @@ Deprecated action traits
 ========================
 
 .. smithy-trait:: aws.iam#actionName
+    :package: smithy-aws-iam-traits
 .. _aws.iam#actionName-trait:
 
 ``aws.iam#actionName`` trait
@@ -240,6 +243,7 @@ The following example defines two operations:
     operation OperationB {}
 
 .. smithy-trait:: aws.iam#actionPermissionDescription
+    :package: smithy-aws-iam-traits
 .. _aws.iam#actionPermissionDescription-trait:
 
 ``aws.iam#actionPermissionDescription`` trait
@@ -270,6 +274,7 @@ Value type
 
 
 .. smithy-trait:: aws.iam#requiredActions
+    :package: smithy-aws-iam-traits
 .. _aws.iam#requiredActions-trait:
 
 ``aws.iam#requiredActions`` trait
@@ -324,6 +329,7 @@ Resource Traits
 ---------------
 
 .. smithy-trait:: aws.iam#iamResource
+    :package: smithy-aws-iam-traits
 .. _aws.iam#iamResource-trait:
 
 ``aws.iam#iamResource`` trait
@@ -387,6 +393,7 @@ Condition key traits
 --------------------
 
 .. smithy-trait:: aws.iam#defineConditionKeys
+    :package: smithy-aws-iam-traits
 .. _aws.iam#defineConditionKeys-trait:
 
 ``aws.iam#defineConditionKeys`` trait
@@ -475,6 +482,7 @@ condition key name is specified, the service is inferred to be the
 
 
 .. smithy-trait:: aws.iam#conditionKeys
+    :package: smithy-aws-iam-traits
 .. _aws.iam#conditionKeys-trait:
 
 ``aws.iam#conditionKeys`` trait
@@ -537,6 +545,7 @@ keys. The ``MyOperation`` operation has the ``aws:region`` condition key.
 
 
 .. smithy-trait:: aws.iam#serviceResolvedConditionKeys
+    :package: smithy-aws-iam-traits
 .. _aws.iam#serviceResolvedConditionKeys-trait:
 
 ``aws.iam#serviceResolvedConditionKeys`` trait
@@ -588,6 +597,7 @@ The following example defines two service-specific condition keys:
 
 
 .. smithy-trait:: aws.iam#conditionKeyValue
+    :package: smithy-aws-iam-traits
 .. _aws.iam#conditionKeyValue-trait:
 
 ``aws.iam#conditionKeyValue`` trait
@@ -654,6 +664,7 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
 
 
 .. smithy-trait:: aws.iam#disableConditionKeyInference
+    :package: smithy-aws-iam-traits
 .. _aws.iam#disableConditionKeyInference-trait:
 
 ``aws.iam#disableConditionKeyInference`` trait

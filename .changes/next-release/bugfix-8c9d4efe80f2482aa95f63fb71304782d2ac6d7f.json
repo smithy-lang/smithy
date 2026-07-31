@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix changelog action for external contributor PRs",
+  "pull_requests": [
+    "[#3220](https://github.com/smithy-lang/smithy/pull/3220)"
+  ]
+}

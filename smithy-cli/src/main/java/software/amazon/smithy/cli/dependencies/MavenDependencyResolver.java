@@ -15,26 +15,21 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession.CloseableSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
+import org.eclipse.aether.supplier.RepositorySystemSupplier;
+import org.eclipse.aether.supplier.SessionBuilderSupplier;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import software.amazon.smithy.build.model.MavenRepository;
@@ -49,9 +44,9 @@ public final class MavenDependencyResolver implements DependencyResolver {
 
     private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
     private final List<Dependency> dependencies = new ArrayList<>();
-    private final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
     private final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
     private final RepositorySystem repositorySystem;
+    private final CloseableSession session;
     private final Proxy commonProxy;
 
     public MavenDependencyResolver() {
@@ -62,19 +57,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
      * @param cacheLocation Maven local cache location.
      */
     public MavenDependencyResolver(String cacheLocation) {
-        final DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-        locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
-            @Override
-            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-                throw new DependencyResolverException(exception);
-            }
-        });
         commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
                 EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
-        repositorySystem = locator.getService(RepositorySystem.class);
 
         // Sets a default maven local to the default local repo of the user.
         if (cacheLocation == null) {
@@ -83,8 +67,26 @@ public final class MavenDependencyResolver implements DependencyResolver {
             LOGGER.fine("Set default Maven local cache location to ~/.m2/repository");
         }
 
-        LocalRepository local = new LocalRepository(cacheLocation);
-        session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, local));
+        // RepositorySystemSupplier replaces the DefaultServiceLocator removed in resolver 2.x. Its default
+        // factories already register the file + Apache HTTP transports and the basic connector, matching the
+        // services this class wired by hand under 1.x. SessionBuilderSupplier likewise reproduces the
+        // dependency traverser/manager/selector, conflict resolver, and artifact type registry that
+        // MavenRepositorySystemUtils.newSession() set up under 1.x, so resolution behavior is preserved.
+        // Both replace the 1.x ServiceLocator error handler by throwing unchecked, so wrap them together.
+        //
+        // The session and repository system are both closeable/shutdownable resources in 2.x, but this resolver
+        // is short-lived (built, used for a single resolve(), then discarded per CLI invocation), so we let
+        // process exit reclaim them rather than thread Closeable through the customer-facing DependencyResolver
+        // SPI. Revisit if this is ever reused in a long-lived or embedded context.
+        try {
+            repositorySystem = new RepositorySystemSupplier().get();
+            session = new SessionBuilderSupplier(repositorySystem)
+                    .get()
+                    .withLocalRepositories(new LocalRepository(cacheLocation))
+                    .build();
+        } catch (RuntimeException e) {
+            throw new DependencyResolverException(e);
+        }
     }
 
     @Override

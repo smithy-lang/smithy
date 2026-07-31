@@ -8,11 +8,15 @@ import static java.lang.String.format;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -139,6 +143,16 @@ final class LoaderUtils {
 
     static ModelSyntaxException idlSyntaxError(String message, SourceLocation location) {
         return idlSyntaxError(null, message, location);
+    }
+
+    static void loadServiceRenameIntoBuilder(ServiceShape.Builder builder, ObjectNode node) {
+        node.getObjectMember("rename").ifPresent(rename -> {
+            for (Map.Entry<StringNode, Node> entry : rename.getMembers().entrySet()) {
+                ShapeId fromId = entry.getKey().expectShapeId();
+                String toName = entry.getValue().expectStringNode().getValue();
+                builder.putRename(fromId, toName);
+            }
+        });
     }
 
     static ModelSyntaxException idlSyntaxError(ShapeId shape, String message, SourceLocation location) {

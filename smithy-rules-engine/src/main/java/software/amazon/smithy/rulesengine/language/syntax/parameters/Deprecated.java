@@ -7,7 +7,6 @@ package software.amazon.smithy.rulesengine.language.syntax.parameters;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 
@@ -58,9 +57,14 @@ public final class Deprecated implements ToNode {
 
     @Override
     public Node toNode() {
-        NodeMapper mapper = new NodeMapper();
-        mapper.disableToNodeForClass(Deprecated.class);
-        return mapper.serialize(this);
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        if (message != null) {
+            builder.withMember(MESSAGE, message);
+        }
+        if (since != null) {
+            builder.withMember(SINCE, since);
+        }
+        return builder.build();
     }
 
     @Override

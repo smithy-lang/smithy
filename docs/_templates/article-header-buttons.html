@@ -1,0 +1,19 @@
+{# Overrides the sphinx-book-theme article header buttons.
+
+   Upstream always appends a theme (color-mode) switcher and a search button
+   here, but we render both in the top navbar (see navbar_end in conf.py), so
+   they would appear twice. This copy keeps the configured header buttons
+   (edit / repo / issues) and the in-page TOC toggle, and drops the duplicate
+   color-mode switcher and search button. #}
+{% from "../macros/buttons.html" import render_funcs with context %}
+
+<div class="article-header-buttons">
+{%- for button in header_buttons -%}
+{% set btype = button.get("type") %}
+{% set bopts = button.copy() %}
+{% set _ = bopts.pop("type") %}
+{{ render_funcs[btype](**bopts) }}
+{%- endfor -%}
+
+{% include "toggle-secondary-sidebar.html" %}
+</div>

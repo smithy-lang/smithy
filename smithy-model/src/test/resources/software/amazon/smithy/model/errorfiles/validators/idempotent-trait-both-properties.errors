@@ -1,0 +1,1 @@
+[ERROR] smithy.example#PutItem: The `exists` and `notFound` properties of the `@idempotent` trait are mutually exclusive. Only one may be specified. | IdempotentTrait

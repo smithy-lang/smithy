@@ -3,6 +3,9 @@ $version: "2.0"
 metadata selectorTests = [
     {
         selector: "[trait|enum]"
+        // The prelude defines enum shapes (e.g. smithy.api#Severity) that carry the synthetic enum trait, so
+        // [trait|enum] legitimately matches them. This case only cares about the user-defined enums.
+        skipPreludeShapes: true
         matches: [
             smithy.example#SimpleEnum
             smithy.example#EnumWithTags

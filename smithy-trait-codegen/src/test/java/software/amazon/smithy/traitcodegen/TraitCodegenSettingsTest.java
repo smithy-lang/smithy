@@ -6,6 +6,7 @@ package software.amazon.smithy.traitcodegen;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
@@ -37,7 +38,8 @@ class TraitCodegenSettingsTest {
                 () -> new TraitCodegenSettings("com.example",
                         namespace,
                         Collections.emptyList(),
-                        Collections.emptyList()));
+                        Collections.emptyList(),
+                        false));
         assertEquals("The `smithy` namespace and its sub-namespaces are reserved.", exception.getMessage());
     }
 
@@ -56,7 +58,8 @@ class TraitCodegenSettingsTest {
                 "com.example",
                 namespace,
                 Collections.emptyList(),
-                Collections.emptyList()));
+                Collections.emptyList(),
+                false));
     }
 
     @ParameterizedTest
@@ -66,7 +69,8 @@ class TraitCodegenSettingsTest {
                 () -> new TraitCodegenSettings(packageName,
                         namespace,
                         Collections.emptyList(),
-                        Collections.emptyList()));
+                        Collections.emptyList(),
+                        false));
     }
 
     static Stream<Arguments> nullParameterCombinations() {
@@ -81,11 +85,13 @@ class TraitCodegenSettingsTest {
                 "com.example",
                 "smithy.foo",
                 Collections.emptyList(),
-                Collections.emptyList());
+                Collections.emptyList(),
+                false);
 
         assertEquals("com.example", settings.packageName());
         assertEquals("smithy.foo", settings.smithyNamespace());
         assertEquals(Collections.emptyList(), settings.headerLines());
         assertEquals(Collections.emptyList(), settings.excludeTags());
+        assertFalse(settings.excludeDeprecatedUnionGetters());
     }
 }

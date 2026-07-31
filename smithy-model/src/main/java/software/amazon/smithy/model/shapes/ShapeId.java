@@ -4,13 +4,10 @@
  */
 package software.amazon.smithy.model.shapes;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
@@ -21,7 +18,7 @@ import software.amazon.smithy.model.node.Node;
  * <p>A shape ID is constructed from an absolute or relative shape
  * reference. A shape reference has the following structure:
  *
- * {@code NAMESPACE#NAME$MEMBER}
+ * <p>{@code NAMESPACE#NAME$MEMBER}
  *
  * <p>An absolute reference contains a namespace and a pound sign.
  * A relative reference omits the namespace and pound sign prefix. In
@@ -42,7 +39,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     private final String namespace;
     private final String name;
     private final String member;
-    private final String absoluteName;
+    private String absoluteName;
     private int hash;
 
     private ShapeId(String absoluteName, String namespace, String name, String member) {
@@ -50,10 +47,6 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         this.name = name;
         this.member = member;
         this.absoluteName = absoluteName;
-    }
-
-    private ShapeId(String namespace, String name, String member) {
-        this(buildAbsoluteIdFromParts(namespace, name, member), namespace, name, member);
     }
 
     /**
@@ -162,16 +155,17 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @throws ShapeIdSyntaxException when the ID is malformed.
      */
     public static ShapeId fromParts(String namespace, String name, String member) {
-        String idFromParts = buildAbsoluteIdFromParts(namespace, name, member);
-        validateParts(idFromParts, namespace, name, member);
-        return new ShapeId(idFromParts, namespace, name, member);
+        validateParts(namespace, name, member);
+        // Pass a null absolute name so it is built lazily only if the ID is ever stringified.
+        return new ShapeId(null, namespace, name, member);
     }
 
-    private static void validateParts(String absoluteId, String namespace, String name, String member) {
+    private static void validateParts(String namespace, String name, String member) {
         if (!isValidNamespace(namespace)
                 || !isValidIdentifier(name)
                 || (member != null && !isValidIdentifier(member))) {
-            throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteId);
+            throw new ShapeIdSyntaxException(
+                    "Invalid shape ID: " + buildAbsoluteIdFromParts(namespace, name, member));
         }
     }
 
@@ -252,7 +246,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             throw new ShapeIdSyntaxException("Invalid shape ID member: " + member);
         }
 
-        return new ShapeId(namespace, name, member);
+        return new ShapeId(null, namespace, name, member);
     }
 
     @Override
@@ -279,7 +273,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         if (member == null) {
             return this;
         } else {
-            return new ShapeId(namespace, name, null);
+            return new ShapeId(null, namespace, name, null);
         }
     }
 
@@ -342,6 +336,18 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     }
 
     /**
+     * Checks whether this ID is a member of the given container ID, i.e. it shares the container's namespace and
+     * name and has a member component. Equivalent to {@code toString().startsWith(container.toString())} for member
+     * IDs, but compares the parts directly so neither absolute name is materialized.
+     *
+     * @param container Candidate container shape ID.
+     * @return True if this ID is a member of {@code container}.
+     */
+    boolean isMemberOf(ShapeId container) {
+        return member != null && name.equals(container.name) && namespace.equals(container.namespace);
+    }
+
+    /**
      * Creates a string that contains a relative reference to the ID.
      *
      * @return Returns a relative shape ID string with no namespace.
@@ -363,25 +369,37 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         } else if (!isValidNamespace(namespace)) {
             throw new ShapeIdSyntaxException("Invalid shape ID: " + namespace);
         } else {
-            return new ShapeId(namespace, name, member);
+            return new ShapeId(null, namespace, name, member);
         }
     }
 
     /**
      * Converts the {@code Id} into a shape ID string.
      *
-     * For example: "com.foo.bar#Baz$member".
+     * <p>For example: "com.foo.bar#Baz$member".
      *
      * @return Returns a shape ID as a string.
      */
     @Override
     public String toString() {
-        return absoluteName;
+        String result = absoluteName;
+        if (result == null) {
+            result = buildAbsoluteIdFromParts(namespace, name, member);
+            absoluteName = result;
+        }
+        return result;
     }
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof ShapeId && other.toString().equals(this.toString());
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof ShapeId)) {
+            return false;
+        } else {
+            ShapeId o = (ShapeId) other;
+            return name.equals(o.name) && Objects.equals(member, o.member) && namespace.equals(o.namespace);
+        }
     }
 
     @Override
@@ -397,64 +415,36 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     }
 
     /**
-     * A least-recently used flyweight factory that creates shape IDs.
-     *
-     * <p>Prelude IDs are stored separately from non-prelude IDs because we can make a reasonable estimate about the
-     * size of the prelude and stop caching IDs when that size is exceeded. Prelude shapes are stored in a
-     * ConcurrentHashMap with a bounded size. Once the size exceeds 500, then items are no longer stored in the cache.
-     * Non-prelude shapes are stored in a bounded, synchronized LRU cache based on {@link LinkedHashMap}.
+     * A bounded flyweight factory that creates shape IDs, striped to reduce lock contention.
      */
     private static final class ShapeIdFactory {
-        private static final int NON_PRELUDE_MAX_SIZE = 8192;
-        private static final int PRELUDE_MAX_SIZE = 500;
-        private static final String PRELUDE_PREFIX = Prelude.NAMESPACE + '#';
-
-        private final Map<String, ShapeId> nonPreludeCache;
-        private final ConcurrentMap<String, ShapeId> preludeCache;
+        private static final int MAX_SIZE = 65536;
+        private static final int STRIPE_COUNT = 32;
+        private static final int STRIPE_MAX_SIZE = MAX_SIZE / STRIPE_COUNT;
+        private final CacheStripe[] stripes;
 
         ShapeIdFactory() {
-            preludeCache = new ConcurrentHashMap<>(PRELUDE_MAX_SIZE);
-
-            // A simple LRU cache based on LinkedHashMap, wrapped in a synchronized map.
-            nonPreludeCache = Collections.synchronizedMap(new LinkedHashMap<String, ShapeId>(
-                    NON_PRELUDE_MAX_SIZE + 1,
-                    1.0f,
-                    true) {
-                @Override
-                protected boolean removeEldestEntry(Map.Entry<String, ShapeId> eldest) {
-                    return this.size() > NON_PRELUDE_MAX_SIZE;
-                }
-            });
+            stripes = new CacheStripe[STRIPE_COUNT];
+            for (int i = 0; i < STRIPE_COUNT; i++) {
+                stripes[i] = new CacheStripe(STRIPE_MAX_SIZE);
+            }
         }
 
         ShapeId create(final String key) {
-            if (key.startsWith(PRELUDE_PREFIX)) {
-                return getPreludeId(key);
-            } else {
-                return getNonPreludeId(key);
-            }
-        }
-
-        private ShapeId getPreludeId(String key) {
-            // computeIfAbsent isn't used here since we need to limit the cache size and creating multiple IDs
-            // simultaneously isn't an issue.
-            ShapeId result = preludeCache.get(key);
+            CacheStripe stripe = stripes[getStripeIndex(key)];
+            ShapeId result = stripe.getCached(key);
             if (result != null) {
                 return result;
+            } else {
+                result = buildShapeId(key);
+                return stripe.putIfAbsentOrGet(key, result);
             }
-
-            // The ID wasn't found so build it, and add it to the cache if the cache isn't too big already.
-            result = buildShapeId(key);
-
-            if (preludeCache.size() <= PRELUDE_MAX_SIZE) {
-                preludeCache.putIfAbsent(key, result);
-            }
-
-            return result;
         }
 
-        private ShapeId getNonPreludeId(String key) {
-            return nonPreludeCache.computeIfAbsent(key, ShapeIdFactory::buildShapeId);
+        private static int getStripeIndex(String key) {
+            int hash = key.hashCode();
+            hash ^= hash >>> 16;
+            return hash & (STRIPE_COUNT - 1);
         }
 
         private static ShapeId buildShapeId(String absoluteShapeId) {
@@ -477,8 +467,35 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
                 memberName = absoluteShapeId.substring(memberPosition + 1);
             }
 
-            validateParts(absoluteShapeId, namespace, name, memberName);
+            validateParts(namespace, name, memberName);
             return new ShapeId(absoluteShapeId, namespace, name, memberName);
+        }
+
+        private static final class CacheStripe extends LinkedHashMap<String, ShapeId> {
+            private final int maxSize;
+
+            CacheStripe(int maxSize) {
+                super((int) (maxSize / 0.75f) + 1, 0.75f, true);
+                this.maxSize = maxSize;
+            }
+
+            synchronized ShapeId getCached(String key) {
+                return get(key);
+            }
+
+            synchronized ShapeId putIfAbsentOrGet(String key, ShapeId value) {
+                ShapeId previous = get(key);
+                if (previous != null) {
+                    return previous;
+                }
+                put(key, value);
+                return value;
+            }
+
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, ShapeId> eldest) {
+                return size() > maxSize;
+            }
         }
     }
 }

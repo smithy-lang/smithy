@@ -1,0 +1,22 @@
+{
+    "smithy": "2.0",
+    "metadata": {"foo": "bar"},
+    "shapes": {
+        "smithy.example#MyString": {
+            "type": "string",
+            "traits": {"smithy.api#documentation": "A string."}
+        },
+        "smithy.example#MyStruct": {
+            "type": "structure",
+            "members": {
+                "name": {"target": "smithy.example#MyString", "traits": {"smithy.api#required": {}}},
+                "count": {"target": "smithy.api#Integer"}
+            }
+        },
+        "smithy.example#MyOp": {
+            "type": "operation",
+            "input": {"target": "smithy.example#MyStruct"},
+            "output": {"target": "smithy.api#Unit"}
+        }
+    }
+}

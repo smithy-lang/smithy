@@ -20,8 +20,14 @@ import software.amazon.smithy.model.traits.EnumTrait;
  */
 public final class GenerateEnumDirective<C extends CodegenContext<S, ?, ?>, S> extends ShapeDirective<Shape, C, S> {
 
-    GenerateEnumDirective(C context, ServiceShape service, Shape shape) {
-        super(context, service, validateShape(shape));
+    GenerateEnumDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            Shape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, validateShape(shape));
     }
 
     private static Shape validateShape(Shape shape) {

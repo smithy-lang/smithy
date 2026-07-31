@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fixed a bug where comments trailing unused imports were being improperly removed during formatting.",
-  "pull_requests": [
-    "[#3152](https://github.com/smithy-lang/smithy/pull/3152)"
-  ]
-}

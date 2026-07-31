@@ -6,6 +6,8 @@ package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -14,19 +16,22 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An operation static context parameter definition.
  */
 @SmithyUnstableApi
-public final class StaticContextParamDefinition implements ToSmithyBuilder<StaticContextParamDefinition> {
+public final class StaticContextParamDefinition implements ToNode, ToSmithyBuilder<StaticContextParamDefinition> {
     private final Node value;
 
     private StaticContextParamDefinition(Builder builder) {
         this.value = SmithyBuilder.requiredState("value", builder.value);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public Node getValue() {
         return value;
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNodeBuilder()
+                .withMember("value", value)
+                .build();
     }
 
     @Override
@@ -49,6 +54,15 @@ public final class StaticContextParamDefinition implements ToSmithyBuilder<Stati
         }
         StaticContextParamDefinition that = (StaticContextParamDefinition) o;
         return getValue().equals(that.getValue());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static StaticContextParamDefinition fromNode(Node node) {
+        ObjectNode obj = node.expectObjectNode();
+        return builder().value(obj.expectMember("value")).build();
     }
 
     public static final class Builder implements SmithyBuilder<StaticContextParamDefinition> {

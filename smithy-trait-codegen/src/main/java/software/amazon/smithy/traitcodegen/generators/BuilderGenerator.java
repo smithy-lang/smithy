@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -571,6 +572,10 @@ final class BuilderGenerator implements Runnable {
 
         @Override
         public Void memberShape(MemberShape memberShape) {
+            if (memberShape.getMemberTrait(model, IdRefTrait.class).isPresent()) {
+                writer.write("$T.from($S)", ShapeId.class, defaultValue.expectStringNode().getValue());
+                return null;
+            }
             return model.expectShape(memberShape.getTarget()).accept(this);
         }
 

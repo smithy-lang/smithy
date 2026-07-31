@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
@@ -82,7 +81,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     private final Map<ShapeType.Category, Set<? extends Shape>> cachedCategories = new ConcurrentHashMap<>();
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
-    private final Map<String, KnowledgeIndex> blackboard = new ConcurrentSkipListMap<>();
+    private final Map<String, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
 
     /** Lazily computed trait mappings. */
     private volatile TraitCache traitCache;
@@ -913,7 +912,20 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     @SuppressWarnings("unchecked")
     public <T extends KnowledgeIndex> T getKnowledge(Class<T> type, Function<Model, T> constructor) {
-        return (T) blackboard.computeIfAbsent(type.getName(), t -> constructor.apply(this));
+        // Don't use computeIfAbsent: a KnowledgeIndex constructor commonly requests other knowledge indexes, which
+        // re-enters this method and modifies the same map. ConcurrentHashMap forbids recursive updates inside a
+        // computeIfAbsent mapping function and throws. Construct outside the map, then putIfAbsent so concurrent
+        // callers converge on a single instance.
+        String key = type.getName();
+        KnowledgeIndex index = blackboard.get(key);
+        if (index == null) {
+            index = constructor.apply(this);
+            KnowledgeIndex existing = blackboard.putIfAbsent(key, index);
+            if (existing != null) {
+                index = existing;
+            }
+        }
+        return (T) index;
     }
 
     /**

@@ -6,6 +6,7 @@ plugins {
     id("smithy.module-conventions")
     id("smithy.smithy-format-conventions")
     id("smithy.profiling-conventions")
+    id("smithy.fuzz-test-conventions")
 }
 
 description = "This module provides the core implementation of loading, validating, " +

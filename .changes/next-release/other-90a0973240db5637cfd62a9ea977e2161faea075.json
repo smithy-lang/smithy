@@ -1,7 +1,0 @@
-{
-  "type": "other",
-  "description": "Formatted all smithy source files and added a formatting task to ensure they stay up to date.",
-  "pull_requests": [
-    "[#3141](https://github.com/smithy-lang/smithy/pull/3142)"
-  ]
-}

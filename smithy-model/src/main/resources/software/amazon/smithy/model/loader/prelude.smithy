@@ -428,6 +428,9 @@ structure ShapeClosure {
     /// - A rename MUST use a name that is case-sensitively different
     ///   from the original shape id name.
     rename: Renames = {}
+
+    /// Documentation for the shape closure in CommonMark format.
+    documentation: CommonMark
 }
 
 /// An identifier for a closure. This matches the shape id format.
@@ -475,6 +478,12 @@ map Renames {
     /// The new name for the shape.
     value: Identifier
 }
+
+/// A string containing CommonMark-formatted text.
+@private
+@externalDocumentation("CommonMark Specification": "https://commonmark.org/")
+@mediaType("text/markdown; charset=UTF-8; variant=CommonMark")
+string CommonMark
 
 /// A string matching the `Identifier` ABNF production used for shape names.
 @private
@@ -609,7 +618,23 @@ structure readonly {}
         }
     ]
 )
-structure idempotent {}
+structure idempotent {
+    /// Describes the errors returned when the operation is called and the
+    /// resource already exists. Applicable to create lifecycle operations.
+    /// An empty list indicates the operation returns a successful response.
+    exists: IdempotentErrors
+
+    /// Describes the errors returned when the operation is called and the
+    /// resource does not exist. Applicable to delete lifecycle operations.
+    /// An empty list indicates the operation returns a successful response.
+    notFound: IdempotentErrors
+}
+
+@private
+list IdempotentErrors {
+    @idRef(selector: "[trait|error]")
+    member: String
+}
 
 /// Defines the input member of an operation that is used by the server to
 /// identify and discard replayed requests.

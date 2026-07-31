@@ -8,6 +8,7 @@ This specification defines the ``aws.protocols#awsJson1_1`` protocol.
 
 
 .. smithy-trait:: aws.protocols#awsJson1_1
+    :package: smithy-aws-traits
 .. _aws.protocols#awsJson1_1-trait:
 
 ----------------------------------

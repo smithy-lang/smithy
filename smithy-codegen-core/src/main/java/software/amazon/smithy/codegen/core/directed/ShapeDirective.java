@@ -22,8 +22,8 @@ public abstract class ShapeDirective<T extends Shape, C extends CodegenContext<S
     private final T shape;
     private final Symbol symbol;
 
-    ShapeDirective(C context, ServiceShape service, T shape) {
-        super(context, service);
+    ShapeDirective(C context, ServiceShape service, String shapeClosureId, boolean generateDataShapesOnly, T shape) {
+        super(context, service, shapeClosureId, generateDataShapesOnly);
         this.shape = shape;
         this.symbol = symbolProvider().toSymbol(shape);
     }

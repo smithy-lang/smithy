@@ -147,8 +147,12 @@ public final class ParserUtils {
         // Parse identifier_start
         char c = parser.peek();
         if (c == '_') {
-            parser.consumeWhile(next -> next == '_');
-            if (!ParserUtils.isValidIdentifierCharacter(parser.peek())) {
+            do {
+                parser.skipNonNewline();
+                c = parser.peek();
+            } while (c == '_');
+
+            if (!ParserUtils.isValidIdentifierCharacter(c)) {
                 throw invalidIdentifier(parser);
             }
         } else if (!isAlphabetic(c)) {
@@ -156,10 +160,12 @@ public final class ParserUtils {
         }
 
         // Skip the first character since it's known to be valid.
-        parser.skip();
+        parser.skipNonNewline();
 
         // Parse identifier_chars
-        parser.consumeWhile(ParserUtils::isValidIdentifierCharacter);
+        while (isValidIdentifierCharacter(parser.peek())) {
+            parser.skipNonNewline();
+        }
     }
 
     private static RuntimeException invalidIdentifier(SimpleParser parser) {

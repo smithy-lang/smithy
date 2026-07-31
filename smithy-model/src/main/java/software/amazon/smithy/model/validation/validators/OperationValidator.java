@@ -150,9 +150,10 @@ public final class OperationValidator extends AbstractValidator {
     }
 
     private void validateOperationNameAmbiguity(Model model, OperationShape operation, List<ValidationEvent> events) {
+        ShapeId operationId = operation.getId();
         ShapeId input = operation.getInputShape();
         for (String suffix : INPUT_SUFFIXES) {
-            ShapeId test = ShapeId.from(operation.getId().toShapeId() + suffix);
+            ShapeId test = ShapeId.fromParts(operationId.getNamespace(), operationId.getName() + suffix);
             if (!test.equals(input)) {
                 model.getShape(test).ifPresent(ambiguousShape -> {
                     events.add(createAmbiguousEvent(ambiguousShape, operation, input, "input"));
@@ -162,7 +163,7 @@ public final class OperationValidator extends AbstractValidator {
 
         ShapeId output = operation.getOutputShape();
         for (String suffix : OUTPUT_SUFFIXES) {
-            ShapeId test = ShapeId.from(operation.getId().toShapeId() + suffix);
+            ShapeId test = ShapeId.fromParts(operationId.getNamespace(), operationId.getName() + suffix);
             if (!test.equals(output)) {
                 model.getShape(test).ifPresent(ambiguousShape -> {
                     events.add(createAmbiguousEvent(ambiguousShape, operation, output, "output"));

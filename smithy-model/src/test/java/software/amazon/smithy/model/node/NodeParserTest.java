@@ -253,4 +253,14 @@ public class NodeParserTest {
 
         assertThat(e.getMessage(), startsWith("Error parsing JSON: "));
     }
+
+    @Test
+    public void throwsModelSyntaxForNumbersBiggerThanBigDecimalAccepts() {
+        // A JSON-grammar-valid numeric literal whose exponent BigDecimal refuses to parse must surface
+        // as a ModelSyntaxException, not a raw NumberFormatException. (Found by fuzzing.)
+        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
+                () -> Node.parse("11e10000000000000022"));
+
+        assertThat(e.getMessage(), startsWith("Invalid number "));
+    }
 }

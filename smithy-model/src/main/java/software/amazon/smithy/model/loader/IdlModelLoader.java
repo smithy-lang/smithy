@@ -861,7 +861,7 @@ final class IdlModelLoader {
         optionalIdList(shapeNode, OPERATIONS_KEY, builder::addOperation);
         optionalIdList(shapeNode, RESOURCES_KEY, builder::addResource);
         optionalIdList(shapeNode, ERRORS_KEY, builder::addError);
-        AstModelLoader.loadServiceRenameIntoBuilder(builder, shapeNode);
+        LoaderUtils.loadServiceRenameIntoBuilder(builder, shapeNode);
         operations.accept(operation);
     }
 

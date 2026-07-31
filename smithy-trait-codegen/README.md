@@ -47,6 +47,7 @@ The generator supports the following configuration options:
 | `namespace` | Smithy namespace to search for traits | Yes |
 | `header` | Header lines to include in generated files | Yes |
 | `excludeTags` | Smithy tags to exclude from generation | No |
+| `excludeDeprecatedUnionGetters` | Omit the deprecated, type-erased `getValue()` accessor from generated union traits, leaving only the type-safe `getContents()` getter. Defaults to `false`. | No |
 
 An example for `smithy-build.json`:
 

@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Clean orphaned endpoint ruleset params after shape removal",
+  "pull_requests": [
+    "[#3219](https://github.com/smithy-lang/smithy/pull/3219)"
+  ]
+}

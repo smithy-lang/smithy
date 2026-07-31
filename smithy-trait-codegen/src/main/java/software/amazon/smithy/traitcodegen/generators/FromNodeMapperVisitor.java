@@ -129,7 +129,7 @@ final class FromNodeMapperVisitor extends ShapeVisitor.DataShapeVisitor<Void> {
         if (nestedLevel > 0) {
             writer.write("$T<$T, $T> $L = new $T<>();",
                     Map.class,
-                    String.class,
+                    symbolProvider.toSymbol(shape.getKey()),
                     symbolProvider.toSymbol(shape.getValue()),
                     "value" + nestedLevel,
                     LinkedHashMap.class);

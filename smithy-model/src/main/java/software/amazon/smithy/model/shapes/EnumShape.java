@@ -93,6 +93,16 @@ public final class EnumShape extends StringShape {
         return super.findTrait(id);
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean hasTrait(ShapeId id) {
+        // Mirror findTrait, so an enum shape responds to the smithy.api#enum trait via its synthetic enum trait.
+        if (id.equals(EnumTrait.ID)) {
+            return super.hasTrait(SyntheticEnumTrait.ID);
+        }
+        return super.hasTrait(id);
+    }
+
     public static Builder builder() {
         return new Builder();
     }

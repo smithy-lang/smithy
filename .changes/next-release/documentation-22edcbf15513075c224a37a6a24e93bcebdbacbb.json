@@ -1,0 +1,7 @@
+{
+  "type": "documentation",
+  "description": "Updated trait docs to show what package the trait is defined in.",
+  "pull_requests": [
+    "[#3217](https://github.com/smithy-lang/smithy/pull/3217)"
+  ]
+}

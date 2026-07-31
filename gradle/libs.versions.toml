@@ -1,22 +1,25 @@
 [versions]
-junit = "6.1.0"
+junit = "6.1.2"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
-spotless = "8.6.0"
+spotless = "8.8.0"
 smithy-gradle = "1.4.0"
 assertj = "3.27.7"
 prettier4j = "0.3.0"
 maven-resolver-provider = "3.9.16"
-# TODO: upgrade major version
-maven-resolver = "1.9.27"
-slf4j = "1.7.36"
-mockserver = "5.15.0"
+# Resolver 2.x core, paired with the Maven 3.9.x provider via maven-resolver-supplier-mvn3.
+# Staying on the Maven 3 provider keeps the Java 8 baseline, upgrading to Maven 4 will
+# require bumping the runtime Java version to 17.
+maven-resolver = "2.0.20"
+slf4j = "2.0.18"
+mockserver = "7.4.0"
 compile-testing = "0.23.0"
 json-schema = "1.12.1"
-shadow = "9.4.2"
+shadow = "9.6.1"
 api-guardian = "1.1.2"
-jreleaser = "1.24.0"
+jazzer = "0.30.0"
+jreleaser = "1.25.0"
 runtime = "2.0.1"
 gradle-checksum = "1.4.0"
 
@@ -31,7 +34,16 @@ maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util"
 maven-resolver-impl = { module = "org.apache.maven.resolver:maven-resolver-impl", version.ref =  "maven-resolver" }
 maven-resolver-connector-basic = { module = "org.apache.maven.resolver:maven-resolver-connector-basic", version.ref =  "maven-resolver" }
 maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-resolver-transport-file", version.ref =  "maven-resolver" }
-maven-resolver-transport-http = { module = "org.apache.maven.resolver:maven-resolver-transport-http", version.ref =  "maven-resolver" }
+
+# Resolver 2.x replaced transport-http with transport-apache (same Apache HttpClient 4.5 engine).
+# There's now alternate http transport implementations, but for now we're keeping the same
+# behavior.
+maven-resolver-transport-apache = { module = "org.apache.maven.resolver:maven-resolver-transport-apache", version.ref =  "maven-resolver" }
+
+# Supplier replaces the removed DefaultServiceLocator bootstrap. The mvn3 variant keeps Maven 3
+# semantics. We may eventually want to upgrade to Maven 4, but that'll require a runtime Java
+# version bump to 17+.
+maven-resolver-supplier = { module = "org.apache.maven.resolver:maven-resolver-supplier-mvn3", version.ref =  "maven-resolver" }
 
 slf4j-jul = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j" }
 
@@ -47,6 +59,7 @@ mockserver = { module = "org.mock-server:mockserver-netty", version.ref = "mocks
 compile-testing = { module = "com.google.testing.compile:compile-testing", version.ref = "compile-testing" }
 json-schema-validator = { module = "com.github.everit-org.json-schema:org.everit.json.schema", version.ref = "json-schema" }
 apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "api-guardian" }
+jazzer-junit = { module = "com.code-intelligence:jazzer-junit", version.ref = "jazzer" }
 
 # plugin artifacts for buildsrc plugins
 spotbugs = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }

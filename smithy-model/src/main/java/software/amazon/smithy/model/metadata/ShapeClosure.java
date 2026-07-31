@@ -39,6 +39,7 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
     private final Set<String> includeNamespaces;
     private final String includeBySelector;
     private final Map<ShapeId, String> rename;
+    private final String documentation;
     private final SourceLocation sourceLocation;
 
     private ShapeClosure(Builder builder) {
@@ -46,6 +47,7 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         includeNamespaces = builder.includeNamespaces.copy();
         includeBySelector = builder.includeBySelector;
         rename = builder.rename.copy();
+        documentation = builder.documentation;
         sourceLocation = builder.sourceLocation;
     }
 
@@ -157,6 +159,15 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         return rename;
     }
 
+    /**
+     * Gets the documentation for the closure.
+     *
+     * @return the documentation for the closure.
+     */
+    public Optional<String> getDocumentation() {
+        return Optional.ofNullable(documentation);
+    }
+
     @Override
     public SourceLocation getSourceLocation() {
         return sourceLocation;
@@ -214,6 +225,7 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         private final BuilderRef<Set<String>> includeNamespaces = BuilderRef.forOrderedSet();
         private String includeBySelector;
         private final BuilderRef<Map<ShapeId, String>> rename = BuilderRef.forOrderedMap();
+        private String documentation;
         private SourceLocation sourceLocation = SourceLocation.NONE;
 
         private Builder() {}
@@ -242,6 +254,11 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         public Builder rename(Map<ShapeId, String> rename) {
             this.rename.clear();
             this.rename.get().putAll(rename);
+            return this;
+        }
+
+        public Builder documentation(String documentation) {
+            this.documentation = documentation;
             return this;
         }
 

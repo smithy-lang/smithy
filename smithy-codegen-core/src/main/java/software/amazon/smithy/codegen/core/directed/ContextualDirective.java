@@ -19,8 +19,8 @@ public abstract class ContextualDirective<C extends CodegenContext<S, ?, ?>, S> 
 
     private final C context;
 
-    ContextualDirective(C context, ServiceShape service) {
-        super(context.model(), context.settings(), service);
+    ContextualDirective(C context, ServiceShape service, String shapeClosureId, boolean generateDataShapesOnly) {
+        super(context.model(), context.settings(), service, shapeClosureId, generateDataShapesOnly);
         this.context = context;
     }
 

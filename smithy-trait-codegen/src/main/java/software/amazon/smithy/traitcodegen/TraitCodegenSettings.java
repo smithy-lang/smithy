@@ -28,6 +28,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  *     <dt>"excludeTags" ({@code List<String>})</dt>
  *     <dd>List of Smithy tags to use for filtering out trait shapes
  *     from the trait code generation process.</dd>
+ *     <dt>"excludeDeprecatedUnionGetters" ({@code boolean})</dt>
+ *     <dd>Omit the deprecated, type-erased {@code getValue()} accessor from generated union traits, leaving only
+ *     the type-safe {@code getContents()} getter. Defaults to {@code false} so that existing code continues to
+ *     compile.</dd>
  * </dl>
  */
 @SmithyUnstableApi
@@ -46,6 +50,7 @@ public final class TraitCodegenSettings {
     private final String smithyNamespace;
     private final List<String> headerLines;
     private final List<String> excludeTags;
+    private final boolean excludeDeprecatedUnionGetters;
 
     /**
      * Settings for trait code generation. These can be set in the
@@ -57,12 +62,15 @@ public final class TraitCodegenSettings {
      *                    license header or copyright header that should be included in all generated files.
      * @param excludeTags smithy tags to exclude from trait code generation. Traits with these tags will be
      *                    ignored when generating java classes.
+     * @param excludeDeprecatedUnionGetters if true, the deprecated type-erased union {@code getValue()} accessor
+     *                                      is omitted from generated code.
      */
     TraitCodegenSettings(
             String packageName,
             String smithyNamespace,
             List<String> headerLines,
-            List<String> excludeTags
+            List<String> excludeTags,
+            boolean excludeDeprecatedUnionGetters
     ) {
         this.packageName = Objects.requireNonNull(packageName);
         if (isReservedNamespace(smithyNamespace)) {
@@ -71,6 +79,7 @@ public final class TraitCodegenSettings {
         this.smithyNamespace = Objects.requireNonNull(smithyNamespace);
         this.headerLines = Objects.requireNonNull(headerLines);
         this.excludeTags = Objects.requireNonNull(excludeTags);
+        this.excludeDeprecatedUnionGetters = excludeDeprecatedUnionGetters;
     }
 
     /**
@@ -87,7 +96,8 @@ public final class TraitCodegenSettings {
                         .getElementsAs(el -> el.expectStringNode().getValue()),
                 node.getArrayMember("excludeTags")
                         .map(n -> n.getElementsAs(el -> el.expectStringNode().getValue()))
-                        .orElse(Collections.emptyList()));
+                        .orElse(Collections.emptyList()),
+                node.getBooleanMemberOrDefault("excludeDeprecatedUnionGetters", false));
     }
 
     /**
@@ -124,6 +134,15 @@ public final class TraitCodegenSettings {
      */
     public List<String> excludeTags() {
         return excludeTags;
+    }
+
+    /**
+     * Whether the deprecated, type-erased union {@code getValue()} accessor is omitted from generated code.
+     *
+     * @return true if the deprecated union getter should be excluded
+     */
+    public boolean excludeDeprecatedUnionGetters() {
+        return excludeDeprecatedUnionGetters;
     }
 
     /**

@@ -82,7 +82,12 @@ structure awsQueryError {
 
 /// Enable backward compatibility when migrating from awsQuery to the awsJson
 /// protocol or Smithy RPC v2 CBOR.
-@trait(selector: "service :test([trait|aws.protocols#awsJson1_0], [trait|smithy.protocols#rpcv2Cbor])")
+@trait(
+    selector: """
+        service :test([trait|aws.protocols#awsJson1_0],
+                      [trait|smithy.protocols#rpcv2Cbor],
+                      [trait|smithy.protocols#rpcv2Json])"""
+)
 structure awsQueryCompatible {}
 
 /// An RPC-based protocol that sends 'POST' requests in the body as Amazon EC2

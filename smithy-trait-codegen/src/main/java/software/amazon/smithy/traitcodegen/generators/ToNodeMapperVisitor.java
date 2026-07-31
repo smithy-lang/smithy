@@ -117,7 +117,7 @@ final class ToNodeMapperVisitor extends TraitVisitor<Void> {
         int nextLevel = nestedLevel + 1;
         writer.write("for ($T<$T, $T> $L : $L.entrySet()) {",
                 Map.Entry.class,
-                String.class,
+                symbolProvider.toSymbol(shape.getKey()),
                 symbolProvider.toSymbol(shape.getValue()),
                 "entry" + nextLevel,
                 varName);

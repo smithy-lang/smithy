@@ -8,6 +8,7 @@ Smithy AI traits provide metadata for service authors to embed contextual inform
 
 
 .. smithy-trait:: smithy.ai#prompts
+   :package: software.amazon.smithy.java:smithy-ai-traits
 .. _smithy.ai#prompts-trait:
 
 ---------------------------

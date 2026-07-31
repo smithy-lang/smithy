@@ -38,13 +38,20 @@ final class LoaderTraitMap {
     private final Map<ShapeId, Map<ShapeId, Node>> traits = new HashMap<>();
     private final List<ValidationEvent> events;
     private final boolean allowUnknownTraits;
+    private final boolean quietUnknownTraits;
     private final Map<ShapeId, Map<ShapeId, Trait>> unclaimed = new HashMap<>();
     private final Set<ShapeId> claimed = new HashSet<>();
 
-    LoaderTraitMap(TraitFactory traitFactory, List<ValidationEvent> events, boolean allowUnknownTraits) {
+    LoaderTraitMap(
+            TraitFactory traitFactory,
+            List<ValidationEvent> events,
+            boolean allowUnknownTraits,
+            boolean quietUnknownTraits
+    ) {
         this.traitFactory = traitFactory;
         this.events = events;
         this.allowUnknownTraits = allowUnknownTraits;
+        this.quietUnknownTraits = quietUnknownTraits;
     }
 
     void applyTraitsToNonMixinsInShapeMap(LoaderShapeMap shapeMap, List<ShapeId> undefinedTraits) {
@@ -134,6 +141,12 @@ final class LoaderTraitMap {
             LoaderShapeMap shapeMap
     ) {
         if (!shapeMap.isRootShapeDefined(traitId) && (trait == null || !trait.isSynthetic())) {
+            // When unknown traits are allowed, these are only WARNINGs. If the caller has also asked to silence them
+            // (ALLOW_UNKNOWN_TRAITS_QUIET), skip building the event entirely rather than constructing a ValidationEvent
+            // and its formatted message per unresolved trait.
+            if (allowUnknownTraits && quietUnknownTraits) {
+                return;
+            }
             Severity severity = allowUnknownTraits ? Severity.WARNING : Severity.ERROR;
             events.add(ValidationEvent.builder()
                     .id(Validator.MODEL_ERROR + UNRESOLVED_TRAIT_SUFFIX)

@@ -1,7 +1,0 @@
-{
-  "type": "feature",
-  "description": "Added test cases for errors in AWS JSON protocols using different namespaces",
-  "pull_requests": [
-    "[#3157](https://github.com/smithy-lang/smithy/pull/3157)"
-  ]
-}

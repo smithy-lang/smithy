@@ -15,7 +15,7 @@ shape.
 
     @mixin
     structure UserIdentifiersMixin {
-        id: String
+        userId: String
     }
 
     structure UserDetails with [UserIdentifiersMixin] {
@@ -28,7 +28,7 @@ Multiple mixins can be applied:
 
     @mixin
     structure UserIdentifiersMixin {
-        id: String
+        userId: String
     }
 
     @mixin
@@ -606,7 +606,7 @@ Operation shapes with the :ref:`mixin-trait` MAY define errors.
 
     operation GetUsername with [ValidatedOperation] {
         input := {
-            id: String
+            userId: String
         }
         output := {
             name: String

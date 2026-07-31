@@ -61,6 +61,11 @@ final class ScopedAttributeSelector implements InternalSelector {
         }
     }
 
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
+
     private boolean matchesAssertions(Shape shape, Map<String, Set<Shape>> vars) {
         // First resolve the scope of the assertions.
         AttributeValue scope = AttributeValue.shape(shape, vars).getPath(path);

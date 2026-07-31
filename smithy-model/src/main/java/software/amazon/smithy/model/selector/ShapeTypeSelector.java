@@ -37,4 +37,14 @@ final class ShapeTypeSelector implements InternalSelector {
                 ? ContainsShape.YES
                 : ContainsShape.NO;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return input.getType().isShapeType(shapeType) ? ContainsShape.YES : ContainsShape.NO;
+    }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }

@@ -14,6 +14,7 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -28,6 +29,33 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
     private final ServiceShape service;
 
     static TestContext create(String modelFile, ShapeId serviceId) {
+        Model model = Model.assembler()
+                .addImport(TestContext.class.getResource(modelFile))
+                .assemble()
+                .unwrap();
+        return create(model, model.expectShape(serviceId, ServiceShape.class));
+    }
+
+    // Loads a service-anchored context from several model files.
+    static TestContext create(ShapeId serviceId, String... modelFiles) {
+        ModelAssembler assembler = Model.assembler();
+        for (String modelFile : modelFiles) {
+            assembler.addImport(TestContext.class.getResource(modelFile));
+        }
+        Model model = assembler.assemble().unwrap();
+        return create(model, model.expectShape(serviceId, ServiceShape.class));
+    }
+
+    // Creates a context that is not anchored to a service, for shape-closure-driven tests.
+    static TestContext create(String modelFile) {
+        Model model = Model.assembler()
+                .addImport(TestContext.class.getResource(modelFile))
+                .assemble()
+                .unwrap();
+        return create(model, null);
+    }
+
+    private static TestContext create(Model model, ServiceShape service) {
         FileManifest manifest = new MockManifest();
         FileManifest sharedManifest = new MockManifest();
         SymbolProvider symbolProvider = (shape) -> Symbol.builder()
@@ -37,11 +65,6 @@ final class TestContext implements CodegenContext<TestSettings, TestWriter, Test
         WriterDelegator<TestWriter> delegator = new WriterDelegator<>(manifest, symbolProvider, (file, namespace) -> {
             throw new UnsupportedOperationException();
         });
-        Model model = Model.assembler()
-                .addImport(TestContext.class.getResource(modelFile))
-                .assemble()
-                .unwrap();
-        ServiceShape service = model.expectShape(serviceId, ServiceShape.class);
         return new TestContext(model, new TestSettings(), symbolProvider, manifest, sharedManifest, delegator, service);
     }
 

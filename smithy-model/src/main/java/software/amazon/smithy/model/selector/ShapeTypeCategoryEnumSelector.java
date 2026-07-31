@@ -40,4 +40,14 @@ final class ShapeTypeCategoryEnumSelector implements InternalSelector {
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
         return shape.getType().getCategory() == category ? ContainsShape.YES : ContainsShape.NO;
     }
+
+    @Override
+    public ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return input.getType().getCategory() == category ? ContainsShape.YES : ContainsShape.NO;
+    }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
 }

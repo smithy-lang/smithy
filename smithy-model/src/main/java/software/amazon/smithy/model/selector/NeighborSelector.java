@@ -42,8 +42,8 @@ final class NeighborSelector implements InternalSelector {
             @Override
             protected Function<Context, NeighborProvider> neighborFactory(boolean includeTraits) {
                 return includeTraits
-                        ? context -> context.neighborIndex.getProviderWithTraitRelationships()
-                        : context -> context.neighborIndex.getProvider();
+                        ? context -> context.getNeighborIndex().getProviderWithTraitRelationships()
+                        : context -> context.getNeighborIndex().getProvider();
             }
         },
         REVERSE {
@@ -55,8 +55,8 @@ final class NeighborSelector implements InternalSelector {
             @Override
             protected Function<Context, NeighborProvider> neighborFactory(boolean includeTraits) {
                 return includeTraits
-                        ? context -> context.neighborIndex.getReverseProviderWithTraitRelationships()
-                        : context -> context.neighborIndex.getReverseProvider();
+                        ? context -> context.getNeighborIndex().getReverseProviderWithTraitRelationships()
+                        : context -> context.getNeighborIndex().getReverseProvider();
             }
         };
 

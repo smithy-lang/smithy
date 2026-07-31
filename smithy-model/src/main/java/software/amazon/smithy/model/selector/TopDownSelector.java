@@ -58,7 +58,7 @@ final class TopDownSelector implements InternalSelector {
         }
 
         // Recursively check each nested resource/operation.
-        for (Relationship rel : context.neighborIndex.getProvider().getNeighbors(shape)) {
+        for (Relationship rel : context.getNeighborIndex().getProvider().getNeighbors(shape)) {
             if (rel.getNeighborShape().isPresent() && !rel.getNeighborShapeId().equals(shape.getId())) {
                 if (rel.getRelationshipType() == RelationshipType.RESOURCE
                         || rel.getRelationshipType() == RelationshipType.OPERATION) {

@@ -17,7 +17,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
  */
 public class GenerateMapDirective<C extends CodegenContext<S, ?, ?>, S>
         extends ShapeDirective<MapShape, C, S> {
-    GenerateMapDirective(C context, ServiceShape service, MapShape shape) {
-        super(context, service, shape);
+    GenerateMapDirective(
+            C context,
+            ServiceShape service,
+            String shapeClosureId,
+            boolean generateDataShapesOnly,
+            MapShape shape
+    ) {
+        super(context, service, shapeClosureId, generateDataShapesOnly, shape);
     }
 }

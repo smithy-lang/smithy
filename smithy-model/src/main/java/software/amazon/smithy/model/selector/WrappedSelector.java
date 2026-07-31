@@ -6,15 +6,16 @@ package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -28,10 +29,17 @@ final class WrappedSelector implements Selector {
     private final String expression;
     private final InternalSelector delegate;
     private final List<InternalSelector> roots;
+    private final Map<String, Integer> variableIndices;
 
-    WrappedSelector(String expression, List<InternalSelector> selectors, List<InternalSelector> roots) {
+    WrappedSelector(
+            String expression,
+            List<InternalSelector> selectors,
+            List<InternalSelector> roots,
+            Map<String, Integer> variableIndices
+    ) {
         this.expression = expression;
         this.roots = roots;
+        this.variableIndices = Collections.unmodifiableMap(variableIndices);
         this.delegate = AndSelector.of(selectors);
     }
 
@@ -60,7 +68,7 @@ final class WrappedSelector implements Selector {
         Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
 
         if (isParallel(startingShapes)) {
-            return shapes(model).collect(Collectors.toSet());
+            return shapes(model, startingContext).collect(Collectors.toSet());
         } else {
             // This is more optimized than using shapes() for smaller models that aren't parallelized.
             Set<Shape> result = new HashSet<>();
@@ -79,6 +87,11 @@ final class WrappedSelector implements Selector {
 
     private boolean isParallel(Collection<? extends Shape> startingShapes) {
         return startingShapes.size() >= PARALLEL_THRESHOLD;
+    }
+
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return delegate.isOutputSubsetOfInput();
     }
 
     @Override
@@ -101,10 +114,9 @@ final class WrappedSelector implements Selector {
     @Override
     public Stream<Shape> shapes(Model model, StartingContext startingContext) {
         Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
-        NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShapes(startingShapes).flatMap(shape -> {
-            Context context = new Context(model, index, computedRoots);
+            Context context = new Context(model, null, computedRoots, variableIndices);
             return delegate.pushResultsToCollection(context, shape, new ArrayList<>()).stream();
         });
     }
@@ -112,11 +124,10 @@ final class WrappedSelector implements Selector {
     @Override
     public Stream<ShapeMatch> matches(Model model, StartingContext startingContext) {
         Collection<? extends Shape> startingShapes = getStartingShapes(model, startingContext);
-        NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShapes(startingShapes).flatMap(shape -> {
             List<ShapeMatch> result = new ArrayList<>();
-            delegate.push(new Context(model, index, computedRoots), shape, (ctx, s) -> {
+            delegate.push(new Context(model, null, computedRoots, variableIndices), shape, (ctx, s) -> {
                 result.add(new ShapeMatch(s, ctx.getVars()));
                 return InternalSelector.Response.CONTINUE;
             });
@@ -130,10 +141,9 @@ final class WrappedSelector implements Selector {
 
     // Eagerly compute roots over all model shapes before evaluating shapes one at a time.
     private List<Set<Shape>> computeRoots(Model model) {
-        NeighborProviderIndex index = NeighborProviderIndex.of(model);
         List<Set<Shape>> rootResults = new ArrayList<>(roots.size());
         for (InternalSelector selector : roots) {
-            Set<Shape> result = evalRoot(model, index, selector, rootResults);
+            Set<Shape> result = evalRoot(model, selector, rootResults);
             rootResults.add(result);
         }
         return rootResults;
@@ -142,15 +152,14 @@ final class WrappedSelector implements Selector {
     // Eagerly compute a root subexpression.
     private Set<Shape> evalRoot(
             Model model,
-            NeighborProviderIndex index,
             InternalSelector selector,
             List<Set<Shape>> results
     ) {
         Collection<? extends Shape> shapesToEmit = selector.getStartingShapes(model);
-        Context isolatedContext = new Context(model, index, results);
+        Context isolatedContext = new Context(model, null, results, variableIndices);
         Set<Shape> captures = new HashSet<>();
         for (Shape rootShape : shapesToEmit) {
-            isolatedContext.getVars().clear();
+            isolatedContext.clearVariables();
             selector.push(isolatedContext, rootShape, (c, s) -> {
                 captures.add(s);
                 return InternalSelector.Response.CONTINUE;
@@ -166,9 +175,19 @@ final class WrappedSelector implements Selector {
             InternalSelector.Receiver acceptor
     ) {
         Objects.requireNonNull(startingShapes);
-        Context context = new Context(model, NeighborProviderIndex.of(model), computeRoots(model));
+        Context context = new Context(model, null, computeRoots(model), variableIndices);
+
+        // When the selector's output is independent of the input shape (e.g., it begins with a
+        // ":root(...)" rooted subexpression), every starting shape produces the identical result.
+        // Pushing a single shape avoids re-deriving the same result once per starting shape, which
+        // is O(n^2) work for selectors like ":root(*)".
+        if (delegate.isInputShapeIndependent() && !startingShapes.isEmpty()) {
+            delegate.push(context, startingShapes.iterator().next(), acceptor);
+            return;
+        }
+
         for (Shape shape : startingShapes) {
-            context.getVars().clear();
+            context.clearVariables();
             delegate.push(context, shape, acceptor);
         }
     }

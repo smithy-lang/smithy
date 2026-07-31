@@ -39,6 +39,11 @@ final class InSelector implements InternalSelector {
         }
     }
 
+    @Override
+    public boolean isOutputSubsetOfInput() {
+        return true;
+    }
+
     private static final class FilteredHolder implements InternalSelector.Receiver {
         private final Shape shapeToMatch;
         private boolean matched;

@@ -26,8 +26,10 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 public final class UnionShapeGenerator implements Consumer<GenerateTraitDirective> {
     @Override
@@ -62,7 +64,8 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
                                 writeNestedClasses(directive.shape(),
                                         writer,
                                         directive.symbolProvider(),
-                                        directive.model());
+                                        directive.model(),
+                                        directive.context().settings());
                                 new BuilderGenerator(writer,
                                         directive.symbol(),
                                         directive.symbolProvider(),
@@ -82,27 +85,41 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
      * @param writer writer to write generated code to.
      * @param symbolProvider symbol provider.
      * @param model smithy model used for code generation.
+     * @param settings trait codegen settings.
      */
+    @SmithyInternalApi
     public void writeNestedClasses(
             Shape shape,
             TraitCodegenWriter writer,
             SymbolProvider symbolProvider,
-            Model model
+            Model model,
+            TraitCodegenSettings settings
     ) {
         writeEnumClass(writer, shape, symbolProvider);
-        writeVariantClasses(writer, shape, symbolProvider, model);
+        writeVariantClasses(writer, shape, symbolProvider, model, settings);
     }
 
     private void writeVariantClasses(
             TraitCodegenWriter writer,
             Shape unionShape,
             SymbolProvider symbolProvider,
-            Model model
+            Model model,
+            TraitCodegenSettings settings
     ) {
         writer.writeWithNoFormatting("abstract Node asNode();");
         writer.newLine();
-        writer.writeWithNoFormatting("public abstract <T> T getValue();");
+
+        // The type-safe accessor, narrowed to the variant's value type by a covariant
+        // return on each member.
+        writer.writeWithNoFormatting("public abstract Object getContents();");
         writer.newLine();
+
+        // The original accessor erases its type and is only retained for backwards
+        // compatibility.
+        if (!settings.excludeDeprecatedUnionGetters()) {
+            writeDeprecatedGetValue(writer);
+        }
+
         Symbol unionSymbol = symbolProvider.toSymbol(unionShape);
         boolean isTrait = unionShape.hasTrait(TraitDefinition.ID);
         for (MemberShape memberShape : unionShape.members()) {
@@ -129,7 +146,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
                         writeAsNodeMethod(writer, memberShape, symbolProvider, model);
                         writer.newLine();
 
-                        writeGetValue(writer, isTargetUnitType);
+                        writeGetContents(writer, memberSymbol, isTargetUnitType);
                     });
             writer.newLine();
             writer.popState();
@@ -233,21 +250,39 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
                 () -> memberShape.accept(new VariantAsNodeGenerator(writer, model, provider)));
     }
 
-    private void writeGetValue(
+    private void writeGetContents(
             TraitCodegenWriter writer,
+            Symbol memberSymbol,
             boolean isTargetUnitType
     ) {
         writer.override();
+
+        // A covariant return narrows the value to its concrete type so callers retain
+        // it after an instanceof check. The unit variant has no value, so it falls
+        // back to the base Object return type.
+        if (isTargetUnitType) {
+            writer.openBlock("public Object getContents() {",
+                    "}",
+                    () -> writer.writeWithNoFormatting("return null;"));
+        } else {
+            writer.openBlock("public $T getContents() {",
+                    "}",
+                    memberSymbol,
+                    () -> writer.writeWithNoFormatting("return value;"));
+        }
+    }
+
+    private void writeDeprecatedGetValue(TraitCodegenWriter writer) {
+        writer.writeWithNoFormatting("/**");
+        writer.writeWithNoFormatting(
+                " * @deprecated this getter erases the value type, use {@link #getContents()} instead.");
+        writer.writeWithNoFormatting(" */");
+        writer.writeWithNoFormatting("@Deprecated");
         writer.writeWithNoFormatting("@SuppressWarnings(\"unchecked\")");
         writer.openBlock("public <T> T getValue() {",
                 "}",
-                () -> {
-                    if (isTargetUnitType) {
-                        writer.writeWithNoFormatting("return null;");
-                    } else {
-                        writer.writeWithNoFormatting("return (T) value;");
-                    }
-                });
+                () -> writer.writeWithNoFormatting("return (T) getContents();"));
+        writer.newLine();
     }
 
     private void writeEquals(TraitCodegenWriter writer, Symbol symbol) {
@@ -268,7 +303,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
                             () -> {
                                 writer.write("$1T b = ($1T) other;", symbol).newLine();
                                 writer.writeWithNoFormatting(
-                                        "return type == b.getType() && Objects.equals(getValue(), b.getValue());\n");
+                                        "return type == b.getType() && Objects.equals(getContents(), b.getContents());\n");
                             }).newLine();
                     writer.enableNewlines();
                 });
@@ -279,7 +314,7 @@ public final class UnionShapeGenerator implements Consumer<GenerateTraitDirectiv
         writer.override();
         writer.openBlock("public int hashCode() {",
                 "}",
-                () -> writer.write("return $T.hash(type, getValue());", Objects.class));
+                () -> writer.write("return $T.hash(type, getContents());", Objects.class));
     }
 
     private static final class VariantFromNodeGenerator extends ShapeVisitor.Default<Void> {

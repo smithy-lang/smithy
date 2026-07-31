@@ -111,6 +111,27 @@ interface InternalSelector {
     }
 
     /**
+     * Quickly determines whether this selector emits at least one shape when given {@code input}, without performing
+     * a full push.
+     *
+     * <p>This differs from {@link #containsShapeOptimization}: that method asks "is this <em>specific</em> shape in
+     * the selector's output?", whereas this asks "does the selector emit <em>anything at all</em> for this input?".
+     * The answers diverge for emitting selectors like {@code :root(...)}, {@code ${var}}, and neighbors, which can
+     * emit shapes other than the input.
+     *
+     * <p>Implementations MUST only return YES or NO when they have no side effects (e.g., variable stores). A selector
+     * that could store a variable as part of being pushed MUST return MAYBE so the full push runs and the side effect
+     * occurs.
+     *
+     * @param context Evaluation context.
+     * @param input Shape that would be pushed into the selector.
+     * @return YES if the selector definitely emits something, NO if it definitely emits nothing, MAYBE if unknown.
+     */
+    default ContainsShape emitsAnyOptimization(Context context, Shape input) {
+        return ContainsShape.MAYBE;
+    }
+
+    /**
      * Returns true if this selector's output is independent of the input shape passed to {@link #push}.
      *
      * <p>Selectors like {@link RootSelector} always emit the same set of shapes regardless of the input shape,
@@ -120,6 +141,19 @@ interface InternalSelector {
      * @return Returns true if the selector ignores the input shape parameter.
      */
     default boolean isInputShapeIndependent() {
+        return false;
+    }
+
+    /**
+     * Returns true if this selector can only emit shapes that were provided as input.
+     *
+     * <p>This is useful for callers that only need to test a known set of candidate shapes. Pure filter selectors
+     * can be evaluated with just the candidates, while selectors that traverse to other shapes must still start from
+     * the whole model to discover whether a candidate appears in their output.
+     *
+     * @return Returns true if this selector's output is always a subset of its input.
+     */
+    default boolean isOutputSubsetOfInput() {
         return false;
     }
 

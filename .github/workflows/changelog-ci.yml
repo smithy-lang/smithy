@@ -26,7 +26,7 @@ jobs:
             # tool. Running from the base branch prevents us from picking up
             # malicious changes that might be in a PR.
             - name: Pull base branch
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                 path: base
                 ref: ${{ github.base_ref }}
@@ -40,7 +40,7 @@ jobs:
             # All we do with it is inspect the changelog entries introduced,
             # if any.
             - name: Pull the PR
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                 path: pr
                 ref: ${{ github.head_ref }}
@@ -51,6 +51,9 @@ jobs:
                 # the checkout faster, but also makes it harder to accidentally
                 # run code from the PR branch.
                 sparse-checkout: .changes/next-release
+                # New setting introduced in checkout v7. Set to `true` to avoid
+                # workflow failure in external contributors' PRs.
+                allow-unsafe-pr-checkout: true
 
             # This is needed so that the changelog tool can check the diff for
             # newly-introduced changes by comparing its head against that of
@@ -63,12 +66,12 @@ jobs:
                 git fetch origin "$BASE_REF"
 
             - name: Install Python
-              uses: actions/setup-python@v6
+              uses: actions/setup-python@v7.0.0
               with:
                 python-version-file: "base/.changes/pyproject.toml"
 
             - name: Install uv
-              uses: astral-sh/setup-uv@v7
+              uses: astral-sh/setup-uv@v9.0.0
               with:
                 version-file: "base/.changes/pyproject.toml"
 

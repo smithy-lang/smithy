@@ -5,8 +5,10 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
@@ -17,6 +19,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Ensures that shapes in separate namespaces don't refer to shapes in other
@@ -26,21 +29,56 @@ public final class PrivateAccessValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProviderWithTraitRelationships();
+        Set<Shape> privateShapes = model.getShapesWithTrait(PrivateTrait.class);
+        if (privateShapes.isEmpty()) {
+            return ListUtils.of();
+        }
+
+        Set<ShapeId> privateShapeIds = new HashSet<>(privateShapes.size());
+        for (Shape privateShape : privateShapes) {
+            privateShapeIds.add(privateShape.getId());
+        }
+
+        NeighborProvider provider = NeighborProviderIndex.of(model).getProvider();
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (Shape privateShape : model.getShapesWithTrait(PrivateTrait.class)) {
-            validateNeighbors(privateShape, provider.getNeighbors(privateShape), events);
+        for (Shape shape : model.toSet()) {
+            validateNeighbors(shape, provider.getNeighbors(shape), privateShapeIds, events);
+            validateTraitRelationships(model, shape, privateShapeIds, events);
         }
 
         return events;
     }
 
-    private void validateNeighbors(Shape shape, List<Relationship> relationships, List<ValidationEvent> events) {
-        String namespace = shape.getId().getNamespace();
+    private void validateNeighbors(
+            Shape shape,
+            List<Relationship> relationships,
+            Set<ShapeId> privateShapeIds,
+            List<ValidationEvent> events
+    ) {
+        String sourceNamespace = shape.getId().getNamespace();
         for (Relationship rel : relationships) {
-            if (!rel.getShape().getId().getNamespace().equals(namespace)) {
+            ShapeId neighborId = rel.getNeighborShapeId();
+            if (!sourceNamespace.equals(neighborId.getNamespace()) && privateShapeIds.contains(neighborId)) {
                 events.add(getPrivateAccessValidationEvent(rel));
+            }
+        }
+    }
+
+    private void validateTraitRelationships(
+            Model model,
+            Shape shape,
+            Set<ShapeId> privateShapeIds,
+            List<ValidationEvent> events
+    ) {
+        String sourceNamespace = shape.getId().getNamespace();
+        for (ShapeId traitId : shape.getAllTraits().keySet()) {
+            if (!sourceNamespace.equals(traitId.getNamespace()) && privateShapeIds.contains(traitId)) {
+                Shape privateTrait = model.expectShape(traitId);
+                events.add(getPrivateAccessValidationEvent(Relationship.create(
+                        shape,
+                        RelationshipType.TRAIT,
+                        privateTrait)));
             }
         }
     }

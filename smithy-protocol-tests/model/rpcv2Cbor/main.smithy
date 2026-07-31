@@ -16,6 +16,7 @@ service RpcV2Protocol {
         RpcV2CborLists
         RpcV2CborDenseMaps
         RpcV2CborSparseMaps
+        RpcV2CborUnions
         RecursiveShapes
         GreetingWithErrors
         FractionalSeconds

@@ -1,1 +1,2 @@
 software.amazon.smithy.rulesengine.traits.CleanEndpointTestOperationInput
+software.amazon.smithy.rulesengine.traits.CleanEndpointRuleSetParameters
