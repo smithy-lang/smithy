@@ -1,4 +1,4 @@
-// Expected DOT('.') but found IDENTIFIER('member')
+// Expected DOT('.') but found SPACE(' ')
 $version: "2.1"
 
 namespace smithy.example
