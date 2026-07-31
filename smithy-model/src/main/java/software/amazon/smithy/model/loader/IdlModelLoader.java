@@ -857,10 +857,9 @@ final class IdlModelLoader {
         int value = parseMemberIndexValue(tokenizer.getCurrentTokenLexeme(), location);
 
         tokenizer.next();
-        tokenizer.skipSpaces();
         tokenizer.expect(IdlToken.DOT);
         tokenizer.next();
-        tokenizer.skipSpaces();
+        tokenizer.expectAndSkipSpaces();
         return new NumberNode(value, location);
     }
 
