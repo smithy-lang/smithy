@@ -45,6 +45,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 public class SelectorTest {
 
@@ -1218,6 +1219,24 @@ public class SelectorTest {
                 SelectorSyntaxException.class,
                 () -> Selector.parse("string ) extra"));
         assertThat(e.getMessage(), containsString(")"));
+    }
+
+    @Test
+    public void rejectsExcessivelyNestedSelectorFunctions() {
+        // Nesting depth significantly over the limit should throw an exception.
+        String expr = StringUtils.repeat(":not(", 2000) + "string" + StringUtils.repeat(")", 2000);
+
+        SelectorSyntaxException e = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+
+        assertThat(e.getMessage(), containsString("maximum allowed nesting depth"));
+    }
+
+    @Test
+    public void allowsSelectorNestingWellUnderTheDepthLimit() {
+        // Nesting depth comfortably under the limit should still parse successfully.
+        String expr = StringUtils.repeat(":not(", 90) + "string" + StringUtils.repeat(")", 90);
+
+        Selector.parse(expr);
     }
 
     // Enum shapes store their enum trait as the synthetic enum trait rather than smithy.api#enum, so selectors that

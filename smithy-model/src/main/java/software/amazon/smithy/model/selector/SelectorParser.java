@@ -31,6 +31,9 @@ final class SelectorParser extends SimpleParser {
     private static final Logger LOGGER = Logger.getLogger(SelectorParser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
 
+    // Cap recursive parsing depth.
+    private static final int MAX_NESTED_SELECTOR_DEPTH = 100;
+
     // Hoisted varargs token arrays so each expect(...) call doesn't allocate a fresh char[] while parsing.
     private static final char[] CLOSE_BRACKET_OR_COMMA = {']', ','};
     private static final char[] CLOSE_PAREN_OR_COMMA = {')', ','};
@@ -91,6 +94,9 @@ final class SelectorParser extends SimpleParser {
     // addressed by this slot at evaluation time so the hot path can use array indexing instead of hash lookups.
     private final Map<String, Integer> variableIndices = new LinkedHashMap<>();
 
+    // Tracks how many recursiveParse() calls are currently nested inside one another.
+    private int nestedSelectorDepth = 0;
+
     private SelectorParser(String selector) {
         super(selector);
     }
@@ -111,22 +117,32 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<InternalSelector> recursiveParse() {
-        List<InternalSelector> selectors = new IgnoreIdentitySelectorArray(4);
+        nestedSelectorDepth++;
 
-        // createSelector() will strip leading ws.
-        selectors.add(createSelector());
+        try {
+            if (nestedSelectorDepth > MAX_NESTED_SELECTOR_DEPTH) {
+                throw syntax("Selector exceeds the maximum allowed nesting depth of " + MAX_NESTED_SELECTOR_DEPTH);
+            }
 
-        // Need to always strip after calling createSelector in case we are at EOF.
-        ws();
+            List<InternalSelector> selectors = new IgnoreIdentitySelectorArray(4);
 
-        // Parse until a break token: ",", "]", and ")".
-        while (!eof() && !BREAK_TOKENS.contains(peek())) {
+            // createSelector() will strip leading ws.
             selectors.add(createSelector());
-            // Always skip ws after calling createSelector.
-            ws();
-        }
 
-        return selectors;
+            // Need to always strip after calling createSelector in case we are at EOF.
+            ws();
+
+            // Parse until a break token: ",", "]", and ")".
+            while (!eof() && !BREAK_TOKENS.contains(peek())) {
+                selectors.add(createSelector());
+                // Always skip ws after calling createSelector.
+                ws();
+            }
+
+            return selectors;
+        } finally {
+            nestedSelectorDepth--;
+        }
     }
 
     /**
