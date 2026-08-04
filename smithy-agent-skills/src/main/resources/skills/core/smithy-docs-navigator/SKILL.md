@@ -53,9 +53,10 @@ published Smithy specification and ecosystem are covered here.
   the source.
 - **`llms.txt` is the one index.** Published at `https://smithy.io/2.0/llms.txt`,
   its generated documentation links point at each page's canonical `.rst` or
-  `.md` source, including resolved symlink targets. It also lists curated
-  **Key references** (including backward compatibility), **Examples and
-  resources**, **Code generators by language** (with each generator's language
+  `.md` source (or a `.rst.template`/`.md.template` partial that a page includes),
+  including resolved symlink targets. It also lists curated
+  **Key references** (including backward compatibility), **Examples**,
+  **Code generators by language** (with each generator's language
   and status where documented), and **Tooling**. There is no separate map to
   install.
 - **Read with a non-summarizing tool.** Routing source text back through a
@@ -67,11 +68,12 @@ published Smithy specification and ecosystem are covered here.
    and pick the entry whose title matches your topic. For cross-cutting
    questions use its curated sections: backward compatibility -> **Key
    references**, language codegen -> **Code generators by language**, getting
-   started -> **Examples and resources**.
+   started -> **Examples**.
 
 2. **Use the index for a URL you already have.** The source extension may be
-   `.rst` or `.md`, and some published pages are symlinks whose canonical source
-   path differs from their rendered URL. The index gives the source URL to read.
+   `.rst` or `.md` (or a `.rst.template`/`.md.template` partial), and some
+   published pages are symlinks whose canonical source path differs from their
+   rendered URL. The index gives the source URL to read.
    For a normal reStructuredText page not present in the index, you can rewrite:
 
    ```

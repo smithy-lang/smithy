@@ -33,12 +33,20 @@ val verifySkillsVerbatim by tasks.registering {
 
     val sourceDir = skillsSourceDir.asFile
     val jarFile = tasks.jar.flatMap { it.archiveFile }
+    val verificationMarker = layout.buildDirectory.file("verification/skills-verbatim.marker")
 
     inputs.dir(sourceDir)
+        .withPropertyName("skillSources")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.file(jarFile)
+        .withPropertyName("skillsJar")
+        .withPathSensitivity(PathSensitivity.NONE)
+    outputs.file(verificationMarker)
+        .withPropertyName("verificationMarker")
+    outputs.cacheIf("Verification is deterministic from the declared source tree and JAR") { true }
 
     doLast {
-        // Map every source file under skills/ to its relative "skills/<path>" entry name and content hash.
+        // Map every source file under skills/ to its relative "skills/<path>" entry name and byte content.
         val sourceEntries = sourceDir.walkTopDown()
             .filter { it.isFile }
             .associate { file ->
@@ -73,6 +81,10 @@ val verifySkillsVerbatim by tasks.registering {
             )
         }
 
+        verificationMarker.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText("verified\n")
+        }
         logger.lifecycle("Verified ${sourceEntries.size} skills/ entries are packaged verbatim.")
     }
 }

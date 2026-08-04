@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Generate llms.txt from Smithy documentation source files.
 
-Finds every .rst and .md file under source-2.0/, extracts each page's title,
-pairs it with the page's raw source URL on GitHub, and writes a structured
-llms.txt suitable for indexing by the AWS Knowledge MCP.
+Finds every reStructuredText and Markdown source file under source-2.0/,
+extracts each page's title, pairs it with the page's raw source URL on GitHub,
+and writes a structured llms.txt suitable for indexing by the AWS Knowledge
+MCP.
 
 Links point at source files rather than rendered HTML. The result is also the
 index the smithy-docs-navigator skill reads.
@@ -34,7 +35,18 @@ SECTIONS: list[tuple[str | None, str | None]] = [
 
 RST_TITLE_RE: re.Pattern[str] = re.compile(r"^([=\-~`#\"^+*:.!'_]{2,})\s*$")
 MARKDOWN_TITLE_RE: re.Pattern[str] = re.compile(r"^#\s+(.+?)\s*#*\s*$")
-SOURCE_EXTENSIONS: tuple[str, ...] = (".rst", ".md")
+
+# .template files are reusable partials that parent pages pull in with `.. include::`. They earn a place
+# in the index because their content lives ONLY in the template in raw form: a parent page's raw source
+# contains just the include directive, so the trait tables and serialization rules a partial carries are
+# unreachable through the parent's raw URL (Sphinx inlines them only when rendering HTML). Two limitations
+# are accepted rather than worked around:
+#   1. A partial that does not open with a heading has no title to link, so extract_title() returns None
+#      and collect_pages() skips it. Partials meant to surface should lead with a section heading.
+#   2. A partial's raw text can still hold unresolved substitutions (e.g. |quoted shape name|) whose
+#      `replace::` definitions live in the parent page. For those, the fully resolved rule is on the
+#      parent page, which is itself indexed.
+SOURCE_EXTENSIONS: tuple[str, ...] = (".rst", ".md", ".rst.template", ".md.template")
 
 
 def extract_title(filepath: str) -> str | None:
@@ -42,7 +54,7 @@ def extract_title(filepath: str) -> str | None:
     with open(filepath, encoding="utf-8") as f:
         lines = f.readlines()
 
-    if filepath.endswith(".md"):
+    if filepath.endswith((".md", ".md.template")):
         for line in lines:
             match = MARKDOWN_TITLE_RE.match(line.rstrip())
             if match:
@@ -159,8 +171,9 @@ def generate(source_dir: str, output_path: str, overlay: dict | None = None) -> 
         " language. Smithy models define a service as a collection of resources,"
         " operations, and shapes.",
         "",
-        "> Links point at the documentation source (.rst or .md), which preserves"
-        " exact rules that a summarized web-fetch of rendered HTML can drop. When"
+        "> Links point at the documentation source (.rst, .md, or an included"
+        " .rst.template/.md.template partial), which preserves exact rules that a"
+        " summarized web-fetch of rendered HTML can drop. When"
         " changing an existing model, consult the Evolving Models guide under Key"
         " references first - it explains which changes are backward compatible and"
         " which break customers.",
