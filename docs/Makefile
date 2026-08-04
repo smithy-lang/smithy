@@ -20,7 +20,10 @@ html2:
 llms-txt: html2
 	python3 generate_llms_txt.py
 
-html: html2 html1 merge-versions llms-txt
+test:
+	python3 -m unittest test_generate_llms_txt.py
+
+html: test html2 html1 merge-versions llms-txt
 
 serve:
 	npx http-server build/html
@@ -42,4 +45,4 @@ openhtml:
 dev: install
 	@source build/venv/bin/activate && sphinx-autobuild "source-2.0" "build/2.0" $(SPHINXOPTS) $(O)
 
-.PHONY: Makefile clean
+.PHONY: Makefile clean test
