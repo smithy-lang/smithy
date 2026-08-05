@@ -1,0 +1,1 @@
+[ERROR] com.example#UpdateWidget: Invalid JMESPath expression `widgetId[` for identifier `widgetId` in `@updatesResources` | ResourceLifecycleTrait

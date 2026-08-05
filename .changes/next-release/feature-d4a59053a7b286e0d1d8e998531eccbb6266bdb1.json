@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added the @createsResources, @putsResources, @deletesResources, @readsResources, and @updatesResources traits, letting you declare which resources an operation affects when the relationship falls outside a resource's standard lifecycle.",
+  "pull_requests": []
+}

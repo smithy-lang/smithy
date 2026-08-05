@@ -1,0 +1,4 @@
+[WARNING] com.example#DeleteThing: Error validating trait `deletesResources`.0: Member `properties` does not exist in `smithy.api#ResourceDeletionBinding` | TraitValue
+[ERROR] com.example#DeleteThing: Binding for resource `com.example#Thing` in `@deletesResources` specifies properties, but `@deletesResources` deletes a resource by its identifiers alone and has no properties. | ResourceLifecycleTrait
+[WARNING] com.example#DeleteThingFrom: Error validating trait `deletesResources`.0: Member `propertiesFrom` does not exist in `smithy.api#ResourceDeletionBinding` | TraitValue
+[ERROR] com.example#DeleteThingFrom: Binding for resource `com.example#Thing` in `@deletesResources` specifies properties, but `@deletesResources` deletes a resource by its identifiers alone and has no properties. | ResourceLifecycleTrait
