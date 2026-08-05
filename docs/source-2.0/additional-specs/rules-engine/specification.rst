@@ -56,9 +56,6 @@ The content of the ``endpointRuleSet`` document has the following properties:
     * - version
       - ``string``
       - **Required**. The rules engine version (e.g., 1.0).
-    * - serviceId
-      - ``string``
-      - **Required**. An identifier for the corresponding service.
     * - parameters
       - ``map<string, parameter object>`` of `Parameter object`_
       - **Required**. A map of zero or more endpoint parameter names to
