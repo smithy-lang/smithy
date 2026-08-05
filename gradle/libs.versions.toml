@@ -3,7 +3,7 @@ junit = "6.1.2"
 hamcrest = "3.0"
 jmh = "0.7.2"
 spotbugs = "6.2.4"
-spotless = "8.8.0"
+spotless = "8.9.0"
 smithy-gradle = "1.4.0"
 assertj = "3.27.7"
 prettier4j = "0.3.0"
@@ -11,7 +11,7 @@ maven-resolver-provider = "3.9.16"
 # Resolver 2.x core, paired with the Maven 3.9.x provider via maven-resolver-supplier-mvn3.
 # Staying on the Maven 3 provider keeps the Java 8 baseline, upgrading to Maven 4 will
 # require bumping the runtime Java version to 17.
-maven-resolver = "2.0.20"
+maven-resolver = "2.0.21"
 slf4j = "2.0.18"
 mockserver = "7.4.0"
 compile-testing = "0.23.0"
