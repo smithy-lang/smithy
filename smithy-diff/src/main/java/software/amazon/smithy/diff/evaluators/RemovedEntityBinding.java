@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -32,17 +33,35 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
+        TopDownIndex topDownIndex = TopDownIndex.of(differences.getNewModel());
         List<ValidationEvent> events = new ArrayList<>();
-        differences.changedShapes(EntityShape.class).forEach(change -> validateOperation(change, events));
+        differences.changedShapes(EntityShape.class).forEach(change -> validateBindings(change, events, topDownIndex));
         return events;
     }
 
-    private void validateOperation(ChangedShape<EntityShape> change, List<ValidationEvent> events) {
-        findRemoved(change.getOldShape().getOperations(), change.getNewShape().getOperations())
-                .forEach(removed -> events.add(createRemovedEvent(REMOVED_OPERATION, change.getNewShape(), removed)));
+    private void validateBindings(
+            ChangedShape<EntityShape> change,
+            List<ValidationEvent> events,
+            TopDownIndex topDownIndex
+    ) {
+        EntityShape oldEntity = change.getOldShape();
+        EntityShape newEntity = change.getNewShape();
 
-        findRemoved(change.getOldShape().getResources(), change.getNewShape().getResources())
-                .forEach(removed -> events.add(createRemovedEvent(REMOVED_RESOURCE, change.getNewShape(), removed)));
+        for (ShapeId removed : findRemoved(oldEntity.getOperations(), newEntity.getOperations())) {
+            Severity severity =
+                    isStillContainedInService(newEntity, removed, topDownIndex) ? Severity.WARNING : Severity.ERROR;
+            events.add(createRemovedEvent(REMOVED_OPERATION, newEntity, removed, severity));
+        }
+
+        for (ShapeId removed : findRemoved(oldEntity.getResources(), newEntity.getResources())) {
+            events.add(createRemovedEvent(REMOVED_RESOURCE, newEntity, removed, Severity.ERROR));
+        }
+    }
+
+    private boolean isStillContainedInService(EntityShape entity, ShapeId operationId, TopDownIndex topDownIndex) {
+        return entity.isServiceShape() && topDownIndex.getContainedOperations(entity)
+                .stream()
+                .anyMatch(operation -> operation.getId().equals(operationId));
     }
 
     private Set<ShapeId> findRemoved(Set<ShapeId> oldShapes, Set<ShapeId> newShapes) {
@@ -51,7 +70,12 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
         return removed;
     }
 
-    private ValidationEvent createRemovedEvent(String typeOfRemoval, EntityShape parentEntity, ShapeId childShape) {
+    private ValidationEvent createRemovedEvent(
+            String typeOfRemoval,
+            EntityShape parentEntity,
+            ShapeId childShape,
+            Severity severity
+    ) {
         String childType = typeOfRemoval.equals(REMOVED_RESOURCE) ? "Resource" : "Operation";
         String typeOfParentShape = ShapeType.RESOURCE.equals(parentEntity.getType()) ? FROM_RESOURCE : FROM_SERVICE;
         String message = String.format(
@@ -62,7 +86,7 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
                 parentEntity.getId());
         return ValidationEvent.builder()
                 .id(typeOfRemoval + typeOfParentShape + childShape.getName())
-                .severity(Severity.ERROR)
+                .severity(severity)
                 .shape(parentEntity)
                 .message(message)
                 .build();
