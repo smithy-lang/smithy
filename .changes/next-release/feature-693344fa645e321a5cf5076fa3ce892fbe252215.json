@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Update RemovedEntityBinding diff evaluator to warn when removed service operation remains in closure",
+  "pull_requests": [
+    "[#3244](https://github.com/smithy-lang/smithy/pull/3244)"
+  ]
+}
