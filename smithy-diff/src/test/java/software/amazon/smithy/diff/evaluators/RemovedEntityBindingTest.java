@@ -15,6 +15,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class RemovedEntityBindingTest {
@@ -35,6 +36,31 @@ public class RemovedEntityBindingTest {
 
         assertThat(TestHelper.findEvents(events, "RemovedOperationBinding.FromService.Operation").size(), equalTo(1));
         assertThat(events.get(0).getSourceLocation(), equalTo(source));
+    }
+
+    @Test
+    public void warnsWhenOperationMovesFromServiceToContainedResource() {
+        OperationShape o = OperationShape.builder().id("foo.baz#Operation").build();
+        ResourceShape r1 = ResourceShape.builder().id("foo.baz#Resource").build();
+        ResourceShape r2 = r1.toBuilder().addOperation(o.getId()).build();
+        ServiceShape service1 = ServiceShape.builder()
+                .version("1")
+                .id("foo.baz#Service")
+                .addOperation(o.getId())
+                .build();
+        ServiceShape service2 = service1.toBuilder()
+                .clearOperations()
+                .addResource(r2.getId())
+                .build();
+        Model modelA = Model.assembler().addShapes(service1, r1, o).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(service2, r2, o).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+        List<ValidationEvent> removedEvents = TestHelper.findEvents(
+                events,
+                "RemovedOperationBinding.FromService.Operation");
+
+        assertThat(removedEvents.size(), equalTo(1));
+        assertThat(removedEvents.get(0).getSeverity(), equalTo(Severity.WARNING));
     }
 
     @Test
