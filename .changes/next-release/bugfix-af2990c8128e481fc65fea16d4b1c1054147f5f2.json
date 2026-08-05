@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix duplicate search box in smithy doc page",
+  "pull_requests": [
+    "[#3245](https://github.com/smithy-lang/smithy/pull/3245)"
+  ]
+}
