@@ -92,7 +92,7 @@ html_theme_options = {
     # so we show just those three rather than the whole doc toctree.
     "navbar_start": ["navbar-logo"],
     "navbar_center": ["components/smithy-navbar-nav.html"],
-    "navbar_end": ["search-button-field", "theme-switcher", "navbar-icon-links"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "navbar_align": "left",
     # sphinx-book-theme puts a "toggle primary sidebar" button in the article
     # header, but with our restored pydata top header there are now two
