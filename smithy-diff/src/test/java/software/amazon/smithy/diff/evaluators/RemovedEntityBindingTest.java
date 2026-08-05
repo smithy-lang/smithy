@@ -39,21 +39,27 @@ public class RemovedEntityBindingTest {
     }
 
     @Test
-    public void warnsWhenOperationMovesFromServiceToContainedResource() {
-        OperationShape o = OperationShape.builder().id("foo.baz#Operation").build();
-        ResourceShape r1 = ResourceShape.builder().id("foo.baz#Resource").build();
-        ResourceShape r2 = r1.toBuilder().addOperation(o.getId()).build();
+    public void warnsWhenOperationMovesFromServiceToNestedResource() {
+        OperationShape op = OperationShape.builder().id("foo.baz#Operation").build();
+        ResourceShape child = ResourceShape.builder()
+                .id("foo.baz#Child")
+                .addOperation(op.getId())
+                .build();
+        ResourceShape parent = ResourceShape.builder()
+                .id("foo.baz#Parent")
+                .addResource(child.getId())
+                .build();
         ServiceShape service1 = ServiceShape.builder()
                 .version("1")
                 .id("foo.baz#Service")
-                .addOperation(o.getId())
+                .addOperation(op.getId())
                 .build();
         ServiceShape service2 = service1.toBuilder()
                 .clearOperations()
-                .addResource(r2.getId())
+                .addResource(parent.getId())
                 .build();
-        Model modelA = Model.assembler().addShapes(service1, r1, o).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(service2, r2, o).assemble().unwrap();
+        Model modelA = Model.assembler().addShapes(service1, op).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(service2, parent, child, op).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
         List<ValidationEvent> removedEvents = TestHelper.findEvents(
                 events,
@@ -61,6 +67,33 @@ public class RemovedEntityBindingTest {
 
         assertThat(removedEvents.size(), equalTo(1));
         assertThat(removedEvents.get(0).getSeverity(), equalTo(Severity.WARNING));
+    }
+
+    @Test
+    public void detectsWhenOperationMovesFromResourceToService() {
+        OperationShape op = OperationShape.builder().id("foo.baz#Operation").build();
+        ResourceShape resourceWithOperation = ResourceShape.builder()
+                .id("foo.baz#Resource")
+                .addOperation(op.getId())
+                .build();
+        ResourceShape resourceWithoutOperation = resourceWithOperation.toBuilder().clearOperations().build();
+        ServiceShape serviceWithResource = ServiceShape.builder()
+                .version("1")
+                .id("foo.baz#Service")
+                .addResource(resourceWithOperation.getId())
+                .build();
+        ServiceShape serviceWithOperation = serviceWithResource.toBuilder()
+                .addOperation(op.getId())
+                .build();
+        Model modelA = Model.assembler().addShapes(serviceWithResource, resourceWithOperation, op).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(serviceWithOperation, resourceWithoutOperation, op).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+        List<ValidationEvent> removedEvents = TestHelper.findEvents(
+                events,
+                "RemovedOperationBinding.FromResource.Operation");
+
+        assertThat(removedEvents.size(), equalTo(1));
+        assertThat(removedEvents.get(0).getSeverity(), equalTo(Severity.ERROR));
     }
 
     @Test
