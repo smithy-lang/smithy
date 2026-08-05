@@ -86,7 +86,8 @@ public class RemovedEntityBindingTest {
                 .addOperation(op.getId())
                 .build();
         Model modelA = Model.assembler().addShapes(serviceWithResource, resourceWithOperation, op).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(serviceWithOperation, resourceWithoutOperation, op).assemble().unwrap();
+        Model modelB =
+                Model.assembler().addShapes(serviceWithOperation, resourceWithoutOperation, op).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
         List<ValidationEvent> removedEvents = TestHelper.findEvents(
                 events,
