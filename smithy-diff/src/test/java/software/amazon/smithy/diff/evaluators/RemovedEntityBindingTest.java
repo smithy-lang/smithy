@@ -39,6 +39,33 @@ public class RemovedEntityBindingTest {
     }
 
     @Test
+    public void detectsRemovedOperationsBeforeAndAfterContainedOperation() {
+        // The retained middle ID exercises both early-exit and exhausted searches of the sorted closure.
+        OperationShape first = OperationShape.builder().id("foo.baz#AOperation").build();
+        OperationShape retained = OperationShape.builder().id("foo.baz#MOperation").build();
+        OperationShape last = OperationShape.builder().id("foo.baz#ZOperation").build();
+        ServiceShape service1 = ServiceShape.builder()
+                .version("1")
+                .id("foo.baz#Service")
+                .addOperation(first.getId())
+                .addOperation(retained.getId())
+                .addOperation(last.getId())
+                .build();
+        ServiceShape service2 = service1.toBuilder()
+                .clearOperations()
+                .addOperation(retained.getId())
+                .build();
+        Model modelA = Model.assembler().addShapes(service1, first, retained, last).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(service2, first, retained, last).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+        List<ValidationEvent> removedEvents =
+                TestHelper.findEvents(events, "RemovedOperationBinding.FromService");
+
+        assertThat(removedEvents.size(), equalTo(2));
+        assertThat(TestHelper.findEvents(removedEvents, Severity.ERROR).size(), equalTo(2));
+    }
+
+    @Test
     public void warnsWhenOperationMovesFromServiceToNestedResource() {
         OperationShape op = OperationShape.builder().id("foo.baz#Operation").build();
         ResourceShape child = ResourceShape.builder()

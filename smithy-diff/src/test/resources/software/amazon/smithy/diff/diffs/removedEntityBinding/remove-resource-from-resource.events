@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Parent: Resource binding of `ns.foo#Child` was removed from resource shape, `ns.foo#Parent` | RemovedResourceBinding.FromResource.Child

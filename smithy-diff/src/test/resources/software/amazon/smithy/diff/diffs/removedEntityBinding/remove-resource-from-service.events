@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Service: Resource binding of `ns.foo#Resource` was removed from service shape, `ns.foo#Service` | RemovedResourceBinding.FromService.Resource
