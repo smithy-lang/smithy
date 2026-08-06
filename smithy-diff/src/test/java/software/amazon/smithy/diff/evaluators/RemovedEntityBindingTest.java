@@ -61,12 +61,17 @@ public class RemovedEntityBindingTest {
         Model modelA = Model.assembler().addShapes(service1, op).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(service2, parent, child, op).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
-        List<ValidationEvent> removedEvents = TestHelper.findEvents(
+        List<ValidationEvent> movedEvents = TestHelper.findEvents(
                 events,
                 "RemovedOperationBinding.FromService.Operation");
 
-        assertThat(removedEvents.size(), equalTo(1));
-        assertThat(removedEvents.get(0).getSeverity(), equalTo(Severity.WARNING));
+        assertThat(movedEvents.size(), equalTo(1));
+        assertThat(movedEvents.get(0).getSeverity(), equalTo(Severity.WARNING));
+        assertThat(
+                movedEvents.get(0).getMessage(),
+                equalTo(
+                        "Operation binding of `foo.baz#Operation` was removed from service shape, `foo.baz#Service`, "
+                                + "but the operation remains in the service closure through a resource"));
     }
 
     @Test
