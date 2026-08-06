@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.EntityShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.Severity;
@@ -33,35 +35,45 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
-        TopDownIndex topDownIndex = TopDownIndex.of(differences.getNewModel());
         List<ValidationEvent> events = new ArrayList<>();
-        differences.changedShapes(EntityShape.class).forEach(change -> validateBindings(change, events, topDownIndex));
+        differences.changedShapes(EntityShape.class)
+                .forEach(change -> validateBindings(change, events, differences.getNewModel()));
         return events;
     }
 
-    private void validateBindings(
-            ChangedShape<EntityShape> change,
-            List<ValidationEvent> events,
-            TopDownIndex topDownIndex
-    ) {
+    private void validateBindings(ChangedShape<EntityShape> change, List<ValidationEvent> events, Model newModel) {
+        TopDownIndex topDownIndex = TopDownIndex.of(newModel);
         EntityShape oldEntity = change.getOldShape();
         EntityShape newEntity = change.getNewShape();
 
         for (ShapeId removed : findRemoved(oldEntity.getOperations(), newEntity.getOperations())) {
-            Severity severity =
-                    isStillContainedInService(newEntity, removed, topDownIndex) ? Severity.WARNING : Severity.ERROR;
-            events.add(createRemovedEvent(REMOVED_OPERATION, newEntity, removed, severity));
+            if (isContainedInService(newEntity, removed, topDownIndex)) {
+                events.add(createMovedOperationEvent(newEntity, removed));
+            } else {
+                events.add(createRemovedEvent(REMOVED_OPERATION, newEntity, removed));
+            }
         }
 
         for (ShapeId removed : findRemoved(oldEntity.getResources(), newEntity.getResources())) {
-            events.add(createRemovedEvent(REMOVED_RESOURCE, newEntity, removed, Severity.ERROR));
+            events.add(createRemovedEvent(REMOVED_RESOURCE, newEntity, removed));
         }
     }
 
-    private boolean isStillContainedInService(EntityShape entity, ShapeId operationId, TopDownIndex topDownIndex) {
-        return entity.isServiceShape() && topDownIndex.getContainedOperations(entity)
-                .stream()
-                .anyMatch(operation -> operation.getId().equals(operationId));
+    private boolean isContainedInService(EntityShape entity, ShapeId operationId, TopDownIndex topDownIndex) {
+        if (!entity.isServiceShape()) {
+            return false;
+        }
+
+        for (OperationShape operation : topDownIndex.getContainedOperations(entity)) {
+            ShapeId currentId = operation.getId();
+            if (currentId.equals(operationId)) {
+                return true;
+            }
+            if (currentId.compareTo(operationId) > 0) {
+                return false;
+            }
+        }
+        return false;
     }
 
     private Set<ShapeId> findRemoved(Set<ShapeId> oldShapes, Set<ShapeId> newShapes) {
@@ -70,12 +82,21 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
         return removed;
     }
 
-    private ValidationEvent createRemovedEvent(
-            String typeOfRemoval,
-            EntityShape parentEntity,
-            ShapeId childShape,
-            Severity severity
-    ) {
+    private ValidationEvent createMovedOperationEvent(EntityShape service, ShapeId operationId) {
+        String message = String.format(
+                "Operation binding of `%s` was removed from service shape, `%s`, "
+                        + "but the operation remains in the service closure through a resource",
+                operationId,
+                service.getId());
+        return ValidationEvent.builder()
+                .id(REMOVED_OPERATION + FROM_SERVICE + operationId.getName())
+                .severity(Severity.WARNING)
+                .shape(service)
+                .message(message)
+                .build();
+    }
+
+    private ValidationEvent createRemovedEvent(String typeOfRemoval, EntityShape parentEntity, ShapeId childShape) {
         String childType = typeOfRemoval.equals(REMOVED_RESOURCE) ? "Resource" : "Operation";
         String typeOfParentShape = ShapeType.RESOURCE.equals(parentEntity.getType()) ? FROM_RESOURCE : FROM_SERVICE;
         String message = String.format(
@@ -86,7 +107,7 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
                 parentEntity.getId());
         return ValidationEvent.builder()
                 .id(typeOfRemoval + typeOfParentShape + childShape.getName())
-                .severity(severity)
+                .severity(Severity.ERROR)
                 .shape(parentEntity)
                 .message(message)
                 .build();
