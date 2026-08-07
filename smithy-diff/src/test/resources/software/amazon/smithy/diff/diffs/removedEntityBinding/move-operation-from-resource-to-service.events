@@ -1,0 +1,3 @@
+[ERROR] ns.foo#Resource: Operation binding of `ns.foo#Operation` was removed from resource shape, `ns.foo#Resource` | RemovedOperationBinding.FromResource.Operation
+-----
+[NOTE] ns.foo#Service: Operation binding of `ns.foo#Operation` was added to the service shape, `ns.foo#Service` | AddedOperationBinding.ToService.Operation

@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Service: Operation binding of `ns.foo#Operation` was removed from service shape, `ns.foo#Service` | RemovedOperationBinding.FromService.Operation
