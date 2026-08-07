@@ -1,3 +1,4 @@
+(client-guidance-retries)=
 # Retrying Requests
 
 Operation requests might fail for a number of reasons that are unrelated to the
