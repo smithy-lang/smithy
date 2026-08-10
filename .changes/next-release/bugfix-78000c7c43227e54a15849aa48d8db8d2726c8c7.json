@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Added a cap to selector recursion depth to prevent malformed selectors",
-  "pull_requests": [
-    "[#3239](https://github.com/smithy-lang/smithy/pull/3239)"
-  ]
-}
