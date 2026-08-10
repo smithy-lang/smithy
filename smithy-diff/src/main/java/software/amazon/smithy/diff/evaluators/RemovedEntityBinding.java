@@ -66,10 +66,11 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
 
         for (OperationShape operation : topDownIndex.getContainedOperations(entity)) {
             ShapeId currentId = operation.getId();
-            if (currentId.equals(operationId)) {
+            int result = currentId.compareTo(operationId);
+            if (result == 0) {
                 return true;
             }
-            if (currentId.compareTo(operationId) > 0) {
+            if (result > 0) {
                 return false;
             }
         }
