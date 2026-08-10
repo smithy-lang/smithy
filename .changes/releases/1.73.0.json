@@ -1,0 +1,76 @@
+{
+  "version": "1.73.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added a versioned smithy-agent-skills artifact that packages reviewable Agent Skills, starting with smithy-docs-navigator for navigating Smithy documentation.",
+      "pull_requests": [
+        "[#3209](https://github.com/smithy-lang/smithy/pull/3209)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Added a cap to selector recursion depth to prevent malformed selectors",
+      "pull_requests": [
+        "[#3239](https://github.com/smithy-lang/smithy/pull/3239)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Extended the `@idempotent` trait with optional `exists` and `notFound` properties to declare the errors returned when encountering unexpected resource states.",
+      "pull_requests": [
+        "[#3218](https://github.com/smithy-lang/smithy/pull/3218)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix duplicate search box in smithy doc page",
+      "pull_requests": [
+        "[#3245](https://github.com/smithy-lang/smithy/pull/3245)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Updated trait docs to show what package the trait is defined in.",
+      "pull_requests": [
+        "[#3217](https://github.com/smithy-lang/smithy/pull/3217)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed trait code generation for shapes with an `@idRef`-annotated member or member's target, which produced uncompilable code. The generated default value for a member didn't respect `@idRef` trait on member or member's target and generated vanilla string literal, while generated member type is `ShapeId`.",
+      "pull_requests": [
+        "https://github.com/smithy-lang/smithy/pull/3214"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Clean orphaned endpoint ruleset params after shape removal",
+      "pull_requests": [
+        "[#3219](https://github.com/smithy-lang/smithy/pull/3219)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Updated CLI to use JDK 25 and AOT cache instead of AppCDS.",
+      "pull_requests": [
+        "[#3186](https://github.com/smithy-lang/smithy/pull/3186)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix changelog action for external contributor PRs",
+      "pull_requests": [
+        "[#3220](https://github.com/smithy-lang/smithy/pull/3220)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "The `RemovedOperationBinding` diff event is now a `NOTE` instead of an `ERROR` when a service operation is moved to a resource within the same service closure",
+      "pull_requests": [
+        "[#3244](https://github.com/smithy-lang/smithy/pull/3244)"
+      ]
+    }
+  ],
+  "date": "2026-08-10"
+}

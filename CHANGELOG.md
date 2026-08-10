@@ -1,5 +1,42 @@
 # Smithy Changelog
 
+## 1.73.0 (2026-08-10)
+
+### Features
+
+- Added a versioned smithy-agent-skills artifact that packages reviewable Agent
+  Skills, starting with smithy-docs-navigator for navigating Smithy
+  documentation. ([#3209](https://github.com/smithy-lang/smithy/pull/3209))
+- Extended the `@idempotent` trait with optional `exists` and `notFound`
+  properties to declare the errors returned when encountering unexpected
+  resource states. ([#3218](https://github.com/smithy-lang/smithy/pull/3218))
+- Updated CLI to use JDK 25 and AOT cache instead of AppCDS.
+  ([#3186](https://github.com/smithy-lang/smithy/pull/3186))
+- The `RemovedOperationBinding` diff event is now a `NOTE` instead of an `ERROR`
+  when a service operation is moved to a resource within the same service
+  closure ([#3244](https://github.com/smithy-lang/smithy/pull/3244))
+
+### Bug Fixes
+
+- Added a cap to selector recursion depth to prevent malformed selectors
+  ([#3239](https://github.com/smithy-lang/smithy/pull/3239))
+- Fix duplicate search box in smithy doc page
+  ([#3245](https://github.com/smithy-lang/smithy/pull/3245))
+- Fixed trait code generation for shapes with an `@idRef`-annotated member or
+  member's target, which produced uncompilable code. The generated default value
+  for a member didn't respect `@idRef` trait on member or member's target and
+  generated vanilla string literal, while generated member type is `ShapeId`.
+  (https://github.com/smithy-lang/smithy/pull/3214)
+- Clean orphaned endpoint ruleset params after shape removal
+  ([#3219](https://github.com/smithy-lang/smithy/pull/3219))
+- Fix changelog action for external contributor PRs
+  ([#3220](https://github.com/smithy-lang/smithy/pull/3220))
+
+### Documentation
+
+- Updated trait docs to show what package the trait is defined in.
+  ([#3217](https://github.com/smithy-lang/smithy/pull/3217))
+
 ## 1.72.1 (2026-07-13)
 
 ### Bug Fixes
