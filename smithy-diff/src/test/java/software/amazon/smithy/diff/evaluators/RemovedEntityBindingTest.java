@@ -93,7 +93,7 @@ public class RemovedEntityBindingTest {
                 "RemovedOperationBinding.FromService.Operation");
 
         assertThat(movedEvents.size(), equalTo(1));
-        assertThat(movedEvents.get(0).getSeverity(), equalTo(Severity.WARNING));
+        assertThat(movedEvents.get(0).getSeverity(), equalTo(Severity.NOTE));
         assertThat(
                 movedEvents.get(0).getMessage(),
                 equalTo(

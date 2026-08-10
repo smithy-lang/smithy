@@ -1,3 +1,3 @@
-[WARNING] ns.foo#Service: Operation binding of `ns.foo#Operation` was removed from service shape, `ns.foo#Service`, but the operation remains in the service closure through a resource | RemovedOperationBinding.FromService.Operation
+[NOTE] ns.foo#Service: Operation binding of `ns.foo#Operation` was removed from service shape, `ns.foo#Service`, but the operation remains in the service closure through a resource | RemovedOperationBinding.FromService.Operation
 -----
 [NOTE] ns.foo#Child: Operation binding of `ns.foo#Operation` was added to the resource shape, `ns.foo#Child` | AddedOperationBinding.ToResource.Operation
