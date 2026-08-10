@@ -66,7 +66,7 @@ public class RemovedEntityBindingTest {
     }
 
     @Test
-    public void warnsWhenOperationMovesFromServiceToNestedResource() {
+    public void emitsNoteWhenOperationMovesFromServiceToNestedResource() {
         OperationShape op = OperationShape.builder().id("foo.baz#Operation").build();
         ResourceShape child = ResourceShape.builder()
                 .id("foo.baz#Child")
