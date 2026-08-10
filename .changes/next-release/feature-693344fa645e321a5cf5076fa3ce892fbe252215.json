@@ -1,6 +1,6 @@
 {
   "type": "feature",
-  "description": "The `RemovedOperationBinding` diff event is now a `WARNING` instead of an `ERROR` when a service operation is moved to a resource within the same service closure",
+  "description": "The `RemovedOperationBinding` diff event is now a `NOTE` instead of an `ERROR` when a service operation is moved to a resource within the same service closure",
   "pull_requests": [
     "[#3244](https://github.com/smithy-lang/smithy/pull/3244)"
   ]

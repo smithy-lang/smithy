@@ -91,7 +91,7 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
                 service.getId());
         return ValidationEvent.builder()
                 .id(REMOVED_OPERATION + FROM_SERVICE + operationId.getName())
-                .severity(Severity.WARNING)
+                .severity(Severity.NOTE)
                 .shape(service)
                 .message(message)
                 .build();
