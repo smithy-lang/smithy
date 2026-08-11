@@ -180,14 +180,6 @@
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -279,14 +271,6 @@
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -473,7 +457,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -710,7 +694,7 @@ your project.</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
 <span class="gd">-     id(&quot;software.amazon.smithy&quot;).version(&quot;0.7.0&quot;)</span>
 <span class="gi">+     `java`</span>
-<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;1.4.0&quot;)</span>
+<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;1.5.0&quot;)</span>
 }
 </pre></div>
 </div>
@@ -722,7 +706,7 @@ your project.</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
 <span class="gd">-      id &#39;software.amazon.smithy&#39; version &#39;0.7.0&#39;</span>
 <span class="gi">+      id &#39;java&#39;</span>
-<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;1.4.0&#39;</span>
+<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;1.5.0&#39;</span>
 }
 </pre></div>
 </div>
@@ -749,7 +733,7 @@ for these build-only dependencies.</p>
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;)</span>
+<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;)</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -758,9 +742,9 @@ for these build-only dependencies.</p>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.72.1&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.73.0&quot;)
 
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;)
+<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;)
 <span class="gi">+   smithyBuild(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
 }
 </pre></div>
@@ -779,7 +763,7 @@ dependencies {
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.72.1&#39;</span>
+<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -788,9 +772,9 @@ dependencies {
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.72.1&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.73.0&#39;
 
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.72.1&#39;
+<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;
 <span class="gi">+   smithyBuild &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
 }
 </pre></div>

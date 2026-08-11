@@ -180,14 +180,6 @@
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -279,14 +271,6 @@
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -473,7 +457,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -749,9 +733,9 @@ Resource Schemas from a Smithy model using the Smithy CLI:</p>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot;</span><span class="p">,</span>
 <span class="w">          </span><span class="c1">// Required for @service trait</span>
-<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;</span>
+<span class="w">          </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -766,7 +750,7 @@ Resource Schemas from a Smithy model using the Smithy CLI:</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>A dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&quot; is
+<p>A dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
@@ -780,13 +764,13 @@ Resource Schemas from a Smithy model <a class="reference internal" href="../grad
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">java</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.4.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="c1">// Required for @service trait</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -797,13 +781,13 @@ Resource Schemas from a Smithy model <a class="reference internal" href="../grad
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java&#39;</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.4.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&#39;</span>
 <span class="w">    </span><span class="c1">// Required for @service trait</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -812,7 +796,7 @@ Resource Schemas from a Smithy model <a class="reference internal" href="../grad
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>A build-only dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&quot; is
+<p>A build-only dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
@@ -1285,7 +1269,7 @@ Gradle:</p>
 <div class="literal-block-wrapper docutils container" id="id23">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id23" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1295,7 +1279,7 @@ Gradle:</p>
 <div class="literal-block-wrapper docutils container" id="id24">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id24" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1322,7 +1306,7 @@ Gradle:</p>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://smithy.io/javadoc/1.72.1/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://smithy.io/javadoc/1.73.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </section>
 </section>
 

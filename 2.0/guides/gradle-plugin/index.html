@@ -180,14 +180,6 @@
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -279,14 +271,6 @@
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -473,7 +457,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -754,7 +738,7 @@ The following example configures a project to use the <code class="docutils lite
 <div class="literal-block-wrapper docutils container" id="id9">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-base&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.4.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-base&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -764,7 +748,7 @@ The following example configures a project to use the <code class="docutils lite
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-base&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.4.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-base&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -817,7 +801,7 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.4.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="c1">// The SmithyExtension is used to customize the build. This example</span>
@@ -830,12 +814,12 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.73.0&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
 <span class="w">    </span><span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
 <span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-model-internal-common:1.0.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -846,7 +830,7 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
-<span class="w">    </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.4.0&#39;</span>
+<span class="w">    </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
 <span class="o">}</span>
 
 <span class="c1">// The SmithyExtension is used to customize the build. This example</span>
@@ -859,12 +843,12 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-model:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-model:1.73.0&#39;</span>
 
 <span class="w">    </span><span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
 <span class="w">    </span><span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
 <span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;com.foo.baz:foo-model-internal-common:1.0.0&#39;</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -890,7 +874,7 @@ build using the &quot;external&quot; projection.</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id13" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.4.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
@@ -899,7 +883,7 @@ build using the &quot;external&quot; projection.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.72.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// Take a dependency on the internal model package. This</span>
 <span class="w">    </span><span class="c1">// dependency *must* be a smithyBuild dependency to ensure</span>
@@ -924,7 +908,7 @@ build using the &quot;external&quot; projection.</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id14" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.4.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
 <span class="o">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="o">{</span>
@@ -933,7 +917,7 @@ build using the &quot;external&quot; projection.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.72.1&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
 
 <span class="w">    </span><span class="c1">// Take a dependency on the internal model package. This</span>
 <span class="w">    </span><span class="c1">// dependency *must* be a smithyBuild dependency to ensure</span>
@@ -1077,7 +1061,7 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 
 <span class="w">    </span><span class="c1">// This dependency is required in order to apply the &quot;typescript-client-codegen&quot;</span>
 <span class="w">    </span><span class="c1">// plugin in smithy-build.json</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-typescript-codegen:0.51.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-typescript-codegen:0.52.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1091,7 +1075,7 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 
 <span class="w">    </span><span class="c1">// This dependency is required in order to apply the &quot;typescript-client-codegen&quot;</span>
 <span class="w">    </span><span class="c1">// plugin in smithy-build.json</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-typescript-codegen:0.51.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-typescript-codegen:0.52.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>

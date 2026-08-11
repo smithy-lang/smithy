@@ -180,14 +180,6 @@
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -279,14 +271,6 @@
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -473,7 +457,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -2259,176 +2243,139 @@ and <code class="docutils literal notranslate"><span class="pre">MyService</span
 changing the semantics of a selector.</p>
 </div>
 <pre class="productionlist highlight">
-<strong>Selector</strong> =
-    <strong id="grammar-token-selectors-Selector">Selector</strong>                          ::= <a class="reference internal" href="#grammar-token-selectors-SelectorExpression"><code class="xref docutils literal notranslate"><span class="pre">SelectorExpression</span></code></a> *(<a class="reference internal" href="#grammar-token-selectors-SelectorExpression"><code class="xref docutils literal notranslate"><span class="pre">SelectorExpression</span></code></a>)
+<strong id="grammar-token-selectors-Selector">Selector</strong>                          = <a class="reference internal" href="#grammar-token-selectors-SelectorExpression"><code class="xref docutils literal notranslate"><span class="pre">SelectorExpression</span></code></a> *(<a class="reference internal" href="#grammar-token-selectors-SelectorExpression"><code class="xref docutils literal notranslate"><span class="pre">SelectorExpression</span></code></a>)
 
 
-<strong>SelectorExpression</strong> =
-    <strong id="grammar-token-selectors-SelectorExpression">SelectorExpression</strong>                ::= <a class="reference internal" href="#grammar-token-selectors-SelectorShapeTypes"><code class="xref docutils literal notranslate"><span class="pre">SelectorShapeTypes</span></code></a>
+<strong id="grammar-token-selectors-SelectorExpression">SelectorExpression</strong>                = <a class="reference internal" href="#grammar-token-selectors-SelectorShapeTypes"><code class="xref docutils literal notranslate"><span class="pre">SelectorShapeTypes</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorAttr"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttr</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorAttr"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttr</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAttr"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAttr</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAttr"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAttr</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorFunction"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunction</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorFunction"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunction</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardUndirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardUndirectedNeighbor</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardUndirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardUndirectedNeighbor</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorReverseUndirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorReverseUndirectedNeighbor</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorReverseUndirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorReverseUndirectedNeighbor</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardDirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardDirectedNeighbor</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardDirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardDirectedNeighbor</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardRecursiveNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardRecursiveNeighbor</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorForwardRecursiveNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorForwardRecursiveNeighbor</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorReverseDirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorReverseDirectedNeighbor</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorReverseDirectedNeighbor"><code class="xref docutils literal notranslate"><span class="pre">SelectorReverseDirectedNeighbor</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorVariableSet"><code class="xref docutils literal notranslate"><span class="pre">SelectorVariableSet</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorVariableSet"><code class="xref docutils literal notranslate"><span class="pre">SelectorVariableSet</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorVariableGet"><code class="xref docutils literal notranslate"><span class="pre">SelectorVariableGet</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorVariableGet"><code class="xref docutils literal notranslate"><span class="pre">SelectorVariableGet</span></code></a>
 
 
-<strong>SelectorShapeTypes</strong> =
-    <strong id="grammar-token-selectors-SelectorShapeTypes">SelectorShapeTypes</strong>                ::= &quot;*&quot; / <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>
+<strong id="grammar-token-selectors-SelectorShapeTypes">SelectorShapeTypes</strong>                = &quot;*&quot; / <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>
 
 
-<strong>SelectorForwardUndirectedNeighbor</strong> =
-    <strong id="grammar-token-selectors-SelectorForwardUndirectedNeighbor">SelectorForwardUndirectedNeighbor</strong> ::= &quot;&gt;&quot;
+<strong id="grammar-token-selectors-SelectorForwardUndirectedNeighbor">SelectorForwardUndirectedNeighbor</strong> = &quot;&gt;&quot;
 
 
-<strong>SelectorReverseUndirectedNeighbor</strong> =
-    <strong id="grammar-token-selectors-SelectorReverseUndirectedNeighbor">SelectorReverseUndirectedNeighbor</strong> ::= &quot;&lt;&quot;
+<strong id="grammar-token-selectors-SelectorReverseUndirectedNeighbor">SelectorReverseUndirectedNeighbor</strong> = &quot;&lt;&quot;
 
 
-<strong>SelectorForwardDirectedNeighbor</strong> =
-    <strong id="grammar-token-selectors-SelectorForwardDirectedNeighbor">SelectorForwardDirectedNeighbor</strong>   ::= &quot;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&gt;&quot;
+<strong id="grammar-token-selectors-SelectorForwardDirectedNeighbor">SelectorForwardDirectedNeighbor</strong>   = &quot;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&gt;&quot;
 
 
-<strong>SelectorReverseDirectedNeighbor</strong> =
-    <strong id="grammar-token-selectors-SelectorReverseDirectedNeighbor">SelectorReverseDirectedNeighbor</strong>   ::= &quot;&lt;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&quot;
+<strong id="grammar-token-selectors-SelectorReverseDirectedNeighbor">SelectorReverseDirectedNeighbor</strong>   = &quot;&lt;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&quot;
 
 
-<strong>SelectorDirectedRelationships</strong> =
-    <strong id="grammar-token-selectors-SelectorDirectedRelationships">SelectorDirectedRelationships</strong>     ::= <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> *(&quot;,&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>)
+<strong id="grammar-token-selectors-SelectorDirectedRelationships">SelectorDirectedRelationships</strong>     = <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> *(&quot;,&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>)
 
 
-<strong>SelectorForwardRecursiveNeighbor</strong> =
-    <strong id="grammar-token-selectors-SelectorForwardRecursiveNeighbor">SelectorForwardRecursiveNeighbor</strong>  ::= &quot;~&gt;&quot;
+<strong id="grammar-token-selectors-SelectorForwardRecursiveNeighbor">SelectorForwardRecursiveNeighbor</strong>  = &quot;~&gt;&quot;
 
 
-<strong>SelectorAttr</strong> =
-    <strong id="grammar-token-selectors-SelectorAttr">SelectorAttr</strong>                      ::= &quot;[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a> [<a class="reference internal" href="#grammar-token-selectors-SelectorAttrComparison"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrComparison</span></code></a>] &quot;]&quot;
+<strong id="grammar-token-selectors-SelectorAttr">SelectorAttr</strong>                      = &quot;[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a> [<a class="reference internal" href="#grammar-token-selectors-SelectorAttrComparison"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrComparison</span></code></a>] &quot;]&quot;
 
 
-<strong>SelectorAttrComparison</strong> =
-    <strong id="grammar-token-selectors-SelectorAttrComparison">SelectorAttrComparison</strong>            ::= <a class="reference internal" href="#grammar-token-selectors-SelectorComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorComparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorAttrValues"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrValues</span></code></a> [&quot;i&quot;]
+<strong id="grammar-token-selectors-SelectorAttrComparison">SelectorAttrComparison</strong>            = <a class="reference internal" href="#grammar-token-selectors-SelectorComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorComparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorAttrValues"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrValues</span></code></a> [&quot;i&quot;]
 
 
-<strong>SelectorKey</strong> =
-    <strong id="grammar-token-selectors-SelectorKey">SelectorKey</strong>                       ::= <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> [&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPath"><code class="xref docutils literal notranslate"><span class="pre">SelectorPath</span></code></a>]
+<strong id="grammar-token-selectors-SelectorKey">SelectorKey</strong>                       = <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> [&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPath"><code class="xref docutils literal notranslate"><span class="pre">SelectorPath</span></code></a>]
 
 
-<strong>SelectorPath</strong> =
-    <strong id="grammar-token-selectors-SelectorPath">SelectorPath</strong>                      ::= <a class="reference internal" href="#grammar-token-selectors-SelectorPathSegment"><code class="xref docutils literal notranslate"><span class="pre">SelectorPathSegment</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPathSegment"><code class="xref docutils literal notranslate"><span class="pre">SelectorPathSegment</span></code></a>)
+<strong id="grammar-token-selectors-SelectorPath">SelectorPath</strong>                      = <a class="reference internal" href="#grammar-token-selectors-SelectorPathSegment"><code class="xref docutils literal notranslate"><span class="pre">SelectorPathSegment</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPathSegment"><code class="xref docutils literal notranslate"><span class="pre">SelectorPathSegment</span></code></a>)
 
 
-<strong>SelectorPathSegment</strong> =
-    <strong id="grammar-token-selectors-SelectorPathSegment">SelectorPathSegment</strong>               ::= <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorFunctionProperty"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunctionProperty</span></code></a>
+<strong id="grammar-token-selectors-SelectorPathSegment">SelectorPathSegment</strong>               = <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorFunctionProperty"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunctionProperty</span></code></a>
 
 
-<strong>SelectorValue</strong> =
-    <strong id="grammar-token-selectors-SelectorValue">SelectorValue</strong>                     ::= <a class="reference internal" href="#grammar-token-selectors-SelectorText"><code class="xref docutils literal notranslate"><span class="pre">SelectorText</span></code></a> / <a class="reference internal" href="idl.html#grammar-token-smithy-Number"><code class="xref docutils literal notranslate"><span class="pre">smithy:Number</span></code></a> / <a class="reference internal" href="model.html#grammar-token-smithy-RootShapeId"><code class="xref docutils literal notranslate"><span class="pre">smithy:RootShapeId</span></code></a>
+<strong id="grammar-token-selectors-SelectorValue">SelectorValue</strong>                     = <a class="reference internal" href="#grammar-token-selectors-SelectorText"><code class="xref docutils literal notranslate"><span class="pre">SelectorText</span></code></a> / <a class="reference internal" href="idl.html#grammar-token-smithy-Number"><code class="xref docutils literal notranslate"><span class="pre">smithy:Number</span></code></a> / <a class="reference internal" href="model.html#grammar-token-smithy-RootShapeId"><code class="xref docutils literal notranslate"><span class="pre">smithy:RootShapeId</span></code></a>
 
 
-<strong>SelectorFunctionProperty</strong> =
-    <strong id="grammar-token-selectors-SelectorFunctionProperty">SelectorFunctionProperty</strong>          ::= &quot;(&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;)&quot;
+<strong id="grammar-token-selectors-SelectorFunctionProperty">SelectorFunctionProperty</strong>          = &quot;(&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;)&quot;
 
 
-<strong>SelectorAttrValues</strong> =
-    <strong id="grammar-token-selectors-SelectorAttrValues">SelectorAttrValues</strong>                ::= <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a>)
+<strong id="grammar-token-selectors-SelectorAttrValues">SelectorAttrValues</strong>                = <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a>)
 
 
-<strong>SelectorComparator</strong> =
-    <strong id="grammar-token-selectors-SelectorComparator">SelectorComparator</strong>                ::= <a class="reference internal" href="#grammar-token-selectors-SelectorStringComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorStringComparator</span></code></a>
+<strong id="grammar-token-selectors-SelectorComparator">SelectorComparator</strong>                = <a class="reference internal" href="#grammar-token-selectors-SelectorStringComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorStringComparator</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorNumericComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorNumericComparator</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorNumericComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorNumericComparator</span></code></a>
 
-                                        / <a class="reference internal" href="#grammar-token-selectors-SelectorProjectionComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorProjectionComparator</span></code></a>
+                                    / <a class="reference internal" href="#grammar-token-selectors-SelectorProjectionComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorProjectionComparator</span></code></a>
 
 
-<strong>SelectorStringComparator</strong> =
-    <strong id="grammar-token-selectors-SelectorStringComparator">SelectorStringComparator</strong>          ::= &quot;^=&quot; / &quot;$=&quot; / &quot;*=&quot; / &quot;!=&quot; / &quot;=&quot; / &quot;?=&quot;
+<strong id="grammar-token-selectors-SelectorStringComparator">SelectorStringComparator</strong>          = &quot;^=&quot; / &quot;$=&quot; / &quot;*=&quot; / &quot;!=&quot; / &quot;=&quot; / &quot;?=&quot;
 
 
-<strong>SelectorNumericComparator</strong> =
-    <strong id="grammar-token-selectors-SelectorNumericComparator">SelectorNumericComparator</strong>         ::= &quot;&gt;=&quot; / &quot;&gt;&quot; / &quot;&lt;=&quot; / &quot;&lt;&quot;
+<strong id="grammar-token-selectors-SelectorNumericComparator">SelectorNumericComparator</strong>         = &quot;&gt;=&quot; / &quot;&gt;&quot; / &quot;&lt;=&quot; / &quot;&lt;&quot;
 
 
-<strong>SelectorProjectionComparator</strong> =
-    <strong id="grammar-token-selectors-SelectorProjectionComparator">SelectorProjectionComparator</strong>      ::= &quot;{=}&quot; / &quot;{!=}&quot; / &quot;{&lt;}&quot; / &quot;{&lt;&lt;}&quot;
+<strong id="grammar-token-selectors-SelectorProjectionComparator">SelectorProjectionComparator</strong>      = &quot;{=}&quot; / &quot;{!=}&quot; / &quot;{&lt;}&quot; / &quot;{&lt;&lt;}&quot;
 
 
-<strong>SelectorAbsoluteRootShapeId</strong> =
-    <strong id="grammar-token-selectors-SelectorAbsoluteRootShapeId">SelectorAbsoluteRootShapeId</strong>       ::= <a class="reference internal" href="model.html#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">smithy:Namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>
+<strong id="grammar-token-selectors-SelectorAbsoluteRootShapeId">SelectorAbsoluteRootShapeId</strong>       = <a class="reference internal" href="model.html#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">smithy:Namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>
 
 
-<strong>SelectorScopedAttr</strong> =
-    <strong id="grammar-token-selectors-SelectorScopedAttr">SelectorScopedAttr</strong>                ::= &quot;[&#64;&quot; [<a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a>] &quot;:&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertions"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertions</span></code></a> &quot;]&quot;
+<strong id="grammar-token-selectors-SelectorScopedAttr">SelectorScopedAttr</strong>                = &quot;[&#64;&quot; [<a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a>] &quot;:&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertions"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertions</span></code></a> &quot;]&quot;
 
 
-<strong>SelectorScopedAssertions</strong> =
-    <strong id="grammar-token-selectors-SelectorScopedAssertions">SelectorScopedAssertions</strong>          ::= <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertion"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertion</span></code></a> *(&quot;&amp;&amp;&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertion"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertion</span></code></a>)
+<strong id="grammar-token-selectors-SelectorScopedAssertions">SelectorScopedAssertions</strong>          = <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertion"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertion</span></code></a> *(&quot;&amp;&amp;&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedAssertion"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedAssertion</span></code></a>)
 
 
-<strong>SelectorScopedAssertion</strong> =
-    <strong id="grammar-token-selectors-SelectorScopedAssertion">SelectorScopedAssertion</strong>           ::= <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorComparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValues"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValues</span></code></a> [&quot;i&quot;]
+<strong id="grammar-token-selectors-SelectorScopedAssertion">SelectorScopedAssertion</strong>           = <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorComparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValues"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValues</span></code></a> [&quot;i&quot;]
 
 
-<strong>SelectorScopedValue</strong> =
-    <strong id="grammar-token-selectors-SelectorScopedValue">SelectorScopedValue</strong>               ::= <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorContextValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorContextValue</span></code></a>
+<strong id="grammar-token-selectors-SelectorScopedValue">SelectorScopedValue</strong>               = <a class="reference internal" href="#grammar-token-selectors-SelectorValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorValue</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorContextValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorContextValue</span></code></a>
 
 
-<strong>SelectorContextValue</strong> =
-    <strong id="grammar-token-selectors-SelectorContextValue">SelectorContextValue</strong>              ::= &quot;&#64;{&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPath"><code class="xref docutils literal notranslate"><span class="pre">SelectorPath</span></code></a> &quot;}&quot;
+<strong id="grammar-token-selectors-SelectorContextValue">SelectorContextValue</strong>              = &quot;&#64;{&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorPath"><code class="xref docutils literal notranslate"><span class="pre">SelectorPath</span></code></a> &quot;}&quot;
 
 
-<strong>SelectorScopedValues</strong> =
-    <strong id="grammar-token-selectors-SelectorScopedValues">SelectorScopedValues</strong>              ::= <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a>)
+<strong id="grammar-token-selectors-SelectorScopedValues">SelectorScopedValues</strong>              = <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorScopedValue"><code class="xref docutils literal notranslate"><span class="pre">SelectorScopedValue</span></code></a>)
 
 
-<strong>SelectorFunction</strong> =
-    <strong id="grammar-token-selectors-SelectorFunction">SelectorFunction</strong>                  ::= &quot;:&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorFunctionArgs"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunctionArgs</span></code></a> &quot;)&quot;
+<strong id="grammar-token-selectors-SelectorFunction">SelectorFunction</strong>                  = &quot;:&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorFunctionArgs"><code class="xref docutils literal notranslate"><span class="pre">SelectorFunctionArgs</span></code></a> &quot;)&quot;
 
 
-<strong>SelectorFunctionArgs</strong> =
-    <strong id="grammar-token-selectors-SelectorFunctionArgs">SelectorFunctionArgs</strong>              ::= <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a>)
+<strong id="grammar-token-selectors-SelectorFunctionArgs">SelectorFunctionArgs</strong>              = <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a>)
 
 
-<strong>SelectorText</strong> =
-    <strong id="grammar-token-selectors-SelectorText">SelectorText</strong>                      ::= <a class="reference internal" href="#grammar-token-selectors-SelectorSingleQuotedText"><code class="xref docutils literal notranslate"><span class="pre">SelectorSingleQuotedText</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorDoubleQuotedText"><code class="xref docutils literal notranslate"><span class="pre">SelectorDoubleQuotedText</span></code></a>
+<strong id="grammar-token-selectors-SelectorText">SelectorText</strong>                      = <a class="reference internal" href="#grammar-token-selectors-SelectorSingleQuotedText"><code class="xref docutils literal notranslate"><span class="pre">SelectorSingleQuotedText</span></code></a> / <a class="reference internal" href="#grammar-token-selectors-SelectorDoubleQuotedText"><code class="xref docutils literal notranslate"><span class="pre">SelectorDoubleQuotedText</span></code></a>
 
 
-<strong>SelectorSingleQuotedText</strong> =
-    <strong id="grammar-token-selectors-SelectorSingleQuotedText">SelectorSingleQuotedText</strong>          ::= &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selectors-SelectorSingleQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">SelectorSingleQuotedChar</span></code></a> &quot;'&quot;
+<strong id="grammar-token-selectors-SelectorSingleQuotedText">SelectorSingleQuotedText</strong>          = &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selectors-SelectorSingleQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">SelectorSingleQuotedChar</span></code></a> &quot;'&quot;
 
 
-<strong>SelectorDoubleQuotedText</strong> =
-    <strong id="grammar-token-selectors-SelectorDoubleQuotedText">SelectorDoubleQuotedText</strong>          ::= DQUOTE 1*<a class="reference internal" href="#grammar-token-selectors-SelectorDoubleQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">SelectorDoubleQuotedChar</span></code></a> DQUOTE
+<strong id="grammar-token-selectors-SelectorDoubleQuotedText">SelectorDoubleQuotedText</strong>          = DQUOTE 1*<a class="reference internal" href="#grammar-token-selectors-SelectorDoubleQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">SelectorDoubleQuotedChar</span></code></a> DQUOTE
 
 
-<strong>SelectorSingleQuotedChar</strong> =
-    <strong id="grammar-token-selectors-SelectorSingleQuotedChar">SelectorSingleQuotedChar</strong>          ::= %x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
+<strong id="grammar-token-selectors-SelectorSingleQuotedChar">SelectorSingleQuotedChar</strong>          = %x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
 
 
-<strong>SelectorDoubleQuotedChar</strong> =
-    <strong id="grammar-token-selectors-SelectorDoubleQuotedChar">SelectorDoubleQuotedChar</strong>          ::= %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
+<strong id="grammar-token-selectors-SelectorDoubleQuotedChar">SelectorDoubleQuotedChar</strong>          = %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
 
 
-<strong>SelectorVariableSet</strong> =
-    <strong id="grammar-token-selectors-SelectorVariableSet">SelectorVariableSet</strong>               ::= &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a> &quot;)&quot;
+<strong id="grammar-token-selectors-SelectorVariableSet">SelectorVariableSet</strong>               = &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a> &quot;)&quot;
 
 
-<strong>SelectorVariableGet</strong> =
-    <strong id="grammar-token-selectors-SelectorVariableGet">SelectorVariableGet</strong>               ::= &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;}&quot;
+<strong id="grammar-token-selectors-SelectorVariableGet">SelectorVariableGet</strong>               = &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;}&quot;
 
 </pre>
 </section>

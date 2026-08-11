@@ -180,14 +180,6 @@
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -279,14 +271,6 @@
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -473,7 +457,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.4.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1150,12 +1134,10 @@ strings whose contents MUST conform to the grammars defined below. These
 grammars are specified using Augmented Backus-Naur Form (ABNF) <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5234.html"><strong>RFC 5234</strong></a>
 notation and share the following definition:</p>
 <pre class="productionlist highlight">
-<strong>DIGIT</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-DIGIT">DIGIT</strong>          ::= %x30-39 ; 0-9
+<strong id="grammar-token-rpc-v2-json-numeric-types-DIGIT">DIGIT</strong>          = %x30-39 ; 0-9
 
 
-<strong>NON-ZERO-DIGIT</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-NON-ZERO-DIGIT">NON-ZERO-DIGIT</strong> ::= %x31-39 ; 1-9
+<strong id="grammar-token-rpc-v2-json-numeric-types-NON-ZERO-DIGIT">NON-ZERO-DIGIT</strong> = %x31-39 ; 1-9
 
 </pre>
 <section id="biginteger-string-format">
@@ -1165,8 +1147,7 @@ grammar. The string representation consists of an optional minus sign followed
 by either a single zero or a non-zero digit and zero or more additional digits.
 No whitespace, decimal points, or exponent indicators are permitted.</p>
 <pre class="productionlist highlight">
-<strong>big-integer</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-big-integer">big-integer</strong> ::= [&quot;-&quot;] (&quot;0&quot; / NON-ZERO-DIGIT *DIGIT)
+<strong id="grammar-token-rpc-v2-json-numeric-types-big-integer">big-integer</strong> = [&quot;-&quot;] (&quot;0&quot; / NON-ZERO-DIGIT *DIGIT)
 
 </pre>
 </section>
@@ -1179,24 +1160,19 @@ followed by an exponent. The exponent consists of <code class="docutils literal 
 optional sign (<code class="docutils literal notranslate"><span class="pre">+</span></code> or <code class="docutils literal notranslate"><span class="pre">-</span></code>) and one or more digits. No whitespace is
 permitted.</p>
 <pre class="productionlist highlight">
-<strong>big-decimal</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-big-decimal">big-decimal</strong>        ::= big-integer [&quot;.&quot; fraction-part] [exponent]
+<strong id="grammar-token-rpc-v2-json-numeric-types-big-decimal">big-decimal</strong>        = big-integer [&quot;.&quot; fraction-part] [exponent]
 
 
-<strong>fraction-part</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-fraction-part">fraction-part</strong>      ::= 1*DIGIT
+<strong id="grammar-token-rpc-v2-json-numeric-types-fraction-part">fraction-part</strong>      = 1*DIGIT
 
 
-<strong>exponent</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-exponent">exponent</strong>           ::= exponent-indicator [sign] 1*DIGIT
+<strong id="grammar-token-rpc-v2-json-numeric-types-exponent">exponent</strong>           = exponent-indicator [sign] 1*DIGIT
 
 
-<strong>exponent-indicator</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-exponent-indicator">exponent-indicator</strong> ::= &quot;e&quot; / &quot;E&quot;
+<strong id="grammar-token-rpc-v2-json-numeric-types-exponent-indicator">exponent-indicator</strong> = &quot;e&quot; / &quot;E&quot;
 
 
-<strong>sign</strong> =
-    <strong id="grammar-token-rpc-v2-json-numeric-types-sign">sign</strong>               ::= &quot;+&quot; / &quot;-&quot;
+<strong id="grammar-token-rpc-v2-json-numeric-types-sign">sign</strong>               = &quot;+&quot; / &quot;-&quot;
 
 </pre>
 </section>

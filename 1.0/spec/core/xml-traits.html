@@ -184,14 +184,6 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
       
         <div class="navbar-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
-      
-        <div class="navbar-item">
-
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
@@ -283,14 +275,6 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
     
     
       <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
         
           <div class="navbar-item">
 
@@ -1373,12 +1357,10 @@ or member.</p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-smithy-XmlName"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:XmlName</span></code></a> ABNF production:</p>
 <pre class="productionlist highlight">
-<strong>XmlName</strong> =
-    <strong id="grammar-token-smithy-XmlName">XmlName</strong>       ::= <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a>)
+<strong id="grammar-token-smithy-XmlName">XmlName</strong>       = <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a>)
 
 
-<strong>XmlIdentifier</strong> =
-    <strong id="grammar-token-smithy-XmlIdentifier">XmlIdentifier</strong> ::= (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
+<strong id="grammar-token-smithy-XmlIdentifier">XmlIdentifier</strong> = (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 
 </pre>
 </dd>
