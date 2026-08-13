@@ -681,7 +681,8 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns true if the trait was used in the model.
      */
     public boolean isTraitApplied(Class<? extends Trait> trait) {
-        return !getShapesWithTrait(trait).isEmpty();
+        Map<Class<? extends Trait>, Set<Shape>> mappings = getTraitCache().traitsToShapes;
+        return mappings.containsKey(trait);
     }
 
     /**
