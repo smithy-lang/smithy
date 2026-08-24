@@ -53,7 +53,7 @@ public class AddedRequiredMemberTest {
                 equalTo("smithy.example#A$foo"));
         assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getMessage(),
                 equalTo("Adding a new member with the `required` trait " +
-                        "but not the `default` trait is backwards-incompatible."));
+                        "but not the `default` trait or the `clientOptional` trait is backwards-incompatible."));
         assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getSourceLocation(),
                 equalTo(source));
     }
