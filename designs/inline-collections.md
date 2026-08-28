@@ -94,6 +94,8 @@ structure Foo {
 
 This desugars into two synthetic shapes: one list and one map.
 
+Inline connections MUST NOT be nested more than 3 levels deep.
+
 #### ABNF
 
 The member target production is extended:
@@ -101,9 +103,9 @@ The member target production is extended:
 ```
 member_target = shape_id / inline_list / inline_map
 
-inline_list = "[" ws member_target ws "]"
+inline_list = "[" [ws] member_target [ws] "]"
 
-inline_map = "{" ws member_target ws ":" ws member_target ws "}"
+inline_map = "{" [ws] member_target [ws] ":" [ws] member_target [ws] "}"
 ```
 
 ### Synthetic shape naming
@@ -217,8 +219,8 @@ Synthetic shapes are normal shapes in the semantic model. They appear
 in selector results and can be matched by type:
 
 ```
-list                           // matches all lists, including synthetic
-[trait|generated]              // matches only generated synthetic shapes
+list                                 // matches all lists, including synthetic
+[trait|smithy.synthetic#generated]   // matches only generated synthetic shapes
 ```
 
 ### AST serialization

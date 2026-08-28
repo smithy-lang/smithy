@@ -44,7 +44,7 @@ and the hypothetical ``fooExample`` authentication scheme.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @authDefinition
@@ -62,7 +62,7 @@ can also support configuration settings.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @authDefinition

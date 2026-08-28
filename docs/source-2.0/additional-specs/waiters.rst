@@ -50,7 +50,7 @@ exists:
 .. code-block:: smithy
     :emphasize-lines: 4
 
-    $version: "2"
+    $version: "2.1"
     namespace com.amazonaws.s3
 
     use smithy.waiters#waitable
@@ -608,7 +608,7 @@ triggered if the ``status`` property equals ``failed``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.waiters#waitable
@@ -664,7 +664,7 @@ provided groups on input matches the number of provided groups on output:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.waiters#waitable

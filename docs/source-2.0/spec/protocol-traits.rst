@@ -156,7 +156,7 @@ The following example defines a ``video/quicktime`` blob:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mediaType("video/quicktime")

@@ -1813,7 +1813,7 @@ Below is an example selector compliance test:
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2.1"
 
     metadata selectorTests = [
         {

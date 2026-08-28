@@ -43,7 +43,7 @@ The following example defines an operation that uses a custom endpoint:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly
@@ -225,7 +225,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly

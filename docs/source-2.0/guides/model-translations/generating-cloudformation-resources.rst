@@ -164,7 +164,7 @@ generate one Resource Schema with the ``typeName`` of ``AWS:Queues:Queue``.
 .. code-block:: smithy
     :caption: model.smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

@@ -31,7 +31,7 @@ The following example defines a model file with each section:
     .. code-block:: smithy
 
         // (1) Control section
-        $version: "2"
+        $version: "2.1"
 
         // (2) Metadata section
         metadata foo = "bar"
@@ -51,7 +51,7 @@ The following example defines a model file with each section:
     .. code-block:: smithy
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "metadata": {
                 "foo": "bar"
             },
@@ -261,7 +261,7 @@ forward slashes followed by any character. A newline terminates a comment.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     // This is a comment
     namespace com.foo // This is also a comment
@@ -398,7 +398,7 @@ The following example defines metadata in the model:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         metadata greeting = "hello"
         metadata "stringList" = ["a", "b", "c"]
 
@@ -407,7 +407,7 @@ The following example defines metadata in the model:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "metadata": {
                 "greeting": "hello",
                 "stringList": ["a", "b", "c"]
@@ -422,7 +422,7 @@ The following Smithy IDL model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata exampleSyntacticShapeId = required
 
 Is equivalent to the following JSON AST model:
@@ -430,7 +430,7 @@ Is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "2",
+        "smithy": "2.1",
         "metadata": {
             "exampleSyntacticShapeId": "smithy.api#required"
         }
@@ -461,7 +461,7 @@ The following example defines a string shape named ``MyString`` in the
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         string MyString
@@ -471,7 +471,7 @@ The following example defines a string shape named ``MyString`` in the
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string"
@@ -495,7 +495,7 @@ so that they can be referred to using only ``Foo`` and ``Baz``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.hello
 
     use smithy.example#Foo
@@ -514,7 +514,7 @@ traits so that they can be applied using relative shape IDs:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.hello
 
     use smithy.example#test
@@ -552,7 +552,7 @@ to.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use foo.baz#Bar
@@ -609,7 +609,7 @@ in another namespace.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.other#MyString
@@ -623,7 +623,7 @@ The above model is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "2",
+        "smithy": "2.1",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -644,7 +644,7 @@ it resolves the value of the :ref:`error-trait` to the shape ID
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @error(client) // <-- This MUST be "client"
@@ -657,7 +657,7 @@ The above example is equivalent to the following incorrect JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "2",
+        "smithy": "2.1",
         "shapes": {
             "smithy.example#Error": {
                 "type": "structure",
@@ -690,7 +690,7 @@ The above example is equivalent to the following JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "2",
+        "smithy": "2.1",
         "metadata": {
             "String": "smithy.api#String"
         }
@@ -736,7 +736,7 @@ The following example defines a ``string`` shape:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         string MyString
@@ -746,7 +746,7 @@ The following example defines a ``string`` shape:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#String": {
                     "type": "string"
@@ -760,7 +760,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         @range(min: 0, max: 1000)
@@ -771,7 +771,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MaxResults": {
                     "type": "integer",
@@ -797,7 +797,7 @@ The following example defines an :ref:`enum` shape:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Suit {
@@ -813,7 +813,7 @@ traits:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Suit {
@@ -829,7 +829,7 @@ The above enum is exactly equivalent to the following enum:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Suit {
@@ -865,7 +865,7 @@ member. The following example defines an :ref:`intEnum` shape:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     intEnum Suit {
@@ -879,7 +879,7 @@ The above intEnum is exactly equivalent to the following intEnum:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     intEnum Suit {
@@ -911,7 +911,7 @@ The following example defines a list with a string member from the
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         list MyList {
@@ -923,7 +923,7 @@ The following example defines a list with a string member from the
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -940,7 +940,7 @@ Traits can be applied to the list shape and its member:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         @length(min: 3, max: 10)
@@ -954,7 +954,7 @@ Traits can be applied to the list shape and its member:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -1002,7 +1002,7 @@ The following example defines a map of strings to integers:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         map IntegerMap {
@@ -1015,7 +1015,7 @@ The following example defines a map of strings to integers:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "type": "map",
                 "smithy.example#IntegerMap": {
@@ -1035,7 +1035,7 @@ Traits can be applied to the map shape and its members:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         @length(min: 0, max: 100)
@@ -1052,7 +1052,7 @@ Traits can be applied to the map shape and its members:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "type": "map",
@@ -1110,7 +1110,7 @@ The following example defines a structure with two members:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         structure MyStructure {
@@ -1123,7 +1123,7 @@ The following example defines a structure with two members:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1145,7 +1145,7 @@ Traits can be applied to structure members:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         /// This is MyStructure.
@@ -1164,7 +1164,7 @@ Traits can be applied to structure members:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1234,7 +1234,7 @@ The following example defines a union shape with several members:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         union MyUnion {
@@ -1251,7 +1251,7 @@ The following example defines a union shape with several members:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyUnion": {
                     "type": "union",
@@ -1302,7 +1302,7 @@ a resource named ``Model`` and an operation named ``PingService``:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         service ModelRepository {
@@ -1316,7 +1316,7 @@ a resource named ``Model`` and an operation named ``PingService``:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#ModelRepository": {
                     "type": "service",
@@ -1352,7 +1352,7 @@ can potentially return the ``Unavailable`` or ``BadRequest``
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         operation PingService {
@@ -1366,7 +1366,7 @@ can potentially return the ``Unavailable`` or ``BadRequest``
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#PingService": {
                     "type": "operation",
@@ -1472,7 +1472,7 @@ The suffixes for the generated names can be customized using the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     $operationInputSuffix: "Request"
     $operationOutputSuffix: "Response"
 
@@ -1570,7 +1570,7 @@ and defines a :ref:`read <read-lifecycle>` operation:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         resource SprocketResource {
@@ -1585,7 +1585,7 @@ and defines a :ref:`read <read-lifecycle>` operation:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#Sprocket": {
                     "type": "resource",
@@ -1651,7 +1651,7 @@ shows how to elide the target for a member inherited from a mixin:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin
@@ -1683,7 +1683,7 @@ a resource:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     resource User {
@@ -1712,7 +1712,7 @@ be checked first. The following example is invalid:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     resource User {
@@ -1754,7 +1754,7 @@ The following Smithy IDL example,
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     /// This is documentation about a shape.
@@ -1773,7 +1773,7 @@ is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "2",
+        "smithy": "2.1",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -1842,7 +1842,7 @@ The following example applies the :ref:`length-trait` and
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         @length(min: 1, max: 100)
@@ -1854,7 +1854,7 @@ The following example applies the :ref:`length-trait` and
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -1931,7 +1931,7 @@ The following applications of the ``foo`` trait are equivalent:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
 
         namespace smithy.example
 
@@ -1953,7 +1953,7 @@ The following applications of the ``foo`` trait are equivalent:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -1991,7 +1991,7 @@ The following applications of the :ref:`tags-trait` are equivalent:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
 
         namespace smithy.example
 
@@ -2009,7 +2009,7 @@ The following applications of the :ref:`tags-trait` are equivalent:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyString1": {
                     "type": "string",
@@ -2051,7 +2051,7 @@ The following example applies the :ref:`documentation-trait` to the
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         apply MyString @documentation("This is my string!")
@@ -2061,7 +2061,7 @@ The following example applies the :ref:`documentation-trait` to the
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -2080,7 +2080,7 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
         namespace smithy.example
 
         apply MyString {
@@ -2093,7 +2093,7 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
     .. code-block:: json
 
         {
-            "smithy": "2",
+            "smithy": "2.1",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -2112,7 +2112,7 @@ Traits can be applied to members too:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     apply MyStructure$foo @documentation("Structure member documentation")

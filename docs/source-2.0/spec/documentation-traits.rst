@@ -243,6 +243,67 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.synthetic#generated
+    :package: smithy-model
+.. _generated-trait:
+
+``generated`` trait
+===================
+
+.. versionadded:: 2.1
+
+Summary
+    Marks a shape as produced by the model assembler rather than written by a
+    model author, such as the synthetic list and map shapes created by
+    :ref:`inline collection declarations <idl-inline-collections>`.
+Trait selector
+    ``:is(list, map)``
+Value type
+    Annotation trait
+
+A model MUST NOT apply this trait manually, only the assembler may attach it.
+A shape that carries it MUST be named using the reserved ``_Synthetic`` prefix.
+
+The trait is serialized in the :ref:`JSON AST <json-ast>` so that AST
+consumers can tell generated shapes apart from authored ones. It is never
+serialized in the IDL, where syntax carries the same information.
+The following two models are therefore equivalent:
+
+.. code-block:: json
+
+    {
+        "smithy": "2.1",
+        "shapes": {
+            "smithy.example#_SyntheticListOfString": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "traits": {
+                    "smithy.synthetic#generated": {}
+                }
+            },
+            "smithy.example#Playlist": {
+                "type": "structure",
+                "members": {
+                    "songs": {
+                        "target": "smithy.example#_SyntheticListOfString"
+                    }
+                }
+            }
+        }
+    }
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    structure Playlist {
+        songs: [String]
+    }
+
+
 .. smithy-trait:: smithy.api#internal
 .. _internal-trait:
 
@@ -396,7 +457,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace acme.example
 
     @title("ACME Simple Image Service")

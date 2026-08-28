@@ -62,7 +62,7 @@ The following example defines an operation that uses HTTP bindings:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @idempotent
@@ -894,7 +894,7 @@ The following example defines an operation that send an HTTP label named
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly
@@ -979,7 +979,7 @@ data in a response:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly
@@ -1547,7 +1547,7 @@ and HTTP bindings:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @http(method: "POST", uri: "/messages")
@@ -1576,7 +1576,7 @@ marked with the ``httpPayload`` trait:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @http(method: "POST", uri: "/messages")

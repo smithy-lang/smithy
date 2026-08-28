@@ -106,7 +106,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [
         {
@@ -162,7 +162,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [
         {name: "AbbreviationName"}
@@ -205,7 +205,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [
         {name: "CamelCase"}
@@ -255,7 +255,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [{
         name: "MissingSensitiveTrait"
@@ -318,7 +318,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [{
         name: "NoninclusiveTerms"
@@ -389,7 +389,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [{
         id: "FooReservedWords"
@@ -617,7 +617,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [{
         name: "StandardOperationVerb"
@@ -858,7 +858,7 @@ union are marked with the ``@clientOptional`` trait.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [
         {
@@ -1047,7 +1047,7 @@ example warns each time the word "meow" appears in documentation:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata validators = [
         {
@@ -1066,7 +1066,7 @@ example warns each time the word "meow" appears in documentation:
 
     .. code-block:: smithy
 
-        $version: "2"
+        $version: "2.1"
 
         metadata validators = [
             {

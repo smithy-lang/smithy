@@ -67,7 +67,7 @@ resource:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -92,7 +92,7 @@ The following example provides a ``name`` value and one structure shape in the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -173,7 +173,7 @@ The following example defines a CloudFormation resource that excludes the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -237,7 +237,7 @@ Given the following model without mutability traits applied,
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -402,7 +402,7 @@ and ``barProperty`` properties as fully mutable:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -444,7 +444,7 @@ The following example defines a CloudFormation resource that marks the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -469,7 +469,7 @@ The following example defines a CloudFormation resource that marks the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -513,7 +513,7 @@ derivable ``secret`` and ``password`` properties as write only:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -574,7 +574,7 @@ Given the following structure definition:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -632,7 +632,7 @@ The following example defines a CloudFormation resource that has the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -692,7 +692,7 @@ CloudFormation schema for this resource.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -731,7 +731,7 @@ Given the following model,
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

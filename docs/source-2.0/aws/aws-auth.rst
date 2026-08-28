@@ -45,7 +45,7 @@ unauthenticated request.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -99,7 +99,7 @@ supports signatures for multi-region API requests.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -147,7 +147,7 @@ operation MUST NOT be used as part of the request signature calculation:
 
 .. code-block:: Smithy
 
-    $version: "2"
+    $version: "2.1"
 
     use aws.auth#unsignedPayload
 
@@ -200,7 +200,7 @@ See also
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -248,7 +248,7 @@ details.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 

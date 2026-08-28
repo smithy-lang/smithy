@@ -14,7 +14,7 @@ Smithy models SHOULD resemble the following example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = []
     metadata suppressions = []
 
@@ -117,7 +117,7 @@ Do:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [{
         name: "StandardOperationVerb"
         configuration: {
@@ -143,7 +143,7 @@ Do not:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [{
         name: "StandardOperationVerb",
         configuration: {
