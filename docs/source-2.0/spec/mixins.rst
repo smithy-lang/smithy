@@ -10,7 +10,7 @@ shape.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin
@@ -225,7 +225,7 @@ Consider the following model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @private
@@ -268,7 +268,7 @@ For example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin
@@ -284,7 +284,7 @@ Alternatively, the member can be redefined if it targets the same shape:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin

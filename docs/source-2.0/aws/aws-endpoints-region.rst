@@ -71,7 +71,7 @@ the hypothetical ``fooExample`` endpoint modifier.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -93,7 +93,7 @@ can also support configuration settings.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.endpoints#endpointsModifier
@@ -164,7 +164,7 @@ The following example defines a service that uses the standard regional endpoint
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -289,7 +289,7 @@ The following example defines a partitional service that uses AWS recommended pa
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

@@ -82,7 +82,7 @@ contain a valid shape ID that targets an integer shape in the model.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @trait
@@ -93,7 +93,7 @@ Given the following model,
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @integerRef(NotFound)
@@ -258,7 +258,7 @@ Consider the following model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @private
@@ -269,7 +269,7 @@ The following model is invalid because it attempts to refer to
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example.other
 
     list StringList {

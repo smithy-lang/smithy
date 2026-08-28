@@ -1257,7 +1257,7 @@ For example, given the following Smithy model:
 .. code-block:: smithy
     :caption: main.smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.protocols#restJson1
@@ -1488,7 +1488,7 @@ The following example defines a specification extension representing a custom me
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.openapi#specificationExtension
@@ -1825,7 +1825,7 @@ or larger:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#minimumCompressionSize
@@ -1986,7 +1986,7 @@ The following Smithy model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#authorizer
@@ -2198,7 +2198,7 @@ operation that uses the ``aws.auth.cognitoUserPools`` scheme name:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.auth#cognitoUserPools
@@ -2246,7 +2246,7 @@ The following Smithy model enables API Gateway's API key usage plans on the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#authorizer
@@ -2323,7 +2323,7 @@ The following Smithy model defines custom 4xx and 5xx gateway responses:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#gatewayResponses
@@ -2399,7 +2399,7 @@ The following Smithy model sets the TLS policy to ``TLS_1_2`` with a
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#apiTlsPolicy
@@ -2447,7 +2447,7 @@ disables the default ``execute-api`` endpoint:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use aws.apigateway#endpointConfiguration

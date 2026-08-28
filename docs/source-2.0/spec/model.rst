@@ -145,7 +145,7 @@ a model validator:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [
         {
             name: "EmitEachSelector"
@@ -176,7 +176,7 @@ Given the following two Smithy models:
 .. code-block:: smithy
     :caption: model-a.smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata "foo" = ["baz", "bar"]
     metadata "qux" = "test"
     metadata "validConflict" = "hi!"
@@ -184,7 +184,7 @@ Given the following two Smithy models:
 .. code-block:: smithy
     :caption: model-b.smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata "foo" = ["lorem", "ipsum"]
     metadata "lorem" = "ipsum"
     metadata "validConflict" = "hi!"
@@ -194,7 +194,7 @@ model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata "foo" = ["baz", "bar", "lorem", "ipsum"]
     metadata "qux" = "test"
     metadata "lorem" = "ipsum"
@@ -245,7 +245,7 @@ The following example defines a :ref:`trait <traits>` using a node value:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @length(min: 1, max: 10)
@@ -468,7 +468,7 @@ documentation for :ref:`shape types <shapes>`.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     list UserNameList {
@@ -495,7 +495,7 @@ The following example defines a shape in the ``smithy.example`` namespace named
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     string MyString
@@ -621,7 +621,7 @@ immediately precede a shape. The following example applies the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @length(min: 1, max: 100)
@@ -681,7 +681,7 @@ The following example applies the :ref:`documentation-trait` and
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     apply MyString @documentation("This is my string!")
@@ -714,7 +714,7 @@ duplicated on the ``MyList`` shape with the same values:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @length(min: 0, max: 10)
@@ -730,7 +730,7 @@ is a list. The resulting value assigned to the ``tags`` trait on the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @tags(["a", "b"])
@@ -743,7 +743,7 @@ duplicated on the ``MyList`` shape with different values:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @length(min: 0, max: 10)
@@ -856,7 +856,7 @@ The following example defines a trait with a :ref:`shape ID <shape-id>` of
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @trait(selector: "*")
@@ -870,7 +870,7 @@ The following example defines two custom traits: ``beta`` and
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     /// A trait that can be applied to a member.
@@ -984,7 +984,7 @@ The following example defines an annotation trait named ``foo``:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @trait
@@ -997,7 +997,7 @@ after adding a member to the ``foo`` trait:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @trait

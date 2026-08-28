@@ -358,7 +358,7 @@ explicitly on the operation.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly
@@ -397,7 +397,7 @@ settings from a service.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @paginated(inputToken: "nextToken", outputToken: "nextToken",
@@ -428,7 +428,7 @@ wrapper where the output token and items are referenced by paths.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @readonly
@@ -644,7 +644,7 @@ member.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @requestCompression(
@@ -700,7 +700,7 @@ As an example, using the ``PutWithContentEncoding`` operation below with the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @requestCompression(

@@ -300,7 +300,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Enum {
@@ -317,7 +317,7 @@ The following enum definition uses syntactic sugar that is exactly equivalent:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Enum {

@@ -221,7 +221,7 @@ public final class ModelSerializer {
         }
 
         /**
-         * Sets the IDL version to serialize. Defaults to 2.0.
+         * Sets the IDL version to serialize. Defaults to 2.1.
          *
          * <p>Version "1.0" serialization cannot be used with {@link #includePrelude}.
          *

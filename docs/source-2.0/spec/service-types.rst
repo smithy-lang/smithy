@@ -74,7 +74,7 @@ The following example defines a service with no operations or resources.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     service MyService {
@@ -86,7 +86,7 @@ that are common to every operation in the service:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     service MyService {
@@ -110,7 +110,7 @@ that do not fit within a resource hierarchy.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     service MyService {
@@ -134,7 +134,7 @@ shape ID of a resource to the ``resources`` property of a service.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     service MyService {
@@ -220,7 +220,7 @@ the conflicting shapes.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     service MyService {
@@ -300,7 +300,7 @@ named ``MyOperationInput``, returns an output structure named
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation MyOperation {
@@ -321,7 +321,7 @@ omitting them is allowed. The default value for input and output is
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation MySideEffectOperation {}
@@ -330,7 +330,7 @@ The following example is equivalent, but more explicit in intent:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation MySideEffectOperation {
@@ -435,7 +435,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     resource Forecast {
@@ -719,7 +719,7 @@ output operation shape ``GetForecastOutput`` contains that output property.
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2.1"
     namespace smithy.example
 
     resource Forecast {
@@ -747,7 +747,7 @@ name and property name by default.
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2.1"
     namespace smithy.example
 
     resource Forecast {
@@ -828,7 +828,7 @@ The following example defines a resource with each lifecycle method:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     resource Forecast {

@@ -86,7 +86,7 @@ and ``{second}``, in the MQTT topic template:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     use smithy.mqtt#publish
     use smithy.mqtt#topicLabel
 
@@ -162,7 +162,7 @@ The following example defines an operation that publishes messages to the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.mqtt#publish
@@ -248,7 +248,7 @@ topic using an :ref:`event stream <event-streams>`:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     use smithy.mqtt#subscribe
     use smithy.mqtt#topicLabel
 
@@ -400,7 +400,7 @@ MQTT protocol bindings.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.mqtt
 
     @trait(selector: "service")

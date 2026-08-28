@@ -264,7 +264,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.test#httpRequestTests
@@ -452,7 +452,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.test#httpResponseTests
@@ -498,7 +498,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.test#httpResponseTests
@@ -756,7 +756,7 @@ specific types of malformed values.
 
 .. code:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     use smithy.test#httpMalformedRequestTests

@@ -74,7 +74,7 @@ and apply it to the ``Weather`` service shape:
 .. code-block:: smithy
     :caption: weather.smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace example.weather
 
     use aws.protocols#restJson1
