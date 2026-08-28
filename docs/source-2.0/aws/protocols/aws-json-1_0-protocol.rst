@@ -59,7 +59,7 @@ The following example defines a service that uses ``aws.protocols#awsJson1_0``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -75,7 +75,7 @@ The following example defines a service that requires the use of
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -95,7 +95,7 @@ preferred over ``http/1.1``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -114,7 +114,7 @@ The following example defines a service that requires the use of
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

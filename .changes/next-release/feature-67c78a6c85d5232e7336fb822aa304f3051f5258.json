@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added tagged string literals to IDL 2.1. Prefixing a string or text block with `#re`, `#b`, `#hex`, or `#timestamp` changes how its content is interpreted at parse time, making regular expressions, binary data, hex dumps, and RFC 3339 timestamps easier to write and read.",
+  "pull_requests": [
+    "[#3163](https://github.com/smithy-lang/smithy/pull/3163)"
+  ]
+}

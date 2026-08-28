@@ -101,7 +101,7 @@ The following Smithy document applies a custom validator named "SomeValidator":
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [
         {
             // The name of the validator.
@@ -202,7 +202,7 @@ for the ``smithy.example#MyString`` shape:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @suppress(["Foo", "Bar"])
@@ -246,7 +246,7 @@ in the ``foo.baz`` namespace with an ID of ``UnreferencedShape``:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata suppressions = [
         {
             id: "UnreferencedShape"
@@ -260,7 +260,7 @@ ID of ``OverlyBroadValidator``:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata suppressions = [
         {
             id: "OverlyBroadValidator"
@@ -349,7 +349,7 @@ for events emitted for shapes in the ``smithy.example`` namespace:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata severityOverrides = [
         {
@@ -425,7 +425,7 @@ following constraints:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [{
         name: "EmitEachSelector"
         id: "MissingDocumentation"
@@ -445,7 +445,7 @@ input/output that has a shape name that does not case-insensitively end with
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [
         {
             name: "EmitEachSelector"
@@ -471,7 +471,7 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [
         {
             name: "EmitEachSelector"
@@ -731,7 +731,7 @@ traits.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     metadata validators = [{
         name: "EmitNoneSelector"
         id: "MissingConstraintTraits"
@@ -774,7 +774,7 @@ The following example defines a protocol that does not support document types.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -917,7 +917,7 @@ a type for the key gives Smithy enough information to validate each usage:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @metadata(key: "auditLevel")
@@ -934,7 +934,7 @@ value is provided:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata auditLevel = "unknown"
 

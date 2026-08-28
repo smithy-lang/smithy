@@ -193,7 +193,7 @@ The following example demonstrates creative prompt templates that enhance the us
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace example.weather
 

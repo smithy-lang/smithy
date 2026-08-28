@@ -9,7 +9,7 @@ Smithy
 .. code-block:: smithy
     :caption: Example Smithy service
 
-    $version: "2"
+    $version: "2.1"
     namespace example.weather
 
     service Weather {

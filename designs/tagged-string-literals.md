@@ -52,7 +52,7 @@ or underscore).
 #### ABNF
 
 ```
-tagged_string_literal = "#" identifier SP (quoted_text / text_block)
+tagged_string_literal = "#" identifier [SP] (quoted_text / text_block)
 
 quoted_text = DQUOTE *quoted_char DQUOTE
 
@@ -91,11 +91,14 @@ equivalent plain string are indistinguishable after parsing.
 The `#re` tag treats backslash sequences as literal characters rather than escape sequences. This allows regex patterns
 to be written naturally without double-escaping.
 
-**Escape rules:**
+No escape sequence is evaluated. Every character, including every backslash,
+is passed through unchanged. `\"` still prevents the string from being
+terminated early, but both characters are emitted as-is. Since `\"` and `"`
+are equivalent in a regular expression, the pattern's meaning is unchanged.
+In text blocks, quotes do not need escaping at all.
 
-* `\"` → produces a literal double quote (necessary to include `"` in the string)
-* `\\` → produces a literal backslash
-* All other `\X` sequences → passed through literally as `\X` (two characters)
+Newlines are stripped, so the lines of a text block are concatenated. To match
+a newline, write `\n`.
 
 **Examples:**
 
@@ -103,8 +106,8 @@ to be written naturally without double-escaping.
 |-|-|-|
 |`#re "^\d{5}$"`|`"^\\d{5}$"`|Match 5 digits|
 |`#re "\w+"`|`"\\w+"`|One or more word chars|
-|`#re "a\"b"`|`"a\"b"`|Literal `a"b`|
-|`#re "a\\b"`|`"a\\b"`|Literal `a\b`|
+|`#re "a\"b"`|`"a\\\"b"`|Literal `a"b`|
+|`#re "a\\b"`|`"a\\\\b"`|Literal `a\b`|
 
 #### `#b` Binary (byte) literals
 
@@ -196,7 +199,7 @@ readable.
 |Tagged literal|Equivalent value|Meaning|
 |-|-|-|
 |`#timestamp "2024-01-01T00:00:00Z"`|`1704067200`|Midnight Jan 1, 2024 UTC|
-|`#timestamp "2024-06-15T12:30:00.500Z"`|`1718451000.5`|With milliseconds|
+|`#timestamp "2024-06-15T12:30:00.500Z"`|`1718454600.5`|With milliseconds|
 
 ### Text block support
 
@@ -254,7 +257,7 @@ This was rejected because:
 
 * It doesn't solve the binary literal use case.
 * The tag system is more general and extensible.
-* For regex specifically, `\"` still needs to work (to include quotes), so truly "raw" strings aren't practical.
+* `#re` semantics already come close to this.
 
 ### Extensible/user-defined tags
 
@@ -298,18 +301,20 @@ string NumericString
 
 ### Can tagged literals span multiple lines?
 
-Yes, via text blocks. Note that newlines are preserved in the output. To continue a pattern across lines without
-including the newline, escape it with `\` at the end of the line:
+Yes, via text blocks. Newlines are always stripped from `#re` content, so the lines are simply concatenated. No
+continuation character is needed, and none is supported: a trailing `\` is passed through into the pattern like any
+other character.
 
 ```smithy
 @pattern(#re """
-    ^\d{5}\
+    ^\d{5}
     (-\d{4})?$
     """)
 string ZipCode
 ```
 
-This produces the pattern `^\d{5}(-\d{4})?$` (no newline between the parts).
+This produces the pattern `^\d{5}(-\d{4})?$` (no newline between the parts). To match a newline character in the
+pattern, write `\n`.
 
 ### What happens if a new tag conflicts with a shape name?
 

@@ -153,7 +153,7 @@ and return a successful response otherwise.
 
 .. code:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

@@ -35,7 +35,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -73,7 +73,7 @@ Given the following structure definition:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     use aws.protocols#ec2QueryName
 

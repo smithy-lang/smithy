@@ -34,7 +34,7 @@ but not on ``HealthCheck``:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -89,7 +89,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -266,7 +266,7 @@ An *authorizer* definition is a structure that supports the following members:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace ns.foo
 
@@ -375,7 +375,7 @@ errors:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -436,7 +436,7 @@ The following example sets the minimum compression size to 10240 bytes:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -488,7 +488,7 @@ The following example enables request validation on a service:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -766,7 +766,7 @@ The following example defines an operation that uses a mock integration.
 .. code-block:: json
 
     {
-        "smithy": "2.0",
+        "smithy": "2.1",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",
@@ -928,7 +928,7 @@ endpoint access mode:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -1003,7 +1003,7 @@ disables the default endpoint:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -1063,7 +1063,7 @@ invoke the API except for requests from the specified source IP address block:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

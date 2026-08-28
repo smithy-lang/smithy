@@ -25,7 +25,7 @@ to determine the XML namespace used in XML responses.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -482,7 +482,7 @@ See
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -544,7 +544,7 @@ The following example defines an error that uses a custom "Code" of
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -597,7 +597,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     use aws.protocols#awsQueryCompatible
     use aws.protocols#awsQueryError
     use aws.protocols#awsJson1_0

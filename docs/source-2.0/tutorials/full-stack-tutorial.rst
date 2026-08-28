@@ -102,7 +102,7 @@ file and add the following:
 .. code-block:: smithy
     :caption: ``smithy/model/main.smithy``
 
-    $version: "2.0"
+    $version: "2.1"
 
     namespace com.example
 
@@ -132,7 +132,7 @@ of coffee-related structures:
 .. code-block:: smithy
     :caption: ``smithy/model/coffee.smithy``
 
-    $version: "2.0"
+    $version: "2.1"
 
     namespace com.example
 
@@ -216,7 +216,7 @@ With these requirements in mind, let's create the underlying data model:
 .. code-block:: smithy
     :caption: ``smithy/model/order.smithy``
 
-    $version: "2.0"
+    $version: "2.1"
 
     namespace com.example
 

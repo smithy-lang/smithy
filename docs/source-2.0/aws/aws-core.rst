@@ -36,7 +36,7 @@ The following example defines an AWS service that uses the default values of
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -51,7 +51,7 @@ The following example provides explicit values for all properties:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -213,7 +213,7 @@ for this property would default to ``some-value-2018-03-17``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -396,7 +396,7 @@ For example, given the following service:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace aws.fooBaz
 
@@ -503,7 +503,7 @@ referenced resource.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -521,7 +521,7 @@ previous example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
