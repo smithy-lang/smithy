@@ -103,7 +103,7 @@ Example
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     metadata shapeClosures = [
         {

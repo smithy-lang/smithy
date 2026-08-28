@@ -145,7 +145,7 @@ Consider the following *abridged* model of S3's ``GetBucketLocation`` operation:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     use aws.customizations#s3UnwrappedXmlOutput
 

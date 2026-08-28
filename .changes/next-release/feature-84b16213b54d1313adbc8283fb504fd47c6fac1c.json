@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added inline collection declarations to IDL 2.1, allowing list and map shapes to be declared directly in member target positions using `[Target]` and `{KeyTarget: ValueTarget}` instead of a separate top-level shape. The assembler generates one shared synthetic shape per distinct collection type in a namespace.",
+  "pull_requests": [
+    "[#3134](https://github.com/smithy-lang/smithy/pull/3134)"
+  ]
+}

@@ -20,7 +20,7 @@ The following example defines a list with a string member from the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     list MyList {
@@ -74,7 +74,7 @@ The following example defines a map of strings to integers:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     map IntegerMap {
@@ -147,7 +147,7 @@ is marked with the :ref:`required-trait`, and one that is marked with the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     structure MyStructure {
@@ -395,7 +395,7 @@ The following example defines a union shape with several members:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     union MyUnion {
@@ -516,7 +516,7 @@ The following recursive shape definition is **valid**:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     list ValidList {
@@ -531,7 +531,7 @@ The following recursive shape definition is **invalid**:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     list RecursiveList {
@@ -543,7 +543,7 @@ recursion and the :ref:`required-trait`.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     structure RecursiveShape1 {

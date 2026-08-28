@@ -52,7 +52,7 @@ The following example defines two operations:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -128,7 +128,7 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the operation.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -226,7 +226,7 @@ The following example defines two operations:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -263,7 +263,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -301,7 +301,7 @@ operation for it to complete successfully.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -371,7 +371,7 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -448,7 +448,7 @@ condition key name is specified, the service is inferred to be the
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -510,7 +510,7 @@ keys. The ``MyOperation`` operation has the ``aws:region`` condition key.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -576,7 +576,7 @@ The following example defines two service-specific condition keys:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -629,7 +629,7 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -689,7 +689,7 @@ service marked with ``aws.iam#disableConditionKeyInference`` trait.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -724,7 +724,7 @@ inference disabled.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 
@@ -811,7 +811,7 @@ Given the following model,
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
 
     namespace smithy.example
 

@@ -1,6 +1,11 @@
 # <img alt="Smithy" src="docs/_static/smithy-anvil.svg" width="32"> Smithy
 [![Build Status](https://github.com/smithy-lang/smithy/workflows/ci/badge.svg)](https://github.com/smithy-lang/smithy/actions/workflows/ci.yml)
 
+> [!IMPORTANT]
+> Smithy IDL 2.1 has released! See the
+> [changelog](https://github.com/smithy-lang/smithy/blob/main/CHANGELOG.md)
+> to learn about the new syntax features.
+
 Smithy defines and generates clients, services, and documentation for
 any protocol.
 

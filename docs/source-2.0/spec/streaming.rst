@@ -70,7 +70,7 @@ stream in its input by referencing a member that targets a union:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation PublishMessages {
@@ -103,7 +103,7 @@ stream in its output:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation SubscribeToMovements {
@@ -180,7 +180,7 @@ service, followed by the events sent in the payload of the HTTP message.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @http(method: "POST", uri: "/messages/{room}")
@@ -230,7 +230,7 @@ message.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @http(method: "GET", uri: "/messages/{room}")
@@ -287,7 +287,7 @@ on the name of an event. For example, given the following event stream:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation SubscribeToEvents {
