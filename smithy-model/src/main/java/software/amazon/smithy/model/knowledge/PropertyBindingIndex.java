@@ -7,6 +7,7 @@ package software.amazon.smithy.model.knowledge;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     private final Map<ShapeId, String> memberShapeToPropertyName = new HashMap<>();
     private final Map<ShapeId, ShapeId> operationToInputPropertiesShape = new HashMap<>();
     private final Map<ShapeId, ShapeId> operationToOutputPropertiesShape = new HashMap<>();
+    private final Set<ShapeId> collectionBoundOperations = new HashSet<>();
 
     private PropertyBindingIndex(Model model) {
         this.model = new WeakReference<>(model);
@@ -48,6 +50,11 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
             Set<String> propertyNames = resourceShape.getProperties().keySet();
             for (ShapeId operationShapeId : resourceShape.getAllOperations()) {
                 OperationShape operationShape = (OperationShape) model.getShape(operationShapeId).get();
+                if (CollectionElementResolver.isElementCarrier(resourceShape, operationShapeId)) {
+                    collectionBoundOperations.add(operationShapeId);
+                    indexCollectionBoundOperation(model, resourceShape, operationShape, identifierIndex);
+                    continue;
+                }
                 Shape inputPropertiesShape = getInputPropertiesShape(operationShape);
                 operationToInputPropertiesShape.put(operationShapeId, inputPropertiesShape.getId());
                 for (MemberShape memberShape : inputPropertiesShape.members()) {
@@ -107,6 +114,65 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     }
 
     /**
+     * Indexes an operation bound to a resource through the {@code list}
+     * lifecycle or the {@code collectionOperations} property.
+     *
+     * <p>Collection operation inputs carry filters and pagination details
+     * rather than resource state, so no input member binds to a property.
+     * Output properties are carried per element of the list member, so
+     * top-level output members never bind properties directly. Within the
+     * element structure, members bound to resource identifiers are identifier
+     * bindings, members matching resource properties (or carrying the
+     * {@code @property} trait) bind to those properties, and remaining
+     * members are not required to bind since elements frequently carry
+     * derived or summary-only data.
+     */
+    private void indexCollectionBoundOperation(
+            Model model,
+            ResourceShape resource,
+            OperationShape operation,
+            IdentifierBindingIndex identifierIndex
+    ) {
+        operationToInputPropertiesShape.put(operation.getId(), operation.getInputShape());
+        for (MemberShape member : model.expectShape(operation.getInputShape()).members()) {
+            memberShapeDoesNotRequireProperty.put(member.toShapeId(), true);
+        }
+
+        for (MemberShape member : model.expectShape(operation.getOutputShape()).members()) {
+            memberShapeDoesNotRequireProperty.put(member.toShapeId(), true);
+        }
+
+        Optional<StructureShape> elementShape = CollectionElementResolver.resolveOutputElement(model, operation);
+        if (!elementShape.isPresent()) {
+            operationToOutputPropertiesShape.put(operation.getId(), operation.getOutputShape());
+            return;
+        }
+
+        operationToOutputPropertiesShape.put(operation.getId(), elementShape.get().getId());
+        Set<String> propertyNames = resource.getProperties().keySet();
+        Set<String> identifierMembers = new HashSet<>(identifierIndex
+                .getOperationOutputElementBindings(resource, operation)
+                .values());
+        for (MemberShape member : elementShape.get().members()) {
+            if (identifierMembers.contains(member.getMemberName())
+                    || resource.getIdentifiers().containsKey(member.getMemberName())) {
+                memberShapeDoesNotRequireProperty.put(member.toShapeId(), true);
+            } else if (getPropertyTraitName(member).isPresent()
+                    || propertyNames.contains(member.getMemberName())) {
+                memberShapeDoesNotRequireProperty.put(member.toShapeId(), doesNotRequireProperty(member));
+                memberShapeToPropertyName.put(member.getId(),
+                        getPropertyTraitName(member).orElse(member.getMemberName()));
+            } else {
+                memberShapeDoesNotRequireProperty.put(member.toShapeId(), true);
+            }
+        }
+    }
+
+    private boolean isCollectionBoundOperation(OperationShape operation) {
+        return collectionBoundOperations.contains(operation.getId());
+    }
+
+    /**
      * Gets the property name for a given member shape. Returns empty optional if the
      * member shape does not correspond to a property.
      *
@@ -133,7 +199,10 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     /**
      * Resolves and returns the output shape of an operation that contains the
      * top-level resource bound properties. Handles adjustments made with
-     * {@code @nestedProperties} trait.
+     * {@code @nestedProperties} trait. For operations bound to a resource
+     * through the {@code list} lifecycle or the {@code collectionOperations}
+     * property, resolves to the structure targeted by the output's list
+     * member when that member is unambiguous.
      *
      * @param operation operation to retrieve output properties shape for.
      * @return the output shape of an operation that contains top-level resource
@@ -141,6 +210,10 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
      */
     public StructureShape getOutputPropertiesShape(OperationShape operation) {
         Model model = getModel();
+        if (isCollectionBoundOperation(operation)) {
+            return CollectionElementResolver.resolveOutputElement(model, operation)
+                    .orElseGet(() -> model.expectShape(operation.getOutputShape(), StructureShape.class));
+        }
         return getPropertiesShape(operationIndex.getOutputMembers(operation).values(),
                 model.expectShape(operation.getOutputShape(), StructureShape.class));
     }

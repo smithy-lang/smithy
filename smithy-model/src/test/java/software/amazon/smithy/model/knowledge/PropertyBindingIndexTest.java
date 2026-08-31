@@ -68,4 +68,77 @@ public class PropertyBindingIndexTest {
 
         Assertions.assertThrows(ValidatedResultException.class, () -> vrmodel.unwrap());
     }
+
+    @Test
+    public void testListBoundOperationIndex() {
+        Model model = Model.assembler()
+                .addImport(OperationIndexTest.class.getResource("list-bound-property-index.smithy"))
+                .assemble()
+                .unwrap();
+
+        PropertyBindingIndex index = PropertyBindingIndex.of(model);
+        OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+
+        // Output properties resolve through the list member to the element structure.
+        assertEquals(ShapeId.from("com.example#TaskSummary"), index.getOutputPropertiesShape(listTasks).getId());
+        assertEquals(ShapeId.from("com.example#ListTasksInput"), index.getInputPropertiesShape(listTasks).getId());
+
+        // Element members matching resource properties are property bindings.
+        assertTrue(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$name"),
+                MemberShape.class)));
+        assertEquals("name", index.getPropertyName(ShapeId.from("com.example#TaskSummary$name")).get());
+        assertTrue(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$status"),
+                MemberShape.class)));
+
+        // Element members matching resource identifiers are not properties.
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$taskName"),
+                MemberShape.class)));
+        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$taskName"),
+                MemberShape.class)));
+
+        // Element members matching nothing are ignored rather than required.
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$lastUpdatedAt"),
+                MemberShape.class)));
+        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$lastUpdatedAt"),
+                MemberShape.class)));
+
+        // Top-level output members and all input members never bind properties.
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#ListTasksOutput$tasks"),
+                MemberShape.class)));
+        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
+                ShapeId.from("com.example#ListTasksOutput$tasks"),
+                MemberShape.class)));
+        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
+                ShapeId.from("com.example#ListTasksInput$maxResults"),
+                MemberShape.class)));
+    }
+
+    @Test
+    public void testPaginatedItemsDisambiguatesBetweenMultipleListMembers() {
+        Model model = Model.assembler()
+                .addImport(OperationIndexTest.class.getResource("list-bound-paginated-disambiguation.smithy"))
+                .assemble()
+                .unwrap();
+
+        PropertyBindingIndex index = PropertyBindingIndex.of(model);
+        OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+
+        // The @paginated(items) member wins over the other list-of-structures member.
+        assertEquals(ShapeId.from("com.example#TaskSummary"), index.getOutputPropertiesShape(listTasks).getId());
+
+        // Only the selected element structure binds properties.
+        assertTrue(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$name"),
+                MemberShape.class)));
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#RelatedResourceSummary$arn"),
+                MemberShape.class)));
+    }
 }

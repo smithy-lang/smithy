@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed resource property and identifier bindings not being discovered through the output list member of `list` and `collectionOperations` bound operations. Resource properties carried per list element now count as bound, fixing `ResourceOperationInputOutput` errors for list-only resources, and `IdentifierBindingIndex` gained a `getOperationOutputElementBindings` accessor for identifier bindings found in list elements. ([#2968](https://github.com/smithy-lang/smithy/issues/2968))",
+  "pull_requests": []
+}

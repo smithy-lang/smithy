@@ -1,0 +1,47 @@
+$version: "2.0"
+
+namespace com.example
+
+service TaskStore {
+    version: "2022-04-01"
+    resources: [
+        Task
+    ]
+}
+
+resource Task {
+    identifiers: {
+        taskName: TaskName
+    }
+    properties: {
+        name: Name
+    }
+    list: ListTasks
+}
+
+@readonly
+operation ListTasks {
+    input: ListTasksInput
+    output: ListTasksOutput
+}
+
+structure ListTasksInput {}
+
+structure ListTasksOutput {
+    tasks: TaskSummaries
+}
+
+list TaskSummaries {
+    member: TaskSummary
+}
+
+structure TaskSummary {
+    @required
+    @resourceIdentifier("taskName")
+    id: TaskName
+
+    name: Name
+}
+
+string TaskName
+string Name

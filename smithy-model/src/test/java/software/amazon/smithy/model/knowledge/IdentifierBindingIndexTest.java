@@ -27,6 +27,25 @@ import software.amazon.smithy.utils.MapUtils;
 public class IdentifierBindingIndexTest {
 
     @Test
+    public void findsElementOutputBindingsOfListOperations() {
+        Model model = Model.assembler()
+                .addImport(OperationIndexTest.class.getResource("list-element-identifier-index.smithy"))
+                .assemble()
+                .unwrap();
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
+        ShapeId resource = ShapeId.from("com.example#Task");
+        ShapeId operation = ShapeId.from("com.example#ListTasks");
+
+        assertThat(index.getOperationOutputElementBindings(resource, operation),
+                equalTo(MapUtils.of("taskName", "id")));
+        // Top-level output bindings are unchanged by element resolution.
+        assertThat(index.getOperationOutputBindings(resource, operation),
+                equalTo(Collections.emptyMap()));
+        assertThat(index.getOperationOutputElementBindings(ShapeId.from("ns.foo#A"), ShapeId.from("ns.foo#B")),
+                equalTo(Collections.emptyMap()));
+    }
+
+    @Test
     public void returnsEmptyMapForUnknownBindings() {
         Model model = Model.builder().build();
         IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
