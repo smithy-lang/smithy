@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -26,6 +27,7 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     /** Map of Resource shape ID to a map of Operation shape ID to a map of identifier name to the member name. */
     private final Map<ShapeId, Map<ShapeId, Map<String, String>>> inputBindings = new HashMap<>();
     private final Map<ShapeId, Map<ShapeId, Map<String, String>>> outputBindings = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, Map<String, String>>> elementOutputBindings = new HashMap<>();
     private final SortedSet<String> allIdentifiers = new TreeSet<>();
 
     /** Map of Resource shape ID to a map of Operation shape ID to a binding type. */
@@ -101,6 +103,33 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets a map of identifier names to member names of the element structure
+     * of a collection operation's output list that provide a value for that
+     * identifier.
+     *
+     * <p>Operations bound to a resource through the {@code list} lifecycle or
+     * the {@code collectionOperations} property return resource state per
+     * element of a list in their output rather than at the top level. This
+     * method returns the identifier bindings found in that element structure,
+     * resolved through the output member named by {@code @paginated(items)}
+     * when present, and otherwise through the single output member targeting
+     * a list of structures. An empty map is returned when the operation is
+     * not bound as a collection operation, when the carrying list member is
+     * ambiguous, or when the binding cannot be found.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return Returns the identifier bindings map of the output list element
+     *  or an empty map.
+     */
+    public Map<String, String> getOperationOutputElementBindings(ToShapeId resource, ToShapeId operation) {
+        return Optional.ofNullable(elementOutputBindings.get(resource.toShapeId()))
+                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
+                .map(Collections::unmodifiableMap)
+                .orElseGet(Collections::emptyMap);
+    }
+
+    /**
      * Gets a map of identifier names to input member names that provide a
      * value for that identifier.
      *
@@ -119,6 +148,7 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     private void processResource(ResourceShape resource, OperationIndex operationIndex, Model model) {
         inputBindings.put(resource.getId(), new HashMap<>());
         outputBindings.put(resource.getId(), new HashMap<>());
+        elementOutputBindings.put(resource.getId(), new HashMap<>());
         bindingTypes.put(resource.getId(), new HashMap<>());
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
@@ -133,6 +163,17 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                     .orElse(Collections.emptyMap());
             outputBindings.get(resource.getId()).put(operationId, computedOutputBindings);
             allIdentifiers.addAll(computedOutputBindings.keySet());
+
+            Map<String, String> computedElementBindings = Collections.emptyMap();
+            if (CollectionElementResolver.isElementCarrier(resource, operationId)) {
+                computedElementBindings = model.getShape(operationId)
+                        .flatMap(Shape::asOperationShape)
+                        .flatMap(operation -> CollectionElementResolver.resolveOutputElement(model, operation))
+                        .map(element -> computeBindings(resource, element))
+                        .orElse(Collections.emptyMap());
+            }
+            elementOutputBindings.get(resource.getId()).put(operationId, computedElementBindings);
+            allIdentifiers.addAll(computedElementBindings.keySet());
 
             bindingTypes.get(resource.getId())
                     .put(operationId,

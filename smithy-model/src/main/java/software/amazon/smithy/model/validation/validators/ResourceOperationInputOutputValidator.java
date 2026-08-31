@@ -84,7 +84,23 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                 propertyBindingIndex,
                 propertiesInOperations,
                 events);
+        processLifecycleOperationProperties(model,
+                resource,
+                "list",
+                resource.getList(),
+                propertyBindingIndex,
+                propertiesInOperations,
+                events);
         for (ShapeId operationId : resource.getOperations()) {
+            processLifecycleOperationProperties(model,
+                    resource,
+                    operationId.getName(),
+                    Optional.of(operationId),
+                    propertyBindingIndex,
+                    propertiesInOperations,
+                    events);
+        }
+        for (ShapeId operationId : resource.getCollectionOperations()) {
             processLifecycleOperationProperties(model,
                     resource,
                     operationId.getName(),
