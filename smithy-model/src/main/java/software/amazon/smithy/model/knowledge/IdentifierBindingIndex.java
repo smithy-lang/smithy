@@ -106,24 +106,6 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
 
     /**
      * Gets a map of identifier names to member names of the element structure
-     * of a collection operation's output list that provide a value for that
-     * identifier.
-     *
-     * <p>The element structure is resolved through the output member marked
-     * with the {@code @nestedProperties} trait targeting a list of
-     * structures, or, for the {@code list} lifecycle without that trait,
-     * through a single unambiguous list-of-structures output member. An empty
-     * map is returned when the operation is not bound as a collection
-     * operation, when the carrying list member cannot be resolved, or when
-     * the binding cannot be found.
-     *
-     * @param resource Shape ID of a resource.
-     * @param operation Shape ID of an operation.
-     * @return Returns the identifier bindings map of the output list element
-     *  or an empty map.
-     */
-    /**
-     * Gets a map of identifier names to member names of the element structure
      * of a collection operation's input list that provide a value for that
      * identifier, resolved through the input member marked with the
      * {@code @nestedProperties} trait.
@@ -140,6 +122,24 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                 .orElseGet(Collections::emptyMap);
     }
 
+    /**
+     * Gets a map of identifier names to member names of the element structure
+     * of a collection operation's output list that provide a value for that
+     * identifier.
+     *
+     * <p>The element structure is resolved through the output member marked
+     * with the {@code @nestedProperties} trait targeting a list of
+     * structures, or, for the {@code list} lifecycle without that trait,
+     * through a single unambiguous list-of-structures output member. An empty
+     * map is returned when the operation is not bound as a collection
+     * operation, when the carrying list member cannot be resolved, or when
+     * the binding cannot be found.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return Returns the identifier bindings map of the output list element
+     *  or an empty map.
+     */
     public Map<String, String> getOperationOutputElementBindings(ToShapeId resource, ToShapeId operation) {
         return Optional.ofNullable(elementOutputBindings.get(resource.toShapeId()))
                 .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())))
