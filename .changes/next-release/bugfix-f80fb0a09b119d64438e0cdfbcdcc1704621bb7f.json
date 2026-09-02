@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed resource property and identifier bindings not being discovered through the output list member of `list` lifecycle operations, fixing `ResourceOperationInputOutput` errors for list-only resources. Collection operations can now bind properties and identifiers through list elements explicitly by applying `@nestedProperties` to an input or output member targeting a list of structures. ([#2968](https://github.com/smithy-lang/smithy/issues/2968))",
+  "pull_requests": [
+    "[#3269](https://github.com/smithy-lang/smithy/pull/3269)"
+  ]
+}

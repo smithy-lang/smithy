@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
@@ -84,13 +85,6 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                 propertyBindingIndex,
                 propertiesInOperations,
                 events);
-        processLifecycleOperationProperties(model,
-                resource,
-                "list",
-                resource.getList(),
-                propertyBindingIndex,
-                propertiesInOperations,
-                events);
         for (ShapeId operationId : resource.getOperations()) {
             processLifecycleOperationProperties(model,
                     resource,
@@ -100,11 +94,19 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     propertiesInOperations,
                     events);
         }
+        resource.getList()
+                .ifPresent(operationId -> processCollectionBoundOperation(model,
+                        resource,
+                        operationId,
+                        "list",
+                        propertyBindingIndex,
+                        propertiesInOperations,
+                        events));
         for (ShapeId operationId : resource.getCollectionOperations()) {
-            processLifecycleOperationProperties(model,
+            processCollectionBoundOperation(model,
                     resource,
+                    operationId,
                     operationId.getName(),
-                    Optional.of(operationId),
                     propertyBindingIndex,
                     propertiesInOperations,
                     events);
@@ -114,11 +116,120 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         definedProperties.removeAll(propertiesInOperations);
         for (String propertyNotInLifecycleOp : definedProperties) {
             events.add(error(resource,
-                    String.format("Resource property `%s` is not used in the input or output"
-                            + " of create or an instance operation.", propertyNotInLifecycleOp)));
+                    String.format("Resource property `%s` is not used in the input or output of create, an"
+                            + " instance operation, or the list element of a collection operation.",
+                            propertyNotInLifecycleOp)));
         }
 
         return events;
+    }
+
+    private void processCollectionBoundOperation(
+            Model model,
+            ResourceShape resource,
+            ShapeId operationId,
+            String bindingName,
+            PropertyBindingIndex propertyBindingIndex,
+            Set<String> propertiesInOperations,
+            List<ValidationEvent> events
+    ) {
+        IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
+
+        propertyBindingIndex.getOperationOutputElementShape(resource, operationId).ifPresent(elementId -> {
+            Map<String, String> properties =
+                    propertyBindingIndex.getOperationOutputElementProperties(resource, operationId);
+            propertiesInOperations.addAll(properties.values());
+            validateElementMembers(model,
+                    resource,
+                    bindingName,
+                    elementId,
+                    properties,
+                    identifierBindingIndex.getOperationOutputElementBindings(resource, operationId),
+                    propertyBindingIndex.isOperationOutputElementExplicit(resource, operationId),
+                    events);
+        });
+
+        propertyBindingIndex.getOperationInputElementShape(resource, operationId).ifPresent(elementId -> {
+            Map<String, String> properties =
+                    propertyBindingIndex.getOperationInputElementProperties(resource, operationId);
+            propertiesInOperations.addAll(properties.values());
+            validateElementMembers(model,
+                    resource,
+                    bindingName,
+                    elementId,
+                    properties,
+                    identifierBindingIndex.getOperationInputElementBindings(resource, operationId),
+                    true,
+                    events);
+        });
+    }
+
+    /**
+     * Validates the members of a collection operation's element structure.
+     *
+     * <p>When the element was explicitly marked with {@code @nestedProperties}
+     * the validation is strict and findings are errors, mirroring top-level
+     * member validation of instance operations. When the element was
+     * automatically detected for a {@code list} lifecycle operation, findings
+     * are warnings and members matching neither a property nor an identifier
+     * are ignored, since automatically detected element structures may be
+     * shared between resources and frequently carry derived data.
+     */
+    private void validateElementMembers(
+            Model model,
+            ResourceShape resource,
+            String bindingName,
+            ShapeId elementId,
+            Map<String, String> properties,
+            Map<String, String> identifierBindings,
+            boolean strict,
+            List<ValidationEvent> events
+    ) {
+        StructureShape element = model.expectShape(elementId, StructureShape.class);
+        Set<String> identifierMembers = new HashSet<>(identifierBindings.values());
+        Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
+
+        for (MemberShape member : element.members()) {
+            if (identifierMembers.contains(member.getMemberName())) {
+                continue;
+            }
+            String propertyName = properties.get(member.getMemberName());
+            if (propertyName == null) {
+                if (strict) {
+                    events.add(error(member,
+                            String.format("Member `%s` does not target a property or identifier for resource "
+                                    + "`%s`. If it is an identifier, apply the `%s` trait. If it is a property, apply "
+                                    + "the `%s` trait. If it is neither, apply the `%s` trait.",
+                                    member.getMemberName(),
+                                    resource.getId().toString(),
+                                    ResourceIdentifierTrait.ID,
+                                    PropertyTrait.ID,
+                                    NotPropertyTrait.ID)));
+                }
+                continue;
+            }
+            propertyToMemberMappings.computeIfAbsent(propertyName, m -> new TreeSet<>()).add(member);
+            ShapeId expectedTarget = resource.getProperties().get(propertyName);
+            if (expectedTarget == null) {
+                String message = String.format(
+                        "This member is marked with the `%s` trait but resolves to `%s`, which is not a resource "
+                                + "property of the `%s` resource.",
+                        PropertyTrait.ID,
+                        propertyName,
+                        resource.getId());
+                events.add(strict ? error(member, message) : warning(member, message));
+            } else if (!expectedTarget.equals(member.getTarget())) {
+                String message = String.format(
+                        "This member must target `%s`. This member is used as part of the `%s` operation of the `%s` "
+                                + "resource and conflicts with its `%s` resource property.",
+                        expectedTarget,
+                        bindingName,
+                        resource.getId(),
+                        propertyName);
+                events.add(strict ? error(member, message) : warning(member, message));
+            }
+        }
+        validateConflictingProperties(events, element, propertyToMemberMappings);
     }
 
     private void processLifecycleOperationProperties(

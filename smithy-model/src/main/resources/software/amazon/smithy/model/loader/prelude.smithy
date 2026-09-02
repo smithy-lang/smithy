@@ -1000,7 +1000,7 @@ structure property {
 /// Explicitly excludes a member from resource property mapping or enables
 /// another trait to carry the same implied meaning.
 @trait(
-    selector: ":is(operation -[input, output]-> structure > member, [trait|trait])"
+    selector: ":is(operation -[input, output]-> structure > member, operation -[input, output]-> structure > member > list > member > structure > member, [trait|trait])"
     breakingChanges: [
         {
             change: "add"
@@ -1013,7 +1013,7 @@ structure notProperty {}
 /// Adjusts the resource property mapping of a lifecycle operation to the
 /// targeted member.
 @trait(
-    selector: "operation -[input, output]-> structure > member :test(> structure)"
+    selector: "operation -[input, output]-> structure > member :test(> structure, > list > member > structure)"
     structurallyExclusive: "member"
     breakingChanges: [
         {

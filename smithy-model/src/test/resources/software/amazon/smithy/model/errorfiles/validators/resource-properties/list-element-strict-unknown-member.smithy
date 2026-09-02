@@ -15,22 +15,19 @@ resource Task {
     }
     properties: {
         name: Name
-        status: Status
     }
-    collectionOperations: [
-        BatchDescribeTasks
-    ]
+    list: ListTasks
 }
 
 @readonly
-operation BatchDescribeTasks {
-    input: BatchDescribeTasksInput
-    output: BatchDescribeTasksOutput
+operation ListTasks {
+    input: ListTasksInput
+    output: ListTasksOutput
 }
 
-structure BatchDescribeTasksInput {}
+structure ListTasksInput {}
 
-structure BatchDescribeTasksOutput {
+structure ListTasksOutput {
     @nestedProperties
     tasks: TaskSummaries
 }
@@ -44,9 +41,8 @@ structure TaskSummary {
     taskName: TaskName
 
     name: Name
-    status: Status
+    unknownExtra: Name
 }
 
 string TaskName
 string Name
-string Status

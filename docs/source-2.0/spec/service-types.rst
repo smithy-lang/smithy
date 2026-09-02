@@ -710,8 +710,10 @@ Resource Properties
 :dfn:`Resource properties` represent the state of a resource within a service.
 Properties can be referred to in the top level input and output shapes
 of a resource's instance operations, including create, read, update,
-delete, and put. All declared resource properties MUST appear in at
-least one instance operation's input or output.
+delete, and put, and in the list element of a collection operation's
+input or output. All declared resource properties MUST appear in at
+least one instance operation's input or output, or in the list element
+of a collection operation's input or output.
 
 For example, the following model defines a ``Forecast`` resource with a
 single property ``chanceOfRain`` read by the GetForecast operation, and the
@@ -793,6 +795,29 @@ Though resource properties are usually bound to top level input and output
 members, use the :ref:`nested-properties-trait` on a member to designate its
 target structure shape as the root to form property bindings. No adjacent
 members can form property bindings when this trait is applied.
+
+Binding properties to collection operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Collection operations carry resource state per element of a list rather than
+at the top level of their input or output. A member of a collection-bound
+operation's input or output that targets a list of structures can be marked
+with the :ref:`nested-properties-trait` to indicate that each element of the
+list carries the state of one resource instance. Within the element
+structure, members bind to resource properties and identifiers using the
+same rules as top-level members of instance operations, and members that
+bind to neither must be marked with the ``notProperty`` trait.
+
+The output of a ``list`` lifecycle operation that does not use the
+``nestedProperties`` trait is resolved automatically when exactly one output
+member targets a list of structures. Because automatically detected element
+structures may be shared between resources or carry derived data, element
+members that do not correspond to a property or identifier are ignored, and
+property binding conflicts are emitted as warnings rather than errors.
+
+Resource properties that appear only in the list element of a collection
+operation satisfy the requirement that all declared properties appear in at
+least one operation's input or output.
 
 Resource property binding validation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
