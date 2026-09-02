@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -78,67 +79,47 @@ public class PropertyBindingIndexTest {
 
         PropertyBindingIndex index = PropertyBindingIndex.of(model);
         OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+        ShapeId task = ShapeId.from("com.example#Task");
 
-        // Output properties resolve through the list member to the element structure.
-        assertEquals(ShapeId.from("com.example#TaskSummary"), index.getOutputPropertiesShape(listTasks).getId());
-        assertEquals(ShapeId.from("com.example#ListTasksInput"), index.getInputPropertiesShape(listTasks).getId());
+        // The element structure is detected automatically for the list lifecycle.
+        assertEquals(ShapeId.from("com.example#TaskSummary"),
+                index.getOperationOutputElementShape(task, listTasks).get());
+        assertFalse(index.isOperationOutputElementExplicit(task, listTasks));
 
-        // Element members matching resource properties are property bindings.
-        assertTrue(index.isMemberShapeProperty(model.expectShape(
+        // Element members matching properties are reported per resource and operation,
+        // identifier and unmatched members are not.
+        Map<String, String> properties = index.getOperationOutputElementProperties(task, listTasks);
+        assertEquals("name", properties.get("name"));
+        assertEquals("status", properties.get("status"));
+        assertFalse(properties.containsKey("taskName"));
+        assertFalse(properties.containsKey("lastUpdatedAt"));
+
+        // Element members are never added to the member-keyed property maps,
+        // because element structures may be shared between resources.
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
                 ShapeId.from("com.example#TaskSummary$name"),
                 MemberShape.class)));
-        assertEquals("name", index.getPropertyName(ShapeId.from("com.example#TaskSummary$name")).get());
-        assertTrue(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$status"),
-                MemberShape.class)));
 
-        // Element members matching resource identifiers are not properties.
-        assertFalse(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$taskName"),
-                MemberShape.class)));
-        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$taskName"),
-                MemberShape.class)));
-
-        // Element members matching nothing are ignored rather than required.
-        assertFalse(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$lastUpdatedAt"),
-                MemberShape.class)));
-        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$lastUpdatedAt"),
-                MemberShape.class)));
-
-        // Top-level output members and all input members never bind properties.
-        assertFalse(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#ListTasksOutput$tasks"),
-                MemberShape.class)));
-        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
-                ShapeId.from("com.example#ListTasksOutput$tasks"),
-                MemberShape.class)));
-        assertFalse(index.doesMemberShapeRequireProperty(model.expectShape(
-                ShapeId.from("com.example#ListTasksInput$maxResults"),
-                MemberShape.class)));
+        // Top-level property resolution is unchanged.
+        assertEquals(ShapeId.from("com.example#ListTasksOutput"), index.getOutputPropertiesShape(listTasks).getId());
+        assertEquals(ShapeId.from("com.example#ListTasksInput"), index.getInputPropertiesShape(listTasks).getId());
     }
 
     @Test
-    public void testPaginatedItemsDisambiguatesBetweenMultipleListMembers() {
+    public void testExplicitElementDisambiguation() {
         Model model = Model.assembler()
-                .addImport(OperationIndexTest.class.getResource("list-bound-paginated-disambiguation.smithy"))
+                .addImport(OperationIndexTest.class.getResource("list-bound-explicit-disambiguation.smithy"))
                 .assemble()
                 .unwrap();
 
         PropertyBindingIndex index = PropertyBindingIndex.of(model);
         OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+        ShapeId task = ShapeId.from("com.example#Task");
 
-        // The @paginated(items) member wins over the other list-of-structures member.
-        assertEquals(ShapeId.from("com.example#TaskSummary"), index.getOutputPropertiesShape(listTasks).getId());
-
-        // Only the selected element structure binds properties.
-        assertTrue(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#TaskSummary$name"),
-                MemberShape.class)));
-        assertFalse(index.isMemberShapeProperty(model.expectShape(
-                ShapeId.from("com.example#RelatedResourceSummary$arn"),
-                MemberShape.class)));
+        // With two list-of-structures members, only the @nestedProperties member is selected.
+        assertEquals(ShapeId.from("com.example#TaskSummary"),
+                index.getOperationOutputElementShape(task, listTasks).get());
+        assertTrue(index.isOperationOutputElementExplicit(task, listTasks));
+        assertFalse(index.getOperationOutputElementProperties(task, listTasks).containsKey("arn"));
     }
 }

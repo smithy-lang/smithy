@@ -1,1 +1,1 @@
-[ERROR] smithy.example#TaskSummary$status: This member must target `smithy.example#Status`. This member is used as part of the `list` operation of the `smithy.example#Task` resource and conflicts with its `status` resource property. | ResourceOperationInputOutput
+[WARNING] smithy.example#TaskSummary$status: This member must target `smithy.example#Status`. This member is used as part of the `list` operation of the `smithy.example#Task` resource and conflicts with its `status` resource property. | ResourceOperationInputOutput

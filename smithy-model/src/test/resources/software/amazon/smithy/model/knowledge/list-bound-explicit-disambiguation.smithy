@@ -32,11 +32,14 @@ structure ListTasksInput {
     maxResults: Integer
 }
 
-// Two list-of-structure members: only the @paginated items member carries the
-// resource elements; the other must not be selected.
+// Two list-of-structure members: automatic detection is ambiguous, so the
+// @nestedProperties trait explicitly marks the member carrying the elements.
 structure ListTasksOutput {
     nextToken: String
+
+    @nestedProperties
     tasks: TaskSummaries
+
     relatedResources: RelatedResourceSummaries
 }
 
@@ -49,7 +52,9 @@ list RelatedResourceSummaries {
 }
 
 structure TaskSummary {
+    @required
     taskName: TaskName
+
     name: Name
     status: Status
 }

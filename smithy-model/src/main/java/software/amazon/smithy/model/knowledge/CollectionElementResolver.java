@@ -14,48 +14,70 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.PaginatedTrait;
+import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 
 /**
  * Resolves the structure that carries per-instance resource state in the
- * output of a collection operation, by looking through the output's list
+ * input or output of a collection-bound operation, by looking through a list
  * member to the structure its elements target.
+ *
+ * <p>Resolution is explicit and opt-in through the {@code @nestedProperties}
+ * trait applied to a member targeting a list of structures. Only the
+ * {@code list} lifecycle operation supports automatic detection of the
+ * carrying member in its output, and only when exactly one output member
+ * targets a list of structures.
  */
 final class CollectionElementResolver {
 
     private CollectionElementResolver() {}
 
     /**
-     * Returns true if the operation is bound to the resource in a way that
-     * carries resource state per list element: through the {@code list}
-     * lifecycle or the {@code collectionOperations} property. The
-     * {@code create} lifecycle is excluded because its input and output carry
-     * top-level resource state.
+     * Returns true if the operation is bound to the resource through the
+     * {@code list} lifecycle.
+     */
+    static boolean isListLifecycle(ResourceShape resource, ShapeId operationId) {
+        return resource.getList().filter(operationId::equals).isPresent();
+    }
+
+    /**
+     * Returns true if the operation is bound to the resource through the
+     * {@code list} lifecycle or the {@code collectionOperations} property.
      */
     static boolean isElementCarrier(ResourceShape resource, ShapeId operationId) {
-        return resource.getList().filter(operationId::equals).isPresent()
+        return isListLifecycle(resource, operationId)
                 || resource.getCollectionOperations().contains(operationId);
     }
 
     /**
-     * Resolves the element structure of a collection operation's output.
-     * Uses the member named by {@code @paginated(items)} when present, and
-     * otherwise resolves only when exactly one output member targets a list
-     * of structures. Returns empty when the carrying member is ambiguous or
-     * absent.
+     * Resolves the element structure explicitly marked by the
+     * {@code @nestedProperties} trait on a member of the given input or
+     * output shape that targets a list of structures.
      */
-    static Optional<StructureShape> resolveOutputElement(Model model, OperationShape operation) {
+    static Optional<StructureShape> resolveExplicitElement(Model model, ShapeId ioShapeId) {
+        Optional<StructureShape> ioShape = model.getShape(ioShapeId).flatMap(Shape::asStructureShape);
+        if (!ioShape.isPresent()) {
+            return Optional.empty();
+        }
+        for (MemberShape member : ioShape.get().members()) {
+            if (member.hasTrait(NestedPropertiesTrait.ID)) {
+                return resolveListElement(model, member);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Automatically resolves the element structure of a {@code list}
+     * lifecycle operation's output. Resolves only when exactly one output
+     * member targets a list of structures; returns empty when the carrying
+     * member is ambiguous or absent.
+     */
+    static Optional<StructureShape> resolveAutoOutputElement(Model model, OperationShape operation) {
         Optional<StructureShape> output = model.getShape(operation.getOutputShape())
                 .flatMap(Shape::asStructureShape);
         if (!output.isPresent()) {
             return Optional.empty();
         }
-
-        Optional<String> itemsMember = operation.getTrait(PaginatedTrait.class).flatMap(PaginatedTrait::getItems);
-        if (itemsMember.isPresent()) {
-            return output.get().getMember(itemsMember.get()).flatMap(member -> resolveListElement(model, member));
-        }
-
         List<StructureShape> candidates = new ArrayList<>();
         for (MemberShape member : output.get().members()) {
             resolveListElement(model, member).ifPresent(candidates::add);
