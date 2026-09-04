@@ -150,11 +150,19 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
         Optional<StructureShape> explicitOutput =
                 CollectionElementResolver.resolveExplicitElement(model, operation.getOutputShape());
         boolean explicit = explicitOutput.isPresent();
-        Optional<StructureShape> outputElement = explicit
-                ? explicitOutput
-                : CollectionElementResolver.isListLifecycle(resource, operation.getId())
-                        ? CollectionElementResolver.resolveAutoOutputElement(model, operation)
-                        : Optional.empty();
+        Optional<StructureShape> outputElement;
+        if (explicit) {
+            outputElement = explicitOutput;
+        } else if (CollectionElementResolver.hasElementMarker(model, operation.getOutputShape())) {
+            // A @nestedProperties member is present but does not resolve to a list of
+            // structures. Never fall back to automatic detection so the misuse can be
+            // reported instead of being silently reinterpreted.
+            outputElement = Optional.empty();
+        } else if (CollectionElementResolver.isListLifecycle(resource, operation.getId())) {
+            outputElement = CollectionElementResolver.resolveAutoOutputElement(model, operation);
+        } else {
+            outputElement = Optional.empty();
+        }
         outputElement.ifPresent(element -> outputElementBindings.get(resource.getId())
                 .put(operation.getId(),
                         createElementBinding(resource,

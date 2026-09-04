@@ -23,9 +23,11 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -134,33 +136,60 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             List<ValidationEvent> events
     ) {
         IdentifierBindingIndex identifierBindingIndex = IdentifierBindingIndex.of(model);
+        OperationShape operation = model.expectShape(operationId, OperationShape.class);
 
-        propertyBindingIndex.getOperationOutputElementShape(resource, operationId).ifPresent(elementId -> {
+        Optional<ShapeId> outputElement = propertyBindingIndex.getOperationOutputElementShape(resource, operationId);
+        if (outputElement.isPresent()) {
             Map<String, String> properties =
                     propertyBindingIndex.getOperationOutputElementProperties(resource, operationId);
             propertiesInOperations.addAll(properties.values());
             validateElementMembers(model,
                     resource,
                     bindingName,
-                    elementId,
+                    outputElement.get(),
                     properties,
                     identifierBindingIndex.getOperationOutputElementBindings(resource, operationId),
                     propertyBindingIndex.isOperationOutputElementExplicit(resource, operationId),
                     events);
-        });
+        } else {
+            validateElementMarkerMisuse(model, operation.getOutputShape(), events);
+        }
 
-        propertyBindingIndex.getOperationInputElementShape(resource, operationId).ifPresent(elementId -> {
+        Optional<ShapeId> inputElement = propertyBindingIndex.getOperationInputElementShape(resource, operationId);
+        if (inputElement.isPresent()) {
             Map<String, String> properties =
                     propertyBindingIndex.getOperationInputElementProperties(resource, operationId);
             propertiesInOperations.addAll(properties.values());
             validateElementMembers(model,
                     resource,
                     bindingName,
-                    elementId,
+                    inputElement.get(),
                     properties,
                     identifierBindingIndex.getOperationInputElementBindings(resource, operationId),
                     true,
                     events);
+        } else {
+            validateElementMarkerMisuse(model, operation.getInputShape(), events);
+        }
+    }
+
+    /**
+     * Reports members marked with {@code @nestedProperties} in a collection
+     * operation's input or output that do not resolve to a list of
+     * structures. Automatic detection is deliberately suppressed in this
+     * case so the misuse is reported rather than silently reinterpreted.
+     */
+    private void validateElementMarkerMisuse(Model model, ShapeId ioShapeId, List<ValidationEvent> events) {
+        model.getShape(ioShapeId).flatMap(Shape::asStructureShape).ifPresent(shape -> {
+            for (MemberShape member : shape.members()) {
+                if (member.hasTrait(NestedPropertiesTrait.ID)) {
+                    events.add(error(member,
+                            String.format(
+                                    "The `%s` trait applied to a member of a collection operation's input or output "
+                                            + "must target a list of structures.",
+                                    NestedPropertiesTrait.ID)));
+                }
+            }
         });
     }
 
@@ -187,6 +216,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
     ) {
         StructureShape element = model.expectShape(elementId, StructureShape.class);
         Set<String> identifierMembers = new HashSet<>(identifierBindings.values());
+        Set<ShapeId> notPropertyTraits = computeNotPropertyTraits(model);
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
 
         for (MemberShape member : element.members()) {
@@ -195,7 +225,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             }
             String propertyName = properties.get(member.getMemberName());
             if (propertyName == null) {
-                if (strict) {
+                if (strict && notPropertyTraits.stream().noneMatch(member::hasTrait)) {
                     events.add(error(member,
                             String.format("Member `%s` does not target a property or identifier for resource "
                                     + "`%s`. If it is an identifier, apply the `%s` trait. If it is a property, apply "
@@ -229,7 +259,15 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                 events.add(strict ? error(member, message) : warning(member, message));
             }
         }
-        validateConflictingProperties(events, element, propertyToMemberMappings);
+        validateConflictingProperties(events, element, propertyToMemberMappings, strict);
+    }
+
+    private Set<ShapeId> computeNotPropertyTraits(Model model) {
+        return model.getShapesWithTrait(NotPropertyTrait.class)
+                .stream()
+                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
+                .map(Shape::toShapeId)
+                .collect(Collectors.toSet());
     }
 
     private void processLifecycleOperationProperties(
@@ -349,16 +387,25 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             Shape shape,
             Map<String, Set<MemberShape>> propertyToMemberMappings
     ) {
+        validateConflictingProperties(events, shape, propertyToMemberMappings, true);
+    }
+
+    private void validateConflictingProperties(
+            List<ValidationEvent> events,
+            Shape shape,
+            Map<String, Set<MemberShape>> propertyToMemberMappings,
+            boolean strict
+    ) {
         for (Map.Entry<String, Set<MemberShape>> entry : propertyToMemberMappings.entrySet()) {
             if (entry.getValue().size() > 1) {
-                events.add(error(shape,
-                        String.format(
-                                "This shape contains members with conflicting resource property names that resolve to '%s': %s",
-                                entry.getKey(),
-                                entry.getValue()
-                                        .stream()
-                                        .map(MemberShape::getMemberName)
-                                        .collect(Collectors.joining(", ")))));
+                String message = String.format(
+                        "This shape contains members with conflicting resource property names that resolve to '%s': %s",
+                        entry.getKey(),
+                        entry.getValue()
+                                .stream()
+                                .map(MemberShape::getMemberName)
+                                .collect(Collectors.joining(", ")));
+                events.add(strict ? error(shape, message) : warning(shape, message));
             }
         }
     }
