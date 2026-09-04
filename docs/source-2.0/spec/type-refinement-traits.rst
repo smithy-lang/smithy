@@ -449,6 +449,11 @@ as well). This gives service teams the ability to remove the ``@required``
 trait from top-level input members and loosen requirements without risking
 breaking previously generated clients.
 
+Implicit client optionality only affects generated types; it does not make the
+``@required`` trait optional during authoritative validation. Adding
+``@required`` to an existing input member is therefore backward incompatible if
+the service previously accepted requests that omitted the member.
+
 
 .. smithy-trait:: smithy.api#output
 .. _output-trait:

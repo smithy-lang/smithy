@@ -66,8 +66,8 @@ The following changes to structure shapes are backward-compatible:
 #. Removing the :ref:`required-trait` from a structure member that is
    marked with the :ref:`clientOptional-trait`.
 #. Adding the :ref:`required-trait` to a member of a structure if the member
-   is marked as ``clientOptional`` or the structure is marked with the ``input``
-   trait.
+   is explicitly marked as ``clientOptional`` and the service already requires
+   the member.
 #. Adding or removing the :ref:`input-trait` from a structure is generally
    backward incompatible.
 
@@ -84,8 +84,10 @@ The following changes to a structure are not backward-compatible:
 #. Renaming a member.
 #. Removing a member.
 #. Changing the shape targeted by a member.
-#. Adding the :ref:`required-trait` to a member that was not previously
-   marked with the :ref:`clientOptional-trait`.
+#. Adding the :ref:`required-trait` to an existing member if this tightens
+   authoritative validation. This can cause previously valid data to be
+   rejected regardless of whether the member is explicitly or implicitly
+   :ref:`clientOptional <clientOptional-trait>`.
 #. Removing the :ref:`default-trait` from a member.
 #. Adding the :ref:`default-trait` to a member that was not previously marked
    with the :ref:`required-trait`.
