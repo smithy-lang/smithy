@@ -110,20 +110,12 @@ Gradle build script:
 
     // Add generated Java sources to the main sourceSet so they are compiled alongside
     // any other Java code in your package
-    afterEvaluate {
-        val clientPath = smithy.getPluginProjectionPath(smithy.sourceProjection.get(), "java-codegen")
-        sourceSets {
-            main {
-                java {
-                    srcDir(clientPath)
-                }
-            }
-        }
-    }
+    val javaCodegenDir = smithy.outputDirectory.dir(smithy.sourceProjection.map { "$it/java-codegen" })
+    val smithyBuild = tasks.named<SmithyBuildTask>("smithyBuild")
 
-    // Ensure client files are generated before java compilation is executed.
-    tasks.named("compileJava") {
-        dependsOn("smithyBuild")
+    sourceSets.main {
+        java.srcDir(files(javaCodegenDir.map { it.dir("java") }).builtBy(smithyBuild))
+        resources.srcDir(files(javaCodegenDir.map { it.dir("resources") }).builtBy(smithyBuild))
     }
 
 ---------------
