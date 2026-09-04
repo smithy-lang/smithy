@@ -198,6 +198,10 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                             if (explicit.isPresent()) {
                                 return explicit;
                             }
+                            if (CollectionElementResolver.hasElementMarker(model, op.getOutputShape())) {
+                                // Present but unresolvable marker: never auto-detect.
+                                return Optional.empty();
+                            }
                             return CollectionElementResolver.isListLifecycle(resource, operationId)
                                     ? CollectionElementResolver.resolveAutoOutputElement(model, op)
                                     : Optional.empty();

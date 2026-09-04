@@ -1,0 +1,2 @@
+[ERROR] smithy.example#ListTasksOutput$summary: The `smithy.api#nestedProperties` trait applied to a member of a collection operation's input or output must target a list of structures. | ResourceOperationInputOutput
+[ERROR] smithy.example#Task: Resource property `name` is not used in the input or output of create, an instance operation, or the list element of a collection operation. | ResourceOperationInputOutput

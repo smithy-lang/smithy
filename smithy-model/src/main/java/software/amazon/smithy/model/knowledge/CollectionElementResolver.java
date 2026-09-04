@@ -49,6 +49,17 @@ final class CollectionElementResolver {
     }
 
     /**
+     * Returns true if any member of the given input or output shape is
+     * marked with the {@code @nestedProperties} trait.
+     */
+    static boolean hasElementMarker(Model model, ShapeId ioShapeId) {
+        return model.getShape(ioShapeId)
+                .flatMap(Shape::asStructureShape)
+                .map(shape -> shape.members().stream().anyMatch(m -> m.hasTrait(NestedPropertiesTrait.ID)))
+                .orElse(false);
+    }
+
+    /**
      * Resolves the element structure explicitly marked by the
      * {@code @nestedProperties} trait on a member of the given input or
      * output shape that targets a list of structures.
