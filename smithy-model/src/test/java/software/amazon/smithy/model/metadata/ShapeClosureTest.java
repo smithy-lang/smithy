@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -56,6 +57,7 @@ public class ShapeClosureTest {
         assertThat(primary.getIncludeNamespaces(), contains("com.example"));
         assertThat(primary.getIncludeBySelector(), equalTo(Optional.of("string")));
         assertThat(primary.getRename(), equalTo(expectedRename));
+        assertThat(primary.getDocumentation(), equalTo(Optional.of("Primary closure documentation.")));
         assertThat(ShapeClosure.fromNode(primary.toNode()), equalTo(primary));
         assertThat(primary.toBuilder().build(), equalTo(primary));
     }
@@ -80,6 +82,40 @@ public class ShapeClosureTest {
         assertFalse(serialized.getMember("includeNamespaces").isPresent());
         assertFalse(serialized.getMember("includeBySelector").isPresent());
         assertFalse(serialized.getMember("rename").isPresent());
+        assertFalse(serialized.getMember("documentation").isPresent());
+    }
+
+    @Test
+    public void readsDocumentationFromNode() {
+        ShapeClosure closure = ShapeClosure.fromNode(Node.objectNodeBuilder()
+                .withMember("id", "com.example#documented")
+                .withMember("documentation", "Closure documentation.")
+                .build());
+
+        assertThat(closure.getDocumentation(), equalTo(Optional.of("Closure documentation.")));
+    }
+
+    @Test
+    public void roundTripsDocumentationThroughNode() {
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("com.example#documented")
+                .documentation("Closure documentation.")
+                .build();
+
+        ShapeClosure roundTripped = ShapeClosure.fromNode(closure.toNode());
+
+        assertThat(roundTripped.getDocumentation(), equalTo(Optional.of("Closure documentation.")));
+    }
+
+    @Test
+    public void copiesDocumentationToBuilder() {
+        ShapeClosure closure = ShapeClosure.builder()
+                .id("com.example#documented")
+                .documentation("Closure documentation.")
+                .build();
+
+        assertThat(closure.toBuilder().build().getDocumentation(),
+                equalTo(Optional.of("Closure documentation.")));
     }
 
     @Test
