@@ -72,7 +72,8 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         object.expectStringMember("id", builder::id)
                 .getArrayMember("includeNamespaces", StringNode::getValue, builder::includeNamespaces)
                 .getStringMember("includeBySelector", builder::includeBySelector)
-                .getObjectMember("rename", rename -> builder.rename(renamesFromNode(rename)));
+                .getObjectMember("rename", rename -> builder.rename(renamesFromNode(rename)))
+                .getStringMember("documentation", builder::documentation);
         return builder.build();
     }
 
@@ -187,6 +188,7 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
             rename.forEach((from, to) -> renameBuilder.withMember(from.toString(), to));
             builder.withMember("rename", renameBuilder.build());
         }
+        builder.withOptionalMember("documentation", getDocumentation().map(Node::from));
         return builder.build();
     }
 
@@ -197,7 +199,8 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
                 .id(id)
                 .includeNamespaces(includeNamespaces)
                 .includeBySelector(includeBySelector)
-                .rename(rename);
+                .rename(rename)
+                .documentation(documentation);
     }
 
     @Override
@@ -209,12 +212,13 @@ public final class ShapeClosure implements ToNode, ToSmithyBuilder<ShapeClosure>
         return id.equals(that.id)
                 && includeNamespaces.equals(that.includeNamespaces)
                 && Objects.equals(includeBySelector, that.includeBySelector)
-                && rename.equals(that.rename);
+                && rename.equals(that.rename)
+                && Objects.equals(documentation, that.documentation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, includeNamespaces, includeBySelector, rename);
+        return Objects.hash(id, includeNamespaces, includeBySelector, rename, documentation);
     }
 
     /**

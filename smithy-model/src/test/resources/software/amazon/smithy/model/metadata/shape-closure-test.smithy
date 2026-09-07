@@ -8,6 +8,8 @@ metadata shapeClosures = [
         rename: {
             "com.example#Foo": "RenamedFoo"
         }
+        documentation: """
+            Primary closure documentation."""
     }
     {
         id: "com.example#secondary"
