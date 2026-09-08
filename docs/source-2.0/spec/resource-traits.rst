@@ -551,14 +551,15 @@ Locators and ``...From`` pointers use a structural subset of JMESPath: field
 access, subexpressions, wildcard projections (``[*]``), flatten (``[]``), and
 the current node. Functions, filters, comparators, index and slice expressions,
 and multi-select expressions are not supported. A ``...From`` pointer must
-resolve to a nested structure or a projection of structures; it may not resolve
-to the whole input or output root, nor to a scalar.
+resolve to a nested structure or a projection of structures. It must not resolve
+to the whole input or output root, nor to a list, map, or scalar.
 
 Binding structures
 ------------------
 
 ``createsResources``, ``putsResources``, ``updatesResources``, and
-``readsResources`` use the ``ResourceLifecycleBinding`` structure:
+``readsResources`` use the ``ResourceLifecycleBinding`` structure,
+which has the following members:
 
 .. list-table::
     :header-rows: 1
@@ -589,7 +590,8 @@ Binding structures
 ``deletesResources`` uses the ``ResourceDeletionBinding`` structure, which is
 identical but omits the ``properties`` and ``propertiesFrom`` members.
 
-Both structures locate values with the ``ResourceMemberBinding`` structure:
+Both structures locate values with the ``ResourceMemberBinding`` structure,
+which has the following members:
 
 .. list-table::
     :header-rows: 1
