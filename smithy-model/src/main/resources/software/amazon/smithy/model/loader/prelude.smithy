@@ -1059,8 +1059,48 @@ structure sparse {}
 structure uniqueItems {}
 
 /// Indicates that the shape is unstable and could change in the future.
-@trait
-structure unstable {}
+@trait(
+    breakingChanges: [
+        {
+            path: "/featureId"
+            change: "add"
+            message: "The `@unstable` trait's `featureId` cannot be added to an existing shape. A preview feature must be declared when the shape is first introduced; `@unstable` with a `featureId` cannot be applied retroactively to an existing shape."
+        }
+    ]
+)
+structure unstable {
+    /// The id of the unstable feature this shape belongs to. When set, it must be defined as a key in the
+    /// `unstableFeatures` trait of an enclosing service.
+    @length(max: 100)
+    featureId: String
+}
+
+/// Defines the preview features offered by a service, keyed by `featureId`. Applied to the service shape.
+@trait(selector: "service")
+map unstableFeatures {
+    /// The id of the unstable feature.
+    @length(max: 100)
+    key: String
+
+    /// The metadata describing the unstable feature.
+    value: UnstableFeatureInfo
+}
+
+/// The metadata describing a single unstable feature.
+@private
+structure UnstableFeatureInfo {
+    /// The message to customers about the unstable feature.
+    message: String
+
+    /// The reason why this feature is unstable.
+    reason: UnstableReason
+}
+
+@private
+enum UnstableReason {
+    /// This feature is under preview.
+    PREVIEW
+}
 
 /// The paginated trait indicates that an operation intentionally limits the
 /// number of results returned in a single response and that multiple

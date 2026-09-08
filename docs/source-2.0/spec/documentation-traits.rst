@@ -416,16 +416,109 @@ Summary
     be applied to trait shapes to indicate that a trait is unstable or
     experimental. If possible, code generators SHOULD use this trait to warn
     when code generated from unstable features are used.
+
+    An optional ``featureId`` member associates the shape with a preview
+    feature defined by the :ref:`unstableFeatures trait
+    <unstableFeatures-trait>` of an enclosing service. Backward-incompatible
+    changes to shapes in a preview feature are relaxed by Smithy Diff; see
+    :ref:`preview-feature-diff`.
 Trait selector
     ``*``
-
 Value type
-    Annotation trait
+    ``structure``
+
+The ``unstable`` trait is a structure that supports the following optional
+member:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - featureId
+      - ``string``
+      - Associates the shape with a preview feature. When set, the value MUST
+        match a key defined in the :ref:`unstableFeatures trait
+        <unstableFeatures-trait>` of every service that encloses the shape, and
+        is limited to 100 characters. When omitted, the shape is marked
+        unstable but is not part of any preview feature.
 
 .. code-block:: smithy
 
     @unstable
     string MyString
+
+The following example marks an operation as part of a preview feature:
+
+.. code-block:: smithy
+
+    @unstable(featureId: "MYSERVICE_FIRST_PREVIEW")
+    operation MyPreviewOperation {}
+
+
+.. smithy-trait:: smithy.api#unstableFeatures
+.. _unstableFeatures-trait:
+
+``unstableFeatures`` trait
+==========================
+
+Summary
+    Defines the preview features offered by a service, keyed by ``featureId``.
+    Each entry provides the metadata for one preview feature that is referenced
+    by the :ref:`unstable trait <unstable-trait>` of the shapes that make up the
+    feature.
+Trait selector
+    ``service``
+Value type
+    ``map`` of ``featureId`` (``string``) to feature metadata structures
+
+Each value of the ``unstableFeatures`` map is a structure that supports the
+following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - message
+      - ``string``
+      - A message to customers describing the preview feature. When omitted,
+        tools SHOULD use a default message indicating that the shape is in
+        preview and is subject to change.
+    * - reason
+      - ``string``
+      - The reason the feature is unstable. Currently only supported value is
+        ``PREVIEW``, indicating that the feature is offered as a public
+        preview.
+
+A shape becomes part of a preview feature by applying the :ref:`unstable trait
+<unstable-trait>` with a ``featureId`` that matches a key in the enclosing
+service's ``unstableFeatures`` trait. A single ``featureId`` MAY be referenced
+by multiple shapes that release together as one preview feature. Every
+``featureId`` referenced by an ``unstable`` trait MUST be defined in the
+enclosing service's ``unstableFeatures`` trait.
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @unstableFeatures(
+        MYSERVICE_FIRST_PREVIEW: {
+            message: "This is my preview operation and is subject to change!"
+            reason: "PREVIEW"
+        }
+    )
+    service MyService {
+        operations: [MyPreviewOperation]
+    }
+
+    @unstable(featureId: "MYSERVICE_FIRST_PREVIEW")
+    operation MyPreviewOperation {}
 
 
 .. _CommonMark: https://spec.commonmark.org/
