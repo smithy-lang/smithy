@@ -289,13 +289,31 @@ public final class ModelDiff {
                     .getResult()
                     .orElse(ValidationEventDecorator.IDENTITY);
 
+            // Diff-aware decorators (discovered via SPI) transform events using the old/new model context, e.g.
+            // downgrading breaking changes on preview shapes. They are applied after the model-based decorator.
+            List<DiffEventDecorator> diffEventDecorators = new ArrayList<>();
+            ServiceLoader.load(DiffEventDecorator.class, classLoader).forEach(diffEventDecorators::add);
+
             List<ValidationEvent> diffEvents = evaluators.parallelStream()
                     .flatMap(evaluator -> evaluator.evaluate(differences).stream())
                     // No need to call canDecorate first since that method will always return true in any code path.
                     .map(decoratorResult::decorate)
+                    .map(event -> applyDiffEventDecorators(diffEventDecorators, differences, event))
                     .collect(Collectors.toList());
 
             return new Result(differences, diffEvents, oldModelEvents, newModelEvents);
+        }
+
+        private static ValidationEvent applyDiffEventDecorators(
+                List<DiffEventDecorator> decorators,
+                Differences differences,
+                ValidationEvent event
+        ) {
+            ValidationEvent result = event;
+            for (DiffEventDecorator decorator : decorators) {
+                result = decorator.decorate(differences, result);
+            }
+            return result;
         }
     }
 }

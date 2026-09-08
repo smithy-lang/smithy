@@ -150,3 +150,37 @@ Using Smithy Diff
 `Smithy Diff <https://github.com/smithy-lang/smithy/tree/main/smithy-diff>`_ is a
 tool used to compare two Smithy models to check for backward compatibility
 issues. Smithy Diff can be run via a Java library or via the Smithy CLI.
+
+
+.. _preview-feature-diff:
+
+Preview features
+----------------
+
+Shapes that are part of a preview feature are expected to change while the
+feature is in preview, so Smithy Diff relaxes backward compatibility checks for
+them. A shape is part of a preview feature when it is in the closure of a shape
+that carries the :ref:`unstable trait <unstable-trait>` whose ``featureId``
+resolves to an :ref:`unstableFeatures <unstableFeatures-trait>` entry with a
+``reason`` of ``PREVIEW``.
+
+For such shapes, Smithy Diff downgrades backward-incompatible events that would
+otherwise be reported as ``ERROR`` or ``DANGER`` to ``WARNING``. This applies to
+all backward-incompatible changes in the closure, including changes to the
+traits applied to shapes in the closure. This lets service teams evolve preview
+features without being blocked by breaking-change validation. The downgrade is
+applied only when the shape resolves as a preview feature in *both* the old and
+new models; a shape that becomes part of a preview feature only in the new model
+is not downgraded.
+
+The following changes are **not** downgraded and remain blocking:
+
+#. Adding the ``unstable`` trait's ``featureId`` to a shape that already
+   existed. A preview feature must be declared when the shape is first
+   introduced; ``featureId`` cannot be applied retroactively to an existing
+   shape.
+#. Making a preview *member* of an otherwise generally available (GA) structure
+   non-nullable, such as adding the :ref:`required trait <required-trait>` or
+   otherwise tightening nullability. These changes break existing customers of
+   the enclosing GA shape, not only customers using the preview feature, so they
+   stay blocking.

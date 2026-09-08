@@ -62,6 +62,7 @@ software.amazon.smithy.model.validation.validators.TraitValueValidator
 software.amazon.smithy.model.validation.validators.TypedMetadataValidator
 software.amazon.smithy.model.validation.validators.UnionValidator
 software.amazon.smithy.model.validation.validators.UnitTypeValidator
+software.amazon.smithy.model.validation.validators.UnstableFeaturesValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator
 software.amazon.smithy.model.validation.validators.XmlNamespaceTraitValidator
 software.amazon.smithy.model.validation.validators.TraitValidatorsValidator

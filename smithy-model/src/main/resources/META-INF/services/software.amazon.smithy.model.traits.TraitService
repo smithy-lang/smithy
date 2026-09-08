@@ -72,6 +72,7 @@ software.amazon.smithy.model.traits.NestedPropertiesTrait$Provider
 software.amazon.smithy.model.traits.NotPropertyTrait$Provider
 software.amazon.smithy.model.traits.UniqueItemsTrait$Provider
 software.amazon.smithy.model.traits.UnitTypeTrait$Provider
+software.amazon.smithy.model.traits.UnstableFeaturesTrait$Provider
 software.amazon.smithy.model.traits.UnstableTrait$Provider
 software.amazon.smithy.model.traits.XmlAttributeTrait$Provider
 software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
