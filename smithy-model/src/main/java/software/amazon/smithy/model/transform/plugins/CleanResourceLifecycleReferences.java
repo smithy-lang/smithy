@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -69,12 +68,12 @@ public final class CleanResourceLifecycleReferences implements ModelTransformerP
             Set<ShapeId> removedIds,
             ShapeId traitId
     ) {
-        Optional<Trait> traitOptional = operation.findTrait(traitId);
-        if (!traitOptional.isPresent()) {
+        if (!operation.hasTrait(traitId)) {
             return builder;
         }
 
-        AbstractResourceLifecycleTrait lifecycleTrait = (AbstractResourceLifecycleTrait) traitOptional.get();
+        AbstractResourceLifecycleTrait lifecycleTrait =
+                (AbstractResourceLifecycleTrait) operation.findTrait(traitId).get();
         List<ResourceLifecycleBinding> bindings = lifecycleTrait.getBindings();
         List<ResourceLifecycleBinding> filtered = new ArrayList<>(bindings.size());
         for (ResourceLifecycleBinding binding : bindings) {

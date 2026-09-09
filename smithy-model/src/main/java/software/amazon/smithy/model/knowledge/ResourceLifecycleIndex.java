@@ -47,11 +47,16 @@ public final class ResourceLifecycleIndex implements KnowledgeIndex {
      * The lifecycle effect an operation has on a resource.
      */
     public enum Lifecycle {
+        /** The operation creates the resource; identifiers are in the output, properties in the input. */
         CREATE,
-        DELETE,
+        /** The operation creates or replaces the resource with a caller-provided identifier from the input. */
         PUT,
+        /** The operation reads the resource; identifiers are in the input, properties in the output. */
         READ,
-        UPDATE
+        /** The operation updates the resource; identifiers and properties are in the input. */
+        UPDATE,
+        /** The operation deletes the resource; identifiers are in the input. */
+        DELETE
     }
 
     // operation -> lifecycle -> set of resource ShapeIds
@@ -63,17 +68,18 @@ public final class ResourceLifecycleIndex implements KnowledgeIndex {
     private ResourceLifecycleIndex(Model model) {
         Map<ShapeId, Lifecycle> traitToLifecycle = new HashMap<>();
         traitToLifecycle.put(CreatesResourcesTrait.ID, Lifecycle.CREATE);
-        traitToLifecycle.put(DeletesResourcesTrait.ID, Lifecycle.DELETE);
         traitToLifecycle.put(PutsResourcesTrait.ID, Lifecycle.PUT);
         traitToLifecycle.put(ReadsResourcesTrait.ID, Lifecycle.READ);
         traitToLifecycle.put(UpdatesResourcesTrait.ID, Lifecycle.UPDATE);
+        traitToLifecycle.put(DeletesResourcesTrait.ID, Lifecycle.DELETE);
 
         for (OperationShape operation : model.getOperationShapes()) {
             for (Map.Entry<ShapeId, Lifecycle> entry : traitToLifecycle.entrySet()) {
-                operation.findTrait(entry.getKey())
-                        .ifPresent(trait -> index(operation.getId(),
-                                entry.getValue(),
-                                ((AbstractResourceLifecycleTrait) trait).getBindings()));
+                if (operation.hasTrait(entry.getKey())) {
+                    AbstractResourceLifecycleTrait trait =
+                            (AbstractResourceLifecycleTrait) operation.findTrait(entry.getKey()).get();
+                    index(operation.getId(), entry.getValue(), trait.getBindings());
+                }
             }
         }
     }
