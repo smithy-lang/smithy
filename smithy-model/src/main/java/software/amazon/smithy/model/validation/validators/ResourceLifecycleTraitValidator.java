@@ -75,12 +75,20 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
     }
 
     private static final class Descriptor {
+        final Class<? extends AbstractResourceLifecycleTrait> traitClass;
         final ShapeId traitId;
         final String name;
         final Side identifierSide;
         final Side propertySide; // null when the trait binds no properties (delete).
 
-        Descriptor(ShapeId traitId, String name, Side identifierSide, Side propertySide) {
+        Descriptor(
+                Class<? extends AbstractResourceLifecycleTrait> traitClass,
+                ShapeId traitId,
+                String name,
+                Side identifierSide,
+                Side propertySide
+        ) {
+            this.traitClass = traitClass;
             this.traitId = traitId;
             this.name = name;
             this.identifierSide = identifierSide;
@@ -89,139 +97,168 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
     }
 
     private static final List<Descriptor> DESCRIPTORS = ListUtils.of(
-            new Descriptor(CreatesResourcesTrait.ID, "createsResources", Side.OUTPUT, Side.INPUT),
-            new Descriptor(PutsResourcesTrait.ID, "putsResources", Side.INPUT, Side.INPUT),
-            new Descriptor(UpdatesResourcesTrait.ID, "updatesResources", Side.INPUT, Side.INPUT),
-            new Descriptor(DeletesResourcesTrait.ID, "deletesResources", Side.INPUT, null),
-            new Descriptor(ReadsResourcesTrait.ID, "readsResources", Side.INPUT, Side.OUTPUT));
+            new Descriptor(CreatesResourcesTrait.class,
+                    CreatesResourcesTrait.ID,
+                    "createsResources",
+                    Side.OUTPUT,
+                    Side.INPUT),
+            new Descriptor(PutsResourcesTrait.class,
+                    PutsResourcesTrait.ID,
+                    "putsResources",
+                    Side.INPUT,
+                    Side.INPUT),
+            new Descriptor(ReadsResourcesTrait.class,
+                    ReadsResourcesTrait.ID,
+                    "readsResources",
+                    Side.INPUT,
+                    Side.OUTPUT),
+            new Descriptor(UpdatesResourcesTrait.class,
+                    UpdatesResourcesTrait.ID,
+                    "updatesResources",
+                    Side.INPUT,
+                    Side.INPUT),
+            new Descriptor(DeletesResourcesTrait.class,
+                    DeletesResourcesTrait.ID,
+                    "deletesResources",
+                    Side.INPUT,
+                    null));
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> applied = model.getAppliedTraits();
-        boolean anyApplied = false;
-        for (Descriptor descriptor : DESCRIPTORS) {
-            if (applied.contains(descriptor.traitId)) {
-                anyApplied = true;
-                break;
-            }
-        }
-        if (!anyApplied) {
-            return Collections.emptyList();
-        }
-
         List<ValidationEvent> events = new ArrayList<>();
-        for (OperationShape operation : model.getOperationShapes()) {
-            for (Descriptor descriptor : DESCRIPTORS) {
-                Optional<Trait> traitOptional = operation.findTrait(descriptor.traitId);
-                if (!traitOptional.isPresent()) {
-                    continue;
-                }
-                Trait trait = traitOptional.get();
-                AbstractResourceLifecycleTrait lifecycleTrait = (AbstractResourceLifecycleTrait) trait;
-                for (ResourceLifecycleBinding binding : lifecycleTrait.getBindings()) {
-                    validateBinding(model, operation, trait, descriptor, binding, events);
+        for (Descriptor descriptor : DESCRIPTORS) {
+            for (OperationShape operation : model.getOperationShapesWithTrait(descriptor.traitClass)) {
+                AbstractResourceLifecycleTrait trait = operation.expectTrait(descriptor.traitClass);
+                for (ResourceLifecycleBinding binding : trait.getBindings()) {
+                    ResourceShape resource = model.getShape(binding.getResource())
+                            .flatMap(Shape::asResourceShape)
+                            .orElse(null);
+                    // Missing shapes and non-resource shapes are reported by the `@idRef` trait on the
+                    // binding's `resource` member (a critical validator that short-circuits this one),
+                    // so when we get here the reference is a resource. Skip defensively otherwise.
+                    if (resource != null) {
+                        Context context = new Context(model, operation, trait, descriptor, resource, events);
+                        validateBinding(context, binding);
+                    }
                 }
             }
         }
-
         return events;
     }
 
-    private void validateBinding(
-            Model model,
-            OperationShape operation,
-            Trait trait,
-            Descriptor descriptor,
-            ResourceLifecycleBinding binding,
-            List<ValidationEvent> events
-    ) {
-        // Missing shapes and non-resource shapes are reported by the `@idRef` trait on the
-        // binding's `resource` member (a critical validator that short-circuits this one), so
-        // when we get here the reference is a resource. Resolve defensively and skip otherwise.
-        ResourceShape resource = model.getShape(binding.getResource())
-                .flatMap(Shape::asResourceShape)
-                .orElse(null);
-        if (resource == null) {
-            return;
+    // Holds the values shared by every step of validating one binding, so the per-step methods take
+    // a single context plus the specific data they act on rather than a long parameter list.
+    private final class Context {
+        final Model model;
+        final OperationShape operation;
+        final Trait trait;
+        final Descriptor descriptor;
+        final ResourceShape resource;
+        final List<ValidationEvent> events;
+
+        Context(
+                Model model,
+                OperationShape operation,
+                Trait trait,
+                Descriptor descriptor,
+                ResourceShape resource,
+                List<ValidationEvent> events
+        ) {
+            this.model = model;
+            this.operation = operation;
+            this.trait = trait;
+            this.descriptor = descriptor;
+            this.resource = resource;
+            this.events = events;
         }
+
+        String traitName() {
+            return descriptor.name;
+        }
+
+        ShapeId resourceId() {
+            return resource.getId();
+        }
+
+        // The input or output structure a given binding kind resolves against, or null if absent.
+        StructureShape sideStructure(Side side) {
+            ShapeId id = side == Side.OUTPUT ? operation.getOutputShape() : operation.getInputShape();
+            return model.getShape(id).flatMap(Shape::asStructureShape).orElse(null);
+        }
+
+        ShapeId sideStructureId(Side side) {
+            return side == Side.OUTPUT ? operation.getOutputShape() : operation.getInputShape();
+        }
+
+        void error(String message) {
+            events.add(ResourceLifecycleTraitValidator.this.error(operation, trait, message));
+        }
+
+        void danger(String message) {
+            events.add(ResourceLifecycleTraitValidator.this.danger(operation, trait, message));
+        }
+
+        void warning(String message) {
+            events.add(ResourceLifecycleTraitValidator.this.warning(operation, trait, message));
+        }
+    }
+
+    private void validateBinding(Context ctx, ResourceLifecycleBinding binding) {
+        Descriptor descriptor = ctx.descriptor;
 
         // Warn if the resource is already lifecycle-bound to this operation.
-        if (isLifecycleBound(resource, operation.getId(), descriptor.name)) {
-            events.add(warning(operation,
-                    trait,
-                    format(
-                            "Resource `%s` in `@%s` is already bound to this operation via the "
-                                    + "resource's lifecycle. The trait is redundant.",
-                            binding.getResource(),
-                            descriptor.name)));
+        if (isLifecycleBound(ctx.resource, ctx.operation.getId(), descriptor.traitId)) {
+            ctx.warning(format(
+                    "Resource `%s` in `@%s` is already bound to this operation via the resource's "
+                            + "lifecycle. The trait is redundant.",
+                    binding.getResource(),
+                    descriptor.name));
         }
 
-        validateBindingKind(model,
-                operation,
-                trait,
-                descriptor.name,
-                resource,
+        validateBindingKind(ctx,
                 ResourceLifecycleResolver.BindingKind.IDENTIFIER,
                 descriptor.identifierSide,
-                binding.getResource(),
                 binding.getIdentifiers(),
-                binding.getIdentifiersFrom(),
-                events);
+                binding.getIdentifiersFrom());
 
         if (descriptor.propertySide != null) {
-            validateBindingKind(model,
-                    operation,
-                    trait,
-                    descriptor.name,
-                    resource,
+            validateBindingKind(ctx,
                     ResourceLifecycleResolver.BindingKind.PROPERTY,
                     descriptor.propertySide,
-                    binding.getResource(),
                     binding.getProperties(),
-                    binding.getPropertiesFrom(),
-                    events);
+                    binding.getPropertiesFrom());
         } else if (!binding.getProperties().isEmpty() || binding.getPropertiesFrom().isPresent()) {
             // The trait binds no properties (delete): a resource is deleted by its identifier
             // alone. Carrying `properties`/`propertiesFrom` is meaningless, so reject it. The
             // prelude models this member with a properties-free structure, which also flags it at
             // load time; this check makes the violation a hard error even if reached in Java.
-            events.add(error(operation,
-                    trait,
-                    format("Binding for resource `%s` in `@%s` specifies properties, but `@%s` deletes a resource "
+            ctx.error(format(
+                    "Binding for resource `%s` in `@%s` specifies properties, but `@%s` deletes a resource "
                             + "by its identifiers alone and has no properties.",
-                            binding.getResource(),
-                            descriptor.name,
-                            descriptor.name)));
+                    binding.getResource(),
+                    descriptor.name,
+                    descriptor.name));
         }
     }
 
     private void validateBindingKind(
-            Model model,
-            OperationShape operation,
-            Trait trait,
-            String traitName,
-            ResourceShape resource,
+            Context ctx,
             ResourceLifecycleResolver.BindingKind kind,
             Side side,
-            ShapeId resourceId,
             Map<String, ResourceMemberBinding> explicit,
-            Optional<String> from,
-            List<ValidationEvent> events
+            Optional<String> from
     ) {
         // Unspecified: nothing to validate.
         if (explicit.isEmpty() && !from.isPresent()) {
             return;
         }
 
-        ShapeId sideStructureId = side == Side.OUTPUT ? operation.getOutputShape() : operation.getInputShape();
-        StructureShape sideStructure = model.getShape(sideStructureId)
-                .flatMap(Shape::asStructureShape)
-                .orElse(null);
-
-        String kindWord = kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER ? "identifier" : "property";
+        StructureShape sideStructure = ctx.sideStructure(side);
+        ShapeId sideStructureId = ctx.sideStructureId(side);
+        String kindWord = kindWord(kind);
         Set<String> validNames = kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER
-                ? resource.getIdentifiers().keySet()
-                : resource.getProperties().keySet();
+                ? ctx.resource.getIdentifiers().keySet()
+                : ctx.resource.getProperties().keySet();
 
         // Explicit map.
         for (Map.Entry<String, ResourceMemberBinding> entry : explicit.entrySet()) {
@@ -229,292 +266,202 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             String path = entry.getValue().getPath();
 
             if (!validNames.contains(name)) {
-                events.add(error(operation,
-                        trait,
-                        format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %ss: [%s]",
-                                capitalize(kindWord),
-                                name,
-                                traitName,
-                                kindWord,
-                                resourceId,
-                                kindWord,
-                                ValidationUtils.tickedList(validNames))));
+                ctx.error(format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %ss: [%s]",
+                        capitalize(kindWord),
+                        name,
+                        ctx.traitName(),
+                        kindWord,
+                        ctx.resourceId(),
+                        kindWord,
+                        ValidationUtils.tickedList(validNames)));
                 continue;
             }
 
-            JmespathExpression parsed = parseAndCheck(operation, trait, traitName, kindWord, name, path, events);
+            JmespathExpression parsed = parseAndCheck(ctx, kindWord, name, path);
             if (parsed == null) {
                 continue;
             }
 
             if (sideStructure != null) {
                 ResourceLifecycleResolver.PathResult result =
-                        ResourceLifecycleResolver.walk(model, sideStructure, parsed);
+                        ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
                 if (result.error != null) {
-                    events.add(danger(operation,
-                            trait,
-                            format("JMESPath expression `%s` for %s `%s` in `@%s` has problems when resolved "
-                                    + "against `%s`: %s",
-                                    path,
-                                    kindWord,
-                                    name,
-                                    traitName,
-                                    sideStructureId,
-                                    result.error)));
-                } else {
-                    checkLeafType(operation,
-                            trait,
-                            traitName,
-                            kind,
+                    ctx.danger(format("JMESPath expression `%s` for %s `%s` in `@%s` has problems when resolved "
+                            + "against `%s`: %s",
+                            path,
                             kindWord,
                             name,
-                            path,
-                            resource,
-                            model,
-                            result.leaf,
-                            events);
+                            ctx.traitName(),
+                            sideStructureId,
+                            result.error));
+                } else {
+                    checkLeafType(ctx, kind, kindWord, name, path, result.leaf);
                 }
             }
         }
 
         if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
-            validateCompositeCardinality(model,
-                    operation,
-                    trait,
-                    traitName,
-                    resourceId,
-                    sideStructure,
-                    explicit,
-                    events);
+            validateCompositeCardinality(ctx, sideStructure, explicit);
         }
 
         // Inferred via `...From`.
-        from.ifPresent(fromPath -> validateInferred(model,
-                operation,
-                trait,
-                traitName,
-                resource,
-                kind,
-                kindWord,
-                sideStructure,
-                sideStructureId,
-                fromPath,
-                events));
+        from.ifPresent(fromPath -> validateInferred(ctx, kind, kindWord, sideStructure, sideStructureId, fromPath));
     }
 
     private void validateInferred(
-            Model model,
-            OperationShape operation,
-            Trait trait,
-            String traitName,
-            ResourceShape resource,
+            Context ctx,
             ResourceLifecycleResolver.BindingKind kind,
             String kindWord,
             StructureShape sideStructure,
             ShapeId sideStructureId,
-            String fromPath,
-            List<ValidationEvent> events
+            String fromPath
     ) {
         String fromMember = kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER
                 ? "identifiersFrom"
                 : "propertiesFrom";
-        JmespathExpression parsed = parseAndCheck(operation,
-                trait,
-                traitName,
-                fromMember,
-                fromMember,
-                fromPath,
-                events);
+        JmespathExpression parsed = parseAndCheck(ctx, fromMember, fromMember, fromPath);
         if (parsed == null || sideStructure == null) {
             return;
         }
 
-        ResourceLifecycleResolver.PathResult result = ResourceLifecycleResolver.walk(model, sideStructure, parsed);
+        ResourceLifecycleResolver.PathResult result = ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
         if (result.error != null) {
-            events.add(danger(operation,
-                    trait,
-                    format("`%s` `%s` in `@%s` has problems when resolved against `%s`: %s",
-                            fromMember,
-                            fromPath,
-                            traitName,
-                            sideStructureId,
-                            result.error)));
+            ctx.danger(format("`%s` `%s` in `@%s` has problems when resolved against `%s`: %s",
+                    fromMember,
+                    fromPath,
+                    ctx.traitName(),
+                    sideStructureId,
+                    result.error));
             return;
         }
         if (result.root) {
-            events.add(error(operation,
-                    trait,
-                    format("`%s` `%s` in `@%s` points at the whole %s root; it must point at a nested "
-                            + "structure or a projection.",
-                            fromMember,
-                            fromPath,
-                            traitName,
-                            sideName(sideStructureId, operation))));
+            ctx.error(format("`%s` `%s` in `@%s` points at the whole %s root; it must point at a nested "
+                    + "structure or a projection.",
+                    fromMember,
+                    fromPath,
+                    ctx.traitName(),
+                    sideName(sideStructureId, ctx.operation)));
             return;
         }
         if (!(result.leaf instanceof StructureShape)) {
-            events.add(error(operation,
-                    trait,
-                    format("`%s` `%s` in `@%s` must point at a nested structure or a projection of "
-                            + "structures, but resolved to `%s`.",
-                            fromMember,
-                            fromPath,
-                            traitName,
-                            result.leaf.getId())));
+            ctx.error(format("`%s` `%s` in `@%s` must point at a nested structure or a projection of "
+                    + "structures, but resolved to `%s`.",
+                    fromMember,
+                    fromPath,
+                    ctx.traitName(),
+                    result.leaf.getId()));
             return;
         }
 
         StructureShape element = (StructureShape) result.leaf;
         ResourceLifecycleResolver.InferenceResult inference =
-                ResourceLifecycleResolver.inferByName(resource, element, kind);
+                ResourceLifecycleResolver.inferByName(ctx.resource, element, kind);
 
         if (inference.matched.isEmpty()) {
-            events.add(error(operation,
-                    trait,
-                    format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",
-                            fromMember,
-                            fromPath,
-                            traitName,
-                            element.getId(),
-                            kindWord,
-                            resource.getId())));
+            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",
+                    fromMember,
+                    fromPath,
+                    ctx.traitName(),
+                    element.getId(),
+                    kindWord,
+                    ctx.resourceId()));
             return;
         }
 
         if (!inference.unmatched.isEmpty()) {
-            events.add(error(operation,
-                    trait,
-                    format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither a %s nor an "
-                            + "identifier of resource `%s` and are not marked `@notProperty`: [%s]",
-                            fromMember,
-                            fromPath,
-                            traitName,
-                            element.getId(),
-                            kindWord,
-                            resource.getId(),
-                            memberNames(inference.unmatched))));
+            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither a %s nor an "
+                    + "identifier of resource `%s` and are not marked `@notProperty`: [%s]",
+                    fromMember,
+                    fromPath,
+                    ctx.traitName(),
+                    element.getId(),
+                    kindWord,
+                    ctx.resourceId(),
+                    memberNames(inference.unmatched)));
         }
 
         // Type agreement for matched members.
         for (Map.Entry<String, MemberShape> matched : inference.matched.entrySet()) {
-            checkMemberType(operation,
-                    trait,
-                    traitName,
-                    kind,
-                    kindWord,
-                    matched.getKey(),
-                    matched.getValue(),
-                    resource,
-                    model,
-                    events);
+            checkMemberType(ctx, kind, matched.getKey(), matched.getValue());
         }
     }
 
     private void checkLeafType(
-            OperationShape operation,
-            Trait trait,
-            String traitName,
+            Context ctx,
             ResourceLifecycleResolver.BindingKind kind,
             String kindWord,
             String name,
             String path,
-            ResourceShape resource,
-            Model model,
-            Shape leaf,
-            List<ValidationEvent> events
+            Shape leaf
     ) {
         if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
-            ShapeId declared = unwrapBaseId(model, resource.getIdentifiers().get(name));
+            ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getIdentifiers().get(name));
             if (!leaf.getId().equals(declared)) {
-                events.add(error(operation,
-                        trait,
-                        format("JMESPath expression `%s` for identifier `%s` in `@%s` resolves to `%s`, but the "
-                                + "resource identifier targets `%s`.",
-                                path,
-                                name,
-                                traitName,
-                                leaf.getId(),
-                                declared)));
+                ctx.error(format("JMESPath expression `%s` for identifier `%s` in `@%s` resolves to `%s`, but the "
+                        + "resource identifier targets `%s`.",
+                        path,
+                        name,
+                        ctx.traitName(),
+                        leaf.getId(),
+                        declared));
             }
         } else {
-            ShapeId declared = unwrapBaseId(model, resource.getProperties().get(name));
+            ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getProperties().get(name));
             if (!leaf.getId().equals(declared)) {
-                events.add(error(operation,
-                        trait,
-                        format("JMESPath expression `%s` for property `%s` in `@%s` resolves to `%s`, but the "
-                                + "resource property targets `%s`.",
-                                path,
-                                name,
-                                traitName,
-                                leaf.getId(),
-                                declared)));
+                ctx.error(format("JMESPath expression `%s` for property `%s` in `@%s` resolves to `%s`, but the "
+                        + "resource property targets `%s`.",
+                        path,
+                        name,
+                        ctx.traitName(),
+                        leaf.getId(),
+                        declared));
             }
         }
     }
 
     private void checkMemberType(
-            OperationShape operation,
-            Trait trait,
-            String traitName,
+            Context ctx,
             ResourceLifecycleResolver.BindingKind kind,
-            String kindWord,
             String name,
-            MemberShape member,
-            ResourceShape resource,
-            Model model,
-            List<ValidationEvent> events
+            MemberShape member
     ) {
-        ShapeId leaf = unwrapBaseId(model, member.getTarget());
+        ShapeId leaf = unwrapBaseId(ctx.model, member.getTarget());
         if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
-            ShapeId declared = unwrapBaseId(model, resource.getIdentifiers().get(name));
+            ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getIdentifiers().get(name));
             if (!leaf.equals(declared)) {
-                events.add(error(operation,
-                        trait,
-                        format("Inferred identifier `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
-                                + "identifier targets `%s`.",
-                                name,
-                                traitName,
-                                member.getMemberName(),
-                                leaf,
-                                declared)));
+                ctx.error(format("Inferred identifier `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
+                        + "identifier targets `%s`.",
+                        name,
+                        ctx.traitName(),
+                        member.getMemberName(),
+                        leaf,
+                        declared));
             }
         } else {
-            ShapeId declared = unwrapBaseId(model, resource.getProperties().get(name));
+            ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getProperties().get(name));
             if (!leaf.equals(declared)) {
-                events.add(error(operation,
-                        trait,
-                        format("Inferred property `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
-                                + "property targets `%s`.",
-                                name,
-                                traitName,
-                                member.getMemberName(),
-                                leaf,
-                                declared)));
+                ctx.error(format("Inferred property `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
+                        + "property targets `%s`.",
+                        name,
+                        ctx.traitName(),
+                        member.getMemberName(),
+                        leaf,
+                        declared));
             }
         }
     }
 
-    private JmespathExpression parseAndCheck(
-            OperationShape operation,
-            Trait trait,
-            String traitName,
-            String kind,
-            String name,
-            String path,
-            List<ValidationEvent> events
-    ) {
+    private JmespathExpression parseAndCheck(Context ctx, String kind, String name, String path) {
         JmespathExpression parsed;
         try {
             parsed = JmespathExpression.parse(path);
         } catch (JmespathException e) {
-            events.add(error(operation,
-                    trait,
-                    format("Invalid JMESPath expression `%s` for %s `%s` in `@%s`: %s",
-                            path,
-                            kind,
-                            name,
-                            traitName,
-                            e.getMessage())));
+            ctx.error(format("Invalid JMESPath expression `%s` for %s `%s` in `@%s`: %s",
+                    path,
+                    kind,
+                    name,
+                    ctx.traitName(),
+                    e.getMessage()));
             return null;
         }
 
@@ -527,17 +474,19 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 }
                 list.append("'").append(expr).append("'");
             }
-            events.add(error(operation,
-                    trait,
-                    format("JMESPath expression `%s` for %s `%s` in `@%s` contains unsupported expressions: %s",
-                            path,
-                            kind,
-                            name,
-                            traitName,
-                            list)));
+            ctx.error(format("JMESPath expression `%s` for %s `%s` in `@%s` contains unsupported expressions: %s",
+                    path,
+                    kind,
+                    name,
+                    ctx.traitName(),
+                    list));
             return null;
         }
         return parsed;
+    }
+
+    private static String kindWord(ResourceLifecycleResolver.BindingKind kind) {
+        return kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER ? "identifier" : "property";
     }
 
     private static String sideName(ShapeId sideStructureId, OperationShape operation) {
@@ -569,32 +518,28 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         return shape.getId();
     }
 
-    private boolean isLifecycleBound(ResourceShape resource, ShapeId operationId, String traitName) {
-        switch (traitName) {
-            case "createsResources":
-                return resource.getCreate().map(operationId::equals).orElse(false);
-            case "putsResources":
-                return resource.getPut().map(operationId::equals).orElse(false);
-            case "deletesResources":
-                return resource.getDelete().map(operationId::equals).orElse(false);
-            case "readsResources":
-                return resource.getRead().map(operationId::equals).orElse(false);
-            case "updatesResources":
-                return resource.getUpdate().map(operationId::equals).orElse(false);
-            default:
-                return false;
+    private boolean isLifecycleBound(ResourceShape resource, ShapeId operationId, ShapeId traitId) {
+        Optional<ShapeId> lifecycleOperation;
+        if (traitId.equals(CreatesResourcesTrait.ID)) {
+            lifecycleOperation = resource.getCreate();
+        } else if (traitId.equals(PutsResourcesTrait.ID)) {
+            lifecycleOperation = resource.getPut();
+        } else if (traitId.equals(ReadsResourcesTrait.ID)) {
+            lifecycleOperation = resource.getRead();
+        } else if (traitId.equals(UpdatesResourcesTrait.ID)) {
+            lifecycleOperation = resource.getUpdate();
+        } else if (traitId.equals(DeletesResourcesTrait.ID)) {
+            lifecycleOperation = resource.getDelete();
+        } else {
+            return false;
         }
+        return lifecycleOperation.map(operationId::equals).orElse(false);
     }
 
     private void validateCompositeCardinality(
-            Model model,
-            OperationShape operation,
-            Trait trait,
-            String traitName,
-            ShapeId resourceId,
+            Context ctx,
             StructureShape sideStructure,
-            Map<String, ResourceMemberBinding> identifiers,
-            List<ValidationEvent> events
+            Map<String, ResourceMemberBinding> identifiers
     ) {
         if (sideStructure == null) {
             return;
@@ -610,7 +555,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 continue;
             }
             ResourceLifecycleResolver.PathResult result =
-                    ResourceLifecycleResolver.walk(model, sideStructure, parsed);
+                    ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
             if (result.error == null && !result.arrays.isEmpty()) {
                 identifierToArrays.put(entry.getKey(), result.arrays);
             }
@@ -629,14 +574,12 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 }
                 detail.append("`").append(entry.getKey()).append("` -> ").append(signature(entry.getValue()));
             }
-            events.add(error(operation,
-                    trait,
-                    format(
-                            "Identifiers in `@%s` for resource `%s` project through different lists, "
-                                    + "making cardinality ambiguous. Identifiers and the lists they iterate: %s",
-                            traitName,
-                            resourceId,
-                            detail)));
+            ctx.error(format(
+                    "Identifiers in `@%s` for resource `%s` project through different lists, "
+                            + "making cardinality ambiguous. Identifiers and the lists they iterate: %s",
+                    ctx.traitName(),
+                    ctx.resourceId(),
+                    detail));
         }
     }
 
