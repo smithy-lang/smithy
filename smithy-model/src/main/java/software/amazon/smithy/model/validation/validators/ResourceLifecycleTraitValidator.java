@@ -424,15 +424,17 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             List<ValidationEvent> events
     ) {
         if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
-            if (!leaf.isStringShape()) {
+            ShapeId declared = unwrapBaseId(model, resource.getIdentifiers().get(name));
+            if (!leaf.getId().equals(declared)) {
                 events.add(error(operation,
                         trait,
-                        format("JMESPath expression `%s` for identifier `%s` in `@%s` resolves to `%s`, but "
-                                + "identifiers must resolve to a string.",
+                        format("JMESPath expression `%s` for identifier `%s` in `@%s` resolves to `%s`, but the "
+                                + "resource identifier targets `%s`.",
                                 path,
                                 name,
                                 traitName,
-                                leaf.getId())));
+                                leaf.getId(),
+                                declared)));
             }
         } else {
             ShapeId declared = unwrapBaseId(model, resource.getProperties().get(name));
@@ -464,15 +466,17 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
     ) {
         ShapeId leaf = unwrapBaseId(model, member.getTarget());
         if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
-            if (!model.expectShape(leaf).isStringShape()) {
+            ShapeId declared = unwrapBaseId(model, resource.getIdentifiers().get(name));
+            if (!leaf.equals(declared)) {
                 events.add(error(operation,
                         trait,
-                        format("Inferred identifier `%s` in `@%s` (member `%s`) resolves to `%s`, but identifiers "
-                                + "must resolve to a string.",
+                        format("Inferred identifier `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
+                                + "identifier targets `%s`.",
                                 name,
                                 traitName,
                                 member.getMemberName(),
-                                leaf)));
+                                leaf,
+                                declared)));
             }
         } else {
             ShapeId declared = unwrapBaseId(model, resource.getProperties().get(name));

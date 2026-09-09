@@ -1589,28 +1589,6 @@ list createsResources {
     member: ResourceLifecycleBinding
 }
 
-/// Declares which resources an operation deletes and where to find their
-/// identifiers in the operation input.
-@unstable
-@trait(
-    selector: "operation"
-    breakingChanges: [
-        {
-            change: "remove"
-            path: "/member"
-            message: "Removing a resource from @deletesResources breaks consumers that depend on this lifecycle declaration."
-        }
-        {
-            change: "update"
-            path: "/member/resource"
-            message: "Changing the resource in a @deletesResources entry is a breaking change."
-        }
-    ]
-)
-list deletesResources {
-    member: ResourceDeletionBinding
-}
-
 /// Declares which resources an operation creates or replaces (put semantics)
 /// and where to find their identifiers in the operation input.
 @unstable
@@ -1679,6 +1657,28 @@ list readsResources {
 )
 list updatesResources {
     member: ResourceLifecycleBinding
+}
+
+/// Declares which resources an operation deletes and where to find their
+/// identifiers in the operation input.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            path: "/member"
+            message: "Removing a resource from @deletesResources breaks consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            path: "/member/resource"
+            message: "Changing the resource in a @deletesResources entry is a breaking change."
+        }
+    ]
+)
+list deletesResources {
+    member: ResourceDeletionBinding
 }
 
 /// A binding that associates a resource with an operation lifecycle effect
