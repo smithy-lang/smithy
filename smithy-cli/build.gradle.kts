@@ -45,14 +45,6 @@ fun requireJava25ForImage() {
 }
 
 dependencies {
-    constraints {
-        implementation("org.codehaus.plexus:plexus-utils:3.6.1") {
-            because(
-                "CVE-2025-67030: directory traversal in Expand.extractFile (CVSS 8.8), fixed in 3.6.1 via https://github.com/codehaus-plexus/plexus-utils/pull/304",
-            )
-        }
-    }
-
     // Keeps these as exported transitive dependencies.
     implementation(project(":smithy-model"))
     implementation(project(":smithy-build"))
