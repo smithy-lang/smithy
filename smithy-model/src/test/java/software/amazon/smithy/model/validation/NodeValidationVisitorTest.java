@@ -656,6 +656,41 @@ public class NodeValidationVisitorTest {
     }
 
     @Test
+    public void nullSparseTimestampListMember() {
+        ArrayNode list = ArrayNode.builder()
+                .withValue(Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(list)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#SparseTimestampList"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void nullSparseTimestampListMemberWithEpochSecondsStrategy() {
+        ArrayNode list = ArrayNode.builder()
+                .withValue(Node.nullNode())
+                .build();
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                .value(list)
+                .model(MODEL)
+                .allowOptionalNull(true)
+                .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#SparseTimestampList"))
+                .accept(visitor);
+
+        assertThat(events, empty());
+    }
+
+    @Test
     public void nullNonSparseMapValue() {
         ObjectNode map = ObjectNode.builder()
                 .withMember("a", Node.nullNode())
