@@ -10,9 +10,20 @@ use smithy.test#eventStreamTests
 apply EventStreamResponse @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseScalars"
-        documentation: "Deserializes an event whose implicit payload carries every scalar type"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Deserializes an event
+            whose implicit payload carries every scalar type."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -44,9 +55,20 @@ apply EventStreamResponse @eventStreamTests([
     }
     {
         id: "RpcV2JsonEventStreamResponseList"
-        documentation: "Deserializes an event whose payload carries lists of scalars"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Deserializes an event
+            whose payload carries lists of scalars."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -69,9 +91,20 @@ apply EventStreamResponse @eventStreamTests([
     }
     {
         id: "RpcV2JsonEventStreamResponseMap"
-        documentation: "Deserializes an event whose payload carries maps of scalars"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Deserializes an event
+            whose payload carries maps of scalars."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -94,9 +127,20 @@ apply EventStreamResponse @eventStreamTests([
     }
     {
         id: "RpcV2JsonEventStreamResponseStruct"
-        documentation: "Deserializes an event whose payload nests a structure"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Deserializes an event
+            whose payload nests a structure."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -117,9 +161,20 @@ apply EventStreamResponse @eventStreamTests([
     }
     {
         id: "RpcV2JsonEventStreamResponseUnion"
-        documentation: "Deserializes an event whose payload nests a union"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Deserializes an event
+            whose payload nests a union."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -141,11 +196,21 @@ apply EventStreamResponse @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseMultipleEvents"
         documentation: """
-            Dispatches a sequence of events to the correct union variants. The
-            heartbeat event models an empty structure, so it carries no payload
-            and therefore no :content-type header."""
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseOutput has no non-stream
+            members, so the frame carries no payload. Dispatches a sequence
+            of events to the correct union variants. The heartbeat event
+            models an empty structure, so it carries no payload and
+            therefore no :content-type header."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -209,12 +274,22 @@ apply EventStreamResponseBlobPayload @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseBlobPayload"
         documentation: """
-            A blob @eventPayload is written as the raw message payload, not
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseBlobPayloadOutput has no
+            non-stream members, so the frame carries no payload. A blob
+            @eventPayload is written as the raw message payload, not
             base64-encoded, and takes the application/octet-stream content
             type. The modeled @eventHeader member is carried as a message
             header and does not appear in the payload."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -237,11 +312,21 @@ apply EventStreamResponseHeaders @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseHeaders"
         documentation: """
-            Each @eventHeader member is carried as a typed event stream message
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseHeadersOutput has no
+            non-stream members, so the frame carries no payload. Each
+            @eventHeader member is carried as a typed event stream message
             header rather than in the payload, and a string @eventPayload takes
             the text/plain content type."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -277,11 +362,21 @@ apply EventStreamResponseImplicitPayload @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseImplicitPayload"
         documentation: """
-            With no @eventPayload member, the remaining non-header members form
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseImplicitPayloadOutput has no
+            non-stream members, so the frame carries no payload. With no
+            @eventPayload member, the remaining non-header members form
             an implicit document payload. The @eventHeader member is excluded
             from that payload and appears only as a message header."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -310,11 +405,21 @@ apply EventStreamError @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamErrorModeled"
         documentation: """
-            A modeled error event uses :message-type "exception" and names the
-            union member in :exception-type, and resolves to the modeled error
-            shape rather than a generic failure."""
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamErrorOutput has no non-stream members,
+            so the frame carries no payload. A modeled error event uses
+            :message-type "exception" and names the union member in
+            :exception-type, and resolves to the modeled error shape rather
+            than a generic failure."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -338,11 +443,20 @@ apply EventStreamError @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamErrorAfterMessage"
         documentation: """
-            An error event arriving after successfully delivered events still
-            resolves to the modeled error shape, so the events preceding it
-            must not mask it."""
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamErrorOutput has no non-stream members,
+            so the frame carries no payload. An error event arriving after
+            successfully delivered events still resolves to the modeled
+            error shape, so the events preceding it must not mask it."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 params: {
@@ -380,11 +494,21 @@ apply EventStreamError @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamErrorUnmodeled"
         documentation: """
-            Clients must handle a structured but unmodeled error, which uses
-            :message-type "error" with the code and message carried entirely in
-            headers and no payload."""
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamErrorOutput has no non-stream members,
+            so the frame carries no payload. Clients must handle a
+            structured but unmodeled error, which uses :message-type
+            "error" with the code and message carried entirely in headers
+            and no payload."""
         protocol: rpcv2Json
         events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
             {
                 type: "response"
                 headers: {

@@ -52,8 +52,8 @@ apply DefaultScalars @httpRequestTests([
                 "zeroShort": 1,
                 "zeroInteger": 1,
                 "zeroLong": 1,
-                "zeroFloat": 1.0,
-                "zeroDouble": 1.0,
+                "zeroFloat": 3.25,
+                "zeroDouble": 4.75,
                 "emptyString": "not empty",
                 "emptyBlob": "YWJj"
             }"""
@@ -78,8 +78,8 @@ apply DefaultScalars @httpRequestTests([
             zeroShort: 1
             zeroInteger: 1
             zeroLong: 1
-            zeroFloat: 1.0
-            zeroDouble: 1.0
+            zeroFloat: 3.25
+            zeroDouble: 4.75
             emptyString: "not empty"
             emptyBlob: "abc"
         }

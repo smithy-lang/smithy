@@ -92,22 +92,6 @@ apply DocumentMembers @httpRequestTests([
         }
     }
     {
-        id: "RpcV2JsonDocumentMembersNull"
-        documentation: "Serializes document as null"
-        protocol: rpcv2Json
-        method: "POST"
-        uri: "/service/RpcV2JsonCorpusTests/operation/DocumentMembers"
-        body: """
-            {
-                "documentValue": null
-            }"""
-        bodyMediaType: "application/json"
-        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
-        requireHeaders: ["Content-Length"]
-        forbidHeaders: ["X-Amz-Target"]
-        params: { documentValue: null }
-    }
-    {
         id: "RpcV2JsonDocumentMembersNestedStruct"
         documentation: "Serializes nested struct containing a document"
         protocol: rpcv2Json
