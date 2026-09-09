@@ -1732,6 +1732,8 @@ map ResourceMemberBindings {
     value: ResourceMemberBinding
 }
 
+/// Locates the value of a single resource identifier or property within an
+/// operation's input or output using a JMESPath expression.
 @private
 structure ResourceMemberBinding {
     /// A JMESPath expression that locates the value in the operation input or
