@@ -1,5 +1,7 @@
 {
   "type": "documentation",
   "description": "Added client guidance for plugin composition, ordering, and discovery.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3283](https://github.com/smithy-lang/smithy/pull/3283)"
+  ]
 }
