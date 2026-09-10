@@ -17,6 +17,8 @@ dependencies {
     api(project(":smithy-aws-traits"))
     api(project(":smithy-protocol-test-traits"))
     api(project(":smithy-protocol-traits"))
+    api(project(":smithy-rules-engine"))
+    api(project(":smithy-aws-endpoints"))
 }
 
 tasks.sourcesJar {
