@@ -121,7 +121,9 @@ public final class CfgBuilder {
         // Deep-copy via serialization to get fresh Expression objects.
         // This avoids sharing expressions that may have cached types from
         // being type-checked in different scopes during EndpointRuleSet.build().
-        canonical = Condition.fromNode(canonical.toNode());
+        // Re-parse with the rule-set's own component factory so functions contributed by an
+        // extension in a caller-supplied classloader still resolve during BDD compilation.
+        canonical = Condition.fromNode(canonical.toNode(), ruleSet.getComponentFactory());
 
         // Track bindings for future isSet consolidation
         if (canonical.getResult().isPresent()) {

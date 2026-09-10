@@ -13,6 +13,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.traits.EndpointBddTrait;
@@ -30,11 +31,13 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (ServiceShape s : model.getServiceShapesWithTrait(EndpointBddTrait.class)) {
-            validateParams(events, s, s.expectTrait(EndpointBddTrait.class).getParameters());
+            EndpointBddTrait trait = s.expectTrait(EndpointBddTrait.class);
+            validateParams(events, s, trait.getParameters(), trait.getComponentFactory());
         }
 
         for (ServiceShape s : model.getServiceShapesWithTrait(EndpointRuleSetTrait.class)) {
-            validateParams(events, s, s.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet().getParameters());
+            EndpointRuleSetTrait trait = s.expectTrait(EndpointRuleSetTrait.class);
+            validateParams(events, s, trait.getEndpointRuleSet().getParameters(), trait.getComponentFactory());
         }
 
         for (ServiceShape s : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
@@ -44,10 +47,15 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
         return events;
     }
 
-    private void validateParams(List<ValidationEvent> events, ServiceShape service, Iterable<Parameter> params) {
+    private void validateParams(
+            List<ValidationEvent> events,
+            ServiceShape service,
+            Iterable<Parameter> params,
+            EndpointComponentFactory factory
+    ) {
         for (Parameter parameter : params) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(events, service, parameter.getBuiltIn().get(), parameter, "RuleSet");
+                validateBuiltIn(events, service, parameter.getBuiltIn().get(), factory, parameter, "RuleSet");
             }
         }
     }
@@ -61,6 +69,7 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
                     validateBuiltIn(events,
                             service,
                             builtInNode.getValue(),
+                            null,
                             operationInput,
                             "TestCase",
                             String.valueOf(testIndex),
@@ -77,13 +86,18 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             List<ValidationEvent> events,
             ServiceShape service,
             String name,
+            EndpointComponentFactory factory,
             FromSourceLocation source,
             String... eventIdSuffixes
     ) {
-        if (!EndpointRuleSet.hasBuiltIn(name)) {
+        boolean registered = factory != null
+                ? factory.hasBuiltIn(name)
+                : EndpointRuleSet.hasBuiltIn(name);
+        if (!registered) {
+            String validBuiltIns = factory != null ? factory.getKeyString() : EndpointRuleSet.getKeyString();
             String msg = String.format("The `%s` built-in used is not registered, valid built-ins: %s",
                     name,
-                    EndpointRuleSet.getKeyString());
+                    validBuiltIns);
             events.add(error(service, source, msg, String.join(".", Arrays.asList(eventIdSuffixes))));
         }
     }

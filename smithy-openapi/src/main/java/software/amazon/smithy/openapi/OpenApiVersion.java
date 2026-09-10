@@ -20,7 +20,7 @@ public enum OpenApiVersion {
     VERSION_3_1_0("3.1.0",
             true,
             JsonSchemaVersion.DRAFT2020_12,
-            SetUtils.of("contentMediaType"));
+            SetUtils.of());
 
     private final String version;
     private final boolean supportsContentEncodingKeyword;

@@ -60,7 +60,8 @@
           },
           "file": {
             "type": "string",
-            "contentEncoding": "byte"
+            "contentEncoding": "byte",
+            "contentMediaType": "video/quicktime"
           }
         }
       },

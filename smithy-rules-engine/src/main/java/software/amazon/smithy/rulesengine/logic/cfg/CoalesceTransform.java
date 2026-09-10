@@ -61,6 +61,7 @@ final class CoalesceTransform {
                 .parameters(ruleSet.getParameters())
                 .rules(transformedRules)
                 .version(ruleSet.getVersion())
+                .componentFactory(ruleSet.getComponentFactory())
                 .build();
     }
 

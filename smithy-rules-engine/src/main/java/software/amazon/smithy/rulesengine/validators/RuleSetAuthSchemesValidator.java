@@ -15,6 +15,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.Endpoint;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
@@ -42,34 +43,46 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
 
     private void visitRuleset(List<ValidationEvent> events, ServiceShape serviceShape, EndpointRuleSetTrait trait) {
         if (trait != null) {
+            EndpointComponentFactory factory = trait.getComponentFactory();
             for (Rule rule : trait.getEndpointRuleSet().getRules()) {
-                traverse(events, serviceShape, rule);
+                traverse(events, serviceShape, rule, factory);
             }
         }
     }
 
     private void visitBdd(List<ValidationEvent> events, ServiceShape serviceShape, EndpointBddTrait trait) {
         if (trait != null) {
+            EndpointComponentFactory factory = trait.getComponentFactory();
             for (Rule result : trait.getResults()) {
                 if (result instanceof EndpointRule) {
-                    visitEndpoint(events, serviceShape, (EndpointRule) result);
+                    visitEndpoint(events, serviceShape, (EndpointRule) result, factory);
                 }
             }
         }
     }
 
-    private void traverse(List<ValidationEvent> events, ServiceShape service, Rule rule) {
+    private void traverse(
+            List<ValidationEvent> events,
+            ServiceShape service,
+            Rule rule,
+            EndpointComponentFactory factory
+    ) {
         if (rule instanceof EndpointRule) {
-            visitEndpoint(events, service, (EndpointRule) rule);
+            visitEndpoint(events, service, (EndpointRule) rule, factory);
         } else if (rule instanceof TreeRule) {
             TreeRule treeRule = (TreeRule) rule;
             for (Rule child : treeRule.getRules()) {
-                traverse(events, service, child);
+                traverse(events, service, child, factory);
             }
         }
     }
 
-    private void visitEndpoint(List<ValidationEvent> events, ServiceShape service, EndpointRule endpointRule) {
+    private void visitEndpoint(
+            List<ValidationEvent> events,
+            ServiceShape service,
+            EndpointRule endpointRule,
+            EndpointComponentFactory factory
+    ) {
         Endpoint endpoint = endpointRule.getEndpoint();
         Literal authSchemes = endpoint.getProperties().get(Identifier.of("authSchemes"));
 
@@ -102,7 +115,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
                     if (!authSchemeNames.add(schemeName)) {
                         duplicateAuthSchemeNames.add(schemeName);
                     }
-                    validateAuthScheme(events, service, schemeName, authSchemeMap, authSchemeEntry);
+                    validateAuthScheme(events, service, schemeName, authSchemeMap, authSchemeEntry, factory);
                 }
             }
 
@@ -152,10 +165,14 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             ServiceShape service,
             String schemeName,
             Map<Identifier, Literal> authScheme,
-            FromSourceLocation sourceLocation
+            FromSourceLocation sourceLocation,
+            EndpointComponentFactory factory
     ) {
         boolean validatedAuth = false;
-        for (AuthSchemeValidator authSchemeValidator : EndpointRuleSet.getAuthSchemeValidators()) {
+        List<AuthSchemeValidator> authSchemeValidators = factory != null
+                ? factory.getAuthSchemeValidators()
+                : EndpointRuleSet.getAuthSchemeValidators();
+        for (AuthSchemeValidator authSchemeValidator : authSchemeValidators) {
             if (authSchemeValidator.test(schemeName)) {
                 events.addAll(authSchemeValidator.validateScheme(authScheme,
                         sourceLocation,

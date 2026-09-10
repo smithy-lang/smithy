@@ -31,6 +31,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -78,10 +79,27 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
      * @return the node as an {@link Endpoint}.
      */
     public static Endpoint fromNode(Node node) {
+        return fromNode(node, null);
+    }
+
+    /**
+     * Constructs an {@link Endpoint} from a {@link Node}, resolving any functions in the URL and
+     * header expressions using the given {@link EndpointComponentFactory}.
+     *
+     * <p>When {@code factory} is {@code null}, the default statically-discovered function factory is
+     * used. Passing the factory ensures functions used directly in an endpoint URL or header
+     * resolve against the same classloader as the enclosing rule-set.
+     *
+     * @param node the object node.
+     * @param factory the factory used to resolve functions, or null.
+     * @return the node as an {@link Endpoint}.
+     */
+    @SmithyInternalApi
+    public static Endpoint fromNode(Node node, EndpointComponentFactory factory) {
         ObjectNode objectNode = node.expectObjectNode();
         Builder builder = builder().sourceLocation(node);
 
-        builder.url(Expression.fromNode(objectNode.expectMember(URL, "URL must be included in endpoint")));
+        builder.url(Expression.fromNode(objectNode.expectMember(URL, "URL must be included in endpoint"), factory));
         objectNode.expectNoAdditionalProperties(Arrays.asList(PROPERTIES, HEADERS, URL));
 
         objectNode.getObjectMember(PROPERTIES, properties -> {
@@ -95,7 +113,7 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
                 builder.putHeader(header.getKey(),
                         header.getValue()
                                 .expectArrayNode("header values should be an array")
-                                .getElementsAs(Expression::fromNode));
+                                .getElementsAs(headerNode -> Expression.fromNode(headerNode, factory)));
             }
         });
 

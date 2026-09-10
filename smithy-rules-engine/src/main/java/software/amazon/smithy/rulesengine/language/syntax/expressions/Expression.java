@@ -17,6 +17,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
@@ -26,6 +27,7 @@ import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -74,6 +76,23 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
      * @return the expression.
      */
     public static Expression fromNode(Node node) {
+        return fromNode(node, null);
+    }
+
+    /**
+     * Constructs an expression from the provided {@link Node}, resolving any functions (including
+     * functions nested as arguments) using the given {@link EndpointComponentFactory}.
+     *
+     * <p>When {@code factory} is {@code null}, the default statically-discovered function factory is
+     * used. Threading the factory here ensures functions used as arguments to other functions are
+     * resolved against the same classloader as the enclosing rule-set.
+     *
+     * @param node the node to construct the expression from.
+     * @param factory the factory used to resolve functions, or null.
+     * @return the expression.
+     */
+    @SmithyInternalApi
+    public static Expression fromNode(Node node, EndpointComponentFactory factory) {
         if (node.asObjectNode().isPresent()) {
             ObjectNode on = node.asObjectNode().get();
             Optional<Node> ref = on.getMember("ref");
@@ -85,7 +104,7 @@ public abstract class Expression extends SyntaxElement implements FromSourceLoca
             if (ref.isPresent()) {
                 return getReference(Identifier.of(ref.get().expectStringNode("ref must be a string")), ref.get());
             }
-            return context("while parsing fn", node, () -> FunctionNode.fromNode(on).createFunction());
+            return context("while parsing fn", node, () -> FunctionNode.fromNode(on, factory).createFunction(factory));
         } else {
             return Literal.fromNode(node);
         }

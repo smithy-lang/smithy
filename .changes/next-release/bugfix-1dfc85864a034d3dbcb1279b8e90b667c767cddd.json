@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Resolve endpoint rule-set components against the model's classloader",
+  "pull_requests": [
+    "[#3267](https://github.com/smithy-lang/smithy/pull/3267)"
+  ]
+}

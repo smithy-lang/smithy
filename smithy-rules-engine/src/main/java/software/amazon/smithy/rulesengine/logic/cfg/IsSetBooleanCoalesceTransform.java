@@ -62,7 +62,7 @@ final class IsSetBooleanCoalesceTransform extends TreeMapper {
         }
         builder.withMember("rules", rulesBuilder.build());
 
-        return EndpointRuleSet.fromNode(builder.build());
+        return EndpointRuleSet.fromNode(builder.build(), ruleSet.getComponentFactory());
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
@@ -26,6 +27,7 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.ErrorRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.TreeRule;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * A Control Flow Graph (CFG) representation of endpoint rule decision logic.
@@ -48,18 +50,36 @@ public final class Cfg implements Iterable<CfgNode> {
     private Condition[] conditions;
     private Map<Condition, Integer> conditionToIndex;
     private final RulesVersion version;
+    private final EndpointComponentFactory componentFactory;
 
     Cfg(EndpointRuleSet ruleSet, CfgNode root) {
         this(
                 ruleSet == null ? Parameters.builder().build() : ruleSet.getParameters(),
                 root,
-                ruleSet == null ? RulesVersion.V1_1 : ruleSet.getRulesVersion());
+                ruleSet == null ? RulesVersion.V1_1 : ruleSet.getRulesVersion(),
+                ruleSet == null ? null : ruleSet.getComponentFactory());
     }
 
     Cfg(Parameters parameters, CfgNode root, RulesVersion version) {
+        this(parameters, root, version, null);
+    }
+
+    Cfg(Parameters parameters, CfgNode root, RulesVersion version, EndpointComponentFactory componentFactory) {
         this.root = SmithyBuilder.requiredState("root", root);
         this.version = version;
         this.parameters = parameters;
+        this.componentFactory = componentFactory;
+    }
+
+    /**
+     * Gets the component factory of the source rule-set, used to resolve endpoint functions when a
+     * BDD compiled from this CFG is later re-parsed. May be null.
+     *
+     * @return the component factory, or null.
+     */
+    @SmithyInternalApi
+    public EndpointComponentFactory getComponentFactory() {
+        return componentFactory;
     }
 
     /**

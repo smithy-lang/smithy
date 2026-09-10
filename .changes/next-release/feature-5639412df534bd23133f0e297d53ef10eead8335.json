@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added benchmark models for measuring the performance of serialization and deserialization",
+  "pull_requests": [
+    "[#3274](https://github.com/smithy-lang/smithy/pull/3274)"
+  ]
+}

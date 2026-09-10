@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Unmarked `contentMediaType` as unsupported in 3.1 OpenApi Spec",
+  "pull_requests": [
+    "[#3275](https://github.com/smithy-lang/smithy/pull/3275)"
+  ]
+}

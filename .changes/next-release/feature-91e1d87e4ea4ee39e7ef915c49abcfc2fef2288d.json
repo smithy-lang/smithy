@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Update stale error message for AddedRequiredMember",
+  "pull_requests": [
+    "[#3261](https://github.com/smithy-lang/smithy/pull/3261)"
+  ]
+}

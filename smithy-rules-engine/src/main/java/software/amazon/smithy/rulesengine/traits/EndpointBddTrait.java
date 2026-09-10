@@ -22,6 +22,9 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension;
 import software.amazon.smithy.rulesengine.language.RulesVersion;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -34,6 +37,7 @@ import software.amazon.smithy.rulesengine.logic.bdd.BddCompiler;
 import software.amazon.smithy.rulesengine.logic.cfg.Cfg;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -57,6 +61,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
     private final List<Condition> conditions;
     private final List<Rule> results;
     private final Bdd bdd;
+    private final ClassLoader classLoader;
+    private volatile EndpointComponentFactory componentFactory;
 
     private EndpointBddTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
@@ -65,6 +71,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         this.conditions = SmithyBuilder.requiredState("conditions", builder.conditions);
         this.results = SmithyBuilder.requiredState("results", builder.results);
         this.bdd = SmithyBuilder.requiredState("bdd", builder.bdd);
+        this.classLoader = builder.classLoader;
+        this.componentFactory = builder.componentFactory;
 
         if (version.compareTo(MIN_VERSION) < 0) {
             throw new IllegalArgumentException("Rules engine version for endpointBdd trait must be >= " + MIN_VERSION);
@@ -96,6 +104,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
                 .parameters(cfg.getParameters())
                 .conditions(compiler.getOrderedConditions())
                 .results(compiler.getIndexedResults())
+                .componentFactory(cfg.getComponentFactory())
                 .bdd(bdd)
                 .build();
     }
@@ -149,6 +158,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
                 .parameters(parameters)
                 .conditions(newConditions)
                 .results(results)
+                .classLoader(classLoader)
+                .componentFactory(componentFactory)
                 .bdd(new Bdd(bdd
                         .getRootRef(), newConditions.size(), bdd.getResultCount(), bdd.getNodeCount(), newNodes))
                 .build();
@@ -197,6 +208,32 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
      */
     public RulesVersion getVersion() {
         return version;
+    }
+
+    /**
+     * Gets the {@link EndpointComponentFactory} used to resolve this BDD's functions, built-ins,
+     * and auth-scheme validators.
+     *
+     * <p>Built lazily from the classloader captured when this trait was created (the classloader
+     * used to assemble the model) and cached, so endpoint extensions living only in a
+     * caller-supplied closure classloader are discovered. When no distinct classloader is present,
+     * the shared default factory is reused.
+     *
+     * @return the factory used to resolve endpoint components.
+     */
+    @SmithyInternalApi
+    public EndpointComponentFactory getComponentFactory() {
+        EndpointComponentFactory result = componentFactory;
+        if (result == null) {
+            ClassLoader ownLoader = EndpointRuleSet.class.getClassLoader();
+            if (classLoader == null || classLoader == ownLoader) {
+                result = EndpointRuleSet.getDefaultComponentFactory();
+            } else {
+                result = EndpointComponentFactory.createServiceFactory(classLoader);
+            }
+            componentFactory = result;
+        }
+        return result;
     }
 
     /**
@@ -251,13 +288,35 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
      * @return the BddTrait
      */
     public static EndpointBddTrait fromNode(Node node) {
+        return fromNode(node, (ClassLoader) null);
+    }
+
+    /**
+     * Creates a BddTrait from a Node representation, discovering endpoint functions and built-ins
+     * using the given {@code classLoader}.
+     *
+     * <p>When {@code classLoader} is {@code null}, discovery falls back to this class's own loader.
+     * Use this overload when the BDD may reference functions contributed by an
+     * {@link EndpointRuleSetExtension} that lives in a caller-supplied classloader.
+     *
+     * @param node the node to parse.
+     * @param classLoader the classloader used to discover endpoint extensions, or null.
+     * @return the BddTrait.
+     */
+    @SmithyInternalApi
+    public static EndpointBddTrait fromNode(Node node, ClassLoader classLoader) {
+        EndpointComponentFactory factory = classLoader != null
+                ? EndpointComponentFactory.createServiceFactory(classLoader)
+                : EndpointRuleSet.getDefaultComponentFactory();
         ObjectNode obj = node.expectObjectNode();
         obj.warnIfAdditionalProperties(ALLOWED_PROPERTIES);
         RulesVersion version = RulesVersion.of(obj.expectStringMember("version").getValue());
         Parameters params = Parameters.fromNode(obj.expectObjectMember("parameters"));
-        List<Condition> conditions = obj.expectArrayMember("conditions").getElementsAs(Condition::fromNode);
+        List<Condition> conditions = obj.expectArrayMember("conditions")
+                .getElementsAs(condNode -> Condition.fromNode(condNode, factory));
 
-        List<Rule> serializedResults = obj.expectArrayMember("results").getElementsAs(Rule::fromNode);
+        List<Rule> serializedResults = obj.expectArrayMember("results")
+                .getElementsAs(ruleNode -> Rule.fromNode(ruleNode, factory));
         List<Rule> results = new ArrayList<>();
         results.add(NoMatchRule.INSTANCE); // Always add no-match at index 0
         results.addAll(serializedResults);
@@ -284,6 +343,7 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
                 .parameters(params)
                 .conditions(conditions)
                 .results(results)
+                .classLoader(classLoader)
                 .bdd(bdd)
                 .build();
         trait.setNodeCache(node);
@@ -344,6 +404,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
                 .parameters(parameters)
                 .conditions(conditions)
                 .results(results)
+                .classLoader(classLoader)
+                .componentFactory(componentFactory)
                 .bdd(bdd);
     }
 
@@ -356,6 +418,8 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
         private List<Condition> conditions;
         private List<Rule> results;
         private Bdd bdd;
+        private ClassLoader classLoader;
+        private EndpointComponentFactory componentFactory;
 
         private Builder() {}
 
@@ -414,6 +478,32 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
             return this;
         }
 
+        /**
+         * Sets the classloader used to discover endpoint extensions when the BDD is materialized.
+         * Typically the classloader used to assemble the model. May be null.
+         *
+         * @param classLoader the classloader, or null.
+         * @return this builder
+         */
+        @SmithyInternalApi
+        public Builder classLoader(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+            return this;
+        }
+
+        /**
+         * Sets the component factory used to resolve endpoint functions when this BDD is later
+         * re-parsed. Typically propagated from the source rule-set. May be null.
+         *
+         * @param componentFactory the factory, or null.
+         * @return this builder
+         */
+        @SmithyInternalApi
+        public Builder componentFactory(EndpointComponentFactory componentFactory) {
+            this.componentFactory = componentFactory;
+            return this;
+        }
+
         @Override
         public EndpointBddTrait build() {
             EndpointBddTrait trait = new EndpointBddTrait(this);
@@ -441,7 +531,12 @@ public final class EndpointBddTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            EndpointBddTrait trait = EndpointBddTrait.fromNode(value);
+            return createTrait(target, value, null);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value, ClassLoader classLoader) {
+            EndpointBddTrait trait = EndpointBddTrait.fromNode(value, classLoader);
             trait.setNodeCache(value);
             return trait;
         }

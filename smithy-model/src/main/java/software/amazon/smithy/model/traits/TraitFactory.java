@@ -36,10 +36,7 @@ public interface TraitFactory {
      * @return Returns the created TraitFactory.
      */
     static TraitFactory createServiceFactory(Iterable<TraitService> services) {
-        Map<ShapeId, TraitService> serviceMap = new HashMap<>();
-        services.forEach(service -> serviceMap.put(service.getShapeId(), service));
-        return (name, target, value) -> Optional.ofNullable(serviceMap.get(name))
-                .map(provider -> provider.createTrait(target, value));
+        return new ServiceFactory(services, null);
     }
 
     /**
@@ -60,6 +57,29 @@ public interface TraitFactory {
      * @return Returns the created TraitFactory.
      */
     static TraitFactory createServiceFactory(ClassLoader classLoader) {
-        return createServiceFactory(ServiceLoader.load(TraitService.class, classLoader));
+        return new ServiceFactory(ServiceLoader.load(TraitService.class, classLoader), classLoader);
+    }
+
+    /**
+     * Default {@link TraitFactory} backed by a map of {@link TraitService} providers.
+     *
+     * <p>Retains the classloader used to discover the providers (when known) and passes it to
+     * {@link TraitService#createTrait(ShapeId, Node, ClassLoader)} so providers can resolve
+     * classloader-sensitive components from the same closure the model is assembled against.
+     */
+    final class ServiceFactory implements TraitFactory {
+        private final Map<ShapeId, TraitService> serviceMap = new HashMap<>();
+        private final ClassLoader classLoader;
+
+        private ServiceFactory(Iterable<TraitService> services, ClassLoader classLoader) {
+            services.forEach(service -> serviceMap.put(service.getShapeId(), service));
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        public Optional<Trait> createTrait(ShapeId id, ShapeId target, Node value) {
+            return Optional.ofNullable(serviceMap.get(id))
+                    .map(provider -> provider.createTrait(target, value, classLoader));
+        }
     }
 }

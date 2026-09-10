@@ -20,12 +20,14 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.Endpoint;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.ToCondition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -80,23 +82,38 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
      * @return the created Rule.
      */
     public static Rule fromNode(Node node) {
+        return fromNode(node, null);
+    }
+
+    /**
+     * Creates a {@link Rule} instance from the given Node, resolving any functions in conditions
+     * using the given {@link EndpointComponentFactory}. When {@code factory} is {@code null}, the
+     * default statically-discovered function factory is used.
+     *
+     * @param node the node to deserialize.
+     * @param factory the factory used to resolve functions, or null.
+     * @return the created Rule.
+     */
+    @SmithyInternalApi
+    public static Rule fromNode(Node node, EndpointComponentFactory factory) {
         ObjectNode objectNode = node.expectObjectNode();
 
         Builder builder = new Builder(node);
         objectNode.getStringMember(DOCUMENTATION, builder::description);
 
         objectNode.getArrayMember(CONDITIONS).ifPresent(conds -> {
-            builder.conditions(conds.getElementsAs(Condition::fromNode));
+            builder.conditions(conds.getElementsAs(condNode -> Condition.fromNode(condNode, factory)));
         });
 
         String type = objectNode.expectStringMember(TYPE).getValue();
         switch (type) {
             case ENDPOINT:
-                return builder.endpoint(Endpoint.fromNode(objectNode.expectMember(ENDPOINT)));
+                return builder.endpoint(Endpoint.fromNode(objectNode.expectMember(ENDPOINT), factory));
             case ERROR:
-                return builder.error(objectNode.expectMember(ERROR));
+                return builder.error(Expression.fromNode(objectNode.expectMember(ERROR), factory));
             case TREE:
-                return builder.treeRule(objectNode.expectArrayMember(RULES).getElementsAs(Rule::fromNode));
+                return builder.treeRule(objectNode.expectArrayMember(RULES)
+                        .getElementsAs(ruleNode -> Rule.fromNode(ruleNode, factory)));
             default:
                 throw new IllegalStateException("Unexpected rule type: " + type);
         }

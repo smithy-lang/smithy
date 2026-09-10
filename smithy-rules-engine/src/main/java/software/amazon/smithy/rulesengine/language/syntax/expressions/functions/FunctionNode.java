@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
@@ -16,6 +18,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
@@ -23,6 +26,7 @@ import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -93,9 +97,26 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return the {@link FunctionNode}.
      */
     public static FunctionNode fromNode(ObjectNode function) {
+        return fromNode(function, null);
+    }
+
+    /**
+     * Constructs a {@link FunctionNode} from the provided {@link ObjectNode}, resolving argument
+     * functions using the given {@link EndpointComponentFactory}.
+     *
+     * <p>When {@code factory} is {@code null}, the default statically-discovered function factory is
+     * used. Passing the factory ensures functions nested as arguments resolve against the same
+     * classloader as the enclosing rule-set.
+     *
+     * @param function the node describing the function.
+     * @param factory the factory used to resolve argument functions, or null.
+     * @return the {@link FunctionNode}.
+     */
+    @SmithyInternalApi
+    public static FunctionNode fromNode(ObjectNode function, EndpointComponentFactory factory) {
         List<Expression> arguments = new ArrayList<>();
         for (Node node : function.expectArrayMember(ARGV).getElements()) {
-            arguments.add(Expression.fromNode(node));
+            arguments.add(Expression.fromNode(node, factory));
         }
         return builder()
                 .sourceLocation(function)
@@ -110,7 +131,25 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return this function as an expression.
      */
     public LibraryFunction createFunction() {
-        return EndpointRuleSet.createFunctionFactory()
+        return createFunction(null);
+    }
+
+    /**
+     * Returns an expression representing this function, resolving the function definition using the
+     * given {@link EndpointComponentFactory}.
+     *
+     * <p>Use this overload when the function may be contributed by an endpoint extension that lives
+     * in a caller-supplied classloader. When {@code factory} is {@code null}, the function is
+     * resolved using the default, statically-discovered function factory.
+     *
+     * @param factory the factory used to resolve the function, or null to use the default.
+     * @return this function as an expression.
+     */
+    @SmithyInternalApi
+    public LibraryFunction createFunction(EndpointComponentFactory factory) {
+        Function<FunctionNode, Optional<LibraryFunction>> functionFactory =
+                factory != null ? factory.createFunctionFactory() : EndpointRuleSet.createFunctionFactory();
+        return functionFactory
                 .apply(this)
                 .orElseThrow(() -> new RuleError(new SourceException(
                         String.format("`%s` is not a valid function", name),

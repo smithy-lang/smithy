@@ -49,7 +49,8 @@ public class AddedRequiredMember extends AbstractDiffEvaluator {
                 .id(getEventId())
                 .shape(memberShape)
                 .message("Adding a new member with the `required` trait "
-                        + "but not the `default` trait is backwards-incompatible.")
+                        + "but not the `default` trait or the `clientOptional` trait "
+                        + "is backwards-incompatible.")
                 .severity(Severity.ERROR)
                 .build();
     }

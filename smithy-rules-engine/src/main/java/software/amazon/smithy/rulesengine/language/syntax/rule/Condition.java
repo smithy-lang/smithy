@@ -14,6 +14,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.EndpointComponentFactory;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -23,6 +24,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -58,10 +60,24 @@ public final class Condition extends SyntaxElement implements TypeCheck, FromSou
      * @return the condition instance.
      */
     public static Condition fromNode(Node node) {
+        return fromNode(node, null);
+    }
+
+    /**
+     * Constructs a condition from the given node, resolving any function using the given
+     * {@link EndpointComponentFactory}. When {@code factory} is {@code null}, the default
+     * statically-discovered function factory is used.
+     *
+     * @param node the node.
+     * @param factory the factory used to resolve the condition's function, or null.
+     * @return the condition instance.
+     */
+    @SmithyInternalApi
+    public static Condition fromNode(Node node, EndpointComponentFactory factory) {
         Builder builder = new Builder();
         ObjectNode objectNode = node.expectObjectNode("condition must be an object node");
 
-        builder.fn(FunctionNode.fromNode(objectNode).createFunction());
+        builder.fn(FunctionNode.fromNode(objectNode, factory).createFunction(factory));
         // This needs to go directly through the node to maintain source locations.
         if (objectNode.containsMember(ASSIGN)) {
             builder.result(Identifier.of(objectNode.expectStringMember(ASSIGN)));

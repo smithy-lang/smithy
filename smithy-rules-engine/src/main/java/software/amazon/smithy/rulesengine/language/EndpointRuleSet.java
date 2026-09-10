@@ -28,7 +28,6 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.validators.AuthSchemeValidator;
@@ -49,9 +48,32 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private static final String PARAMETERS = "parameters";
     private static final String RULES = "rules";
 
-    private static final class LazyEndpointComponentFactoryHolder {
-        static final EndpointComponentFactory INSTANCE = EndpointComponentFactory.createServiceFactory(
-                EndpointRuleSet.class.getClassLoader());
+    // Default endpoint components discovered from this class's own classloader, used when no
+    // EndpointComponentFactory is supplied. A caller assembling a model with an explicit closure
+    // classloader threads its own factory through fromNode instead (see
+    // EndpointRuleSetTrait#getComponentFactory), so extensions living only in that closure (e.g.
+    // smithy-aws-endpoints, which registers aws.partition) are found. Lazily initialized via the
+    // holder idiom so ServiceLoader runs at most once for the default.
+    private static final class DefaultComponentFactoryHolder {
+        private static final EndpointComponentFactory INSTANCE =
+                EndpointComponentFactory.createServiceFactory(EndpointRuleSet.class.getClassLoader());
+    }
+
+    private static EndpointComponentFactory defaultComponentFactory() {
+        return DefaultComponentFactoryHolder.INSTANCE;
+    }
+
+    /**
+     * Gets the shared {@link EndpointComponentFactory} discovered from this class's own classloader.
+     *
+     * <p>Reused for any rule-set that does not need a distinct classloader (no explicit loader, or a
+     * loader equal to this class's own), so those cases avoid re-running service discovery.
+     *
+     * @return the shared default component factory.
+     */
+    @SmithyInternalApi
+    public static EndpointComponentFactory getDefaultComponentFactory() {
+        return defaultComponentFactory();
     }
 
     private final Parameters parameters;
@@ -59,6 +81,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private final SourceLocation sourceLocation;
     private final String version;
     private final RulesVersion rulesVersion;
+    private final EndpointComponentFactory componentFactory;
 
     private EndpointRuleSet(Builder builder) {
         super();
@@ -67,6 +90,25 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         sourceLocation = SmithyBuilder.requiredState("source", builder.getSourceLocation());
         version = SmithyBuilder.requiredState(VERSION, builder.version);
         rulesVersion = RulesVersion.of(version);
+        componentFactory = builder.componentFactory != null
+                ? builder.componentFactory
+                : defaultComponentFactory();
+    }
+
+    /**
+     * Gets the {@link EndpointComponentFactory} used to resolve this rule-set's functions and
+     * built-ins.
+     *
+     * <p>Captured from the classloader-aware {@link #fromNode(Node, EndpointComponentFactory)} (the
+     * classloader used to assemble the model) and carried across {@link #toBuilder()}, so transforms
+     * that round-trip a rule-set through the node form re-resolve functions against the same
+     * classloader. Defaults to the shared factory discovered from this class's own loader.
+     *
+     * @return the component factory for this rule-set.
+     */
+    @SmithyInternalApi
+    public EndpointComponentFactory getComponentFactory() {
+        return componentFactory;
     }
 
     /**
@@ -85,15 +127,55 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      * @return the created EndpointRuleSet.
      */
     public static EndpointRuleSet fromNode(Node node) throws RuleError {
+        return fromNode(node, defaultComponentFactory());
+    }
+
+    /**
+     * Creates an {@link EndpointRuleSet} from the given Node, discovering endpoint functions and
+     * built-ins using the given {@code classLoader}.
+     *
+     * <p>Convenience overload that builds an {@link EndpointComponentFactory} from
+     * {@code classLoader} (or this class's own loader when null). Prefer
+     * {@link #fromNode(Node, EndpointComponentFactory)} when a factory is already available so it
+     * can be reused across the deserialization and validation of the same rule-set.
+     *
+     * @param node the node to deserialize.
+     * @param classLoader the classloader used to discover endpoint extensions, or null.
+     * @return the created EndpointRuleSet.
+     */
+    public static EndpointRuleSet fromNode(Node node, ClassLoader classLoader) throws RuleError {
+        return fromNode(node,
+                classLoader != null
+                        ? EndpointComponentFactory.createServiceFactory(classLoader)
+                        : defaultComponentFactory());
+    }
+
+    /**
+     * Creates an {@link EndpointRuleSet} from the given Node, resolving endpoint functions and
+     * built-ins using the given {@link EndpointComponentFactory}.
+     *
+     * <p>The factory wraps the classloader used to discover {@link EndpointRuleSetExtension}s and
+     * caches the discovered components, so a caller can build it once (typically from a
+     * dependency-closure classloader) and reuse it. When {@code factory} is {@code null}, the
+     * default factory discovered from this class's own loader is used.
+     *
+     * @param node the node to deserialize.
+     * @param factory the factory used to resolve endpoint components, or null.
+     * @return the created EndpointRuleSet.
+     */
+    @SmithyInternalApi
+    public static EndpointRuleSet fromNode(Node node, EndpointComponentFactory factory) throws RuleError {
+        EndpointComponentFactory resolved = factory != null ? factory : defaultComponentFactory();
         return RuleError.context("when parsing endpoint ruleset", () -> {
             ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
 
             EndpointRuleSet.Builder builder = new Builder(node);
+            builder.componentFactory(resolved);
             builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
             objectNode.expectStringMember(VERSION, builder::version);
 
             for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
-                builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
+                builder.addRule(context("while parsing rule", element, () -> Rule.fromNode(element, resolved)));
             }
 
             return builder.build();
@@ -208,7 +290,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      */
     @SmithyInternalApi
     public static boolean hasBuiltIn(String name) {
-        return LazyEndpointComponentFactoryHolder.INSTANCE.hasBuiltIn(name);
+        return defaultComponentFactory().hasBuiltIn(name);
     }
 
     /**
@@ -218,7 +300,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      */
     @SmithyInternalApi
     public static String getKeyString() {
-        return LazyEndpointComponentFactoryHolder.INSTANCE.getKeyString();
+        return defaultComponentFactory().getKeyString();
     }
 
     /**
@@ -228,7 +310,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      */
     @SmithyInternalApi
     public static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory() {
-        return LazyEndpointComponentFactoryHolder.INSTANCE.createFunctionFactory();
+        return defaultComponentFactory().createFunctionFactory();
     }
 
     /**
@@ -238,7 +320,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      */
     @SmithyInternalApi
     public static List<AuthSchemeValidator> getAuthSchemeValidators() {
-        return LazyEndpointComponentFactoryHolder.INSTANCE.getAuthSchemeValidators();
+        return defaultComponentFactory().getAuthSchemeValidators();
     }
 
     /**
@@ -249,6 +331,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         private Parameters parameters;
         // Default the version to the latest.
         private String version = LATEST_VERSION;
+        private EndpointComponentFactory componentFactory;
 
         /**
          * Construct a builder from a {@link SourceLocation}.
@@ -264,6 +347,21 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
             this.parameters = ruleSet.parameters;
             this.version = ruleSet.version;
             this.rules.setBorrowed(ruleSet.rules);
+            this.componentFactory = ruleSet.componentFactory;
+        }
+
+        /**
+         * Sets the {@link EndpointComponentFactory} used to resolve functions and built-ins when a
+         * rule-set built from this builder is later round-tripped through the node form. May be
+         * null, in which case the shared default factory is used.
+         *
+         * @param componentFactory the factory, or null.
+         * @return the {@link Builder}
+         */
+        @SmithyInternalApi
+        public Builder componentFactory(EndpointComponentFactory componentFactory) {
+            this.componentFactory = componentFactory;
+            return this;
         }
 
         /**
@@ -341,9 +439,11 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         private static final String TYPE = "type";
         private final Map<String, Endpoint> visitedEndpoints = new HashMap();
         private final ObjectNode endpointRuleSet;
+        private final EndpointComponentFactory componentFactory;
 
         private EndpointPathCollector(EndpointRuleSetTrait endpointRuleSetTrait) {
             this.endpointRuleSet = endpointRuleSetTrait.getRuleSet().expectObjectNode();
+            this.componentFactory = endpointRuleSetTrait.getComponentFactory();
         }
 
         /**
@@ -375,7 +475,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
                             .orElse(false))
                     .orElse(false);
             if (isEndpointRuleObject) {
-                Endpoint endpoint = Endpoint.fromNode(node.expectMember(ENDPOINT));
+                Endpoint endpoint = Endpoint.fromNode(node.expectMember(ENDPOINT), componentFactory);
                 visitedEndpoints.put(parentPath + "/" + ENDPOINT, endpoint);
                 return;
             }
