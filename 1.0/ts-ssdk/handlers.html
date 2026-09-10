@@ -567,7 +567,7 @@ requests from an endpoint are handled by a handler, which would be the case when
 <p>Consider a service with the following Smithy declaration:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">StringWizard</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-05-10"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Echo</span><span class="p">,</span><span class="w"> </span><span class="vc">Length</span>]
 }
 </pre></div>
@@ -662,7 +662,7 @@ the handler:</p>
 
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">userArn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">requestContext</span><span class="p">.</span><span class="nx">identity</span><span class="p">.</span><span class="nx">userArn</span><span class="p">;</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">userArn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s2">&quot;IAM Auth is not enabled&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s2">"IAM Auth is not enabled"</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="kt">userArn</span><span class="w"> </span><span class="p">};</span>
 

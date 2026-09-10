@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -838,11 +839,11 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 </dd>
 </dl>
 <p>Consider the following <em>abridged</em> model of S3's <code class="docutils literal notranslate"><span class="pre">GetBucketLocation</span></code> operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">use </span><span class="nc">aws.customizations#s3UnwrappedXmlOutput</span>
 
-<span class="nt">@http</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)
+<span class="nt">@http</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/GetBucketLocation"</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span>)
 <span class="nt">@s3UnwrappedXmlOutput</span>
 <span class="kd">operation </span><span class="nc">GetBucketLocation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span>
@@ -850,24 +851,24 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 }
 
 <span class="nt">@output</span>
-<span class="nt">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)
+<span class="nt">@xmlName</span>(<span class="s2">"LocationConstraint"</span>)
 <span class="kd">structure </span><span class="nc">GetBucketLocationOutput</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">LocationConstraint</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span>
 }
 
 <span class="kd">enum </span><span class="nc">BucketLocationConstraint</span><span class="w"> </span>{
-<span class="w">    </span><span class="vc">us_west_2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span>
+<span class="w">    </span><span class="vc">us_west_2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"us-west-2"</span>
 }
 </pre></div>
 </div>
 <p>Since this operation is modeled with <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code>,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">"http://s3.amazonaws.com/doc/2006-03-01/"</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>
 </div>
 <p>Without <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code> on the operation, the response would be expected to be
 wrapped with the <a class="reference internal" href="../protocols/aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml protocol</span></a> operation-level XML node:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">"http://s3.amazonaws.com/doc/2006-03-01/"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;LocationConstraint&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 <span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">TypeScript</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -738,7 +739,7 @@ guides the generation of client and server code.</p>
 <div class="code-block-caption"><span class="caption-text">smithy/model/weather.smithy</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Allows users to retrieve a menu, create a coffee order, and</span>
 <span class="c">/// and to view the status of their orders</span>
-<span class="nt">@title</span>(<span class="s2">&quot;Coffee Shop Service&quot;</span>)
+<span class="nt">@title</span>(<span class="s2">"Coffee Shop Service"</span>)
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">CoffeeShop</span><span class="w"> </span>{
 <span class="w">    </span><span class="vc">...</span>
@@ -773,22 +774,22 @@ handling<span class="w"> </span>orders...
 </div>
 <p>This will return a JSON-formatted menu of coffee types that can be ordered from our cafe:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DRIP&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A clean-bodied, rounder, and more simplistic flavour profile.\nOften praised for mellow and less intense notes.\nFar less concentrated than espresso.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DRIP"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A clean-bodied, rounder, and more simplistic flavour profile.\nOften praised for mellow and less intense notes.\nFar less concentrated than espresso.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POUR_OVER&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\nMore concentrated than drip, but less than espresso.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POUR_OVER"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\nMore concentrated than drip, but less than espresso.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LATTE&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A creamier, milk-based drink made with espresso.\nA subtle coffee taste, with smooth texture.\nHigh milk-to-coffee ratio.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LATTE"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A creamier, milk-based drink made with espresso.\nA subtle coffee taste, with smooth texture.\nHigh milk-to-coffee ratio.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ESPRESSO&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A highly concentrated form of coffee, brewed under high pressure.\nSyrupy, thick liquid in a small serving size.\nFull bodied and intensely aromatic.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ESPRESSO"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A highly concentrated form of coffee, brewed under high pressure.\nSyrupy, thick liquid in a small serving size.\nFull bodied and intensely aromatic.\n"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -834,7 +835,7 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">smithy/model/main.smithy</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>service CoffeeShop {
-<span class="w"> </span>   version: &quot;2024-08-23&quot;
+<span class="w"> </span>   version: "2024-08-23"
 <span class="w"> </span>   operations: [
 <span class="w"> </span>       GetMenu,
 <span class="gi">+       GetHours</span>
@@ -850,7 +851,7 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">smithy/model/main.smithy</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">///</span> <span class="n">Retrieve</span> <span class="n">the</span> <span class="n">coffee</span> <span class="n">shop</span> <span class="n">hours</span><span class="o">.</span>
-<span class="nd">@http</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="s2">&quot;/hours&quot;</span><span class="p">)</span>
+<span class="nd">@http</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="s2">"GET"</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="s2">"/hours"</span><span class="p">)</span>
 <span class="nd">@readonly</span>
 <span class="n">operation</span> <span class="n">GetHours</span><span class="p">{</span>
     <span class="n">output</span> <span class="o">:=</span> <span class="p">{</span>
@@ -879,8 +880,8 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 <p>This will fail with a compilation error:</p>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">build</span></code> output</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>src/CoffeeShop.ts:14:14<span class="w"> </span>-<span class="w"> </span>error<span class="w"> </span>TS2420:<span class="w"> </span>Class<span class="w"> </span><span class="s1">&#39;CoffeeShop&#39;</span><span class="w"> </span>incorrectly<span class="w"> </span>implements<span class="w"> </span>interface<span class="w"> </span><span class="s1">&#39;CoffeeShopService&lt;CoffeeShopContext&gt;&#39;</span>.
-Property<span class="w"> </span><span class="s1">&#39;GetHours&#39;</span><span class="w"> </span>is<span class="w"> </span>missing<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s1">&#39;CoffeeShop&#39;</span><span class="w"> </span>but<span class="w"> </span>required<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s1">&#39;CoffeeShopService&lt;CoffeeShopContext&gt;&#39;</span>.
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>src/CoffeeShop.ts:14:14<span class="w"> </span>-<span class="w"> </span>error<span class="w"> </span>TS2420:<span class="w"> </span>Class<span class="w"> </span><span class="s1">'CoffeeShop'</span><span class="w"> </span>incorrectly<span class="w"> </span>implements<span class="w"> </span>interface<span class="w"> </span><span class="s1">'CoffeeShopService&lt;CoffeeShopContext&gt;'</span>.
+Property<span class="w"> </span><span class="s1">'GetHours'</span><span class="w"> </span>is<span class="w"> </span>missing<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s1">'CoffeeShop'</span><span class="w"> </span>but<span class="w"> </span>required<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s1">'CoffeeShopService&lt;CoffeeShopContext&gt;'</span>.
 </pre></div>
 </div>
 </div>
@@ -912,7 +913,7 @@ every operation defined in service model. Let’s add the required implementatio
 <p>Which will return the hours of our Cafe:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">curl</span></code> output</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;opensAt&quot;</span>:9,<span class="s2">&quot;closesAt&quot;</span>:16<span class="o">}</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">"opensAt"</span>:9,<span class="s2">"closesAt"</span>:16<span class="o">}</span>
 </pre></div>
 </div>
 </div>
@@ -927,7 +928,7 @@ we just need to call it in our client application:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>async function main() {
 <span class="w"> </span>   try {
 <span class="gi">+       const hours = await client.getHours()</span>
-<span class="gi">+       console.log(`Hours: Opens at: ${hours[&quot;opensAt&quot;]}, Closes at ${hours[&quot;closesAt&quot;]}`)</span>
+<span class="gi">+       console.log(`Hours: Opens at: ${hours["opensAt"]}, Closes at ${hours["closesAt"]}`)</span>
 <span class="w"> </span>       // Create an order request
 <span class="w"> </span>       const createRequest: CreateOrderInput = {
 <span class="w"> </span>           coffeeType: CoffeeType.COLD_BREW

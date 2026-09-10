@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -757,33 +758,33 @@ MAY be used to influence how messages are serialized (for example,
 <code class="docutils literal notranslate"><span class="pre">jsonExample</span></code> and <code class="docutils literal notranslate"><span class="pre">xmlExample</span></code> protocols.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// An example JSON protocol.</span>
 <span class="nt">@protocolDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">jsonExample</span><span class="w"> </span>{}
 
 <span class="c">/// An example XML protocol.</span>
 <span class="nt">@protocolDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">xmlExample</span><span class="w"> </span>{}
 
 <span class="nt">@jsonExample</span>
 <span class="nt">@xmlExample</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
 <p>Because protocol definitions are just specialized shapes, they can also
 support configuration settings.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@protocolDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">configurableExample</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
-<span class="nt">@configurableExample</span>(<span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>)
+<span class="nt">@configurableExample</span>(<span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span>)
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -804,7 +805,7 @@ a structure or union member name used in the model.</p>
 </dl>
 <p>Given the following structure definition,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@jsonName</span>(<span class="s2">&quot;Foo&quot;</span>)
+<span class="w">    </span><span class="nt">@jsonName</span>(<span class="s2">"Foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -812,15 +813,15 @@ a structure or union member name used in the model.</p>
 </pre></div>
 </div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">MyStructure</span></code>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;foo&quot;</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>
-<span class="s2">&quot;bar&quot;</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"foo"</span> <span class="o">=</span> <span class="s2">"abc"</span>
+<span class="s2">"bar"</span> <span class="o">=</span> <span class="s2">"def"</span>
 </pre></div>
 </div>
 <p>the JSON representation of the value would be serialized with the
 following document:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;def&quot;</span>
+<span class="w">    </span><span class="nt">"Foo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abc"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="s2">"def"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -845,10 +846,10 @@ media type as defined by <span class="target" id="index-0"></span><a class="rfc 
 </dd>
 </dl>
 <p>The following example defines a <code class="docutils literal notranslate"><span class="pre">video/quicktime</span></code> blob:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@mediaType</span>(<span class="s2">&quot;video/quicktime&quot;</span>)
+<span class="nt">@mediaType</span>(<span class="s2">"video/quicktime"</span>)
 <span class="kd">blob </span><span class="nc">VideoData</span>
 </pre></div>
 </div>
@@ -986,12 +987,12 @@ member as an XML attribute.</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait applied to a structure or union changes the element name
 of the serialized shape; however, it does not influence the serialization of
 members that target it. Given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlName</span>(<span class="s2">&quot;AStruct&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlName</span>(<span class="s2">"AStruct"</span>)
 <span class="kd">structure </span><span class="nc">A</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">B</span>
 }
 
-<span class="nt">@xmlName</span>(<span class="s2">&quot;BStruct&quot;</span>)
+<span class="nt">@xmlName</span>(<span class="s2">"BStruct"</span>)
 <span class="kd">structure </span><span class="nc">B</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">hello</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -1131,7 +1132,7 @@ change the nested element name. For example, given the following:</p>
 }
 
 <span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Item&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Item"</span>)
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1171,7 +1172,7 @@ example, given the following:</p>
 the name of the repeated XML element. For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MyList</span>
 }
 
@@ -1197,7 +1198,7 @@ following:</p>
 }
 
 <span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1253,10 +1254,10 @@ to change the nested element names.  For example, given the following:</p>
 }
 
 <span class="kd">map </span><span class="nc">MyMap</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Name&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Name"</span>)
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Setting&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Setting"</span>)
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1313,7 +1314,7 @@ into a containing structure/union. For example, given the following:</p>
 the name of the repeated XML element. For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MyMap</span>
 }
 
@@ -1345,15 +1346,15 @@ traits applied to the key or value members of the map. For example, given
 the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MyMap</span>
 }
 
 <span class="kd">map </span><span class="nc">MyMap</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Name&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Name"</span>)
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Setting&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Setting"</span>)
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1406,7 +1407,7 @@ member name. For example, given the following:</p>
 </pre></div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">foo=</span><span class="s">&quot;example&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">foo=</span><span class="s">"example"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;bar&gt;</span>example<span class="nt">&lt;/bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>
 </pre></div>
@@ -1415,13 +1416,13 @@ member name. For example, given the following:</p>
 Given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlAttribute</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;NotFoo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"NotFoo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">NotFoo=</span><span class="s">&quot;example&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">NotFoo=</span><span class="s">"example"</span><span class="nt">/&gt;</span>
 </pre></div>
 </div>
 </section>
@@ -1528,7 +1529,7 @@ or member.</p>
 <p>By default, structure properties are serialized in attributes or nested
 elements using the same name as the structure member name. Given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Foo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1545,7 +1546,7 @@ elements using the same name as the structure member name. Given the following:<
 <p>A namespace prefix can be inserted before the element name. Given the
 following</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">AnotherStructure</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;hello:foo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"hello:foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1600,7 +1601,7 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 </table>
 </div>
 <p>Given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://foo.com"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1608,24 +1609,24 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 </pre></div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://foo.com&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">"http://foo.com"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;foo&gt;</span>example<span class="nt">&lt;/foo&gt;</span>
 <span class="w">    </span><span class="nt">&lt;bar&gt;</span>example<span class="nt">&lt;/bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>
 </pre></div>
 </div>
 <p>Given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://foo.com"</span><span class="p">,</span><span class="w"> </span><span class="py">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"baz"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;baz:bar&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"baz:bar"</span>)
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns:baz=</span><span class="s">&quot;http://foo.com&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns:baz=</span><span class="s">"http://foo.com"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;foo&gt;</span>example<span class="nt">&lt;/foo&gt;</span>
 <span class="w">    </span><span class="nt">&lt;baz:bar&gt;</span>example<span class="nt">&lt;/baz:bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -762,36 +763,36 @@ generate AWS SDK client classes and the namespace used in ARNs.</p>
 <p>The following example defines an AWS service that uses the default values of
 <code class="docutils literal notranslate"><span class="pre">cloudFormationService</span></code>, <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>, <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> and
 <code class="docutils literal notranslate"><span class="pre">docId</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
 <p>The following example provides explicit values for all properties:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
 <span class="nt">@service</span>(
-<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>
-<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span>
-<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>
-<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span>
-<span class="w">    </span><span class="py">docId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-value-2018-03-17&quot;</span>
-<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-endpoint&quot;</span>
-<span class="w">    </span><span class="py">cloudWatchNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS/SomeValue&quot;</span>
+<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>
+<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooBaz"</span>
+<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>
+<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice.amazon.aws"</span>
+<span class="w">    </span><span class="py">docId</span><span class="p">:</span><span class="w"> </span><span class="s2">"some-value-2018-03-17"</span>
+<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-endpoint"</span>
+<span class="w">    </span><span class="py">cloudWatchNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS/SomeValue"</span>
 )
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
@@ -905,15 +906,15 @@ between service and SDK documentation for AWS services.</p>
 <p>This will default to the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> value in lower case followed by the service
 <code class="docutils literal notranslate"><span class="pre">version</span></code> property, separated by dashes. For the example below, the value
 for this property would default to <code class="docutils literal notranslate"><span class="pre">some-value-2018-03-17</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
@@ -1074,20 +1075,20 @@ absolute ARN template. This ARN template can only be expanded at runtime with
 actual values for the partition, region name, account ID, and identifier
 label placeholders.</p>
 <p>For example, given the following service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 <span class="kd">use </span><span class="nc">aws.api#arn</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
 }
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>)
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"myresource/{myId}"</span>)
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">myId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResourceId</span>}
 }
@@ -1109,7 +1110,7 @@ resource.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#arn</span>
 <span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"{arn}"</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">arn</span><span class="p">:</span><span class="w"> </span><span class="vc">Arn</span>}
 }
@@ -1180,14 +1181,14 @@ closure of the referenced service shape.</p></td>
 The CloudFormation name of the resource and the Smithy service and resource
 shape IDs are provided to give tooling additional information about the
 referenced resource.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
 <span class="nt">@arnReference</span>(
-<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>
+<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS::SomeService::SomeResource"</span>
 <span class="w">    </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeService</span>
 <span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeResource</span>)
 <span class="kd">string </span><span class="nc">SomeResourceId</span>
@@ -1196,7 +1197,7 @@ referenced resource.</p>
 <p>The following example defines an ARN reference that doesn't provide an context
 about the referenced shape. While this is valid, it is not as useful as the
 previous example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -1226,17 +1227,17 @@ of a member inherits the effective data classification applied to a parent
 structure, union, or list unless overridden.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#data</span>
 
-<span class="nt">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
+<span class="nt">@data</span>(<span class="s2">"permissions"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@data</span>(<span class="s2">&quot;content&quot;</span>)
+<span class="w">    </span><span class="nt">@data</span>(<span class="s2">"content"</span>)
 <span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span>
 }
 
-<span class="nt">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
+<span class="nt">@data</span>(<span class="s2">"tagging"</span>)
 <span class="kd">list </span><span class="nc">TagList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -1510,7 +1511,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span>
 )
 <span class="kd">service </span><span class="nc">FooService</span><span class="w"> </span>{
-<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-09-10&quot;</span>
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-09-10"</span>
 <span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"> </span><span class="vc">GetObject</span>]
 }
 
@@ -1520,7 +1521,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">InvalidEndpointError</span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@httpError</span>(<span class="m">421</span>)
 <span class="kd">structure </span><span class="nc">InvalidEndpointError</span><span class="w"> </span>{}
 
@@ -1714,9 +1715,9 @@ selecting an algorithm in the <code class="docutils literal notranslate"><span c
 setting the <code class="docutils literal notranslate"><span class="pre">validationMode</span></code> input property to &quot;ENABLED&quot;.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>(
 <span class="w">    </span><span class="py">requestChecksumRequired</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;checksumAlgorithm&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;validationMode&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>]
+<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">"checksumAlgorithm"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">"validationMode"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"CRC32C"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CRC32"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SHA1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SHA256"</span>]
 )
 <span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span>
@@ -1724,10 +1725,10 @@ setting the <code class="docutils literal notranslate"><span class="pre">validat
 }
 
 <span class="kd">structure </span><span class="nc">PutSomethingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-request-algorithm&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"x-amz-request-algorithm"</span>)
 <span class="w">    </span><span class="py">checksumAlgorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">ChecksumAlgorithm</span>
 
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-response-validation-mode&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"x-amz-response-validation-mode"</span>)
 <span class="w">    </span><span class="py">validationMode</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidationMode</span>
 
 <span class="w">    </span><span class="nt">@httpPayload</span>
@@ -2106,7 +2107,7 @@ through the operates attached to the service.</p>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">TagResource</span><span class="p">,</span><span class="w"> </span><span class="vc">UntagResource</span><span class="p">,</span><span class="w"> </span><span class="vc">ListTagsForResource</span>]
 }
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;city/{cityId}/forecast/{forecastId}&quot;</span>)
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"city/{cityId}/forecast/{forecastId}"</span>)
 <span class="nt">@taggable</span>
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
@@ -2262,7 +2263,7 @@ and the resource lacks an <a class="reference internal" href="#aws-api-arn-trait
 }
 
 <span class="nt">@taggable</span>(
-<span class="w">    </span><span class="py">property</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tags&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">property</span><span class="p">:</span><span class="w"> </span><span class="s2">"tags"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">apiConfig</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">tagApi</span><span class="p">:</span><span class="w"> </span><span class="vc">TagCity</span><span class="p">,</span>
 <span class="w">        </span><span class="py">untagApi</span><span class="p">:</span><span class="w"> </span><span class="vc">UntagCity</span><span class="p">,</span>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -827,10 +828,10 @@ targets the <a class="reference internal" href="model.html#unit-type"><span clas
 <p>The following example is exactly equivalent to the previous example, but the
 enum values are made explicit:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;DIAMOND&quot;</span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;CLUB&quot;</span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;HEART&quot;</span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;SPADE&quot;</span>
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"DIAMOND"</span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"CLUB"</span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"HEART"</span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"SPADE"</span>
 }
 </pre></div>
 </div>
@@ -843,25 +844,25 @@ the member with the trait value set to the member's name.</p>
 <p>The following example provides custom enum values for each member using
 syntactic sugar in the Smithy IDL:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;club&quot;</span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span>
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"diamond"</span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"club"</span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"heart"</span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"spade"</span>
 }
 </pre></div>
 </div>
 <p>The above example is exactly equivalent to the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;diamond&quot;</span>)
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">"diamond"</span>)
 <span class="w">    </span><span class="vc">DIAMOND</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;club&quot;</span>)
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">"club"</span>)
 <span class="w">    </span><span class="vc">CLUB</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;heart&quot;</span>)
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">"heart"</span>)
 <span class="w">    </span><span class="vc">HEART</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;spade&quot;</span>)
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">"spade"</span>)
 <span class="w">    </span><span class="vc">SPADE</span>
 }
 </pre></div>

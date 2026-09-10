@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -710,9 +711,9 @@ are defined as follows:</p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">booleanEquals</span></code> to check if value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 parameter is equal to the value <code class="docutils literal notranslate"><span class="pre">false</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"booleanEquals"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">},</span>
 <span class="w">        </span><span class="kc">true</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -749,11 +750,11 @@ optionals. The return type is <code class="docutils literal notranslate"><span c
 <p>The following example demonstrates using <code class="docutils literal notranslate"><span class="pre">coalesce</span></code> with multiple arguments to try several optional values
 in sequence:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;coalesce&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customEndpoint&quot;</span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regionalEndpoint&quot;</span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;defaultEndpoint&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"coalesce"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"customEndpoint"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"regionalEndpoint"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"defaultEndpoint"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -781,15 +782,15 @@ need to be validated at runtime). Note that the first non-empty result is return
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">getAttr</span></code> to extract the <code class="docutils literal notranslate"><span class="pre">scheme</span></code> value from the
 parsed value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;getAttr&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"getAttr"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;parseURL&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"parseURL"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="s2">&quot;scheme&quot;</span>
+<span class="w">        </span><span class="s2">"scheme"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -848,9 +849,9 @@ meaning they do not need to perform their own validation at runtime.</p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">isSet</span></code> to check if the <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter is not
 null:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isSet&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isSet"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -880,9 +881,9 @@ by dot (<code class="docutils literal notranslate"><span class="pre">.</span></c
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">isValidHostLabel</span></code> to check if the value of the
 <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter is an <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc1123.html"><strong>RFC 1123</strong></a> compliant host segment.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isValidHostLabel&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isValidHostLabel"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">},</span>
 <span class="w">        </span><span class="kc">false</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -921,31 +922,31 @@ the &quot;least upper bound&quot; rule: if either branch is optional, the result
 </div>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">ite</span></code> to compute a URL suffix based on whether FIPS is enabled:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ite&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UseFIPS&quot;</span><span class="p">},</span>
-<span class="w">        </span><span class="s2">&quot;-fips&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ite"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UseFIPS"</span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"-fips"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">""</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;assign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fipsSuffix&quot;</span>
+<span class="w">    </span><span class="nt">"assign"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fipsSuffix"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">ite</span></code> with <code class="docutils literal notranslate"><span class="pre">coalesce</span></code> to handle an optional boolean parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ite&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ite"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;coalesce&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DisableFeature&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"coalesce"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DisableFeature"</span><span class="p">},</span>
 <span class="w">                </span><span class="kc">false</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;enabled&quot;</span>
+<span class="w">        </span><span class="s2">"disabled"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"enabled"</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;assign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;featureState&quot;</span>
+<span class="w">    </span><span class="nt">"assign"</span><span class="p">:</span><span class="w"> </span><span class="s2">"featureState"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1008,21 +1009,21 @@ negated value.</p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">not</span></code> to negate the value of the
 <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"not"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">not</span></code> to negate the value of an <a class="reference internal" href="#isset-function">isSet function</a>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"not"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isSet&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isSet"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
@@ -1052,9 +1053,9 @@ function MUST return an empty optional.</p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">parseURL</span></code> to parse the value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 parameter into its component parts:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;parseURL&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"parseURL"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -1203,10 +1204,10 @@ For empty input strings, the function returns an array containing a single empty
 </div>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">split</span></code> to divide a bucket name into parts using <code class="docutils literal notranslate"><span class="pre">--</span></code> as the delimiter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;split&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bucketName&quot;</span><span class="p">},</span>
-<span class="w">        </span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"split"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bucketName"</span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"--"</span><span class="p">,</span>
 <span class="w">        </span><span class="mi">0</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -1306,10 +1307,10 @@ For empty input strings, the function returns an array containing a single empty
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">stringEquals</span></code> to check if value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 parameter is equal to the value <code class="docutils literal notranslate"><span class="pre">something</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">},</span>
-<span class="w">        </span><span class="s2">&quot;something&quot;</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"booleanEquals"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">},</span>
+<span class="w">        </span><span class="s2">"something"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -1343,9 +1344,9 @@ non-ASCII characters.</p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">substring</span></code> to extract the first four characters of
 value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;substring&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"substring"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">},</span>
 <span class="w">        </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">        </span><span class="mi">4</span><span class="p">,</span>
 <span class="w">        </span><span class="kc">false</span>
@@ -1380,9 +1381,9 @@ uppercase hexadecimal digits for all percent-encodings to ensure consistency.</p
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">uriEncode</span></code> to percent-encode the value of the
 <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uriEncode&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uriEncode"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>

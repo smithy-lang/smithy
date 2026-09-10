@@ -630,28 +630,28 @@ generate AWS SDK client classes and the namespace used in ARNs.</p>
 <code class="docutils literal notranslate"><span class="pre">docId</span></code>:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--1">Smithy</label><div class="tab-content docutils">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
 }
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"aws.fooBaz#FooBaz"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -664,39 +664,39 @@ generate AWS SDK client classes and the namespace used in ARNs.</p>
 <p>The following example provides explicit values for all properties:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--1">Smithy</label><div class="tab-content docutils">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
 <span class="nt">@service</span>(
-<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">docId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-value-2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-endpoint&quot;</span>
+<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooBaz"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice.amazon.aws"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">docId</span><span class="p">:</span><span class="w"> </span><span class="s2">"some-value-2018-03-17"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-endpoint"</span>
 )
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
 }
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;cloudFormationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;docId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-value-2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;cloudTrailEventSource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"aws.fooBaz#FooBaz"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"cloudFormationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooBaz"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"arnNamespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"docId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"some-value-2018-03-17"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"cloudTrailEventSource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice.amazon.aws"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -817,14 +817,14 @@ between service and SDK documentation for AWS services.</p>
 <p>This will default to the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> value in lower case followed by the service
 <code class="docutils literal notranslate"><span class="pre">version</span></code> property, separated by dashes. For the example below, the value
 for this property would default to <code class="docutils literal notranslate"><span class="pre">some-value-2018-03-17</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
 }
 </pre></div>
 </div>
@@ -970,13 +970,13 @@ label placeholders.</p>
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 <span class="kd">use </span><span class="nc">aws.api#arn</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>)
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"myresource/{myId}"</span>)
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">myId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResourceId</span>}<span class="p">,</span>
 }
@@ -985,32 +985,32 @@ label placeholders.</p>
 </div>
 <input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#FooBaz"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;myId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResourceId&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"identifiers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"myId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResourceId"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#arn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myresource/{myId}"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1038,7 +1038,7 @@ resource.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#arn</span>
 <span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"{arn}"</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">arn</span><span class="p">:</span><span class="w"> </span><span class="vc">Arn</span>}
 }
@@ -1050,28 +1050,28 @@ resource.</p>
 </div>
 <input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Arn&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"identifiers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"arn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Arn"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;absolute&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#arn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{arn}"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"absolute"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyResource&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#Arn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#arnReference"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooBaz"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1148,7 +1148,7 @@ referenced resource.</p>
 <span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
 <span class="nt">@arnReference</span>(
-<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS::SomeService::SomeResource"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeService</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeResource</span>)
 <span class="kd">string </span><span class="nc">SomeResourceId</span>
@@ -1157,15 +1157,15 @@ referenced resource.</p>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeService&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeResource&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#SomeResourceId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#arnReference"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS::SomeService::SomeResource"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.foo#SomeService"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.foo#SomeResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1180,7 +1180,7 @@ about the referenced shape. While this is valid, it is not as useful as the
 previous example:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio" /><label class="tab-label" for="tab-set--5-input--1">Smithy</label><div class="tab-content docutils">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.api#arnReference</span>
@@ -1192,12 +1192,12 @@ previous example:</p>
 </div>
 <input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio" /><label class="tab-label" for="tab-set--5-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#SomeResourceId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#arnReference"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1226,17 +1226,17 @@ structure, union, or list unless overridden.</p>
 <input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio" /><label class="tab-label" for="tab-set--6-input--1">Smithy</label><div class="tab-content docutils">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#data</span>
 
-<span class="nt">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
+<span class="nt">@data</span>(<span class="s2">"permissions"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@data</span>(<span class="s2">&quot;content&quot;</span>)
+<span class="w">    </span><span class="nt">@data</span>(<span class="s2">"content"</span>)
 <span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span>
 }
 
-<span class="nt">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
+<span class="nt">@data</span>(<span class="s2">"tagging"</span>)
 <span class="kd">list </span><span class="nc">TagList</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -1245,29 +1245,29 @@ structure, union, or list unless overridden.</p>
 </div>
 <input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio" /><label class="tab-label" for="tab-set--6-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;content&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyStructure"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"aws.api#data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"content"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#TagList&quot;</span>
+<span class="w">                </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#TagList"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#TagList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#TagList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"member"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tagging&quot;</span>
+<span class="w">            </span><span class="nt">"aws.api#data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tagging"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1388,18 +1388,18 @@ plane unless an operation or resource is marked with the
 </div>
 <input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio" /><label class="tab-label" for="tab-set--7-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#PutThings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#PutThingsInput"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+<span class="w">            </span><span class="nt">"output"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#PutThingsOutput"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#controlPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#controlPlane"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1441,18 +1441,18 @@ plane unless an operation or resource is marked with the
 </div>
 <input class="tab-input" id="tab-set--8-input--2" name="tab-set--8" type="radio" /><label class="tab-label" for="tab-set--8-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#PutThings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#PutThingsInput"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+<span class="w">            </span><span class="nt">"output"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#PutThingsOutput"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#dataPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#dataPlane"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1583,7 +1583,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span><span class="p">,</span>
 )
 <span class="kd">service </span><span class="nc">FooService</span><span class="w"> </span>{
-<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-09-10"</span><span class="p">,</span>
 <span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"> </span><span class="vc">GetObject</span>]
 }
 
@@ -1593,7 +1593,7 @@ using an <code class="docutils literal notranslate"><span class="pre">clientEndp
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">InvalidEndpointError</span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@httpError</span>(<span class="m">421</span>)
 <span class="kd">structure </span><span class="nc">InvalidEndpointError</span><span class="w"> </span>{}
 
@@ -1761,9 +1761,9 @@ selecting an algorithm in the <code class="docutils literal notranslate"><span c
 setting the <code class="docutils literal notranslate"><span class="pre">validationMode</span></code> input property to &quot;ENABLED&quot;.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>(
 <span class="w">    </span><span class="py">requestChecksumRequired</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;checksumAlgorithm&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;validationMode&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>]
+<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">"checksumAlgorithm"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">"validationMode"</span><span class="p">,</span>
+<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"CRC32C"</span><span class="p">,</span><span class="w"> </span><span class="s2">"CRC32"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SHA1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SHA256"</span>]
 )
 <span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span>
@@ -1771,10 +1771,10 @@ setting the <code class="docutils literal notranslate"><span class="pre">validat
 }
 
 <span class="kd">structure </span><span class="nc">PutSomethingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-request-algorithm&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"x-amz-request-algorithm"</span>)
 <span class="w">    </span><span class="py">checksumAlgorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">ChecksumAlgorithm</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-response-validation-mode&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"x-amz-response-validation-mode"</span>)
 <span class="w">    </span><span class="py">validationMode</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidationMode</span><span class="p">,</span>
 
 <span class="w">    </span><span class="nt">@httpPayload</span>
@@ -1783,28 +1783,28 @@ setting the <code class="docutils literal notranslate"><span class="pre">validat
 
 <span class="nt">@enum</span>([
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"CRC32C"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"CRC32C"</span>
 <span class="w">    </span>}<span class="p">,</span>
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"CRC32"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"CRC32"</span>
 <span class="w">    </span>}<span class="p">,</span>
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHA1"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHA1"</span>
 <span class="w">    </span>}<span class="p">,</span>
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHA256"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHA256"</span>
 <span class="w">    </span>}
 ])
 <span class="kd">string </span><span class="nc">ChecksumAlgorithm</span>
 
 <span class="nt">@enum</span>([
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"ENABLED"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"ENABLED"</span>
 <span class="w">    </span>}
 ])
 <span class="kd">string </span><span class="nc">ValidationMode</span>

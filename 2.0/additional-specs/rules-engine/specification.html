@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1041,11 +1042,11 @@ is not present. A parameter with the <code class="docutils literal notranslate">
 the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait.</p>
 <p>The following is an example of a parameter that is marked required.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;linkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The identifier of the link to target.&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"linkId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The identifier of the link to target."</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"required"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1091,12 +1092,12 @@ provide recourse options to a user.</p></td>
 </div>
 <p>The following is an example of a parameter that is marked as deprecated.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;linkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;deprecated&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This feature has been deprecated, and requests are now directed towards a global endpoint.&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;since&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="nt">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"linkId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"deprecated"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This feature has been deprecated, and requests are now directed towards a global endpoint."</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"since"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-07-02"</span>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1147,20 +1148,20 @@ of the rule MUST be terminated and evaluation proceeds to any subsequent rules.<
 <p>The following example defines an endpoint rule object that checks a condition
 and uses a parameter value in a url template:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;An endpoint rule description&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;endpoint&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An endpoint rule description"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"endpoint"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isValidHostLabel&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isValidHostLabel"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linkId&quot;</span>
+<span class="w">                    </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linkId"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://{linkId}.service.com&quot;</span>
+<span class="w">    </span><span class="nt">"endpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://{linkId}.service.com"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1301,24 +1302,24 @@ selected. If a condition fails evaluation, the rule MUST be terminated and
 evaluation proceeds to any subsequent rules.</p>
 <p>The following example defines an error rule object that checks a condition:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;An error rule description.&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An error rule description."</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"not"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isValidHostLabel&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isValidHostLabel"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                        </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linkId&quot;</span>
+<span class="w">                            </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linkId"</span>
 <span class="w">                        </span><span class="p">}</span>
 <span class="w">                    </span><span class="p">]</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{linkId} must be a valid HTTP host label.&quot;</span>
+<span class="w">    </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{linkId} must be a valid HTTP host label."</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1385,42 +1386,42 @@ depending on the scenario.</p>
 <p>The following example is an abbreviated example of a tree rule that consists
 of a tree, endpoint, and error rule.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;isValidHostLabel&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"isValidHostLabel"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linkId&quot;</span>
+<span class="w">                    </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linkId"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tree&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tree"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tree&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tree"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="c1">// Abbreviated for clarity</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="c1">// Abbreviated for clarity</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;endpoint&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"endpoint"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="c1">// Abbreviated for clarity</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{linkId}.service.com&quot;</span>
+<span class="w">            </span><span class="nt">"endpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{linkId}.service.com"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="c1">// Abbreviated for clarity</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;An error message.&quot;</span>
+<span class="w">            </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"An error message."</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -1484,21 +1485,21 @@ variable declarations in scope.</p>
 <p>The following example shows using the <a class="reference internal" href="standard-library.html#rules-engine-standard-library-stringequals"><span class="std std-ref">stringEquals function</span></a>
 to compare two arguments as a prerequisite to an endpoint object:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;endpoint&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"endpoint"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Use the base endpoint if using the default link&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Use the base endpoint if using the default link"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"stringEquals"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linkId&quot;</span>
+<span class="w">                    </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linkId"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="s2">&quot;default&quot;</span>
+<span class="w">                </span><span class="s2">"default"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://service.com&quot;</span>
+<span class="w">    </span><span class="nt">"endpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://service.com"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1508,20 +1509,20 @@ function, taking a single argument and assigning the result to the <code class="
 variable. The <code class="docutils literal notranslate"><span class="pre">url</span></code> variable is then used as part of a template string in an
 endpoint object.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;endpoint&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"endpoint"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"conditions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;parseURL&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"parseURL"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Endpoint&quot;</span>
+<span class="w">                    </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Endpoint"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;assign&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;url&quot;</span>
+<span class="w">            </span><span class="nt">"assign"</span><span class="p">:</span><span class="w"> </span><span class="s2">"url"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://service.com/{url#path}&quot;</span>
+<span class="w">    </span><span class="nt">"endpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://service.com/{url#path}"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1609,17 +1610,17 @@ syntactic sugar for using the long-form <code class="docutils literal notranslat
 JSON object, and <code class="docutils literal notranslate"><span class="pre">foo</span></code> being a property defined on that object.</p>
 <p>The following two expressions are equivalent:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;linkId&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"stringEquals"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"linkId"</span><span class="p">,</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;getAttr&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"getAttr"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;partResult&quot;</span>
+<span class="w">                    </span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"partResult"</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;name&quot;</span>
+<span class="w">                    </span><span class="s2">"name"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1628,10 +1629,10 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;linkId&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;{partResult#name}&quot;</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"stringEquals"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"linkId"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"{partResult#name}"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -1687,15 +1688,15 @@ or :ref:`endpointBdd &lt;smithy.rules#endpointBdd-trait&gt;` trait.</em></p>
 <p>The following example defines an endpoint test that expects an endpoint URL
 to be based on configured region parameter.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@endpointTests</span>(
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="w">    </span><span class="py">testCases</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span>{
-<span class="w">            </span><span class="s2">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="s2">&quot;Region&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;north-america-1&quot;</span>
+<span class="w">            </span><span class="s2">"params"</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">"Region"</span><span class="p">:</span><span class="w"> </span><span class="s2">"north-america-1"</span>
 <span class="w">            </span>}
-<span class="w">            </span><span class="s2">&quot;expect&quot;</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="s2">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="s2">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://north-america-1.example.com&quot;</span>
+<span class="w">            </span><span class="s2">"expect"</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">"endpoint"</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://north-america-1.example.com"</span>
 <span class="w">                </span>}
 <span class="w">            </span>}
 <span class="w">        </span>}

@@ -584,19 +584,19 @@ operation would entail.</p>
 
 <span class="kd">use </span><span class="nc">aws.iam#actionPermissionDescription</span>
 
-<span class="nt">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
+<span class="nt">@actionPermissionDescription</span>(<span class="s2">"This will allow the user to Foo."</span>)
 <span class="kd">operation </span><span class="nc">FooOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#FooOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#actionPermissionDescription&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This will allow the user to Foo.&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#FooOperation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.iam#actionPermissionDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"This will allow the user to Foo."</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -630,71 +630,71 @@ explicitly defined via the <a class="reference internal" href="#aws-iam-defineco
 <span class="kd">use </span><span class="nc">aws.iam#definedContextKeys</span>
 <span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>)
+<span class="nt">@defineConditionKeys</span>(<span class="s2">"otherservice:Bar"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span><span class="w"> </span>})
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="nt">@conditionKeys</span>([<span class="s2">"otherservice:Bar"</span>])
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span>
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="nt">@conditionKeys</span>([<span class="s2">"aws:region"</span>])
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyService"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"arnNamespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#defineConditionKeys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
+<span class="w">                </span><span class="nt">"aws.iam#defineConditionKeys"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"otherservice:Bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"identifiers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"operations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyOperation&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyOperation"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;otherservice:Bar&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.iam#conditionKeys"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"otherservice:Bar"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;aws:region&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyOperation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.iam#conditionKeys"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"aws:region"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -766,15 +766,15 @@ for more information.</p></td>
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 <span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>)
 <span class="nt">@defineConditionKeys</span>(
-<span class="w">    </span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span>
+<span class="w">    </span><span class="s2">"otherservice:Bar"</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"The Bar string"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://example.com"</span>
 <span class="w">    </span>})
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 </pre></div>
@@ -782,26 +782,26 @@ for more information.</p></td>
 </div>
 <input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyService"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"arnNamespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#defineConditionKeys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;externalDocumentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span>
+<span class="w">                </span><span class="nt">"aws.iam#defineConditionKeys"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"otherservice:Bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The Bar string"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"externalDocumentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://example.com"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
@@ -901,9 +901,9 @@ condition key inference disabled.</p>
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 <span class="kd">use </span><span class="nc">aws.iam#disableConditionKeyInference</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 
@@ -919,35 +919,35 @@ condition key inference disabled.</p>
 </div>
 <input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyService"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"arnNamespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"identifiers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">                </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#disableConditionKeyInference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.iam#disableConditionKeyInference"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -981,9 +981,9 @@ operation for it to complete successfully.</p>
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 <span class="kd">use </span><span class="nc">aws.iam#requiredActions</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 
@@ -992,48 +992,48 @@ operation for it to complete successfully.</p>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span>
 }
 
-<span class="nt">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
+<span class="nt">@requiredActions</span>([<span class="s2">"otherservice:OtherOperation"</span>])
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyService"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyResource"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">],</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.api#service"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"sdkId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"arnNamespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyResource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"identifiers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="nt">"operations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyOperation&quot;</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyOperation"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.iam#requiredActions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;otherservice:OtherOperation&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyOperation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.iam#requiredActions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"otherservice:OtherOperation"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1069,13 +1069,13 @@ applied to the service.</p></li>
 
 <span class="kd">use </span><span class="nc">aws.iam#supportedPrincipalTypes</span>
 
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">"Root"</span><span class="p">,</span><span class="w"> </span><span class="s2">"IAMUser"</span><span class="p">,</span><span class="w"> </span><span class="s2">"IAMRole"</span><span class="p">,</span><span class="w"> </span><span class="s2">"FederatedUser"</span>])
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-07-02"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="p">,</span>
 }
 
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">"Root"</span>])
 <span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 
 <span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
@@ -1120,7 +1120,7 @@ deviates from the <a class="reference internal" href="../core/model.html#shape-i
 
 <span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
 
-<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)
+<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"super"</span>)
 <span class="kd">resource </span><span class="nc">SuperResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">superId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -1149,26 +1149,26 @@ trait.</p>
 <span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
 <span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Value"</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">"myservice"</span>)
+<span class="nt">@defineConditionKeys</span>(<span class="s2">"otherservice:Bar"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span><span class="w"> </span>})
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="nt">@conditionKeys</span>([<span class="s2">"otherservice:Bar"</span>])
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span>]<span class="p">,</span>
 }
 
-<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InnerResource&quot;</span>)
+<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"InnerResource"</span>)
 <span class="kd">resource </span><span class="nc">MyInnerResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="nt">@conditionKeys</span>([<span class="s2">"aws:region"</span>])
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>

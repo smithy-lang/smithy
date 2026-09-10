@@ -594,12 +594,12 @@ Resource Schemas from a Smithy model <a class="reference internal" href="buildin
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">java</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"0.6.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-cloudformation:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -614,11 +614,11 @@ organization.</p>
 <div class="literal-block-wrapper docutils container" id="cfn-smithy-build-json">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#cfn-smithy-build-json" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -631,10 +631,10 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#QueueService"</span><span class="p">,</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -647,9 +647,9 @@ generate one Resource Schema with the <code class="docutils literal notranslate"
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Queues"</span><span class="p">,</span><span class="w"> </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">"Queues"</span>)
 <span class="kd">service </span><span class="nc">QueueService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-07-02"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Queue</span>]<span class="p">,</span>
 }
 </pre></div>
@@ -676,11 +676,11 @@ Resource Schemas that it generates.</p>
 <dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -693,11 +693,11 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 &quot;AWS&quot; if the <a class="reference internal" href="../spec/aws/aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> is present, otherwise is
 <strong>required</strong>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -711,12 +711,12 @@ This value defaults to the <a class="reference internal" href="../spec/aws/aws-c
 aws.api#service trait</span></a> if present, or the
 shape name of the specified service shape otherwise.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;serviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#QueueService"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"serviceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Queues"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -731,14 +731,14 @@ This list is case insensitive. By default, this is a list of the following
 values: &quot;Documentation Url&quot;, &quot;DocumentationUrl&quot;, &quot;API Reference&quot;, &quot;User
 Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;externalDocs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;Documentation Url&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">&quot;Custom&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"externalDocs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"Documentation Url"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"Custom"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -753,14 +753,14 @@ priority ordered list of names in an <a class="reference internal" href="../spec
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &quot;Source Code&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;sourceDocs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;Source Url&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">&quot;Custom&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"sourceDocs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"Source Url"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"Custom"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -780,18 +780,18 @@ JSON Patch, as specified in <span class="target" id="index-1"></span><a class="r
 properties to an undefined object will create nested objects in the
 result as needed.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;jsonAdd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.example#Queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;/info/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Replaced title value&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;/info/nested/foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Adding this object created intermediate objects too!&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"jsonAdd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"smithy.example#Queue"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"/info/title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Replaced title value"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"/info/nested/foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"hi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Adding this object created intermediate objects too!"</span>
 <span class="w">                    </span><span class="p">},</span>
-<span class="w">                    </span><span class="nt">&quot;/info/nested/foo/baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                    </span><span class="nt">"/info/nested/foo/baz"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -809,12 +809,12 @@ listed in the <a class="reference internal" href="../spec/aws/aws-iam.html#aws-i
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers">the handlers section</a> in the CloudFormation Resource Schemas
 documentation for more information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableHandlerPermissionGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableHandlerPermissionGeneration"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -827,32 +827,32 @@ define other permission actions required to invoke them with the <a class="refer
 <p>When handler permission generation is enabled, all the actions required to
 invoke the operations related to the handler, including the actions for the
 operations themselves, are used to populate permission lists:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;handlers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;create&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;queues:CreateQueue&quot;</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"handlers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"create"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"dependency:GetDependencyComponent"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"queues:CreateQueue"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;queues:GetQueue&quot;</span>
+<span class="w">    </span><span class="nt">"read"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"queues:GetQueue"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;update&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;queues:UpdateQueue&quot;</span>
+<span class="w">    </span><span class="nt">"update"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"dependency:GetDependencyComponent"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"queues:UpdateQueue"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;delete&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;queues:DeleteQueue&quot;</span>
+<span class="w">    </span><span class="nt">"delete"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"queues:DeleteQueue"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;queues:ListQueues&quot;</span>
+<span class="w">    </span><span class="nt">"list"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"queues:ListQueues"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">},</span>
@@ -867,12 +867,12 @@ Schemas. By default, deprecated members are automatically added to the
 section</a> in the CloudFormation Resource Schemas documentation for more
 information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableDeprecatedPropertyGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableDeprecatedPropertyGeneration"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -886,12 +886,12 @@ default, required members are automatically added to the <code class="docutils l
 schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required">the required property section</a> in the CloudFormation
 Resource Schemas documentation for more information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableRequiredPropertyGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableRequiredPropertyGeneration"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -905,12 +905,12 @@ Resource Schemas. By default, property names of resource schemas are
 capitalized if no <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-cfnname-trait"><span class="std std-ref">cfnName</span></a> trait
 is applied.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableCapitalizedProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableCapitalizedProperties"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -927,12 +927,12 @@ no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;defaultTimestampFormat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;epoch-seconds&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"defaultTimestampFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"epoch-seconds"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -944,15 +944,15 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 <dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to all of the generated
 CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;schemaDocumentExtensions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;x-my-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello!&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;x-another-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;can be&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;too!&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"schemaDocumentExtensions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"x-my-custom-top-level-property"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello!"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"x-another-custom-top-level-property"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"can be"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"complex"</span><span class="p">,</span><span class="w"> </span><span class="s2">"value"</span><span class="p">,</span><span class="w"> </span><span class="s2">"too!"</span><span class="p">]</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -966,12 +966,12 @@ CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 <dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and CloudFormation schema property names from
 appearing in the generated CloudFormation Resource Schemas.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableFeatures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;propertyNames&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"cloudformation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Queues"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"organizationName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smithy"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"propertyNames"</span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1014,7 +1014,7 @@ Gradle:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-cloudformation:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1031,8 +1031,8 @@ Gradle:</p>
 
 <span class="c1">// Add any necessary configuration settings.</span>
 <span class="n">CfnConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CfnConfig</span><span class="p">();</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="p">));</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setOrganizationName</span><span class="p">(</span><span class="s">&quot;Smithy&quot;</span><span class="p">);</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">"smithy.example#Queues"</span><span class="p">));</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setOrganizationName</span><span class="p">(</span><span class="s">"Smithy"</span><span class="p">);</span>
 
 <span class="c1">// Generate the schemas.</span>
 <span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span><span class="w"> </span><span class="n">schemas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>

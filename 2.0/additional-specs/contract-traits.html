@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -718,8 +719,8 @@ the following members:</p>
 <p>See the <a class="reference internal" href="waiters.html#waiter-jmespath-data-model"><span class="std std-ref">JMESPath data model</span></a> for details on how Smithy types are mapped to JMESPath types.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@conditions</span>({
 <span class="w">    </span><span class="py">StartBeforeEnd</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The start time must be strictly less than the end time&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start &lt; end&quot;</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"The start time must be strictly less than the end time"</span><span class="p">,</span>
+<span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">"start &lt; end"</span>
 <span class="w">    </span>}
 })
 <span class="kd">structure </span><span class="nc">FetchLogsInput</span><span class="w"> </span>{
@@ -732,8 +733,8 @@ the following members:</p>
 
 <span class="nt">@conditions</span>({
 <span class="w">    </span><span class="py">NoKeywords</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The name cannot contain either &#39;id&#39; or &#39;name&#39;, as these are reserved keywords&quot;</span>
-<span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!contains(@, &#39;id&#39;) &amp;&amp; !contains(@, &#39;name&#39;)&quot;</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"The name cannot contain either 'id' or 'name', as these are reserved keywords"</span>
+<span class="w">        </span><span class="py">expression</span><span class="p">:</span><span class="w"> </span><span class="s2">"!contains(@, 'id') &amp;&amp; !contains(@, 'name')"</span>
 <span class="w">    </span>}
 })
 <span class="kd">string </span><span class="nc">Name</span>

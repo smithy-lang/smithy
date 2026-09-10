@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -682,7 +683,7 @@ The plugin facilitates testing client request/responses without the need to set 
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-mock-plugin:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-mock-plugin:1.6.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -694,13 +695,13 @@ The plugin facilitates testing client request/responses without the need to set 
 <span class="n">mockQueue</span><span class="p">.</span><span class="na">enqueue</span><span class="p">(</span>
 <span class="w">    </span><span class="n">HttpResponse</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">        </span><span class="p">.</span><span class="na">statusCode</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">body</span><span class="p">(</span><span class="n">DataStream</span><span class="p">.</span><span class="na">ofString</span><span class="p">(</span><span class="s">&quot;{\&quot;id\&quot;:\&quot;1\&quot;}&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">body</span><span class="p">(</span><span class="n">DataStream</span><span class="p">.</span><span class="na">ofString</span><span class="p">(</span><span class="s">"{\"id\":\"1\"}"</span><span class="p">))</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
 <span class="p">);</span>
 <span class="n">mockQueue</span><span class="p">.</span><span class="na">enqueue</span><span class="p">(</span>
 <span class="w">    </span><span class="n">HttpResponse</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">        </span><span class="p">.</span><span class="na">statusCode</span><span class="p">(</span><span class="mi">429</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">body</span><span class="p">(</span><span class="n">DataStream</span><span class="p">.</span><span class="na">ofString</span><span class="p">(</span><span class="s">&quot;{\&quot;__type\&quot;:\&quot;InvalidSprocketId\&quot;}&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">body</span><span class="p">(</span><span class="n">DataStream</span><span class="p">.</span><span class="na">ofString</span><span class="p">(</span><span class="s">"{\"__type\":\"InvalidSprocketId\"}"</span><span class="p">))</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
 <span class="p">);</span>
 
@@ -746,7 +747,7 @@ The plugin facilitates testing client request/responses without the need to set 
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">smithy</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">1.5.1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.6.1</span></code></p></td>
 <td><p>Smithy Java version in use by client in SemVer format.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ua</span></code></p></td>
@@ -783,7 +784,7 @@ To add a new feature ID, update the FEATURE_IDS context key within an intercepto
 <span class="n">features</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FeatureId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getShortName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;short-name&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">"short-name"</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">});</span>
 </pre></div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -792,7 +793,7 @@ file and add the following:</p>
 </div>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/main.smithy</span></code></span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
 
 <span class="kd">namespace </span><span class="nc">com.example</span>
 
@@ -800,10 +801,10 @@ file and add the following:</p>
 
 <span class="c">/// Allows users to retrieve a menu, create a coffee order, and</span>
 <span class="c">/// and to view the status of their orders</span>
-<span class="nt">@title</span>(<span class="s2">&quot;Coffee Shop Service&quot;</span>)
+<span class="nt">@title</span>(<span class="s2">"Coffee Shop Service"</span>)
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">CoffeeShop</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-08-23&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-08-23"</span>
 }
 </pre></div>
 </div>
@@ -819,7 +820,7 @@ de-serializing data when communicating between client and server.</p>
 of coffee-related structures:</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <span id="full-stack-tutorial-operations"></span><div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/coffee.smithy</span></code></span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
 
 <span class="kd">namespace </span><span class="nc">com.example</span>
 
@@ -856,14 +857,14 @@ to the service:</p>
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/main.smithy</span></code></span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="vc">...</span>
 <span class="kd">service </span><span class="nc">CoffeeShop</span><span class="w"> </span>{
-<span class="w">   </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-08-23&quot;</span>
+<span class="w">   </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-08-23"</span>
 <span class="w">   </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">GetMenu</span>
 <span class="w">   </span>]
 }
 
 <span class="c">/// Retrieve the menu</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/menu&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/menu"</span>)
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetMenu</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
@@ -879,10 +880,10 @@ With the <code class="docutils literal notranslate"><span class="pre">restJson1<
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">GetMenuResponse</span> <span class="pre">(json)</span></code></span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LATTE&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A creamier, milk-based drink made with espresso&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LATTE"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A creamier, milk-based drink made with espresso"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -903,13 +904,13 @@ modeling an order:</p>
 <p>With these requirements in mind, let's create the underlying data model:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/order.smithy</span></code></span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
 
 <span class="kd">namespace </span><span class="nc">com.example</span>
 
 <span class="c">/// A unique identifier to identify an order</span>
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">128</span>)
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$&quot;</span>)
+<span class="nt">@pattern</span>(<span class="s2">"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"</span>)
 <span class="kd">string </span><span class="nc">Uuid</span>
 
 <span class="c">/// An enum describing the status of an order</span>
@@ -944,7 +945,7 @@ and its operations with <a class="reference internal" href="../spec/service-type
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/order.smithy</span></code></span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// An Order resource, which has a unique id and describes an order by the type of coffee</span>
-<span class="c">/// and the order&#39;s status</span>
+<span class="c">/// and the order's status</span>
 <span class="kd">resource </span><span class="nc">Order</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">orderId</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span><span class="w"> </span>}
 <span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">coffeeType</span><span class="p">:</span><span class="w"> </span><span class="vc">CoffeeType</span><span class="p">,</span><span class="w"> </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">OrderStatus</span><span class="w"> </span>}
@@ -961,7 +962,7 @@ represent the state of an instance. In this case, we will only define a subset o
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/order.smithy</span></code></span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Create an order</span>
 <span class="nt">@idempotent</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/order&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"PUT"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/order"</span>)
 <span class="kd">operation </span><span class="nc">CreateOrder</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Order</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@required</span>
@@ -982,7 +983,7 @@ represent the state of an instance. In this case, we will only define a subset o
 
 <span class="c">/// Retrieve an order</span>
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/order/{orderId}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/order/{orderId}"</span>)
 <span class="kd">operation </span><span class="nc">GetOrder</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Order</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpLabel</span>
@@ -1018,7 +1019,7 @@ output shapes of an operation for a resource.</p>
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/model/order.smithy</span></code></span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// An error indicating an order could not be found</span>
 <span class="nt">@httpError</span>(<span class="m">404</span>)
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">OrderNotFound</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span><span class="py">orderId</span><span class="p">:</span><span class="w"> </span><span class="vc">Uuid</span>
@@ -1080,19 +1081,19 @@ for our service by using the following build configuration:</p>
 <div class="literal-block-wrapper docutils container" id="id15">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/smithy-build.json</span></code></span><a class="headerlink" href="#id15" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;model/&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.50.0&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-validation-model:1.50.0&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.22.0&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"model/"</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.50.0"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-validation-model:1.50.0"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.22.0"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@com.example/coffee-shop-server&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"typescript-ssdk-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"package"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"@com.example/coffee-shop-server"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1111,7 +1112,7 @@ for our service by using the following build configuration:</p>
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">failure</span> <span class="pre">message</span></code></span><a class="headerlink" href="#id17" title="Link to this code">#</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Projection source failed: software.amazon.smithy.codegen.core.CodegenException:
     Every operation must have the smithy.framework#ValidationException error attached
-        unless disableDefaultValidation is set to &#39;true&#39; in the plugin settings.
+        unless disableDefaultValidation is set to 'true' in the plugin settings.
     Operations without smithy.framework#ValidationException errors attached:
         [com.example#CreateOrder, com.example#GetMenu, com.example#GetOrder]
 </pre></div>
@@ -1166,13 +1167,13 @@ the server imports the generated code from. Let's take a look at the core of the
 <span class="w">    </span><span class="p">...</span>
 
 <span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">CreateOrder</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">CreateOrderServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">CreateOrderServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;received an order request...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"received an order request..."</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// TODO: Implement me!</span>
 <span class="w">        </span><span class="k">return</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">GetMenu</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetMenuServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">GetMenuServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getting menu...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"getting menu..."</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// TODO: Implement me!</span>
 <span class="w">        </span><span class="k">return</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1197,31 +1198,31 @@ each type of coffee:</p>
 <div class="literal-block-wrapper docutils container" id="id21">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">server/src/CoffeeShop.ts</span></code></span><a class="headerlink" href="#id21" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">GetMenu</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetMenuServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">GetMenuServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getting menu...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"getting menu..."</span><span class="p">)</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nx">items</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
 <span class="w">                    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">.</span><span class="nx">DRIP</span><span class="p">,</span>
-<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;A clean-bodied, rounder, and more simplistic flavour profile.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Often praised for mellow and less intense notes.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Far less concentrated than espresso.&quot;</span>
+<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">"A clean-bodied, rounder, and more simplistic flavour profile.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Often praised for mellow and less intense notes.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Far less concentrated than espresso."</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
 <span class="w">                    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">.</span><span class="nx">POUR_OVER</span><span class="p">,</span>
-<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;More concentrated than drip, but less than espresso.&quot;</span>
+<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">"Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"More concentrated than drip, but less than espresso."</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
 <span class="w">                    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">.</span><span class="nx">LATTE</span><span class="p">,</span>
-<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;A creamier, milk-based drink made with espresso.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;A subtle coffee taste, with smooth texture.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;High milk-to-coffee ratio.&quot;</span>
+<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">"A creamier, milk-based drink made with espresso.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"A subtle coffee taste, with smooth texture.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"High milk-to-coffee ratio."</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
 <span class="w">                    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">.</span><span class="nx">ESPRESSO</span><span class="p">,</span>
-<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;A highly concentrated form of coffee, brewed under high pressure.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Syrupy, thick liquid in a small serving size.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Full bodied and intensely aromatic.&quot;</span>
+<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">"A highly concentrated form of coffee, brewed under high pressure.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Syrupy, thick liquid in a small serving size.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Full bodied and intensely aromatic."</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1236,7 +1237,7 @@ and updates this queue. Let's implement order submission, or <code class="docuti
 <div class="literal-block-wrapper docutils container" id="id22">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">server/src/CoffeeShop.ts</span></code></span><a class="headerlink" href="#id22" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">CreateOrder</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">CreateOrderServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">CreateOrderServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;received an order request...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"received an order request..."</span><span class="p">)</span>
 <span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="kt">randomUUID</span><span class="p">(),</span>
 <span class="w">            </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="kt">input.coffeeType</span><span class="p">,</span>
@@ -1314,15 +1315,15 @@ the <code class="docutils literal notranslate"><span class="pre">GetMenu</span><
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">smithy/smithy-build.json</span></code></span><a class="headerlink" href="#id27" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@com.example/coffee-shop-server&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"typescript-ssdk-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"package"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"@com.example/coffee-shop-server"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="c1">// add the client codegen plugin</span>
-<span class="w">        </span><span class="nt">&quot;typescript-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@com.example/coffee-shop-client&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">        </span><span class="nt">"typescript-client-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@com.example/coffee-shop-client"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1370,9 +1371,9 @@ the client will not be able to connect. In another terminal, launch the server w
 following:</p>
 <div class="literal-block-wrapper docutils container" id="id32">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">repl</span></code></span><a class="headerlink" href="#id32" title="Link to this code">#</a></div>
-<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@com.example/coffee-shop-client&#39;</span>
+<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@com.example/coffee-shop-client'</span>
 
-<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="p">({</span><span class="w"> </span><span class="nx">endpoint</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">protocol</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;http&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">hostname</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">port</span><span class="o">:</span><span class="w"> </span><span class="kt">3001</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">})</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="p">({</span><span class="w"> </span><span class="nx">endpoint</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">protocol</span><span class="o">:</span><span class="w"> </span><span class="s1">'http'</span><span class="p">,</span><span class="w"> </span><span class="nx">hostname</span><span class="o">:</span><span class="w"> </span><span class="s1">'localhost'</span><span class="p">,</span><span class="w"> </span><span class="nx">port</span><span class="o">:</span><span class="w"> </span><span class="kt">3001</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="s1">'/'</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">})</span>
 
 <span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getMenu</span><span class="p">()</span>
 </pre></div>
@@ -1382,9 +1383,9 @@ following:</p>
 Let's try submitting an order:</p>
 <div class="literal-block-wrapper docutils container" id="id33">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">repl</span></code></span><a class="headerlink" href="#id33" title="Link to this code">#</a></div>
-<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@com.example/coffee-shop-client&#39;</span>
+<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@com.example/coffee-shop-client'</span>
 
-<span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">createOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;DRIP&quot;</span><span class="w"> </span><span class="p">})</span>
+<span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">createOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s2">"DRIP"</span><span class="w"> </span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -1392,12 +1393,12 @@ Let's try submitting an order:</p>
 <div class="literal-block-wrapper docutils container" id="id34">
 <div class="code-block-caption"><span class="caption-text">response</span><a class="headerlink" href="#id34" title="Link to this code">#</a></div>
 <div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="s1">&#39;$metadata&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">'$metadata'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// metadata, such as response code, added by the client</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;DRIP&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
-<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
-<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;IN_PROGRESS&#39;</span><span class="w"> </span><span class="c1">// &lt;--- the order status</span>
+<span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">'DRIP'</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
+<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">'ee97e900-d8dd-4770-904c-3d175cda90c3'</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
+<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">'IN_PROGRESS'</span><span class="w"> </span><span class="c1">// &lt;--- the order status</span>
 <span class="w">  </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -1405,7 +1406,7 @@ Let's try submitting an order:</p>
 <p>The order should be ready by the time you submit this next command. Let's retrieve the order:</p>
 <div class="literal-block-wrapper docutils container" id="id35">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">repl</span></code></span><a class="headerlink" href="#id35" title="Link to this code">#</a></div>
-<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;&lt;PUT YOUR ORDER-ID HERE!&gt;&#39;</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">// &lt;--- make sure to replace with your id</span>
+<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">getOrder</span><span class="p">({</span><span class="w"> </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">'&lt;PUT YOUR ORDER-ID HERE!&gt;'</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">// &lt;--- make sure to replace with your id</span>
 </pre></div>
 </div>
 </div>
@@ -1413,12 +1414,12 @@ Let's try submitting an order:</p>
 <div class="literal-block-wrapper docutils container" id="id36">
 <div class="code-block-caption"><span class="caption-text">response</span><a class="headerlink" href="#id36" title="Link to this code">#</a></div>
 <div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="s1">&#39;$metadata&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">'$metadata'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// ...</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;DRIP&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
-<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;ee97e900-d8dd-4770-904c-3d175cda90c3&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
-<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;COMPLETED&#39;</span><span class="w"> </span><span class="c1">// &lt;--- the order status, which should be &#39;COMPLETED&#39;</span>
+<span class="w">    </span><span class="nx">coffeeType</span><span class="o">:</span><span class="w"> </span><span class="s1">'DRIP'</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;--- the type of coffee we ordered</span>
+<span class="w">    </span><span class="nx">orderId</span><span class="o">:</span><span class="w"> </span><span class="s1">'ee97e900-d8dd-4770-904c-3d175cda90c3'</span><span class="p">,</span><span class="w">  </span><span class="c1">// &lt;--- the order id</span>
+<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">'COMPLETED'</span><span class="w"> </span><span class="c1">// &lt;--- the order status, which should be 'COMPLETED'</span>
 <span class="w">  </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -1433,7 +1434,7 @@ and server communicate with each other.</p>
 client. First, we create the client, and then we create helper methods to use the client:</p>
 <div class="literal-block-wrapper docutils container" id="id37">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">app/app/index.ts</span></code></span><a class="headerlink" href="#id37" title="Link to this code">#</a></div>
-<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeItem</span><span class="p">,</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="p">,</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">,</span><span class="w"> </span><span class="nx">OrderStatus</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@com.example/coffee-shop-client&quot;</span><span class="p">;</span>
+<div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeItem</span><span class="p">,</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="p">,</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">,</span><span class="w"> </span><span class="nx">OrderStatus</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">"@com.example/coffee-shop-client"</span><span class="p">;</span>
 
 <span class="p">...</span>
 <span class="c1">// create a coffee service client singleton and getter</span>
@@ -1441,10 +1442,10 @@ client. First, we create the client, and then we create helper methods to use th
 <span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getClient</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">CoffeeShop</span><span class="p">({</span>
 <span class="w">        </span><span class="nx">endpoint</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nx">protocol</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">hostname</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">protocol</span><span class="o">:</span><span class="w"> </span><span class="s2">"http"</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">hostname</span><span class="o">:</span><span class="w"> </span><span class="s2">"localhost"</span><span class="p">,</span>
 <span class="w">            </span><span class="nx">port</span><span class="o">:</span><span class="w"> </span><span class="kt">3001</span><span class="p">,</span>
-<span class="w">            </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>
+<span class="w">            </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="s2">"/"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}));</span>
 <span class="p">}</span>
@@ -1468,8 +1469,8 @@ client. First, we create the client, and then we create helper methods to use th
 <div class="literal-block-wrapper docutils container" id="id38">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">app/components/Menu.tsx</span></code></span><a class="headerlink" href="#id38" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
-<span class="k">import</span><span class="w"> </span><span class="nx">MenuItem</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@/components/MenuItem&quot;</span><span class="p">;</span>
-<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeItem</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@com.example/coffee-shop-client&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">MenuItem</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">"@/components/MenuItem"</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">CoffeeItem</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">"@com.example/coffee-shop-client"</span><span class="p">;</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">Menu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">menuItems</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeItem</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">getMenuItems</span><span class="p">();</span>
@@ -1543,15 +1544,15 @@ description above to add a new item to the menu:</p>
 <div class="literal-block-wrapper docutils container" id="id41">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">server/src/CoffeeShop.ts</span></code></span><a class="headerlink" href="#id41" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="nx">GetMenu</span><span class="p">(</span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetMenuServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">CoffeeShopContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">GetMenuServerOutput</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getting menu...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"getting menu..."</span><span class="p">)</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nx">items</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">...</span>
 <span class="w">                </span><span class="p">{</span>
 <span class="w">                    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="nx">CoffeeType</span><span class="p">.</span><span class="nx">COLD_BREW</span><span class="p">,</span>
-<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;A high-extraction and chilled form of coffee that has been cold-pressed..\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Different flavor profile than other hot methods of brewing.\n&quot;</span><span class="w"> </span><span class="o">+</span>
-<span class="w">                        </span><span class="s2">&quot;Smooth and slightly more caffeinated as a result of its concentration.&quot;</span>
+<span class="w">                    </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="s2">"A high-extraction and chilled form of coffee that has been cold-pressed..\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Different flavor profile than other hot methods of brewing.\n"</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                        </span><span class="s2">"Smooth and slightly more caffeinated as a result of its concentration."</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1564,7 +1565,7 @@ description above to add a new item to the menu:</p>
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">app/app/index.ts</span></code></span><a class="headerlink" href="#id42" title="Link to this code">#</a></div>
 <div class="highlight-TypeScript notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="p">...</span>
 <span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="nx">CoffeeType.COLD_BREW</span><span class="o">:</span>
-<span class="w">        </span><span class="kt">return</span><span class="w"> </span><span class="s2">&quot;/cold-brew.png&quot;</span>
+<span class="w">        </span><span class="kt">return</span><span class="w"> </span><span class="s2">"/cold-brew.png"</span>
 <span class="w">    </span><span class="nx">default</span><span class="o">:</span>
 <span class="w">        </span><span class="kt">...</span>
 </pre></div>

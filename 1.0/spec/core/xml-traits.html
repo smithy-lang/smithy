@@ -614,12 +614,12 @@ of the serialized shape; however, it does not influence the serialization of
 members that target it. Given the following:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--1">Smithy</label><div class="tab-content docutils">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlName</span>(<span class="s2">&quot;AStruct&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlName</span>(<span class="s2">"AStruct"</span>)
 <span class="kd">structure </span><span class="nc">A</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">B</span><span class="p">,</span>
 }
 
-<span class="nt">@xmlName</span>(<span class="s2">&quot;BStruct&quot;</span>)
+<span class="nt">@xmlName</span>(<span class="s2">"BStruct"</span>)
 <span class="kd">structure </span><span class="nc">B</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">hello</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
@@ -628,28 +628,28 @@ members that target it. Given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#A&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;b&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#B&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#A"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"b"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#B"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AStruct&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"smithy.api#xmlName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AStruct"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#B&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;hello&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#B"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"hello"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BStruct&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"smithy.api#xmlName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BStruct"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -794,7 +794,7 @@ change the nested element name. For example, given the following:</p>
 }
 
 <span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Item&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Item"</span>)
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
@@ -802,22 +802,22 @@ change the nested element name. For example, given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyList&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#Foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"values"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyList"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Item&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"member"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"smithy.api#xmlName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Item"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -862,7 +862,7 @@ example, given the following:</p>
 the name of the repeated XML element. For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MySet</span><span class="p">,</span>
 }
 
@@ -888,7 +888,7 @@ following:</p>
 }
 
 <span class="kd">set </span><span class="nc">MySet</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -944,10 +944,10 @@ to change the nested element names.  For example, given the following:</p>
 }
 
 <span class="kd">map </span><span class="nc">MyMap</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Name&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Name"</span>)
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Setting&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Setting"</span>)
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
@@ -988,26 +988,26 @@ into a containing structure/union. For example, given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio" /><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;flatMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyMap&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlFlattened&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#Bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"flatMap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyMap"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlFlattened"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;map&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyMap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"map"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">            </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1037,7 +1037,7 @@ into a containing structure/union. For example, given the following:</p>
 the name of the repeated XML element. For example, given the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MyMap</span><span class="p">,</span>
 }
 
@@ -1069,15 +1069,15 @@ traits applied to the key or value members of the map. For example, given
 the following:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">Choice</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlFlattened</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Hi"</span>)
 <span class="w">    </span><span class="py">flat</span><span class="p">:</span><span class="w"> </span><span class="vc">MyMap</span><span class="p">,</span>
 }
 
 <span class="kd">map </span><span class="nc">MyMap</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Name&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Name"</span>)
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Setting&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Setting"</span>)
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
@@ -1133,19 +1133,19 @@ member name. For example, given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio" /><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlAttribute&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyStructure"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlAttribute"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">                </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1156,7 +1156,7 @@ member name. For example, given the following:</p>
 </div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">foo=</span><span class="s">&quot;example&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">foo=</span><span class="s">"example"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;bar&gt;</span>example<span class="nt">&lt;/bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>
 </pre></div>
@@ -1167,7 +1167,7 @@ Given the following:</p>
 <input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--1">Smithy</label><div class="tab-content docutils">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@xmlAttribute</span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;NotFoo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"NotFoo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
@@ -1175,16 +1175,16 @@ Given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio" /><label class="tab-label" for="tab-set--4-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlAttribute&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NotFoo&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyStructure"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlAttribute"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NotFoo"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
@@ -1196,7 +1196,7 @@ Given the following:</p>
 </div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">NotFoo=</span><span class="s">&quot;example&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">NotFoo=</span><span class="s">"example"</span><span class="nt">/&gt;</span>
 </pre></div>
 </div>
 </section>
@@ -1231,26 +1231,26 @@ Given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio" /><label class="tab-label" for="tab-set--5-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;flat&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyList&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlFlattened&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#Foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"flat"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyList"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlFlattened"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;nested&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyList&quot;</span>
+<span class="w">                </span><span class="nt">"nested"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyList"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"member"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1291,29 +1291,29 @@ Given the following:</p>
 </div>
 <input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio" /><label class="tab-label" for="tab-set--6-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;flat&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyMap&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlFlattened&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#Foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"flat"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyMap"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlFlattened"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;notFlat&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyMap&quot;</span>
+<span class="w">                </span><span class="nt">"notFlat"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#MyMap"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;map&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyMap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"map"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">            </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1370,7 +1370,7 @@ elements using the same name as the structure member name. Given the following:<
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--7-input--1" name="tab-set--7" type="radio" /><label class="tab-label" for="tab-set--7-input--1">Smithy</label><div class="tab-content docutils">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Foo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"Foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -1380,19 +1380,19 @@ elements using the same name as the structure member name. Given the following:<
 </div>
 <input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio" /><label class="tab-label" for="tab-set--7-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;smithy.api#xmlName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Foo&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyStructure"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"smithy.api#xmlName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Foo"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">                </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1412,7 +1412,7 @@ elements using the same name as the structure member name. Given the following:<
 <p>A namespace prefix can be inserted before the element name. Given the
 following</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">AnotherStructure</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;hello:foo&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"hello:foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
@@ -1467,7 +1467,7 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 <p>Given the following:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--8-input--1" name="tab-set--8" type="radio" /><label class="tab-label" for="tab-set--8-input--1">Smithy</label><div class="tab-content docutils">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://foo.com"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
@@ -1477,21 +1477,21 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 </div>
 <input class="tab-input" id="tab-set--8-input--2" name="tab-set--8" type="radio" /><label class="tab-label" for="tab-set--8-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyStructure"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">                </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#xmlNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"smithy.api#xmlNamespace"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"uri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://foo.com"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1502,24 +1502,24 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 </div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://foo.com&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">"http://foo.com"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;foo&gt;</span>example<span class="nt">&lt;/foo&gt;</span>
 <span class="w">    </span><span class="nt">&lt;bar&gt;</span>example<span class="nt">&lt;/bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>
 </pre></div>
 </div>
 <p>Given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://foo.com"</span><span class="p">,</span><span class="w"> </span><span class="py">prefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"baz"</span>)
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;baz:bar&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"baz:bar"</span>)
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
 </div>
 <p>The XML serialization is:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns:baz=</span><span class="s">&quot;http://foo.com&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;MyStructure</span><span class="w"> </span><span class="na">xmlns:baz=</span><span class="s">"http://foo.com"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;foo&gt;</span>example<span class="nt">&lt;/foo&gt;</span>
 <span class="w">    </span><span class="nt">&lt;baz:bar&gt;</span>example<span class="nt">&lt;/baz:bar&gt;</span>
 <span class="nt">&lt;/MyStructure&gt;</span>

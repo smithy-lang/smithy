@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -738,7 +739,7 @@ guides the generation of client and server code.</p>
 <div class="code-block-caption"><span class="caption-text">smithy/model/weather.smithy</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Allows users to retrieve a menu, create a coffee order, and</span>
 <span class="c">/// and to view the status of their orders</span>
-<span class="nt">@title</span>(<span class="s2">&quot;Coffee Shop Service&quot;</span>)
+<span class="nt">@title</span>(<span class="s2">"Coffee Shop Service"</span>)
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">CoffeeShop</span><span class="w"> </span>{
 <span class="w">    </span><span class="vc">...</span>
@@ -774,22 +775,22 @@ INFO:<span class="w"> </span>Started<span class="w"> </span>listening<span class
 </div>
 <p>This will return a JSON-formatted menu of coffee types that can be ordered from our cafe:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"items"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DRIP&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A clean-bodied, rounder, and more simplistic flavour profile.\nOften praised for mellow and less intense notes.\nFar less concentrated than espresso.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DRIP"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A clean-bodied, rounder, and more simplistic flavour profile.\nOften praised for mellow and less intense notes.\nFar less concentrated than espresso.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POUR_OVER&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\nMore concentrated than drip, but less than espresso.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POUR_OVER"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Similar to drip coffee, but with a process that brings out more subtle nuances in flavor.\nMore concentrated than drip, but less than espresso.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LATTE&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A creamier, milk-based drink made with espresso.\nA subtle coffee taste, with smooth texture.\nHigh milk-to-coffee ratio.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LATTE"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A creamier, milk-based drink made with espresso.\nA subtle coffee taste, with smooth texture.\nHigh milk-to-coffee ratio.\n"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ESPRESSO&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A highly concentrated form of coffee, brewed under high pressure.\nSyrupy, thick liquid in a small serving size.\nFull bodied and intensely aromatic.\n&quot;</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ESPRESSO"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A highly concentrated form of coffee, brewed under high pressure.\nSyrupy, thick liquid in a small serving size.\nFull bodied and intensely aromatic.\n"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -835,7 +836,7 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">smithy/model/main.smithy</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>service CoffeeShop {
-<span class="w"> </span>   version: &quot;2024-08-23&quot;
+<span class="w"> </span>   version: "2024-08-23"
 <span class="w"> </span>   operations: [
 <span class="w"> </span>       GetMenu,
 <span class="gi">+       GetHours</span>
@@ -846,7 +847,7 @@ will be expressed in hours using 24hr time (i.e. 1PM is 13).</p>
 }
 
 <span class="gi">+ /// Retrieve the coffee shop hours.</span>
-<span class="gi">+ @http(method: &quot;GET&quot;, uri: &quot;/hours&quot;)</span>
+<span class="gi">+ @http(method: "GET", uri: "/hours")</span>
 <span class="gi">+ @readonly</span>
 <span class="gi">+ operation GetHours{</span>
 <span class="gi">+    output := {</span>
@@ -918,7 +919,7 @@ every operation defined in service model. Let’s add the required implementatio
 <p>Which will return the hours of our Cafe:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">curl</span></code> output</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s">&quot;opensAt&quot;</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="s">&quot;closesAt&quot;</span><span class="p">:</span><span class="mi">16</span><span class="p">}</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s">"opensAt"</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="s">"closesAt"</span><span class="p">:</span><span class="mi">16</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -951,7 +952,7 @@ we just need to call it in our client application:</p>
 <section id="next-steps">
 <h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Explore other examples: <a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java example projects</a></p></li>
+<li><p>Explore other examples: <a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java example projects</a></p></li>
 <li><p>Discover the Smithy ecosystem: <a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome-Smithy</a></p></li>
 </ul>
 </section>

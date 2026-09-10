@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -694,12 +695,12 @@ or streams of events (<a class="reference internal" href="#event-streams"><span 
 bytes or UTF-8 characters. A data stream is created by applying the
 <a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a> to a blob. This stream can then be referenced
 by a single top-level operation input or output structure member. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/streaming-operation"</span>)
 <span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpPayload</span>
-<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">""</span>
 <span class="w">    </span>}
 }
 
@@ -733,7 +734,7 @@ member names of the union define the name that is used to identify each event
 that is sent over the event stream.</p>
 <p id="input-eventstream">The following example defines an operation that uses an event
 stream in its input by referencing a member that targets a union:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
@@ -761,7 +762,7 @@ stream in its input by referencing a member that targets a union:</p>
 </div>
 <p id="output-eventstream">The following example defines an operation that uses an event
 stream in its output:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">SubscribeToMovements</span><span class="w"> </span>{
@@ -792,7 +793,7 @@ stream in its output:</p>
 
 <span class="c">/// An example error emitted when the client is throttled</span>
 <span class="c">/// and should terminate the event stream.</span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
 <span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
@@ -823,10 +824,10 @@ sent however is necessary for the protocol.</p>
 <p>The following example defines an operation with an input event stream with
 an initial-request. The client will first send the initial-request to the
 service, followed by the events sent in the payload of the HTTP message.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/messages/{room}"</span>)
 <span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span>
 }
@@ -866,10 +867,10 @@ however is necessary for the protocol.</p>
 an initial-response. The client will first receive and process the
 initial-response, followed by the events sent in the payload of the HTTP
 message.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/messages/{room}"</span>)
 <span class="kd">operation </span><span class="nc">SubscribeToMessages</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesOutput</span>
@@ -884,7 +885,7 @@ message.</p>
 
 <span class="nt">@output</span>
 <span class="kd">structure </span><span class="nc">SubscribeToMessagesOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"X-Connection-Lifetime"</span>)
 <span class="w">    </span><span class="py">connectionLifetime</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
 <span class="w">    </span><span class="nt">@httpPayload</span>
@@ -915,7 +916,7 @@ MUST provide access to the <a class="reference internal" href="#initial-messages
 event stream when necessary.</p>
 <p>Clients SHOULD expose type-safe functionality that is used to dispatch based
 on the name of an event. For example, given the following event stream:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">SubscribeToEvents</span><span class="w"> </span>{

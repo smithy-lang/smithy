@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -676,12 +677,12 @@ the plugin by adding it to <code class="docutils literal notranslate"><span clas
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;typescript-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@weather-service/client&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"model"</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"typescript-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@weather-service/client"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -695,14 +696,14 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.52.0&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"model"</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.53.0"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+<span class="w">    </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -715,7 +716,7 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.52.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.53.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -725,7 +726,7 @@ named <code class="docutils literal notranslate"><span class="pre">&#64;weather-
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.52.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.53.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -834,15 +835,15 @@ is built and the code generated, the TypeScript code also has to be compiled.
 The generated <code class="docutils literal notranslate"><span class="pre">package.json</span></code> contains scripts to do so:</p>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">package.json</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;concurrently &#39;yarn:build:cjs&#39; &#39;yarn:build:es&#39; &#39;yarn:build:types&#39;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build:cjs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tsc -p tsconfig.cjs.json&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build:docs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;typedoc&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build:es&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tsc -p tsconfig.es.json&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build:types&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tsc -p tsconfig.types.json&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build:types:downlevel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;downlevel-dts dist-types dist-types/ts3.4&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;clean&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rimraf ./dist-* &amp;&amp; rimraf *.tsbuildinfo&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;prepack&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yarn run clean &amp;&amp; yarn run build&quot;</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build:cjs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tsc -p tsconfig.cjs.json"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build:docs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"typedoc"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build:es"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tsc -p tsconfig.es.json"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build:types"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tsc -p tsconfig.types.json"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build:types:downlevel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"downlevel-dts dist-types dist-types/ts3.4"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"clean"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rimraf ./dist-* &amp;&amp; rimraf *.tsbuildinfo"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"prepack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yarn run clean &amp;&amp; yarn run build"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -893,17 +894,17 @@ contents:</p>
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">package.json</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather-service&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;generate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cd smithy &amp;&amp; gradle clean build&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yarn workspace @weather-service/client build&quot;</span>
+<span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weather-service"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"generate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cd smithy &amp;&amp; gradle clean build"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yarn workspace @weather-service/client build"</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;@weather-service/client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">  </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"@weather-service/client"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;workspaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;smithy/build/smithy/source/typescript-codegen&quot;</span>
+<span class="w">  </span><span class="nt">"private"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"workspaces"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"smithy/build/smithy/source/typescript-codegen"</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -914,17 +915,17 @@ contents:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">package.json</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather-service&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;generate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cd smithy &amp;&amp; gradle clean build&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yarn workspace @weather-service/client build&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weather-service"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"generate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cd smithy &amp;&amp; gradle clean build"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yarn workspace @weather-service/client build"</span><span class="p">,</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;@weather-service/client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span>
+<span class="w">  </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"@weather-service/client"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;workspaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;smithy/build/smithyprojections/smithy/source/typescript-codegen&quot;</span>
+<span class="w">  </span><span class="nt">"private"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"workspaces"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"smithy/build/smithyprojections/smithy/source/typescript-codegen"</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -953,12 +954,12 @@ after moving the Smithy project into the <code class="docutils literal notransla
 <span class="w">  </span><span class="nx">GetCityCommandInput</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">GetCityCommandOutput</span><span class="p">,</span>
 <span class="w">  </span><span class="nx">Weather</span>
-<span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@weather-service/client&#39;</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@weather-service/client'</span><span class="p">;</span>
 
-<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="o">:</span><span class="w"> </span><span class="kt">Weather</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Weather</span><span class="p">({</span><span class="w"> </span><span class="nx">endpoint</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;some-endpoint&#39;</span><span class="w"> </span><span class="p">});</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="o">:</span><span class="w"> </span><span class="kt">Weather</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Weather</span><span class="p">({</span><span class="w"> </span><span class="nx">endpoint</span><span class="o">:</span><span class="w"> </span><span class="s1">'some-endpoint'</span><span class="w"> </span><span class="p">});</span>
 
 <span class="kd">const</span><span class="w"> </span><span class="nx">getCityInput</span><span class="o">:</span><span class="w"> </span><span class="kt">GetCityCommandInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nx">cityId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span>
+<span class="w">  </span><span class="nx">cityId</span><span class="o">:</span><span class="w"> </span><span class="s1">'foo'</span>
 <span class="p">};</span>
 
 <span class="nx">client</span><span class="p">.</span><span class="nx">getCity</span><span class="p">(</span><span class="nx">getCityInput</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">getCityOutput</span><span class="o">:</span><span class="w"> </span><span class="kt">GetCityCommandOutput</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -712,7 +713,7 @@ A list shape requires a single member named <code class="docutils literal notran
 in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.
 The following example defines a list with a string member from the
 <a class="reference internal" href="model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
@@ -746,7 +747,7 @@ keys to homogeneous values. A map requires a member named <code class="docutils 
 that MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape and a member named <code class="docutils literal notranslate"><span class="pre">value</span></code>.
 Maps are defined in the IDL using a <a class="reference internal" href="idl.html#idl-map"><span class="std std-ref">map_statement</span></a>.
 The following example defines a map of strings to integers:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">map </span><span class="nc">IntegerMap</span><span class="w"> </span>{
@@ -796,7 +797,7 @@ Structures are defined in the IDL using a
 <p>The following example defines a structure with three members, one of which
 is marked with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>, and one that is marked with the
 <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a> using IDL syntactic sugar.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
@@ -805,7 +806,7 @@ is marked with the <a class="reference internal" href="type-refinement-traits.ht
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
-<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;Hello&quot;</span>
+<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"Hello"</span>
 }
 </pre></div>
 </div>
@@ -1023,7 +1024,7 @@ values of each variant.</p>
 <p>Unions are defined in the IDL using a <a class="reference internal" href="idl.html#idl-union"><span class="std std-ref">union_statement</span></a>.
 A union shape MUST contain one or more named <a class="reference internal" href="model.html#member"><span class="std std-ref">members</span></a>.
 The following example defines a union shape with several members:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">union </span><span class="nc">MyUnion</span><span class="w"> </span>{
@@ -1071,17 +1072,17 @@ purposes, if unions were to be represented in a hypothetical JSON
 serialization, the following value would be valid for the <code class="docutils literal notranslate"><span class="pre">PlayerAction</span></code>
 union because a single member is present:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="nt">"move"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The following value is <strong>invalid</strong> because multiple members are present:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;quit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="nt">"quit"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"move"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1123,7 +1124,7 @@ contain at least one path through its members that is not recursive
 or steps through a list, map, or optional structure member.</p></li>
 </ol>
 <p>The following recursive shape definition is <strong>valid</strong>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">ValidList</span><span class="w"> </span>{
@@ -1136,7 +1137,7 @@ or steps through a list, map, or optional structure member.</p></li>
 </pre></div>
 </div>
 <p>The following recursive shape definition is <strong>invalid</strong>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">list </span><span class="nc">RecursiveList</span><span class="w"> </span>{
@@ -1146,7 +1147,7 @@ or steps through a list, map, or optional structure member.</p></li>
 </div>
 <p>The following recursive shape definition is <strong>invalid</strong> due to mutual
 recursion and the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">structure </span><span class="nc">RecursiveShape1</span><span class="w"> </span>{

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -946,12 +947,12 @@ wait for a response. This must be greater than 0.</p></td>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;server&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">"server"</span>)
 <span class="nt">@retryable</span>
 <span class="nt">@httpError</span>(<span class="m">503</span>)
 <span class="kd">structure </span><span class="nc">ServiceUnavailableError</span><span class="w"> </span>{}
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
 <span class="nt">@httpError</span>(<span class="m">429</span>)
 <span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
@@ -1045,12 +1046,12 @@ an unpredictable latency.</p>
 </div>
 <p>The following example defines a paginated operation that sets each value
 explicitly on the operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"maxResults"</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"foos"</span>)
 <span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
@@ -1081,17 +1082,17 @@ of the service. Pagination settings configured on an operation override any
 inherited service setting.</p>
 <p>The following example defines a paginated operation that inherits some
 settings from a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span>
+<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"maxResults"</span>)
 <span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-27"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]
 }
 
-<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
+<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"foos"</span>)
 <span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
@@ -1110,12 +1111,12 @@ following ABNF.</p>
 </pre>
 <p>The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"result.nextToken"</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"maxResults"</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"result.foos"</span>)
 <span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
@@ -1311,11 +1312,11 @@ the service operation. Supported compression algorithms are: &quot;gzip&quot;.</
 <p>The following example defines an operation that supports <code class="docutils literal notranslate"><span class="pre">gzip</span></code> compression
 for requests from clients to services with both a streaming and non-streaming
 member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@requestCompression</span>(
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"gzip"</span>]
 )
 <span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
@@ -1359,11 +1360,11 @@ any user-provided encoding(s).</p>
 <p>As an example, using the <code class="docutils literal notranslate"><span class="pre">PutWithContentEncoding</span></code> operation below with the
 <code class="docutils literal notranslate"><span class="pre">customEncoding</span></code> member set to <code class="docutils literal notranslate"><span class="pre">brotli</span></code>, the header would be
 <code class="docutils literal notranslate"><span class="pre">&quot;Content-Encoding&quot;:</span> <span class="pre">&quot;brotli,</span> <span class="pre">gzip&quot;</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@requestCompression</span>(
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"gzip"</span>]
 )
 <span class="kd">operation </span><span class="nc">PutWithContentEncoding</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutWithContentEncodingInput</span>
@@ -1371,7 +1372,7 @@ any user-provided encoding(s).</p>
 
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">PutWithContentEncodingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Encoding&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"Content-Encoding"</span>)
 <span class="w">    </span><span class="py">customEncoding</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="c">// brotli</span>
 
 <span class="w">    </span><span class="nt">@httpPayload</span>

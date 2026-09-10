@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -726,7 +727,7 @@ endpoints for that service or operation.</p>
 </dl>
 <p>The following example defines a service with <code class="docutils literal notranslate"><span class="pre">standardRegionalEndpoints</span></code> modified by
 the hypothetical <code class="docutils literal notranslate"><span class="pre">fooExample</span></code> endpoint modifier.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -734,34 +735,34 @@ the hypothetical <code class="docutils literal notranslate"><span class="pre">fo
 <span class="kd">use </span><span class="nc">aws.endpoints#standardRegionalEndpoints</span>
 
 <span class="nt">@endpointsModifier</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">fooExample</span><span class="w"> </span>{}
 
 <span class="nt">@standardRegionalEndpoints</span>
 <span class="nt">@fooExample</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
 <p>Because endpoint modification definitions are just specialized shapes, they
 can also support configuration settings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.endpoints#endpointsModifier</span>
 <span class="kd">use </span><span class="nc">aws.endpoints#standardRegionalEndpoints</span>
 
 <span class="nt">@endpointsModifier</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">endpointSuffix</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">suffix</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
 <span class="nt">@standardRegionalEndpoints</span>
-<span class="nt">@endpointSuffix</span>(<span class="vc">suffix</span><span class="p">=</span><span class="s2">&quot;-suffix&quot;</span>)
+<span class="nt">@endpointSuffix</span>(<span class="vc">suffix</span><span class="p">=</span><span class="s2">"-suffix"</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -821,7 +822,7 @@ the standard endpoint patterns defined above for consistency, and to
 ensure that endpoints are forwards compatible, and that SDK updates are
 not required when the service launches in a new region or partition.</p>
 <p>The following example defines a service that uses the standard regional endpoints:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -829,7 +830,7 @@ not required when the service launches in a new region or partition.</p>
 
 <span class="nt">@standardRegionalEndpoints</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -841,14 +842,14 @@ FIPS endpoints in US GovCloud:</p>
 <span class="w">    </span><span class="py">partitionSpecialCases</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="vc">aws-us-gov</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myservice.{region}.{dnsSuffix}&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://myservice.{region}.{dnsSuffix}"</span><span class="p">,</span>
 <span class="w">                </span><span class="py">fips</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">            </span>}
 <span class="w">        </span>]
 <span class="w">    </span>}
 )
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -970,15 +971,15 @@ service's standard patterns or are located in a region other than the partition'
 <p>Partitional services (also known as &quot;global&quot; services) resolve a single endpoint per partition.
 That single endpoint is located in the partition's <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>.</p>
 <p>The following example defines a partitional service that uses AWS recommended patterns for each partition:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.endpoints#standardPartitionalEndpoints</span>
 
-<span class="nt">@standardPartitionalEndpoints</span>(<span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws_recommended&quot;</span>)
+<span class="nt">@standardPartitionalEndpoints</span>(<span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws_recommended"</span>)
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -986,14 +987,14 @@ That single endpoint is located in the partition's <code class="docutils literal
 The following example defines a partitional service that uses a special case pattern in
 the <code class="docutils literal notranslate"><span class="pre">aws</span></code> partition and uses a non-standard global region in the <code class="docutils literal notranslate"><span class="pre">aws-cn</span></code> partition:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardPartitionalEndpoints</span>(
-<span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws_recommended&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws_recommended"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">partitionEndpointSpecialCases</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myservice.global.amazonaws.com&quot;</span>}]<span class="p">,</span>
-<span class="w">        </span><span class="vc">aws-cn</span><span class="p">:</span><span class="w"> </span>[{<span class="py">region</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cn-north-1&quot;</span>}]
+<span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://myservice.global.amazonaws.com"</span>}]<span class="p">,</span>
+<span class="w">        </span><span class="vc">aws-cn</span><span class="p">:</span><span class="w"> </span>[{<span class="py">region</span><span class="p">:</span><span class="w"> </span><span class="s2">"cn-north-1"</span>}]
 <span class="w">    </span>}
 )
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -1059,7 +1060,7 @@ is dual stack only:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardRegionalEndpoints</span>
 <span class="nt">@dualStackOnlyEndpoints</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>
@@ -1089,7 +1090,7 @@ The following example specifies a service that has standard regional endpoints e
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardRegionalEndpoints</span>
 <span class="nt">@rulesBasedEndpoints</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-04-02"</span>
 }
 </pre></div>
 </div>

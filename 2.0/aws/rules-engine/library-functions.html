@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -684,9 +685,9 @@ to a Smithy project:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-endpoints:1.73.0&quot;</span>
+<span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-endpoints:1.73.0"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -701,7 +702,7 @@ to a Smithy project:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="p">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-endpoints:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-endpoints:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">}</span>
 </pre></div>
@@ -713,7 +714,7 @@ to a Smithy project:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-endpoints:1.73.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-endpoints:1.73.0'</span>
 <span class="w">    </span><span class="o">...</span>
 <span class="o">}</span>
 </pre></div>
@@ -740,9 +741,9 @@ unknown.</em></p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">aws.partition</span></code> to provide <a class="reference external" href="https://docs.aws.amazon.com/whitepapers/latest/aws-fault-isolation-boundaries/partitions.html">partition</a>
 information from the region in the value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.partition&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.partition"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -811,9 +812,9 @@ parsed</em></p>
 <p>The following example uses <code class="docutils literal notranslate"><span class="pre">aws.parseArn</span></code> to parse the value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 parameter into its component parts:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.parseArn&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.parseArn"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
@@ -953,9 +954,9 @@ each compliant values joined by dot (<code class="docutils literal notranslate">
 value of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> parameter is an <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc1123.html"><strong>RFC 1123</strong></a> compliant host segment and a
 valid bucket name.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;fn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.isVirtualHostableS3Bucket&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;argv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="nt">&quot;ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"fn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.isVirtualHostableS3Bucket"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"argv"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="p">},</span>
 <span class="w">        </span><span class="kc">false</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>

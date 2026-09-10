@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">TypeScript</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -691,11 +692,11 @@ code unless default validation is disabled.</p>
 <h2>Custom validation<a class="headerlink" href="#custom-validation" title="Link to this heading">#</a></h2>
 <p>For advanced use-cases, developers can choose to customize the validation behavior of the server SDK. This requires
 setting <code class="docutils literal notranslate"><span class="pre">disableDefaultValidation</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> for the <code class="docutils literal notranslate"><span class="pre">typescript-ssdk-codegen</span></code> plugin:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@aws-smithy/example&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"typescript-ssdk-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@aws-smithy/example"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0-alpha.1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"disableDefaultValidation"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -706,7 +707,7 @@ with the validation failures encountered. In order to support this, the server S
 of type <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> to every handler factory:</p>
 <div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">getExampleOperationHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">(</span>
 <span class="w">  </span><span class="nx">operation</span><span class="o">:</span><span class="w"> </span><span class="kt">Operation</span><span class="o">&lt;</span><span class="nx">ExampleOperationServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">ExampleOperationServerOutput</span><span class="p">,</span><span class="w"> </span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">,</span>
-<span class="w">  </span><span class="nx">customizer</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationCustomizer</span><span class="o">&lt;</span><span class="s2">&quot;ExampleOperation&quot;</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="nx">customizer</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationCustomizer</span><span class="o">&lt;</span><span class="s2">"ExampleOperation"</span><span class="o">&gt;</span>
 <span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ServiceHandler</span><span class="o">&lt;</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpResponse</span><span class="o">&gt;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 </pre></div>
 </div>
@@ -745,24 +746,24 @@ will render an <a class="reference internal" href="error-handling.html#ts-ssdk-i
 <p>For example, consider a service that, for backwards compatibility purposes, needs to return a <code class="docutils literal notranslate"><span class="pre">BadInput</span></code> error:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-05-10"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetForecast</span>]<span class="p">,</span>
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BadInput</span>]
 }
 
 <span class="nt">@httpError</span>(<span class="m">400</span>)
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">BadInput</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 }
 </pre></div>
 </div>
 <p>After disabling default validation in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@example/weather-service&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"typescript-ssdk-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@example/weather-service"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0-alpha.1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"disableDefaultValidation"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -686,7 +687,7 @@ Create and use an override as follows:</p>
 configuration settings. To get a client-specific override builder, use the <code class="docutils literal notranslate"><span class="pre">.requestOverrideBuilder</span></code> method on the
 generated client:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">overrideBuilder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyClient</span><span class="p">.</span><span class="na">requestOverrideBuilder</span><span class="p">();</span>
-<span class="kd">var</span><span class="w"> </span><span class="n">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">overrideBuilder</span><span class="p">.</span><span class="na">customSetting</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">overrideBuilder</span><span class="p">.</span><span class="na">customSetting</span><span class="p">(</span><span class="s">"foo"</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">createFoo</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">override</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -761,10 +762,10 @@ added through a <code class="docutils literal notranslate"><span class="pre">Req
 fully qualified name to the <code class="docutils literal notranslate"><span class="pre">defaultPlugins</span></code> setting to your :ref`smithy-build &lt;smithy-build&gt;` configuration:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"java-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// ...</span>
-<span class="w">     </span><span class="nt">&quot;defaultPlugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;fully.qualified.plugin.name.MyPlugin&quot;</span>
+<span class="w">     </span><span class="nt">"defaultPlugins"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"fully.qualified.plugin.name.MyPlugin"</span>
 <span class="w">     </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -972,7 +973,7 @@ base64 encoded. Each event is delineated by a long line.</p>
 :event-type: structure
 :content-type: application/json
 
-{&quot;foo&quot;:&quot;bar&quot;}
+{"foo":"bar"}
 -------------------------------------------------------------------------------
 :message-type: event
 :event-type: string
@@ -1036,7 +1037,7 @@ service with a JSON-based protocol:</p>
 <span class="w">    </span><span class="py">modeledError</span><span class="p">:</span><span class="w"> </span><span class="vc">MyError</span>
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">MyError</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -1048,7 +1049,7 @@ service with a JSON-based protocol:</p>
 :exception-type: modeledError
 :content-type: application/json
 
-{&quot;message&quot;:&quot;...&quot;}
+{"message":"..."}
 </pre></div>
 </div>
 </section>
@@ -1145,7 +1146,7 @@ no different than a conventional HTTP RPC request:</p>
 <span class="na">X-Amz-Target</span><span class="o">:</span> <span class="l">Kinesis_20131202.GetRecordStream</span>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">224</span>
 
-{&quot;ShardIterator&quot;:&quot;...&quot;}
+{"ShardIterator":"..."}
 </pre></div>
 </div>
 <p>The response is an event stream, so it begins with an <code class="docutils literal notranslate"><span class="pre">initial-response</span></code>
@@ -1160,21 +1161,21 @@ event:</p>
 :event-type: initial-response
 :content-type: application/json
 
-{&quot;streamLifetimeInMinutes&quot;:5}
+{"streamLifetimeInMinutes":5}
 -------------------------------------------------------------------------------
 :message-type: event
 :event-type: recordsListEvent
 :content-type: application/json
 
 {
-    &quot;MillisBehindLatest&quot;: 2100,
-    &quot;NextShardIterator&quot;: &quot;...&quot;,
-    &quot;Records&quot;: [
+    "MillisBehindLatest": 2100,
+    "NextShardIterator": "...",
+    "Records": [
         {
-        &quot;Data&quot;: &quot;XzxkYXRhPl8w&quot;,
-        &quot;PartitionKey&quot;: &quot;partitionKey&quot;,
-        &quot;ApproximateArrivalTimestamp&quot;: 1.441215410867E9,
-        &quot;SequenceNumber&quot;: &quot;21269319989652663814458848515492872193&quot;
+        "Data": "XzxkYXRhPl8w",
+        "PartitionKey": "partitionKey",
+        "ApproximateArrivalTimestamp": 1.441215410867E9,
+        "SequenceNumber": "21269319989652663814458848515492872193"
         }
     ]
 }

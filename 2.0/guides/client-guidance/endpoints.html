@@ -55,7 +55,7 @@
     <link rel="icon" href="../../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Glossary" href="../glossary.html" />
+    <link rel="next" title="Interceptors" href="interceptors.html" />
     <link rel="prev" title="Retrying Requests" href="retries.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -729,7 +730,7 @@ auth schemes that the endpoint supports.</p>
 setting the URI. This context carries metadata that tells the client how to
 modify requests for this specific endpoint. For example, some AWS use cases
 require that additional headers be added to HTTP requests for certain endpoints.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">HEADERS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">&quot;Endpoint headers&quot;</span><span class="p">);</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">HEADERS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">"Endpoint headers"</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -751,7 +752,7 @@ indicates that the endpoint has no special auth settings.</p>
 <span class="cm"> */</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EndpointAuthScheme</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="cm">/**</span>
-<span class="cm">     * The ID of the auth scheme (e.g., &quot;aws.auth#sigv4&quot;).</span>
+<span class="cm">     * The ID of the auth scheme (e.g., "aws.auth#sigv4").</span>
 <span class="cm">     *</span>
 <span class="cm">     * @return the auth scheme ID.</span>
 <span class="cm">     */</span>
@@ -883,11 +884,11 @@ it should take precedence over any configured <code class="docutils literal notr
       </div>
     </a>
     <a class="right-next"
-       href="../glossary.html"
+       href="interceptors.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Glossary</p>
+        <p class="prev-next-title">Interceptors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -837,7 +838,7 @@ any type.</p></td>
 <p>The following example defines smoke test cases for an operation which should
 return a specific <code class="docutils literal notranslate"><span class="pre">InvalidMessageError</span></code> response when given an invalid input,
 and return a successful response otherwise.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -846,15 +847,15 @@ and return a successful response otherwise.</p>
 <span class="nt">@smokeTests</span>(
 <span class="w">    </span>[
 <span class="w">        </span>{
-<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooSuccess&quot;</span>
-<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>}
+<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooSuccess"</span>
+<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span>}
 <span class="w">            </span><span class="py">expect</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">                </span><span class="py">success</span><span class="p">:</span><span class="w"> </span>{}
 <span class="w">            </span>}
 <span class="w">        </span>}
 <span class="w">        </span>{
-<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooInvalidMessageError&quot;</span>
-<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;föö&quot;</span>}
+<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooInvalidMessageError"</span>
+<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">"föö"</span>}
 <span class="w">            </span><span class="py">expect</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">                </span><span class="py">failure</span><span class="p">:</span><span class="w"> </span>{<span class="py">errorId</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidMessageError</span>}
 <span class="w">            </span>}
@@ -870,7 +871,7 @@ and return a successful response otherwise.</p>
 <span class="w">    </span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">InvalidMessageError</span><span class="w"> </span>{}
 </pre></div>
 </div>

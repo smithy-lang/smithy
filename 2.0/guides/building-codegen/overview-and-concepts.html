@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -694,13 +695,13 @@ Interfaces (SPI).</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">       </span><span class="nt">&quot;foo-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">           </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example.weather&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="nt">&quot;edition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2022&quot;</span>
+<span class="w">   </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">"foo-client-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Weather"</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.example.weather"</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span><span class="p">,</span>
+<span class="w">           </span><span class="nt">"edition"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022"</span>
 <span class="w">       </span><span class="p">}</span>
 <span class="w">   </span><span class="p">}</span>
 <span class="p">}</span>
@@ -812,15 +813,15 @@ configured for a Java code generator:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">       </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">           </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;java-server-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                   </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.bigco.example#Example&quot;</span><span class="p">,</span>
-<span class="w">                   </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.bigco.example&quot;</span><span class="p">,</span>
-<span class="w">                   </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-<span class="w">                   </span><span class="nt">&quot;edition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2022&quot;</span>
+<span class="w">   </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"projections"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">"java-server-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                   </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.bigco.example#Example"</span><span class="p">,</span>
+<span class="w">                   </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.bigco.example"</span><span class="p">,</span>
+<span class="w">                   </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span><span class="p">,</span>
+<span class="w">                   </span><span class="nt">"edition"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022"</span>
 <span class="w">               </span><span class="p">}</span>
 <span class="w">           </span><span class="p">}</span>
 <span class="w">       </span><span class="p">}</span>

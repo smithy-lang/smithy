@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -753,16 +754,16 @@ found or does not match the <code class="docutils literal notranslate"><span cla
 <p>To illustrate an example, a custom trait named <code class="docutils literal notranslate"><span class="pre">integerRef</span></code> is defined.
 This trait can be attached to any shape, and the value of the trait MUST
 contain a valid shape ID that targets an integer shape in the model.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@trait</span>
-<span class="nt">@idRef</span>(<span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>)
+<span class="nt">@idRef</span>(<span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span>)
 <span class="kd">string </span><span class="nc">integerRef</span>
 </pre></div>
 </div>
 <p>Given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@integerRef</span>(<span class="vc">NotFound</span>)
@@ -771,7 +772,7 @@ contain a valid shape ID that targets an integer shape in the model.</p>
 <span class="nt">@integerRef</span>(<span class="vc">String</span>)
 <span class="kd">string </span><span class="nc">InvalidShape2</span>
 
-<span class="nt">@integerRef</span>(<span class="s2">&quot;invalid-shape-id!&quot;</span>)
+<span class="nt">@integerRef</span>(<span class="s2">"invalid-shape-id!"</span>)
 <span class="kd">string </span><span class="nc">InvalidShape3</span>
 
 <span class="nt">@integerRef</span>(<span class="vc">Integer</span>)
@@ -887,7 +888,7 @@ the corresponding shape:</p>
 conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z]+$&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">"^[A-Za-z]+$"</span>)
 <span class="kd">string </span><span class="nc">Alphabetic</span>
 </pre></div>
 </div>
@@ -912,7 +913,7 @@ requires that the entire string matches the regular expression.</p>
 <p>Pattern values that contain <code class="docutils literal notranslate"><span class="pre">\</span></code> need to <a class="reference internal" href="idl.html#string-escape-characters"><span class="std std-ref">escape it</span></a>.
 For example, the regular expression <code class="docutils literal notranslate"><span class="pre">^\w+$</span></code> would be specified as
 <code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;^\\w+$&quot;)</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;</span><span class="se">\\</span><span class="s2">w+&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">"</span><span class="se">\\</span><span class="s2">w+"</span>)
 <span class="kd">string </span><span class="nc">ContainsWords</span>
 </pre></div>
 </div>
@@ -936,7 +937,7 @@ which the shape is defined. The <code class="docutils literal notranslate"><span
 access from within the model itself and SHOULD NOT influence code-generation
 of the targeted shape.</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@private</span>
@@ -945,7 +946,7 @@ of the targeted shape.</p>
 </div>
 <p>The following model is invalid because it attempts to refer to
 <code class="docutils literal notranslate"><span class="pre">PrivateString</span></code> from another namespace:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example.other</span>
 
 <span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{

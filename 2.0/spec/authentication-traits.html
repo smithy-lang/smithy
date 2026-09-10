@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -713,39 +714,39 @@ is marked with the <a class="reference internal" href="#auth-trait"><span class=
 supported authentication schemes.</p>
 <p>The following example defines a service that supports both <code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code>
 and the hypothetical <code class="docutils literal notranslate"><span class="pre">fooExample</span></code> authentication scheme.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@authDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">fooExample</span><span class="w"> </span>{}
 
 <span class="nt">@fooExample</span>
 <span class="nt">@httpBasicAuth</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
 <p>Because authentication scheme definitions are just specialized shapes, they
 can also support configuration settings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@authDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="kd">structure </span><span class="nc">algorithmAuth</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">algorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">AlgorithmAuthAlgorithm</span>
 }
 
 <span class="nt">@private</span>
 <span class="kd">enum </span><span class="nc">AlgorithmAuthAlgorithm</span><span class="w"> </span>{
-<span class="w">    </span><span class="vc">SHA2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>
+<span class="w">    </span><span class="vc">SHA2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"SHA-2"</span>
 }
 
-<span class="nt">@algorithmAuth</span>(<span class="py">algorithm</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>)
+<span class="nt">@algorithmAuth</span>(<span class="py">algorithm</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHA-2"</span>)
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -765,7 +766,7 @@ defined in <span class="target" id="index-0"></span><a class="rfc reference exte
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBasicAuth</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -785,7 +786,7 @@ in <span class="target" id="index-1"></span><a class="rfc reference external" hr
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -805,7 +806,7 @@ in <span class="target" id="index-2"></span><a class="rfc reference external" hr
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBearerAuth</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -860,17 +861,17 @@ only be set if the &quot;in&quot; property is set to <code class="docutils liter
 </div>
 <p>The following example defines a service that accepts an API key in the &quot;X-Api-Key&quot;
 HTTP header:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"X-Api-Key"</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>)
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
 <p>The following example defines a service that uses an API key auth scheme through
 the HTTP <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ApiKey&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="s2">"ApiKey"</span><span class="p">,</span><span class="w"> </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"Authorization"</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>)
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -892,7 +893,7 @@ regardless of any authentication traits applied to the operation.</p>
 and bound to the service is an operation that supports unauthenticated access.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">PingServer</span>]
 }
 
@@ -977,7 +978,7 @@ without authentication.</p>
 <span class="nt">@httpDigestAuth</span>
 <span class="nt">@httpBearerAuth</span>
 <span class="kd">service </span><span class="nc">ServiceWithNoAuthTrait</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-01-29"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">OperationA</span>
 <span class="w">        </span><span class="vc">OperationB</span>
@@ -1000,7 +1001,7 @@ without authentication.</p>
 <span class="nt">@httpBearerAuth</span>
 <span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">httpDigestAuth</span>])
 <span class="kd">service </span><span class="nc">ServiceWithAuthTrait</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-01-29"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">OperationC</span>
 <span class="w">        </span><span class="vc">OperationD</span>
@@ -1030,7 +1031,7 @@ authentication scheme trait that is not applied to the service:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
 <span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"> </span><span class="c">// &lt;-- Invalid!</span>
 <span class="kd">service </span><span class="nc">InvalidExample</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
@@ -1038,7 +1039,7 @@ authentication scheme trait that is not applied to the service:</p>
 authentication scheme trait that is not applied to the service:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
 <span class="kd">service </span><span class="nc">InvalidExample</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]
 }
 

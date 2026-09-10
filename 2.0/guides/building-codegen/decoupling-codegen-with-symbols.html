@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -706,29 +707,29 @@ between the code being generated and the logic used to determine:</p>
 to write symbols to the generated code and automatically add imports to
 the file:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create MyWriter, an imaginary subclass of SymbolWriter.</span>
-<span class="c1">// Set the namespace of the writer to &quot;example.foo&quot;, which internally</span>
-<span class="c1">// calls SymbolWriter#relativizeSymbols, passing in &quot;example.foo&quot;.</span>
-<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">);</span>
+<span class="c1">// Set the namespace of the writer to "example.foo", which internally</span>
+<span class="c1">// calls SymbolWriter#relativizeSymbols, passing in "example.foo".</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">"example.foo"</span><span class="p">);</span>
 
 <span class="c1">// Create an example Symbol that refers to a type in the same namespace</span>
-<span class="c1">// as the writer&#39;s current namespace. Setting the the namespace also</span>
+<span class="c1">// as the writer's current namespace. Setting the the namespace also</span>
 <span class="c1">// requires the namespace separator.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"Example"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"example.foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
-<span class="c1">// &quot;$T&quot; in the following call to &#39;write&#39; is replaced with just</span>
-<span class="c1">// the name of the Symbol (&quot;Example&quot;) because the Symbol&#39;s</span>
+<span class="c1">// "$T" in the following call to 'write' is replaced with just</span>
+<span class="c1">// the name of the Symbol ("Example") because the Symbol's</span>
 <span class="c1">// namespace matches the relative namespace of the writer.</span>
 <span class="c1">// If exampleSymbol was in a different namespace, the writer</span>
 <span class="c1">// would either write the fully-qualified name or would add</span>
 <span class="c1">// an import to the file for the symbol.</span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">    if ($T.isEmpty()) {</span>
 <span class="s">        doSomething();</span>
 <span class="s">    }</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s">    """</span><span class="p">,</span>
 <span class="w">    </span><span class="n">exampleSymbol</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -765,17 +766,17 @@ SymbolReference is used when a Symbol uses generic type parameters. The
 following example is a Symbol created for a list of
 <code class="docutils literal notranslate"><span class="pre">example.foo.Example</span></code> values in a Java-like language,
 <code class="docutils literal notranslate"><span class="pre">collections.List&lt;example.foo.Example&gt;</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create the &quot;Example&quot; Symbol used in the &quot;List&lt;Example&gt;&quot;.</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create the "Example" Symbol used in the "List&lt;Example&gt;".</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"Example"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"example.foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
-<span class="c1">// Create a &quot;List&lt;Example&gt;&quot; that can be properly relativized</span>
+<span class="c1">// Create a "List&lt;Example&gt;" that can be properly relativized</span>
 <span class="c1">// against the current namespace of the SymbolWriter.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">listSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;List&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;collections&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"List"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"collections"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// Automatically creates a SymbolReference from a Symbol.</span>
 <span class="w">        </span><span class="p">.</span><span class="na">addReference</span><span class="p">(</span><span class="n">exampleSymbol</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
@@ -791,18 +792,18 @@ have conflicts.</p>
 <p>The following example creates a Symbol for <code class="docutils literal notranslate"><span class="pre">List&lt;__Example&gt;</span></code> where
 <code class="docutils literal notranslate"><span class="pre">__Example</span></code> is an alias to <code class="docutils literal notranslate"><span class="pre">com.foo.Example</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"Example"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"example.foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
-<span class="c1">// Alias &quot;Example&quot; to &quot;__Example&quot;.</span>
-<span class="n">SymbolReference</span><span class="w"> </span><span class="n">exampleReference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="p">.</span><span class="na">toReference</span><span class="p">(</span><span class="s">&quot;__Example&quot;</span><span class="p">);</span>
+<span class="c1">// Alias "Example" to "__Example".</span>
+<span class="n">SymbolReference</span><span class="w"> </span><span class="n">exampleReference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="p">.</span><span class="na">toReference</span><span class="p">(</span><span class="s">"__Example"</span><span class="p">);</span>
 
-<span class="c1">// Create a &quot;List&lt;__Example&gt;&quot; that can be properly relativized</span>
+<span class="c1">// Create a "List&lt;__Example&gt;" that can be properly relativized</span>
 <span class="c1">// against the current namespace of the SymbolWriter.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">listSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;List&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;collections&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"List"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"collections"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">addReference</span><span class="p">(</span><span class="n">exampleReference</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
@@ -812,21 +813,21 @@ that the references of the Symbol need to be accounted for when writing
 the symbol by importing any necessary dependencies with appropriate
 aliases.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Hypothetical example of managing imports and using references.</span>
-<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">&quot;example.other.namespace&quot;</span><span class="p">);</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">"example.other.namespace"</span><span class="p">);</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">    var list = new $T();</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s">    """</span><span class="p">,</span>
 <span class="w">    </span><span class="n">listSymbol</span><span class="p">);</span>
 
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">    package example.other.namespace;</span>
 
 <span class="s">    import collections.List;</span>
 <span class="s">    import example.foo.Example as __Example;</span>
 
 <span class="s">    var list = new List&lt;__Example&gt;();</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">));</span>
+<span class="s">    """</span><span class="p">));</span>
 </pre></div>
 </div>
 </section>
@@ -851,22 +852,22 @@ and adding them to the Symbol via <code class="docutils literal notranslate"><sp
 refers to a type defined in a package named <code class="docutils literal notranslate"><span class="pre">big</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This dependency is needed in JavaScript.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">bigRuntimeDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">&quot;dependencies&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">&quot;big&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;^5.2.2&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">"dependencies"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">"big"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">"^5.2.2"</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
 <span class="c1">// This dependency is needed by the TypeScript compiler.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">bigTsDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">&quot;devDependencies&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">&quot;@types/big.js&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;^4.0.5&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">"devDependencies"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">"@types/big.js"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">"^4.0.5"</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
 <span class="c1">// Create a symbol used for big decimals in Smithy.</span>
 <span class="kd">var</span><span class="w"> </span><span class="n">big</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Big&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;big&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"Big"</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"big"</span><span class="p">,</span><span class="w"> </span><span class="s">"/"</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">addDependency</span><span class="p">(</span><span class="n">bigRuntimeDependency</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">addDependency</span><span class="p">(</span><span class="n">bigTsDependency</span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
@@ -895,14 +896,14 @@ update version numbers in a single place.</p>
 <span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">TypeScriptDependency</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolDependencyContainer</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">    </span><span class="c1">// Conditionally added if a big decimal shape is found in a model.</span>
-<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">&quot;dependencies&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;big.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;^5.2.2&quot;</span><span class="p">),</span>
-<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">&quot;devDependencies&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;@types/big.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;^4.0.5&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">"dependencies"</span><span class="p">,</span><span class="w"> </span><span class="s">"big.js"</span><span class="p">,</span><span class="w"> </span><span class="s">"^5.2.2"</span><span class="p">),</span>
+<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">"devDependencies"</span><span class="p">,</span><span class="w"> </span><span class="s">"@types/big.js"</span><span class="p">,</span><span class="w"> </span><span class="s">"^4.0.5"</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">NORMAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dependencies&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">DEV_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;devDependencies&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">PEER_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;peerDependencies&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BUNDLED_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bundledDependencies&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">OPTIONAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;optionalDependencies&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">NORMAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"dependencies"</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">DEV_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"devDependencies"</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">PEER_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"peerDependencies"</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BUNDLED_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"bundledDependencies"</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">OPTIONAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"optionalDependencies"</span><span class="p">;</span>
 
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="w"> </span><span class="n">dependency</span><span class="p">;</span>
 
@@ -945,8 +946,8 @@ need to be translated from other formats or lock files. For example:</p>
 <span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">TypeScriptDependency</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolDependencyContainer</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">    </span><span class="c1">// Conditionally added if a big decimal shape is found in a model.</span>
-<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">&quot;big.js&quot;</span><span class="p">),</span>
-<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">&quot;@types/big.js&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">"big.js"</span><span class="p">),</span>
+<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">"@types/big.js"</span><span class="p">);</span>
 
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="w"> </span><span class="n">dependency</span><span class="p">;</span>
 
@@ -962,7 +963,7 @@ need to be translated from other formats or lock files. For example:</p>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">VersionFile</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DependencyTracker</span><span class="w"> </span><span class="n">VERSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DependencyTracker</span><span class="p">();</span>
 <span class="w">        </span><span class="kd">static</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;sdkVersions.json&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"sdkVersions.json"</span><span class="p">;</span>
 <span class="w">            </span><span class="n">VERSIONS</span><span class="p">.</span><span class="na">addDependenciesFromJson</span><span class="p">(</span><span class="n">SdkVersion</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getResource</span><span class="p">(</span><span class="n">path</span><span class="p">));</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1011,7 +1012,7 @@ language are accounted for during codegen.</p>
 <span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">ShapeId</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renames</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span>
-<span class="w">        </span><span class="c1">// Sourced from the directive&#39;s getRenames() so naming works whether</span>
+<span class="w">        </span><span class="c1">// Sourced from the directive's getRenames() so naming works whether</span>
 <span class="w">        </span><span class="c1">// generation is driven by a service or a shape closure.</span>
 <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">renames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">renames</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1019,7 +1020,7 @@ language are accounted for during codegen.</p>
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">toSymbol</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">Symbol</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">accept</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-<span class="w">        </span><span class="n">LOGGER</span><span class="p">.</span><span class="na">fine</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Creating symbol from %s: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">symbol</span><span class="p">));</span>
+<span class="w">        </span><span class="n">LOGGER</span><span class="p">.</span><span class="na">fine</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">format</span><span class="p">(</span><span class="s">"Creating symbol from %s: %s"</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">symbol</span><span class="p">));</span>
 <span class="w">        </span><span class="c1">// TODO: Escape reserved words.</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1037,7 +1038,7 @@ language are accounted for during codegen.</p>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">createErrorStructure</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UnsupportedOperationException</span><span class="p">(</span><span class="s">&quot;Error type codegen not yet implemented&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UnsupportedOperationException</span><span class="p">(</span><span class="s">"Error type codegen not yet implemented"</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">createNormalStructure</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -1046,17 +1047,17 @@ language are accounted for during codegen.</p>
 <span class="w">            </span><span class="c1">// Change this to however the settings object configures the</span>
 <span class="w">            </span><span class="c1">// target namespace and the namespace separator for the</span>
 <span class="w">            </span><span class="c1">// language.</span>
-<span class="w">            </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">(),</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
 <span class="w">            </span><span class="c1">// Change this to however filenames should work each generated</span>
 <span class="w">            </span><span class="c1">// type. If this changes, then the files used to generate</span>
 <span class="w">            </span><span class="c1">// code should automatically change too.</span>
-<span class="w">            </span><span class="p">.</span><span class="na">definitionFile</span><span class="p">(</span><span class="s">&quot;models/&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.xyz&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">definitionFile</span><span class="p">(</span><span class="s">"models/"</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".xyz"</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getDefaultShapeName</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Use the rename for this shape if there is one, otherwise its plain</span>
-<span class="w">        </span><span class="c1">// name, and ensure it&#39;s capitalized. Works for both service- and</span>
+<span class="w">        </span><span class="c1">// name, and ensure it's capitalized. Works for both service- and</span>
 <span class="w">        </span><span class="c1">// closure-driven generation.</span>
 <span class="w">        </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">();</span>
 <span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">renames</span><span class="p">.</span><span class="na">getOrDefault</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
@@ -1090,8 +1091,8 @@ example:</p>
 <span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">ShapeId</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renames</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// ... other setup</span>
 <span class="hll"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span>
-</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Function&quot;</span><span class="p">)</span>
-</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;throw&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Throw&quot;</span><span class="p">)</span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"function"</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"Function"</span><span class="p">)</span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"throw"</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"Throw"</span><span class="p">)</span>
 </span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </span><span class="w">    </span><span class="p">}</span>
 
@@ -1127,11 +1128,11 @@ throw
 <p><code class="docutils literal notranslate"><span class="pre">ReservedWordsBuilder</span></code> can be configured to escape words using the
 file and your escaping function.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Returns something like &quot;MyNamespaceFunction&quot;.</span>
+<span class="w">    </span><span class="c1">// Returns something like "MyNamespaceFunction".</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">word</span><span class="p">);</span>
 <span class="p">});</span>
 
-<span class="n">URL</span><span class="w"> </span><span class="n">wordsFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">&quot;reservedwords.txt&quot;</span><span class="p">);</span>
+<span class="n">URL</span><span class="w"> </span><span class="n">wordsFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">"reservedwords.txt"</span><span class="p">);</span>
 
 <span class="n">ReservedWords</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">loadWords</span><span class="p">(</span><span class="n">wordsFile</span><span class="p">,</span><span class="w"> </span><span class="n">escaper</span><span class="p">)</span>
@@ -1176,7 +1177,7 @@ to every Symbol:</p>
 <span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">wrapSymbolProvider</span><span class="p">(</span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">delegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">delegate</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">toBuilder</span><span class="p">()</span>
-<span class="w">                    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;shape&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">"shape"</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span>
 <span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 <span class="w">        </span><span class="p">};</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1230,7 +1231,7 @@ is added to a map of namespaces to a map of alias → target name.</p>
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">imports</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1">// Build up each line of import statements.</span>
@@ -1240,18 +1241,18 @@ is added to a map of namespaces to a map of alias → target name.</p>
 <span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span>
 <span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">().</span><span class="na">getKey</span><span class="p">();</span>
 <span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">().</span><span class="na">getValue</span><span class="p">();</span>
-<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;import &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">target</span><span class="p">);</span>
+<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">"import "</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">target</span><span class="p">);</span>
 
 <span class="w">            </span><span class="c1">// Use a made up aliasing syntax if the alias differs from the target.</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">alias</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">target</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot; as &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+<span class="w">                </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" as "</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
 <span class="w">            </span><span class="p">}</span>
 
 <span class="w">            </span><span class="c1">// Import from a target namespace.</span>
-<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot; from &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">ns</span><span class="p">);</span>
+<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">" from "</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">ns</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">"\n"</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1281,12 +1282,12 @@ created.</p>
 <span class="w">        </span><span class="c1">// You can override how code is converted to a string. For example,</span>
 <span class="w">        </span><span class="c1">// this allows you to add a prelude to generated code or to write the</span>
 <span class="w">        </span><span class="c1">// necessary imports that were used in the writer.</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">getImportContainer</span><span class="p">().</span><span class="na">toString</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;\n\n&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">getImportContainer</span><span class="p">().</span><span class="na">toString</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"\n\n"</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">MyWriter</span><span class="w"> </span><span class="nf">someCustomMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// You can implement custom methods that are specific to whatever</span>
-<span class="w">        </span><span class="c1">// language you&#39;re implementing a generator for.</span>
+<span class="w">        </span><span class="c1">// language you're implementing a generator for.</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1307,7 +1308,7 @@ is written.</p>
 <p>Let's say you need to generate code for a structure shape. You ask the
 <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to give you the appropriate <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">useShapeWriter</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Structure $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"Structure $L"</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
 <span class="p">});</span>
 </pre></div>
 </div>
@@ -1318,12 +1319,12 @@ the given shape. If multiple shapes use the same filename, then
 to <code class="docutils literal notranslate"><span class="pre">useShapeWriter</span></code>, and it will automatically inject <code class="docutils literal notranslate"><span class="pre">\n</span></code> prior to
 vending a previously used writer (this can be customized).</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">useFileWriter</span></code> to write to a file that isn't specific to a shape:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">"README.md"</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">        # This is my README!</span>
 
 <span class="s">        Do you like it?</span>
-<span class="s">        &quot;&quot;&quot;</span><span class="p">);</span>
+<span class="s">        """</span><span class="p">);</span>
 <span class="p">});</span>
 </pre></div>
 </div>
@@ -1348,18 +1349,18 @@ manifests for the created code.</p>
 <h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Link to this heading">#</a></h3>
 <p>Use typed property bags to store additional information. For example:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Symbol</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;customData&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">"example.foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"."</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">"customData"</span><span class="p">,</span><span class="w"> </span><span class="s">"hello"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 
-<span class="n">String</span><span class="w"> </span><span class="n">customData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;customData&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">customData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">"customData"</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>You can add properties to an existing <code class="docutils literal notranslate"><span class="pre">Symbol</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReference</span></code>,
 or <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> by calling <code class="docutils literal notranslate"><span class="pre">toBuilder</span></code> first:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;anotherProperty&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">"anotherProperty"</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>

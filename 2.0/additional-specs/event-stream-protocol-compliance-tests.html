@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1035,39 +1036,39 @@ It asserts that a <code class="docutils literal notranslate"><span class="pre">s
 serialized in both directions over a bidirectional stream.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@eventStreamTests</span>([
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DuplexStringPayload&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">"DuplexStringPayload"</span>
 <span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">restJson1</span>
 <span class="w">        </span><span class="py">events</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span>
+<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"request"</span>
 <span class="w">                </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">stringPayload</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="py">stringPayload</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="w"> </span>}
 <span class="w">                </span>}
 <span class="w">                </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="s2">&quot;:message-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;event&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:event-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringPayload&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:content-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":message-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"event"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":event-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"stringPayload"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":content-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span><span class="w"> </span>}
 <span class="w">                </span>}
-<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
-<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span>
+<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span>
+<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span>
 <span class="w">            </span>}
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;response&quot;</span>
+<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"response"</span>
 <span class="w">                </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">stringPayload</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="py">stringPayload</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">payload</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="w"> </span>}
 <span class="w">                </span>}
 <span class="w">                </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="s2">&quot;:message-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;event&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:event-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringPayload&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:content-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":message-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"event"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":event-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"stringPayload"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":content-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span><span class="w"> </span>}
 <span class="w">                </span>}
-<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
-<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span>
+<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span>
+<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span>
 <span class="w">            </span>}
 <span class="w">        </span>]
 <span class="w">    </span>}
 ])
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/DuplexStream&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/DuplexStream"</span>)
 <span class="kd">operation </span><span class="nc">DuplexStream</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpPayload</span>
@@ -1098,31 +1099,31 @@ serialized in both directions over a bidirectional stream.</p>
 error type.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@eventStreamTests</span>([
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ClientErrorOutput&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">"ClientErrorOutput"</span>
 <span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">restJson1</span>
 <span class="w">        </span><span class="py">events</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;response&quot;</span>
+<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"response"</span>
 <span class="w">                </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="w"> </span>}
 <span class="w">                </span>}
 <span class="w">                </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="s2">&quot;:message-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exception&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:exception-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:content-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":message-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"exception"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":exception-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":content-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/json"</span><span class="w"> </span>}
 <span class="w">                </span>}
-<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    {&quot;message&quot;:&quot;foo&quot;}&quot;&quot;&quot;</span>
-<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span>
+<span class="w">                </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">"""</span>
+<span class="s2">                    {"message":"foo"}"""</span>
+<span class="w">                </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/json"</span>
 <span class="w">            </span>}
 <span class="w">        </span>]
 <span class="w">        </span><span class="py">expectation</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">            </span><span class="py">failure</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">errorId</span><span class="p">:</span><span class="w"> </span><span class="vc">ErrorEvent</span><span class="w"> </span>}
 <span class="w">        </span>}
-<span class="w">        </span><span class="py">appliesTo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;client&quot;</span>
+<span class="w">        </span><span class="py">appliesTo</span><span class="p">:</span><span class="w"> </span><span class="s2">"client"</span>
 <span class="w">    </span>}
 ])
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/OutputStream&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/OutputStream"</span>)
 <span class="kd">operation </span><span class="nc">OutputStream</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpPayload</span>
@@ -1135,7 +1136,7 @@ error type.</p>
 <span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">ErrorEvent</span>
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">ErrorEvent</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -1148,26 +1149,26 @@ error type.</p>
 specific error since the error returned is not modeled.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@eventStreamTests</span>([
 <span class="w">    </span>{
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ClientUnexpectedErrorOutput&quot;</span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Clients must be able to handle structured, but unmodeled errors.&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">"ClientUnexpectedErrorOutput"</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"Clients must be able to handle structured, but unmodeled errors."</span>
 <span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">restJson1</span>
 <span class="w">        </span><span class="py">events</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;response&quot;</span>
+<span class="w">                </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"response"</span>
 <span class="w">                </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="s2">&quot;:message-type&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:error-code&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;internal-error&quot;</span><span class="w"> </span>}
-<span class="w">                    </span><span class="s2">&quot;:error-message&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;An unknown error occurred.&quot;</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":message-type"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"error"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":error-code"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"internal-error"</span><span class="w"> </span>}
+<span class="w">                    </span><span class="s2">":error-message"</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="s2">"An unknown error occurred."</span><span class="w"> </span>}
 <span class="w">                </span>}
 <span class="w">            </span>}
 <span class="w">        </span>]
 <span class="w">        </span><span class="py">expectation</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">            </span><span class="py">failure</span><span class="p">:</span><span class="w"> </span>{}
 <span class="w">        </span>}
-<span class="w">        </span><span class="py">appliesTo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;client&quot;</span>
+<span class="w">        </span><span class="py">appliesTo</span><span class="p">:</span><span class="w"> </span><span class="s2">"client"</span>
 <span class="w">    </span>}
 ])
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/OutputStream&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/OutputStream"</span>)
 <span class="kd">operation </span><span class="nc">OutputStream</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpPayload</span>

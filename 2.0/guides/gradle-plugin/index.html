@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -738,7 +739,7 @@ The following example configures a project to use the <code class="docutils lite
 <div class="literal-block-wrapper docutils container" id="id9">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-base&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy.gradle.smithy-base"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"1.5.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -748,7 +749,7 @@ The following example configures a project to use the <code class="docutils lite
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-base&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'software.amazon.smithy.gradle.smithy-base'</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">'1.5.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -801,11 +802,11 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy.gradle.smithy-jar"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"1.5.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="c1">// The SmithyExtension is used to customize the build. This example</span>
-<span class="c1">// doesn&#39;t set any values and can be completely omitted.</span>
+<span class="c1">// doesn't set any values and can be completely omitted.</span>
 <span class="n">smithy</span><span class="w"> </span><span class="p">{}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
@@ -814,12 +815,12 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-model:1.73.0"</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
-<span class="w">    </span><span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-model-internal-common:1.0.0&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// a "common" model package and uses the external AWS traits.</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.foo.baz:foo-model-internal-common:1.0.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -829,12 +830,12 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
-<span class="w">    </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'java-library'</span>
+<span class="w">    </span><span class="s1">'software.amazon.smithy.gradle.smithy-jar'</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">'1.5.0'</span>
 <span class="o">}</span>
 
 <span class="c1">// The SmithyExtension is used to customize the build. This example</span>
-<span class="c1">// doesn&#39;t set any values and can be completely omitted.</span>
+<span class="c1">// doesn't set any values and can be completely omitted.</span>
 <span class="n">smithy</span><span class="w"> </span><span class="o">{}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="o">{</span>
@@ -843,12 +844,12 @@ using only the <a class="reference internal" href="#model-sources"><span class="
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-model:1.73.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-model:1.73.0'</span>
 
 <span class="w">    </span><span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
-<span class="w">    </span><span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;com.foo.baz:foo-model-internal-common:1.0.0&#39;</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
+<span class="w">    </span><span class="c1">// a "common" model package and uses the external AWS traits.</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.foo.baz:foo-model-internal-common:1.0.0'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.73.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -874,7 +875,7 @@ build using the &quot;external&quot; projection.</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id13" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy.gradle.smithy-jar"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"1.5.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
@@ -883,21 +884,21 @@ build using the &quot;external&quot; projection.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// Take a dependency on the internal model package. This</span>
 <span class="w">    </span><span class="c1">// dependency *must* be a smithyBuild dependency to ensure</span>
 <span class="w">    </span><span class="c1">// that is does not appear in the generated JAR.</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-internal-model:1.0.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"com.foo.baz:foo-internal-model:1.0.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Use the &quot;external&quot; projection. This projection must be found in the</span>
+<span class="w">    </span><span class="c1">// Use the "external" projection. This projection must be found in the</span>
 <span class="w">    </span><span class="c1">// smithy-build.json file. This also ensures that models found in the</span>
-<span class="w">    </span><span class="c1">// foo-internal-package that weren&#39;t filtered out are copied into the</span>
+<span class="w">    </span><span class="c1">// foo-internal-package that weren't filtered out are copied into the</span>
 <span class="w">    </span><span class="c1">// projection created by this package.</span>
-<span class="w">    </span><span class="n">sourceProjection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;external&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">projectionSourceTags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-internal-model&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">sourceProjection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"external"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">projectionSourceTags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">"com.foo.baz:foo-internal-model"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -907,8 +908,8 @@ build using the &quot;external&quot; projection.</p>
 <div class="literal-block-wrapper docutils container" id="id14">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id14" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'java-library'</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'software.amazon.smithy.gradle.smithy-jar'</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">'1.5.0'</span>
 <span class="o">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="o">{</span>
@@ -917,21 +918,21 @@ build using the &quot;external&quot; projection.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.73.0'</span>
 
 <span class="w">    </span><span class="c1">// Take a dependency on the internal model package. This</span>
 <span class="w">    </span><span class="c1">// dependency *must* be a smithyBuild dependency to ensure</span>
 <span class="w">    </span><span class="c1">// that is does not appear in the generated JAR.</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'com.foo.baz:foo-internal-model:1.0.0'</span>
 <span class="o">}</span>
 
 <span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="c1">// Use the &quot;external&quot; projection. This projection must be found in the</span>
+<span class="w">    </span><span class="c1">// Use the "external" projection. This projection must be found in the</span>
 <span class="w">    </span><span class="c1">// smithy-build.json file. This also ensures that models found in the</span>
-<span class="w">    </span><span class="c1">// foo-internal-package that weren&#39;t filtered out are copied into the</span>
+<span class="w">    </span><span class="c1">// foo-internal-package that weren't filtered out are copied into the</span>
 <span class="w">    </span><span class="c1">// projection created by this package.</span>
-<span class="w">    </span><span class="n">sourceProjection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>
-<span class="w">    </span><span class="n">projectionSourceTags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;com.foo.baz:foo-internal-model&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="n">sourceProjection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"external"</span>
+<span class="w">    </span><span class="n">projectionSourceTags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">"com.foo.baz:foo-internal-model"</span><span class="o">]</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -944,30 +945,30 @@ projection. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id15">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id15" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;external&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"projections"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"external"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"transforms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;excludeShapesByTag&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"excludeShapesByTag"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"internal"</span><span class="p">]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;excludeShapesByTrait&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"excludeShapesByTrait"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"internal"</span><span class="p">]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;excludeMetadata&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;suppressions&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;validators&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"excludeMetadata"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"keys"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"suppressions"</span><span class="p">,</span><span class="w"> </span><span class="s2">"validators"</span><span class="p">]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
 <span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;removeUnusedShapes&quot;</span>
+<span class="w">                    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"removeUnusedShapes"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
@@ -989,8 +990,8 @@ your JAR by setting the <code class="docutils literal notranslate"><span class="
 <div class="literal-block-wrapper docutils container" id="id16">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id16" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">sourceProjection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;external&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">projectionSourceTags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;com.baz:bar&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">sourceProjection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"external"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">projectionSourceTags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"com.baz:bar"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1000,8 +1001,8 @@ your JAR by setting the <code class="docutils literal notranslate"><span class="
 <div class="literal-block-wrapper docutils container" id="id17">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id17" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>
-<span class="w">    </span><span class="n">projectionSourceTags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">setOf</span><span class="o">(</span><span class="s2">&quot;Foo&quot;</span><span class="o">,</span><span class="w"> </span><span class="s2">&quot;com.baz:bar&quot;</span><span class="o">)</span>
+<span class="w">    </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"external"</span>
+<span class="w">    </span><span class="n">projectionSourceTags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">setOf</span><span class="o">(</span><span class="s2">"Foo"</span><span class="o">,</span><span class="w"> </span><span class="s2">"com.baz:bar"</span><span class="o">)</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1016,7 +1017,7 @@ to the JAR MANIFEST.</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id18" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">tags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foobaz-model&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">tags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">"X"</span><span class="p">,</span><span class="w"> </span><span class="s">"foobaz-model"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1026,7 +1027,7 @@ to the JAR MANIFEST.</p>
 <div class="literal-block-wrapper docutils container" id="id19">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id19" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;X&quot;</span><span class="o">,</span><span class="w"> </span><span class="s2">&quot;foobaz-model&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">"X"</span><span class="o">,</span><span class="w"> </span><span class="s2">"foobaz-model"</span><span class="o">]</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1059,9 +1060,9 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
 
-<span class="w">    </span><span class="c1">// This dependency is required in order to apply the &quot;typescript-client-codegen&quot;</span>
+<span class="w">    </span><span class="c1">// This dependency is required in order to apply the "typescript-client-codegen"</span>
 <span class="w">    </span><span class="c1">// plugin in smithy-build.json</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.typescript:smithy-typescript-codegen:0.52.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.typescript:smithy-typescript-codegen:0.53.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1073,9 +1074,9 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
 
-<span class="w">    </span><span class="c1">// This dependency is required in order to apply the &quot;typescript-client-codegen&quot;</span>
+<span class="w">    </span><span class="c1">// This dependency is required in order to apply the "typescript-client-codegen"</span>
 <span class="w">    </span><span class="c1">// plugin in smithy-build.json</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.typescript:smithy-typescript-codegen:0.52.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy.typescript:smithy-typescript-codegen:0.53.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1087,13 +1088,13 @@ from a Smithy model:</p>
 <div class="literal-block-wrapper docutils container" id="id22">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id22" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;typescript-client-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@smithy/typescript-client-codegen-example&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.1&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;packageJson&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;license&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MIT&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"typescript-client-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"package"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@smithy/typescript-client-codegen-example"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.1"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageJson"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1123,7 +1124,7 @@ By default, this source block will include Smithy models in:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">sourceSets</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">main</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="n">srcDir</span><span class="p">(</span><span class="s">&quot;includes&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="n">srcDir</span><span class="p">(</span><span class="s">"includes"</span><span class="p">)</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1137,7 +1138,7 @@ By default, this source block will include Smithy models in:</p>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">sourceSets</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="n">main</span><span class="w"> </span><span class="o">{</span>
 <span class="w">        </span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="n">srcDir</span><span class="w"> </span><span class="s1">&#39;includes&#39;</span>
+<span class="w">            </span><span class="n">srcDir</span><span class="w"> </span><span class="s1">'includes'</span>
 <span class="w">        </span><span class="o">}</span>
 <span class="w">    </span><span class="o">}</span>
 <span class="o">}</span>
@@ -1184,7 +1185,7 @@ included in the <cite>smithyBuild</cite> configuration. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id25">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id25" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;com.example.software:build-only:1.0.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"com.example.software:build-only:1.0.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1194,7 +1195,7 @@ included in the <cite>smithyBuild</cite> configuration. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id26">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id26" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">&#39;com.example.software:build-only:1.0.0&#39;</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'com.example.software:build-only:1.0.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1211,7 +1212,7 @@ included in the <cite>smithyBuild</cite> configuration. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id27">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id27" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">projection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">projection</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1221,7 +1222,7 @@ included in the <cite>smithyBuild</cite> configuration. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id28">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id28" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
+<span class="w">    </span><span class="n">projection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"foo"</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1305,7 +1306,7 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <div class="literal-block-wrapper docutils container" id="id29">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id29" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;outputDirectory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;build/output&quot;</span>
+<span class="w">    </span><span class="nt">"outputDirectory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build/output"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1316,7 +1317,7 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <div class="literal-block-wrapper docutils container" id="id30">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id30" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">outputDirectory</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">file</span><span class="p">(</span><span class="s">&quot;path/to/output&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">outputDirectory</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">file</span><span class="p">(</span><span class="s">"path/to/output"</span><span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1326,7 +1327,7 @@ in the <code class="docutils literal notranslate"><span class="pre">smithy-build
 <div class="literal-block-wrapper docutils container" id="id31">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id31" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">outputDirectory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file</span><span class="o">(</span><span class="s2">&quot;path/to/output&quot;</span><span class="o">)</span>
+<span class="w">    </span><span class="n">outputDirectory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file</span><span class="o">(</span><span class="s2">"path/to/output"</span><span class="o">)</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1353,7 +1354,7 @@ your project as follows:</p>
 <div class="literal-block-wrapper docutils container" id="id32">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id32" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuildConfigs</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="s">&quot;smithy-build-config.json&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">smithyBuildConfigs</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="s">"smithy-build-config.json"</span><span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1363,7 +1364,7 @@ your project as follows:</p>
 <div class="literal-block-wrapper docutils container" id="id33">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id33" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuildConfigs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">files</span><span class="o">(</span><span class="s2">&quot;smithy-build-config.json&quot;</span><span class="o">)</span>
+<span class="w">    </span><span class="n">smithyBuildConfigs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">files</span><span class="o">(</span><span class="s2">"smithy-build-config.json"</span><span class="o">)</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -1382,7 +1383,7 @@ for the plugin as follows:</p>
 <div class="literal-block-wrapper docutils container" id="id34">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id34" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">tags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">&quot;tag1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;anotherTag&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;anotherTag2&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">tags</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="s">"tag1"</span><span class="p">,</span><span class="w"> </span><span class="s">"anotherTag"</span><span class="p">,</span><span class="w"> </span><span class="s">"anotherTag2"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1392,7 +1393,7 @@ for the plugin as follows:</p>
 <div class="literal-block-wrapper docutils container" id="id35">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id35" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">smithy</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;tag1&quot;</span><span class="o">,</span><span class="w"> </span><span class="s2">&quot;anotherTag&quot;</span><span class="o">,</span><span class="w"> </span><span class="s2">&quot;anotherTag2&quot;</span><span class="o">]</span>
+<span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">[</span><span class="s2">"tag1"</span><span class="o">,</span><span class="w"> </span><span class="s2">"anotherTag"</span><span class="o">,</span><span class="w"> </span><span class="s2">"anotherTag2"</span><span class="o">]</span>
 <span class="o">}</span>
 </pre></div>
 </div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -862,7 +863,7 @@ enabling Smithy's resource property modeling and validation.</p>
 }
 
 <span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chanceOfRain&quot;</span>)
+<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"chanceOfRain"</span>)
 <span class="w">    </span><span class="py">howLikelyToRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
 }
 </pre></div>
@@ -955,7 +956,7 @@ runtime (e.g., a member is not marked as <a class="reference internal" href="typ
 <h3>Implicit identifier mappings example<a class="headerlink" href="#implicit-identifier-mappings-example" title="Link to this heading">#</a></h3>
 <p>The following example creates a reference to a <code class="docutils literal notranslate"><span class="pre">HistoricalForecast</span></code> resource
 (a resource that requires the &quot;forecastId&quot; and &quot;historicalId&quot; identifiers):</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{
@@ -981,15 +982,15 @@ contains members with names that match the names of the identifiers of the
 <h3>Explicit identifier mappings example<a class="headerlink" href="#explicit-identifier-mappings-example" title="Link to this heading">#</a></h3>
 <p>Explicit mappings between identifier names and structure member names can be
 defined if needed. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@references</span>([
 <span class="w">    </span>{
 <span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecast</span>
 <span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">            </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customForecastId&quot;</span>
-<span class="w">            </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customHistoricalId&quot;</span>
+<span class="w">            </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="s2">"customForecastId"</span>
+<span class="w">            </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="s2">"customHistoricalId"</span>
 <span class="w">        </span>}
 <span class="w">    </span>}
 ])
@@ -1010,7 +1011,7 @@ defined if needed. For example:</p>
 <span class="w">    </span>{
 <span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Object</span>
 <span class="w">        </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Service</span>
-<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{<span class="py">bucket</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bucketName&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">object</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;objectKey&quot;</span>}
+<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{<span class="py">bucket</span><span class="p">:</span><span class="w"> </span><span class="s2">"bucketName"</span><span class="p">,</span><span class="w"> </span><span class="py">object</span><span class="p">:</span><span class="w"> </span><span class="s2">"objectKey"</span>}
 <span class="w">    </span>])
 <span class="kd">structure </span><span class="nc">ForecastInformation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">someId</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeShapeIdentifier</span>
@@ -1082,8 +1083,8 @@ name of the structure member is an exact match for the name of the resource
 identifier.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">File</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
-<span class="w">        </span><span class="py">fileName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
+<span class="w">        </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span>
+<span class="w">        </span><span class="py">fileName</span><span class="p">:</span><span class="w"> </span><span class="s2">"String"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFile</span>
 }
@@ -1102,7 +1103,7 @@ identifier.</p>
 
 <span class="w">    </span><span class="c">// resourceIdentifier is used because the input member name</span>
 <span class="w">    </span><span class="c">// does not match the resource identifier name</span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;fileName&quot;</span>)
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">"fileName"</span>)
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }

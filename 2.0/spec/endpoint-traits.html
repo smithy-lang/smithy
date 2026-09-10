@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -715,11 +716,11 @@ a domain that you do not control.</p>
 </table>
 </div>
 <p>The following example defines an operation that uses a custom endpoint:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}.data."</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -743,7 +744,7 @@ be marked as <a class="reference internal" href="type-refinement-traits.html#req
 <a class="reference internal" href="#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>, and the input member MUST reference a string.</p>
 <p>Given the following operation,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}.data."</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -758,7 +759,7 @@ be marked as <a class="reference internal" href="type-refinement-traits.html#req
 </pre></div>
 </div>
 <p>and the following value provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;foo&quot;</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"foo"</span> <span class="o">=</span> <span class="s2">"abc"</span>
 </pre></div>
 </div>
 <p>the expanded <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> evaluates to <code class="docutils literal notranslate"><span class="pre">abc.data.</span></code>.</p>
@@ -766,7 +767,7 @@ be marked as <a class="reference internal" href="type-refinement-traits.html#req
 not immediately adjacent and do not have identical label names.</p>
 <p>Given the following operation,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}-{bar}.data.&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}-{bar}.data."</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -784,15 +785,15 @@ not immediately adjacent and do not have identical label names.</p>
 </pre></div>
 </div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;foo&quot;</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>
-<span class="s2">&quot;bar&quot;</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"foo"</span> <span class="o">=</span> <span class="s2">"abc"</span>
+<span class="s2">"bar"</span> <span class="o">=</span> <span class="s2">"def"</span>
 </pre></div>
 </div>
 <p>the expanded <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> evaluates to <code class="docutils literal notranslate"><span class="pre">abc-def.data.</span></code>.</p>
 <p>Labels MUST NOT be adjacent in a <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>. The following operation is
 invalid because the <code class="docutils literal notranslate"><span class="pre">{foo}</span></code> and <code class="docutils literal notranslate"><span class="pre">{bar}</span></code> labels are adjacent:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}{bar}.data.&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}{bar}.data."</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -820,8 +821,8 @@ regardless of this flag.</p>
 logic of a member.</p>
 <p>Given the following operation,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/status&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}.data."</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/status"</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -830,13 +831,13 @@ logic of a member.</p>
 <span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="nt">@hostLabel</span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"X-Foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
 <p>and the following value provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;foo&quot;</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"foo"</span> <span class="o">=</span> <span class="s2">"abc"</span>
 </pre></div>
 </div>
 <p>the expanded <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> evaluates to <code class="docutils literal notranslate"><span class="pre">abc.data.</span></code> AND the <code class="docutils literal notranslate"><span class="pre">X-Foo</span></code> HTTP
@@ -865,11 +866,11 @@ value of <code class="docutils literal notranslate"><span class="pre">{spam}.egg
 member named <code class="docutils literal notranslate"><span class="pre">spam</span></code> that is annotated with the <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait. Any
 <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait applied to a member that is not a top-level input member
 to an operation marked with the <a class="reference internal" href="#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> will be ignored.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">"{foo}.data."</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>

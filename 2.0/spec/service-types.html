@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -780,25 +781,25 @@ original shape ID name.</p></li>
 </table>
 </div>
 <p>The following example defines a service with no operations or resources.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 }
 </pre></div>
 </div>
 <p>The following example defines a service shape that defines a set of errors
 that are common to every operation in the service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">SomeError</span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">SomeError</span><span class="w"> </span>{}
 </pre></div>
 </div>
@@ -808,11 +809,11 @@ that are common to every operation in the service:</p>
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
 that do not fit within a resource hierarchy.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetServerTime</span>]
 }
 
@@ -827,11 +828,11 @@ that do not fit within a resource hierarchy.</p>
 <span id="id4"></span><h3>Service resources<a class="headerlink" href="#service-resources" title="Link to this heading">#</a></h3>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
 }
 
@@ -903,14 +904,14 @@ a single service.</p>
 <p>The following example defines a service that contains two shapes named
 &quot;Widget&quot; in its closure. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is used to disambiguate
 the conflicting shapes.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-11"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetSomething</span>]
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;foo.example#Widget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooWidget&quot;</span>
+<span class="w">        </span><span class="s2">"foo.example#Widget"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooWidget"</span>
 <span class="w">    </span>}
 }
 
@@ -993,7 +994,7 @@ marked with the <a class="reference internal" href="type-refinement-traits.html#
 named <code class="docutils literal notranslate"><span class="pre">MyOperationInput</span></code>, returns an output structure named
 <code class="docutils literal notranslate"><span class="pre">MyOperationOutput</span></code>, and can potentially return the <code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or
 <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code> <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error structures</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
@@ -1012,14 +1013,14 @@ named <code class="docutils literal notranslate"><span class="pre">MyOperationIn
 <p>While, input and output SHOULD be explicitly defined for every operation,
 omitting them is allowed. The default value for input and output is
 <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, indicating that there is no meaningful value.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>The following example is equivalent, but more explicit in intent:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{
@@ -1131,7 +1132,7 @@ The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single identifier named <code class="docutils literal notranslate"><span class="pre">forecastId</span></code> that targets the <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code> shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
@@ -1202,7 +1203,7 @@ define an <code class="docutils literal notranslate"><span class="pre">identifie
 }
 
 <span class="kd">resource </span><span class="nc">Invalid1</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// Invalid: missing &quot;a&quot;.</span>
+<span class="w">    </span><span class="c">// Invalid: missing "a".</span>
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
@@ -1346,11 +1347,11 @@ which the input member corresponds.</p>
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">GetHistoricalForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;forecastId&quot;</span>)
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">"forecastId"</span>)
 <span class="w">    </span><span class="py">customForecastIdName</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
 
 <span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;historicalId&quot;</span>)
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">"historicalId"</span>)
 <span class="w">    </span><span class="nl">$customHistoricalIdName</span>
 }
 </pre></div>
@@ -1374,7 +1375,7 @@ least one instance operation's input or output.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single property <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> read by the GetForecast operation, and the
 output operation shape <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> contains that output property.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
@@ -1397,7 +1398,7 @@ output operation shape <code class="docutils literal notranslate"><span class="p
 <p><em>Property bindings</em> associate top-level members of input or output shapes
 with resource properties. The match occurs through a match between member
 name and property name by default.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
@@ -1432,7 +1433,7 @@ but resource property modeling is being added to your Smithy model.</p>
 }
 
 <span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chanceOfRain&quot;</span>)
+<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"chanceOfRain"</span>)
 <span class="w">    </span><span class="py">howLikelyToRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
 }
 </pre></div>
@@ -1470,7 +1471,7 @@ shape ID to the <code class="docutils literal notranslate"><span class="pre">put
 <a class="reference internal" href="#operation"><span class="std std-ref">operation</span></a> that is compatible with the semantics of the
 lifecycle.</p>
 <p>The following example defines a resource with each lifecycle method:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{

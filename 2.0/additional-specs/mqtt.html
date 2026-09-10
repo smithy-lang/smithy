@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -744,11 +745,11 @@ are substituted into the topic template at runtime to resolve the actual
 MQTT topic.</p>
 <p>The following example defines a publish operation with two labels, <code class="docutils literal notranslate"><span class="pre">{first}</span></code>
 and <code class="docutils literal notranslate"><span class="pre">{second}</span></code>, in the MQTT topic template:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
 <span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)
+<span class="nt">@publish</span>(<span class="s2">"{first}/{second}"</span>)
 <span class="kd">operation </span><span class="nc">ExampleOperation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
@@ -813,13 +814,13 @@ member name.</p>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
 <p>The following example defines an operation that publishes messages to the
 <code class="docutils literal notranslate"><span class="pre">foo/{bar}</span></code> topic:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
 <span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)
+<span class="nt">@publish</span>(<span class="s2">"foo/{bar}"</span>)
 <span class="kd">operation </span><span class="nc">PostFoo</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostFooInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
@@ -890,11 +891,11 @@ payload to be sent as the payload of a message.</p>
 </div>
 <p>The following example operation subscribes to the <code class="docutils literal notranslate"><span class="pre">events/{id}</span></code>
 topic using an <a class="reference internal" href="../spec/streaming.html#event-streams"><span class="std std-ref">event stream</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">use </span><span class="nc">smithy.mqtt#subscribe</span>
 <span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
+<span class="nt">@subscribe</span>(<span class="s2">"events/{id}"</span>)
 <span class="kd">operation </span><span class="nc">SubscribeForEvents</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span>
@@ -1044,32 +1045,32 @@ same number of levels.</p></li>
 <h2>Model definition<a class="headerlink" href="#model-definition" title="Link to this heading">#</a></h2>
 <p>The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.mqtt</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
 <span class="nt">@protocolDefinition</span>
 <span class="kd">structure </span><span class="nc">mqttJson</span><span class="w"> </span>{}
 
 <span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span>
-<span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>]
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation:not(-[output]-&gt; * &gt; member)"</span>
+<span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"smithy.mqtt#subscribe"</span>]
 )
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="nt">@tags</span>([<span class="s2">"diff.error.const"</span>])
+<span class="c">// Matches one or more characters that are not "#" or "+".</span>
+<span class="nt">@pattern</span>(<span class="s2">"^[^#+]+$"</span>)
 <span class="kd">string </span><span class="nc">publish</span>
 
 <span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])"</span>
 <span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">publish</span>]
 )
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="nt">@tags</span>([<span class="s2">"diff.error.const"</span>])
+<span class="c">// Matches one or more characters that are not "#" or "+".</span>
+<span class="nt">@pattern</span>(<span class="s2">"^[^#+]+$"</span>)
 <span class="kd">string </span><span class="nc">subscribe</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))"</span>)
 <span class="kd">structure </span><span class="nc">topicLabel</span><span class="w"> </span>{}
 </pre></div>
 </div>

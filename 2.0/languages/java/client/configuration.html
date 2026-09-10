@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -728,10 +729,10 @@ to configure a protocol at runtime.</p>
 <p>To configure the client plugin with a default protocol, add the protocol’s fully qualified Smithy ID to the protocol setting in the smithy-build.json configuration file:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"java-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="c1">// Set the default protocol for the client.</span>
-<span class="w">      </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.protocols#rpcv2Cbor&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.protocols#rpcv2Cbor"</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// ... additional settings</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -844,10 +845,10 @@ from the discoverable transport implementations.</p>
 <p>To set a default transport, add the following to your <a class="reference internal" href="../../../guides/smithy-build-json.html#smithy-build"><span class="std std-ref">smithy-build.json</span></a>:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"java-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="w">    </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;http-java&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"transport"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"http-java"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -906,7 +907,7 @@ overriding any auth trait specified on a service.</p>
 <span class="nt">@httpDigestAuth</span>
 <span class="nt">@httpBearerAuth</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-01-29"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">OperationA</span>
 <span class="w">        </span><span class="vc">OperationB</span>
@@ -961,9 +962,9 @@ this API key authentication.</p>
 <div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">com.example</span>
 
-<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)<span class="w"> </span><span class="c">// &lt;- Add auth scheme trait</span>
+<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"X-Api-Key"</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>)<span class="w"> </span><span class="c">// &lt;- Add auth scheme trait</span>
 <span class="kd">service </span><span class="nc">ExampleService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-05-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-05-05"</span>
 <span class="w">    </span><span class="c">// ...</span>
 }
 </pre></div>
@@ -979,7 +980,7 @@ to the <code class="docutils literal notranslate"><span class="pre">&#64;httpApi
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Add the HTTP auth scheme to the classpath</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-http:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-http:1.6.1"</span><span class="p">)</span>
 <span class="w">    </span><span class="c1">// ...</span>
 <span class="p">}</span>
 </pre></div>
@@ -993,7 +994,7 @@ The <code class="docutils literal notranslate"><span class="pre">HttpApiKeyAuthS
 For testing purposes we will provide a static resolver as follows:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ExampleService</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">        </span><span class="p">.</span><span class="na">addIdentityResolver</span><span class="p">(</span>
-<span class="w">            </span><span class="n">IdentityResolver</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ApiKeyIdentity</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="s">&quot;example-api-key&quot;</span><span class="p">))</span>
+<span class="w">            </span><span class="n">IdentityResolver</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ApiKeyIdentity</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="s">"example-api-key"</span><span class="p">))</span>
 <span class="w">        </span><span class="p">)</span>
 <span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
 </pre></div>
@@ -1002,7 +1003,7 @@ For testing purposes we will provide a static resolver as follows:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">Environment variable identity resolver implementation</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">EnvironmentVariableIdentityResolver</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">ApiKeyIdentity</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">API_KEY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;EXAMPLE_API_KEY&quot;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">API_KEY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"EXAMPLE_API_KEY"</span>
 
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">ApiKeyIdentity</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -1015,7 +1016,7 @@ For testing purposes we will provide a static resolver as follows:</p>
 
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">apiKey</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">apiKey</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span>
 <span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">CompletableFuture</span><span class="p">.</span><span class="na">completedFuture</span><span class="p">(</span>
-<span class="w">                </span><span class="n">IdentityResult</span><span class="p">.</span><span class="na">ofError</span><span class="p">(</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Could not find API KEY&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="n">IdentityResult</span><span class="p">.</span><span class="na">ofError</span><span class="p">(</span><span class="n">getClass</span><span class="p">(),</span><span class="w"> </span><span class="s">"Could not find API KEY"</span><span class="p">)</span>
 <span class="w">            </span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 
@@ -1039,7 +1040,7 @@ For testing purposes we will provide a static resolver as follows:</p>
 determine what subdomain to use, i.e. <code class="docutils literal notranslate"><span class="pre">us-east-2.myservice.com</span></code> based on a region setting on the client.</p>
 <p>To set a static endpoint for a client use the following client builder setter:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">endpointResolver</span><span class="p">(</span><span class="n">EndpointResolver</span><span class="p">.</span><span class="na">staticResolver</span><span class="p">(</span><span class="s">&quot;https://example.com&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">endpointResolver</span><span class="p">(</span><span class="n">EndpointResolver</span><span class="p">.</span><span class="na">staticResolver</span><span class="p">(</span><span class="s">"https://example.com"</span><span class="p">))</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1056,12 +1057,12 @@ The properties are tied to a typed key and used by client pipeline components su
 Configuration parameters can be set on a client using a typed property key via the putConfig method:</p>
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text">Setting REGION context property</span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">static</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">&quot;a config property&quot;</span><span class="p">);</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">static</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">"a config property"</span><span class="p">);</span>
 
 <span class="p">...</span>
 
 <span class="kd">var</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="n">MY_PROPERTY</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="n">MY_PROPERTY</span><span class="p">,</span><span class="w"> </span><span class="s">"value"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -1075,7 +1076,7 @@ The <code class="docutils literal notranslate"><span class="pre">ClientSetting</
 <div class="literal-block-wrapper docutils container" id="id11">
 <div class="code-block-caption"><span class="caption-text">custom client setting implementation</span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">CustomSetting</span><span class="o">&lt;</span><span class="n">B</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Client</span><span class="p">.</span><span class="na">Builder</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ClientSetting</span><span class="o">&lt;</span><span class="n">B</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">&quot;A custom string configuration property&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MY_PROPERTY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">"A custom string configuration property"</span><span class="p">);</span>
 
 <span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="nf">custom</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">custom</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">putConfig</span><span class="p">(</span><span class="n">MY_PROPERTY</span><span class="p">,</span><span class="w"> </span><span class="n">custom</span><span class="p">);</span>
@@ -1091,10 +1092,10 @@ The <code class="docutils literal notranslate"><span class="pre">ClientSetting</
 <p>A client setting can then be added to our generated clients using the defaultSettings setting in the smithy-build.json file:</p>
 <div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"java-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="w">    </span><span class="nt">&quot;defaultSettings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;com.example.settings.CustomSetting&quot;</span>
+<span class="w">    </span><span class="nt">"defaultSettings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"com.example.settings.CustomSetting"</span>
 <span class="w">    </span><span class="p">],</span>
 <span class="w">    </span><span class="c1">//...</span>
 <span class="p">}</span>
@@ -1103,7 +1104,7 @@ The <code class="docutils literal notranslate"><span class="pre">ClientSetting</
 </div>
 <p>Now we can use our new setting as follows:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">    </span><span class="p">.</span><span class="na">custom</span><span class="p">(</span><span class="s">&quot;that was easy!&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">custom</span><span class="p">(</span><span class="s">"that was easy!"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -1125,19 +1126,19 @@ The <code class="docutils literal notranslate"><span class="pre">ClientSetting</
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Service name to use for signing. For example {@code lambda}.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SIGNING_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">&quot;Signing name to use for computing SigV4 signatures.&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Context</span><span class="p">.</span><span class="na">Key</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SIGNING_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">"Signing name to use for computing SigV4 signatures."</span><span class="p">);</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * Signing name to use for the SigV4 signing process.</span>
 <span class="cm">     *</span>
-<span class="cm">     * &lt;p&gt;The signing name is typically the name of the service. For example {@code &quot;lambda&quot;}.</span>
+<span class="cm">     * &lt;p&gt;The signing name is typically the name of the service. For example {@code "lambda"}.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param signingName signing name.</span>
 <span class="cm">     */</span>
 <span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="nf">signingName</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">signingName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Validation of the signing name</span>
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">signingName</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">signingName</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">&quot;signingName cannot be null or empty&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">"signingName cannot be null or empty"</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">putConfig</span><span class="p">(</span><span class="n">SIGNING_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">signingName</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>

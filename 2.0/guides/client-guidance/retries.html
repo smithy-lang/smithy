@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -676,7 +677,7 @@
                 <article class="bd-article">
                   
   <section id="retrying-requests">
-<h1>Retrying Requests<a class="headerlink" href="#retrying-requests" title="Link to this heading">#</a></h1>
+<span id="client-guidance-retries"></span><h1>Retrying Requests<a class="headerlink" href="#retrying-requests" title="Link to this heading">#</a></h1>
 <p>Operation requests might fail for a number of reasons that are unrelated to the
 input parameters, such as a transient network issue or excessive load on the
 service. This guide gives recommendations on how Smithy clients can
@@ -835,7 +836,7 @@ free up any resources it was using.</p>
 <span class="w">            </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
 <span class="w">                </span><span class="n">retryToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">retryStrategy</span><span class="p">.</span><span class="na">refreshRetryToken</span><span class="p">(</span><span class="n">retryToken</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
 <span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TokenAcquisitionFailedException</span><span class="w"> </span><span class="n">retryError</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="c1">// If the token can&#39;t be refreshed, the request fails, so the</span>
+<span class="w">                </span><span class="c1">// If the token can't be refreshed, the request fails, so the</span>
 <span class="w">                </span><span class="c1">// original exception needs to be propagated. Logging the reason</span>
 <span class="w">                </span><span class="c1">// the retry failed is advisable.</span>
 <span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
@@ -888,12 +889,12 @@ directly from the service.</p></li>
 <span class="cm"> */</span>
 <span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">RetryInfo</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="cm">/**</span>
-<span class="cm">     * Get the decision about whether it&#39;s safe to retry the encountered error.</span>
+<span class="cm">     * Get the decision about whether it's safe to retry the encountered error.</span>
 <span class="cm">     *</span>
 <span class="cm">     * &lt;p&gt;If the decision is {@link RetrySafety#YES}, it does not mean that a</span>
 <span class="cm">     * retry will occur, but rather that a retry is allowed to occur.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @return whether it&#39;s safe to retry.</span>
+<span class="cm">     * @return whether it's safe to retry.</span>
 <span class="cm">     */</span>
 <span class="w">    </span><span class="n">RetrySafety</span><span class="w"> </span><span class="nf">isRetrySafe</span><span class="p">();</span>
 
@@ -926,7 +927,7 @@ directly from the service.</p></li>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="cm">/**</span>
-<span class="cm">     * Whether it&#39;s safe to retry.</span>
+<span class="cm">     * Whether it's safe to retry.</span>
 <span class="cm">     */</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">RetrySafety</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="cm">/**</span>
@@ -935,7 +936,7 @@ directly from the service.</p></li>
 <span class="w">        </span><span class="n">YES</span><span class="p">,</span>
 
 <span class="w">        </span><span class="cm">/**</span>
-<span class="cm">         * No, a retry should not be made because it isn&#39;t safe to retry.</span>
+<span class="cm">         * No, a retry should not be made because it isn't safe to retry.</span>
 <span class="cm">         */</span>
 <span class="w">        </span><span class="n">NO</span><span class="p">,</span>
 
@@ -974,7 +975,7 @@ separate interface since it is relevant to more than just retries.</p>
 <span class="w">        </span><span class="n">SERVER</span><span class="p">,</span>
 
 <span class="w">        </span><span class="cm">/**</span>
-<span class="cm">         * The fault isn&#39;t necessarily client or server.</span>
+<span class="cm">         * The fault isn't necessarily client or server.</span>
 <span class="cm">         */</span>
 <span class="w">        </span><span class="n">OTHER</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -986,7 +987,7 @@ separate interface since it is relevant to more than just retries.</p>
 demonstrates a modeled error and what it might look like as a generated Java
 exception class.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpError</span>(<span class="m">429</span>)
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
 <span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1009,8 +1010,8 @@ exception class.</p>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// This value is code generated based on the retryable trait. If that trait</span>
-<span class="w">    </span><span class="c1">// is not present, this should be NO for &quot;client&quot; errors or MAYBE for</span>
-<span class="w">    </span><span class="c1">// &quot;server&quot; errors.</span>
+<span class="w">    </span><span class="c1">// is not present, this should be NO for "client" errors or MAYBE for</span>
+<span class="w">    </span><span class="c1">// "server" errors.</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RetrySafety</span><span class="w"> </span><span class="nf">isRetrySafe</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">RetrySafety</span><span class="p">.</span><span class="na">YES</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1134,13 +1135,13 @@ to be empty.</p>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RetryToken</span><span class="w"> </span><span class="nf">refreshRetryToken</span><span class="p">(</span><span class="n">RetryToken</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="n">Throwable</span><span class="w"> </span><span class="n">failure</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// First, ensure that the provided token is of the correct type.</span>
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">token</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">AwsStandardRetryToken</span><span class="w"> </span><span class="n">standardToken</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">&quot;Invalid token provided for refresh.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">"Invalid token provided for refresh."</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1">// Next, check to see if the maximum number of attempts has already</span>
 <span class="w">        </span><span class="c1">// been exceeded.</span>
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">standardToken</span><span class="p">.</span><span class="na">attempts</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_ATTEMPTS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Max attempts exhausted.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">"Max attempts exhausted."</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1">// Examine the exception thrown by the operation to determine an</span>
@@ -1163,12 +1164,12 @@ to be empty.</p>
 <span class="w">                </span><span class="n">payForRetry</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">resultToken</span><span class="p">);</span>
 <span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="n">resultToken</span><span class="p">;</span>
 <span class="w">            </span><span class="p">}</span>
-<span class="w">            </span><span class="k">default</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Exception not retryable.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">default</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">"Exception not retryable."</span><span class="p">);</span>
 <span class="w">        </span><span class="p">};</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="cm">/**</span>
-<span class="cm">     * Consumes tokens to &quot;pay&quot; for a retry.</span>
+<span class="cm">     * Consumes tokens to "pay" for a retry.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param isThrottle whether the retry is in response to a throttling error,</span>
 <span class="cm">     *     which will require fewer tokens.</span>
@@ -1189,7 +1190,7 @@ to be empty.</p>
 <span class="w">                    </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">interrupt</span><span class="p">();</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
-<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">&quot;Token bucket exhausted.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TokenAcquisitionFailedException</span><span class="p">(</span><span class="s">"Token bucket exhausted."</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 

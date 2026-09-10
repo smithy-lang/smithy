@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -809,11 +810,11 @@ following example states that the integration needs to run before
 <code class="docutils literal notranslate"><span class="pre">&quot;Foo&quot;</span></code> but after <code class="docutils literal notranslate"><span class="pre">&quot;CodeLicenseHeader&quot;</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
 <span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runBefore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="nd">@Override</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runAfter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;CodeLicenseHeader&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">"CodeLicenseHeader"</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -864,10 +865,10 @@ metadata to each <a class="reference internal" href="../glossary.html#term-Symbo
 be achieved by implementing <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#decorateSymbolProvider</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
 <span class="kd">public</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">decorateSymbolProvider</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSetting</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Decorate the symbol provider and add a &quot;foo&quot; property to every symbol.</span>
+<span class="w">    </span><span class="c1">// Decorate the symbol provider and add a "foo" property to every symbol.</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span>
-<span class="w">            </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello!&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">"foo"</span><span class="p">,</span><span class="w"> </span><span class="s">"hello!"</span><span class="p">)</span>
 <span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
 <span class="p">}</span>
 </pre></div>
@@ -899,7 +900,7 @@ first creating an implementation of <code class="docutils literal notranslate"><
 If the section should have content by default, then use <code class="docutils literal notranslate"><span class="pre">pushSection</span></code> and
 <code class="docutils literal notranslate"><span class="pre">popSection</span></code>:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">pushSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span>
-<span class="n">mywriter</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;// This is generated code&quot;</span><span class="p">);</span>
+<span class="n">mywriter</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"// This is generated code"</span><span class="p">);</span>
 <span class="n">mywriter</span><span class="p">.</span><span class="na">popSection</span><span class="p">();</span>
 </pre></div>
 </div>
@@ -926,11 +927,11 @@ appends to the existing content in the section:</p>
 
 <span class="w">    </span><span class="nd">@Override</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">PythonWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">,</span><span class="w"> </span><span class="n">CodeHeader</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">            /*</span>
 <span class="s">             * Copyright 2023 example.com, Inc. or its affiliates. All Rights Reserved.</span>
 <span class="s">             */</span>
-<span class="s">            &quot;&quot;&quot;</span><span class="p">);</span>
+<span class="s">            """</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -948,10 +949,10 @@ model, settings object, symbol provider, <code class="docutils literal notransla
 <p>The following example writes a custom README.md file:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customize</span><span class="p">(</span><span class="n">PythonContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">writerDelegator</span><span class="p">().</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">writerDelegator</span><span class="p">().</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">"README.md"</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">"""</span>
 <span class="s">            # $L service client</span>
-<span class="s">            Client SDK library ...&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s">            Client SDK library ..."""</span><span class="p">,</span>
 <span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="na">settings</span><span class="p">().</span><span class="na">service</span><span class="p">()</span>
 <span class="w">        </span><span class="p">);</span>
 <span class="w">    </span><span class="p">});</span>

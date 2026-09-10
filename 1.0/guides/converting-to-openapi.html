@@ -668,22 +668,22 @@ specification from a Smithy model using a buildscript dependency:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-smithy-build-gradle" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">java</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"0.6.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.73.0"</span><span class="p">)</span>
 <span class="w">        </span><span class="c1">// The openapi plugin configured in the smithy-build.json example below</span>
 <span class="w">        </span><span class="c1">// uses the restJson1 protocol defined in the aws-traits package. This</span>
 <span class="w">        </span><span class="c1">// additional dependency must added to use that protocol.</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// The dependency for restJson1 is required here too.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -696,11 +696,11 @@ that builds an OpenAPI specification from a service for the
 <div class="literal-block-wrapper docutils container" id="open-api-smithy-build-json">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#open-api-smithy-build-json" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.protocols#restJson1&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.protocols#restJson1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -728,10 +728,10 @@ tools and vendors.</p>
 <dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">example.weather#Weather</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -758,11 +758,11 @@ service provider found on the classpath.</p></li>
 </ul>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.protocols#restJson1&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.protocols#restJson1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -775,11 +775,11 @@ service provider found on the classpath.</p></li>
 Currently supports OpenAPI 3.0.2 and OpenAPI 3.1.0.
 This option defaults to <code class="docutils literal notranslate"><span class="pre">3.0.2</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.1.0&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.1.0"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -792,11 +792,11 @@ This option defaults to <code class="docutils literal notranslate"><span class="
 as <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject">OpenAPI tags</a>. The following example adds all tags in the Smithy
 model to the OpenAPI model.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -809,12 +809,12 @@ model to the OpenAPI model.</p>
 must be a list of strings. This property requires that <code class="docutils literal notranslate"><span class="pre">tags</span></code> is set to
 <code class="docutils literal notranslate"><span class="pre">true</span></code> in order to have an effect.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;supportedTags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"supportedTags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"foo"</span><span class="p">,</span><span class="w"> </span><span class="s2">"baz"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bar"</span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -827,11 +827,11 @@ must be a list of strings. This property requires that <code class="docutils lit
 Smithy to strings in OpenAPI. Defaults to &quot;byte&quot;, meaning Base64 encoded.
 See <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types">OpenAPI Data types</a> for more information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;defaultBlobFormat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;byte&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"defaultBlobFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"byte"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -846,13 +846,13 @@ This list is case insensitive. By default, this is a list of the following
 values: &quot;Homepage&quot;, &quot;API Reference&quot;, &quot;User Guide&quot;, &quot;Developer Guide&quot;,
 &quot;Reference&quot;, and &quot;Guide&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;externalDocs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;Homepage&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">&quot;Custom&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"externalDocs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"Homepage"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"Custom"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -865,11 +865,11 @@ values: &quot;Homepage&quot;, &quot;API Reference&quot;, &quot;User Guide&quot;,
 <dt>keepUnusedComponents (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to prevent unused OpenAPI <code class="docutils literal notranslate"><span class="pre">components</span></code> from being
 removed from the created specification.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;keepUnusedComponents&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"keepUnusedComponents"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -881,11 +881,11 @@ removed from the created specification.</p>
 <dt>jsonContentType (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets a custom media-type to associate with the JSON payload of
 JSON-based protocols.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;jsonContentType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/x-amz-json-1.1&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"jsonContentType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/x-amz-json-1.1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -898,11 +898,11 @@ JSON-based protocols.</p>
 appear as-is in the path generated for an operation. For example,
 &quot;/{foo+}&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;forbidGreedyLabels&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"forbidGreedyLabels"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -916,11 +916,11 @@ labels will have a corresponding parameter name generated that will include
 the <code class="docutils literal notranslate"><span class="pre">+</span></code> suffix. Given a label &quot;/{foo+}&quot;, the parameter name will be &quot;foo+&quot;.
 If enabled, the parameter name will instead be &quot;foo&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;removeGreedyParameterSuffix&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"removeGreedyParameterSuffix"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -939,11 +939,11 @@ setting:</p>
 <li><p>WARN: The header is omitted from the OpenAPI model and a warning is logged.</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;onHttpPrefixHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARN&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"onHttpPrefixHeaders"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WARN"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -955,11 +955,11 @@ setting:</p>
 <dt>ignoreUnsupportedTraits (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Emits warnings rather than failing when unsupported traits like
 <code class="docutils literal notranslate"><span class="pre">endpoint</span></code> and <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> are encountered.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;ignoreUnsupportedTraits&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"ignoreUnsupportedTraits"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -985,13 +985,13 @@ performed on the generated document is more explicit and resilient to
 change.</p>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;substitutions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;REPLACE_ME&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;this is a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot; replacement&quot;</span><span class="p">],</span>
-<span class="w">                </span><span class="nt">&quot;ANOTHER_REPLACEMENT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello!!!&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"substitutions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"REPLACE_ME"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"this is a"</span><span class="p">,</span><span class="w"> </span><span class="s2">" replacement"</span><span class="p">],</span>
+<span class="w">                </span><span class="nt">"ANOTHER_REPLACEMENT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello!!!"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1011,16 +1011,16 @@ JSON Patch, as specified in <span class="target" id="index-1"></span><a class="r
 properties to an undefined object will create nested objects in the
 result as needed.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;jsonAdd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;/info/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Replaced title value&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;/info/nested/foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Adding this object created intermediate objects too!&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"jsonAdd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"/info/title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Replaced title value"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"/info/nested/foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"hi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Adding this object created intermediate objects too!"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;/info/nested/foo/baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                </span><span class="nt">"/info/nested/foo/baz"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1036,11 +1036,11 @@ true, like the example below, is recommended.</p>
 <p>By default, these shape types are converted to OpenAPI with a type of
 &quot;number&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;useIntegerType&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"useIntegerType"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1068,11 +1068,11 @@ and <code class="docutils literal notranslate"><span class="pre">apiGatewayType<
 properties for structure and union shapes. This property MAY be
 automatically set to <code class="docutils literal notranslate"><span class="pre">true</span></code> depending on the protocol being converted.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;useJsonName&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"useJsonName"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1086,11 +1086,11 @@ no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;defaultTimestampFormat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;epoch-seconds&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"defaultTimestampFormat"</span><span class="p">:</span><span class="w"> </span><span class="s2">"epoch-seconds"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1109,11 +1109,11 @@ default setting used if not configured.</p></li>
 structure.</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;unionStrategy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;oneOf&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"unionStrategy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oneOf"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1134,11 +1134,11 @@ used if not configured.</p></li>
 is applied.</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;mapStrategy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;propertyNames&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"mapStrategy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"propertyNames"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1150,14 +1150,14 @@ is applied.</p></li>
 <dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to the created OpenAPI specification.
 Any existing value is overwritten.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;schemaDocumentExtensions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;x-my-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello!&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;x-another-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;can be&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;too!&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"schemaDocumentExtensions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"x-my-custom-top-level-property"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello!"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"x-another-custom-top-level-property"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"can be"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"complex"</span><span class="p">,</span><span class="w"> </span><span class="s2">"value"</span><span class="p">,</span><span class="w"> </span><span class="s2">"too!"</span><span class="p">]</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
@@ -1171,11 +1171,11 @@ Any existing value is overwritten.</p>
 <dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and OpenAPI property names from appearing in the
 generated OpenAPI model.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableFeatures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;propertyNames&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"propertyNames"</span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1190,11 +1190,11 @@ JSON Schema document will be updated to refer to them as a &quot;oneOf&quot; of
 number and string.</p>
 <p>By default, these non-numeric values are not supported.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;supportNonNumericFloats&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"supportNonNumericFloats"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1203,25 +1203,25 @@ number and string.</p>
 <p>When this is disabled (the default), references to floats/doubles will
 look like this:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;floatMember&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">    </span><span class="nt">"floatMember"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"number"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>With this enabled, references to floats/doubles will look like this:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;floatMember&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"floatMember"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"oneOf"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">            </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"number"</span>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="s2">&quot;Infinity&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="s2">&quot;-Infinity&quot;</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"enum"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"NaN"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"Infinity"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"-Infinity"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">]</span>
@@ -1256,47 +1256,47 @@ OpenAPI security schemes.</p>
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
 <span class="nt">@restJson1</span>
-<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x-api-key&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
+<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"x-api-key"</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>)
 <span class="kd">service </span><span class="nc">Foo</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span><span class="p">,</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ExampleOperation</span>]<span class="p">,</span>
 }
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/"</span>)
 <span class="kd">operation </span><span class="nc">ExampleOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>Smithy will generate the following OpenAPI model:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.0.2&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.0.2"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Foo"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;paths&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;/&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExampleOperation&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExampleOperation response&quot;</span>
+<span class="w">    </span><span class="nt">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"/"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ExampleOperation"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ExampleOperation response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;securitySchemes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;smithy.api#httpApiKeyAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apiKey&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x-api-key&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>
+<span class="w">    </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"securitySchemes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"smithy.api#httpApiKeyAuth"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apiKey"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"x-api-key"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"in"</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"security"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;smithy.api#httpApiKeyAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">]</span>
+<span class="w">            </span><span class="nt">"smithy.api#httpApiKeyAuth"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -1312,13 +1312,13 @@ operation shape, which shows this logical grouping.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">apply </span><span class="nc">FooOperation</span><span class="w"> </span><span class="nt">@examples</span>(
 <span class="w">    </span>[
 <span class="w">        </span>{
-<span class="w">            </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example doc&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example"</span><span class="p">,</span>
+<span class="w">            </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example doc"</span><span class="p">,</span>
 <span class="w">            </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span>
+<span class="w">                </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234"</span>
 <span class="w">            </span>}<span class="p">,</span>
 <span class="w">            </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5678&quot;</span>
+<span class="w">                </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">"5678"</span>
 <span class="w">            </span>}<span class="p">,</span>
 <span class="w">        </span>}
 <span class="w">    </span>]
@@ -1328,36 +1328,36 @@ operation shape, which shows this logical grouping.</p>
 <p>However, example values in OpenAPI are scattered throughout the model, with each example value
 contained by the OpenAPI object the example value is for.
 The following is an example OpenAPI model for the above Smithy example value.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;paths&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;/&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooOperation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;requestBody&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;FooOperation_example1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example&quot;</span><span class="p">,</span>
-<span class="w">                                </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example doc&quot;</span><span class="p">,</span>
-<span class="w">                                </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                    </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"/"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooOperation"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"requestBody"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"application/json"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"examples"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"FooOperation_example1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example doc"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                    </span><span class="nt">"bar"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234"</span>
 <span class="w">                                </span><span class="p">}</span>
 <span class="w">                            </span><span class="p">}</span>
 <span class="w">                        </span><span class="p">}</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
-<span class="w">            </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooOperation response&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;FooOperation_example1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                    </span><span class="nt">&quot;summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example&quot;</span><span class="p">,</span>
-<span class="w">                                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid example doc&quot;</span><span class="p">,</span>
-<span class="w">                                    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                        </span><span class="nt">&quot;baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5678&quot;</span>
+<span class="w">            </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FooOperation response"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"application/json"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"examples"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">"FooOperation_example1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                    </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example"</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid example doc"</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                        </span><span class="nt">"baz"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5678"</span>
 <span class="w">                                    </span><span class="p">}</span>
 <span class="w">                                </span><span class="p">}</span>
 <span class="w">                            </span><span class="p">}</span>
@@ -1382,7 +1382,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-apigateway-openapi:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1404,11 +1404,11 @@ OpenAPI model. This is useful if <code class="docutils literal notranslate"><spa
 is inadvertently placed on the classpath by a dependency.</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;apiGatewayType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;REST&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"apiGatewayType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"REST"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1418,11 +1418,11 @@ is inadvertently placed on the classpath by a dependency.</p></li>
 <dt>disableCloudFormationSubstitution (<code class="docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Disables automatically converting <code class="docutils literal notranslate"><span class="pre">${}</span></code> templates in specific properties
 into CloudFormation intrinsic functions.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;disableCloudFormationSubstitution&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"disableCloudFormationSubstitution"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1438,11 +1438,11 @@ option is not set, the default <code class="docutils literal notranslate"><span 
 headers will be added. By setting this option to an empty array, those default
 headers will be omitted.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.weather#Weather&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;additionalAllowedCorsHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo-header&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar-header&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example.weather#Weather"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"additionalAllowedCorsHeaders"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"foo-header"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bar-header"</span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1475,24 +1475,24 @@ for the operation.</p>
 <dl>
 <dt>full</dt><dd><p>Creates a request validator configured as</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"validateRequestBody"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"validateRequestParameters"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </dd>
 <dt>params-only</dt><dd><p>Creates a request validator configured as</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="nt">"validateRequestBody"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"validateRequestParameters"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </dd>
 <dt>body-only</dt><dd><p>Creates a request validator configured as</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestBody&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;validateRequestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="nt">"validateRequestBody"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"validateRequestParameters"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1550,13 +1550,13 @@ or operations using the <code class="docutils literal notranslate"><span class="
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
 <span class="nt">@restJson1</span>
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
-<span class="nt">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"foo"</span>)
 <span class="nt">@authorizers</span>(
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>}<span class="p">,</span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>})
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:foo"</span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:foo"</span>})
 <span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
-<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-17"</span><span class="p">,</span>
 <span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="p">,</span>
 <span class="w">  </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceA</span><span class="p">,</span><span class="w"> </span><span class="vc">ResourceB</span>]<span class="p">,</span>
 }
@@ -1565,7 +1565,7 @@ or operations using the <code class="docutils literal notranslate"><span class="
 <span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 
 <span class="c">// Overrides the authorizer of the service</span>
-<span class="nt">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"baz"</span>)
 <span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 
 <span class="c">// Inherits the authorizer of the service</span>
@@ -1577,11 +1577,11 @@ or operations using the <code class="docutils literal notranslate"><span class="
 <span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
 
 <span class="c">// Overrides the authorizer of the service</span>
-<span class="nt">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"baz"</span>)
 <span class="kd">operation </span><span class="nc">OperationD</span><span class="w"> </span>{}
 
 <span class="c">// Overrides the authorizer of the service</span>
-<span class="nt">@authorizer</span>(<span class="s2">&quot;baz&quot;</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"baz"</span>)
 <span class="kd">resource </span><span class="nc">ResourceB</span><span class="w"> </span>{
 <span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationE</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationF</span>]
 }
@@ -1590,123 +1590,123 @@ or operations using the <code class="docutils literal notranslate"><span class="
 <span class="kd">operation </span><span class="nc">OperationE</span><span class="w"> </span>{}
 
 <span class="c">// Overrides the authorizer of ResourceB</span>
-<span class="nt">@authorizer</span>(<span class="s2">&quot;foo&quot;</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"foo"</span>)
 <span class="kd">operation </span><span class="nc">OperationF</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>Is converted to the following OpenAPI model:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;openapi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.0.2&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Example&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span>
+<span class="w">    </span><span class="nt">"openapi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.0.2"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Example"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-17"</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;paths&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;/a&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationA&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationA response&quot;</span>
+<span class="w">    </span><span class="nt">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"/a"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationA"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationA response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;/b&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationB&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationB response&quot;</span>
+<span class="w">        </span><span class="nt">"/b"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationB"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationB response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="nt">"security"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                    </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">                        </span><span class="nt">"baz"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;/c&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationC&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationC response&quot;</span>
+<span class="w">        </span><span class="nt">"/c"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationC"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationC response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;/d&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationD&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationD response&quot;</span>
+<span class="w">        </span><span class="nt">"/d"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationD"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationD response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="nt">"security"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                    </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">                        </span><span class="nt">"baz"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;/e&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationE&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationE response&quot;</span>
+<span class="w">        </span><span class="nt">"/e"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationE"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationE response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="nt">"security"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">                    </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">                        </span><span class="nt">"baz"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;/f&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;get&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;operationId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationF&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;200&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationF response&quot;</span>
+<span class="w">        </span><span class="nt">"/f"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"get"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"operationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationF"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"responses"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"200"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationF response"</span>
 <span class="w">                    </span><span class="p">}</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;securitySchemes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apiKey&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS Signature Version 4 authentication&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;x-amazon-apigateway-authorizer&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;authorizerUri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>
+<span class="w">    </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"securitySchemes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"baz"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apiKey"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS Signature Version 4 authentication"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Authorization"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"in"</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"x-amazon-apigateway-authorizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"authorizerUri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:foo"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;x-amazon-apigateway-authtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;awsSigv4&quot;</span>
+<span class="w">                </span><span class="nt">"x-amazon-apigateway-authtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"awsSigv4"</span>
 <span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apiKey&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS Signature Version 4 authentication&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;x-amazon-apigateway-authorizer&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;authorizerUri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo&quot;</span>
+<span class="w">            </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apiKey"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS Signature Version 4 authentication"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Authorization"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"in"</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"x-amazon-apigateway-authorizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"authorizerUri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:foo"</span>
 <span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;x-amazon-apigateway-authtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;awsSigv4&quot;</span>
+<span class="w">                </span><span class="nt">"x-amazon-apigateway-authtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"awsSigv4"</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;security&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"security"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">            </span><span class="nt">"foo"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -1750,16 +1750,16 @@ the <a class="reference internal" href="../spec/aws/aws-auth.html#aws-auth-cogni
 When this trait is present, Smithy will add a <code class="docutils literal notranslate"><span class="pre">securitySchemes</span></code> components
 entry:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;aws.auth#cognitoUserPools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apiKey&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Amazon Cognito User Pools authentication&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;x-amazon-apigateway-authtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cognito_user_pools&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;x-amazon-apigateway-authorizer&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cognito_user_pools&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;providerARNs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>
+<span class="w">    </span><span class="nt">"aws.auth#cognitoUserPools"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"apiKey"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Amazon Cognito User Pools authentication"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Authorization"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"in"</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"x-amazon-apigateway-authtype"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cognito_user_pools"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"x-amazon-apigateway-authorizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cognito_user_pools"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"providerARNs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"arn:aws:cognito-idp:us-east-1:123:userpool/123"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1782,11 +1782,11 @@ from the trait.</p>
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
 <span class="nt">@restJson1</span>
-<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x-api-key&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
-<span class="nt">@authorizer</span>(<span class="s2">&quot;api_key&quot;</span>)
-<span class="nt">@authorizers</span>(<span class="py">api_key</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#httpApiKeyAuth&quot;</span>})
+<span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"x-api-key"</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">"header"</span>)
+<span class="nt">@authorizer</span>(<span class="s2">"api_key"</span>)
+<span class="nt">@authorizers</span>(<span class="py">api_key</span><span class="p">:</span><span class="w"> </span>{<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#httpApiKeyAuth"</span>})
 <span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
-<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-17&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-17"</span><span class="p">,</span>
 <span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="p">,</span>
 }
 
@@ -1822,7 +1822,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#openapi-code-build-gradle" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.73.0"</span><span class="p">)</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1838,7 +1838,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 
 <span class="c1">// Add any necessary configuration settings.</span>
 <span class="n">OpenApiConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OpenApiConfig</span><span class="p">();</span>
-<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;example.weather#Weather&quot;</span><span class="p">));</span>
+<span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">"example.weather#Weather"</span><span class="p">));</span>
 <span class="n">converter</span><span class="p">.</span><span class="na">config</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
 
 <span class="c1">// Generate the OpenAPI schema.</span>

@@ -617,20 +617,20 @@ values are provided.</p>
 
 <span class="nt">@awsJson1</span><span class="vc">_1</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span>
 }
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio" /><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.protocols#awsJson1_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#MyService"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"aws.protocols#awsJson1_1"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -646,11 +646,11 @@ values are provided.</p>
 <span class="kd">use </span><span class="nc">aws.protocols#awsJson1_1</span>
 
 <span class="nt">@awsJson1</span><span class="vc">_1</span>(
-<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span>
-<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>]
+<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"h2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"http/1.1"</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"h2"</span>]
 )
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span>
 }
 </pre></div>
 </div>
@@ -662,11 +662,11 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 <span class="kd">use </span><span class="nc">aws.protocols#awsJson1_1</span>
 
 <span class="nt">@awsJson1</span><span class="vc">_1</span>(
-<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span>
-<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]
+<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"h2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"http/1.1"</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"h2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"http/1.1"</span>]
 )
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span>
 }
 </pre></div>
 </div>
@@ -676,9 +676,9 @@ preferred over <code class="docutils literal notranslate"><span class="pre">http
 
 <span class="kd">use </span><span class="nc">aws.protocols#awsJson1_1</span>
 
-<span class="nt">@awsJson1</span><span class="vc">_1</span>(<span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>])
+<span class="nt">@awsJson1</span><span class="vc">_1</span>(<span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"h2"</span>])
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span>
 }
 </pre></div>
 </div>

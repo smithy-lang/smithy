@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Interceptors &#8212; Smithy 2.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/client-guidance/interceptors';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/custom.js?v=0fa699fc"></script>
+    <link rel="icon" href="../../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../glossary.html" />
+    <link rel="prev" title="Endpoint Resolution" href="endpoints.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+<script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/smithy.svg" class="logo__image only-light" alt="Smithy 2.0 - Home"/>
+    <img src="../../_static/smithy-dark.svg" class="logo__image only-dark pst-js-only" alt="Smithy 2.0 - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/shape-closures.html">Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">JSON AST</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wire-protocol-selection.html">Wire protocol selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-codegen/index.html">Creating a Code Generator</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Smithy Client Guidance</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="application-protocols/index.html">Application Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="application-protocols/http.html">HTTP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Interceptors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/contract-traits.html">Contract traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/event-stream-protocol-compliance-tests.html">Event Stream Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/java/index.html">Java</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/java/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/generating-clients.html">Generating Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/configuration.html">Configuring Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/customization.html">Customizing Client Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-typescript">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/rust/index.html">Rust</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/kotlin/quickstart.html">Kotlin Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/kotlin/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/kotlin/client/generating-clients.html">Generating Clients</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples/tree/main/smithy-kotlin-examples">Smithy Kotlin Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin/tree/main/docs/design">Smithy Kotlin Design Docs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/golang/index.html">GoLang</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/scala/index.html">Scala</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/client-guidance/interceptors.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/issues/new?title=Issue%20on%20page%20%2Fguides/client-guidance/interceptors.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+<a href="../../_sources/guides/client-guidance/interceptors.md.txt" target="_blank"
+   class="btn btn-sm btn-source-file-button"
+   title="View page source"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+
+</a>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Interceptors</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hooks">Hooks</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifybeforecall">modifyBeforeCall</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#call-wrappers">Call wrappers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-sequence">Hook sequence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#error-accumulation">Error accumulation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#control-flow">Control flow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interfaces">Interfaces</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-input-types">Hook input types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interceptor-interface">Interceptor interface</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-interceptors">Configuring interceptors</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-order">Execution order</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-interceptors-instead-of-middleware">Why interceptors instead of middleware?</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="interceptors">
+<span id="client-guidance-interceptors"></span><h1>Interceptors<a class="headerlink" href="#interceptors" title="Link to this heading">#</a></h1>
+<p>An <strong>interceptor</strong> is a general-purpose extension point that allows code to
+observe or modify <em>specific</em> stages of a request execution, such as
+serialization, signing, transmission, and deserialization. Interceptors may
+also wrap an entire operation call. Interceptors are registered at client
+creation time or per operation invocation.</p>
+<p>The other sections of this guide describe specific extension points for known
+use cases: retries, endpoint resolution, authentication, and transport. Those
+interfaces are designed to handle tasks that every client implementation will
+take on and which may need to be replaced or extended. In addition to those
+specific extension points, it is recommended to provide interceptors as a more
+general-purpose mechanism that allows users to implement a broader array of
+extensions.</p>
+<section id="hooks">
+<h2>Hooks<a class="headerlink" href="#hooks" title="Link to this heading">#</a></h2>
+<p>Interceptors inject logic through methods that are called at specific points in
+the execution pipeline. These methods are called <strong>hooks</strong>.</p>
+<p>Each hook provides either an <strong>immutable</strong> view of the current state or a
+<strong>mutable</strong> view that allows modifications. It is important to maintain this
+distinction, even in languages where immutability may not be enforceable. Hooks
+often come in pairs: the mutable hook is called first so that all interceptors
+can make their changes, then the immutable hook is called so that interceptors
+can see the finalized state after all mutations have been applied.</p>
+<p>Where possible, it is important to limit what can be mutated in a mutable hook
+to only the properties that are relevant to that hook. This makes each hook
+easier to reason about, and helps to ensure that a change in execution order
+doesn't result in different behavior.</p>
+<p>Hooks are intended to be lightweight, so blocking operations should not be
+supported.</p>
+<section id="modifybeforecall">
+<h3>modifyBeforeCall<a class="headerlink" href="#modifybeforecall" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> is the first interceptor hook invoked for a call. It runs
+once per call, before call wrappers and outside the execution and retry
+lifecycles. The hook receives the operation input and current client
+configuration and returns the configuration to use for the call.</p>
+<p>The client invokes <code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> on interceptors in registration order.
+Each interceptor receives the configuration returned by the previous
+interceptor. The final configuration is used to construct the execution
+pipeline and resolve the interceptors that participate in the call. This allows
+<code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> to switch protocols for a single call, change other
+call-scoped configuration, or add and remove interceptors.</p>
+<p>Interceptors added by <code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> participate in call wrapping and the
+execution hooks, but do not receive <code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> for the current call. An
+error raised by this hook is propagated directly because execution has not yet
+started.</p>
+</section>
+<section id="call-wrappers">
+<h3>Call wrappers<a class="headerlink" href="#call-wrappers" title="Link to this heading">#</a></h3>
+<p>Most interceptor hooks run at a fixed point in the execution pipeline. The
+interceptor interface also includes call-wrapping hooks that enclose the entire
+execution. Individual interceptor implementations may opt in to wrapping calls.</p>
+<p>An interceptor opts in to call wrapping by returning <code class="docutils literal notranslate"><span class="pre">true</span></code> from
+<code class="docutils literal notranslate"><span class="pre">interceptCalls</span></code>. Opted-in interceptors receive an <code class="docutils literal notranslate"><span class="pre">interceptCall</span></code> invocation
+with an input hook and a continuation representing the remaining wrappers and
+the normal execution pipeline. A wrapper may:</p>
+<ul class="simple">
+<li><p>Delegate once to continue normal execution.</p></li>
+<li><p>Delegate with a different operation input.</p></li>
+<li><p>Return an output without delegating.</p></li>
+<li><p>Delegate multiple times to implement behavior such as fallback or, where
+concurrent invocation is supported, hedging.</p></li>
+<li><p>Observe or transform the output or error produced by delegation.</p></li>
+</ul>
+<p>Call wrappers compose by nesting. The first registered wrapper is the outermost
+wrapper, unlike read and modify hooks, which iterate in registration order.
+Wrappers run after <code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> and outside the retry loop. Every
+delegation to the continuation runs the normal execution pipeline, including
+its retry loop.</p>
+<p>Clients should resolve the opted-in wrappers when creating an interceptor chain
+and provide a fast way to determine whether the chain contains wrappers. This
+allows calls without wrappers to follow the normal execution path without
+constructing a call-wrapper input hook or continuation.</p>
+<p>The current client should be available through the input hook's context so that
+a wrapper can re-enter the client when necessary. Re-entry starts a separate
+call, including its call wrappers.</p>
+<p>An error raised by a wrapper itself is propagated directly and is not processed
+by execution completion hooks. Errors produced by a delegated execution are
+processed by that execution's completion hooks before propagating back to the
+wrapper.</p>
+</section>
+<section id="hook-sequence">
+<h3>Hook sequence<a class="headerlink" href="#hook-sequence" title="Link to this heading">#</a></h3>
+<p>The following is an ordered list of recommended hooks for one execution. The
+sequence runs each time the call wrapper chain delegates to the normal execution
+pipeline. If no call wrappers are configured, it runs once for the call. It is
+also recommended to make the list of hooks modifiable, so that new hooks may be
+added later.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>In the following list, a <strong>call</strong> is one operation invocation made through the
+client. An <strong>execution</strong> is one end-to-end delegation through the normal
+pipeline. A call wrapper may cause a call to have zero, one, or multiple
+executions. An <strong>attempt</strong> is a single try within an execution. There may be
+multiple attempts if the request needs to be retried.</p>
+<p>The <strong>transport request</strong> and <strong>transport response</strong> represent the serialized
+requests and responses that are sent to and received from the service. For HTTP
+protocols, these are HTTP requests and HTTP responses.</p>
+</div>
+<ol class="arabic simple">
+<li><p><strong>readBeforeExecution</strong> <em>(immutable)</em> — The first thing called during an
+execution. This inspects the client state and the unmodified inputs to the
+operation.</p></li>
+<li><p><strong>modifyBeforeSerialization</strong> <em>(mutable)</em> — Modifies the input before it is
+serialized.</p></li>
+<li><p><strong>readBeforeSerialization</strong> <em>(immutable)</em> — Called immediately before the
+input is serialized.</p></li>
+<li><p><strong>readAfterSerialization</strong> <em>(immutable)</em> — Called immediately after the input
+is serialized.</p></li>
+<li><p><strong>modifyBeforeRetryLoop</strong> <em>(mutable)</em> — Modifies the transport request before
+the retry loop begins.</p></li>
+<li><p><em>(retry loop)</em></p>
+<ol class="arabic simple">
+<li><p><strong>readBeforeAttempt</strong> <em>(immutable)</em> — The first thing called inside the
+retry loop.</p></li>
+<li><p><strong>modifyBeforeSigning</strong> <em>(mutable)</em> — Can modify the transport request
+before signing.</p></li>
+<li><p><strong>readBeforeSigning</strong> <em>(immutable)</em> — Called immediately before signing.</p></li>
+<li><p><strong>readAfterSigning</strong> <em>(immutable)</em> — Called immediately after signing.</p></li>
+<li><p><strong>modifyBeforeTransmit</strong> <em>(mutable)</em> — Can modify the transport request
+before it is sent.</p></li>
+<li><p><strong>readBeforeTransmit</strong> <em>(immutable)</em> — Called immediately before the
+request is sent.</p></li>
+<li><p><strong>readAfterTransmit</strong> <em>(immutable)</em> — Called immediately after the
+transport response is received.</p></li>
+<li><p><strong>modifyBeforeDeserialization</strong> <em>(mutable)</em> — Can modify the transport
+response before deserialization.</p></li>
+<li><p><strong>readBeforeDeserialization</strong> <em>(immutable)</em> — Called immediately before
+deserialization.</p></li>
+<li><p><strong>readAfterDeserialization</strong> <em>(immutable)</em> — Called immediately after
+deserialization.</p></li>
+<li><p><strong>modifyBeforeAttemptCompletion</strong> <em>(mutable)</em> — Can modify the output or
+error before the attempt ends.</p></li>
+<li><p><strong>readAfterAttempt</strong> <em>(immutable)</em> — The last thing called inside the
+retry loop.</p></li>
+</ol>
+</li>
+<li><p><strong>modifyBeforeCompletion</strong> <em>(mutable)</em> — Can modify the output or error
+before the execution ends.</p></li>
+<li><p><strong>readAfterExecution</strong> <em>(immutable)</em> — The last thing called during an
+execution.</p></li>
+</ol>
+</section>
+<section id="error-handling">
+<h3>Error handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h3>
+<p>Error handling behavior depends on where in the pipeline the hook is called and
+whether or not the hook is mutable.</p>
+<section id="error-accumulation">
+<h4>Error accumulation<a class="headerlink" href="#error-accumulation" title="Link to this heading">#</a></h4>
+<p>When an immutable hook is being executed, all interceptors are always invoked
+and any errors thrown by those interceptors are accumulated before any further
+action is taken. The last error thrown by an interceptor is re-thrown. If the
+language supports suppressed errors, the other errors should be suppressed. If
+not, the other errors should be logged and dropped. The may also be attached to
+the raised error as metadata.</p>
+<p>When a mutable hook is being executed, the first error thrown is immediately
+forwarded on and no other interceptors are invoked.</p>
+</section>
+<section id="control-flow">
+<h4>Control flow<a class="headerlink" href="#control-flow" title="Link to this heading">#</a></h4>
+<p>When an error is raised in a hook outside the retry loop, execution immediately
+jumps to <code class="docutils literal notranslate"><span class="pre">modifyBeforeCompletion</span></code>. When an error is raised outside the retry
+loop, execution immediately jumps to <code class="docutils literal notranslate"><span class="pre">modifyBeforeAttemptCompletion</span></code>.</p>
+</section>
+</section>
+</section>
+<section id="interfaces">
+<h2>Interfaces<a class="headerlink" href="#interfaces" title="Link to this heading">#</a></h2>
+<section id="hook-input-types">
+<h3>Hook input types<a class="headerlink" href="#hook-input-types" title="Link to this heading">#</a></h3>
+<p>Each hook receives a typed input object that contains only the data available at
+that stage of the pipeline, along with a <a class="reference internal" href="context.html#typed-context"><span class="std std-ref">context object</span></a>. Using
+typed inputs prevents interceptors from accidentally accessing data that doesn't
+exist yet (for example, trying to read the transport response before a request
+has been sent).</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Available to modifyBeforeCall.</span>
+<span class="c1">// Contains the operation input and current client configuration.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CallHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="nf">input</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ClientConfig</span><span class="w"> </span><span class="nf">config</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Available to interceptCall and from readBeforeExecution onward.</span>
+<span class="c1">// Always contains the operation input.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="nf">input</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="nf">context</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">withInput</span><span class="p">(</span><span class="n">I</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Available from readAfterSerialization and modifyBeforeRetryLoop onward.</span>
+<span class="c1">// Adds the protocol-specific request.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RequestHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RequestT</span><span class="w"> </span><span class="nf">request</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Available from readAfterTransmit and modifyBeforeDeserialization onward.</span>
+<span class="c1">// Adds the protocol-specific response.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ResponseHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">ResponseT</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">RequestHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ResponseT</span><span class="w"> </span><span class="nf">response</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Available from readAfterDeserialization and modifyBeforeAttemptCompletion onward.</span>
+<span class="c1">// Adds the deserialized output (may be null if the attempt failed).</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OutputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">ResponseT</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ResponseHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">ResponseT</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">output</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">RuntimeException</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">error</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * If an exception {@code e} is provided, throw it, otherwise return the output value.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param e Error to potentially rethrow.</span>
+<span class="cm">     * @return the output value.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">O</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">output</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The context object on each hook is the same instance for the entire execution,
+so data stored in it by one hook is available to all subsequent hooks. See the
+<a class="reference internal" href="context.html#typed-context"><span class="std std-ref">context guide</span></a> for details.</p>
+</section>
+<section id="interceptor-interface">
+<h3>Interceptor interface<a class="headerlink" href="#interceptor-interface" title="Link to this heading">#</a></h3>
+<p>It is highly recommended to design the interceptor interface so that
+implementations only need to override the hooks they care about. In Java, this
+means providing default no-op implementations for every method. Clients in other
+languages may prefer to use abstract classes or similar features.</p>
+<p>Mutable hooks should always return the value they receive, whether or not it was
+modified. If no modification is needed, they return the original value
+unchanged.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Interceptor</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">ClientConfig</span><span class="w"> </span><span class="nf">modifyBeforeCall</span><span class="p">(</span><span class="n">CallHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">config</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">interceptCalls</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">O</span><span class="w"> </span><span class="nf">interceptCall</span><span class="p">(</span><span class="n">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">NextCall</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">next</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">hook</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@FunctionalInterface</span>
+<span class="w">    </span><span class="kd">interface</span> <span class="nc">NextCall</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">O</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="n">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeExecution</span><span class="p">(</span><span class="n">InputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">I</span><span class="o">&gt;</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="nf">modifyBeforeSerialization</span><span class="p">(</span><span class="n">InputHook</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">input</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeSerialization</span><span class="p">(</span><span class="n">InputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterSerialization</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RequestT</span><span class="w"> </span><span class="nf">modifyBeforeRetryLoop</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">request</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeAttempt</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RequestT</span><span class="w"> </span><span class="nf">modifyBeforeSigning</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">request</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeSigning</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterSigning</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RequestT</span><span class="w"> </span><span class="nf">modifyBeforeTransmit</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">request</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeTransmit</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterTransmit</span><span class="p">(</span><span class="n">ResponseHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">ResponseT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ResponseT</span><span class="w"> </span><span class="nf">modifyBeforeDeserialization</span><span class="p">(</span><span class="n">ResponseHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">ResponseT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">response</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readBeforeDeserialization</span><span class="p">(</span><span class="n">ResponseHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterDeserialization</span><span class="p">(</span><span class="n">OutputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">O</span><span class="w"> </span><span class="nf">modifyBeforeAttemptCompletion</span><span class="p">(</span><span class="n">OutputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">forward</span><span class="p">(</span><span class="n">error</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterAttempt</span><span class="p">(</span><span class="n">OutputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">O</span><span class="o">&gt;</span><span class="w"> </span><span class="n">O</span><span class="w"> </span><span class="nf">modifyBeforeCompletion</span><span class="p">(</span><span class="n">OutputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="n">O</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">forward</span><span class="p">(</span><span class="n">error</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">readAfterExecution</span><span class="p">(</span><span class="n">OutputHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">,</span><span class="w"> </span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="important admonition">
+<p class="admonition-title">Error modeling</p>
+<p>In these interfaces, errors are provided separately from the <code class="docutils literal notranslate"><span class="pre">OutputHook</span></code> type.
+This is a minor optimization that eliminates the need to allocate new <code class="docutils literal notranslate"><span class="pre">OutputHook</span></code>
+instances when errors are thrown.</p>
+<p>In languages that have a native union type (such as Python) or a native <code class="docutils literal notranslate"><span class="pre">Result</span></code>
+type (such as Rust), the usability benefits of integrating the error into the
+<code class="docutils literal notranslate"><span class="pre">OutputHook</span></code> may be preferrable.</p>
+</div>
+</section>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<p>The following interceptor adds a tracing header to HTTP requests when running
+inside AWS Lambda. It uses <code class="docutils literal notranslate"><span class="pre">modifyBeforeTransmit</span></code> because the header needs to be
+added to the transport request after signing. Adding it before signing would
+cause the signature to include the header. That would be fine, but this
+particular header is added after signing in practice.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AddTraceHeader</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Interceptor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">traceId</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">AddTraceHeader</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">traceId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">traceId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">traceId</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RequestT</span><span class="w"> </span><span class="nf">modifyBeforeTransmit</span><span class="p">(</span><span class="n">RequestHook</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hook</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hook</span><span class="p">.</span><span class="na">mapRequest</span><span class="p">(</span><span class="n">HttpRequest</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">h</span><span class="p">.</span><span class="na">request</span><span class="p">().</span><span class="na">headers</span><span class="p">().</span><span class="na">hasHeader</span><span class="p">(</span><span class="s">"x-amzn-trace-id"</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">h</span><span class="p">.</span><span class="na">request</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">h</span><span class="p">.</span><span class="na">request</span><span class="p">().</span><span class="na">toBuilder</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">withReplacedHeader</span><span class="p">(</span><span class="s">"x-amzn-trace-id"</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">traceId</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mapRequest</span></code> is a convenience method on <code class="docutils literal notranslate"><span class="pre">RequestHook</span></code> that applies a mapping
+function only if the request is of the expected type. This keeps the interceptor
+from failing if it is used with a non-HTTP protocol.</p>
+</section>
+<section id="configuring-interceptors">
+<h2>Configuring interceptors<a class="headerlink" href="#configuring-interceptors" title="Link to this heading">#</a></h2>
+<p>Interceptors should be configurable for the whole client, in which case they
+apply to every operation invocation made by that client. Interceptors configured
+this way can determine which operation is being executed based on the input if
+they need to apply to only a subset of operations.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">MyServiceClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyServiceClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AddTraceHeader</span><span class="p">(</span><span class="n">traceId</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Interceptors should also be configurable for a single operation execution. This
+is particularly important for things like debugging or profiling specific parts
+of a code base.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="n">GetObjectInput</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">bucket</span><span class="p">(</span><span class="s">"example"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">key</span><span class="p">(</span><span class="s">"my-object"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AddTraceHeader</span><span class="p">(</span><span class="n">traceId</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+</pre></div>
+</div>
+<section id="execution-order">
+<h3>Execution order<a class="headerlink" href="#execution-order" title="Link to this heading">#</a></h3>
+<p>When multiple interceptors are configured, they should be called in a
+deterministic order because the order they are called in can impact the
+execution of the operation.</p>
+<p>The recommended ordering is:</p>
+<ol class="arabic simple">
+<li><p>Interceptors that are configured on the client by default. This includes
+interceptors that are added during code generation.</p></li>
+<li><p>Interceptors that are configured on the client which are not applied by
+default.</p></li>
+<li><p>Interceptors configured for a single operation execution.</p></li>
+</ol>
+<p>Read and modify hooks iterate in this order. Call wrappers preserve the same
+resolved order but compose by nesting, so the first registered wrapper is the
+outermost and the last registered wrapper is the innermost.</p>
+</section>
+</section>
+<section id="why-interceptors-instead-of-middleware">
+<h2>Why interceptors instead of middleware?<a class="headerlink" href="#why-interceptors-instead-of-middleware" title="Link to this heading">#</a></h2>
+<p>Middleware is a common pattern for building request pipelines, and it works well
+as an internal implementation strategy. As a public extension point, however, it
+allows middleware to modify control flow at arbitrary stages. This makes it
+difficult to reason about the pipeline as a whole when third-party middleware
+is present.</p>
+<p>Most interceptor hooks deliberately cannot modify control flow. They observe or
+modify values at fixed pipeline stages while preserving the client's execution
+order. <code class="docutils literal notranslate"><span class="pre">interceptCall</span></code> is a narrowly scoped exception at the operation call
+boundary. It may choose whether or how many times to delegate the entire
+execution, but once delegated, the serialization, retry, signing, transmission,
+and deserialization stages retain their defined ordering.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="endpoints.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Endpoint Resolution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../glossary.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Glossary</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hooks">Hooks</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifybeforecall">modifyBeforeCall</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#call-wrappers">Call wrappers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-sequence">Hook sequence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#error-accumulation">Error accumulation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#control-flow">Control flow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interfaces">Interfaces</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-input-types">Hook input types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interceptor-interface">Interceptor interface</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-interceptors">Configuring interceptors</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-order">Execution order</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-interceptors-instead-of-middleware">Why interceptors instead of middleware?</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Amazon Web Services
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, Amazon Web Services.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

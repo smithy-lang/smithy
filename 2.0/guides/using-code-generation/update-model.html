@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -690,13 +691,13 @@ project:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="nt">&quot;...&quot;</span>
-<span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span>
+<span class="w">    </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="nt">"..."</span>
+<span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+<span class="w">    </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -709,7 +710,7 @@ project:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="p">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.73.0"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -720,7 +721,7 @@ project:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.73.0'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -733,21 +734,21 @@ project:</p>
 and apply it to the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service shape:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">weather.smithy</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
 <span class="c">/// Provides weather forecasts.</span>
 <span class="nt">@paginated</span>(
-<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>
+<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span>
+<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span>
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"pageSize"</span>
 )
 
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
 }
@@ -763,30 +764,30 @@ HTTP messages properly.</p>
 <p>First, configure the HTTP method, request URI, and the status code of a successful
 response with the <a class="reference internal" href="../../spec/http-bindings.html#http-trait"><span class="std std-ref">&#64;http trait</span></a>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities/{cityId}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/cities/{cityId}"</span>)
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span>
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
 }
 
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"items"</span>)
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities&quot;</span>)
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/cities"</span>)
 <span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
 }
 
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/currentTime&quot;</span>)
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/currentTime"</span>)
 <span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
 }
 
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/forecast/{cityId}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/forecast/{cityId}"</span>)
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
@@ -798,7 +799,7 @@ bind the <code class="docutils literal notranslate"><span class="pre">cityId</sp
 the members that should be bound to the URIs using the <a class="reference internal" href="../../spec/http-bindings.html#httplabel-trait"><span class="std std-ref">&#64;httpLabel trait</span></a>:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">    </span><span class="c">// "cityId" provides the identifier for the resource and</span>
 <span class="w">    </span><span class="c">// has to be marked as required.</span>
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="nt">@httpLabel</span>
@@ -817,9 +818,9 @@ the members that should be bound to the URIs using the <a class="reference inter
 in the request URI as query parameters using the <a class="reference internal" href="../../spec/http-bindings.html#httpquery-trait"><span class="std std-ref">&#64;httpQuery trait</span></a>:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;nextToken&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"nextToken"</span>)
 <span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;pageSize&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"pageSize"</span>)
 <span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 }
 </pre></div>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -780,19 +781,19 @@ request flow using traits.</p>
 <p>The examples in the following trait definitions are valid bindings into the
 following rule set:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;serviceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;linkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The identifier of the link to target.&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"serviceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"linkId"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The identifier of the link to target."</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;previewEndpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;documentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Whether the client should target the service&#39;s preview endpoint.&quot;</span>
+<span class="w">        </span><span class="nt">"previewEndpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"boolean"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Whether the client should target the service's preview endpoint."</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="c1">// Abbreviated for clarity</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
@@ -848,16 +849,16 @@ parameters SHOULD be configurable or overridable per operation invocation.</p>
 configurable values:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@clientContextParams</span>(
 <span class="w">    </span><span class="py">linkId</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The identifier of the link to target.&quot;</span>
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"The identifier of the link to target."</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">previewEndpoint</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Whether the client should target the service&#39;s preview endpoint.&quot;</span>
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">"boolean"</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">"Whether the client should target the service's preview endpoint."</span>
 <span class="w">    </span>}
 )
 <span class="kd">service </span><span class="nc">ExampleService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-07-02"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetThing</span>]
 }
 </pre></div>
@@ -907,13 +908,13 @@ specified in the rule set.</p>
 operation:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@staticContextParams</span>(
 <span class="w">    </span><span class="py">linkId</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some value&quot;</span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">"some value"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">previewEndpoint</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">    </span>}<span class="p">,</span>
 <span class="w">    </span><span class="py">supportedPrefixes</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;host&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;resourceId&quot;</span>]
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"host"</span><span class="p">,</span><span class="w"> </span><span class="s2">"id"</span><span class="p">,</span><span class="w"> </span><span class="s2">"resourceId"</span>]
 <span class="w">    </span>}
 )
 <span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{}
@@ -962,7 +963,7 @@ specified in the rule set.</p>
 operation input using a JMESPath expression:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@operationContextParams</span>(
 <span class="w">    </span><span class="py">ObjectKeys</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Delete.Objects[*].Key&quot;</span>
+<span class="w">        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"Delete.Objects[*].Key"</span>
 <span class="w">    </span>}
 )
 <span class="kd">operation </span><span class="nc">DeleteObjects</span><span class="w"> </span>{
@@ -1044,7 +1045,7 @@ bound to the <code class="docutils literal notranslate"><span class="pre">linkId
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">fizz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">        </span><span class="nt">@contextParam</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linkId&quot;</span>)
+<span class="w">        </span><span class="nt">@contextParam</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"linkId"</span>)
 <span class="w">        </span><span class="py">buzz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 <span class="w">    </span>}
 }
@@ -1067,10 +1068,10 @@ annotated with the <code class="docutils literal notranslate"><span class="pre">
 the parameter’s value MUST be bound to the value retrieved from the identified
 source, if present, UNLESS a more specific value supersedes it.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;builtIn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SDK::Endpoint&quot;</span>
+<span class="w">    </span><span class="nt">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"endpoint"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"builtIn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SDK::Endpoint"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>

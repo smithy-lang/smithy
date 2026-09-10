@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -692,9 +693,9 @@ your project.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
-<span class="gd">-     id(&quot;software.amazon.smithy&quot;).version(&quot;0.7.0&quot;)</span>
+<span class="gd">-     id("software.amazon.smithy").version("0.7.0")</span>
 <span class="gi">+     `java`</span>
-<span class="gi">+     id(&quot;software.amazon.smithy.gradle.smithy-jar&quot;).version(&quot;1.5.0&quot;)</span>
+<span class="gi">+     id("software.amazon.smithy.gradle.smithy-jar").version("1.5.0")</span>
 }
 </pre></div>
 </div>
@@ -704,9 +705,9 @@ your project.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
-<span class="gd">-      id &#39;software.amazon.smithy&#39; version &#39;0.7.0&#39;</span>
-<span class="gi">+      id &#39;java&#39;</span>
-<span class="gi">+      id &#39;software.amazon.smithy.gradle.smithy-jar&#39; version &#39;1.5.0&#39;</span>
+<span class="gd">-      id 'software.amazon.smithy' version '0.7.0'</span>
+<span class="gi">+      id 'java'</span>
+<span class="gi">+      id 'software.amazon.smithy.gradle.smithy-jar' version '1.5.0'</span>
 }
 </pre></div>
 </div>
@@ -733,19 +734,19 @@ for these build-only dependencies.</p>
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath(&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;)</span>
+<span class="gd">-           classpath("software.amazon.smithy:smithy-aws-traits:1.73.0")</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
-<span class="gd">-           classpath(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
+<span class="gd">-           classpath("com.foo.baz:foo-internal-model:1.0.0")</span>
 <span class="gd">-       }</span>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-model:1.73.0&quot;)
+<span class="w"> </span>   implementation("software.amazon.smithy:smithy-model:1.73.0")
 
-<span class="w"> </span>   implementation(&quot;software.amazon.smithy:smithy-aws-traits:1.73.0&quot;)
-<span class="gi">+   smithyBuild(&quot;com.foo.baz:foo-internal-model:1.0.0&quot;)</span>
+<span class="w"> </span>   implementation("software.amazon.smithy:smithy-aws-traits:1.73.0")
+<span class="gi">+   smithyBuild("com.foo.baz:foo-internal-model:1.0.0")</span>
 }
 </pre></div>
 </div>
@@ -763,19 +764,19 @@ dependencies {
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath &#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;</span>
+<span class="gd">-           classpath 'software.amazon.smithy:smithy-aws-traits:1.73.0'</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
-<span class="gd">-           classpath &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
+<span class="gd">-           classpath 'com.foo.baz:foo-internal-model:1.0.0'</span>
 <span class="gd">-       }</span>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-model:1.73.0&#39;
+<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-model:1.73.0'
 
-<span class="w"> </span>   implementation &#39;software.amazon.smithy:smithy-aws-traits:1.73.0&#39;
-<span class="gi">+   smithyBuild &#39;com.foo.baz:foo-internal-model:1.0.0&#39;</span>
+<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-aws-traits:1.73.0'
+<span class="gi">+   smithyBuild 'com.foo.baz:foo-internal-model:1.0.0'</span>
 }
 </pre></div>
 </div>
@@ -792,8 +793,8 @@ dependencies {
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-configure&lt;software.amazon.smithy.gradle.SmithyExtension&gt; {</span>
 <span class="gi">+smithy {</span>
-<span class="gd">-    projection = &quot;foo&quot;</span>
-<span class="gi">+    sourceProjection.set(&quot;foo&quot;)</span>
+<span class="gd">-    projection = "foo"</span>
+<span class="gi">+    sourceProjection.set("foo")</span>
 }
 </pre></div>
 </div>
@@ -804,8 +805,8 @@ dependencies {
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-configure&lt;software.amazon.smithy.gradle.SmithyExtension&gt; {</span>
 <span class="gi">+smithy {</span>
-<span class="gd">-    projection = &quot;foo&quot;</span>
-<span class="gi">+    sourceProjection = &quot;foo&quot;</span>
+<span class="gd">-    projection = "foo"</span>
+<span class="gi">+    sourceProjection = "foo"</span>
 }
 </pre></div>
 </div>
@@ -827,13 +828,13 @@ configure the <code class="docutils literal notranslate"><span class="pre">smith
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>tasks {
 <span class="gd">-   smithyBuildJar {</span>
 <span class="gi">+   smithyBuild {</span>
-<span class="w"> </span>       smithyBuildConfigs.set(files(&quot;smithy-build.json&quot;, other))
+<span class="w"> </span>       smithyBuildConfigs.set(files("smithy-build.json", other))
 <span class="w"> </span>   }
 <span class="w"> </span>   // ..
 }
 
-<span class="gd">-tasks[&quot;smithyBuildJar&quot;].dependsOn(&quot;otherTask&quot;)</span>
-<span class="gi">+tasks[&quot;jar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+<span class="gd">-tasks["smithyBuildJar"].dependsOn("otherTask")</span>
+<span class="gi">+tasks["jar"].dependsOn("otherTask")</span>
 </pre></div>
 </div>
 </div>
@@ -844,13 +845,13 @@ configure the <code class="docutils literal notranslate"><span class="pre">smith
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>tasks {
 <span class="gd">-   smithyBuildJar {</span>
 <span class="gi">+   smithyBuild {</span>
-<span class="w"> </span>       smithyBuildConfigs = files(&quot;smithy-build.json&quot;, other)
+<span class="w"> </span>       smithyBuildConfigs = files("smithy-build.json", other)
 <span class="w"> </span>   }
 <span class="w"> </span>   // ..
 }
 
-<span class="gd">-tasks[&quot;smithyBuildJar&quot;].dependsOn(&quot;otherTask&quot;)</span>
-<span class="gi">+tasks[&quot;jar&quot;].dependsOn(&quot;otherTask&quot;)</span>
+<span class="gd">-tasks["smithyBuildJar"].dependsOn("otherTask")</span>
+<span class="gi">+tasks["jar"].dependsOn("otherTask")</span>
 </pre></div>
 </div>
 </div>

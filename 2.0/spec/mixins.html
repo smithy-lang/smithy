@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -682,7 +683,7 @@
 <p>A mixin is a shape that has the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin trait</span></a>. Adding a mixin to a shape
 causes the members and traits of the mixin shape to be copied into the local
 shape.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@mixin</span>
@@ -750,7 +751,7 @@ without mixins:</p>
 different type. For example, a string mixin can be applied to a string
 shape, but not to a blob shape.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;[a-zA-Z0-1]*&quot;</span>)
+<span class="nt">@pattern</span>(<span class="s2">"[a-zA-Z0-1]*"</span>)
 <span class="kd">string </span><span class="nc">AlphaNumericMixin</span>
 
 <span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">32</span>)
@@ -764,7 +765,7 @@ the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"
 shape take precedence over traits applied to its mixins.</p>
 <p>For example, the definition of <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> in the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span>
-<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">"a"</span>])
 <span class="nt">@mixin</span>
 <span class="kd">structure </span><span class="nc">UserInfoMixin</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -776,7 +777,7 @@ shape take precedence over traits applied to its mixins.</p>
 <p>Is equivalent to the following flattened structure because it inherits the
 traits of <code class="docutils literal notranslate"><span class="pre">UserInfo</span></code>:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span>
-<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">"a"</span>])
 <span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -784,14 +785,14 @@ traits of <code class="docutils literal notranslate"><span class="pre">UserInfo<
 </div>
 <p>The definition of <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> in the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Generic mixin documentation.</span>
-<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">"a"</span>])
 <span class="nt">@mixin</span>
 <span class="kd">structure </span><span class="nc">UserInfoMixin</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
 <span class="c">/// Specific documentation</span>
-<span class="nt">@tags</span>([<span class="s2">&quot;replaced-tags&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">"replaced-tags"</span>])
 <span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">UserInfoMixin</span>]<span class="w"> </span>{}
 </pre></div>
 </div>
@@ -799,7 +800,7 @@ traits of <code class="docutils literal notranslate"><span class="pre">UserInfo<
 traits of <code class="docutils literal notranslate"><span class="pre">UserInfo</span></code> and traits applied to <code class="docutils literal notranslate"><span class="pre">UserSummary</span></code> take precedence
 over traits it inherits:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Specific documentation</span>
-<span class="nt">@tags</span>([<span class="s2">&quot;replaced-tags&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">"replaced-tags"</span>])
 <span class="kd">structure </span><span class="nc">UserSummary</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">userId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
@@ -869,7 +870,7 @@ the <a class="reference internal" href="type-refinement-traits.html#mixin-trait"
 the mixin are not copied onto shapes that use the mixin (note that this has
 no effect on the traits applied to members contained within a mixin).</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@private</span>
@@ -905,7 +906,7 @@ and in the Smithy IDL using <a class="reference internal" href="idl.html#apply-s
 <p>Traits applied to shapes supersede any traits inherited from mixins.</p>
 </div>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@mixin</span>
@@ -915,11 +916,11 @@ and in the Smithy IDL using <a class="reference internal" href="idl.html#apply-s
 }
 
 <span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{}
-<span class="kd">apply </span><span class="nc">MyStruct$mixinMember</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">&quot;Specific docs&quot;</span>)
+<span class="kd">apply </span><span class="nc">MyStruct$mixinMember</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">"Specific docs"</span>)
 </pre></div>
 </div>
 <p>Alternatively, the member can be redefined if it targets the same shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@mixin</span>
@@ -1112,7 +1113,7 @@ example, in the following model:</p>
 
 <span class="nt">@mixin</span>
 <span class="kd">service </span><span class="nc">A</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"A"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]
 }
 
@@ -1124,10 +1125,10 @@ example, in the following model:</p>
 
 <span class="nt">@mixin</span>
 <span class="kd">service </span><span class="nc">B</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">A</span>]<span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"B"</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationARequest&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResult&quot;</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationAInput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationARequest"</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationAOutput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationAResult"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationB</span>]
 }
@@ -1135,10 +1136,10 @@ example, in the following model:</p>
 <span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
 
 <span class="kd">service </span><span class="nc">C</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">B</span>]<span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"C"</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResponse&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationBInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationBRequest&quot;</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationAOutput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationAResponse"</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationBInput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationBRequest"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationC</span>]
 }
@@ -1162,11 +1163,11 @@ example, in the following model:</p>
 <span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
 
 <span class="kd">service </span><span class="nc">C</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"C"</span>
 <span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationARequest&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationAOutput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationAResponse&quot;</span>
-<span class="w">        </span><span class="s2">&quot;smithy.example#OperationBInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationBRequest&quot;</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationAInput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationARequest"</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationAOutput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationAResponse"</span>
+<span class="w">        </span><span class="s2">"smithy.example#OperationBInput"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OperationBRequest"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span>]
 }
@@ -1199,7 +1200,7 @@ input and output shapes to be shared goes against the goal of the
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">ValidationError</span><span class="w"> </span>{}
 
 <span class="kd">operation </span><span class="nc">GetUsername</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">ValidatedOperation</span>]<span class="w"> </span>{
@@ -1212,7 +1213,7 @@ input and output shapes to be shared goes against the goal of the
 <span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span>]
 }
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">NotFoundError</span><span class="w"> </span>{}
 </pre></div>
 </div>

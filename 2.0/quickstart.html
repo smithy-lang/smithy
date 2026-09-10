@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -805,13 +806,13 @@ following file structure:</p>
 <code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="spec/service-types.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a <a class="reference internal" href="spec/idl.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
 <span class="c">/// Provides weather forecasts.</span>
 <span class="c">/// Triple slash comments attach documentation to shapes.</span>
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 }
 </pre></div>
 </div>
@@ -837,12 +838,12 @@ shape.</p></li>
 identifiers, operations, and any number of child resources.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
 <span class="c">/// Provides weather forecasts.</span>
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">City</span>
 <span class="w">    </span>]
@@ -854,8 +855,8 @@ identifiers, operations, and any number of child resources.</p>
 <span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span>
 }
 
-<span class="c">// &quot;pattern&quot; is a trait.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)
+<span class="c">// "pattern" is a trait.</span>
+<span class="nt">@pattern</span>(<span class="s2">"^[A-Za-z0-9 ]+$"</span>)
 <span class="kd">string </span><span class="nc">CityId</span>
 </pre></div>
 </div>
@@ -969,16 +970,16 @@ your API.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
-<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">        </span><span class="c">// "cityId" provides the identifier for the resource and</span>
 <span class="w">        </span><span class="c">// has to be marked as required.</span>
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$cityId</span>
 <span class="w">    </span>}
 
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
-<span class="w">        </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">        </span><span class="c">// "required" is used on output to indicate if the service</span>
 <span class="w">        </span><span class="c">// will always provide a value for the member.</span>
-<span class="w">        </span><span class="c">// &quot;notProperty&quot; indicates that top-level input member &quot;name&quot;</span>
+<span class="w">        </span><span class="c">// "notProperty" indicates that top-level input member "name"</span>
 <span class="w">        </span><span class="c">// is not bound to any resource property.</span>
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nt">@notProperty</span>
@@ -993,9 +994,9 @@ your API.</p>
 <span class="w">    </span>]
 }
 
-<span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
+<span class="c">// "error" is a trait that is used to specialize</span>
 <span class="c">// a structure as an error.</span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1008,8 +1009,8 @@ your API.</p>
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
-<span class="w">    </span><span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="w">    </span><span class="c">// "cityId" provides the only identifier for the resource since</span>
+<span class="w">    </span><span class="c">// a Forecast doesn't have its own.</span>
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$cityId</span>
@@ -1044,9 +1045,9 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"pageSize"</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">City</span>
 <span class="w">    </span>]
@@ -1055,7 +1056,7 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 <span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results. Applying this trait to the service</span>
 <span class="c">// sets default pagination configuration settings on each operation.</span>
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"items"</span>)
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
@@ -1122,9 +1123,9 @@ service.</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">model/weather.smithy</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"pageSize"</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">City</span>
 <span class="w">    </span>]
@@ -1161,9 +1162,9 @@ create a <a class="reference internal" href="guides/smithy-build-json.html#id1">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Version of the smithy-build.json file specification</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
 <span class="w">    </span><span class="c1">// Location to search for Smithy model source files</span>
-<span class="w">    </span><span class="nt">&quot;sources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1183,7 +1184,7 @@ first, create a gradle build script file in the <code class="docutils literal no
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">`java-library`</span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-jar&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;1.5.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy.gradle.smithy-jar"</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">"1.5.0"</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
@@ -1198,8 +1199,8 @@ first, create a gradle build script file in the <code class="docutils literal no
 <div class="literal-block-wrapper docutils container" id="id11">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;java-library&#39;</span>
-<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">&#39;software.amazon.smithy.gradle.smithy-jar&#39;</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">&#39;1.5.0&#39;</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'java-library'</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="s1">'software.amazon.smithy.gradle.smithy-jar'</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s1">'1.5.0'</span>
 <span class="o">}</span>
 
 <span class="n">repositories</span><span class="w"> </span><span class="o">{</span>
@@ -1217,7 +1218,7 @@ first, create a gradle build script file in the <code class="docutils literal no
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Version of the smithy-build.json file specification</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="w">    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1292,14 +1293,14 @@ show how to use tools like the Smithy CLI or
 <p>The complete <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model should look like:</p>
 <div class="literal-block-wrapper docutils container" id="id13">
 <div class="code-block-caption"><span class="caption-text">weather.smithy</span><a class="headerlink" href="#id13" title="Link to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
 <span class="c">/// Provides weather forecasts.</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">"nextToken"</span><span class="p">,</span><span class="w"> </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">"pageSize"</span>)
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2006-03-01"</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span><span class="vc">City</span>
 <span class="w">    </span>]
@@ -1324,23 +1325,23 @@ show how to use tools like the Smithy CLI or
 <span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
 }
 
-<span class="c">// &quot;pattern&quot; is a trait.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)
+<span class="c">// "pattern" is a trait.</span>
+<span class="nt">@pattern</span>(<span class="s2">"^[A-Za-z0-9 ]+$"</span>)
 <span class="kd">string </span><span class="nc">CityId</span>
 
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
-<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">        </span><span class="c">// "cityId" provides the identifier for the resource and</span>
 <span class="w">        </span><span class="c">// has to be marked as required.</span>
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$cityId</span>
 <span class="w">    </span>}
 
 <span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">City</span><span class="w"> </span>{
-<span class="w">        </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">        </span><span class="c">// "required" is used on output to indicate if the service</span>
 <span class="w">        </span><span class="c">// will always provide a value for the member.</span>
-<span class="w">        </span><span class="c">// &quot;notProperty&quot; indicates that top-level input member &quot;name&quot;</span>
+<span class="w">        </span><span class="c">// "notProperty" indicates that top-level input member "name"</span>
 <span class="w">        </span><span class="c">// is not bound to any resource property.</span>
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nt">@notProperty</span>
@@ -1364,9 +1365,9 @@ show how to use tools like the Smithy CLI or
 <span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
 }
 
-<span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
+<span class="c">// "error" is a trait that is used to specialize</span>
 <span class="c">// a structure as an error.</span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1375,7 +1376,7 @@ show how to use tools like the Smithy CLI or
 <span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results.</span>
 <span class="nt">@readonly</span>
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">"items"</span>)
 <span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
@@ -1420,8 +1421,8 @@ show how to use tools like the Smithy CLI or
 <span class="nt">@readonly</span>
 <span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
-<span class="w">        </span><span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
-<span class="w">        </span><span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="w">        </span><span class="c">// "cityId" provides the only identifier for the resource since</span>
+<span class="w">        </span><span class="c">// a Forecast doesn't have its own.</span>
 <span class="w">        </span><span class="nt">@required</span>
 <span class="w">        </span><span class="nl">$cityId</span>
 <span class="w">    </span>}

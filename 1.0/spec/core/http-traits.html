@@ -634,29 +634,29 @@ the body of the response.</p></td>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@idempotent</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/{bucketName}/{key}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"PUT"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/{bucketName}/{key}"</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
 <span class="kd">operation </span><span class="nc">PutObject</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutObjectInput</span>
 }
 
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">PutObjectInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// Sent in the URI label named &quot;key&quot;.</span>
+<span class="w">    </span><span class="c">// Sent in the URI label named "key".</span>
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="nt">@httpLabel</span>
 <span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectKey</span><span class="p">,</span>
 
-<span class="w">    </span><span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span>
+<span class="w">    </span><span class="c">// Sent in the URI label named "bucketName".</span>
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="nt">@httpLabel</span>
 <span class="w">    </span><span class="py">bucketName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="c">// Sent in the X-Foo header</span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"X-Foo"</span>)
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="c">// Sent in the query string as paramName</span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"paramName"</span>)
 <span class="w">    </span><span class="py">someValue</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="c">// Sent in the body</span>
@@ -702,7 +702,7 @@ constraints:</p>
 properties.</p></li>
 </ol>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foo/{baz}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/foo/{baz}"</span>)
 <span class="kd">operation </span><span class="nc">GetService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetServiceOutput</span>
 }
@@ -1121,7 +1121,7 @@ shapes that also have the <a class="reference internal" href="type-refinement-tr
 </dd>
 </dl>
 <p>The following example defines an error with an HTTP status code of <code class="docutils literal notranslate"><span class="pre">404</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">"client"</span>)
 <span class="nt">@httpError</span>(<span class="m">404</span>)
 <span class="kd">structure </span><span class="nc">MyError</span><span class="w"> </span>{}
 </pre></div>
@@ -1277,7 +1277,7 @@ with the <a class="reference internal" href="constraint-traits.html#required-tra
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/{foo}&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/{foo}"</span>)
 <span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
@@ -1350,7 +1350,7 @@ data in a response:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/random-binary-data&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/random-binary-data"</span>)
 <span class="kd">operation </span><span class="nc">GetRandomBinaryData</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataOutput</span>
@@ -1362,7 +1362,7 @@ data in a response:</p>
 <span class="nt">@output</span>
 <span class="kd">structure </span><span class="nc">GetRandomBinaryDataOutput</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Type&quot;</span>)
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">"Content-Type"</span>)
 <span class="w">    </span><span class="py">contentType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="nt">@httpPayload</span>
@@ -1422,14 +1422,14 @@ name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</p>
 </dl>
 <p>Given the following Smithy model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/myOperation&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/myOperation"</span>)
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
 }
 
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
+<span class="w">    </span><span class="nt">@httpPrefixHeaders</span>(<span class="s2">"X-Foo-"</span>)
 <span class="w">    </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span>
 }
 
@@ -1441,9 +1441,9 @@ name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</p>
 </div>
 <p>And given the following input to <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;headers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;first&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hi&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;second&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;there&quot;</span>
+<span class="w">    </span><span class="nt">"headers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"first"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hi"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"second"</span><span class="p">:</span><span class="w"> </span><span class="s2">"there"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1489,7 +1489,7 @@ across all other members marked with the <code class="docutils literal notransla
 <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">shape</span></code>, and <code class="docutils literal notranslate"><span class="pre">size</span></code> query string parameters in an HTTP
 request:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/things"</span>)
 <span class="kd">operation </span><span class="nc">ListThings</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span>
@@ -1497,13 +1497,13 @@ request:</p>
 
 <span class="nt">@input</span>
 <span class="kd">structure </span><span class="nc">ListThingsInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;color&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"color"</span>)
 <span class="w">    </span><span class="py">color</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;shape&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"shape"</span>)
 <span class="w">    </span><span class="py">shape</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;size&quot;</span>)
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">"size"</span>)
 <span class="w">    </span><span class="py">size</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
 }
 </pre></div>
@@ -1580,7 +1580,7 @@ that target a <code class="docutils literal notranslate"><span class="pre">map</
 <p>The following example defines an operation that optionally sends the
 target input map as query string parameters in an HTTP request:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/things"</span>)
 <span class="kd">operation </span><span class="nc">ListThings</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span>
@@ -1618,7 +1618,7 @@ certain that multiple values for any query string will never be meaningful for t
 <p>If a member with the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait and a member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>
 conflict, clients MUST use the value set by the member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> and
 disregard the value set by <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code>. For example, given the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/things"</span>)
 <span class="kd">operation </span><span class="nc">PutThing</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingInput</span>
 }
@@ -1641,10 +1641,10 @@ disregard the value set by <code class="docutils literal notranslate"><span clas
 </div>
 <p>And given the following input to <code class="docutils literal notranslate"><span class="pre">PutThing</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;realId&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fakeId&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;otherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span>
+<span class="w">    </span><span class="nt">"thingId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"realId"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"thingId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fakeId"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"otherTag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"value"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1658,7 +1658,7 @@ Host: &lt;server&gt;
 <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait, servers MUST treat all values as strings and produce
 empty string values for keys which do not have values specified. For example,
 given the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/things"</span>)
 <span class="kd">operation </span><span class="nc">PostThing</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostThingInput</span>
 }
@@ -1680,11 +1680,11 @@ given the following model:</p>
 </div>
 <p>A server should deserialize the following input structure:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;realId&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;otherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;anotherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;lastTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"thingId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"realId"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"otherTag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"anotherTag"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"lastTag"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1851,7 +1851,7 @@ output member that targets a shape marked with the <a class="reference internal"
 and HTTP bindings:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/messages"</span>)
 <span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span>
 }
@@ -1877,7 +1877,7 @@ and an input member is marked with the <code class="docutils literal notranslate
 marked with the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/messages"</span>)
 <span class="kd">operation </span><span class="nc">InvalidOperation</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidOperationInput</span>
 }

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -700,7 +701,7 @@ and execute build plugins:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>plugins {
 <span class="w"> </span>   `java-library`
-<span class="gi">+    id(&quot;software.amazon.smithy.gradle.smithy-base&quot;) version &quot;1.5.0&quot;</span>
+<span class="gi">+    id("software.amazon.smithy.gradle.smithy-base") version "1.5.0"</span>
 }
 </pre></div>
 </div>
@@ -719,14 +720,14 @@ The  <code class="docutils literal notranslate"><span class="pre">client-core`</
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// Add the code generation plugins to the smithy build classpath</span>
-<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:codegen-plugin:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.6.1"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add the client-core dependency needed by the generated code</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-core:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.6.1"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Protocol implementations and auth schemes used by client</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-protocol:1.0.0&quot;</span><span class="p">)</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-auth-scheme:1.0.0&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-protocol:1.0.0"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-auth-scheme:1.0.0"</span><span class="p">)</span>
 <span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -741,13 +742,13 @@ your <a class="reference internal" href="../../../guides/smithy-build-json.html#
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>{
-<span class="w"> </span> &quot;version&quot;: &quot;1.0&quot;,
-<span class="w"> </span> &quot;plugins&quot;: {
-<span class="gi">+    &quot;java-codegen&quot;: {</span>
-<span class="gi">+      &quot;service&quot;: &quot;com.example#CoffeeShop&quot;, // &lt;- Replace with your service&#39;s ID</span>
+<span class="w"> </span> "version": "1.0",
+<span class="w"> </span> "plugins": {
+<span class="gi">+    "java-codegen": {</span>
+<span class="gi">+      "service": "com.example#CoffeeShop", // &lt;- Replace with your service's ID</span>
 <span class="gi">+      // Generated Java code will use this as the root package namespace</span>
-<span class="gi">+      &quot;namespace&quot;: &quot;com.example.cafe&quot;</span>
-<span class="gi">+      &quot;modes&quot;: [&quot;client&quot;]</span>
+<span class="gi">+      "namespace": "com.example.cafe"</span>
+<span class="gi">+      "modes": ["client"]</span>
 <span class="gi">+    }</span>
 <span class="w"> </span> }
 }
@@ -766,7 +767,7 @@ Gradle build script:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="c1">// Add generated Java sources to the main sourceSet so they are compiled alongside</span>
 <span class="w"> </span><span class="c1">// any other Java code in your package</span>
 <span class="w"> </span><span class="n">afterEvaluate</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="kd">val</span><span class="w"> </span><span class="nv">clientPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smithy</span><span class="p">.</span><span class="na">getPluginProjectionPath</span><span class="p">(</span><span class="n">smithy</span><span class="p">.</span><span class="na">sourceProjection</span><span class="p">.</span><span class="na">get</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;java-codegen&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="kd">val</span><span class="w"> </span><span class="nv">clientPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smithy</span><span class="p">.</span><span class="na">getPluginProjectionPath</span><span class="p">(</span><span class="n">smithy</span><span class="p">.</span><span class="na">sourceProjection</span><span class="p">.</span><span class="na">get</span><span class="p">(),</span><span class="w"> </span><span class="s">"java-codegen"</span><span class="p">)</span>
 <span class="w">     </span><span class="n">sourceSets</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="n">main</span><span class="w"> </span><span class="p">{</span>
 <span class="w">             </span><span class="n">java</span><span class="w"> </span><span class="p">{</span>
@@ -777,8 +778,8 @@ Gradle build script:</p>
 <span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="c1">// Ensure client files are generated before java compilation is executed.</span>
-<span class="w"> </span><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">&quot;compileJava&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;smithyBuild&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">"compileJava"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">"smithyBuild"</span><span class="p">)</span>
 <span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -801,29 +802,29 @@ Gradle project to generate a Smithy Java client:</p>
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="n">`java-library`</span>
-<span class="w">     </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.gradle.smithy-base&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">&quot;1.5.0&quot;</span>
+<span class="w">     </span><span class="n">id</span><span class="p">(</span><span class="s">"software.amazon.smithy.gradle.smithy-base"</span><span class="p">)</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="s">"1.5.0"</span>
 <span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// Add the code generation plugin to the smithy build dependencies</span>
-<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:codegen-plugin:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.6.1"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add any smithy model dependencies as `implementation` dependencies here.</span>
 <span class="w">     </span><span class="c1">// For example, you might add additional trait packages here.</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"..."</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add the client-core dependency needed by the generated code</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy.java:client-core:1.5.1&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.6.1"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Also add your protocol implementations or auth schemes as dependencies</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-protocol:1.0.0&quot;</span><span class="p">)</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.example:my-auth-scheme:1.0.0&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-protocol:1.0.0"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-auth-scheme:1.0.0"</span><span class="p">)</span>
 <span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="c1">// Add generated Java sources to the main sourceSet so they are compiled alongside</span>
 <span class="w"> </span><span class="c1">// any other java code in your package</span>
 <span class="w"> </span><span class="n">afterEvaluate</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="kd">val</span><span class="w"> </span><span class="nv">clientPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smithy</span><span class="p">.</span><span class="na">getPluginProjectionPath</span><span class="p">(</span><span class="n">smithy</span><span class="p">.</span><span class="na">sourceProjection</span><span class="p">.</span><span class="na">get</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;java-codegen&quot;</span><span class="p">)</span>
+<span class="w">     </span><span class="kd">val</span><span class="w"> </span><span class="nv">clientPath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smithy</span><span class="p">.</span><span class="na">getPluginProjectionPath</span><span class="p">(</span><span class="n">smithy</span><span class="p">.</span><span class="na">sourceProjection</span><span class="p">.</span><span class="na">get</span><span class="p">(),</span><span class="w"> </span><span class="s">"java-codegen"</span><span class="p">)</span>
 <span class="w">     </span><span class="n">sourceSets</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="n">main</span><span class="w"> </span><span class="p">{</span>
 <span class="w">             </span><span class="n">java</span><span class="w"> </span><span class="p">{</span>
@@ -834,8 +835,8 @@ Gradle project to generate a Smithy Java client:</p>
 <span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="c1">// Ensure client files are generated before java compilation is executed.</span>
-<span class="w"> </span><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">&quot;compileJava&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">&quot;smithyBuild&quot;</span><span class="p">)</span>
+<span class="w"> </span><span class="n">tasks</span><span class="p">.</span><span class="na">named</span><span class="p">(</span><span class="s">"compileJava"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">dependsOn</span><span class="p">(</span><span class="s">"smithyBuild"</span><span class="p">)</span>
 <span class="w"> </span><span class="p">}</span>
 
 <span class="w"> </span><span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
@@ -848,17 +849,17 @@ Gradle project to generate a Smithy Java client:</p>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">     </span><span class="nt">&quot;java-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">       </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example#CoffeeShop&quot;</span><span class="p">,</span>
-<span class="w">       </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example.cafe&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="nt">"java-codegen"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.example#CoffeeShop"</span><span class="p">,</span>
+<span class="w">       </span><span class="nt">"namespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"com.example.cafe"</span><span class="p">,</span>
 <span class="w">       </span><span class="c1">// Default protocol for the client. Must have a corresponding trait in the</span>
 <span class="w">       </span><span class="c1">// model and implementation discoverable via SPI (see section on protocols below)</span>
-<span class="w">       </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws.protocols#restJson1&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws.protocols#restJson1"</span><span class="p">,</span>
 <span class="w">       </span><span class="c1">// Adds a common header to all generated files</span>
-<span class="w">       </span><span class="nt">&quot;headerFile&quot;</span><span class="p">:</span><span class="w"> </span><span class="nt">&quot;license.txt&quot;</span>
-<span class="w">       </span><span class="nt">&quot;modes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;client&quot;</span><span class="p">]</span>
+<span class="w">       </span><span class="nt">"headerFile"</span><span class="p">:</span><span class="w"> </span><span class="nt">"license.txt"</span>
+<span class="w">       </span><span class="nt">"modes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"client"</span><span class="p">]</span>
 <span class="w">     </span><span class="p">}</span>
 <span class="w">   </span><span class="p">}</span>
 <span class="w"> </span><span class="p">}</span>

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -713,7 +714,7 @@ of the <code class="docutils literal notranslate"><span class="pre">awsQuery</sp
 HTTP binding traits MUST be ignored if they are present.</p></li>
 </ul>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -721,7 +722,7 @@ HTTP binding traits MUST be ignored if they are present.</p></li>
 
 <span class="nt">@ec2Query</span>
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-02-05"</span>
 }
 </pre></div>
 </div>
@@ -746,18 +747,18 @@ used in the model.</p>
 operation inputs using the <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2</span></code> protocol.</p>
 </div>
 <p>Given the following structure definition:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">use </span><span class="nc">aws.protocols#ec2QueryName</span>
 
 <span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">"foo"</span>)
 <span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
 </div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">MyStruct</span></code>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;bar&quot;</span> <span class="o">=</span> <span class="s2">&quot;baz&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"bar"</span> <span class="o">=</span> <span class="s2">"baz"</span>
 </pre></div>
 </div>
 <p>the serialization of this structure as an input on the <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2</span></code>
@@ -1045,14 +1046,14 @@ for how to serialize a property using a custom name. Members with null values ar
 <span class="kd">structure </span><span class="nc">Ec2QueryStructuresInput</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">"A"</span>)
 <span class="w">    </span><span class="py">HasQueryName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;B&quot;</span>)
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">"B"</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"IgnoreMe"</span>)
 <span class="w">    </span><span class="py">HasQueryAndXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;c&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"c"</span>)
 <span class="w">    </span><span class="py">UsesXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span>
@@ -1085,8 +1086,8 @@ container's key.</p>
 <span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
 <span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">"Renamed"</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">"IgnoreMe"</span>)
 <span class="w">    </span><span class="py">RenamedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
 }
 
@@ -1126,7 +1127,7 @@ contents of the successful response.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">"https://example.com/"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>

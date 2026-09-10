@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -723,8 +724,8 @@
 <p>Prompt templates use <code class="docutils literal notranslate"><span class="pre">{{parameterName}}</span></code> syntax to reference parameters from the associated <code class="docutils literal notranslate"><span class="pre">arguments</span></code> structure. This can be useful to reference and interpolate members of arguments when accepting user input for prompts in Model Context Protocol (MCP) servers.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">detailed_weather_report</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Generate a comprehensive weather report&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Create a detailed weather report for {{location}} showing {{temperature}}°F with {{conditions}}. Include humidity at {{humidity}}% and provide recommendations for outdoor activities.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Generate a comprehensive weather report"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Create a detailed weather report for {{location}} showing {{temperature}}°F with {{conditions}}. Include humidity at {{humidity}}% and provide recommendations for outdoor activities."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">DetailedWeatherInput</span>
 <span class="w">    </span>}
 })
@@ -756,14 +757,14 @@
 <p><strong>Service-level prompts</strong> SHOULD be used to define workflows that compose multiple operations, provide guidance about the service and offer prompts that make complex interactions with the service simple:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">service_overview</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Overview of weather service capabilities&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This weather service provides current conditions and forecasts. Use GetCurrentWeather for immediate conditions, and leverage creative prompts like emoji_weather for enhanced user experience.&quot;</span>
-<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User needs to understand available weather service features&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Overview of weather service capabilities"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"This weather service provides current conditions and forecasts. Use GetCurrentWeather for immediate conditions, and leverage creative prompts like emoji_weather for enhanced user experience."</span>
+<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">"User needs to understand available weather service features"</span>
 <span class="w">    </span>}<span class="p">,</span>
 <span class="w">    </span><span class="py">vacation_weather_planner</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Plan weather for vacation destinations&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Help plan a vacation by comparing weather between {{homeLocation}} and {{destinationLocation}}.</span>
-<span class="s2">        Call GetCurrentWeather for both locations, then provide a recommendation on the best time to travel, what to pack, and activities to consider based on weather differences.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Plan weather for vacation destinations"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Help plan a vacation by comparing weather between {{homeLocation}} and {{destinationLocation}}.</span>
+<span class="s2">        Call GetCurrentWeather for both locations, then provide a recommendation on the best time to travel, what to pack, and activities to consider based on weather differences."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">VacationPlannerInput</span>
 <span class="w">    </span>}
 })
@@ -775,10 +776,10 @@
 <p><strong>Operation-level prompts</strong> SHOULD provide specific guidance for individual operations and their usage:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">emergency_weather_check</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Quick weather check for emergency situations&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Immediately check weather conditions at {{location}} focusing on safety concerns. Prioritize severe weather alerts, visibility, and hazardous conditions.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Quick weather check for emergency situations"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Immediately check weather conditions at {{location}} focusing on safety concerns. Prioritize severe weather alerts, visibility, and hazardous conditions."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentWeatherInput</span>
-<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Emergency situations requiring immediate weather assessment&quot;</span>
+<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">"Emergency situations requiring immediate weather assessment"</span>
 <span class="w">    </span>}
 })
 <span class="kd">operation </span><span class="nc">GetCurrentWeather</span><span class="w"> </span>{
@@ -801,8 +802,8 @@
 <p>Service teams can control how LLMs present API results:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">weather_dashboard</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Create a weather dashboard with multiple data points&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Get weather for {{location}} and create a dashboard view. Format as: 🌡️ Temperature: [temp]°F | 💧 Humidity: [humidity]% | 🌤️ Conditions: [conditions]. Add appropriate weather emoji and brief activity recommendations.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Create a weather dashboard with multiple data points"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get weather for {{location}} and create a dashboard view. Format as: 🌡️ Temperature: [temp]°F | 💧 Humidity: [humidity]% | 🌤️ Conditions: [conditions]. Add appropriate weather emoji and brief activity recommendations."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentWeatherInput</span>
 <span class="w">    </span>}
 })
@@ -821,8 +822,8 @@
 <p>Prompts can guide LLMs to perform complex workflows using existing operations:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">vacation_weather_planner</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Plan weather for vacation destinations&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Help plan a vacation by comparing weather between {{homeLocation}} and {{destinationLocation}}. Call GetCurrentWeather for both locations, then provide a recommendation on the best time to travel, what to pack, and activities to consider based on weather differences.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Plan weather for vacation destinations"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Help plan a vacation by comparing weather between {{homeLocation}} and {{destinationLocation}}. Call GetCurrentWeather for both locations, then provide a recommendation on the best time to travel, what to pack, and activities to consider based on weather differences."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">VacationPlannerInput</span>
 <span class="w">    </span>}
 })
@@ -848,7 +849,7 @@
 <section id="a-complete-example">
 <h3>A complete example<a class="headerlink" href="#a-complete-example" title="Link to this heading">#</a></h3>
 <p>The following example demonstrates creative prompt templates that enhance the user experience with a weather service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">example.weather</span>
 
@@ -856,26 +857,26 @@
 
 <span class="nt">@prompts</span>({
 <span class="w">    </span><span class="py">emoji_weather</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Get weather with emoji visualization&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Get current weather for {{location}} and display it with appropriate weather emojis (☀️ sunny, ⛅ partly cloudy, ☁️ cloudy, 🌧️ rainy, ⛈️ stormy, ❄️ snowy).&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get weather with emoji visualization"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get current weather for {{location}} and display it with appropriate weather emojis (☀️ sunny, ⛅ partly cloudy, ☁️ cloudy, 🌧️ rainy, ⛈️ stormy, ❄️ snowy)."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentWeatherInput</span>
-<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User wants a fun, visual weather display&quot;</span>
+<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">"User wants a fun, visual weather display"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">travel_weather_advisor</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Provides complete travel guidance according to the weather&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Get weather for {{location}} and provide travel advice. Include clothing recommendations based on temperature and conditions, suggest appropriate activities, and highlight any weather concerns.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Provides complete travel guidance according to the weather"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Get weather for {{location}} and provide travel advice. Include clothing recommendations based on temperature and conditions, suggest appropriate activities, and highlight any weather concerns."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentWeatherInput</span>
-<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User is planning travel or outdoor activities&quot;</span>
+<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">"User is planning travel or outdoor activities"</span>
 <span class="w">    </span>}
 <span class="w">    </span><span class="py">weather_comparison</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Compare weather between multiple locations&quot;</span>
-<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Compare current weather between {{location1}} and {{location2}}. Call GetCurrentWeather for each location, then present results in a table format showing temperature, conditions, and humidity. Highlight which location has better weather conditions.&quot;</span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">"Compare weather between multiple locations"</span>
+<span class="w">        </span><span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">"Compare current weather between {{location1}} and {{location2}}. Call GetCurrentWeather for each location, then present results in a table format showing temperature, conditions, and humidity. Highlight which location has better weather conditions."</span>
 <span class="w">        </span><span class="py">arguments</span><span class="p">:</span><span class="w"> </span><span class="vc">WeatherComparisonInput</span>
-<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User wants to compare weather across different cities&quot;</span>
+<span class="w">        </span><span class="py">preferWhen</span><span class="p">:</span><span class="w"> </span><span class="s2">"User wants to compare weather across different cities"</span>
 <span class="w">    </span>}
 })
 <span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-01-01&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-01-01"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentWeather</span>]
 }
 

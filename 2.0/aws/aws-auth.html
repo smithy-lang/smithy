@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
@@ -457,7 +458,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.5.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -714,7 +715,7 @@ with the name of <code class="docutils literal notranslate"><span class="pre">X-
 the request will undergo authentication and be rejected if it fails. Otherwise,
 if the <a class="reference internal" href="../spec/authentication-traits.html#optionalauth-trait"><span class="std std-ref">optionalAuth trait</span></a> is applied, the service shall operate on the
 unauthenticated request.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
@@ -722,11 +723,11 @@ unauthenticated request.</p>
 <span class="kd">use </span><span class="nc">aws.auth#sigv4</span>
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"foobaz"</span>)
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
@@ -772,7 +773,7 @@ property of the <a class="reference internal" href="#aws-auth-sigv4-trait"><span
 <p>SigV4A is nearly identical to SigV4, but also uses public-private keys and
 asymmetric cryptographic signatures for every request. Most notably, SigV4A
 supports signatures for multi-region API requests.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
@@ -784,13 +785,13 @@ supports signatures for multi-region API requests.</p>
 <span class="c">// This service is an AWS service that prioritizes SigV4A</span>
 <span class="c">// authentication before SigV4 authentication.</span>
 <span class="c">// Note that services that support SigV4A MUST support SigV4.</span>
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="nt">@auth</span>([<span class="vc">sigv4a</span><span class="p">,</span><span class="w"> </span><span class="vc">sigv4</span>])
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
-<span class="nt">@sigv4a</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"foobaz"</span>)
+<span class="nt">@sigv4a</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">"foobaz"</span>)
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
@@ -814,7 +815,7 @@ with an unknown size at the time a request is initiated might require that the
 payload of a request is not signed.</p>
 <p>The following example defines an operation that indicates the payload of the
 operation MUST NOT be used as part of the request signature calculation:</p>
-<div class="highlight-Smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;2&quot;</span>
+<div class="highlight-Smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> "2"</span>
 
 <span class="kd">use</span><span class="nc"> aws.auth#unsignedPayload</span>
 
@@ -872,7 +873,7 @@ OAuth scopes.</p></li>
 <dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-traits</span></code></a> package.</p>
 </dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
@@ -880,12 +881,12 @@ OAuth scopes.</p></li>
 <span class="kd">use </span><span class="nc">aws.auth#cognitoUserPools</span>
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="nt">@cognitoUserPools</span>(
-<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>])
+<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"arn:aws:cognito-idp:us-east-1:123:userpool/123"</span>])
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 }
 </pre></div>
 </div>
@@ -916,7 +917,7 @@ that are not bound to a service with <code class="docutils literal notranslate">
 <code class="docutils literal notranslate"><span class="pre">security</span></code> requirement that uses the <code class="docutils literal notranslate"><span class="pre">aws.auth.cognitoUserPools</span></code> security
 scheme name and carries the listed scopes. See <a class="reference internal" href="../guides/model-translations/converting-to-openapi.html#smithy-to-openapi"><span class="std std-ref">Converting Smithy to OpenAPI</span></a> for
 details.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
@@ -925,17 +926,17 @@ details.</p>
 <span class="kd">use </span><span class="nc">aws.auth#cognitoUserPoolsScopes</span>
 <span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some Value"</span>)
 <span class="nt">@cognitoUserPools</span>(
-<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>])
+<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">"arn:aws:cognito-idp:us-east-1:123:userpool/123"</span>])
 <span class="nt">@restJson1</span>
 <span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-03-17"</span>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetThing</span>]
 }
 
-<span class="nt">@cognitoUserPoolsScopes</span>([<span class="s2">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;profile&quot;</span>])
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things/{thingId}&quot;</span>)
+<span class="nt">@cognitoUserPoolsScopes</span>([<span class="s2">"email"</span><span class="p">,</span><span class="w"> </span><span class="s2">"profile"</span>])
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">"/things/{thingId}"</span>)
 <span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
 <span class="w">        </span><span class="nt">@httpLabel</span>

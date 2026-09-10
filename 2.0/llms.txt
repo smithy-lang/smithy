@@ -48,6 +48,7 @@
 - [Context](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/client-guidance/context.md)
 - [Endpoint Resolution](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/client-guidance/endpoints.md)
 - [Smithy Client Guidance](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/client-guidance/index.md)
+- [Interceptors](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/client-guidance/interceptors.md)
 - [Retrying Requests](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/client-guidance/retries.md)
 - [Evolving Models](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/evolving-models.rst)
 - [Glossary](https://raw.githubusercontent.com/smithy-lang/smithy/main/docs/source-2.0/guides/glossary.rst)
