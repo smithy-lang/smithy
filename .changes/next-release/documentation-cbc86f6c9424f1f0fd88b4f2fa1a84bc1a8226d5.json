@@ -1,0 +1,5 @@
+{
+  "type": "documentation",
+  "description": "Added client guidance for request and response checksum implementations.",
+  "pull_requests": "[#3285](https://github.com/smithy-lang/smithy/pull/3285)]"
+}
