@@ -2,9 +2,10 @@
 # Interceptors
 
 An **interceptor** is a general-purpose extension point that allows code to
-observe or modify *specific* stages of a request execution: serialization,
-signing, transmission, deserialization, and so on. Interceptors are registered
-at client creation time or per operation invocation.
+observe or modify *specific* stages of a request execution, such as
+serialization, signing, transmission, and deserialization. Interceptors may
+also wrap an entire operation call. Interceptors are registered at client
+creation time or per operation invocation.
 
 The other sections of this guide describe specific extension points for known
 use cases: retries, endpoint resolution, authentication, and transport. Those
@@ -34,15 +35,77 @@ doesn't result in different behavior.
 Hooks are intended to be lightweight, so blocking operations should not be
 supported.
 
+### modifyBeforeCall
+
+`modifyBeforeCall` is the first interceptor hook invoked for a call. It runs
+once per call, before call wrappers and outside the execution and retry
+lifecycles. The hook receives the operation input and current client
+configuration and returns the configuration to use for the call.
+
+The client invokes `modifyBeforeCall` on interceptors in registration order.
+Each interceptor receives the configuration returned by the previous
+interceptor. The final configuration is used to construct the execution
+pipeline and resolve the interceptors that participate in the call. This allows
+`modifyBeforeCall` to switch protocols for a single call, change other
+call-scoped configuration, or add and remove interceptors.
+
+Interceptors added by `modifyBeforeCall` participate in call wrapping and the
+execution hooks, but do not receive `modifyBeforeCall` for the current call. An
+error raised by this hook is propagated directly because execution has not yet
+started.
+
+### Call wrappers
+
+Most interceptor hooks run at a fixed point in the execution pipeline. The
+interceptor interface also includes call-wrapping hooks that enclose the entire
+execution. Individual interceptor implementations may opt in to wrapping calls.
+
+An interceptor opts in to call wrapping by returning `true` from
+`interceptCalls`. Opted-in interceptors receive an `interceptCall` invocation
+with an input hook and a continuation representing the remaining wrappers and
+the normal execution pipeline. A wrapper may:
+
+- Delegate once to continue normal execution.
+- Delegate with a different operation input.
+- Return an output without delegating.
+- Delegate multiple times to implement behavior such as fallback or, where
+  concurrent invocation is supported, hedging.
+- Observe or transform the output or error produced by delegation.
+
+Call wrappers compose by nesting. The first registered wrapper is the outermost
+wrapper, unlike read and modify hooks, which iterate in registration order.
+Wrappers run after `modifyBeforeCall` and outside the retry loop. Every
+delegation to the continuation runs the normal execution pipeline, including
+its retry loop.
+
+Clients should resolve the opted-in wrappers when creating an interceptor chain
+and provide a fast way to determine whether the chain contains wrappers. This
+allows calls without wrappers to follow the normal execution path without
+constructing a call-wrapper input hook or continuation.
+
+The current client should be available through the input hook's context so that
+a wrapper can re-enter the client when necessary. Re-entry starts a separate
+call, including its call wrappers.
+
+An error raised by a wrapper itself is propagated directly and is not processed
+by execution completion hooks. Errors produced by a delegated execution are
+processed by that execution's completion hooks before propagating back to the
+wrapper.
+
 ### Hook sequence
 
-The following is an ordered list of recommended hooks. It is also recommended to
-make the list of hooks modifiable, so that new hooks may be added later.
+The following is an ordered list of recommended hooks for one execution. The
+sequence runs each time the call wrapper chain delegates to the normal execution
+pipeline. If no call wrappers are configured, it runs once for the call. It is
+also recommended to make the list of hooks modifiable, so that new hooks may be
+added later.
 
 :::{important}
 
-In the following list, an **execution** is one entire end-to-end invocation of
-an operation. An **attempt** is a single try within that execution. There may be
+In the following list, a **call** is one operation invocation made through the
+client. An **execution** is one end-to-end delegation through the normal
+pipeline. A call wrapper may cause a call to have zero, one, or multiple
+executions. An **attempt** is a single try within an execution. There may be
 multiple attempts if the request needs to be retried.
 
 The **transport request** and **transport response** represent the serialized
@@ -123,11 +186,19 @@ exist yet (for example, trying to read the transport response before a request
 has been sent).
 
 ```java
-// Available from readBeforeExecution and modifyBeforeSerialization onward.
+// Available to modifyBeforeCall.
+// Contains the operation input and current client configuration.
+public class CallHook<I, O> {
+    public I input() { ... }
+    public ClientConfig config() { ... }
+}
+
+// Available to interceptCall and from readBeforeExecution onward.
 // Always contains the operation input.
 public class InputHook<I, O> {
     public I input() { ... }
     public Context context() { ... }
+    public InputHook<I, O> withInput(I input) { ... }
 }
 
 // Available from readAfterSerialization and modifyBeforeRetryLoop onward.
@@ -175,11 +246,29 @@ implementations only need to override the hooks they care about. In Java, this
 means providing default no-op implementations for every method. Clients in other
 languages may prefer to use abstract classes or similar features.
 
-Mutable hooks should always return the message, whether or not it was modified.
-If no modification is needed, they return the original value unchanged.
+Mutable hooks should always return the value they receive, whether or not it was
+modified. If no modification is needed, they return the original value
+unchanged.
 
 ```java
 public interface Interceptor {
+
+    default ClientConfig modifyBeforeCall(CallHook<?, ?> hook) {
+        return hook.config();
+    }
+
+    default boolean interceptCalls() {
+        return false;
+    }
+
+    default <I, O> O interceptCall(InputHook<I, O> hook, NextCall<I, O> next) {
+        return next.invoke(hook);
+    }
+
+    @FunctionalInterface
+    interface NextCall<I, O> {
+        O invoke(InputHook<I, O> hook);
+    }
 
     default void readBeforeExecution(InputHook<?, ?> hook) {}
 
@@ -321,18 +410,21 @@ The recommended ordering is:
    default.
 3. Interceptors configured for a single operation execution.
 
+Read and modify hooks iterate in this order. Call wrappers preserve the same
+resolved order but compose by nesting, so the first registered wrapper is the
+outermost and the last registered wrapper is the innermost.
+
 ## Why interceptors instead of middleware?
 
 Middleware is a common pattern for building request pipelines, and it works well
 as an internal implementation strategy. As a public extension point, however, it
-has a significant drawback: middleware can modify control flow. A middleware
-component can wrap the next stage in its own retry loop, short-circuit the
-pipeline entirely, or call the next stage multiple times. This makes it
-impossible to reason about the behavior of the pipeline as a whole when
-third-party middleware is present.
+allows middleware to modify control flow at arbitrary stages. This makes it
+difficult to reason about the pipeline as a whole when third-party middleware
+is present.
 
-Interceptors deliberately cannot modify control flow. They can observe and
-modify messages, but the pipeline itself always executes in the same order. This
-makes the behavior of the client predictable and easier to reason about. It also
-makes it safe to add new behavior to the pipeline without risking unexpected
-interactions with existing interceptors.
+Most interceptor hooks deliberately cannot modify control flow. They observe or
+modify values at fixed pipeline stages while preserving the client's execution
+order. `interceptCall` is a narrowly scoped exception at the operation call
+boundary. It may choose whether or how many times to delegate the entire
+execution, but once delegated, the serialization, retry, signing, transmission,
+and deserialization stages retain their defined ordering.
