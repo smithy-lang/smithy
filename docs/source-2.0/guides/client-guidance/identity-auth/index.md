@@ -275,28 +275,17 @@ The Smithy client should conduct the auth flow in an operation call as follows:
 1. Resolve the auth scheme (`AuthSchemeResolver::resolveAuthScheme`) **within**
    the retry loop. Store the selected auth scheme and identity / signer
    properties in operation context for future use.
-1. Resolve the endpoint [TODO: NEED ANCHOR]. **Merge** the signer properties
-   from the resolved endpoint into the ones sourced from auth scheme resolution.
 1. Retrieve the `IdentityResolver` from the previously-resolved `AuthScheme`
    (`AuthScheme::identityResolver`). Resolve the identity
    (`IdentityResolver::resolve`) with the identity properties sourced from
    scheme resolution.
+1. Resolve the endpoint. **Merge** the signer properties
+   from the resolved endpoint into the ones sourced from auth scheme resolution.
 1. Retrieve the `Signer` from the previously-resolved `AuthScheme`
    (`AuthScheme::signer`). Sign the request (`Signer::sign`) with the merged
    signer properties from scheme and endpoint resolution.
 
 ## FAQ
-
-### Wow, this seems like a lot. Do I really need all of these abstractions just to decide how to set an Authorization header?
-
-The example set of interfaces provided in this listing represents a
-rigorous solution for implementing Identity & Auth. These interfaces
-support multiple authentication schemes, _across_ multiple identity types and
-transport message types. The Smithy client implementor is free to simplify
-along any of those dimensions as fits their needs.
-
-As always, APIs should be designed or future-proofed with respect to backwards
-compatibility of future client releases at the implementor's discretion.
 
 ### What about operations with no authentication?
 
