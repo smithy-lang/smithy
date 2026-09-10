@@ -61,5 +61,6 @@ application-protocols/index
 context
 retries
 endpoints
+plugins
 interceptors
 ```
