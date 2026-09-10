@@ -35,6 +35,7 @@ doesn't result in different behavior.
 Hooks are intended to be lightweight, so blocking operations should not be
 supported.
 
+(client-guidance-interceptors-modify-before-call)=
 ### modifyBeforeCall
 
 `modifyBeforeCall` is the first interceptor hook invoked for a call. It runs
@@ -377,6 +378,9 @@ Interceptors should be configurable for the whole client, in which case they
 apply to every operation invocation made by that client. Interceptors configured
 this way can determine which operation is being executed based on the input if
 they need to apply to only a subset of operations.
+
+Reusable client features should register their interceptors through
+[client plugins](plugins.md).
 
 ```java
 MyServiceClient client = MyServiceClient.builder()
