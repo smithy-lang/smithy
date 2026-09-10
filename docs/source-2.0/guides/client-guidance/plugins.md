@@ -18,8 +18,8 @@ configuration.
 Clients should support plugins from the following sources:
 
 1. Framework plugins applied by default.
-2. Service-specific or generated plugins.
-3. Plugins explicitly configured by the user.
+2. Plugins explicitly configured by the user.
+3. Service-specific or generated default plugins.
 4. Plugins configured for a single operation call.
 
 The first three sources are resolved while constructing a client configuration.
@@ -171,13 +171,15 @@ Most plugins should use `DEFAULTS`, `APPLY`, or one of their adjacent phases.
 The recommended top-level insertion order is:
 
 1. The framework default plugin.
-2. Service-specific or generated plugins.
-3. User-configured plugins.
+2. User-configured plugins.
+3. Service-specific or generated default plugins.
 
 Automatic plugins should be children of the framework default plugin. They are
-therefore encountered before service-specific, generated, and user plugins.
-Application phases can move plugins relative to one another, but insertion
-order remains the tie breaker within a phase.
+therefore encountered before user plugins and generated defaults. Generated
+defaults are registered after explicit user plugins so that a user-provided
+instance wins a concrete-type duplicate. Application phases can move plugins
+relative to one another, but insertion order remains the tie breaker within a
+phase.
 
 Call-scoped plugins are resolved after construction plugins have already been
 applied. Their phases order them relative to other call-scoped plugins, but
