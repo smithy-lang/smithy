@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Expand unstable trait for preview usage.",
+  "pull_requests": [
+    "[#3277](https://github.com/smithy-lang/smithy/pull/3277)"
+  ]
+}
