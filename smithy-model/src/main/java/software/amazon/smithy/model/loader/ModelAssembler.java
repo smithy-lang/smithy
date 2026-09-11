@@ -568,7 +568,12 @@ public final class ModelAssembler {
         // Load model files into the processor.
         for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
             try {
-                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue(), stringTable);
+                ModelLoader.load(traitFactory,
+                        properties,
+                        entry.getKey(),
+                        processor,
+                        entry.getValue(),
+                        stringTable);
             } catch (SourceException e) {
                 processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
             }

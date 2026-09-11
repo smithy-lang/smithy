@@ -4,11 +4,18 @@ plugins {
 
 jmh {
     timeUnit = "us"
+    if (project.hasProperty("jmh.includes")) {
+        includes.set(listOf(project.property("jmh.includes") as String))
+    }
 }
 
 tasks {
     processJmhResources {
         duplicatesStrategy = DuplicatesStrategy.WARN
+    }
+    // Fix implicit dependency issue with Gradle 9+
+    named("jmhRunBytecodeGenerator") {
+        dependsOn("jar")
     }
 }
 
