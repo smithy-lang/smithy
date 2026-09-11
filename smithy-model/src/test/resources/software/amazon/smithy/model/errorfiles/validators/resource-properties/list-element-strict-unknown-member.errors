@@ -1,0 +1,1 @@
+[ERROR] smithy.example#TaskSummary$unknownExtra: Member `unknownExtra` does not target a property or identifier for resource `smithy.example#Task`. If it is an identifier, apply the `smithy.api#resourceIdentifier` trait. If it is a property, apply the `smithy.api#property` trait. If it is neither, apply the `smithy.api#notProperty` trait. | ResourceOperationInputOutput

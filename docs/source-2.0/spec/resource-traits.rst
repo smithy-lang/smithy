@@ -10,11 +10,13 @@ Resource traits
 
 Summary
     Allows the binding of resource properties to occur within a nested structure
-    deeper than the lifecycle operation's input or output shape.
+    deeper than the lifecycle operation's input or output shape, or within the
+    element structure of a list targeted by a collection operation's input or
+    output member.
 Trait selector
-    ``operation -[input, output]-> structure > member :test(> structure)``
+    ``operation -[input, output]-> structure > member :test(> structure, > list > member > structure)``
 
-    *A member of a top-level input or output structure member*
+    *A member of a top-level input or output structure member targeting a structure or a list of structures*
 Value type
     Annotation trait.
 
@@ -67,7 +69,7 @@ Summary
     ``@notProperty`` so that if that trait is applied to a member, the member
     is considered implicitly marked with ``@notProperty``.
 Trait selector
-    ``:is(operation -[input, output]-> structure > member, [trait|trait])``
+    ``:is(operation -[input, output]-> structure > member, operation -[input, output]-> structure > member > list > member > structure > member, [trait|trait])``
 
     *A top-level member of an operation's input or output shape, or a trait*
 Value type
