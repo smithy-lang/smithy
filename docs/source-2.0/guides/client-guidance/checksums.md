@@ -44,6 +44,10 @@ public interface ChecksumProvider {
 }
 
 public interface Checksum {
+    /**
+     * Updates this checksum from the bytes between the buffer's position and
+     * limit without changing its position, limit, or contents.
+     */
     void update(ByteBuffer bytes);
 
     byte[] finish();
@@ -54,19 +58,43 @@ Each call to `create` returns new mutable checksum state. This allows an
 implementation to use the same provider for concurrent calls, request retries,
 and multiple response bodies.
 
+Updating a checksum must not consume or modify bytes that are still owned by
+another component. For the Java-like interface above, `update` must not change
+the buffer's position or limit and must not modify its contents. Decorators
+should at minimum pass a duplicate so that provider cursor changes cannot
+affect the buffer later read by the transport. A read-only view additionally
+prevents content changes. In either case, custom provider behavior must not
+change the bytes or cursor state later observed by the transport.
+
 Resolvers should produce an immutable plan that contains the information needed
 by the rest of the pipeline. A request plan commonly contains:
 
 - The selected algorithm.
-- Whether the checksum is required or optional.
+- The source of the selection, such as an operation requirement, explicit input
+  value, client default, or SDK default.
+- Whether a checksum must be sent.
+- The failure policy when the selected algorithm or required placement cannot
+  be supported.
 - The header or trailer name.
 - The wire encoding of the checksum value.
 - Whether the value is supplied before transmission or calculated while
   streaming.
+- The component that owns any required trailer or payload framing.
 
-A response plan commonly contains the selected algorithm, the expected value,
-and the metadata location used to report validation. Plans allow protocol logic
-to be tested independently from hashing and stream behavior.
+A response plan commonly contains the selected algorithm, an expected-value
+source, and the metadata location used to report validation. The
+expected-value source can return an immediately available header value or
+defer access to a trailer value until the response body reaches end of stream.
+Plans allow protocol logic to be tested independently from hashing and stream
+behavior.
+
+Whether a checksum is required and whether resolution must fail are separate
+decisions. For example, a protocol can make request checksums optional while a
+caller explicitly selects an algorithm. If that selected algorithm is
+unsupported, the request must fail rather than silently omit the checksum. A
+plan should therefore carry an explicit failure policy or enough selection
+source information to derive one. A single `required` boolean is not
+sufficient.
 
 ## Client configuration
 
@@ -79,12 +107,23 @@ A client can expose configuration for:
 - Whether optional request checksums are calculated.
 - Whether optional response checksums are validated.
 - The checksum provider or algorithm implementations.
+- The maximum amount of a request body that can be buffered to calculate a
+  checksum header.
+- The policy for a one-shot body whose size is unknown or exceeds that limit,
+  such as using a protocol-supported trailer or failing the request.
 
 Configuration must not disable checksum behavior required by the protocol or
 operation. An algorithm explicitly selected by an operation input should take
 precedence over a client default. If a required or explicitly selected
 algorithm is unsupported, the client should fail before transmitting the
 request.
+
+The protocol determines which checksum placements are valid. A client body
+preparation policy decides whether an eligible body is reused, buffered within
+the configured limit, sent with a supported streaming checksum, or rejected.
+This policy must not perform unbounded buffering. An unknown-length body should
+not be read into memory or temporary storage without an explicit, finite
+limit.
 
 Some protocols use modeled input members to select a request algorithm or
 enable response validation. The effective value must be available when the
@@ -119,9 +158,11 @@ fields in the [HTTP client guidance](application-protocols/http.md).
 ### Headers and trailers
 
 A checksum sent in a header must be known before the request is transmitted.
-The client can calculate it directly when the body is replayable. A one-shot
-body must either be buffered, rejected, or handled using a protocol-supported
-streaming mechanism.
+The client can calculate it directly when the body is replayable. For a
+one-shot body, the configured body preparation policy must choose between
+bounded buffering, a protocol-supported streaming placement, and rejection.
+The resolver determines which placements the protocol permits; the body
+preparation policy applies the configured size limit and fallback behavior.
 
 A checksum sent in a trailer can be calculated incrementally as the request
 body is transmitted. The decorator updates checksum state for each chunk and
@@ -132,6 +173,24 @@ Trailer support can require coordination between the protocol, authentication
 scheme, and transport. The checksum resolver should determine the placement,
 while the body decorator calculates the value. Transport or authentication
 components should provide the framing required by the protocol.
+
+### Trailer ownership
+
+Each request must have exactly one component that owns trailer and payload
+framing. The request plan should identify that owner or identify an existing
+framing layer with which the checksum feature must integrate.
+
+The checksum decorator normally observes payload bytes and produces a final
+checksum value. It should not independently add chunk framing when an
+authentication scheme or transport already owns that framing. If an existing
+signing implementation already wraps the payload, checksum integration should
+register its trailer declaration and value producer with that implementation.
+The transport must not then add a second framing layer.
+
+Pipeline integration should detect incompatible or duplicate ownership and
+fail before transmission. Double-wrapping a body can change the protected
+bytes, invalidate content lengths or signatures, and emit duplicate trailer
+declarations.
 
 ### Authentication
 
@@ -145,6 +204,25 @@ signing, then calculate and emit the value while streaming.
 
 A request checksum should not be added after signing unless the authentication
 scheme explicitly excludes it or the protocol requires that ordering.
+
+The request ordering is:
+
+1. Resolve modeled algorithm defaults and selections that must be visible
+   during serialization.
+2. Serialize the request and apply payload transformations that precede the
+   checksum.
+3. Resolve the final checksum placement, failure policy, and framing owner, and
+   prepare the body according to the configured buffering policy.
+4. Calculate and set any fixed checksum header. For trailer checksums, set the
+   trailer declaration, framing metadata, and required signing sentinel.
+5. Sign the request with those headers and declarations already present.
+6. Transmit the request. A streaming decorator calculates the final checksum
+   value over the protected bytes and the selected framing owner emits that
+   value in the trailer.
+
+Only the final trailer value is deferred until transmission. The existence and
+name of the trailer, any checksum sentinel, and all metadata covered by the
+signature must be fixed before signing.
 
 ### Replayability and retries
 
@@ -198,6 +276,13 @@ The client should return a body decorator that updates checksum state as the
 caller reads. When the caller reaches the end of the stream, the decorator
 compares the calculated value with the expected value.
 
+The expected checksum might itself be in a response trailer and therefore be
+unavailable when the response plan is created. In this case, the validating
+decorator should resolve the plan's deferred expected-value source after
+reaching end of stream, then compare the values. The deferred source should
+also preserve the distinction between an absent trailer, a malformed value,
+and a value that is not yet available.
+
 This has two important consequences:
 
 - Validation is not complete when the operation initially returns.
@@ -240,8 +325,11 @@ Useful error categories include:
 - A required or explicitly selected algorithm is unsupported.
 - A checksum value has an invalid encoding or length.
 - A request body cannot be read or buffered as required.
+- A request body exceeds the configured buffering limit and no permitted
+  streaming placement is available.
 - A response checksum does not match the payload.
 - Protocol-specific trailer or framing requirements cannot be satisfied.
+- More than one component attempts to own trailer or payload framing.
 
 The checksum layer should preserve the original stream or provider error as the
 cause when possible.
@@ -258,11 +346,17 @@ The exact hooks depend on the client pipeline, but checksum integration
 typically needs to:
 
 - Resolve modeled defaults before serialization.
-- Prepare a stable or replayable request body before the retry loop when
-  possible.
-- Add signed checksum metadata before authentication.
+- Resolve the selection source and failure policy independently from whether a
+  checksum is required.
+- Prepare a stable or replayable request body within the configured buffering
+  limit before the retry loop when possible.
+- Select exactly one trailer or payload-framing owner.
+- Add fixed checksum headers, trailer declarations, signing sentinels, and
+  other signed checksum metadata before authentication.
 - Recreate attempt-specific checksum state before transmission.
+- Produce only the final trailer value during transmission.
 - Wrap a response body before deserialization.
+- Resolve deferred response trailer values at end of stream.
 - Report validation results before attempt completion for non-streaming
   responses.
 
@@ -279,13 +373,25 @@ stream behavior. At minimum, test:
 - Every required algorithm, including empty payloads and multiple chunk
   boundaries.
 - Default, explicitly selected, unsupported, and user-supplied checksums.
+- Optional checksums with an explicitly selected unsupported algorithm, which
+  must exercise the plan's failure policy.
 - Header and trailer placement.
+- Header checksum buffering below, at, and above the configured limit,
+  including unknown-length bodies.
 - Replayable, seekable, one-shot, asynchronous, and empty request bodies.
+- Custom checksum providers that attempt to advance or otherwise mutate the
+  byte buffer passed to `update`.
 - Request body transformations such as compression and protocol framing.
-- Authentication ordering and signed checksum metadata.
+- Authentication ordering, including fixed checksum headers and trailer
+  declarations before signing and only the final trailer value during
+  transmission.
+- Existing authentication or transport framing, including detection of
+  duplicate trailer ownership and prevention of double-wrapped bodies.
 - Retries after partial request transmission.
 - Matching, mismatching, malformed, absent, and unsupported response checksum
   values.
+- Response checksum values supplied by trailers and resolved only after end of
+  stream.
 - Buffered and streaming responses, including partial consumption and early
   close.
 - Validation state and algorithm metadata.
