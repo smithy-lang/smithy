@@ -40,6 +40,8 @@ A checksum provider can use an interface similar to the following:
 public interface ChecksumProvider {
     boolean supports(String algorithm);
 
+    OptionalInt outputLength(String algorithm);
+
     Checksum create(String algorithm);
 }
 
@@ -53,6 +55,12 @@ public interface Checksum {
     byte[] finish();
 }
 ```
+
+`outputLength` returns the raw checksum output length in bytes when it is fixed
+for the selected algorithm. It can be queried without creating mutable
+checksum state. The protocol resolver combines this metadata with the selected
+wire encoding to determine the encoded value length when needed. Providers
+should not report protocol-specific encoded lengths.
 
 Each call to `create` returns new mutable checksum state. This allows an
 implementation to use the same provider for concurrent calls, request retries,
@@ -77,6 +85,7 @@ by the rest of the pipeline. A request plan commonly contains:
   be supported.
 - The header or trailer name.
 - The wire encoding of the checksum value.
+- The raw and wire-encoded checksum value lengths when known.
 - Whether the value is supplied before transmission or calculated while
   streaming.
 - The component that owns any required trailer or payload framing.
@@ -167,7 +176,10 @@ preparation policy applies the configured size limit and fallback behavior.
 A checksum sent in a trailer can be calculated incrementally as the request
 body is transmitted. The decorator updates checksum state for each chunk and
 emits the final value after the payload. This avoids reading the entire body
-before transmission.
+before transmission. When the provider reports a fixed output length, the
+resolver can calculate the encoded trailer value length before transmission so
+that the framing owner can determine the complete encoded body length when the
+protocol requires it.
 
 Trailer support can require coordination between the protocol, authentication
 scheme, and transport. The checksum resolver should determine the placement,
@@ -372,6 +384,8 @@ stream behavior. At minimum, test:
 
 - Every required algorithm, including empty payloads and multiple chunk
   boundaries.
+- Known and unknown checksum output lengths, including their wire-encoded
+  lengths when required for framing.
 - Default, explicitly selected, unsupported, and user-supplied checksums.
 - Optional checksums with an explicitly selected unsupported algorithm, which
   must exercise the plan's failure policy.
