@@ -1,0 +1,1 @@
+[ERROR] com.example#CreateItems: JMESPath expression `length(items)` for identifier `itemId` in `@createsResources` contains unsupported expressions: '`length` function' | ResourceLifecycleTrait

@@ -1,0 +1,1 @@
+[ERROR] com.example#MakeWidget: `propertiesFrom` `spec` in `@createsResources` resolves to `com.example#WidgetSpec`, which has members that are neither a property nor an identifier of resource `com.example#Widget` and are not marked `@notProperty`: [`extra`] | ResourceLifecycleTrait

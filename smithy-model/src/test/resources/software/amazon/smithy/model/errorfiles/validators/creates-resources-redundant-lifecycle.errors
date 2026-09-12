@@ -1,0 +1,1 @@
+[WARNING] com.example#CreateFoo: Resource `com.example#Foo` in `@createsResources` is already bound to this operation via the resource's lifecycle. The trait is redundant. | ResourceLifecycleTrait

@@ -1,0 +1,1 @@
+[DANGER] com.example#CreateWidget: JMESPath expression `result.nonExistentField` for identifier `widgetId` in `@createsResources` has problems when resolved against `com.example#CreateWidgetOutput` | ResourceLifecycleTrait

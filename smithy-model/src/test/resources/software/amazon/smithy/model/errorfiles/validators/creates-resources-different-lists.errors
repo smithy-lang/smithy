@@ -1,0 +1,1 @@
+[ERROR] com.example#AttachVolumes: Identifiers in `@createsResources` for resource `com.example#Attachment` project through different lists, making cardinality ambiguous. | ResourceLifecycleTrait

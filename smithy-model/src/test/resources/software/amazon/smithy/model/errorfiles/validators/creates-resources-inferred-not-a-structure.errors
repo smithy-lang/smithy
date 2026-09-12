@@ -1,0 +1,1 @@
+[ERROR] com.example#MakeWidget: `propertiesFrom` `label` in `@createsResources` must point at a nested structure or a projection of structures, but resolved to `smithy.api#String`. | ResourceLifecycleTrait

@@ -1566,3 +1566,178 @@ structure requestCompression {
     @required
     encodings: RequestCompressionEncodingsList
 }
+
+/// Declares which resources an operation creates and where to find their
+/// identifiers in the operation output.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            path: "/member"
+            message: "Removing a resource from @createsResources breaks consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            path: "/member/resource"
+            message: "Changing the resource in a @createsResources entry is a breaking change."
+        }
+    ]
+)
+list createsResources {
+    member: ResourceLifecycleBinding
+}
+
+/// Declares which resources an operation creates or replaces (put semantics)
+/// and where to find their identifiers in the operation input.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            path: "/member"
+            message: "Removing a resource from @putsResources breaks consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            path: "/member/resource"
+            message: "Changing the resource in a @putsResources entry is a breaking change."
+        }
+    ]
+)
+list putsResources {
+    member: ResourceLifecycleBinding
+}
+
+/// Declares which resources an operation reads outside the standard lifecycle
+/// binding, and where to find their identifiers in the operation input.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            severity: "DANGER"
+            path: "/member"
+            message: "Removing a resource from @readsResources may break consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            severity: "DANGER"
+            path: "/member/resource"
+            message: "Changing the resource in a @readsResources entry may break consumers."
+        }
+    ]
+)
+list readsResources {
+    member: ResourceLifecycleBinding
+}
+
+/// Declares which resources an operation updates outside the standard lifecycle
+/// binding, and where to find their identifiers in the operation input.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            severity: "DANGER"
+            path: "/member"
+            message: "Removing a resource from @updatesResources may break consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            severity: "DANGER"
+            path: "/member/resource"
+            message: "Changing the resource in a @updatesResources entry may break consumers."
+        }
+    ]
+)
+list updatesResources {
+    member: ResourceLifecycleBinding
+}
+
+/// Declares which resources an operation deletes and where to find their
+/// identifiers in the operation input.
+@unstable
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            path: "/member"
+            message: "Removing a resource from @deletesResources breaks consumers that depend on this lifecycle declaration."
+        }
+        {
+            change: "update"
+            path: "/member/resource"
+            message: "Changing the resource in a @deletesResources entry is a breaking change."
+        }
+    ]
+)
+list deletesResources {
+    member: ResourceDeletionBinding
+}
+
+/// A binding that associates a resource with an operation lifecycle effect
+/// and optionally declares where to find resource identifiers.
+@private
+structure ResourceLifecycleBinding {
+    /// The shape ID of the affected resource.
+    @required
+    @idRef(selector: "resource", failWhenMissing: true)
+    resource: String
+
+    /// Explicit map of resource identifier name to a JMESPath locator for its
+    /// value in the operation input or output.
+    identifiers: ResourceMemberBindings
+
+    /// Structural JMESPath pointing at a nested structure or projection from
+    /// whose members identifiers are inferred by name.
+    identifiersFrom: NonEmptyString
+
+    /// Explicit map of resource property name to a JMESPath locator for its
+    /// value in the operation input or output.
+    properties: ResourceMemberBindings
+
+    /// Structural JMESPath pointing at a nested structure or projection from
+    /// whose members properties are inferred by name.
+    propertiesFrom: NonEmptyString
+}
+
+/// A binding that associates a deleted resource with an operation and optionally
+/// declares where to find its identifiers. Deletion binds no properties: a
+/// resource is deleted by its identifier alone.
+@private
+structure ResourceDeletionBinding {
+    /// The shape ID of the deleted resource.
+    @required
+    @idRef(selector: "resource", failWhenMissing: true)
+    resource: String
+
+    /// Explicit map of resource identifier name to a JMESPath locator for its
+    /// value in the operation input.
+    identifiers: ResourceMemberBindings
+
+    /// Structural JMESPath pointing at a nested structure or projection from
+    /// whose members identifiers are inferred by name.
+    identifiersFrom: NonEmptyString
+}
+
+@private
+map ResourceMemberBindings {
+    key: NonEmptyString
+    value: ResourceMemberBinding
+}
+
+/// Locates the value of a single resource identifier or property within an
+/// operation's input or output using a JMESPath expression.
+@private
+structure ResourceMemberBinding {
+    /// A JMESPath expression that locates the value in the operation input or
+    /// output.
+    @required
+    path: NonEmptyString
+}

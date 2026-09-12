@@ -448,5 +448,353 @@ identifier.
         name: String
     }
 
+.. _resource-lifecycle-association-traits:
+
+Resource lifecycle association traits
+=====================================
+
+The ``createsResources``, ``putsResources``, ``readsResources``,
+``updatesResources``, and ``deletesResources`` traits declare which resources an
+operation affects when that relationship is not expressed through a resource's
+standard lifecycle operations. They let tooling understand, from the model
+alone, that an operation creates, replaces, reads, updates, or deletes one or
+more resources, and where to find the affected resources' identifiers and
+properties.
+
+These traits are useful for operations that a 1:1 resource lifecycle cannot
+express, such as batch operations, operations that affect several resource
+types at once, or operations that are not bound to the resource they affect.
+
+For an operation that is bound to a resource's standard lifecycle, including a
+``list`` or other collection operation, resource properties and identifiers are
+bound through the operation's members, and the :ref:`nested-properties-trait` is
+used to bind them within a list element. These traits are for the operations
+that fall outside that standard lifecycle binding, and they locate identifiers
+and properties explicitly with :ref:`JMESPath <supported-jmespath>` rather than
+by member binding.
+
+Each trait is a ``list`` of bindings. A binding names a resource and,
+optionally, declares where the resource's identifiers and properties are
+located in the operation's input or output.
+
+Identifiers, properties, and sides
+----------------------------------
+
+A binding can locate two independent kinds of information about the resource:
+
+* **identifiers**: where the affected resource's identifiers are located.
+* **properties**: where the affected resource's properties are located.
+
+Identifiers and properties each resolve against a fixed side of the operation,
+determined by the trait:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 34 33 33
+
+    * - Trait
+      - Identifiers side
+      - Properties side
+    * - ``createsResources``
+      - output
+      - input
+    * - ``putsResources``
+      - input
+      - input
+    * - ``readsResources``
+      - input
+      - output
+    * - ``updatesResources``
+      - input
+      - input
+    * - ``deletesResources``
+      - input
+      - (none)
+
+The sides reflect where the data lives: a created resource's identifier is
+generated into the output while its properties are supplied in the input; a read
+resource is selected by an identifier in the input and its state is returned in
+the output; and so on. ``deletesResources`` does not locate properties, because
+a resource is deleted by its identifier alone.
+
+Specifying identifiers and properties
+-------------------------------------
+
+Identifiers and properties are each optional and are specified in one of three
+ways:
+
+* **Explicit**: an ``identifiers`` or ``properties`` map associates each
+  resource identifier or property name with a :ref:`JMESPath <supported-jmespath>`
+  expression that locates its value on the appropriate side.
+* **Inferred**: an ``identifiersFrom`` or ``propertiesFrom`` expression points
+  at a nested structure or a projection whose members are matched by name to the
+  resource's identifiers or properties. Member-name differences are reconciled
+  with the :ref:`property-trait` and :ref:`resourceIdentifier-trait`, and the
+  :ref:`notProperty-trait` excludes a member.
+* **Unspecified**: neither the explicit map nor the ``...From`` pointer is set.
+  The binding only asserts that the operation affects the resource; nothing is
+  inferred and nothing is validated for it. For example,
+  ``@createsResources([{resource: Forecast}])`` states only that the operation
+  creates a ``Forecast``.
+
+The explicit map and the ``...From`` pointer may be combined; the map overrides
+inference for a given name. The value located for an identifier must match the
+resource identifier's target shape, and the value located for a property must
+match the resource property's target shape.
+
+.. _supported-jmespath:
+
+Supported JMESPath
+------------------
+
+Locators and ``...From`` pointers use a structural subset of JMESPath: field
+access, subexpressions, wildcard projections (``[*]``), flatten (``[]``), and
+the current node. Functions, filters, comparators, index and slice expressions,
+and multi-select expressions are not supported. A ``...From`` pointer must
+resolve to a nested structure or a projection of structures. It must not resolve
+to the whole input or output root, nor to a list, map, or scalar.
+
+Binding structures
+------------------
+
+``createsResources``, ``putsResources``, ``readsResources``, and
+``updatesResources`` use the ``ResourceLifecycleBinding`` structure,
+which has the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 33 47
+
+    * - Property
+      - Type
+      - Description
+    * - resource
+      - :ref:`shape-id`
+      - **Required**. The absolute shape ID of the affected resource. Must
+        target a :ref:`resource` shape.
+    * - identifiers
+      - ``map<string, ResourceMemberBinding>``
+      - Explicit map of resource identifier name to a locator for its value.
+    * - identifiersFrom
+      - ``string``
+      - Structural JMESPath pointing at a nested structure or projection from
+        whose members identifiers are inferred by name.
+    * - properties
+      - ``map<string, ResourceMemberBinding>``
+      - Explicit map of resource property name to a locator for its value.
+    * - propertiesFrom
+      - ``string``
+      - Structural JMESPath pointing at a nested structure or projection from
+        whose members properties are inferred by name.
+
+``deletesResources`` uses the ``ResourceDeletionBinding`` structure, which is
+identical but omits the ``properties`` and ``propertiesFrom`` members.
+
+Both structures locate values with the ``ResourceMemberBinding`` structure,
+which has the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 33 47
+
+    * - Property
+      - Type
+      - Description
+    * - path
+      - ``string``
+      - **Required**. A structural JMESPath expression that locates the value in
+        the operation input or output.
+
+.. smithy-trait:: smithy.api#createsResources
+.. _createsResources-trait:
+
+``createsResources`` trait
+--------------------------
+
+Summary
+    Declares which resources an operation creates. Identifiers are located in
+    the output; properties are located in the input.
+Trait selector
+    ``operation``
+Value type
+    ``list`` of ``ResourceLifecycleBinding`` structures.
+
+Removing a binding or changing a binding's ``resource`` is a breaking change.
+
+.. code-block:: smithy
+
+    @createsResources([
+        {
+            resource: Snapshot
+            identifiers: { snapshotId: { path: "snapshots[*].snapshotId" } }
+        }
+    ])
+    operation BatchCreateSnapshots {
+        input: BatchCreateSnapshotsInput
+        output: BatchCreateSnapshotsOutput
+    }
+
+.. smithy-trait:: smithy.api#putsResources
+.. _putsResources-trait:
+
+``putsResources`` trait
+-----------------------
+
+Summary
+    Declares which resources an operation creates or replaces with put
+    semantics (a caller-provided identifier). Identifiers and properties are
+    both located in the input.
+Trait selector
+    ``operation``
+Value type
+    ``list`` of ``ResourceLifecycleBinding`` structures.
+
+Removing a binding or changing a binding's ``resource`` is a breaking change.
+
+.. code-block:: smithy
+
+    @putsResources([
+        {
+            resource: Forecast
+            identifiers: { forecastId: { path: "forecastId" } }
+            properties: { chanceOfRain: { path: "chanceOfRain" } }
+        }
+    ])
+    @idempotent
+    operation PutForecast {
+        input: PutForecastInput
+        output: PutForecastOutput
+    }
+
+    @input
+    structure PutForecastInput {
+        @required
+        forecastId: String
+
+        chanceOfRain: Float
+    }
+
+.. smithy-trait:: smithy.api#readsResources
+.. _readsResources-trait:
+
+``readsResources`` trait
+------------------------
+
+Summary
+    Declares which resources an operation reads. Identifiers are located in the
+    input; properties are located in the output.
+Trait selector
+    ``operation``
+Value type
+    ``list`` of ``ResourceLifecycleBinding`` structures.
+
+Removing a binding or changing a binding's ``resource`` is flagged as a possible
+breaking change.
+
+.. code-block:: smithy
+
+    @readsResources([
+        {
+            resource: Forecast
+            identifiers: { forecastId: { path: "forecastId" } }
+            properties: { chanceOfRain: { path: "chanceOfRain" } }
+        }
+    ])
+    @readonly
+    operation GetForecast {
+        input: GetForecastInput
+        output: GetForecastOutput
+    }
+
+    @input
+    structure GetForecastInput {
+        @required
+        forecastId: String
+    }
+
+    structure GetForecastOutput {
+        chanceOfRain: Float
+    }
+
+.. smithy-trait:: smithy.api#updatesResources
+.. _updatesResources-trait:
+
+``updatesResources`` trait
+--------------------------
+
+Summary
+    Declares which resources an operation updates. Identifiers and properties
+    are both located in the input.
+Trait selector
+    ``operation``
+Value type
+    ``list`` of ``ResourceLifecycleBinding`` structures.
+
+Removing a binding or changing a binding's ``resource`` is flagged as a possible
+breaking change.
+
+.. code-block:: smithy
+
+    @updatesResources([
+        {
+            resource: Forecast
+            identifiers: { forecastId: { path: "forecastId" } }
+            properties: { chanceOfRain: { path: "chanceOfRain" } }
+        }
+    ])
+    operation UpdateForecast {
+        input: UpdateForecastInput
+        output: UpdateForecastOutput
+    }
+
+    @input
+    structure UpdateForecastInput {
+        @required
+        forecastId: String
+
+        chanceOfRain: Float
+    }
+
+.. smithy-trait:: smithy.api#deletesResources
+.. _deletesResources-trait:
+
+``deletesResources`` trait
+--------------------------
+
+Summary
+    Declares which resources an operation deletes. Identifiers are located in
+    the input. Delete does not locate properties.
+Trait selector
+    ``operation``
+Value type
+    ``list`` of ``ResourceDeletionBinding`` structures.
+
+Removing a binding or changing a binding's ``resource`` is a breaking change.
+
+.. code-block:: smithy
+
+    @deletesResources([
+        {
+            resource: Table
+            identifiersFrom: "target"
+        }
+    ])
+    @idempotent
+    operation RestoreTable {
+        input: RestoreTableInput
+        output: RestoreTableOutput
+    }
+
+    @input
+    structure RestoreTableInput {
+        @required
+        target: TableRef
+    }
+
+    structure TableRef for Table {
+        $tableName
+    }
+
+
 .. _CreateTable: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html
 .. _standard link relation: https://www.iana.org/assignments/link-relations/link-relations.xhtml

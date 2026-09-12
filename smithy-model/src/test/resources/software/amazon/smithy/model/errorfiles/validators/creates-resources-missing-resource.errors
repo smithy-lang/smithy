@@ -1,0 +1,1 @@
+[ERROR] com.example#CreateWidget: Error validating trait `createsResources`.0.resource: Shape ID `com.example#DoesNotExist` was not found in the model | TraitValue

@@ -1,0 +1,1 @@
+[ERROR] com.example#ReserveNodes: Identifiers in `@createsResources` for resource `com.example#Reservation` project through different lists, making cardinality ambiguous. | ResourceLifecycleTrait

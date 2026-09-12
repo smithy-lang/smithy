@@ -1,0 +1,1 @@
+[ERROR] com.example#BadOperation: Error validating trait `createsResources`.0.resource: Shape ID `com.example#NotAResource` does not match selector `resource` | TraitValue

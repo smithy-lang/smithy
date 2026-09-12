@@ -78,3 +78,8 @@ software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
 software.amazon.smithy.model.traits.XmlNamespaceTrait$Provider
 software.amazon.smithy.model.traits.XmlNameTrait$Provider
 software.amazon.smithy.model.traits.TraitValidatorsTrait$Provider
+software.amazon.smithy.model.traits.CreatesResourcesTrait$Provider
+software.amazon.smithy.model.traits.DeletesResourcesTrait$Provider
+software.amazon.smithy.model.traits.PutsResourcesTrait$Provider
+software.amazon.smithy.model.traits.ReadsResourcesTrait$Provider
+software.amazon.smithy.model.traits.UpdatesResourcesTrait$Provider

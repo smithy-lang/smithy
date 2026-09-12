@@ -66,3 +66,4 @@ software.amazon.smithy.model.validation.validators.UnstableTraitValidator
 software.amazon.smithy.model.validation.validators.XmlNamespaceTraitValidator
 software.amazon.smithy.model.validation.validators.TraitValidatorsValidator
 software.amazon.smithy.model.validation.validators.XmlFlattenedTraitValidator
+software.amazon.smithy.model.validation.validators.ResourceLifecycleTraitValidator
