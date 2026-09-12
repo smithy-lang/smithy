@@ -70,6 +70,109 @@ public class AwsRestJson1ProtocolTest {
     }
 
     @Test
+    public void canUseOperationInputOutputShapeNamesForContentSchemas() {
+        Model model = Model.assembler()
+                .addUnparsedModel("test.smithy", """
+                        $version: "2"
+
+                        namespace smithy.example
+
+                        use aws.protocols#restJson1
+
+                        @restJson1
+                        service Service {
+                            version: "2006-03-01"
+                            operations: [DoSomething]
+                        }
+
+                        /// Do something given its name
+                        @http(method: "POST", uri: "/do-something")
+                        operation DoSomething {
+                            input: DoSomethingInput
+                            output: DoSomethingOutput
+                        }
+
+                        structure DoSomethingInput {
+                            @required
+                            nameOfSomething: String
+                        }
+
+                        structure DoSomethingOutput {
+                            comment: String
+                        }
+                        """)
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        ObjectNode result = convertWithOperationInputOutputShapeNames(model);
+
+        Assertions.assertEquals("#/components/schemas/DoSomethingInput",
+                getRequestSchemaRef(result, "/do-something"));
+        Assertions.assertEquals("#/components/schemas/DoSomethingOutput",
+                getResponseSchemaRef(result, "/do-something", "200"));
+        result.expectObjectMember("components")
+                .expectObjectMember("schemas")
+                .expectObjectMember("DoSomethingInput");
+        result.expectObjectMember("components")
+                .expectObjectMember("schemas")
+                .expectObjectMember("DoSomethingOutput");
+    }
+
+    @Test
+    public void canUseElidedOperationInputOutputShapeNamesForContentSchemas() {
+        Model model = Model.assembler()
+                .addUnparsedModel("test.smithy", """
+                        $version: "2"
+
+                        namespace smithy.example
+
+                        use aws.protocols#restJson1
+
+                        @restJson1
+                        service Service {
+                            version: "2006-03-01"
+                            operations: [DoSomething]
+                        }
+
+                        /// Do something given its name
+                        @http(method: "POST", uri: "/do-something")
+                        operation DoSomething {
+                            input := {
+                                @required
+                                nameOfSomething: String
+                            }
+                            output := {
+                                comment: String
+                            }
+                        }
+                        """)
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        ObjectNode result = convertWithOperationInputOutputShapeNames(model);
+
+        Assertions.assertEquals("#/components/schemas/DoSomethingInput",
+                getRequestSchemaRef(result, "/do-something"));
+        Assertions.assertEquals("#/components/schemas/DoSomethingOutput",
+                getResponseSchemaRef(result, "/do-something", "200"));
+    }
+
+    @Test
+    public void fallsBackToContentSuffixesWhenInputAndOutputShapesAreShared() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("synthesizes-contents.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        ObjectNode result = convertWithOperationInputOutputShapeNames(model);
+
+        Assertions.assertEquals("#/components/schemas/CreateDocumentRequestContent",
+                getRequestSchemaRef(result, "/document"));
+        Assertions.assertEquals("#/components/schemas/CreateDocumentResponseContent",
+                getResponseSchemaRef(result, "/document", "200"));
+    }
+
+    @Test
     public void canUseCustomMediaType() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("adds-json-document-bodies.json"))
@@ -333,6 +436,40 @@ public class AwsRestJson1ProtocolTest {
                 Arguments.of("/boolean", "GetBooleanDocument_example1", booleanValue),
                 Arguments.of("/number", "GetNumberDocument_example1", numberValue),
                 Arguments.of("/null", "GetNullDocument_example1", nullValue));
+    }
+
+    private ObjectNode convertWithOperationInputOutputShapeNames(Model model) {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setUseOperationInputOutputShapeNames(true);
+        return OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+    }
+
+    private String getRequestSchemaRef(ObjectNode result, String path) {
+        return result.expectObjectMember("paths")
+                .expectObjectMember(path)
+                .expectObjectMember("post")
+                .expectObjectMember("requestBody")
+                .expectObjectMember("content")
+                .expectObjectMember("application/json")
+                .expectObjectMember("schema")
+                .expectStringMember("$ref")
+                .getValue();
+    }
+
+    private String getResponseSchemaRef(ObjectNode result, String path, String statusCode) {
+        return result.expectObjectMember("paths")
+                .expectObjectMember(path)
+                .expectObjectMember("post")
+                .expectObjectMember("responses")
+                .expectObjectMember(statusCode)
+                .expectObjectMember("content")
+                .expectObjectMember("application/json")
+                .expectObjectMember("schema")
+                .expectStringMember("$ref")
+                .getValue();
     }
 
     @Test
