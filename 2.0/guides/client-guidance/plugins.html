@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Code Generation &#8212; Smithy 2.0</title>
+    <title>Client Plugins &#8212; Smithy 2.0</title>
   
   
   
@@ -49,14 +49,14 @@
     <script src="../../_static/copybutton.js?v=6b89569b"></script>
     <script src="../../_static/tabs.js?v=3ee01567"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/using-code-generation/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/client-guidance/plugins';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="../../_static/custom.js?v=0fa699fc"></script>
     <link rel="icon" href="../../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Updating the Smithy Model" href="update-model.html" />
-    <link rel="prev" title="Migrating to Gradle plugin version 0.10.0+" href="../gradle-plugin/gradle-migration-guide.html" />
+    <link rel="next" title="Interceptors" href="interceptors.html" />
+    <link rel="prev" title="Identity and Authentication" href="identity-auth.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0" />
@@ -224,6 +224,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -341,9 +345,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Code Generation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="update-model.html">Updating the Smithy Model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generating-a-client.html">Generating a client</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
@@ -369,17 +373,17 @@
 <li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../client-guidance/index.html">Smithy Client Guidance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../client-guidance/application-protocols/index.html">Application Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../client-guidance/application-protocols/http.html">HTTP</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Smithy Client Guidance</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="application-protocols/index.html">Application Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="application-protocols/http.html">HTTP</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/context.html">Context</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/retries.html">Retrying Requests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/endpoints.html">Endpoint Resolution</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/identity-auth.html">Identity and Authentication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/plugins.html">Client Plugins</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../client-guidance/interceptors.html">Interceptors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identity-auth.html">Identity and Authentication</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
@@ -578,7 +582,7 @@
       
       
       
-      <li><a href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/using-code-generation/index.rst" target="_blank"
+      <li><a href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/client-guidance/plugins.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -595,7 +599,7 @@
       
       
       
-      <li><a href="https://github.com/smithy-lang/smithy/issues/new?title=Issue%20on%20page%20%2Fguides/using-code-generation/index.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/smithy-lang/smithy/issues/new?title=Issue%20on%20page%20%2Fguides/client-guidance/plugins.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -614,7 +618,7 @@
 
 
 
-<a href="../../_sources/guides/using-code-generation/index.rst.txt" target="_blank"
+<a href="../../_sources/guides/client-guidance/plugins.md.txt" target="_blank"
    class="btn btn-sm btn-source-file-button"
    title="View page source"
    data-bs-placement="bottom" data-bs-toggle="tooltip"
@@ -626,7 +630,9 @@
   </span>
 
 </a>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -637,11 +643,31 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Code Generation</h1>
+    <h1>Client Plugins</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-model">Application model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface">Interface</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-a-client">Configuring a client</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#child-plugins">Child plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering">Ordering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deduplication">Deduplication</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predicates">Predicates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resolution">Resolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#call-scoped-plugins">Call-scoped plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automatic-plugins">Automatic plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -651,23 +677,353 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="code-generation">
-<span id="using-code-generation"></span><h1>Code Generation<a class="headerlink" href="#code-generation" title="Link to this heading">#</a></h1>
-<p>One of Smithy's greatest strengths is code generation. Smithy models can be used to
-generate clients and servers in a variety of programming languages. The generated
-code takes care of low level details like endpoints, serialization, deserialization,
-and more.</p>
-<p>In this guide, we will use the Smithy model we created in the
-<a class="reference internal" href="../../quickstart.html"><span class="doc">Quick start guide</span></a> to generate
-a TypeScript client that knows how to communicate with the weather service. For a
-list of code generators, see <a class="reference external" href="https://github.com/smithy-lang/awesome-smithy#client-code-generators">Awesome Smithy</a>.</p>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Using Code Generation guide</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="update-model.html">Updating the Smithy Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generating-a-client.html">Generating a client</a></li>
+  <section id="client-plugins">
+<span id="client-guidance-plugins"></span><h1>Client Plugins<a class="headerlink" href="#client-plugins" title="Link to this heading">#</a></h1>
+<p>A <strong>client plugin</strong> packages reusable changes to client configuration. Plugins
+can configure protocols, transports, endpoint resolvers, authentication, retry
+behavior, <a class="reference internal" href="interceptors.html"><span class="std std-doc">interceptors</span></a>, and other client components. They can
+also compose other plugins.</p>
+<p>Plugins are applied while resolving client configuration rather than at a fixed
+stage of request execution. An interceptor is the appropriate extension point
+for observing or modifying a particular execution stage. A plugin is the
+appropriate extension point for installing and configuring one or more client
+features. Plugins commonly register interceptors as part of their
+configuration.</p>
+<section id="application-model">
+<h2>Application model<a class="headerlink" href="#application-model" title="Link to this heading">#</a></h2>
+<p>Clients should support plugins from the following sources:</p>
+<ol class="arabic simple">
+<li><p>Framework plugins applied by default.</p></li>
+<li><p>Plugins explicitly configured by the user.</p></li>
+<li><p>Service-specific or generated default plugins.</p></li>
+<li><p>Plugins configured for a single operation call.</p></li>
+</ol>
+<p>The first three sources are resolved while constructing a client configuration.
+Call-scoped plugins are resolved later from the already configured client. This
+allows a call-scoped plugin to replace a protocol, transport, endpoint resolver,
+or other dependency for one call without changing later calls.</p>
+<p>Plugin registration and plugin application are separate operations.
+Registration establishes the set of plugins and their insertion order.
+Resolution filters, deduplicates, and orders that set. Application then invokes
+each resolved plugin against the current configuration.</p>
+<p>Client configurations should retain the plugin registration and resolution
+state used to create them. This allows a derived configuration or call-scoped
+configuration to apply only newly introduced plugins.</p>
+</section>
+<section id="interface">
+<h2>Interface<a class="headerlink" href="#interface" title="Link to this heading">#</a></h2>
+<p>A plugin needs three capabilities:</p>
+<ul class="simple">
+<li><p>Configure the client.</p></li>
+<li><p>Contribute child plugins.</p></li>
+<li><p>Select an application phase.</p></li>
 </ul>
+<p>The following Java-like example returns a configuration to make the sequencing
+of immutable configurations explicit:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">ClientPlugin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ClientConfig</span><span class="w"> </span><span class="nf">configureClient</span><span class="p">(</span><span class="n">ClientConfig</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getChildPlugins</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">PluginPhase</span><span class="w"> </span><span class="nf">getPluginPhase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">PluginPhase</span><span class="p">.</span><span class="na">APPLY</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
+<p>A language may instead provide a mutable configuration view during client
+construction and allow <code class="docutils literal notranslate"><span class="pre">configureClient</span></code> to return nothing. The important
+requirement is that each plugin receives the configuration produced by the
+previous plugin.</p>
+<p>Plugin interfaces should provide defaults for child plugins and the application
+phase. Languages without default interface methods can provide an abstract base
+class with equivalent behavior.</p>
+<section id="configuring-a-client">
+<h3>Configuring a client<a class="headerlink" href="#configuring-a-client" title="Link to this heading">#</a></h3>
+<p>Plugins should be able to configure the same components that users can configure
+directly. A plugin might:</p>
+<ul class="simple">
+<li><p>Register an interceptor.</p></li>
+<li><p>Set or decorate a protocol or transport.</p></li>
+<li><p>Add an authentication scheme or identity resolver.</p></li>
+<li><p>Replace an endpoint resolver.</p></li>
+<li><p>Set retry behavior.</p></li>
+<li><p>Add typed <a class="reference internal" href="context.html"><span class="std std-doc">context</span></a> values.</p></li>
+<li><p>Register another reusable client component.</p></li>
+</ul>
+<p>A plugin should configure the client and return. It should not execute an
+operation or retain call-specific mutable state.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TracingPlugin</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ClientPlugin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ClientConfig</span><span class="w"> </span><span class="nf">configureClient</span><span class="p">(</span><span class="n">ClientConfig</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">withInterceptor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">TracingInterceptor</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="child-plugins">
+<h2>Child plugins<a class="headerlink" href="#child-plugins" title="Link to this heading">#</a></h2>
+<p>A plugin can contribute other plugins through <code class="docutils literal notranslate"><span class="pre">getChildPlugins</span></code>. Child plugins
+allow one feature to aggregate reusable components while preserving the normal
+resolution behavior of each component.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ObservabilityPlugin</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ClientPlugin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ClientConfig</span><span class="w"> </span><span class="nf">configureClient</span><span class="p">(</span><span class="n">ClientConfig</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">config</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getChildPlugins</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">TracingPlugin</span><span class="p">(),</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">MetricsPlugin</span><span class="p">()</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Child plugins:</p>
+<ul class="simple">
+<li><p>Are visited only if their parent is accepted.</p></li>
+<li><p>Are independently evaluated by the plugin predicate.</p></li>
+<li><p>Use their own application phases.</p></li>
+<li><p>Are deduplicated with top-level and other child plugins.</p></li>
+<li><p>Can contribute children of their own.</p></li>
+</ul>
+<p>Plugins should contribute child plugins instead of invoking another plugin's
+configuration method directly. Direct invocation bypasses phase ordering,
+predicates, deduplication, and persisted resolution state.</p>
+<p>Implementations should mark an accepted plugin as applied before visiting its
+children. In addition to enforcing first-registration-wins behavior, this causes
+cycles in a child-plugin graph to terminate through normal deduplication.</p>
+</section>
+<section id="ordering">
+<h2>Ordering<a class="headerlink" href="#ordering" title="Link to this heading">#</a></h2>
+<p>Plugins should be ordered by application phase, then by insertion order within
+the same phase. The phase sort must be stable.</p>
+<p>The recommended phases are:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">PluginPhase</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FIRST</span><span class="p">,</span>
+<span class="w">    </span><span class="n">BEFORE_DEFAULTS</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DEFAULTS</span><span class="p">,</span>
+<span class="w">    </span><span class="n">AFTER_DEFAULTS</span><span class="p">,</span>
+<span class="w">    </span><span class="n">BEFORE_APPLY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">APPLY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">AFTER_APPLY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LAST</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Phase</p></th>
+<th class="head"><p>Intended use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FIRST</span></code></p></td>
+<td><p>Framework setup that must occur before other plugins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BEFORE_DEFAULTS</span></code></p></td>
+<td><p>Validation or configuration that precedes defaults.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DEFAULTS</span></code></p></td>
+<td><p>Applying default values or components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AFTER_DEFAULTS</span></code></p></td>
+<td><p>Validation or adjustment after defaults.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BEFORE_APPLY</span></code></p></td>
+<td><p>Preparation for general configuration changes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">APPLY</span></code></p></td>
+<td><p>General configuration changes and the default plugin phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AFTER_APPLY</span></code></p></td>
+<td><p>Validation or adjustment after general changes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LAST</span></code></p></td>
+<td><p>Framework finalization after all other phases.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">FIRST</span></code> and <code class="docutils literal notranslate"><span class="pre">LAST</span></code> should generally be reserved for framework-level behavior.
+Most plugins should use <code class="docutils literal notranslate"><span class="pre">DEFAULTS</span></code>, <code class="docutils literal notranslate"><span class="pre">APPLY</span></code>, or one of their adjacent phases.</p>
+<p>The recommended top-level insertion order is:</p>
+<ol class="arabic simple">
+<li><p>The framework default plugin.</p></li>
+<li><p>User-configured plugins.</p></li>
+<li><p>Service-specific or generated default plugins.</p></li>
+</ol>
+<p>Automatic plugins should be children of the framework default plugin. They are
+therefore encountered before user plugins and generated defaults. Generated
+defaults are registered after explicit user plugins so that a user-provided
+instance wins a concrete-type duplicate. Application phases can move plugins
+relative to one another, but insertion order remains the tie breaker within a
+phase.</p>
+<p>Call-scoped plugins are resolved after construction plugins have already been
+applied. Their phases order them relative to other call-scoped plugins, but
+cannot move them before a construction plugin.</p>
+</section>
+<section id="deduplication">
+<h2>Deduplication<a class="headerlink" href="#deduplication" title="Link to this heading">#</a></h2>
+<p>Each concrete plugin implementation type should be applied at most once to a
+configuration. The first registered instance of a concrete type wins.
+Equivalent implementation-type identity should be used in languages that do
+not expose runtime classes.</p>
+<p>Deduplication occurs while traversing registrations and children, before phase
+sorting. A later instance does not replace an earlier instance even if the later
+instance selects an earlier phase.</p>
+<p>The set of applied plugin types should be stored with the client configuration.
+When deriving a new configuration, previously applied types are not applied
+again. Newly registered plugins remain eligible.</p>
+<p>For example, applying <code class="docutils literal notranslate"><span class="pre">MetricsPlugin</span></code> to a base configuration and then deriving
+a call configuration with another <code class="docutils literal notranslate"><span class="pre">MetricsPlugin</span></code> should not configure metrics
+twice. A different <code class="docutils literal notranslate"><span class="pre">TracingPlugin</span></code> introduced by the call remains eligible.</p>
+</section>
+<section id="predicates">
+<h2>Predicates<a class="headerlink" href="#predicates" title="Link to this heading">#</a></h2>
+<p>Clients should support a predicate that determines whether a plugin is
+accepted. Predicates allow users and framework code to disable optional
+features without changing plugin registration.</p>
+<p>The predicate is evaluated before a plugin is marked as applied:</p>
+<ul class="simple">
+<li><p>A rejected parent prevents traversal of all its children.</p></li>
+<li><p>An accepted parent's children are each evaluated independently.</p></li>
+<li><p>A rejected plugin is not marked as applied.</p></li>
+</ul>
+<p>Implementations may expose operations to replace the current predicate and to
+combine another predicate with it. Registered plugins that were rejected remain
+eligible if a later configuration uses a predicate that accepts them and the
+registration is still reachable.</p>
+</section>
+<section id="resolution">
+<h2>Resolution<a class="headerlink" href="#resolution" title="Link to this heading">#</a></h2>
+<p>The following pseudocode demonstrates the recommended resolution algorithm:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">registered</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">predicate</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">PluginType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">applied</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ResolvedPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resolved</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ClientPlugin</span><span class="w"> </span><span class="n">plugin</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">registered</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">collect</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span><span class="w"> </span><span class="n">predicate</span><span class="p">,</span><span class="w"> </span><span class="n">applied</span><span class="p">,</span><span class="w"> </span><span class="n">resolved</span><span class="p">,</span><span class="w"> </span><span class="n">sequence</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">resolved</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">comparing</span><span class="p">(</span><span class="n">ResolvedPlugin</span><span class="p">::</span><span class="n">phase</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">thenComparing</span><span class="p">(</span><span class="n">ResolvedPlugin</span><span class="p">::</span><span class="n">sequence</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">resolved</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">ResolvedPlugin</span><span class="p">::</span><span class="n">plugin</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">toList</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">collect</span><span class="p">(</span>
+<span class="w">        </span><span class="n">ClientPlugin</span><span class="w"> </span><span class="n">plugin</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">ClientPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">predicate</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">PluginType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">applied</span><span class="p">,</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ResolvedPlugin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resolved</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sequence</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">PluginType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">implementationType</span><span class="p">(</span><span class="n">plugin</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">applied</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">predicate</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="n">plugin</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">sequence</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">applied</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="n">resolved</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ResolvedPlugin</span><span class="p">(</span>
+<span class="w">        </span><span class="n">plugin</span><span class="p">,</span>
+<span class="w">        </span><span class="n">plugin</span><span class="p">.</span><span class="na">getPluginPhase</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">sequence</span><span class="o">++</span>
+<span class="w">    </span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ClientPlugin</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">plugin</span><span class="p">.</span><span class="na">getChildPlugins</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">collect</span><span class="p">(</span>
+<span class="w">            </span><span class="n">child</span><span class="p">,</span>
+<span class="w">            </span><span class="n">predicate</span><span class="p">,</span>
+<span class="w">            </span><span class="n">applied</span><span class="p">,</span>
+<span class="w">            </span><span class="n">resolved</span><span class="p">,</span>
+<span class="w">            </span><span class="n">sequence</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sequence</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The explicit sequence value makes insertion order deterministic even when the
+language's sort implementation is not stable.</p>
+<p>After resolution, apply plugins in order. Each plugin receives the
+configuration returned or modified by the previous plugin. The updated applied
+type set and registered plugin set are retained by the resulting configuration.</p>
+</section>
+<section id="call-scoped-plugins">
+<h2>Call-scoped plugins<a class="headerlink" href="#call-scoped-plugins" title="Link to this heading">#</a></h2>
+<p>Clients should allow plugins to be added to a single operation invocation.
+Call-scoped plugins begin with the client's configured dependencies,
+registrations, predicate, and applied type set.</p>
+<p>Only newly eligible plugins are applied. The resulting configuration is used to
+construct or select the execution pipeline for that call and does not replace
+the configuration stored by the client.</p>
+<p>Call-scoped plugins should run before the interceptor
+<a class="reference internal" href="interceptors.html#client-guidance-interceptors-modify-before-call"><span class="std std-ref"><code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code></span></a> hook.
+This gives interceptors installed by a call-scoped plugin an opportunity to
+participate in call configuration, wrapping, and execution.</p>
+</section>
+<section id="automatic-plugins">
+<h2>Automatic plugins<a class="headerlink" href="#automatic-plugins" title="Link to this heading">#</a></h2>
+<p>Some languages provide a package-level service discovery mechanism. Client
+implementations may use that mechanism to discover plugins automatically:</p>
+<ul class="simple">
+<li><p>Java can use <code class="docutils literal notranslate"><span class="pre">ServiceLoader</span></code>.</p></li>
+<li><p>PHP can use a registry populated by Composer autoload files.</p></li>
+<li><p>Other languages can use an equivalent package manifest or registry.</p></li>
+</ul>
+<p>Automatic discovery should be modeled as a normal parent plugin:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>DefaultPlugin
+└── AutoPlugin
+    ├── DiscoveredPluginA
+    └── DiscoveredPluginB
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">AutoPlugin</span></code> performs no configuration of its own. Its children are the
+discovered plugins. Making it a child of the default plugin gives discovered
+plugins the same phases, predicates, deduplication, and persisted state as all
+other plugins.</p>
+<p>Automatic plugin discovery should:</p>
+<ul class="simple">
+<li><p>Produce plugins in deterministic registration order.</p></li>
+<li><p>Cache discovery and plugin instances when the language runtime permits it.</p></li>
+<li><p>Report invalid registrations or construction failures clearly.</p></li>
+<li><p>Allow users to disable all automatic plugins.</p></li>
+</ul>
+<p>Disabling automatic plugins can be implemented by rejecting <code class="docutils literal notranslate"><span class="pre">AutoPlugin</span></code> with
+the plugin predicate. Because a rejected parent's children are not visited,
+none of the discovered plugins are resolved or applied.</p>
+<p>Automatic plugins should be used sparingly. They are appropriate for
+cross-cutting functionality that applies broadly but can determine its
+applicability from an explicit signal such as a modeled trait, configured
+context value, service identity, or selected protocol. Installing a package
+should not cause unrelated clients to acquire behavior that the plugin cannot
+determine is applicable.</p>
+<p>Automatically discovered plugin instances may be shared by multiple clients.
+They should be immutable or otherwise safe for concurrent use.</p>
+</section>
+<section id="error-handling">
+<h2>Error handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<p>An error raised while resolving or applying a construction plugin should fail
+client construction. An error raised by a call-scoped plugin should fail that
+call before the execution pipeline begins.</p>
+<p>Plugin application is not an execution stage, so plugin errors should not be
+processed by interceptor completion hooks.</p>
+</section>
 </section>
 
 
@@ -682,20 +1038,20 @@ list of code generators, see <a class="reference external" href="https://github.
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../gradle-plugin/gradle-migration-guide.html"
+       href="identity-auth.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Migrating to Gradle plugin version 0.10.0+</p>
+        <p class="prev-next-title">Identity and Authentication</p>
       </div>
     </a>
     <a class="right-next"
-       href="update-model.html"
+       href="interceptors.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Updating the Smithy Model</p>
+        <p class="prev-next-title">Interceptors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -705,6 +1061,35 @@ list of code generators, see <a class="reference external" href="https://github.
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-model">Application model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface">Interface</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-a-client">Configuring a client</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#child-plugins">Child plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering">Ordering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deduplication">Deduplication</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predicates">Predicates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resolution">Resolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#call-scoped-plugins">Call-scoped plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automatic-plugins">Automatic plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

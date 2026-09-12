@@ -1,0 +1,1517 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Identity and Authentication &#8212; Smithy 2.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/client-guidance/identity-auth';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/custom.js?v=0fa699fc"></script>
+    <link rel="icon" href="../../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Client Plugins" href="plugins.html" />
+    <link rel="prev" title="Endpoint Resolution" href="endpoints.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+<script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/smithy.svg" class="logo__image only-light" alt="Smithy 2.0 - Home"/>
+    <img src="../../_static/smithy-dark.svg" class="logo__image only-dark pst-js-only" alt="Smithy 2.0 - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/shape-closures.html">Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">JSON AST</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wire-protocol-selection.html">Wire protocol selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-codegen/index.html">Creating a Code Generator</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Smithy Client Guidance</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="application-protocols/index.html">Application Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="application-protocols/http.html">HTTP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Identity and Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/contract-traits.html">Contract traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/event-stream-protocol-compliance-tests.html">Event Stream Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/java/index.html">Java</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/java/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/generating-clients.html">Generating Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/configuration.html">Configuring Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/customization.html">Customizing Client Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-typescript">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/rust/index.html">Rust</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/kotlin/quickstart.html">Kotlin Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/kotlin/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/kotlin/client/generating-clients.html">Generating Clients</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples/tree/main/smithy-kotlin-examples">Smithy Kotlin Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin/tree/main/docs/design">Smithy Kotlin Design Docs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/golang/index.html">GoLang</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/scala/index.html">Scala</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/client-guidance/identity-auth.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/issues/new?title=Issue%20on%20page%20%2Fguides/client-guidance/identity-auth.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+<a href="../../_sources/guides/client-guidance/identity-auth.md.txt" target="_blank"
+   class="btn btn-sm btn-source-file-button"
+   title="View page source"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+
+</a>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Identity and Authentication</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identity">Identity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identityresolver">IdentityResolver</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signer">Signer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authscheme">AuthScheme</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authschemeresolver">AuthSchemeResolver</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#authschemeoption">AuthSchemeOption</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#order-of-operations">Order of Operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#faq">FAQ</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-operations-with-no-authentication">What about operations with no authentication?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-auth-schemes-returned-by-endpoint-resolution">What about auth schemes returned by endpoint resolution?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-authscheme-identityresolver-accept-a-parameter-but-authscheme-signer-does-not">Why does <code class="docutils literal notranslate"><span class="pre">AuthScheme::identityResolver</span></code> accept a parameter, but <code class="docutils literal notranslate"><span class="pre">AuthScheme::signer</span></code> does not?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-identityresolver-idioms">Appendix: IdentityResolver idioms</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolver-chains">Resolver Chains</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolver-caching">Resolver Caching</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="identity-and-authentication">
+<h1>Identity and Authentication<a class="headerlink" href="#identity-and-authentication" title="Link to this heading">#</a></h1>
+<p>Operations supported by a Smithy service generally require a mechanism for
+authenticating the caller's identity. This section describes how to model the
+workflow of identity retrieval and request authentication in Smithy clients.</p>
+<p>The Java-like interfaces in this section are illustrative behavioral contracts,
+not mandatory source-compatible APIs. Implementations may adapt names, types,
+synchronous or asynchronous execution, mutability, and lifecycle management to
+the idioms of their language while preserving the behavior described here.</p>
+<section id="identity">
+<h2>Identity<a class="headerlink" href="#identity" title="Link to this heading">#</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">Identity</span></code> represents <strong>who the caller is</strong>. The caller's identity could be
+anonymous, a token, a public/private key pair, or another form of identity.</p>
+<p>Identity types in the client runtime should conform to a common <code class="docutils literal notranslate"><span class="pre">Identity</span></code>
+abstraction so that authentication components can reference them generically.
+Scheme-specific APIs can then use concrete identity types, and the same identity
+type can be reused by multiple schemes.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Identity</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">Instant</span><span class="w"> </span><span class="nf">expirationTime</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// for aws.auth#sigv4, aws.auth#sigv4a</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">AwsCredentialsIdentity</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">accessKeyId</span><span class="p">();</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">secretAccessKey</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">sessionToken</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">accountId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// for smithy.api#httpBearerAuth</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">TokenIdentity</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">token</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Username and password-based credentials.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">LoginIdentity</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">username</span><span class="p">();</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">password</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// for smithy.api#httpApiKeyAuth</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">ApiKeyIdentity</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">apiKey</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="identityresolver">
+<h2>IdentityResolver<a class="headerlink" href="#identityresolver" title="Link to this heading">#</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">IdentityResolver</span></code> retrieves a single type of identity. Identity resolution
+accepts a
+<a class="reference external" href="https://smithy.io/2.0/guides/client-guidance/context.html">client context</a>
+containing properties that can affect resolution.</p>
+<p>Identity resolution has three possible outcomes:</p>
+<ol class="arabic simple">
+<li><p>An identity is successfully resolved.</p></li>
+<li><p>An expected identity-specific failure occurs, such as an identity source not
+being configured. This outcome is returned as a result without an identity
+and allows a resolver chain to continue.</p></li>
+<li><p>An unexpected or unrecoverable failure occurs, such as malformed
+configuration or a runtime failure from which resolution cannot recover.
+The resolver raises an error, which must not be treated as an expected miss.</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">IdentityResolver</span></code> interface may be modeled as follows:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolveIdentity</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">properties</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityType</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="n">IdentityT</span><span class="w"> </span><span class="n">rejectedIdentity</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="n">identity</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="n">IdentityT</span><span class="w"> </span><span class="n">identity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">identity</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">notFound</span><span class="p">(</span>
+<span class="w">            </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="p">,</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">error</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+<span class="w">                </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">resolver</span><span class="p">),</span>
+<span class="w">                </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">error</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">IdentityResult</span><span class="p">(</span><span class="n">IdentityT</span><span class="w"> </span><span class="n">identity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">identity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">identity</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">resolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">IdentityResult</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">identity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">resolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolver</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="nf">identity</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">identity</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">error</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Get the identity resolver class that could not resolve an identity.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @return the identity resolver.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="nf">resolver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resolver</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Get the resolved identity, or throw if no identity is present.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @return the resolved identity.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="nf">unwrap</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">identity</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IdentityNotFoundException</span><span class="p">(</span>
+<span class="w">                    </span><span class="s">"Unable to resolve an identity: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">error</span>
+<span class="w">                            </span><span class="o">+</span><span class="w"> </span><span class="s">" ("</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">resolver</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">")"</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">identity</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">identity</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">"IdentityResult[identity="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">identity</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="sc">']'</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">"IdentityResult[error='"</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"', resolver="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">resolver</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="sc">']'</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">IdentityResolver::invalidate</span></code> signals that an identity used for a request was
+rejected. This guide defines the generic invalidation contract, whose default
+implementation is a no-op. The Modular AWS Credential Chains SEP applies this
+contract to AWS credential chains and defines request-pipeline integration and
+propagation. The Credential Refresh Behavior SEP defines invalidation triggers
+and the resulting AWS credential cache behavior.</p>
+<p>There may be multiple valid implementations of an identity resolver for a given
+type. For example, one implementation of an <code class="docutils literal notranslate"><span class="pre">IdentityResolver&lt;TokenIdentity&gt;</span></code>
+may read the bearer token from the system environment, while another may read
+it from application configuration.</p>
+<p>The client configuration for a service should typically make an applicable
+<code class="docutils literal notranslate"><span class="pre">IdentityResolver</span></code> configurable for every authentication scheme supported by
+the service. Implementations may register resolvers by identity type, auth
+scheme ID, modeled trait, or another mechanism. An auth scheme is responsible
+for locating or adapting an applicable resolver from the configured resolver
+repository. This permits multiple auth schemes to share an identity resolver
+and allows dynamically discovered schemes to select resolvers using runtime
+model or schema information.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ClientConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="na">addIdentityResolver</span><span class="p">(</span><span class="n">sigV4CredentialResolver</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">addIdentityResolver</span><span class="p">(</span><span class="n">bearerTokenResolver</span><span class="p">)</span>
+<span class="w">        </span><span class="c1">// other configuration...</span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="signer">
+<h2>Signer<a class="headerlink" href="#signer" title="Link to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">Signer</span></code> <strong>authenticates a request using an identity</strong>. Signing includes both
+generating cryptographic signatures and attaching non-cryptographic
+authentication material, such as a bearer token.</p>
+<p>For example, a signer authenticates an outgoing HTTP request using a bearer
+token by placing the token in the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header.</p>
+<p>At a minimum, signing requires a request and an identity. A signer may mutate
+the request or return a modified copy. It may also return signature metadata
+needed by later processing, such as event stream signing. The behavior depends
+on the language idioms and implementation, though implementations should bias
+towards the most performant approach with the least amount of allocations.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Signer</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="kd">extends</span><span class="w"> </span><span class="n">AutoCloseable</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="n">SignResult</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">sign</span><span class="p">(</span><span class="n">RequestT</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="n">properties</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">close</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">SignResult</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="p">(</span><span class="n">RequestT</span><span class="w"> </span><span class="n">signedRequest</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">signature</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">SignResult</span><span class="p">(</span><span class="n">RequestT</span><span class="w"> </span><span class="n">signedRequest</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">(</span><span class="n">signedRequest</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Signers may be shared, created per client, or created per request attempt.
+Clients should close a signer when its configured lifetime ends to release any
+state like caches, scratch buffers, etc. Stateless signers may use the default
+no-op <code class="docutils literal notranslate"><span class="pre">close</span></code> implementation.</p>
+</section>
+<section id="authscheme">
+<h2>AuthScheme<a class="headerlink" href="#authscheme" title="Link to this heading">#</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> describes the components needed to authenticate a request using
+a single authentication scheme:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">AuthScheme</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Unique identifier for this auth scheme. Corresponds to the ID</span>
+<span class="cm">     * of a Smithy IDL auth trait, for example "smithy.api#httpBearerAuth".</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">schemeId</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * The identity type used by this authentication scheme.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityClass</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * The request type this authentication scheme can sign.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">requestClass</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Provides an identity resolver for this authentication scheme.</span>
+<span class="cm">     * This API can return null to indicate that an identity</span>
+<span class="cm">     * resolver for this scheme's identity type is not available in the</span>
+<span class="cm">     * current client environment.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityResolver</span><span class="p">(</span><span class="n">IdentityResolvers</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resolvers</span><span class="p">.</span><span class="na">identityResolver</span><span class="p">(</span><span class="n">identityClass</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Provides default properties used when resolving an identity.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="nf">getIdentityProperties</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">operationContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Provides default properties used when signing a request.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="nf">getSignerProperties</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">operationContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Provides a signer for this authentication scheme. An implementation</span>
+<span class="cm">     * might retrieve the signer from client configuration or provide its own</span>
+<span class="cm">     * implementation directly.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">Signer</span><span class="o">&lt;</span><span class="n">RequestT</span><span class="p">,</span><span class="w"> </span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">signer</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Creates a signer used to sign event stream frames.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="o">&lt;</span><span class="n">F</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Frame</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">FrameProcessor</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">eventSigner</span><span class="p">(</span>
+<span class="w">            </span><span class="n">IdentityT</span><span class="w"> </span><span class="n">identity</span><span class="p">,</span>
+<span class="w">            </span><span class="n">Context</span><span class="w"> </span><span class="n">context</span><span class="p">,</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">seedSignature</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">FrameProcessor</span><span class="p">.</span><span class="na">identity</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">IdentityResolvers</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityResolver</span><span class="p">(</span>
+<span class="w">            </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">identityClass</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This example indexes resolvers by identity type. Implementations may instead
+index them by auth scheme ID, modeled trait, or another form of runtime
+metadata. The <code class="docutils literal notranslate"><span class="pre">AuthScheme::identityResolver</span></code> method is the adaptation point
+between the repository's lookup strategy and the resolver required by a
+specific scheme.</p>
+<p>Implementations that construct clients from runtime models or dynamic schemas
+may also provide <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> factories discoverable by scheme ID. These
+factories map modeled authentication traits to runtime <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>
+implementations.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">AuthSchemeFactory</span><span class="o">&lt;</span><span class="n">TraitT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Trait</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * The ID of the authentication scheme created by this factory.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">schemeId</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Creates an authentication scheme from its modeled trait.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">AuthScheme</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">createAuthScheme</span><span class="p">(</span><span class="n">TraitT</span><span class="w"> </span><span class="n">trait</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Nested in HttpApiKeyAuthScheme.</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Factory</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">AuthSchemeFactory</span><span class="o">&lt;</span><span class="n">HttpApiKeyAuthTrait</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">schemeId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">HttpApiKeyAuthTrait</span><span class="p">.</span><span class="na">ID</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">AuthScheme</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">createAuthScheme</span><span class="p">(</span><span class="n">HttpApiKeyAuthTrait</span><span class="w"> </span><span class="n">trait</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HttpApiKeyAuthScheme</span><span class="p">(</span>
+<span class="w">                </span><span class="n">trait</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">trait</span><span class="p">.</span><span class="na">getIn</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">trait</span><span class="p">.</span><span class="na">getScheme</span><span class="p">().</span><span class="na">orElse</span><span class="p">(</span><span class="kc">null</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A list of supported <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>s should be configurable by the end user of the
+Smithy client. The default client configuration should typically preload the
+service's supported <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>s.</p>
+<p>If multiple configured auth schemes use the same scheme ID, the most recently
+registered implementation replaces the previous one. This allows user
+configuration to deterministically replace a default implementation.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// in this example, the service supports some combination of</span>
+<span class="c1">// smithy.api#httpBearerAuth and aws.auth#sigv4</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">MyServiceClientConfig</span><span class="w"> </span><span class="nf">defaultConfig</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">MyServiceClientConfig</span><span class="p">.</span><span class="na">Builder</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyServiceClientConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">builder</span><span class="p">.</span><span class="na">putSupportedAuthSchemes</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">DefaultHttpBearerAuthScheme</span><span class="p">());</span>
+<span class="w">    </span><span class="n">builder</span><span class="p">.</span><span class="na">putSupportedAuthSchemes</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">DefaultSigV4AuthScheme</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// ...</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="authschemeresolver">
+<h2>AuthSchemeResolver<a class="headerlink" href="#authschemeresolver" title="Link to this heading">#</a></h2>
+<p>Smithy allows clients to model operations that support <strong>multiple</strong>
+authentication schemes. A Smithy client can therefore have multiple
+<code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>s available at runtime. The <code class="docutils literal notranslate"><span class="pre">AuthSchemeResolver</span></code> selects the
+appropriate <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> for an operation call.</p>
+<p>Like the client's <code class="docutils literal notranslate"><span class="pre">EndpointResolver</span></code>, an <code class="docutils literal notranslate"><span class="pre">AuthSchemeResolver</span></code> is a runtime
+component that can be shared by generated and dynamic clients. It accepts
+<code class="docutils literal notranslate"><span class="pre">AuthSchemeResolverParams</span></code>, which provide the protocol, operation, and request
+context needed to resolve authentication schemes. The operation contains its
+effective auth scheme IDs and can expose schema information needed by a dynamic
+resolver.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">AuthSchemeResolver</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Returns authentication scheme options in priority order.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">AuthSchemeOption</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolveAuthScheme</span><span class="p">(</span><span class="n">AuthSchemeResolverParams</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AuthSchemeResolverParams</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocolId</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="n">context</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">AuthSchemeResolverParams</span><span class="p">(</span><span class="n">Builder</span><span class="w"> </span><span class="n">builder</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">protocolId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="na">protocolId</span><span class="p">,</span><span class="w"> </span><span class="s">"protocolId is null"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="na">operation</span><span class="p">,</span><span class="w"> </span><span class="s">"operation is null"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNullElseGet</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="na">context</span><span class="p">,</span><span class="w"> </span><span class="n">Context</span><span class="p">::</span><span class="n">create</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">protocolId</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">protocolId</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">operation</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="nf">context</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">context</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Builder</span><span class="w"> </span><span class="nf">builder</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Builder</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Builder</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocolId</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="n">context</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">Builder</span><span class="w"> </span><span class="nf">protocolId</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocolId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">protocolId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">protocolId</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">Builder</span><span class="w"> </span><span class="nf">operation</span><span class="p">(</span><span class="n">ApiOperation</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">operation</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">operation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">operation</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">Builder</span><span class="w"> </span><span class="nf">context</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">context</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">AuthSchemeResolverParams</span><span class="w"> </span><span class="nf">build</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AuthSchemeResolverParams</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<section id="authschemeoption">
+<h3>AuthSchemeOption<a class="headerlink" href="#authschemeoption" title="Link to this heading">#</a></h3>
+<p>An <code class="docutils literal notranslate"><span class="pre">AuthSchemeOption</span></code> represents a <strong>possible</strong> <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> for the current
+request. Identity and signer properties use the extensible, type-safe property
+bag described in the
+<a class="reference external" href="https://smithy.io/2.0/guides/client-guidance/context.html">client context</a>
+guidance.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">AuthSchemeOption</span><span class="p">(</span>
+<span class="w">        </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">schemeId</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Context</span><span class="w"> </span><span class="n">identityPropertyOverrides</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Context</span><span class="w"> </span><span class="n">signerPropertyOverrides</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">AuthSchemeOption</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">schemeId</span><span class="p">,</span><span class="w"> </span><span class="s">"schemeId cannot be null"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span>
+<span class="w">                </span><span class="n">identityPropertyOverrides</span><span class="p">,</span>
+<span class="w">                </span><span class="s">"identityPropertyOverrides cannot be null"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span>
+<span class="w">                </span><span class="n">signerPropertyOverrides</span><span class="p">,</span>
+<span class="w">                </span><span class="s">"signerPropertyOverrides cannot be null"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">AuthSchemeOption</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">schemeId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">(</span><span class="n">schemeId</span><span class="p">,</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">empty</span><span class="p">(),</span><span class="w"> </span><span class="n">Context</span><span class="p">.</span><span class="na">empty</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Identity and signer property overrides must not be null. An option with no
+overrides uses empty contexts.</p>
+<p>After invoking the <code class="docutils literal notranslate"><span class="pre">AuthSchemeResolver</span></code>, the Smithy client should choose the
+first <code class="docutils literal notranslate"><span class="pre">AuthSchemeOption</span></code> whose scheme it supports. A scheme is considered
+supported if the client has registered an <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> with the same ID and an
+identity resolver for the scheme is available. If the runtime uses multiple
+transport message representations, the scheme must also support the
+representation used by the current request.</p>
+<p>Support must be checked before evaluating the scheme's default properties or
+attempting to resolve an identity. Scheme selection checks whether a resolver
+is available, not whether that resolver will ultimately produce an identity.
+Once a scheme is selected, an identity resolution failure causes the request
+attempt to fail rather than falling through to another auth scheme. Fallback
+between identity sources belongs within an identity resolver chain.</p>
+<p>This may be implemented as follows:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">resolveAndSelectAuthScheme</span><span class="p">(</span><span class="n">OperationContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">AuthSchemeResolver</span><span class="w"> </span><span class="n">resolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="na">getAuthSchemeResolver</span><span class="p">();</span>
+<span class="w">    </span><span class="n">AuthSchemeResolverParams</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AuthSchemeResolverParams</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">protocolId</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">getProtocolId</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="na">operation</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">getOperation</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="na">context</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">getContext</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">AuthSchemeOption</span><span class="o">&gt;</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolver</span><span class="p">.</span><span class="na">resolveAuthScheme</span><span class="p">(</span><span class="n">params</span><span class="p">);</span>
+<span class="w">    </span><span class="n">SelectedAuthScheme</span><span class="w"> </span><span class="n">selected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selectAuthScheme</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">selected</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OperationException</span><span class="p">(</span><span class="s">"no available auth schemes"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="na">setSelectedAuthScheme</span><span class="p">(</span><span class="n">selected</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="n">SelectedAuthScheme</span><span class="w"> </span><span class="nf">selectAuthScheme</span><span class="p">(</span><span class="n">OperationContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">AuthSchemeOption</span><span class="o">&gt;</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">IdentityResolvers</span><span class="w"> </span><span class="n">identityResolvers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="na">identityResolvers</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">AuthSchemeOption</span><span class="w"> </span><span class="n">option</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// condition 1: the client has an auth scheme with an ID matching</span>
+<span class="w">        </span><span class="c1">// this option</span>
+<span class="w">        </span><span class="n">AuthScheme</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="na">getAuthSchemesById</span><span class="p">().</span><span class="na">get</span><span class="p">(</span><span class="n">option</span><span class="p">.</span><span class="na">schemeId</span><span class="p">());</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// condition 2: the scheme supports the current transport message type</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">found</span><span class="p">.</span><span class="na">requestClass</span><span class="p">().</span><span class="na">isInstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">getRequest</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// condition 3: the client has an identity resolver configured for</span>
+<span class="w">        </span><span class="c1">// this auth scheme</span>
+<span class="w">        </span><span class="c1">//</span>
+<span class="w">        </span><span class="c1">// note that we are only checking whether there is an identity</span>
+<span class="w">        </span><span class="c1">// resolver, not whether it can actually provide an identity</span>
+<span class="w">        </span><span class="n">IdentityResolver</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">identityResolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">found</span><span class="p">.</span><span class="na">identityResolver</span><span class="p">(</span><span class="n">identityResolvers</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">identityResolver</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SelectedAuthScheme</span><span class="p">(</span>
+<span class="w">            </span><span class="n">found</span><span class="p">,</span>
+<span class="w">            </span><span class="n">identityResolver</span><span class="p">,</span>
+<span class="w">            </span><span class="n">option</span><span class="p">.</span><span class="na">identityPropertyOverrides</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">option</span><span class="p">.</span><span class="na">signerPropertyOverrides</span><span class="p">()</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">record</span> <span class="nc">SelectedAuthScheme</span><span class="p">(</span>
+<span class="w">    </span><span class="n">AuthScheme</span><span class="o">&lt;?</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="w"> </span><span class="n">scheme</span><span class="p">,</span>
+<span class="w">    </span><span class="n">IdentityResolver</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">identityResolver</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Context</span><span class="w"> </span><span class="n">identityPropertyOverrides</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Context</span><span class="w"> </span><span class="n">signerPropertyOverrides</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="order-of-operations">
+<h2>Order of Operations<a class="headerlink" href="#order-of-operations" title="Link to this heading">#</a></h2>
+<p>For every request attempt within the retry loop, the Smithy client should
+perform the following authentication flow:</p>
+<ol class="arabic simple">
+<li><p>Resolve the auth scheme options (<code class="docutils literal notranslate"><span class="pre">AuthSchemeResolver::resolveAuthScheme</span></code>)
+and select the first supported scheme.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">IdentityResolver</span></code> selected with the <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>.</p></li>
+<li><p>Merge identity properties using the following precedence, where later
+values override earlier values:</p>
+<ol class="arabic simple">
+<li><p>Auth scheme defaults.</p></li>
+<li><p>Auth scheme option overrides.</p></li>
+</ol>
+</li>
+<li><p>Resolve the identity (<code class="docutils literal notranslate"><span class="pre">IdentityResolver::resolveIdentity</span></code>) using the merged
+identity properties.</p></li>
+<li><p>Resolve the endpoint.</p></li>
+<li><p>Form the final signer properties by merging the following sources, where
+later values override earlier values:</p>
+<ol class="arabic simple">
+<li><p>Auth scheme defaults.</p></li>
+<li><p>Auth scheme option overrides.</p></li>
+<li><p>Endpoint-provided signer property overrides.</p></li>
+</ol>
+</li>
+<li><p>Retrieve the <code class="docutils literal notranslate"><span class="pre">Signer</span></code> from the selected <code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code>
+(<code class="docutils literal notranslate"><span class="pre">AuthScheme::signer</span></code>) and sign the request using the merged signer
+properties.</p></li>
+</ol>
+<p>The signer property ordering above defines merge precedence, not evaluation
+timing. Implementations may invoke <code class="docutils literal notranslate"><span class="pre">AuthScheme::getSignerProperties</span></code> while
+selecting the auth scheme or later before signing. Auth scheme defaults should
+not depend on the resolved identity or endpoint; endpoint-derived values should
+be supplied as endpoint-provided signer property overrides.</p>
+<p>For protocols that require signed event streams, the auth scheme may
+additionally provide an event signer initialized with the resolved identity,
+merged signer properties, and the signature returned when signing the initial
+request.</p>
+</section>
+<section id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Link to this heading">#</a></h2>
+<section id="what-about-operations-with-no-authentication">
+<h3>What about operations with no authentication?<a class="headerlink" href="#what-about-operations-with-no-authentication" title="Link to this heading">#</a></h3>
+<p>&quot;Anonymous&quot; (no authentication) is not an explicitly modeled auth scheme.
+Rather, it is a consequence of an operation having an empty
+<a class="reference external" href="https://smithy.io/2.0/spec/authentication-traits.html#smithy-api-auth-trait"><code class="docutils literal notranslate"><span class="pre">&#64;auth</span></code></a>
+trait list (<code class="docutils literal notranslate"><span class="pre">&#64;auth([])</span></code>), or of using the
+<a class="reference external" href="https://smithy.io/2.0/spec/authentication-traits.html#optionalauth-trait"><code class="docutils literal notranslate"><span class="pre">&#64;optionalAuth</span></code></a>
+trait. In the auth scheme knowledge index, this is represented as the synthetic
+<code class="docutils literal notranslate"><span class="pre">smithy.api#noAuth</span></code> scheme ID.</p>
+<p>Clients can treat anonymous authentication as a first-class auth scheme without
+much special-casing. Its <code class="docutils literal notranslate"><span class="pre">Identity</span></code> implementation can model no additional
+properties, its <code class="docutils literal notranslate"><span class="pre">IdentityResolver</span></code> can return a static anonymous identity, and
+its <code class="docutils literal notranslate"><span class="pre">Signer</span></code> can be a no-op. These components should always be available
+without user configuration.</p>
+<p>Operations with <code class="docutils literal notranslate"><span class="pre">&#64;optionalAuth</span></code> support both authenticated and anonymous
+access. The client should include anonymous auth as a candidate in the auth
+scheme resolution for these operations, typically as the lowest-priority
+option.</p>
+<p>Clients should avoid exposing configuration for anonymous identity resolvers
+and signers because doing so provides no additional value to the caller and
+unnecessarily expands the API surface.</p>
+</section>
+<section id="what-about-auth-schemes-returned-by-endpoint-resolution">
+<h3>What about auth schemes returned by endpoint resolution?<a class="headerlink" href="#what-about-auth-schemes-returned-by-endpoint-resolution" title="Link to this heading">#</a></h3>
+<p>Some existing clients support endpoint rules that return auth scheme IDs and
+signer property overrides. These rules may augment the selected auth scheme or
+replace it after endpoint resolution, potentially requiring the client to
+resolve another identity.</p>
+<p>Endpoint-driven auth scheme replacement is deprecated compatibility behavior.
+New services and implementations should select auth schemes through the
+<code class="docutils literal notranslate"><span class="pre">AuthSchemeResolver</span></code>. Endpoint resolution should only contribute
+endpoint-specific signer property overrides for the selected scheme.</p>
+</section>
+<section id="why-does-authscheme-identityresolver-accept-a-parameter-but-authscheme-signer-does-not">
+<h3>Why does <code class="docutils literal notranslate"><span class="pre">AuthScheme::identityResolver</span></code> accept a parameter, but <code class="docutils literal notranslate"><span class="pre">AuthScheme::signer</span></code> does not?<a class="headerlink" href="#why-does-authscheme-identityresolver-accept-a-parameter-but-authscheme-signer-does-not" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> implementations commonly exist in a static, hand-written runtime,
+while configured identity resolvers vary between clients.</p>
+<p>The client can expose its configured resolvers through a repository keyed by
+identity type:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ClientIdentityResolvers</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IdentityResolvers</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">resolvers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">ClientIdentityResolvers</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">IdentityResolver</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">IdentityResolver</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">resolvers</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">resolver</span><span class="p">.</span><span class="na">identityType</span><span class="p">(),</span><span class="w"> </span><span class="n">resolver</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">"unchecked"</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityResolver</span><span class="p">(</span>
+<span class="w">            </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">identityClass</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="n">resolvers</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">identityClass</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is only a suggested approach, and the implementer need not expose the
+interfaces this way. Resolver registration may instead be keyed by auth scheme
+ID, modeled trait, or another implementation-specific mechanism. An
+<code class="docutils literal notranslate"><span class="pre">AuthScheme</span></code> may also adapt a shared resolver into the scheme-specific resolver
+it returns.</p>
+<p>Signers are often supplied by the shared runtime, but are not required to be
+constant or stateless. An implementation may allow the caller to configure a
+signer, create one per client, or create one per request attempt. If a signer
+holds resources, the implementation should provide an appropriate lifecycle
+mechanism.</p>
+</section>
+</section>
+<section id="appendix-identityresolver-idioms">
+<h2>Appendix: IdentityResolver idioms<a class="headerlink" href="#appendix-identityresolver-idioms" title="Link to this heading">#</a></h2>
+<section id="resolver-chains">
+<h3>Resolver Chains<a class="headerlink" href="#resolver-chains" title="Link to this heading">#</a></h3>
+<p>If a Smithy client supports retrieving an identity from multiple sources, the
+implementer may use a resolver chain that tries each resolver in sequence and
+returns the first successful result. An expected miss allows the chain to
+continue. An unexpected or unrecoverable error must stop the chain and be
+exposed to the caller.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">IdentityResolverChain</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Identity</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">identityType</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">resolvers</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">IdentityResolverChain</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">resolvers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">copyOf</span><span class="p">(</span>
+<span class="w">                </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">resolvers</span><span class="p">,</span><span class="w"> </span><span class="s">"resolvers cannot be null"</span><span class="p">));</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">resolvers</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">"Cannot chain an empty resolver list"</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">identityType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">resolvers</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="na">identityType</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">identityType</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">resolver</span><span class="p">.</span><span class="na">identityType</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span>
+<span class="w">                        </span><span class="s">"All resolvers in a chain must resolve the same identity type"</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">identityType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">identityType</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolveIdentity</span><span class="p">(</span><span class="n">Context</span><span class="w"> </span><span class="n">properties</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">IdentityResult</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">IdentityResult</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolver</span><span class="p">.</span><span class="na">resolveIdentity</span><span class="p">(</span><span class="n">properties</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">error</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">errors</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">IdentityResult</span><span class="p">.</span><span class="na">notFound</span><span class="p">(</span>
+<span class="w">            </span><span class="n">IdentityResolverChain</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<span class="w">            </span><span class="s">"Attempted resolvers: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">errors</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="n">IdentityT</span><span class="w"> </span><span class="n">rejectedIdentity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">IdentityResolver</span><span class="o">&lt;</span><span class="n">IdentityT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">resolver</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">resolvers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">resolver</span><span class="p">.</span><span class="na">invalidate</span><span class="p">(</span><span class="n">rejectedIdentity</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="resolver-caching">
+<h3>Resolver Caching<a class="headerlink" href="#resolver-caching" title="Link to this heading">#</a></h3>
+<p>If the process of retrieving an identity is a resource-intensive or otherwise
+expensive operation, such as one that requires an external service call, the
+implementer may wrap the identity resolver in a cache. A cache must preserve
+resolution semantics for any context properties that affect identity resolution
+and must define appropriate concurrency and lifecycle behavior.</p>
+<p>AWS credential caching has additional requirements that are intentionally not
+repeated here. The Modular AWS Credential Chains SEP applies
+<code class="docutils literal notranslate"><span class="pre">IdentityResolver::invalidate</span></code> to AWS credential chains and defines
+request-pipeline integration and propagation. The Credential Refresh Behavior
+SEP defines AWS credential caching, refresh windows, refresh backoff,
+concurrency, invalidation triggers, identity matching, and cache behavior.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="endpoints.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Endpoint Resolution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="plugins.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Client Plugins</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identity">Identity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identityresolver">IdentityResolver</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signer">Signer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authscheme">AuthScheme</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authschemeresolver">AuthSchemeResolver</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#authschemeoption">AuthSchemeOption</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#order-of-operations">Order of Operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#faq">FAQ</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-operations-with-no-authentication">What about operations with no authentication?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-auth-schemes-returned-by-endpoint-resolution">What about auth schemes returned by endpoint resolution?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-authscheme-identityresolver-accept-a-parameter-but-authscheme-signer-does-not">Why does <code class="docutils literal notranslate"><span class="pre">AuthScheme::identityResolver</span></code> accept a parameter, but <code class="docutils literal notranslate"><span class="pre">AuthScheme::signer</span></code> does not?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-identityresolver-idioms">Appendix: IdentityResolver idioms</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolver-chains">Resolver Chains</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolver-caching">Resolver Caching</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Amazon Web Services
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, Amazon Web Services.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

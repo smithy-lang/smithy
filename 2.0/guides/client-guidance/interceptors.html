@@ -56,7 +56,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Glossary" href="../glossary.html" />
-    <link rel="prev" title="Endpoint Resolution" href="endpoints.html" />
+    <link rel="prev" title="Client Plugins" href="plugins.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0" />
@@ -381,6 +381,8 @@
 <li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identity-auth.html">Identity and Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Interceptors</a></li>
 </ul>
 </details></li>
@@ -715,7 +717,7 @@ doesn't result in different behavior.</p>
 <p>Hooks are intended to be lightweight, so blocking operations should not be
 supported.</p>
 <section id="modifybeforecall">
-<h3>modifyBeforeCall<a class="headerlink" href="#modifybeforecall" title="Link to this heading">#</a></h3>
+<span id="client-guidance-interceptors-modify-before-call"></span><h3>modifyBeforeCall<a class="headerlink" href="#modifybeforecall" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> is the first interceptor hook invoked for a call. It runs
 once per call, before call wrappers and outside the execution and retry
 lifecycles. The hook receives the operation input and current client
@@ -1043,6 +1045,8 @@ from failing if it is used with a non-HTTP protocol.</p>
 apply to every operation invocation made by that client. Interceptors configured
 this way can determine which operation is being executed based on the input if
 they need to apply to only a subset of operations.</p>
+<p>Reusable client features should register their interceptors through
+<a class="reference internal" href="plugins.html"><span class="std std-doc">client plugins</span></a>.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">MyServiceClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyServiceClient</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
 <span class="w">    </span><span class="p">.</span><span class="na">addInterceptor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">AddTraceHeader</span><span class="p">(</span><span class="n">traceId</span><span class="p">))</span>
 <span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
@@ -1104,12 +1108,12 @@ and deserialization stages retain their defined ordering.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="endpoints.html"
+       href="plugins.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Endpoint Resolution</p>
+        <p class="prev-next-title">Client Plugins</p>
       </div>
     </a>
     <a class="right-next"
