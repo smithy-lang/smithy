@@ -28,7 +28,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
 import software.amazon.smithy.model.traits.ReferencesTrait;
-import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
+import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -137,14 +137,14 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
                 if (!(applied instanceof AbstractResourceLifecycleTrait)) {
                     continue;
                 }
-                AbstractResourceLifecycleTrait trait = (AbstractResourceLifecycleTrait) applied;
+                AbstractResourceLifecycleTrait<?> trait = (AbstractResourceLifecycleTrait<?>) applied;
                 // Identifiers live on the input for every lifecycle trait except create, which
                 // returns generated identifiers on the output. Resolve against both sides: a path
                 // only resolves to a real member of the correct side, and keying on the concrete
                 // member id keeps this independent of the per-trait side rules in the validator.
                 Shape input = model.getShape(operation.getInputShape()).orElse(null);
                 Shape output = model.getShape(operation.getOutputShape()).orElse(null);
-                for (ResourceLifecycleBinding binding : trait.getBindings()) {
+                for (ResourceBinding binding : trait.getBindings()) {
                     for (ResourceMemberBinding locator : binding.getIdentifiers().values()) {
                         JmespathExpression path = parseQuietly(locator.getPath());
                         if (path == null) {

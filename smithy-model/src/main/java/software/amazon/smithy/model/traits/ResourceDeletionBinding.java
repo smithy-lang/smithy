@@ -16,29 +16,23 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Associates a resource with an operation lifecycle effect and optionally
- * declares where to find the resource's identifiers and properties.
+ * Associates a deleted resource with an operation and optionally declares where
+ * to find the resource's identifiers.
  *
- * <p>Identifiers and properties may each be left unspecified, given an
- * explicit map of name to locator, or inferred from a structure named by a
- * {@code ...From} JMESPath pointer. The side each resolves against
- * (input or output) is determined per trait by the validator.
+ * <p>Unlike {@link ResourceLifecycleBinding}, a deletion binding has no
+ * properties: a resource is deleted by its identifiers alone.
  */
 @SmithyUnstableApi
-public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithyBuilder<ResourceLifecycleBinding> {
+public final class ResourceDeletionBinding implements ResourceBinding, ToSmithyBuilder<ResourceDeletionBinding> {
 
     private final ShapeId resource;
     private final Map<String, ResourceMemberBinding> identifiers;
     private final String identifiersFrom;
-    private final Map<String, ResourceMemberBinding> properties;
-    private final String propertiesFrom;
 
-    private ResourceLifecycleBinding(Builder builder) {
+    private ResourceDeletionBinding(Builder builder) {
         this.resource = SmithyBuilder.requiredState("resource", builder.resource);
         this.identifiers = builder.identifiers.copy();
         this.identifiersFrom = builder.identifiersFrom;
-        this.properties = builder.properties.copy();
-        this.propertiesFrom = builder.propertiesFrom;
     }
 
     @Override
@@ -56,14 +50,6 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
         return Optional.ofNullable(identifiersFrom);
     }
 
-    public Map<String, ResourceMemberBinding> getProperties() {
-        return properties;
-    }
-
-    public Optional<String> getPropertiesFrom() {
-        return Optional.ofNullable(propertiesFrom);
-    }
-
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
@@ -73,12 +59,6 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
         }
         if (identifiersFrom != null) {
             builder.withMember("identifiersFrom", Node.from(identifiersFrom));
-        }
-        if (!properties.isEmpty()) {
-            builder.withMember("properties", membersToNode(properties));
-        }
-        if (propertiesFrom != null) {
-            builder.withMember("propertiesFrom", Node.from(propertiesFrom));
         }
         return builder.build();
     }
@@ -91,7 +71,7 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
         return builder.build();
     }
 
-    public static ResourceLifecycleBinding fromNode(Node node) {
+    public static ResourceDeletionBinding fromNode(Node node) {
         ObjectNode obj = node.expectObjectNode();
         Builder builder = builder();
         builder.resource(ShapeId.from(obj.expectStringMember("resource").getValue()));
@@ -100,11 +80,6 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
                         .forEach((key, value) -> builder.putIdentifier(key.getValue(),
                                 ResourceMemberBinding.fromNode(value))));
         obj.getStringMember("identifiersFrom").ifPresent(from -> builder.identifiersFrom(from.getValue()));
-        obj.getObjectMember("properties")
-                .ifPresent(props -> props.getMembers()
-                        .forEach((key, value) -> builder.putProperty(key.getValue(),
-                                ResourceMemberBinding.fromNode(value))));
-        obj.getStringMember("propertiesFrom").ifPresent(from -> builder.propertiesFrom(from.getValue()));
         return builder.build();
     }
 
@@ -121,46 +96,38 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof ResourceLifecycleBinding)) {
+        } else if (!(o instanceof ResourceDeletionBinding)) {
             return false;
         }
-        ResourceLifecycleBinding that = (ResourceLifecycleBinding) o;
+        ResourceDeletionBinding that = (ResourceDeletionBinding) o;
         return resource.equals(that.resource)
                 && identifiers.equals(that.identifiers)
-                && Objects.equals(identifiersFrom, that.identifiersFrom)
-                && properties.equals(that.properties)
-                && Objects.equals(propertiesFrom, that.propertiesFrom);
+                && Objects.equals(identifiersFrom, that.identifiersFrom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resource, identifiers, identifiersFrom, properties, propertiesFrom);
+        return Objects.hash(resource, identifiers, identifiersFrom);
     }
 
     @Override
     public String toString() {
-        return "ResourceLifecycleBinding{resource=" + resource
+        return "ResourceDeletionBinding{resource=" + resource
                 + ", identifiers=" + identifiers
-                + ", identifiersFrom=" + identifiersFrom
-                + ", properties=" + properties
-                + ", propertiesFrom=" + propertiesFrom + "}";
+                + ", identifiersFrom=" + identifiersFrom + "}";
     }
 
-    public static final class Builder implements SmithyBuilder<ResourceLifecycleBinding> {
+    public static final class Builder implements SmithyBuilder<ResourceDeletionBinding> {
         private ShapeId resource;
         private final BuilderRef<Map<String, ResourceMemberBinding>> identifiers = BuilderRef.forOrderedMap();
         private String identifiersFrom;
-        private final BuilderRef<Map<String, ResourceMemberBinding>> properties = BuilderRef.forOrderedMap();
-        private String propertiesFrom;
 
         private Builder() {}
 
-        private Builder(ResourceLifecycleBinding binding) {
+        private Builder(ResourceDeletionBinding binding) {
             this.resource = binding.resource;
             this.identifiers.setBorrowed(binding.identifiers);
             this.identifiersFrom = binding.identifiersFrom;
-            this.properties.setBorrowed(binding.properties);
-            this.propertiesFrom = binding.propertiesFrom;
         }
 
         public Builder resource(ShapeId resource) {
@@ -184,25 +151,9 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
             return this;
         }
 
-        public Builder properties(Map<String, ResourceMemberBinding> properties) {
-            this.properties.clear();
-            this.properties.get().putAll(Objects.requireNonNull(properties));
-            return this;
-        }
-
-        public Builder putProperty(String name, ResourceMemberBinding binding) {
-            this.properties.get().put(name, binding);
-            return this;
-        }
-
-        public Builder propertiesFrom(String propertiesFrom) {
-            this.propertiesFrom = propertiesFrom;
-            return this;
-        }
-
         @Override
-        public ResourceLifecycleBinding build() {
-            return new ResourceLifecycleBinding(this);
+        public ResourceDeletionBinding build() {
+            return new ResourceDeletionBinding(this);
         }
     }
 }
