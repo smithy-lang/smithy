@@ -117,13 +117,22 @@ public final class UnstableFeatureIndex implements KnowledgeIndex {
      * Returns whether the given shape belongs to a feature that is in preview.
      *
      * @param shape Shape to check.
-     * @return True if the shape's feature resolves to a {@code PREVIEW} reason.
+     * @return True if the shape is owned and all of its owners are {@code PREVIEW} features.
      */
     public boolean isInPreviewClosure(ShapeId shape) {
-        return getFeature(shape)
-                .flatMap(UnstableFeatureInfo::getReason)
-                .filter(reason -> reason == UnstableReason.PREVIEW)
-                .isPresent();
+        Set<ShapeId> owners = ownersByShape.getOrDefault(shape, Collections.emptySet());
+        if (owners.isEmpty()) {
+            return false;
+        }
+
+        // Every owner must resolve to a PREVIEW feature. Any unresolved or non-preview owner disqualifies it.
+        for (ShapeId owner : owners) {
+            UnstableFeatureInfo info = featureByOwner.get(owner);
+            if (info == null || info.getReason().orElse(null) != UnstableReason.PREVIEW) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // Relates each owner to the services it resides in, which is how its featureId finds the
