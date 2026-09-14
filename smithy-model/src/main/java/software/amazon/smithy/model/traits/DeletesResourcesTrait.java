@@ -13,7 +13,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * identifiers in the operation input.
  */
 @SmithyUnstableApi
-public final class DeletesResourcesTrait extends AbstractResourceLifecycleTrait
+public final class DeletesResourcesTrait extends AbstractResourceLifecycleTrait<ResourceDeletionBinding>
         implements ToSmithyBuilder<DeletesResourcesTrait> {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#deletesResources");
@@ -22,9 +22,10 @@ public final class DeletesResourcesTrait extends AbstractResourceLifecycleTrait
         super(ID, builder);
     }
 
-    public static final class Provider extends AbstractResourceLifecycleTrait.Provider<DeletesResourcesTrait> {
+    public static final class Provider
+            extends AbstractResourceLifecycleTrait.Provider<DeletesResourcesTrait, ResourceDeletionBinding> {
         public Provider() {
-            super(ID, Builder::new);
+            super(ID, Builder::new, ResourceDeletionBinding::fromNode);
         }
     }
 
@@ -37,7 +38,8 @@ public final class DeletesResourcesTrait extends AbstractResourceLifecycleTrait
         return new Builder();
     }
 
-    public static final class Builder extends AbstractResourceLifecycleTrait.Builder<DeletesResourcesTrait, Builder> {
+    public static final class Builder
+            extends AbstractResourceLifecycleTrait.Builder<DeletesResourcesTrait, Builder, ResourceDeletionBinding> {
         private Builder() {}
 
         private Builder(DeletesResourcesTrait trait) {

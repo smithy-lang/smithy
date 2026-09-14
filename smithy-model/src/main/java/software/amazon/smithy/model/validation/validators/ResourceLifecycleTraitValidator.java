@@ -48,6 +48,7 @@ import software.amazon.smithy.model.traits.CreatesResourcesTrait;
 import software.amazon.smithy.model.traits.DeletesResourcesTrait;
 import software.amazon.smithy.model.traits.PutsResourcesTrait;
 import software.amazon.smithy.model.traits.ReadsResourcesTrait;
+import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.traits.Trait;
@@ -75,14 +76,14 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
     }
 
     private static final class Descriptor {
-        final Class<? extends AbstractResourceLifecycleTrait> traitClass;
+        final Class<? extends AbstractResourceLifecycleTrait<?>> traitClass;
         final ShapeId traitId;
         final String name;
         final Side identifierSide;
         final Side propertySide; // null when the trait binds no properties (delete).
 
         Descriptor(
-                Class<? extends AbstractResourceLifecycleTrait> traitClass,
+                Class<? extends AbstractResourceLifecycleTrait<?>> traitClass,
                 ShapeId traitId,
                 String name,
                 Side identifierSide,
@@ -128,8 +129,8 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Descriptor descriptor : DESCRIPTORS) {
             for (OperationShape operation : model.getOperationShapesWithTrait(descriptor.traitClass)) {
-                AbstractResourceLifecycleTrait trait = operation.expectTrait(descriptor.traitClass);
-                for (ResourceLifecycleBinding binding : trait.getBindings()) {
+                AbstractResourceLifecycleTrait<?> trait = operation.expectTrait(descriptor.traitClass);
+                for (ResourceBinding binding : trait.getBindings()) {
                     ResourceShape resource = model.getShape(binding.getResource())
                             .flatMap(Shape::asResourceShape)
                             .orElse(null);
@@ -203,7 +204,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
     }
 
-    private void validateBinding(Context ctx, ResourceLifecycleBinding binding) {
+    private void validateBinding(Context ctx, ResourceBinding binding) {
         Descriptor descriptor = ctx.descriptor;
 
         // Warn if the resource is already lifecycle-bound to this operation.
@@ -221,23 +222,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 binding.getIdentifiers(),
                 binding.getIdentifiersFrom());
 
+        // A properties side is only defined for the non-delete traits, whose bindings are always
+        // ResourceLifecycleBinding. Delete uses ResourceDeletionBinding, which has no properties at
+        // all, so there is nothing to validate here.
         if (descriptor.propertySide != null) {
+            ResourceLifecycleBinding lifecycleBinding = (ResourceLifecycleBinding) binding;
             validateBindingKind(ctx,
                     ResourceLifecycleResolver.BindingKind.PROPERTY,
                     descriptor.propertySide,
-                    binding.getProperties(),
-                    binding.getPropertiesFrom());
-        } else if (!binding.getProperties().isEmpty() || binding.getPropertiesFrom().isPresent()) {
-            // The trait binds no properties (delete): a resource is deleted by its identifier
-            // alone. Carrying `properties`/`propertiesFrom` is meaningless, so reject it. The
-            // prelude models this member with a properties-free structure, which also flags it at
-            // load time; this check makes the violation a hard error even if reached in Java.
-            ctx.error(format(
-                    "Binding for resource `%s` in `@%s` specifies properties, but `@%s` deletes a resource "
-                            + "by its identifiers alone and has no properties.",
-                    binding.getResource(),
-                    descriptor.name,
-                    descriptor.name));
+                    lifecycleBinding.getProperties(),
+                    lifecycleBinding.getPropertiesFrom());
         }
     }
 

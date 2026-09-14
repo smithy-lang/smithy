@@ -20,7 +20,7 @@ import software.amazon.smithy.model.traits.CreatesResourcesTrait;
 import software.amazon.smithy.model.traits.DeletesResourcesTrait;
 import software.amazon.smithy.model.traits.PutsResourcesTrait;
 import software.amazon.smithy.model.traits.ReadsResourcesTrait;
-import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
+import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.UpdatesResourcesTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -76,8 +76,8 @@ public final class ResourceLifecycleIndex implements KnowledgeIndex {
         for (OperationShape operation : model.getOperationShapes()) {
             for (Map.Entry<ShapeId, Lifecycle> entry : traitToLifecycle.entrySet()) {
                 if (operation.hasTrait(entry.getKey())) {
-                    AbstractResourceLifecycleTrait trait =
-                            (AbstractResourceLifecycleTrait) operation.findTrait(entry.getKey()).get();
+                    AbstractResourceLifecycleTrait<?> trait =
+                            (AbstractResourceLifecycleTrait<?>) operation.findTrait(entry.getKey()).get();
                     index(operation.getId(), entry.getValue(), trait.getBindings());
                 }
             }
@@ -136,8 +136,8 @@ public final class ResourceLifecycleIndex implements KnowledgeIndex {
                 resourceToOperations.getOrDefault(resource.toShapeId(), Collections.emptyMap()));
     }
 
-    private void index(ShapeId operationId, Lifecycle lifecycle, List<ResourceLifecycleBinding> bindings) {
-        for (ResourceLifecycleBinding binding : bindings) {
+    private void index(ShapeId operationId, Lifecycle lifecycle, List<? extends ResourceBinding> bindings) {
+        for (ResourceBinding binding : bindings) {
             ShapeId resourceId = binding.getResource();
 
             operationToResources

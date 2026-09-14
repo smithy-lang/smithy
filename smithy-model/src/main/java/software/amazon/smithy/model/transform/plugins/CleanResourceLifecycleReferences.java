@@ -18,7 +18,7 @@ import software.amazon.smithy.model.traits.CreatesResourcesTrait;
 import software.amazon.smithy.model.traits.DeletesResourcesTrait;
 import software.amazon.smithy.model.traits.PutsResourcesTrait;
 import software.amazon.smithy.model.traits.ReadsResourcesTrait;
-import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
+import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UpdatesResourcesTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -72,58 +72,80 @@ public final class CleanResourceLifecycleReferences implements ModelTransformerP
             return builder;
         }
 
-        AbstractResourceLifecycleTrait lifecycleTrait =
-                (AbstractResourceLifecycleTrait) operation.findTrait(traitId).get();
-        List<ResourceLifecycleBinding> bindings = lifecycleTrait.getBindings();
-        List<ResourceLifecycleBinding> filtered = new ArrayList<>(bindings.size());
-        for (ResourceLifecycleBinding binding : bindings) {
+        AbstractResourceLifecycleTrait<?> lifecycleTrait =
+                (AbstractResourceLifecycleTrait<?>) operation.findTrait(traitId).get();
+        List<? extends ResourceBinding> bindings = lifecycleTrait.getBindings();
+        int remaining = 0;
+        for (ResourceBinding binding : bindings) {
             if (!removedIds.contains(binding.getResource())) {
-                filtered.add(binding);
+                remaining++;
             }
         }
 
-        if (filtered.size() == bindings.size()) {
+        if (remaining == bindings.size()) {
             return builder; // Nothing removed, no change needed.
         }
 
         OperationShape.Builder result = builder != null ? builder : operation.toBuilder();
-        if (filtered.isEmpty()) {
+        if (remaining == 0) {
             result.removeTrait(traitId);
         } else {
-            result.addTrait(rebuild(traitId, lifecycleTrait, filtered));
+            result.addTrait(rebuild(traitId, lifecycleTrait, removedIds));
         }
         return result;
     }
 
-    // Rebuilds the concrete lifecycle trait with the filtered bindings, preserving the
-    // original source location. The dispatch lives here rather than on the trait classes.
+    // Rebuilds the concrete lifecycle trait with the bindings whose resource was not removed,
+    // preserving the original source location. The dispatch lives here rather than on the trait
+    // classes; each branch keeps the concrete binding type so delete stays properties-free.
     private Trait rebuild(
             ShapeId traitId,
-            AbstractResourceLifecycleTrait original,
-            List<ResourceLifecycleBinding> filtered
+            AbstractResourceLifecycleTrait<?> original,
+            Set<ShapeId> removedIds
     ) {
-        AbstractResourceLifecycleTrait.Builder<?, ?> builder;
-        switch (traitId.getName()) {
-            case "createsResources":
-                builder = CreatesResourcesTrait.builder();
-                break;
-            case "deletesResources":
-                builder = DeletesResourcesTrait.builder();
-                break;
-            case "putsResources":
-                builder = PutsResourcesTrait.builder();
-                break;
-            case "readsResources":
-                builder = ReadsResourcesTrait.builder();
-                break;
-            case "updatesResources":
-                builder = UpdatesResourcesTrait.builder();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected resource lifecycle trait: " + traitId);
+        if (traitId.equals(CreatesResourcesTrait.ID)) {
+            CreatesResourcesTrait trait = (CreatesResourcesTrait) original;
+            return CreatesResourcesTrait.builder()
+                    .sourceLocation(trait.getSourceLocation())
+                    .bindings(retain(trait.getBindings(), removedIds))
+                    .build();
+        } else if (traitId.equals(PutsResourcesTrait.ID)) {
+            PutsResourcesTrait trait = (PutsResourcesTrait) original;
+            return PutsResourcesTrait.builder()
+                    .sourceLocation(trait.getSourceLocation())
+                    .bindings(retain(trait.getBindings(), removedIds))
+                    .build();
+        } else if (traitId.equals(ReadsResourcesTrait.ID)) {
+            ReadsResourcesTrait trait = (ReadsResourcesTrait) original;
+            return ReadsResourcesTrait.builder()
+                    .sourceLocation(trait.getSourceLocation())
+                    .bindings(retain(trait.getBindings(), removedIds))
+                    .build();
+        } else if (traitId.equals(UpdatesResourcesTrait.ID)) {
+            UpdatesResourcesTrait trait = (UpdatesResourcesTrait) original;
+            return UpdatesResourcesTrait.builder()
+                    .sourceLocation(trait.getSourceLocation())
+                    .bindings(retain(trait.getBindings(), removedIds))
+                    .build();
+        } else if (traitId.equals(DeletesResourcesTrait.ID)) {
+            DeletesResourcesTrait trait = (DeletesResourcesTrait) original;
+            return DeletesResourcesTrait.builder()
+                    .sourceLocation(trait.getSourceLocation())
+                    .bindings(retain(trait.getBindings(), removedIds))
+                    .build();
+        } else {
+            throw new IllegalStateException("Unexpected resource lifecycle trait: " + traitId);
         }
-        return builder.sourceLocation(original.getSourceLocation())
-                .bindings(filtered)
-                .build();
+    }
+
+    // Returns the bindings whose resource was not removed, preserving the concrete binding type.
+    private static <B extends ResourceBinding> List<B> retain(List<B> bindings, Set<ShapeId> removedIds) {
+        List<B> filtered = new ArrayList<>(bindings.size());
+        for (B binding : bindings) {
+            if (!removedIds.contains(binding.getResource())) {
+                filtered.add(binding);
+            }
+        }
+        return filtered;
     }
 }
