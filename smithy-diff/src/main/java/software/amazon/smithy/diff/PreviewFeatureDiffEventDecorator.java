@@ -27,9 +27,10 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
     private static final Set<String> NULLABILITY_EVENT_ID_PREFIXES =
             SetUtils.of("ChangedNullability", "AddedRequiredMember");
 
-    // Emitted when @unstable's featureId is added to an existing shape.
-    private static final String UNSTABLE_ADDED_EVENT_ID =
-            "TraitBreakingChange.Add." + UnstableTrait.ID;
+    //These misuses of the trait itself must stay blocking rather than be downgraded as a preview change.
+    private static final Set<String> UNSTABLE_TRAIT_EVENT_IDS = SetUtils.of(
+            "TraitBreakingChange.Add." + UnstableTrait.ID,
+            "TraitBreakingChange.Update." + UnstableTrait.ID);
 
     @Override
     public ValidationEvent decorate(Differences differences, ValidationEvent event) {
@@ -41,22 +42,43 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
             return event;
         }
 
-        if (event.getId().equals(UNSTABLE_ADDED_EVENT_ID)) {
+        if (UNSTABLE_TRAIT_EVENT_IDS.contains(event.getId())) {
             return event;
         }
 
-        Shape unstableOwner = resolveClosureOwner(differences, event.getShapeId().get());
-        if (unstableOwner == null) {
+        ShapeId shapeId = event.getShapeId().get();
+        Model newModel = differences.getNewModel();
+        boolean inNewModel = newModel.getShape(shapeId).isPresent();
+
+        if (inNewModel && !UnstableFeatureIndex.of(newModel).isInPreviewClosure(shapeId)) {
             return event;
         }
 
-        // A preview member's nullability changes break the enclosing GA operation's existing customers,
-        // so they stay blocking.
-        if (unstableOwner.isMemberShape() && isNullabilityEvent(event)) {
+        Model oldModel = differences.getOldModel();
+        boolean inOldModel = oldModel.getShape(shapeId).isPresent();
+        if (inOldModel && !UnstableFeatureIndex.of(oldModel).isInPreviewClosure(shapeId)) {
+            return event;
+        }
+
+        if (!inNewModel && !inOldModel) {
+            return event;
+        }
+
+        Model model = inNewModel ? newModel : oldModel;
+        if (isNullabilityEvent(event) && hasMemberOwner(model, shapeId)) {
             return event;
         }
 
         return event.toBuilder().severity(Severity.WARNING).build();
+    }
+
+    private static boolean hasMemberOwner(Model model, ShapeId shapeId) {
+        for (ShapeId ownerId : UnstableFeatureIndex.of(model).getFeatureOwners(shapeId)) {
+            if (model.getShape(ownerId).filter(Shape::isMemberShape).isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isNullabilityEvent(ValidationEvent event) {
@@ -66,34 +88,5 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
             }
         }
         return false;
-    }
-
-    private static Shape resolveClosureOwner(Differences differences, ShapeId shapeId) {
-        Model newModel = differences.getNewModel();
-        Model oldModel = differences.getOldModel();
-        boolean inNewModel = newModel.getShape(shapeId).isPresent();
-        boolean inOldModel = oldModel.getShape(shapeId).isPresent();
-
-        if (!inNewModel) {
-            return inOldModel ? resolvePreviewOwner(oldModel, shapeId) : null;
-        }
-
-        Shape owner = resolvePreviewOwner(newModel, shapeId);
-        if (owner == null || (inOldModel && resolvePreviewOwner(oldModel, shapeId) == null)) {
-            return null;
-        }
-
-        return owner;
-    }
-
-    private static Shape resolvePreviewOwner(Model model, ShapeId shapeId) {
-        UnstableFeatureIndex index = UnstableFeatureIndex.of(model);
-        if (!index.isInPreviewClosure(shapeId)) {
-            return null;
-        }
-
-        // isInPreviewClosure only resolves for a shape with exactly one owner, so this owner is unambiguous.
-        Set<ShapeId> owners = index.getFeatureOwners(shapeId);
-        return model.getShape(owners.iterator().next()).orElse(null);
     }
 }

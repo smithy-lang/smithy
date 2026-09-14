@@ -130,6 +130,17 @@ public class PreviewFeatureDiffEventDecoratorTest {
     }
 
     @Test
+    public void changedMemberTargetOnShapeSharedByTwoDifferentPreviewFeatures() {
+        // InputStruct is the input of two operations that are preview owners of DIFFERENT preview features.
+        // Every path that reaches the member is still a preview opt-in (no GA operation exposes it), so the
+        // change is downgraded even though the owners belong to different features. A shape shared with a GA
+        // operation, by contrast, stays blocking (see changedLengthTraitOnSharedShape).
+        assertDowngraded(compare("changed-member-target-shared-different-preview-features"),
+                "ChangedMemberTarget",
+                "smithy.example#InputStruct$targetChange");
+    }
+
+    @Test
     public void removedShapeOnPreviewMember() {
         assertDowngraded(compare("removed-shape-preview-member"), "RemovedShape", "smithy.example#GaIn$goingAway");
     }
@@ -192,6 +203,13 @@ public class PreviewFeatureDiffEventDecoratorTest {
 
         // The trait-level guard keeps the featureId addition itself blocking.
         assertSeverity(events, UNSTABLE_ADDED_EVENT_ID, "smithy.example#GuardFeatureIdOp", Severity.ERROR);
+
+        // Changing an existing featureId stays blocking too, even though GuardUpdateOp is a preview owner (of
+        // a PREVIEW feature) in both models.
+        assertSeverity(events,
+                "TraitBreakingChange.Update.smithy.api#unstable",
+                "smithy.example#GuardUpdateOp",
+                Severity.ERROR);
 
         // The decorator only downgrades a shape that resolves as preview in BOTH models, so the breaking input
         // change made in the same revision is not downgraded either.

@@ -1064,7 +1064,12 @@ structure uniqueItems {}
         {
             path: "/featureId"
             change: "add"
-            message: "The `@unstable` trait's `featureId` cannot be added to an existing shape. A preview feature must be declared when the shape is first introduced; `@unstable` with a `featureId` cannot be applied retroactively to an existing shape."
+            message: "The `@unstable` trait's `featureId` cannot be added to an existing shape. A preview feature must be declared when the shape is first introduced."
+        }
+        {
+            path: "/featureId"
+            change: "update"
+            message: "The `@unstable` trait's `featureId` cannot be changed after setting."
         }
     ]
 )
