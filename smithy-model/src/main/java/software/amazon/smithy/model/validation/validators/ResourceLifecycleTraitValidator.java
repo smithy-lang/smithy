@@ -217,7 +217,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
 
         validateBindingKind(ctx,
-                ResourceLifecycleResolver.BindingKind.IDENTIFIER,
+                ResourceMemberInference.BindingKind.IDENTIFIER,
                 descriptor.identifierSide,
                 binding.getIdentifiers(),
                 binding.getIdentifiersFrom());
@@ -228,7 +228,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         if (descriptor.propertySide != null) {
             ResourceLifecycleBinding lifecycleBinding = (ResourceLifecycleBinding) binding;
             validateBindingKind(ctx,
-                    ResourceLifecycleResolver.BindingKind.PROPERTY,
+                    ResourceMemberInference.BindingKind.PROPERTY,
                     descriptor.propertySide,
                     lifecycleBinding.getProperties(),
                     lifecycleBinding.getPropertiesFrom());
@@ -237,7 +237,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private void validateBindingKind(
             Context ctx,
-            ResourceLifecycleResolver.BindingKind kind,
+            ResourceMemberInference.BindingKind kind,
             Side side,
             Map<String, ResourceMemberBinding> explicit,
             Optional<String> from
@@ -250,7 +250,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         StructureShape sideStructure = ctx.sideStructure(side);
         ShapeId sideStructureId = ctx.sideStructureId(side);
         String kindWord = kindWord(kind);
-        Set<String> validNames = kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER
+        Set<String> validNames = kind == ResourceMemberInference.BindingKind.IDENTIFIER
                 ? ctx.resource.getIdentifiers().keySet()
                 : ctx.resource.getProperties().keySet();
 
@@ -277,8 +277,8 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             }
 
             if (sideStructure != null) {
-                ResourceLifecycleResolver.PathResult result =
-                        ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
+                JmespathPathResult result =
+                        JmespathShapeWalker.walk(ctx.model, sideStructure, parsed);
                 if (result.error != null) {
                     ctx.danger(format("JMESPath expression `%s` for %s `%s` in `@%s` has problems when resolved "
                             + "against `%s`: %s",
@@ -294,7 +294,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             }
         }
 
-        if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
+        if (kind == ResourceMemberInference.BindingKind.IDENTIFIER) {
             validateCompositeCardinality(ctx, sideStructure, explicit);
         }
 
@@ -304,13 +304,13 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private void validateInferred(
             Context ctx,
-            ResourceLifecycleResolver.BindingKind kind,
+            ResourceMemberInference.BindingKind kind,
             String kindWord,
             StructureShape sideStructure,
             ShapeId sideStructureId,
             String fromPath
     ) {
-        String fromMember = kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER
+        String fromMember = kind == ResourceMemberInference.BindingKind.IDENTIFIER
                 ? "identifiersFrom"
                 : "propertiesFrom";
         JmespathExpression parsed = parseAndCheck(ctx, fromMember, fromMember, fromPath);
@@ -318,7 +318,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             return;
         }
 
-        ResourceLifecycleResolver.PathResult result = ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
+        JmespathPathResult result = JmespathShapeWalker.walk(ctx.model, sideStructure, parsed);
         if (result.error != null) {
             ctx.danger(format("`%s` `%s` in `@%s` has problems when resolved against `%s`: %s",
                     fromMember,
@@ -348,8 +348,8 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
 
         StructureShape element = (StructureShape) result.leaf;
-        ResourceLifecycleResolver.InferenceResult inference =
-                ResourceLifecycleResolver.inferByName(ctx.resource, element, kind);
+        MemberInferenceResult inference =
+                ResourceMemberInference.inferByName(ctx.resource, element, kind);
 
         if (inference.matched.isEmpty()) {
             ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",
@@ -382,13 +382,13 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private void checkLeafType(
             Context ctx,
-            ResourceLifecycleResolver.BindingKind kind,
+            ResourceMemberInference.BindingKind kind,
             String kindWord,
             String name,
             String path,
             Shape leaf
     ) {
-        if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
+        if (kind == ResourceMemberInference.BindingKind.IDENTIFIER) {
             ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getIdentifiers().get(name));
             if (!leaf.getId().equals(declared)) {
                 ctx.error(format("JMESPath expression `%s` for identifier `%s` in `@%s` resolves to `%s`, but the "
@@ -415,12 +415,12 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private void checkMemberType(
             Context ctx,
-            ResourceLifecycleResolver.BindingKind kind,
+            ResourceMemberInference.BindingKind kind,
             String name,
             MemberShape member
     ) {
         ShapeId leaf = unwrapBaseId(ctx.model, member.getTarget());
-        if (kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER) {
+        if (kind == ResourceMemberInference.BindingKind.IDENTIFIER) {
             ShapeId declared = unwrapBaseId(ctx.model, ctx.resource.getIdentifiers().get(name));
             if (!leaf.equals(declared)) {
                 ctx.error(format("Inferred identifier `%s` in `@%s` (member `%s`) resolves to `%s`, but the resource "
@@ -479,8 +479,8 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         return parsed;
     }
 
-    private static String kindWord(ResourceLifecycleResolver.BindingKind kind) {
-        return kind == ResourceLifecycleResolver.BindingKind.IDENTIFIER ? "identifier" : "property";
+    private static String kindWord(ResourceMemberInference.BindingKind kind) {
+        return kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifier" : "property";
     }
 
     private static String sideName(ShapeId sideStructureId, OperationShape operation) {
@@ -548,8 +548,8 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             if (parsed == null) {
                 continue;
             }
-            ResourceLifecycleResolver.PathResult result =
-                    ResourceLifecycleResolver.walk(ctx.model, sideStructure, parsed);
+            JmespathPathResult result =
+                    JmespathShapeWalker.walk(ctx.model, sideStructure, parsed);
             if (result.error == null && !result.arrays.isEmpty()) {
                 identifierToArrays.put(entry.getKey(), result.arrays);
             }

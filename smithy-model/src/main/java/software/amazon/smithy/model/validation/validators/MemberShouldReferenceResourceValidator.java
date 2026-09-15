@@ -194,7 +194,7 @@ public final class MemberShouldReferenceResourceValidator extends AbstractValida
         if (structure == null) {
             return;
         }
-        MemberShape member = ResourceLifecycleResolver.resolveTerminalMember(model, structure, path);
+        MemberShape member = JmespathShapeWalker.resolveTerminalMember(model, structure, path);
         if (member != null) {
             index.computeIfAbsent(member.getId(), key -> new HashSet<>()).add(resource);
         }
