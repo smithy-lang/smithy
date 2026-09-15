@@ -5,10 +5,7 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.jmespath.ast.AndExpression;
@@ -33,35 +30,30 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.NotPropertyTrait;
-import software.amazon.smithy.model.traits.PropertyTrait;
-import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 
 /**
- * Resolves resource lifecycle identifier and property locations against operation input/output shapes.
+ * Walks a structural JMESPath over a starting shape to resolve where a resource
+ * lifecycle locator points.
  *
  * <p>Two capabilities:
  * <ul>
- *   <li>{@link #walk} follows a structural JMESPath over a starting shape and reports the
- *       resolved leaf value shape, whether it is the root, and how many array (projection or
- *       flatten) levels were traversed.</li>
- *   <li>{@link #inferByName} matches the members of a structure to a resource's identifier or
- *       property names, honoring {@code @resourceIdentifier}, {@code @property}, and
- *       {@code @notProperty}, mirroring the standard lifecycle resolution.</li>
+ *   <li>{@link #walk} follows a structural JMESPath and reports the resolved leaf value shape,
+ *       whether it is the root, and the list identities it iterates (its cardinality signature).</li>
+ *   <li>{@link #resolveTerminalMember} answers only "which top-level member does this field chain
+ *       point at", without tracking cardinality.</li>
  * </ul>
  *
  * <p>Only the structural JMESPath subset is supported (field, subexpression, projection
  * {@code [*]}, flatten {@code []}, current node). Callers reject unsupported expressions
  * before walking.
  */
-final class ResourceLifecycleResolver {
+final class JmespathShapeWalker {
 
-    private ResourceLifecycleResolver() {}
+    private JmespathShapeWalker() {}
 
     /**
      * Walks a structural JMESPath over a starting shape.
@@ -71,13 +63,13 @@ final class ResourceLifecycleResolver {
      * @param expr The parsed structural JMESPath.
      * @return The resolved leaf shape and metadata, or an error.
      */
-    static PathResult walk(Model model, Shape start, JmespathExpression expr) {
+    static JmespathPathResult walk(Model model, Shape start, JmespathExpression expr) {
         boolean root = expr instanceof CurrentExpression;
         Result r = expr.accept(new ShapeWalkVisitor(model, new Type(start, new ArrayList<>())));
         if (r.error != null) {
-            return PathResult.error(r.error);
+            return JmespathPathResult.error(r.error);
         }
-        return PathResult.of(r.type.shape, root, r.type.arrays);
+        return JmespathPathResult.of(r.type.shape, root, r.type.arrays);
     }
 
     /**
@@ -121,89 +113,6 @@ final class ResourceLifecycleResolver {
             current = target;
         }
         return null;
-    }
-
-    /**
-     * Infers which members of a structure provide the resource's identifiers or properties.
-     *
-     * @param resource The resource being bound.
-     * @param element The structure to match members against.
-     * @param kind Whether to match identifier names or property names.
-     * @return The matched and unmatched members.
-     */
-    static InferenceResult inferByName(ResourceShape resource, StructureShape element, BindingKind kind) {
-        InferenceResult result = new InferenceResult();
-        for (MemberShape member : element.members()) {
-            if (member.hasTrait(NotPropertyTrait.ID)) {
-                continue;
-            }
-            String boundName = boundName(member, kind);
-            boolean matched = kind == BindingKind.IDENTIFIER
-                    ? resource.getIdentifiers().containsKey(boundName)
-                    : resource.getProperties().containsKey(boundName);
-            if (matched) {
-                result.matched.put(boundName, member);
-            } else {
-                result.unmatched.add(member);
-            }
-        }
-        return result;
-    }
-
-    // Whether a member set is being matched against a resource's identifiers or its properties.
-    enum BindingKind {
-        IDENTIFIER, PROPERTY
-    }
-
-    // The result of walking a structural path over a starting shape.
-    static final class PathResult {
-        // The leaf value shape the path resolves to, with array levels unwrapped, or null on error.
-        final Shape leaf;
-        // True if the path is the bare current node (resolves to the starting shape/root).
-        final boolean root;
-        // The ordered identities of the lists the path iterates through (outermost first), forming a
-        // cardinality signature. Two paths correlate element-for-element iff their signatures are equal.
-        // Empty for a scalar (non-array) leaf.
-        final List<ShapeId> arrays;
-        // Number of array levels (projections or flattens) traversed; equal to arrays.size().
-        final int arrayDepth;
-        // Non-null when a segment could not be resolved against the model.
-        final String error;
-
-        private PathResult(Shape leaf, boolean root, List<ShapeId> arrays, String error) {
-            this.leaf = leaf;
-            this.root = root;
-            this.arrays = arrays == null ? Collections.emptyList() : Collections.unmodifiableList(arrays);
-            this.arrayDepth = this.arrays.size();
-            this.error = error;
-        }
-
-        static PathResult of(Shape leaf, boolean root, List<ShapeId> arrays) {
-            return new PathResult(leaf, root, arrays, null);
-        }
-
-        static PathResult error(String error) {
-            return new PathResult(null, false, null, error);
-        }
-    }
-
-    // The result of inferring resource members from a structure by name.
-    static final class InferenceResult {
-        // Matched identifier or property name to the structure member that provides it.
-        final Map<String, MemberShape> matched = new LinkedHashMap<>();
-        // Members that matched no identifier or property name and are not @notProperty.
-        final List<MemberShape> unmatched = new ArrayList<>();
-    }
-
-    private static String boundName(MemberShape member, BindingKind kind) {
-        if (kind == BindingKind.IDENTIFIER) {
-            return member.getTrait(ResourceIdentifierTrait.class)
-                    .map(ResourceIdentifierTrait::getValue)
-                    .orElseGet(member::getMemberName);
-        }
-        return member.getTrait(PropertyTrait.class)
-                .flatMap(PropertyTrait::getName)
-                .orElseGet(member::getMemberName);
     }
 
     // Flattens a pure field chain (fields joined by subexpressions) into ordered field names.
