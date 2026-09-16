@@ -4,9 +4,11 @@
  */
 package software.amazon.smithy.model.traits;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -71,29 +73,21 @@ public final class UnstableFeaturesTrait extends AbstractTrait implements ToSmit
     public enum UnstableReason implements ToNode {
         PREVIEW;
 
-        private static final String[] NAMES = names();
-
-        private static String[] names() {
-            String[] names = new String[values().length];
-            for (int i = 0; i < names.length; i++) {
-                names[i] = values()[i].name();
-            }
-            return names;
-        }
-
-        /**
-         * Creates an {@code UnstableReason} from a node.
-         *
-         * @param node Node to parse.
-         * @return Returns the parsed reason.
-         */
         public static UnstableReason fromNode(Node node) {
-            return UnstableReason.valueOf(node.expectStringNode().expectOneOf(NAMES));
+            StringNode string = node.expectStringNode();
+            for (UnstableReason reason : values()) {
+                if (reason.name().equals(string.getValue())) {
+                    return reason;
+                }
+            }
+            throw new ExpectationNotMetException(
+                    "Expected one of " + Arrays.toString(values()) + "; got `" + string.getValue() + "`.",
+                    string);
         }
 
         @Override
         public Node toNode() {
-            return Node.from(toString());
+            return Node.from(name());
         }
     }
 

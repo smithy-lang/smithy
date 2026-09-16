@@ -4,9 +4,9 @@ namespace smithy.example
 
 // Guards around the @unstable trait itself. GuardFeatureIdOp gains a featureId in -b AND has a breaking input
 // change, which exercises both the trait-level guard and the decorator's rule that a shape must resolve as
-// preview in BOTH models to be downgraded. GuardUpdateOp changes its featureId (EXAMPLE_PREVIEW -> _TWO), a
-// trait-level guard that stays blocking. GuardBareOp gains a bare @unstable (allowed) and GuardNewOp is brand
-// new (allowed).
+// preview in BOTH models to be downgraded. GuardUpdateOp changes its featureId (EXAMPLE_PREVIEW -> _TWO) and
+// GuardRemoveOp drops its featureId (-> bare @unstable); both are trait-level guards that stay blocking.
+// GuardBareOp gains a bare @unstable (allowed) and GuardNewOp is brand new (allowed).
 @unstableFeatures(
     EXAMPLE_PREVIEW: { message: "preview", reason: "PREVIEW" }
     EXAMPLE_PREVIEW_TWO: { message: "preview2", reason: "PREVIEW" }
@@ -16,6 +16,7 @@ service Example {
     operations: [
         GuardFeatureIdOp
         GuardUpdateOp
+        GuardRemoveOp
         GuardBareOp
     ]
 }
@@ -30,5 +31,8 @@ structure GuardIn {
 
 @unstable(featureId: "EXAMPLE_PREVIEW")
 operation GuardUpdateOp {}
+
+@unstable(featureId: "EXAMPLE_PREVIEW")
+operation GuardRemoveOp {}
 
 operation GuardBareOp {}

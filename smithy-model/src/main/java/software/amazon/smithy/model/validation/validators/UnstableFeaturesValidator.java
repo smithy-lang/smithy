@@ -144,7 +144,8 @@ public final class UnstableFeaturesValidator extends AbstractValidator {
 
     private static boolean definesFeature(Model model, ShapeId serviceId, String featureId) {
         return model.getShape(serviceId)
-                .flatMap(service -> service.getTrait(UnstableFeaturesTrait.class))
+                .flatMap(service -> service.findTrait(UnstableFeaturesTrait.ID))
+                .map(UnstableFeaturesTrait.class::cast)
                 .map(features -> features.getFeatures().containsKey(featureId))
                 .orElse(false);
     }
