@@ -74,15 +74,15 @@ public final class UnstableFeaturesTrait extends AbstractTrait implements ToSmit
         PREVIEW;
 
         public static UnstableReason fromNode(Node node) {
-            StringNode string = node.expectStringNode();
+            String value = node.expectStringNode().getValue();
             for (UnstableReason reason : values()) {
-                if (reason.name().equals(string.getValue())) {
+                if (reason.name().equals(value)) {
                     return reason;
                 }
             }
             throw new ExpectationNotMetException(
-                    "Expected one of " + Arrays.toString(values()) + "; got `" + string.getValue() + "`.",
-                    string);
+                    "Expected one of " + Arrays.toString(values()) + "; got `" + value + "`.",
+                    node);
         }
 
         @Override
