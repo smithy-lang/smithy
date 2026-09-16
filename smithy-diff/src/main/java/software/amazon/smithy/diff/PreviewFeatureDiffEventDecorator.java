@@ -23,14 +23,15 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorator {
 
-    // Event-id prefixes for changes that make a member non-nullable will not be downgraded, these two can cause
+    // Event-id prefixes for changes that make a member non-nullable will not be downgraded, these two can be
+    // backward incompatible for users.
     private static final Set<String> NULLABILITY_EVENT_ID_PREFIXES =
             SetUtils.of("ChangedNullability", "AddedRequiredMember");
 
-    //These misuses of the trait itself must stay blocking rather than be downgraded as a preview change.
-    private static final Set<String> UNSTABLE_TRAIT_EVENT_IDS = SetUtils.of(
-            "TraitBreakingChange.Add." + UnstableTrait.ID,
-            "TraitBreakingChange.Update." + UnstableTrait.ID);
+    // Adding, updating, or removing @unstable's featureId is a misuse of the trait itself and must stay
+    // blocking rather than be downgraded as a preview change.
+    private static final String UNSTABLE_TRAIT_EVENT_PREFIX = "TraitBreakingChange.";
+    private static final String UNSTABLE_TRAIT_EVENT_SUFFIX = "." + UnstableTrait.ID;
 
     @Override
     public ValidationEvent decorate(Differences differences, ValidationEvent event) {
@@ -42,7 +43,8 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
             return event;
         }
 
-        if (UNSTABLE_TRAIT_EVENT_IDS.contains(event.getId())) {
+        if (event.getId().startsWith(UNSTABLE_TRAIT_EVENT_PREFIX)
+                && event.getId().endsWith(UNSTABLE_TRAIT_EVENT_SUFFIX)) {
             return event;
         }
 

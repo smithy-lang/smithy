@@ -211,6 +211,13 @@ public class PreviewFeatureDiffEventDecoratorTest {
                 "smithy.example#GuardUpdateOp",
                 Severity.ERROR);
 
+        // Removing an existing featureId (-> bare @unstable) stays blocking; the shape is not preview in the
+        // new model, so the both-models rule keeps it an error.
+        assertSeverity(events,
+                "TraitBreakingChange.Remove.smithy.api#unstable",
+                "smithy.example#GuardRemoveOp",
+                Severity.ERROR);
+
         // The decorator only downgrades a shape that resolves as preview in BOTH models, so the breaking input
         // change made in the same revision is not downgraded either.
         assertNotDowngraded(events, "ChangedMemberTarget", "smithy.example#GuardIn$data");

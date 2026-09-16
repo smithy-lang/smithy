@@ -12,6 +12,7 @@ service Example {
     operations: [
         GuardFeatureIdOp
         GuardUpdateOp
+        GuardRemoveOp
         GuardBareOp
         GuardNewOp
     ]
@@ -30,6 +31,10 @@ structure GuardIn {
 // Changes its featureId from EXAMPLE_PREVIEW to EXAMPLE_PREVIEW_TWO.
 @unstable(featureId: "EXAMPLE_PREVIEW_TWO")
 operation GuardUpdateOp {}
+
+// Drops its featureId, becoming a bare @unstable.
+@unstable
+operation GuardRemoveOp {}
 
 @unstable
 operation GuardBareOp {}

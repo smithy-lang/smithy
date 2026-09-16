@@ -221,7 +221,8 @@ public final class UnstableFeatureIndex implements KnowledgeIndex {
 
         for (ShapeId ownerId : owners) {
             String featureId = model.getShape(ownerId)
-                    .flatMap(owner -> owner.getTrait(UnstableTrait.class))
+                    .flatMap(owner -> owner.findTrait(UnstableTrait.ID))
+                    .map(UnstableTrait.class::cast)
                     .flatMap(UnstableTrait::getFeatureId)
                     .orElse(null);
             if (featureId == null) {
@@ -231,7 +232,8 @@ public final class UnstableFeatureIndex implements KnowledgeIndex {
             Set<UnstableFeatureInfo> candidates = new LinkedHashSet<>();
             for (ShapeId serviceId : getContainingServices(ownerId)) {
                 model.getShape(serviceId)
-                        .flatMap(service -> service.getTrait(UnstableFeaturesTrait.class))
+                        .flatMap(service -> service.findTrait(UnstableFeaturesTrait.ID))
+                        .map(UnstableFeaturesTrait.class::cast)
                         .flatMap(trait -> trait.getFeature(featureId))
                         .ifPresent(candidates::add);
             }

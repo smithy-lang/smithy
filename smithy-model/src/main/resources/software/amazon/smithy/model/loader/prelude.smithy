@@ -1071,6 +1071,11 @@ structure uniqueItems {}
             change: "update"
             message: "The `@unstable` trait's `featureId` cannot be changed after setting."
         }
+        {
+            path: "/featureId"
+            change: "remove"
+            message: "The `@unstable` trait's `featureId` cannot be removed after setting. Please remove the whole `unstable` trait if the shape is GA."
+        }
     ]
 )
 structure unstable {
