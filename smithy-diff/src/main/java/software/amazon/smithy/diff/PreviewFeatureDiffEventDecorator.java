@@ -43,8 +43,8 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
             return event;
         }
 
-        if (event.getId().startsWith(UNSTABLE_TRAIT_EVENT_PREFIX)
-                && event.getId().endsWith(UNSTABLE_TRAIT_EVENT_SUFFIX)) {
+        String eventId = event.getId();
+        if (eventId.startsWith(UNSTABLE_TRAIT_EVENT_PREFIX) && eventId.endsWith(UNSTABLE_TRAIT_EVENT_SUFFIX)) {
             return event;
         }
 
