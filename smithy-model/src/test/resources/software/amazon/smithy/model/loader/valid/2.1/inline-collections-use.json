@@ -15,7 +15,7 @@
                 "target": "foo.example#Widget"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         }
     }
