@@ -6,7 +6,9 @@ package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
@@ -38,6 +41,10 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
     private final Map<ShapeId, ShapeId> operationToInputPropertiesShape = new HashMap<>();
     private final Map<ShapeId, ShapeId> operationToOutputPropertiesShape = new HashMap<>();
 
+    /** Map of resource shape ID to a map of operation shape ID to element bindings. */
+    private final Map<ShapeId, Map<ShapeId, ElementBinding>> inputElementBindings = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, ElementBinding>> outputElementBindings = new HashMap<>();
+
     private PropertyBindingIndex(Model model) {
         this.model = new WeakReference<>(model);
         this.notPropertyMetaTraitSet = computeNotPropertyTraits();
@@ -46,8 +53,13 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
 
         for (ResourceShape resourceShape : model.getResourceShapes()) {
             Set<String> propertyNames = resourceShape.getProperties().keySet();
+            inputElementBindings.put(resourceShape.getId(), new HashMap<>());
+            outputElementBindings.put(resourceShape.getId(), new HashMap<>());
             for (ShapeId operationShapeId : resourceShape.getAllOperations()) {
                 OperationShape operationShape = (OperationShape) model.getShape(operationShapeId).get();
+                if (CollectionElementResolver.isElementCarrier(resourceShape, operationShapeId)) {
+                    indexElementBindings(model, resourceShape, operationShape, identifierIndex);
+                }
                 Shape inputPropertiesShape = getInputPropertiesShape(operationShape);
                 operationToInputPropertiesShape.put(operationShapeId, inputPropertiesShape.getId());
                 for (MemberShape memberShape : inputPropertiesShape.members()) {
@@ -104,6 +116,163 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
 
     public static PropertyBindingIndex of(Model model) {
         return model.getKnowledge(PropertyBindingIndex.class, PropertyBindingIndex::new);
+    }
+
+    /**
+     * Computes the element bindings of an operation bound to a resource
+     * through the {@code list} lifecycle or the {@code collectionOperations}
+     * property.
+     *
+     * <p>The element structure is resolved through a member marked with the
+     * {@code @nestedProperties} trait that targets a list of structures, and
+     * for the output of {@code list} lifecycle operations without that trait,
+     * through a single unambiguous list-of-structures member. Element
+     * bindings are scoped to the resource and operation because element
+     * structures may be shared between resources, so element members are
+     * never added to the member-keyed property maps used for top-level
+     * input and output members.
+     */
+    private void indexElementBindings(
+            Model model,
+            ResourceShape resource,
+            OperationShape operation,
+            IdentifierBindingIndex identifierIndex
+    ) {
+        Optional<StructureShape> explicitInput =
+                CollectionElementResolver.resolveExplicitElement(model, operation.getInputShape());
+        explicitInput.ifPresent(element -> inputElementBindings.get(resource.getId())
+                .put(operation.getId(),
+                        createElementBinding(resource,
+                                element,
+                                true,
+                                identifierIndex.getOperationInputElementBindings(resource, operation))));
+
+        Optional<StructureShape> explicitOutput =
+                CollectionElementResolver.resolveExplicitElement(model, operation.getOutputShape());
+        boolean explicit = explicitOutput.isPresent();
+        Optional<StructureShape> outputElement;
+        if (explicit) {
+            outputElement = explicitOutput;
+        } else if (CollectionElementResolver.hasElementMarker(model, operation.getOutputShape())) {
+            // A @nestedProperties member is present but does not resolve to a list of
+            // structures. Never fall back to automatic detection so the misuse can be
+            // reported instead of being silently reinterpreted.
+            outputElement = Optional.empty();
+        } else if (CollectionElementResolver.isListLifecycle(resource, operation.getId())) {
+            outputElement = CollectionElementResolver.resolveAutoOutputElement(model, operation);
+        } else {
+            outputElement = Optional.empty();
+        }
+        outputElement.ifPresent(element -> outputElementBindings.get(resource.getId())
+                .put(operation.getId(),
+                        createElementBinding(resource,
+                                element,
+                                explicit,
+                                identifierIndex.getOperationOutputElementBindings(resource, operation))));
+    }
+
+    private ElementBinding createElementBinding(
+            ResourceShape resource,
+            StructureShape element,
+            boolean explicit,
+            Map<String, String> identifierBindings
+    ) {
+        Set<String> propertyNames = resource.getProperties().keySet();
+        Set<String> identifierMembers = new HashSet<>(identifierBindings.values());
+        Map<String, String> properties = new HashMap<>();
+        for (MemberShape member : element.members()) {
+            if (identifierMembers.contains(member.getMemberName())) {
+                continue;
+            }
+            Optional<String> traitName = getPropertyTraitName(member);
+            if (traitName.isPresent()) {
+                properties.put(member.getMemberName(), traitName.get());
+            } else if (!doesNotRequireProperty(member) && propertyNames.contains(member.getMemberName())) {
+                properties.put(member.getMemberName(), member.getMemberName());
+            }
+        }
+        return new ElementBinding(element.getId(), explicit, properties);
+    }
+
+    /**
+     * Gets the element structure of a collection-bound operation's output
+     * that carries per-instance resource state.
+     *
+     * <p>The element structure is the structure targeted by the members of
+     * the list targeted by the output member marked with the
+     * {@code @nestedProperties} trait, or, for the {@code list} lifecycle
+     * without that trait, by a single unambiguous list-of-structures output
+     * member.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return the element structure ID of the operation's output, if any.
+     */
+    public Optional<ShapeId> getOperationOutputElementShape(ToShapeId resource, ToShapeId operation) {
+        return getBinding(outputElementBindings, resource, operation).map(binding -> binding.elementShape);
+    }
+
+    /**
+     * Gets the element structure of a collection-bound operation's input
+     * that carries per-instance resource state, resolved through the input
+     * member marked with the {@code @nestedProperties} trait.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return the element structure ID of the operation's input, if any.
+     */
+    public Optional<ShapeId> getOperationInputElementShape(ToShapeId resource, ToShapeId operation) {
+        return getBinding(inputElementBindings, resource, operation).map(binding -> binding.elementShape);
+    }
+
+    /**
+     * Returns true if the output element structure of the operation was
+     * explicitly marked with the {@code @nestedProperties} trait rather than
+     * automatically detected.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return true if the output element binding is explicit.
+     */
+    public boolean isOperationOutputElementExplicit(ToShapeId resource, ToShapeId operation) {
+        return getBinding(outputElementBindings, resource, operation).map(binding -> binding.explicit).orElse(false);
+    }
+
+    /**
+     * Gets a map of element member names to resource property names for the
+     * element structure of a collection-bound operation's output.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return the member name to property name map, or an empty map.
+     */
+    public Map<String, String> getOperationOutputElementProperties(ToShapeId resource, ToShapeId operation) {
+        return getBinding(outputElementBindings, resource, operation)
+                .map(binding -> Collections.unmodifiableMap(binding.properties))
+                .orElseGet(Collections::emptyMap);
+    }
+
+    /**
+     * Gets a map of element member names to resource property names for the
+     * element structure of a collection-bound operation's input.
+     *
+     * @param resource Shape ID of a resource.
+     * @param operation Shape ID of an operation.
+     * @return the member name to property name map, or an empty map.
+     */
+    public Map<String, String> getOperationInputElementProperties(ToShapeId resource, ToShapeId operation) {
+        return getBinding(inputElementBindings, resource, operation)
+                .map(binding -> Collections.unmodifiableMap(binding.properties))
+                .orElseGet(Collections::emptyMap);
+    }
+
+    private Optional<ElementBinding> getBinding(
+            Map<ShapeId, Map<ShapeId, ElementBinding>> bindings,
+            ToShapeId resource,
+            ToShapeId operation
+    ) {
+        return Optional.ofNullable(bindings.get(resource.toShapeId()))
+                .flatMap(resourceMap -> Optional.ofNullable(resourceMap.get(operation.toShapeId())));
     }
 
     /**
@@ -202,5 +371,17 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
             }
         }
         return presumedShape;
+    }
+
+    private static final class ElementBinding {
+        private final ShapeId elementShape;
+        private final boolean explicit;
+        private final Map<String, String> properties;
+
+        private ElementBinding(ShapeId elementShape, boolean explicit, Map<String, String> properties) {
+            this.elementShape = elementShape;
+            this.explicit = explicit;
+            this.properties = properties;
+        }
     }
 }

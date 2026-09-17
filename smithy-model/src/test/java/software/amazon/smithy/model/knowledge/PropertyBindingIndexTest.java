@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -67,5 +68,58 @@ public class PropertyBindingIndexTest {
                 MemberShape.class)));
 
         Assertions.assertThrows(ValidatedResultException.class, () -> vrmodel.unwrap());
+    }
+
+    @Test
+    public void testListBoundOperationIndex() {
+        Model model = Model.assembler()
+                .addImport(OperationIndexTest.class.getResource("list-bound-property-index.smithy"))
+                .assemble()
+                .unwrap();
+
+        PropertyBindingIndex index = PropertyBindingIndex.of(model);
+        OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+        ShapeId task = ShapeId.from("com.example#Task");
+
+        // The element structure is detected automatically for the list lifecycle.
+        assertEquals(ShapeId.from("com.example#TaskSummary"),
+                index.getOperationOutputElementShape(task, listTasks).get());
+        assertFalse(index.isOperationOutputElementExplicit(task, listTasks));
+
+        // Element members matching properties are reported per resource and operation,
+        // identifier and unmatched members are not.
+        Map<String, String> properties = index.getOperationOutputElementProperties(task, listTasks);
+        assertEquals("name", properties.get("name"));
+        assertEquals("status", properties.get("status"));
+        assertFalse(properties.containsKey("taskName"));
+        assertFalse(properties.containsKey("lastUpdatedAt"));
+
+        // Element members are never added to the member-keyed property maps,
+        // because element structures may be shared between resources.
+        assertFalse(index.isMemberShapeProperty(model.expectShape(
+                ShapeId.from("com.example#TaskSummary$name"),
+                MemberShape.class)));
+
+        // Top-level property resolution is unchanged.
+        assertEquals(ShapeId.from("com.example#ListTasksOutput"), index.getOutputPropertiesShape(listTasks).getId());
+        assertEquals(ShapeId.from("com.example#ListTasksInput"), index.getInputPropertiesShape(listTasks).getId());
+    }
+
+    @Test
+    public void testExplicitElementDisambiguation() {
+        Model model = Model.assembler()
+                .addImport(OperationIndexTest.class.getResource("list-bound-explicit-disambiguation.smithy"))
+                .assemble()
+                .unwrap();
+
+        PropertyBindingIndex index = PropertyBindingIndex.of(model);
+        OperationShape listTasks = model.expectShape(ShapeId.from("com.example#ListTasks"), OperationShape.class);
+        ShapeId task = ShapeId.from("com.example#Task");
+
+        // With two list-of-structures members, only the @nestedProperties member is selected.
+        assertEquals(ShapeId.from("com.example#TaskSummary"),
+                index.getOperationOutputElementShape(task, listTasks).get());
+        assertTrue(index.isOperationOutputElementExplicit(task, listTasks));
+        assertFalse(index.getOperationOutputElementProperties(task, listTasks).containsKey("arn"));
     }
 }
