@@ -94,6 +94,12 @@ public class TaggedStringLiteralTest {
                 Arguments.of("\\77", base64((byte) 63)), // two octal digits
                 // Escaped quote
                 Arguments.of("a\\\"b", base64((byte) 'a', (byte) '"', (byte) 'b')),
+                // BMP (multi-byte UTF-8) characters
+                Arguments.of("\u00e9", base64("\u00e9")), // é, 2 UTF-8 bytes
+                Arguments.of("\u20ac", base64("\u20ac")), // €, 3 UTF-8 bytes
+                // Non-BMP (supplementary) code points require surrogate-pair handling
+                Arguments.of("\ud83d\ude00", base64("\ud83d\ude00")), // 😀 U+1F600, 4 UTF-8 bytes
+                Arguments.of("A\ud83d\ude00B", base64("A\ud83d\ude00B")), // ASCII mixed with emoji
                 Arguments.of("", base64()));
     }
 
@@ -124,6 +130,15 @@ public class TaggedStringLiteralTest {
         RuntimeException e = assertThrows(RuntimeException.class,
                 () -> TaggedStringLiteral.scan("b", "\\777", false));
         assertTrue(e.getMessage().contains("exceeds byte range"));
+    }
+
+    @Test
+    public void binaryNonBmpCharacterEncodesFullCodePoint() {
+        // A supplementary code point (😀 U+1F600) must be UTF-8 encoded as its four bytes
+        // (F0 9F 98 80 -> 8J+YgA==), not as two per-surrogate replacement bytes.
+        TaggedStringLiteral.Result result = TaggedStringLiteral.scan("b", "\ud83d\ude00", false);
+        assertThat(result.token, is(IdlToken.STRING));
+        assertThat(result.stringValue.toString(), equalTo("8J+YgA=="));
     }
 
     // --- #hex tag tests ---
