@@ -7,7 +7,6 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,7 +102,8 @@ public class SyntheticShapePreludeTest {
     }
 
     private static List<String> eventIds(ValidatedResult<Model> result, String id) {
-        return result.getValidationEvents().stream()
+        return result.getValidationEvents()
+                .stream()
                 .filter(event -> event.getId().equals(id))
                 .map(ValidationEvent::getMessage)
                 .collect(Collectors.toList());
