@@ -23,7 +23,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         }
     }

@@ -69,7 +69,7 @@ Smithy model should not impact generated code.
    synthetic list and map shapes with auto-generated names (e.g.,
    ``_SyntheticListOfString``). These names are implementation details and
    SHOULD NOT be used as generated type names. Generators can detect synthetic
-   shapes by checking for the ``smithy.synthetic#generated`` trait.
+   shapes by checking for the ``smithy.api#synthetic`` trait.
 
 The following shapes *are* expected to translate into named generated types
 or methods in the target environment:

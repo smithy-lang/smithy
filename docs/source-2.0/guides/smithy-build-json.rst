@@ -756,9 +756,9 @@ Removes all shapes matching the given :ref:`selector <selectors>`.
 
    .. versionadded:: 2.1
       :ref:`Inline collection declarations <idl-inline-collections>` produce
-      synthetic shapes marked with ``smithy.synthetic#generated``. To select
+      synthetic shapes marked with ``smithy.api#synthetic``. To select
       these shapes in a projection, use
-      ``[trait|smithy.synthetic#generated]``.
+      ``[trait|smithy.api#synthetic]``.
 
 .. _excludeShapesByTag-transform:
 

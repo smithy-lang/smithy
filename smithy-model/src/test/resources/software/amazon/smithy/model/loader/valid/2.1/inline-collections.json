@@ -21,7 +21,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         },
         "smithy.example#_SyntheticMapOfStringToString": {
@@ -33,7 +33,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         },
         "smithy.example#_SyntheticListOfInteger": {
@@ -42,7 +42,7 @@
                 "target": "smithy.api#Integer"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         },
         "smithy.example#_SyntheticMapOfStringTo_SyntheticListOfInteger": {
@@ -54,7 +54,7 @@
                 "target": "smithy.example#_SyntheticListOfInteger"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         }
     }

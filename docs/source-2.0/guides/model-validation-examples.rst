@@ -313,7 +313,7 @@ linters to have clear, actionable error messages.
 .. versionadded:: 2.1
    Selectors matching ``list`` or ``map`` also match synthetic shapes created
    by :ref:`inline collection declarations <idl-inline-collections>`. To
-   exclude synthetic shapes, add ``:not([trait|smithy.synthetic#generated])``
+   exclude synthetic shapes, add ``:not([trait|smithy.api#synthetic])``
    to the selector.
 
 

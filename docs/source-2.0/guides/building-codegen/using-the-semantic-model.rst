@@ -185,7 +185,7 @@ for handling different kinds of shapes.
    Synthetic list and map shapes created by :ref:`inline collection
    declarations <idl-inline-collections>` are visited like any other shape.
    Generators that produce named types for collections should check for the
-   ``smithy.synthetic#generated`` trait to avoid generating types with
+   ``smithy.api#synthetic`` trait to avoid generating types with
    synthetic names.
 
 
