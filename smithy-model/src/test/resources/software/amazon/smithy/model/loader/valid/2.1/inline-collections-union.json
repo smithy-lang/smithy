@@ -5,14 +5,14 @@
             "type": "union",
             "members": {
                 "names": {
-                    "target": "smithy.example#_SyntheticListOfString"
+                    "target": "smithy.example#_SyntheticListOf__String"
                 },
                 "tags": {
-                    "target": "smithy.example#_SyntheticMapOfStringToInteger"
+                    "target": "smithy.example#_SyntheticMapOf__String_To___Integer"
                 }
             }
         },
-        "smithy.example#_SyntheticListOfString": {
+        "smithy.example#_SyntheticListOf__String": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
@@ -21,7 +21,7 @@
                 "smithy.api#synthetic": {}
             }
         },
-        "smithy.example#_SyntheticMapOfStringToInteger": {
+        "smithy.example#_SyntheticMapOf__String_To___Integer": {
             "type": "map",
             "key": {
                 "target": "smithy.api#String"

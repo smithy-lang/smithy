@@ -121,35 +121,58 @@ The `_Synthetic` prefix makes these shapes easy to identify in
 tooling and ensures they cannot collide with user-defined names.
 
 Inline collections produce synthetic shapes with content-derived
-names. The naming scheme uses a `_Synthetic` prefix followed by a
-description of the collection type and its targets.
+names. The name uses a `_Synthetic` prefix followed by the collection
+type and a token for each resolved target.
 
-The format is:
+The name is derived from each target's **resolved** shape ID (not the
+text as written), relative to the namespace of the declaring structure.
+Each target is encoded as a token using these rules, applied per target
+and decided purely from the resolved target's namespace and name, so a
+name never changes based on what else exists in the model, and in
+particular does not change if a shape is later added to the prelude:
 
-```
-_Synthetic<ShapeType>Of<TargetNames>
-```
+- If the target is in the declaring structure's namespace and is itself a
+  synthetic shape (its name starts with `_Synthetic`), the token is
+  `_Name`. Nested inline collections hit this case. The short form is
+  safe because the prelude never defines shapes whose names start with
+  `_`.
+- Otherwise, if the target's simple name starts with `_`, the token is
+  the flattened-namespace form (see below). This keeps an
+  underscore-prefixed user shape from fusing with the prelude or
+  same-namespace markers.
+- Otherwise, a prelude target (`smithy.api`) is `__Name`.
+- Otherwise, a target in the declaring structure's namespace is `_Name`.
+- Otherwise (any other namespace) the token is the flattened-namespace
+  form `_seg1_seg2_Name`.
 
-Examples:
+Lists are named `_SyntheticListOf<token>`; maps are named
+`_SyntheticMapOf<keyToken>_To_<valueToken>`.
+
+Examples (declared in namespace `smithy.example`):
 
 | Inline syntax | Synthetic shape name |
 |---------------|---------------------|
-| `[String]` | `_SyntheticListOfString` |
-| `[Account]` | `_SyntheticListOfAccount` |
-| `{String: String}` | `_SyntheticMapOfStringToString` |
-| `{AccountId: Account}` | `_SyntheticMapOfAccountIdToAccount` |
-| `{PersonId: [Account]}` | `_SyntheticMapOfPersonIdTo_SyntheticListOfAccount` |
+| `[String]` | `_SyntheticListOf__String` |
+| `[Widget]` (same namespace) | `_SyntheticListOf_Widget` |
+| `[com.foo#Account]` | `_SyntheticListOf_com_foo_Account` |
+| `{String: String}` | `_SyntheticMapOf__String_To___String` |
+| `{String: [Integer]}` | `_SyntheticMapOf__String_To___SyntheticListOf__Integer` |
 
-These names are stable: they are derived from content, not declaration
-order, so reordering members or adding new inline collections does not
-change existing names. They are also deterministic: the same inline
-declaration always produces the same name.
+These names are stable: they are derived from resolved content, not
+declaration order, so reordering members or adding new inline
+collections does not change existing names. They are also
+deterministic: the same resolved collection always produces the same
+name.
 
-Note: It is theoretically possible for a user-defined shape to
-conflict with a synthetic name (e.g., a user defines a shape named
-`_SyntheticListOfString`). In practice this is unlikely, and the
-assembler SHOULD emit a validation error if a conflict is detected,
-instructing the user to rename their shape.
+The encoding is injective for all but pathological combinations of
+namespaces and underscores (for example, `com.amazon#String` and
+`com#amazon_String` both flatten to `com_amazon_String`). The assembler
+keys deduplication on each collection's resolved element types, so
+identical collections share one shape and a genuinely different
+collection that maps to an already-used synthetic name is reported as a
+validation error rather than silently reusing the first shape. A
+user-defined shape that happens to use a `_Synthetic` name is likewise
+reported.
 
 The synthetic shapes are placed in the same namespace as the structure
 that contains them.
@@ -160,12 +183,12 @@ Grouping is scoped to a single namespace. Within a namespace, all
 members using the same inline collection type (e.g., `[String]`)
 reference the same synthetic shape. Across namespaces, each namespace
 produces its own synthetic shape independently:
-`com.foo#_SyntheticListOfString` and `com.bar#_SyntheticListOfString`
+`com.foo#_SyntheticListOf__String` and `com.bar#_SyntheticListOf__String`
 are distinct shapes.
 
 Explicit user-defined shapes are never grouped with synthetic shapes.
 A `list MyList { member: String }` is a distinct shape from
-`_SyntheticListOfString` even though they are structurally equivalent.
+`_SyntheticListOf__String` even though they are structurally equivalent.
 
 ### The `@synthetic` trait
 
@@ -184,7 +207,7 @@ collections or that reads a model serialized to an older IDL version.
 Because synthetic shapes are shared across all members that use the
 same inline type, applying a trait to a synthetic shape would affect
 every usage simultaneously. This creates action at a distance: adding
-`@sparse` to `_SyntheticListOfString` would make every `[String]`
+`@sparse` to `_SyntheticListOf__String` would make every `[String]`
 member in the namespace sparse, which is almost never the intent. To
 prevent this, traits cannot be applied to synthetic shapes.
 
@@ -202,7 +225,7 @@ containing member. When applied to a member, the trait constrains only
 that specific member usage, not the shared synthetic shape. For
 example, `@length(min: 1) names: [String]` constrains the `names`
 member but does not affect other members that reference the same
-`_SyntheticListOfString` shape.
+`_SyntheticListOf__String` shape.
 
 ### Referencing synthetic shapes
 
@@ -214,7 +237,7 @@ practical use case for referencing them directly in `apply` statements
 
 Synthetic shapes can be referenced in:
 
-- Selectors (e.g., `[id = ns#_SyntheticListOfString]`)
+- Selectors (e.g., `[id = ns#_SyntheticListOf__String]`)
 - Programmatic model access (Java API, JSON AST)
 
 ### Selectors
@@ -236,7 +259,7 @@ the `@synthetic` trait attached:
 {
     "smithy": "2.1",
     "shapes": {
-        "com.example#_SyntheticListOfString": {
+        "com.example#_SyntheticListOf__String": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
@@ -249,7 +272,7 @@ the `@synthetic` trait attached:
             "type": "structure",
             "members": {
                 "strings": {
-                    "target": "com.example#_SyntheticListOfString"
+                    "target": "com.example#_SyntheticListOf__String"
                 }
             }
         }
@@ -367,7 +390,7 @@ This was rejected because:
 Existing models using explicit list and map definitions can adopt
 inline syntax incrementally. Replacing an explicit shape with inline
 syntax changes the shape ID (from `ns#MyList` to
-`ns#_SyntheticListOfString`), which is a breaking change for:
+`ns#_SyntheticListOf__String`), which is a breaking change for:
 
 - Other models referencing the shape by name
 - Selectors targeting the shape by ID
@@ -410,8 +433,8 @@ language.
 ### What if two namespaces produce the same synthetic name?
 
 Synthetic shapes are scoped to their
-namespace. `com.foo#_SyntheticListOfString` and
-`com.bar#_SyntheticListOfString` are distinct shapes, just as any two
+namespace. `com.foo#_SyntheticListOf__String` and
+`com.bar#_SyntheticListOf__String` are distinct shapes, just as any two
 shapes in different namespaces are distinct.
 
 ### Can a member target both an explicit shape and an inline collection?

@@ -102,7 +102,10 @@ final class IdlModelLoader {
     private final String filename;
     private final IdlInternalTokenizer tokenizer;
     private final Map<String, ShapeId> useShapes = new HashMap<>();
-    private final Set<ShapeId> emittedSyntheticShapes = new HashSet<>();
+    // Maps a generated synthetic shape ID to the canonical signature of the collection it was
+    // created from, so an identical collection reuses the shape and a different collection that
+    // somehow maps to the same ID is reported rather than silently overwriting the first.
+    private final Map<ShapeId, String> emittedSyntheticShapes = new HashMap<>();
     private final Function<CharSequence, String> stringTable;
     private Consumer<LoadOperation> operations;
     private Version modelVersion = Version.VERSION_1_0;
@@ -875,13 +878,14 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACKET);
         tokenizer.next();
 
-        // Compute the synthetic name from the target string as written.
-        String syntheticName = LoaderUtils.listName(innerTarget);
+        // Resolve the element target first, then derive the synthetic name from the resolved
+        // shape ID so the name is deterministic and injective regardless of namespaces.
+        ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
+        String syntheticName = LoaderUtils.listName(namespace, resolvedTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+        String signature = "list:" + resolvedTarget;
 
-        // Create the synthetic list shape if not already emitted.
-        if (emittedSyntheticShapes.add(syntheticId)) {
-            ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
+        if (registerSyntheticShape(syntheticId, signature, location)) {
             ListShape.Builder listBuilder = ListShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -924,15 +928,15 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
 
-        // Compute the synthetic name from the target strings as written.
-        String syntheticName = LoaderUtils.mapName(keyTarget, valueTarget);
+        // Resolve the key and value targets first, then derive the synthetic name from the
+        // resolved shape IDs so the name is deterministic and injective regardless of namespaces.
+        ShapeId resolvedKey = resolveInlineTarget(keyTarget);
+        ShapeId resolvedValue = resolveInlineTarget(valueTarget);
+        String syntheticName = LoaderUtils.mapName(namespace, resolvedKey, resolvedValue);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+        String signature = "map:" + resolvedKey + "," + resolvedValue;
 
-        // Create the synthetic map shape if not already emitted.
-        if (emittedSyntheticShapes.add(syntheticId)) {
-            ShapeId resolvedKey = resolveInlineTarget(keyTarget);
-            ShapeId resolvedValue = resolveInlineTarget(valueTarget);
-
+        if (registerSyntheticShape(syntheticId, signature, location)) {
             MapShape.Builder mapBuilder = MapShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -951,6 +955,34 @@ final class IdlModelLoader {
         }
 
         return syntheticId.toString();
+    }
+
+    /**
+     * Registers a synthetic shape ID for the collection with the given canonical signature.
+     *
+     * @return {@code true} if the shape should be created (first time this ID is seen);
+     *     {@code false} if an identical collection already produced it. If the same ID was
+     *     already produced by a <em>different</em> collection, a validation error is emitted
+     *     and {@code false} is returned so the first definition is preserved rather than
+     *     silently overwritten.
+     */
+    private boolean registerSyntheticShape(ShapeId syntheticId, String signature, SourceLocation location) {
+        String existing = emittedSyntheticShapes.putIfAbsent(syntheticId, signature);
+        if (existing == null) {
+            return true;
+        }
+        if (!existing.equals(signature)) {
+            emit(ValidationEvent.builder()
+                    .id(Validator.MODEL_ERROR)
+                    .severity(Severity.ERROR)
+                    .sourceLocation(location)
+                    .shapeId(syntheticId)
+                    .message("Inline collection generated a synthetic shape name `" + syntheticId
+                            + "` that conflicts with a different inline collection in the same "
+                            + "namespace. Use explicit shape definitions to disambiguate.")
+                    .build());
+        }
+        return false;
     }
 
     /**

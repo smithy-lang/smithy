@@ -5,11 +5,11 @@
             "type": "structure",
             "members": {
                 "widgets": {
-                    "target": "smithy.example#_SyntheticListOfWidget"
+                    "target": "smithy.example#_SyntheticListOf_foo_example_Widget"
                 }
             }
         },
-        "smithy.example#_SyntheticListOfWidget": {
+        "smithy.example#_SyntheticListOf_foo_example_Widget": {
             "type": "list",
             "member": {
                 "target": "foo.example#Widget"

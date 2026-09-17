@@ -170,26 +170,73 @@ final class LoaderUtils {
     /**
      * Generates a synthetic name for an inline list shape.
      *
-     * @param memberTarget The target name as written (e.g., "String" or "com.foo#Bar").
+     * <p>The name is derived from the fully-resolved element target (see
+     * {@link #syntheticToken(ShapeId, String)}). It is deterministic and order-independent.
+     * It is injective for the common cases; a small set of pathological targets can collide,
+     * which the loader detects and reports as an error rather than silently reusing a shape.
+     *
+     * @param containingNamespace Namespace of the structure that declares the inline collection.
+     * @param memberTarget The fully-resolved element target.
      * @return The synthetic shape name (without namespace).
      */
-    static String listName(String memberTarget) {
-        return PREFIX + "ListOf" + simpleName(memberTarget);
+    static String listName(String containingNamespace, ShapeId memberTarget) {
+        return PREFIX + "ListOf" + syntheticToken(memberTarget, containingNamespace);
     }
 
     /**
      * Generates a synthetic name for an inline map shape.
      *
-     * @param keyTarget The key target name as written.
-     * @param valueTarget The value target name as written.
+     * <p>The key and value tokens are separated by {@code _To_}. As with {@link #listName},
+     * the encoding is deterministic; rare collisions are detected and reported by the loader.
+     *
+     * @param containingNamespace Namespace of the structure that declares the inline collection.
+     * @param keyTarget The fully-resolved key target.
+     * @param valueTarget The fully-resolved value target.
      * @return The synthetic shape name (without namespace).
      */
-    static String mapName(String keyTarget, String valueTarget) {
-        return PREFIX + "MapOf" + simpleName(keyTarget) + "To" + simpleName(valueTarget);
+    static String mapName(String containingNamespace, ShapeId keyTarget, ShapeId valueTarget) {
+        return PREFIX + "MapOf"
+                + syntheticToken(keyTarget, containingNamespace)
+                + "_To_"
+                + syntheticToken(valueTarget, containingNamespace);
     }
 
-    private static String simpleName(String target) {
-        int hashIndex = target.indexOf('#');
-        return hashIndex >= 0 ? target.substring(hashIndex + 1) : target;
+    /**
+     * Encodes a resolved target shape ID into an identifier-safe token.
+     *
+     * <p>The encoding is decided purely from the resolved target's namespace and simple name
+     * (independent of what else exists in the model or prelude, so a name does not change when,
+     * for example, a shape is added to the prelude in a later version):
+     *
+     * <ul>
+     *   <li>Same namespace and a synthetic target (name starts with {@code _Synthetic}):
+     *       {@code _Name}. Nested inline collections hit this case; the short form is safe
+     *       because the prelude never defines shapes whose names start with {@code _}.</li>
+     *   <li>Other name starting with {@code _}: the flattened namespace form
+     *       {@code _seg1_seg2_Name}. This keeps an underscore-prefixed user shape from fusing
+     *       with the prelude ({@code __}) or same-namespace ({@code _}) markers.</li>
+     *   <li>Prelude target ({@code smithy.api}): {@code __Name}.</li>
+     *   <li>Same namespace as the declaring structure: {@code _Name}.</li>
+     *   <li>Any other namespace: {@code _seg1_seg2_Name}.</li>
+     * </ul>
+     *
+     * <p>The encoding is deterministic and injective for all but pathological namespace/underscore
+     * constructions (e.g. {@code com.amazon#String} versus {@code com#amazon_String}). Those are
+     * detected by the loader and reported as an error rather than silently reused.
+     */
+    private static String syntheticToken(ShapeId target, String containingNamespace) {
+        boolean sameNamespace = target.getNamespace().equals(containingNamespace);
+        if (sameNamespace && target.getName().startsWith(PREFIX)) {
+            return "_" + target.getName();
+        }
+        if (!target.getName().startsWith("_")) {
+            if (target.getNamespace().equals(Prelude.NAMESPACE)) {
+                return "__" + target.getName();
+            }
+            if (sameNamespace) {
+                return "_" + target.getName();
+            }
+        }
+        return "_" + target.getNamespace().replace('.', '_') + "_" + target.getName();
     }
 }
