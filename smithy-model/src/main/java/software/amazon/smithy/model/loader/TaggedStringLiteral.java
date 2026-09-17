@@ -5,7 +5,6 @@
 package software.amazon.smithy.model.loader;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
@@ -175,9 +174,18 @@ final class TaggedStringLiteral {
                 if (c <= 0x7F) {
                     buffer[length++] = (byte) c;
                 } else {
-                    byte[] utf8 = String.valueOf(c).getBytes(StandardCharsets.UTF_8);
-                    System.arraycopy(utf8, 0, buffer, length, utf8.length);
-                    length += utf8.length;
+                    // Combine a surrogate pair into a single code point so supplementary (non-BMP)
+                    // characters are UTF-8 encoded correctly rather than as two replacement bytes.
+                    int codePoint;
+                    if (Character.isHighSurrogate(c)
+                            && i + 1 < lexeme.length()
+                            && Character.isLowSurrogate(lexeme.charAt(i + 1))) {
+                        codePoint = Character.toCodePoint(c, lexeme.charAt(i + 1));
+                        i++;
+                    } else {
+                        codePoint = c;
+                    }
+                    length = encodeUtf8(codePoint, buffer, length);
                 }
             }
         }
@@ -233,6 +241,33 @@ final class TaggedStringLiteral {
             bytes[i] = (byte) ((hexDigit(hex.charAt(i * 2)) << 4) | hexDigit(hex.charAt(i * 2 + 1)));
         }
         return Result.ofString(Base64.getEncoder().encodeToString(bytes));
+    }
+
+    /**
+     * Encodes a single Unicode code point as UTF-8 directly into {@code buffer} starting at
+     * {@code offset}, returning the new offset. This avoids the intermediate String and byte[]
+     * allocations of {@code new String(Character.toChars(cp)).getBytes(UTF_8)}.
+     *
+     * <p>Callers that special-case ASCII can skip this method for code points {@code <= 0x7F};
+     * the ASCII case is still handled here so the method is a complete UTF-8 encoder.
+     */
+    private static int encodeUtf8(int codePoint, byte[] buffer, int offset) {
+        if (codePoint <= 0x7F) {
+            buffer[offset++] = (byte) codePoint;
+        } else if (codePoint <= 0x7FF) {
+            buffer[offset++] = (byte) (0xC0 | (codePoint >> 6));
+            buffer[offset++] = (byte) (0x80 | (codePoint & 0x3F));
+        } else if (codePoint <= 0xFFFF) {
+            buffer[offset++] = (byte) (0xE0 | (codePoint >> 12));
+            buffer[offset++] = (byte) (0x80 | ((codePoint >> 6) & 0x3F));
+            buffer[offset++] = (byte) (0x80 | (codePoint & 0x3F));
+        } else {
+            buffer[offset++] = (byte) (0xF0 | (codePoint >> 18));
+            buffer[offset++] = (byte) (0x80 | ((codePoint >> 12) & 0x3F));
+            buffer[offset++] = (byte) (0x80 | ((codePoint >> 6) & 0x3F));
+            buffer[offset++] = (byte) (0x80 | (codePoint & 0x3F));
+        }
+        return offset;
     }
 
     private static int hexDigit(char c) {
