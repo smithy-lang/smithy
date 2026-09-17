@@ -86,12 +86,12 @@ public final class ModelSerializer {
                     // Exclude V2 specific traits.
                     return false;
                 } else {
-                    return trait.serializationMode() != Trait.SerializationMode.NONE;
+                    return !trait.isSynthetic();
                 }
             });
         } else {
             // 2.0 models just need to filter out synthetic traits, including box.
-            traitFilter = builder.traitFilter.and(trait -> trait.serializationMode() != Trait.SerializationMode.NONE);
+            traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
         }
     }
 

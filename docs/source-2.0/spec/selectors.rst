@@ -566,7 +566,7 @@ to a shape. The ``trait`` attribute supports the following properties:
 
        .. code-block:: none
 
-           [trait|smithy.synthetic#generated]
+           [trait|smithy.api#synthetic]
 
     Traits are converted to their serialized :token:`node <smithy:NodeValue>` form
     when matching against their values. Only string, boolean, and numeric

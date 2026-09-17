@@ -167,13 +167,17 @@ Explicit user-defined shapes are never grouped with synthetic shapes.
 A `list MyList { member: String }` is a distinct shape from
 `_SyntheticListOfString` even though they are structurally equivalent.
 
-### The `@generated` trait
+### The `@synthetic` trait
 
-Synthetic shapes carry a `@generated` trait in the semantic model and
-AST serialization. This trait identifies the shape as
+Synthetic shapes carry the `smithy.api#synthetic` trait in the semantic
+model and AST serialization. This trait identifies the shape as
 assembler-generated and allows IDL serializers to reconstruct the
 inline syntax when converting from AST back to IDL. It is not
 user-applicable: only the assembler may attach it.
+
+The trait is defined in the prelude so that any tooling that reads a
+model's JSON AST can resolve it, including tooling that predates inline
+collections or that reads a model serialized to an older IDL version.
 
 ### Traits on synthetic shapes
 
@@ -186,7 +190,7 @@ prevent this, traits cannot be applied to synthetic shapes.
 
 No traits may be applied to synthetic shapes, either at definition
 time or via `apply` statements. The `apply` statement MUST NOT target
-a shape that has the `@generated` trait.
+a shape that has the `@synthetic` trait.
 
 Traits that would normally apply to a collection shape (such as
 `@sparse` or `@uniqueItems`) cannot be expressed using inline syntax.
@@ -219,14 +223,14 @@ Synthetic shapes are normal shapes in the semantic model. They appear
 in selector results and can be matched by type:
 
 ```
-list                                 // matches all lists, including synthetic
-[trait|smithy.synthetic#generated]   // matches only generated synthetic shapes
+list                              // matches all lists, including synthetic
+[trait|smithy.api#synthetic]      // matches only generated synthetic shapes
 ```
 
 ### AST serialization
 
 In the JSON AST, synthetic shapes are serialized as normal shapes with
-the `@generated` trait attached:
+the `@synthetic` trait attached:
 
 ```json
 {
@@ -238,7 +242,7 @@ the `@generated` trait attached:
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         },
         "com.example#MyStructure": {
@@ -256,7 +260,7 @@ the `@generated` trait attached:
 ### IDL round-tripping
 
 When converting from JSON AST to IDL 2.1, a serializer SHOULD
-reconstruct inline syntax for shapes bearing the `@generated`
+reconstruct inline syntax for shapes bearing the `@synthetic`
 trait. When converting to IDL 2.0 or earlier, synthetic shapes MUST be
 serialized as explicit top-level shape definitions.
 
