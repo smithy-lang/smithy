@@ -1537,7 +1537,7 @@ These shapes are:
 
 - Named using a ``_Synthetic`` prefix derived from their content (e.g.,
   ``_SyntheticListOfString``, ``_SyntheticMapOfStringToString``).
-- Marked with the ``smithy.synthetic#generated`` trait.
+- Marked with the ``smithy.api#synthetic`` trait.
 - Placed in the same namespace as the declaring structure.
 - Grouped: multiple members using the same inline type (e.g., two members
   both using ``[String]``) share a single synthetic shape.

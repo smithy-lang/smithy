@@ -243,11 +243,11 @@ Value type
     }
 
 
-.. smithy-trait:: smithy.synthetic#generated
+.. smithy-trait:: smithy.api#synthetic
     :package: smithy-model
-.. _generated-trait:
+.. _synthetic-trait:
 
-``generated`` trait
+``synthetic`` trait
 ===================
 
 .. versionadded:: 2.1
@@ -266,7 +266,8 @@ A shape that carries it MUST be named using the reserved ``_Synthetic`` prefix.
 
 The trait is serialized in the :ref:`JSON AST <json-ast>` so that AST
 consumers can tell generated shapes apart from authored ones. It is never
-serialized in the IDL, where syntax carries the same information.
+serialized in the IDL, where the IDL 2.1 inline collection syntax carries the
+same information.
 The following two models are therefore equivalent:
 
 .. code-block:: json
@@ -280,7 +281,7 @@ The following two models are therefore equivalent:
                     "target": "smithy.api#String"
                 },
                 "traits": {
-                    "smithy.synthetic#generated": {}
+                    "smithy.api#synthetic": {}
                 }
             },
             "smithy.example#Playlist": {

@@ -102,8 +102,8 @@ public final class SmithyIdlModelSerializer {
         } else {
             shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         }
-        // Never serialize synthetic traits or AST-only traits in the IDL.
-        traitFilter = builder.traitFilter.and(trait -> trait.serializationMode() == Trait.SerializationMode.ALL);
+        // Never serialize synthetic traits in the IDL.
+        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
         basePath = builder.basePath;
         if (basePath != null) {
             Function<Shape, Path> placer = builder.shapePlacer;

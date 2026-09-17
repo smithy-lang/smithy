@@ -14,14 +14,17 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
  *
  * <p>This trait is applied by the assembler to shapes created from inline
  * collection syntax (e.g., {@code [String]} or {@code {String: String}}).
- * It is not user-applicable and does not need a definition in the prelude.
+ * It is not user-applicable.
  *
- * <p>Unlike other synthetic traits, this trait is persisted in the JSON AST
- * so that IDL serializers can reconstruct inline syntax from it.
+ * <p>The trait is defined in the prelude ({@code smithy.api#synthetic}) and is
+ * a normal persisted trait: it is serialized in the JSON AST so that AST
+ * consumers can tell generated shapes apart from authored ones. It is never
+ * serialized in the IDL; the IDL 2.1 inline collection syntax carries the same
+ * information.
  */
 public final class SyntheticShapeTrait extends AnnotationTrait {
 
-    public static final ShapeId ID = ShapeId.from("smithy.synthetic#generated");
+    public static final ShapeId ID = ShapeId.from("smithy.api#synthetic");
 
     public SyntheticShapeTrait() {
         super(ID, Node.objectNode());
@@ -29,16 +32,6 @@ public final class SyntheticShapeTrait extends AnnotationTrait {
 
     public SyntheticShapeTrait(ObjectNode node) {
         super(ID, node);
-    }
-
-    @Override
-    public boolean isSynthetic() {
-        return true;
-    }
-
-    @Override
-    public SerializationMode serializationMode() {
-        return SerializationMode.AST_ONLY;
     }
 
     public static final class Provider extends AnnotationTrait.Provider<SyntheticShapeTrait> {

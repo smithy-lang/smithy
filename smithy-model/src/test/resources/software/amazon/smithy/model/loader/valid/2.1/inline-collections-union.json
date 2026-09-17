@@ -18,7 +18,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         },
         "smithy.example#_SyntheticMapOfStringToInteger": {
@@ -30,7 +30,7 @@
                 "target": "smithy.api#Integer"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
             }
         }
     }
