@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added the @createsResources, @putsResources, @deletesResources, @readsResources, and @updatesResources traits that declare which resources an operation affects for relationships that fall outside a resource's standard lifecycle.",
+  "pull_requests": [
+    "[#3273](https://github.com/smithy-lang/smithy/pull/3273)"
+  ]
+}

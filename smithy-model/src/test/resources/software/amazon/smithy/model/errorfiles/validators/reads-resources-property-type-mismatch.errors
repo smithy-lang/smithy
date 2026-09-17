@@ -1,0 +1,1 @@
+[ERROR] com.example#GetWidget: JMESPath expression `label` for property `size` in `@readsResources` resolves to `smithy.api#String`, but the resource property targets `smithy.api#Integer`. | ResourceLifecycleTrait

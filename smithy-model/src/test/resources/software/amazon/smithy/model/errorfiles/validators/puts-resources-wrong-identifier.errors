@@ -1,0 +1,1 @@
+[ERROR] com.example#PutTable: Identifier `tableId` in `@putsResources` does not match any identifier of resource `com.example#Table`. Valid identifiers: [`tableName`] | ResourceLifecycleTrait
