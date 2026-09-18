@@ -111,7 +111,8 @@ public class InlineCollectionInjectiveNamingTest {
     // A rare, pathological collision that the naming scheme does not resolve: two foreign
     // targets whose flattened namespace and name coincide (`com.amazon#String` and
     // `com#amazon_String` both flatten to `com_amazon_String`). Rather than silently reuse
-    // the first synthetic shape, the loader reports an error so the user can disambiguate.
+    // the first synthetic shape, the two definitions conflict and the assembler's shape
+    // conflict validation reports it, the same as any other conflicting shape definition.
     @Test
     public void collidingSyntheticNamesAreReportedNotSilentlyReused() {
         ValidatedResult<Model> result = Model.assembler()
@@ -136,7 +137,8 @@ public class InlineCollectionInjectiveNamingTest {
                 .stream()
                 .filter(event -> event.getSeverity().name().equals("ERROR"))
                 .map(event -> event.getMessage())
-                .filter(message -> message.contains("conflicts with a different inline collection"))
+                .filter(message -> message.contains("Conflicting shape definition for")
+                        && message.contains("_SyntheticListOf_com_amazon_String"))
                 .collect(Collectors.toList());
         assertThat(errors, hasSize(1));
     }

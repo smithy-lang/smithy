@@ -102,9 +102,9 @@ final class IdlModelLoader {
     private final String filename;
     private final IdlInternalTokenizer tokenizer;
     private final Map<String, ShapeId> useShapes = new HashMap<>();
-    // Maps a generated synthetic shape ID to the canonical signature of the collection it was
-    // created from, so an identical collection reuses the shape and a different collection that
-    // somehow maps to the same ID is reported rather than silently overwriting the first.
+    // Deduplicates identical inline collections within a file by mapping a generated synthetic
+    // shape ID to the canonical signature it was created from. Collisions between different
+    // collections that map to the same ID are left for the assembler's shape-conflict validation.
     private final Map<ShapeId, String> emittedSyntheticShapes = new HashMap<>();
     private final Function<CharSequence, String> stringTable;
     private Consumer<LoadOperation> operations;
@@ -885,7 +885,7 @@ final class IdlModelLoader {
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
         String signature = "list:" + resolvedTarget;
 
-        if (registerSyntheticShape(syntheticId, signature, location)) {
+        if (shouldCreateSyntheticShape(syntheticId, signature)) {
             ListShape.Builder listBuilder = ListShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -936,7 +936,7 @@ final class IdlModelLoader {
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
         String signature = "map:" + resolvedKey + "," + resolvedValue;
 
-        if (registerSyntheticShape(syntheticId, signature, location)) {
+        if (shouldCreateSyntheticShape(syntheticId, signature)) {
             MapShape.Builder mapBuilder = MapShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -958,31 +958,20 @@ final class IdlModelLoader {
     }
 
     /**
-     * Registers a synthetic shape ID for the collection with the given canonical signature.
+     * Determines whether the synthetic shape for a collection should be created.
      *
-     * @return {@code true} if the shape should be created (first time this ID is seen);
-     *     {@code false} if an identical collection already produced it. If the same ID was
-     *     already produced by a <em>different</em> collection, a validation error is emitted
-     *     and {@code false} is returned so the first definition is preserved rather than
-     *     silently overwritten.
+     * <p>Deduplicates on the collection's canonical signature so that an identical inline
+     * collection encountered again in the same file is not emitted twice. A collection whose
+     * generated ID matches an earlier one but whose signature differs is still emitted, so the
+     * assembler's normal shape-conflict validation reports it (uniformly with the cross-file and
+     * cross-model cases) rather than it being silently dropped here.
+     *
+     * @return {@code true} if the shape should be created, {@code false} if an identical
+     *     collection already produced it in this file.
      */
-    private boolean registerSyntheticShape(ShapeId syntheticId, String signature, SourceLocation location) {
+    private boolean shouldCreateSyntheticShape(ShapeId syntheticId, String signature) {
         String existing = emittedSyntheticShapes.putIfAbsent(syntheticId, signature);
-        if (existing == null) {
-            return true;
-        }
-        if (!existing.equals(signature)) {
-            emit(ValidationEvent.builder()
-                    .id(Validator.MODEL_ERROR)
-                    .severity(Severity.ERROR)
-                    .sourceLocation(location)
-                    .shapeId(syntheticId)
-                    .message("Inline collection generated a synthetic shape name `" + syntheticId
-                            + "` that conflicts with a different inline collection in the same "
-                            + "namespace. Use explicit shape definitions to disambiguate.")
-                    .build());
-        }
-        return false;
+        return existing == null || !existing.equals(signature);
     }
 
     /**
