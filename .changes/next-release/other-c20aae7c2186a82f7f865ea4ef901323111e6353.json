@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Add protocol tests for HTTP URI conflict resolution. Fixes [#2667](https://github.com/smithy-lang/smithy/issues/2667)",
+  "pull_requests": [
+    "[#3294](https://github.com/smithy-lang/smithy/pull/3294)"
+  ]
+}
