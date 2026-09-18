@@ -53,10 +53,16 @@ final class CollectionElementResolver {
      * marked with the {@code @nestedProperties} trait.
      */
     static boolean hasElementMarker(Model model, ShapeId ioShapeId) {
-        return model.getShape(ioShapeId)
-                .flatMap(Shape::asStructureShape)
-                .map(shape -> shape.members().stream().anyMatch(m -> m.hasTrait(NestedPropertiesTrait.ID)))
-                .orElse(false);
+        Optional<StructureShape> ioShape = model.getShape(ioShapeId).flatMap(Shape::asStructureShape);
+        if (!ioShape.isPresent()) {
+            return false;
+        }
+        for (MemberShape member : ioShape.get().members()) {
+            if (member.hasTrait(NestedPropertiesTrait.ID)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
