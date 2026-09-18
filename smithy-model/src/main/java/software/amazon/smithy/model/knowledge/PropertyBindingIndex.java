@@ -339,6 +339,17 @@ public final class PropertyBindingIndex implements KnowledgeIndex {
         return !memberShapeDoesNotRequireProperty.getOrDefault(memberShape.toShapeId(), false);
     }
 
+    /**
+     * Returns true if the member is excluded from resource property binding
+     * by the {@code @notProperty} trait or by a trait marked with it.
+     *
+     * @param memberShape the member shape to check
+     * @return true if the member is explicitly excluded from property binding.
+     */
+    public boolean isNotPropertyMember(MemberShape memberShape) {
+        return doesNotRequireProperty(memberShape);
+    }
+
     private Model getModel() {
         return Objects.requireNonNull(model.get(), "The dereferenced WeakReference<Model> is null");
     }

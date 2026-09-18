@@ -27,7 +27,6 @@ import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -149,6 +148,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     outputElement.get(),
                     properties,
                     identifierBindingIndex.getOperationOutputElementBindings(resource, operationId),
+                    propertyBindingIndex,
                     propertyBindingIndex.isOperationOutputElementExplicit(resource, operationId),
                     events);
         } else {
@@ -166,6 +166,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     inputElement.get(),
                     properties,
                     identifierBindingIndex.getOperationInputElementBindings(resource, operationId),
+                    propertyBindingIndex,
                     true,
                     events);
         } else {
@@ -211,12 +212,12 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ShapeId elementId,
             Map<String, String> properties,
             Map<String, String> identifierBindings,
+            PropertyBindingIndex propertyBindingIndex,
             boolean strict,
             List<ValidationEvent> events
     ) {
         StructureShape element = model.expectShape(elementId, StructureShape.class);
         Set<String> identifierMembers = new HashSet<>(identifierBindings.values());
-        Set<ShapeId> notPropertyTraits = computeNotPropertyTraits(model);
         Map<String, Set<MemberShape>> propertyToMemberMappings = new TreeMap<>();
 
         for (MemberShape member : element.members()) {
@@ -225,7 +226,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             }
             String propertyName = properties.get(member.getMemberName());
             if (propertyName == null) {
-                if (strict && notPropertyTraits.stream().noneMatch(member::hasTrait)) {
+                if (strict && !propertyBindingIndex.isNotPropertyMember(member)) {
                     events.add(error(member,
                             String.format("Member `%s` does not target a property or identifier for resource "
                                     + "`%s`. If it is an identifier, apply the `%s` trait. If it is a property, apply "
@@ -260,14 +261,6 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             }
         }
         validateConflictingProperties(events, element, propertyToMemberMappings, strict);
-    }
-
-    private Set<ShapeId> computeNotPropertyTraits(Model model) {
-        return model.getShapesWithTrait(NotPropertyTrait.class)
-                .stream()
-                .filter(shape -> shape.hasTrait(TraitDefinition.ID))
-                .map(Shape::toShapeId)
-                .collect(Collectors.toSet());
     }
 
     private void processLifecycleOperationProperties(
