@@ -93,6 +93,35 @@ shape, but not to a blob shape.
     @length(min: 8, max: 32)
     string Username with [AlphaNumericMixin]
 
+Mixins can also be applied to maps, lists, and unions. For example:
+
+.. code-block:: smithy
+
+    @mixin
+    map StringMapMixin {
+        key: String
+        value: String
+    }
+
+    map Labels with [StringMapMixin] {}
+
+    @mixin
+    list StringListMixin {
+        member: String
+    }
+
+    list Aliases with [StringListMixin] {}
+
+    @mixin
+    union ErrorDetailMixin {
+        code: String
+        message: String
+    }
+
+    union ErrorDetail with [ErrorDetailMixin] {
+        retryable: Boolean
+    }
+
 
 Traits and mixins
 =================
@@ -412,7 +441,7 @@ supersede any traits inherited from mixins.
 
     @mixin
     structure A1 {
-        @private
+        @documentation("Generic docs")
         a: String
     }
 
@@ -422,7 +451,25 @@ supersede any traits inherited from mixins.
         a: String
     }
 
-    structure Valid with [A1, A2] {}
+    structure Valid with [A1, A2] {
+        @documentation("Specific docs")
+        a: String
+    }
+
+The ``a`` member of ``Valid`` targets the same shape as the ``a`` members
+inherited from the ``A1`` and ``A2`` mixins, so the model is valid. The
+:ref:`documentation-trait` applied to the redefined member supersedes the
+trait inherited from ``A1``, and the :ref:`required-trait` inherited from
+``A2`` is still applied to the copied member. The flattened ``Valid`` shape
+is equivalent to:
+
+.. code-block:: smithy
+
+    structure Valid {
+        @documentation("Specific docs")
+        @required
+        a: String
+    }
 
 
 Member ordering
