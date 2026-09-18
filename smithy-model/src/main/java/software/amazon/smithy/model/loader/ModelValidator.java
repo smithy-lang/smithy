@@ -23,6 +23,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
+import software.amazon.smithy.model.validation.suppressions.SuppressionUsage;
 import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
 import software.amazon.smithy.model.validation.validators.TargetValidator;
 import software.amazon.smithy.utils.BuilderRef;
@@ -205,6 +206,7 @@ final class ModelValidator implements Validator {
         private final List<Validator> criticalValidators;
         private final List<ValidationEvent> events = new ArrayList<>();
         private final ValidationEventDecorator validationEventDecorator;
+        private final SuppressionUsage suppressionUsage;
         private final Consumer<ValidationEvent> eventListener;
         private final boolean legacyValidationMode;
 
@@ -219,6 +221,11 @@ final class ModelValidator implements Validator {
             // ModelBasedEventDecorator.
             ModelBasedEventDecorator modelBasedEventDecorator = new ModelBasedEventDecorator();
             ValidatedResult<ValidationEventDecorator> result = modelBasedEventDecorator.createDecorator(model);
+            ValidationEventDecorator createdDecorator = result.getResult().orElse(null);
+            // No-op suppression warnings can only be created if the decorator tracks suppression usage.
+            this.suppressionUsage = createdDecorator instanceof SuppressionUsage
+                    ? (SuppressionUsage) createdDecorator
+                    : null;
             this.validationEventDecorator = result.getResult()
                     .map(decorator -> ValidationEventDecorator.compose(
                             ListUtils.of(decorator, validator.validationEventDecorator)))
@@ -307,7 +314,29 @@ final class ModelValidator implements Validator {
             }
 
             events.addAll(streamEvents(validators.parallelStream()));
+            emitNoOpSuppressionWarnings();
             return events;
+        }
+
+        /**
+         * Emits a WARNING event for each suppression that matched no validation events.
+         *
+         * <p>These warnings are emitted only after all validators have run. Emitting them when validation fails
+         * early would report suppressions as no-ops simply because the events they suppress were never emitted.
+         *
+         * <p>The warnings are intentionally not decorated by the suppression and severity override pipeline.
+         * Suppressing a no-op suppression warning would allow a stale suppression to permanently silence the
+         * warning about itself, defeating the purpose of the warning.
+         */
+        private void emitNoOpSuppressionWarnings() {
+            if (suppressionUsage == null) {
+                return;
+            }
+
+            for (ValidationEvent warning : suppressionUsage.createNoOpSuppressionWarnings()) {
+                eventListener.accept(warning);
+                events.add(warning);
+            }
         }
 
         private List<ValidationEvent> streamEvents(Stream<Validator> validators) {
