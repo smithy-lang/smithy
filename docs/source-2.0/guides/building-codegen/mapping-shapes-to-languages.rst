@@ -66,8 +66,8 @@ Smithy model should not impact generated code.
 
 .. versionadded:: 2.1
    :ref:`Inline collection declarations <idl-inline-collections>` produce
-   synthetic list and map shapes with auto-generated names (e.g.,
-   ``_SyntheticListOfString``). These names are implementation details and
+   synthetic list and map shapes with auto-generated ``_Synthetic``-prefixed
+   names. These names are implementation details and
    SHOULD NOT be used as generated type names. Generators can detect synthetic
    shapes by checking for the ``smithy.api#synthetic`` trait.
 
