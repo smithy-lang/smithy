@@ -1,0 +1,71 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "InheritedAuthService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/a2-inherits-auth-no-key": {
+            "get": {
+                "operationId": "InheritsAuthNoKey",
+                "responses": {
+                    "200": {
+                        "description": "InheritsAuthNoKey 200 response"
+                    }
+                }
+            }
+        },
+        "/a3-inherits-auth-with-key": {
+            "get": {
+                "operationId": "InheritsAuthWithKey",
+                "responses": {
+                    "200": {
+                        "description": "InheritsAuthWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "aws.auth.sigv4": []
+                    }
+                ]
+            }
+        },
+        "/a5-disabled-auth-with-key": {
+            "get": {
+                "operationId": "DisabledAuthWithKey",
+                "responses": {
+                    "200": {
+                        "description": "DisabledAuthWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "aws.auth.sigv4": {
+                "type": "apiKey",
+                "description": "AWS Signature Version 4 authentication",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "awsSigv4"
+            }
+        }
+    },
+    "security": [
+        {
+            "aws.auth.sigv4": []
+        }
+    ]
+}

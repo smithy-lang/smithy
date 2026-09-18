@@ -291,6 +291,20 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
             return this;
         }
 
+        /**
+         * Removes all security requirements from the operation.
+         *
+         * <p>If nothing is added back, the built operation has no security field at all
+         * (inheriting the document-level security requirements) rather than an explicitly
+         * empty one.
+         *
+         * @return Returns the builder.
+         */
+        public Builder clearSecurity() {
+            this.security.clear();
+            return this;
+        }
+
         public Builder servers(Collection<ServerObject> servers) {
             this.servers.clear();
             servers.forEach(this::addServer);
