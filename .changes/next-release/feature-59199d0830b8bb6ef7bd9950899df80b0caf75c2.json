@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add a warning for suppressions that did not match any validation events. Fixes [#2623](https://github.com/smithy-lang/smithy/issues/2623)",
+  "pull_requests": []
+}
