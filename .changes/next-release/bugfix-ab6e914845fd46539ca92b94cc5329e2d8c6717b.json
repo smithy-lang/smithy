@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Fix CLI output when rendering long source lines so that the pointer never goes past the truncation marker. Fixes [#2491](https://github.com/smithy-lang/smithy/issues/2491)",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3292](https://github.com/smithy-lang/smithy/pull/3292)"
+  ]
 }
