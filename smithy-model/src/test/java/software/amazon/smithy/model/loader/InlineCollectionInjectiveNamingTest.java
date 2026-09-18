@@ -85,7 +85,15 @@ public class InlineCollectionInjectiveNamingTest {
 
         ShapeId a = result.expectShape(ShapeId.from("smithy.example#First$a"), MemberShape.class).getTarget();
         ShapeId b = result.expectShape(ShapeId.from("smithy.example#Second$b"), MemberShape.class).getTarget();
-        assertThat(a, equalTo(b));
+
+        // Both members target the same synthetic shape, and that shape has the expected id and
+        // element target. Asserting the concrete id and element guards against a regression that
+        // collapsed every inline collection onto one shape.
+        ShapeId expectedList = ShapeId.from("smithy.example#_SyntheticListOf__String");
+        assertThat(a, equalTo(expectedList));
+        assertThat(b, equalTo(expectedList));
+        assertThat(result.expectShape(expectedList, ListShape.class).getMember().getTarget(),
+                equalTo(ShapeId.from("smithy.api#String")));
     }
 
     @Test

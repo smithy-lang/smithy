@@ -171,7 +171,7 @@ final class LoaderUtils {
      * Generates a synthetic name for an inline list shape.
      *
      * <p>The name is derived from the fully-resolved element target (see
-     * {@link #syntheticToken(ShapeId, String)}). It is deterministic and order-independent.
+     * {@link #syntheticToken(String, ShapeId)}). It is deterministic and order-independent.
      * It is injective for the common cases; a small set of pathological targets can collide,
      * which the loader detects and reports as an error rather than silently reusing a shape.
      *
@@ -180,7 +180,7 @@ final class LoaderUtils {
      * @return The synthetic shape name (without namespace).
      */
     static String listName(String containingNamespace, ShapeId memberTarget) {
-        return PREFIX + "ListOf" + syntheticToken(memberTarget, containingNamespace);
+        return PREFIX + "ListOf" + syntheticToken(containingNamespace, memberTarget);
     }
 
     /**
@@ -196,9 +196,9 @@ final class LoaderUtils {
      */
     static String mapName(String containingNamespace, ShapeId keyTarget, ShapeId valueTarget) {
         return PREFIX + "MapOf"
-                + syntheticToken(keyTarget, containingNamespace)
+                + syntheticToken(containingNamespace, keyTarget)
                 + "_To_"
-                + syntheticToken(valueTarget, containingNamespace);
+                + syntheticToken(containingNamespace, valueTarget);
     }
 
     /**
@@ -224,7 +224,7 @@ final class LoaderUtils {
      * constructions (e.g. {@code com.amazon#String} versus {@code com#amazon_String}). Those are
      * detected by the loader and reported as an error rather than silently reused.
      */
-    private static String syntheticToken(ShapeId target, String containingNamespace) {
+    private static String syntheticToken(String containingNamespace, ShapeId target) {
         boolean sameNamespace = target.getNamespace().equals(containingNamespace);
         if (sameNamespace && target.getName().startsWith(PREFIX)) {
             return "_" + target.getName();
