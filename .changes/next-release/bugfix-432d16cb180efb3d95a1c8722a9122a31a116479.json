@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix API Gateway ApiKeyRequired OpenApi mapper to work with service level security schemes",
+  "pull_requests": []
+}
