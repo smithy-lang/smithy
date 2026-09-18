@@ -496,6 +496,13 @@ non-nullable because those members can never remove the `@required` trait.
 Not observing these optionality affordances runs the risk of previously
 generated code breaking when a model is updated in the future.
 
+Implicit client optionality only controls generated types. It does not weaken
+the `@required` trait during authoritative validation. Adding `@required` to an
+existing member of an `@input` structure is therefore backward incompatible if
+the service previously accepted requests that omitted the member. A service
+that is only correcting its model to describe an already-enforced requirement
+can explicitly suppress the corresponding compatibility event.
+
 Organizations that want stricter optionality controls over inputs can choose to
 not use the `@input` trait.
 
