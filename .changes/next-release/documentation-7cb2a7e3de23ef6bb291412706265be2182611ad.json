@@ -1,0 +1,5 @@
+{
+  "type": "documentation",
+  "description": "Added mixin examples for maps, lists, and unions, and fixed the member trait supersession example in the mixins specification. Fixes [#2535](https://github.com/smithy-lang/smithy/issues/2535)",
+  "pull_requests": []
+}
