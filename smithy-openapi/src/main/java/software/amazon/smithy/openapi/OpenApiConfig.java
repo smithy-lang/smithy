@@ -99,6 +99,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private ErrorStatusConflictHandlingStrategy onErrorStatusConflict;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
     private boolean useStringsForArbitraryPrecision = false;
+    private boolean useOperationInputOutputShapeNames = false;
 
     public OpenApiConfig() {
         super();
@@ -388,6 +389,24 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setUseStringsForArbitraryPrecision(boolean useStringsForArbitraryPrecision) {
         this.useStringsForArbitraryPrecision = useStringsForArbitraryPrecision;
+    }
+
+    public boolean getUseOperationInputOutputShapeNames() {
+        return useOperationInputOutputShapeNames;
+    }
+
+    /**
+     * Set to true to name synthesized operation input and output content schemas
+     * after the Smithy input and output structures.
+     *
+     * <p>By default, synthesized operation content schemas are named after the
+     * operation with a {@code RequestContent} or {@code ResponseContent} suffix.
+     *
+     * @param useOperationInputOutputShapeNames True to use the Smithy input and
+     *                                          output shape names when possible.
+     */
+    public void setUseOperationInputOutputShapeNames(boolean useOperationInputOutputShapeNames) {
+        this.useOperationInputOutputShapeNames = useOperationInputOutputShapeNames;
     }
 
     /**
