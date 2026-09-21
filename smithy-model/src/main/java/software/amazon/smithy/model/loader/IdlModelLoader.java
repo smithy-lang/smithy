@@ -102,7 +102,10 @@ final class IdlModelLoader {
     private final String filename;
     private final IdlInternalTokenizer tokenizer;
     private final Map<String, ShapeId> useShapes = new HashMap<>();
-    private final Set<ShapeId> emittedSyntheticShapes = new HashSet<>();
+    // Deduplicates identical inline collections within a file by mapping a generated synthetic
+    // shape ID to the canonical signature it was created from. Collisions between different
+    // collections that map to the same ID are left for the assembler's shape-conflict validation.
+    private final Map<ShapeId, String> emittedSyntheticShapes = new HashMap<>();
     private final Function<CharSequence, String> stringTable;
     private Consumer<LoadOperation> operations;
     private Version modelVersion = Version.VERSION_1_0;
@@ -875,13 +878,14 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACKET);
         tokenizer.next();
 
-        // Compute the synthetic name from the target string as written.
-        String syntheticName = LoaderUtils.listName(innerTarget);
+        // Resolve the element target first, then derive the synthetic name from the resolved
+        // shape ID so the name is deterministic and injective regardless of namespaces.
+        ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
+        String syntheticName = LoaderUtils.listName(namespace, resolvedTarget);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+        String signature = "list:" + resolvedTarget;
 
-        // Create the synthetic list shape if not already emitted.
-        if (emittedSyntheticShapes.add(syntheticId)) {
-            ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
+        if (shouldCreateSyntheticShape(syntheticId, signature)) {
             ListShape.Builder listBuilder = ListShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -924,15 +928,15 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
 
-        // Compute the synthetic name from the target strings as written.
-        String syntheticName = LoaderUtils.mapName(keyTarget, valueTarget);
+        // Resolve the key and value targets first, then derive the synthetic name from the
+        // resolved shape IDs so the name is deterministic and injective regardless of namespaces.
+        ShapeId resolvedKey = resolveInlineTarget(keyTarget);
+        ShapeId resolvedValue = resolveInlineTarget(valueTarget);
+        String syntheticName = LoaderUtils.mapName(namespace, resolvedKey, resolvedValue);
         ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+        String signature = "map:" + resolvedKey + "," + resolvedValue;
 
-        // Create the synthetic map shape if not already emitted.
-        if (emittedSyntheticShapes.add(syntheticId)) {
-            ShapeId resolvedKey = resolveInlineTarget(keyTarget);
-            ShapeId resolvedValue = resolveInlineTarget(valueTarget);
-
+        if (shouldCreateSyntheticShape(syntheticId, signature)) {
             MapShape.Builder mapBuilder = MapShape.builder()
                     .id(syntheticId)
                     .source(location)
@@ -951,6 +955,23 @@ final class IdlModelLoader {
         }
 
         return syntheticId.toString();
+    }
+
+    /**
+     * Determines whether the synthetic shape for a collection should be created.
+     *
+     * <p>Deduplicates on the collection's canonical signature so that an identical inline
+     * collection encountered again in the same file is not emitted twice. A collection whose
+     * generated ID matches an earlier one but whose signature differs is still emitted, so the
+     * assembler's normal shape-conflict validation reports it (uniformly with the cross-file and
+     * cross-model cases) rather than it being silently dropped here.
+     *
+     * @return {@code true} if the shape should be created, {@code false} if an identical
+     *     collection already produced it in this file.
+     */
+    private boolean shouldCreateSyntheticShape(ShapeId syntheticId, String signature) {
+        String existing = emittedSyntheticShapes.putIfAbsent(syntheticId, signature);
+        return existing == null || !existing.equals(signature);
     }
 
     /**
