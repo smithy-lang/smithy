@@ -157,8 +157,8 @@ inline collections, consider the following:
 
 Replacing an explicit list or map shape with inline syntax is
 wire-compatible (the serialized data is identical), but changes the shape ID
-from the explicit name to a synthetic name (e.g., ``MyList`` becomes
-``_SyntheticListOfString``). This may be a breaking change for:
+from the explicit name to an assembler-generated ``_Synthetic``-prefixed name.
+This may be a breaking change for:
 
 - Other models referencing the shape by name.
 - Code generators that derive type names from shape IDs.

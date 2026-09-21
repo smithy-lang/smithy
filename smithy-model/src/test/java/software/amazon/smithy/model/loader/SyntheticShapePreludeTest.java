@@ -61,7 +61,7 @@ public class SyntheticShapePreludeTest {
                 .assemble()
                 .unwrap();
 
-        Shape listOfString = model.expectShape(ShapeId.from("smithy.example#_SyntheticListOfString"));
+        Shape listOfString = model.expectShape(ShapeId.from("smithy.example#_SyntheticListOf__String"));
         assertThat(listOfString.hasTrait(SyntheticShapeTrait.ID), is(true));
         assertThat(SyntheticShapeTrait.ID, is(ShapeId.from("smithy.api#synthetic")));
     }
@@ -82,7 +82,7 @@ public class SyntheticShapePreludeTest {
         assertThat(eventIds(reloaded, "Model"), is(empty()));
         Model reloadedModel = reloaded.unwrap();
         Shape listOfString =
-                reloadedModel.expectShape(ShapeId.from("smithy.example#_SyntheticListOfString"));
+                reloadedModel.expectShape(ShapeId.from("smithy.example#_SyntheticListOf__String"));
         assertThat(listOfString.hasTrait(SyntheticShapeTrait.ID), is(true));
     }
 
@@ -96,7 +96,7 @@ public class SyntheticShapePreludeTest {
         ObjectNode serialized = ModelSerializer.builder().build().serialize(model);
         ObjectNode shapes = serialized.expectObjectMember("shapes");
         ObjectNode listShape = shapes
-                .expectObjectMember("smithy.example#_SyntheticListOfString");
+                .expectObjectMember("smithy.example#_SyntheticListOf__String");
         ObjectNode traits = listShape.expectObjectMember("traits");
         assertThat(traits.getMember("smithy.api#synthetic").isPresent(), is(true));
     }

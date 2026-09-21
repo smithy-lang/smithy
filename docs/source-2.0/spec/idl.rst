@@ -1535,8 +1535,11 @@ Inline collections can be nested:
 Inline collection declarations produce assembler-generated *synthetic shapes*.
 These shapes are:
 
-- Named using a ``_Synthetic`` prefix derived from their content (e.g.,
-  ``_SyntheticListOfString``, ``_SyntheticMapOfStringToString``).
+- Named using a reserved ``_Synthetic`` prefix. The rest of the name is
+  derived deterministically from the collection's resolved element types, so
+  the same collection always produces the same name and structurally different
+  collections produce different names. The exact encoding is an implementation
+  detail and MUST NOT be relied upon.
 - Marked with the ``smithy.api#synthetic`` trait.
 - Placed in the same namespace as the declaring structure.
 - Grouped: multiple members using the same inline type (e.g., two members
