@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "names": {
-                    "target": "smithy.example#_SyntheticListOfString"
+                    "target": "smithy.example#_SyntheticListOf__String"
                 }
             }
         },
@@ -13,11 +13,11 @@
             "type": "structure",
             "members": {
                 "tags": {
-                    "target": "smithy.example#_SyntheticListOfString"
+                    "target": "smithy.example#_SyntheticListOf__String"
                 }
             }
         },
-        "smithy.example#_SyntheticListOfString": {
+        "smithy.example#_SyntheticListOf__String": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"

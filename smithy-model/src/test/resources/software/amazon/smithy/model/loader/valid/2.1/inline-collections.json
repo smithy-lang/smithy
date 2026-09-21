@@ -5,17 +5,17 @@
             "type": "structure",
             "members": {
                 "strings": {
-                    "target": "smithy.example#_SyntheticListOfString"
+                    "target": "smithy.example#_SyntheticListOf__String"
                 },
                 "tags": {
-                    "target": "smithy.example#_SyntheticMapOfStringToString"
+                    "target": "smithy.example#_SyntheticMapOf__String_To___String"
                 },
                 "nested": {
-                    "target": "smithy.example#_SyntheticMapOfStringTo_SyntheticListOfInteger"
+                    "target": "smithy.example#_SyntheticMapOf__String_To___SyntheticListOf__Integer"
                 }
             }
         },
-        "smithy.example#_SyntheticListOfString": {
+        "smithy.example#_SyntheticListOf__String": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
@@ -24,7 +24,7 @@
                 "smithy.api#synthetic": {}
             }
         },
-        "smithy.example#_SyntheticMapOfStringToString": {
+        "smithy.example#_SyntheticMapOf__String_To___String": {
             "type": "map",
             "key": {
                 "target": "smithy.api#String"
@@ -36,7 +36,7 @@
                 "smithy.api#synthetic": {}
             }
         },
-        "smithy.example#_SyntheticListOfInteger": {
+        "smithy.example#_SyntheticListOf__Integer": {
             "type": "list",
             "member": {
                 "target": "smithy.api#Integer"
@@ -45,13 +45,13 @@
                 "smithy.api#synthetic": {}
             }
         },
-        "smithy.example#_SyntheticMapOfStringTo_SyntheticListOfInteger": {
+        "smithy.example#_SyntheticMapOf__String_To___SyntheticListOf__Integer": {
             "type": "map",
             "key": {
                 "target": "smithy.api#String"
             },
             "value": {
-                "target": "smithy.example#_SyntheticListOfInteger"
+                "target": "smithy.example#_SyntheticListOf__Integer"
             },
             "traits": {
                 "smithy.api#synthetic": {}

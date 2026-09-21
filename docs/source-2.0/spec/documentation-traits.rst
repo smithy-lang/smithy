@@ -275,7 +275,7 @@ The following two models are therefore equivalent:
     {
         "smithy": "2.1",
         "shapes": {
-            "smithy.example#_SyntheticListOfString": {
+            "smithy.example#_SyntheticListOf__String": {
                 "type": "list",
                 "member": {
                     "target": "smithy.api#String"
@@ -288,7 +288,7 @@ The following two models are therefore equivalent:
                 "type": "structure",
                 "members": {
                     "songs": {
-                        "target": "smithy.example#_SyntheticListOfString"
+                        "target": "smithy.example#_SyntheticListOf__String"
                     }
                 }
             }
