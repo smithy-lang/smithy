@@ -1,14 +1,6 @@
 {
     "smithy": "2.1",
     "shapes": {
-        "smithy.protocols#idx": {
-            "type": "integer",
-            "traits": {
-                "smithy.api#trait": {
-                    "selector": "member"
-                }
-            }
-        },
         "smithy.protocols#Common": {
             "type": "structure",
             "members": {
@@ -67,7 +59,7 @@
                     }
                 },
                 "values": {
-                    "target": "smithy.protocols#_SyntheticListOfString",
+                    "target": "smithy.protocols#_SyntheticListOf__String",
                     "traits": {
                         "smithy.protocols#idx": 2147483647
                     }
@@ -80,13 +72,21 @@
                 "smithy.protocols#idx": 3
             }
         },
-        "smithy.protocols#_SyntheticListOfString": {
+        "smithy.protocols#_SyntheticListOf__String": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.synthetic#generated": {}
+                "smithy.api#synthetic": {}
+            }
+        },
+        "smithy.protocols#idx": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member"
+                }
             }
         }
     }
