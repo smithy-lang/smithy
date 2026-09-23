@@ -818,8 +818,11 @@ final class IdlModelLoader {
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
             tokenizer.skipSpaces();
-            String target = parseMemberTarget();
-            addForwardReference(target, memberBuilder::target);
+            // Resolve the member target the same way for plain shape IDs and inline
+            // collections: through the shared forward-reference machinery so that an
+            // unqualified name follows imports -> current namespace -> prelude, and
+            // inline collections derive their synthetic name from the resolved target.
+            resolveMemberTargetInto(0, memberBuilder::target);
         }
 
         // Skip spaces to check if there is default trait sugar.
@@ -923,25 +926,41 @@ final class IdlModelLoader {
     }
 
     /**
-     * Parses a member target, which can be a shape ID, an inline list ([Target]),
-     * or an inline map ({KeyTarget: ValueTarget}). Returns the target as a string.
+     * Resolves a member target (a plain shape ID, an inline list {@code [Target]},
+     * or an inline map {@code {KeyTarget: ValueTarget}}) and passes the resolved
+     * target's {@link ShapeId} to {@code consumer}.
+     *
+     * <p>Resolution is always deferred through the shared forward-reference machinery
+     * (see {@link #addForwardReference} and
+     * {@code LoadOperationProcessor#detectAndEmitForwardReference}). This is what makes
+     * an unqualified name inside inline brackets resolve exactly like every other member
+     * target: imports first, then the current namespace, then the prelude. For inline
+     * collections the synthetic shape's name is derived from the fully-resolved inner
+     * target(s), so the synthetic shape is created inside the resolution callback, once
+     * the target namespaces are actually known, rather than eagerly during parsing.
+     *
+     * <p>The syntactic tokens are still consumed synchronously here; only the resolution
+     * and synthetic-shape creation are deferred.
+     *
+     * @param depth Current inline nesting depth (0 for a top-level member target).
+     * @param consumer Receives the resolved target ShapeId (a plain shape ID or the
+     *     synthetic collection shape ID) when resolution completes.
      */
-    private String parseMemberTarget() {
-        return parseMemberTarget(0);
-    }
-
-    private String parseMemberTarget(int depth) {
+    private void resolveMemberTargetInto(int depth, Consumer<ShapeId> consumer) {
         switch (tokenizer.getCurrentToken()) {
             case LBRACKET:
-                return parseInlineListTarget(depth);
+                resolveInlineListTarget(depth, consumer);
+                break;
             case LBRACE:
-                return parseInlineMapTarget(depth);
+                resolveInlineMapTarget(depth, consumer);
+                break;
             default:
-                return internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
+                String target = internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
+                addForwardReference(target, consumer);
         }
     }
 
-    private String parseInlineListTarget(int depth) {
+    private void resolveInlineListTarget(int depth, Consumer<ShapeId> consumer) {
         if (!modelVersion.supportsInlineCollections()) {
             throw syntax("Inline collection syntax requires Smithy IDL version 2.1 or later");
         }
@@ -955,36 +974,36 @@ final class IdlModelLoader {
         tokenizer.next();
         tokenizer.skipWs();
 
-        String innerTarget = parseMemberTarget(depth + 1);
+        // Resolve the element target first (deferred). Once it is known, derive the
+        // synthetic name from the resolved shape ID (deterministic and injective
+        // regardless of namespaces), create the synthetic list, and hand its ID up.
+        resolveMemberTargetInto(depth + 1, resolvedTarget -> {
+            String syntheticName = LoaderUtils.listName(namespace, resolvedTarget);
+            ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+            String signature = "list:" + resolvedTarget;
+
+            if (shouldCreateSyntheticShape(syntheticId, signature)) {
+                ListShape.Builder listBuilder = ListShape.builder()
+                        .id(syntheticId)
+                        .source(location)
+                        .member(MemberShape.builder()
+                                .id(syntheticId.withMember("member"))
+                                .target(resolvedTarget)
+                                .source(location)
+                                .build())
+                        .addTrait(new SyntheticShapeTrait());
+                addOperation(createShape(listBuilder));
+            }
+
+            consumer.accept(syntheticId);
+        });
 
         tokenizer.skipWs();
         tokenizer.expect(IdlToken.RBRACKET);
         tokenizer.next();
-
-        // Resolve the element target first, then derive the synthetic name from the resolved
-        // shape ID so the name is deterministic and injective regardless of namespaces.
-        ShapeId resolvedTarget = resolveInlineTarget(innerTarget);
-        String syntheticName = LoaderUtils.listName(namespace, resolvedTarget);
-        ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
-        String signature = "list:" + resolvedTarget;
-
-        if (shouldCreateSyntheticShape(syntheticId, signature)) {
-            ListShape.Builder listBuilder = ListShape.builder()
-                    .id(syntheticId)
-                    .source(location)
-                    .member(MemberShape.builder()
-                            .id(syntheticId.withMember("member"))
-                            .target(resolvedTarget)
-                            .source(location)
-                            .build())
-                    .addTrait(new SyntheticShapeTrait());
-            addOperation(createShape(listBuilder));
-        }
-
-        return syntheticId.toString();
     }
 
-    private String parseInlineMapTarget(int depth) {
+    private void resolveInlineMapTarget(int depth, Consumer<ShapeId> consumer) {
         if (!modelVersion.supportsInlineCollections()) {
             throw syntax("Inline collection syntax requires Smithy IDL version 2.1 or later");
         }
@@ -998,46 +1017,85 @@ final class IdlModelLoader {
         tokenizer.next();
         tokenizer.skipWs();
 
-        String keyTarget = parseMemberTarget(depth + 1);
+        // The synthetic map name needs both resolved key and value. Both resolutions are
+        // deferred and are guaranteed to complete before forward-reference resolution
+        // finishes, so a small two-slot join fires the synthetic-shape creation when the
+        // second of the two targets resolves.
+        InlineMapJoin join = new InlineMapJoin(location, consumer);
+
+        resolveMemberTargetInto(depth + 1, join::setKey);
 
         tokenizer.skipWs();
         tokenizer.expect(IdlToken.COLON);
         tokenizer.next();
         tokenizer.skipWs();
 
-        String valueTarget = parseMemberTarget(depth + 1);
+        resolveMemberTargetInto(depth + 1, join::setValue);
 
         tokenizer.skipWs();
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
+    }
 
-        // Resolve the key and value targets first, then derive the synthetic name from the
-        // resolved shape IDs so the name is deterministic and injective regardless of namespaces.
-        ShapeId resolvedKey = resolveInlineTarget(keyTarget);
-        ShapeId resolvedValue = resolveInlineTarget(valueTarget);
-        String syntheticName = LoaderUtils.mapName(namespace, resolvedKey, resolvedValue);
-        ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
-        String signature = "map:" + resolvedKey + "," + resolvedValue;
+    /**
+     * Joins the deferred resolution of an inline map's key and value targets. When both
+     * are known, derives the synthetic map name, creates the synthetic map shape, and
+     * hands its ID to the containing consumer. The two callbacks run during forward-
+     * reference resolution; whichever resolves second triggers creation.
+     */
+    private final class InlineMapJoin {
+        private final SourceLocation location;
+        private final Consumer<ShapeId> consumer;
+        private ShapeId key;
+        private ShapeId value;
+        private boolean keySet;
+        private boolean valueSet;
 
-        if (shouldCreateSyntheticShape(syntheticId, signature)) {
-            MapShape.Builder mapBuilder = MapShape.builder()
-                    .id(syntheticId)
-                    .source(location)
-                    .key(MemberShape.builder()
-                            .id(syntheticId.withMember("key"))
-                            .target(resolvedKey)
-                            .source(location)
-                            .build())
-                    .value(MemberShape.builder()
-                            .id(syntheticId.withMember("value"))
-                            .target(resolvedValue)
-                            .source(location)
-                            .build())
-                    .addTrait(new SyntheticShapeTrait());
-            addOperation(createShape(mapBuilder));
+        private InlineMapJoin(SourceLocation location, Consumer<ShapeId> consumer) {
+            this.location = location;
+            this.consumer = consumer;
         }
 
-        return syntheticId.toString();
+        private void setKey(ShapeId resolved) {
+            this.key = resolved;
+            this.keySet = true;
+            complete();
+        }
+
+        private void setValue(ShapeId resolved) {
+            this.value = resolved;
+            this.valueSet = true;
+            complete();
+        }
+
+        private void complete() {
+            if (!keySet || !valueSet) {
+                return;
+            }
+            String syntheticName = LoaderUtils.mapName(namespace, key, value);
+            ShapeId syntheticId = ShapeId.fromParts(namespace, syntheticName);
+            String signature = "map:" + key + "," + value;
+
+            if (shouldCreateSyntheticShape(syntheticId, signature)) {
+                MapShape.Builder mapBuilder = MapShape.builder()
+                        .id(syntheticId)
+                        .source(location)
+                        .key(MemberShape.builder()
+                                .id(syntheticId.withMember("key"))
+                                .target(key)
+                                .source(location)
+                                .build())
+                        .value(MemberShape.builder()
+                                .id(syntheticId.withMember("value"))
+                                .target(value)
+                                .source(location)
+                                .build())
+                        .addTrait(new SyntheticShapeTrait());
+                addOperation(createShape(mapBuilder));
+            }
+
+            consumer.accept(syntheticId);
+        }
     }
 
     /**
@@ -1055,27 +1113,6 @@ final class IdlModelLoader {
     private boolean shouldCreateSyntheticShape(ShapeId syntheticId, String signature) {
         String existing = emittedSyntheticShapes.putIfAbsent(syntheticId, signature);
         return existing == null || !existing.equals(signature);
-    }
-
-    /**
-     * Resolves an inline target string to a ShapeId, checking use statements
-     * and the prelude, defaulting to the current namespace for relative names.
-     */
-    private ShapeId resolveInlineTarget(String target) {
-        if (target.contains("#")) {
-            return ShapeId.from(target);
-        }
-        // Check use statements first.
-        ShapeId used = useShapes.get(target);
-        if (used != null) {
-            return used;
-        }
-        // Check if it's a prelude shape.
-        ShapeId preludeId = ShapeId.fromParts(Prelude.NAMESPACE, target);
-        if (Prelude.isPreludeShape(preludeId)) {
-            return preludeId;
-        }
-        return ShapeId.fromParts(namespace, target);
     }
 
     private void parseForResource(LoadOperation.DefineShape operation) {
