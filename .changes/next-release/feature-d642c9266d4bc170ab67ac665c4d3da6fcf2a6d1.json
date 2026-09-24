@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Add rpcv2Cbor protocol tests for UTF-8 string/map-key lengths, integer-encoded floats, and negative-integer timestamps",
+  "pull_requests": [
+    "[#3253](https://github.com/smithy-lang/smithy/pull/3253)"
+  ]
+}
