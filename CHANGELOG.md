@@ -31,6 +31,7 @@
 ### Documentation
 
 - Added client guidance for interceptors.
+  ([#2992](https://github.com/smithy-lang/smithy/pull/2992))
 - Added client guidance for plugin composition, ordering, and discovery.
   ([#3283](https://github.com/smithy-lang/smithy/pull/3283))
 
