@@ -271,6 +271,15 @@
                 "target": "ns.foo#Timestamp"
             }
         },
+        "ns.foo#SparseTimestampList": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#Timestamp"
+            },
+            "traits": {
+                "smithy.api#sparse": {}
+            }
+        },
         "ns.foo#Structure2": {
             "type": "structure",
             "members": {
