@@ -17,7 +17,7 @@
     },
     {
       "type": "bugfix",
-      "description": "Fixed resource property and identifier bindings not being discovered through the output list member of `list` lifecycle operations, fixing `ResourceOperationInputOutput` errors for list-only resources. Collection operations can now bind properties and identifiers through list elements explicitly by applying `@nestedProperties` to an input or output member targeting a list of structures. ([#2968](https://github.com/smithy-lang/smithy/issues/2968))",
+      "description": "Fixed resource property and identifier bindings not being discovered through the output list member of `list` lifecycle operations, fixing `ResourceOperationInputOutput` errors for list-only resources. Collection operations can now bind properties and identifiers through list elements explicitly by applying `@nestedProperties` to an input or output member targeting a list of structures.",
       "pull_requests": [
         "[#3269](https://github.com/smithy-lang/smithy/pull/3269)"
       ]
@@ -62,6 +62,13 @@
       "description": "Unmarked `contentMediaType` as unsupported in 3.1 OpenApi Spec",
       "pull_requests": [
         "[#3275](https://github.com/smithy-lang/smithy/pull/3275)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Added the `@createsResources`, `@putsResources`, `@deletesResources`, `@readsResources`, and `@updatesResources` traits that declare which resources an operation affects for relationships that fall outside a resource's standard lifecycle.",
+      "pull_requests": [
+        "[#3273](https://github.com/smithy-lang/smithy/pull/3273)"
       ]
     }
   ],
