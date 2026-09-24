@@ -10,6 +10,10 @@
   ([#3277](https://github.com/smithy-lang/smithy/pull/3277))
 - Update stale error message for AddedRequiredMember
   ([#3261](https://github.com/smithy-lang/smithy/pull/3261))
+- Added the `@createsResources`, `@putsResources`, `@deletesResources`,
+  `@readsResources`, and `@updatesResources` traits that declare which resources
+  an operation affects for relationships that fall outside a resource's standard
+  lifecycle. ([#3273](https://github.com/smithy-lang/smithy/pull/3273))
 
 ### Bug Fixes
 
@@ -19,7 +23,6 @@
   operations can now bind properties and identifiers through list elements
   explicitly by applying `@nestedProperties` to an input or output member
   targeting a list of structures.
-  ([#2968](https://github.com/smithy-lang/smithy/issues/2968))
   ([#3269](https://github.com/smithy-lang/smithy/pull/3269))
 - Resolve endpoint rule-set components against the model's classloader
   ([#3267](https://github.com/smithy-lang/smithy/pull/3267))
@@ -4734,3 +4737,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+
