@@ -627,13 +627,22 @@ Removing a binding or changing a binding's ``resource`` is a breaking change.
 
     @createsResources([
         {
-            resource: Snapshot
-            identifiers: { snapshotId: { path: "snapshots[*].snapshotId" } }
+            resource: Table
+            identifiersFrom: "table"
         }
     ])
-    operation BatchCreateSnapshots {
-        input: BatchCreateSnapshotsInput
-        output: BatchCreateSnapshotsOutput
+    operation RestoreTable {
+        input: RestoreTableInput
+        output: RestoreTableOutput
+    }
+
+    @output
+    structure RestoreTableOutput {
+        table: TableRef
+    }
+
+    structure TableRef for Table {
+        $tableName
     }
 
 .. smithy-trait:: smithy.api#putsResources
@@ -778,23 +787,13 @@ Removing a binding or changing a binding's ``resource`` is a breaking change.
     @deletesResources([
         {
             resource: Table
-            identifiersFrom: "target"
+            identifiers: { tableName: { path: "tableNames[*]" } }
         }
     ])
     @idempotent
-    operation RestoreTable {
-        input: RestoreTableInput
-        output: RestoreTableOutput
-    }
-
-    @input
-    structure RestoreTableInput {
-        @required
-        target: TableRef
-    }
-
-    structure TableRef for Table {
-        $tableName
+    operation BatchDeleteTables {
+        input: BatchDeleteTablesInput
+        output: BatchDeleteTablesOutput
     }
 
 
