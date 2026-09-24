@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix API Gateway EndpointConfiguration OpenApi mapper to write to the right place",
+  "pull_requests": []
+}

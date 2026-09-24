@@ -18,16 +18,23 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.openapi.model.ServerObject;
 
 public class AddEndpointConfigurationTest {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-endpoint-configuration";
 
     @Test
-    public void addsExtensionWithVpcEndpointIdsAndDisableFlag() {
+    public void addsExtensionToServerObjectWithVpcEndpointIdsAndDisableFlag() {
         OpenApi result = convert("endpoint-configuration.smithy");
 
-        assertThat(result.getExtension(EXTENSION_NAME).isPresent(), is(true));
-        ObjectNode extension = result.getExtension(EXTENSION_NAME).get().expectObjectNode();
+        // The extension goes on the Server object for OpenAPI 3.0.
+        assertThat(result.getExtension(EXTENSION_NAME).isPresent(), is(false));
+        assertThat(result.getServers().size(), equalTo(1));
+
+        ServerObject server = result.getServers().get(0);
+        assertThat(server.getUrl(), equalTo("/"));
+        assertThat(server.getExtension(EXTENSION_NAME).isPresent(), is(true));
+        ObjectNode extension = server.getExtension(EXTENSION_NAME).get().expectObjectNode();
 
         assertThat(extension.expectArrayMember("vpcEndpointIds")
                 .getElements()
@@ -48,8 +55,10 @@ public class AddEndpointConfigurationTest {
         OpenApi result = convert("endpoint-configuration-minimal.smithy");
 
         // Only types is set on the trait, and types is not part of the
-        // extension. The mapper must not emit an empty extension.
+        // extension. The mapper must not emit an empty extension or add
+        // a default server.
         assertThat(result.getExtension(EXTENSION_NAME).isPresent(), is(false));
+        assertThat(result.getServers().isEmpty(), is(true));
     }
 
     @Test
@@ -68,7 +77,11 @@ public class AddEndpointConfigurationTest {
                 .classLoader(getClass().getClassLoader())
                 .convertToNode(assembled);
 
-        ObjectNode extension = result.expectObjectMember(EXTENSION_NAME);
+        ObjectNode server = result.expectArrayMember("servers")
+                .get(0)
+                .get()
+                .expectObjectNode();
+        ObjectNode extension = server.expectObjectMember(EXTENSION_NAME);
         ObjectNode firstId = extension.expectArrayMember("vpcEndpointIds")
                 .get(0)
                 .get()
