@@ -1,0 +1,67 @@
+{
+  "version": "1.74.0",
+  "changes": [
+    {
+      "type": "feature",
+      "description": "Added benchmark models for measuring the performance of serialization and deserialization",
+      "pull_requests": [
+        "[#3274](https://github.com/smithy-lang/smithy/pull/3274)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Expand unstable trait for preview usage.",
+      "pull_requests": [
+        "[#3277](https://github.com/smithy-lang/smithy/pull/3277)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed resource property and identifier bindings not being discovered through the output list member of `list` lifecycle operations, fixing `ResourceOperationInputOutput` errors for list-only resources. Collection operations can now bind properties and identifiers through list elements explicitly by applying `@nestedProperties` to an input or output member targeting a list of structures. ([#2968](https://github.com/smithy-lang/smithy/issues/2968))",
+      "pull_requests": [
+        "[#3269](https://github.com/smithy-lang/smithy/pull/3269)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added client guidance for interceptors.",
+      "pull_requests": []
+    },
+    {
+      "type": "documentation",
+      "description": "Added client guidance for plugin composition, ordering, and discovery.",
+      "pull_requests": [
+        "[#3283](https://github.com/smithy-lang/smithy/pull/3283)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Resolve endpoint rule-set components against the model's classloader",
+      "pull_requests": [
+        "[#3267](https://github.com/smithy-lang/smithy/pull/3267)"
+      ]
+    },
+    {
+      "type": "feature",
+      "description": "Update stale error message for AddedRequiredMember",
+      "pull_requests": [
+        "[#3261](https://github.com/smithy-lang/smithy/pull/3261)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fixed an issue where closure documentation was not being parsed.",
+      "pull_requests": [
+        "[#3276](https://github.com/smithy-lang/smithy/pull/3276)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Unmarked `contentMediaType` as unsupported in 3.1 OpenApi Spec",
+      "pull_requests": [
+        "[#3275](https://github.com/smithy-lang/smithy/pull/3275)"
+      ]
+    }
+  ],
+  "date": "2026-09-24"
+}
