@@ -1,0 +1,1 @@
+[ERROR] com.example#CreateWidget: JMESPath expression `widgetId` for identifier `widgetId` in `@createsResources` resolves to `smithy.api#String`, but the resource identifier targets `com.example#WidgetId`. | ResourceLifecycleTrait

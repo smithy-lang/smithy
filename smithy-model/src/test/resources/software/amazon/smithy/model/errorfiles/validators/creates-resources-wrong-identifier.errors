@@ -1,0 +1,1 @@
+[ERROR] com.example#CreateWidget: Identifier `wrongName` in `@createsResources` does not match any identifier of resource `com.example#Widget`. Valid identifiers: [`widgetId`] | ResourceLifecycleTrait

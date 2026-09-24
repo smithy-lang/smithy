@@ -1,0 +1,1 @@
+[ERROR] com.example#MakeWidget: JMESPath expression `spec.name` for property `size` in `@createsResources` resolves to `smithy.api#String`, but the resource property targets `smithy.api#Integer`. | ResourceLifecycleTrait

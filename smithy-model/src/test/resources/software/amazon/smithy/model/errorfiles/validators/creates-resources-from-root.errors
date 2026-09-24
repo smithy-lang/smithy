@@ -1,0 +1,1 @@
+[ERROR] com.example#CreateFoo: `identifiersFrom` `@` in `@createsResources` points at the whole output root; it must point at a nested structure or a projection. | ResourceLifecycleTrait

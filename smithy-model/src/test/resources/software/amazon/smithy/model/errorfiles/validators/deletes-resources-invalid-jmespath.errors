@@ -1,0 +1,1 @@
+[ERROR] com.example#DeleteThing: Invalid JMESPath expression `[invalid..path` for identifier `thingId` in `@deletesResources` | ResourceLifecycleTrait
