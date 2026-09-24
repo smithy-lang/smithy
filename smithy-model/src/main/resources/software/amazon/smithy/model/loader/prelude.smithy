@@ -1541,6 +1541,7 @@ structure unitType {}
 @trait(selector: ":not(member)")
 structure mixin {
     localTraits: LocalMixinTraitList
+    interface: Boolean
 }
 
 @private
