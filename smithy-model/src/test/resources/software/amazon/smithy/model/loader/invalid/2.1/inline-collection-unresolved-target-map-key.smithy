@@ -4,5 +4,5 @@ $version: "2.1"
 namespace smithy.example
 
 structure S {
-    items: [Missing]
+    inlineMap: {Missing: String}
 }

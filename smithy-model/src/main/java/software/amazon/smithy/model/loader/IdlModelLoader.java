@@ -1048,8 +1048,6 @@ final class IdlModelLoader {
         private final Consumer<ShapeId> consumer;
         private ShapeId key;
         private ShapeId value;
-        private boolean keySet;
-        private boolean valueSet;
 
         private InlineMapJoin(SourceLocation location, Consumer<ShapeId> consumer) {
             this.location = location;
@@ -1058,18 +1056,16 @@ final class IdlModelLoader {
 
         private void setKey(ShapeId resolved) {
             this.key = resolved;
-            this.keySet = true;
             complete();
         }
 
         private void setValue(ShapeId resolved) {
             this.value = resolved;
-            this.valueSet = true;
             complete();
         }
 
         private void complete() {
-            if (!keySet || !valueSet) {
+            if (key == null || value == null) {
                 return;
             }
             String syntheticName = LoaderUtils.mapName(namespace, key, value);
