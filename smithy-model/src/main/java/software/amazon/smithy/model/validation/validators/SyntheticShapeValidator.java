@@ -39,7 +39,12 @@ public final class SyntheticShapeValidator extends AbstractValidator {
         }
 
         for (Shape shape : model.toSet()) {
+            // Members are skipped: their name is derived from the container, not chosen by
+            // the user, so a member cannot independently reuse the reserved prefix. Members
+            // of synthetic shapes inherit the prefix without carrying the trait, and a user
+            // shape reusing the prefix is already reported on the container itself.
             if (!shape.hasTrait(SyntheticShapeTrait.ID)
+                    && !shape.isMemberShape()
                     && shape.getId().getName().startsWith("_Synthetic")) {
                 events.add(warning(shape,
                         "Shape name starts with `_Synthetic` which is reserved for "
