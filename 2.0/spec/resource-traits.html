@@ -668,6 +668,18 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resourceidentifier-trait"><code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-lifecycle-association-traits">Resource lifecycle association traits</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#identifiers-properties-and-sides">Identifiers, properties, and sides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-identifiers-and-properties">Specifying identifiers and properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-jmespath">Supported JMESPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-structures">Binding structures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#createsresources-trait"><code class="docutils literal notranslate"><span class="pre">createsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#putsresources-trait"><code class="docutils literal notranslate"><span class="pre">putsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#readsresources-trait"><code class="docutils literal notranslate"><span class="pre">readsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#updatesresources-trait"><code class="docutils literal notranslate"><span class="pre">updatesResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deletesresources-trait"><code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> trait</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -685,10 +697,12 @@
 <span id="nested-properties-trait"></span><span id="smithy-api-nestedproperties-trait"></span><h2><code class="docutils literal notranslate"><span class="pre">nestedProperties</span></code> trait<a class="headerlink" href="#nestedproperties-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Allows the binding of resource properties to occur within a nested structure
-deeper than the lifecycle operation's input or output shape.</p>
+deeper than the lifecycle operation's input or output shape, or within the
+element structure of a list targeted by a collection operation's input or
+output member.</p>
 </dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">structure)</span></code></p>
-<p><em>A member of a top-level input or output structure member</em></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">structure,</span> <span class="pre">&gt;</span> <span class="pre">list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">structure)</span></code></p>
+<p><em>A member of a top-level input or output structure member targeting a structure or a list of structures</em></p>
 </dd>
 <dt>Value type</dt><dd><p>Annotation trait.</p>
 </dd>
@@ -737,7 +751,7 @@ resource property. This trait can also mark another trait as a carrier for
 <code class="docutils literal notranslate"><span class="pre">&#64;notProperty</span></code> so that if that trait is applied to a member, the member
 is considered implicitly marked with <code class="docutils literal notranslate"><span class="pre">&#64;notProperty</span></code>.</p>
 </dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member,</span> <span class="pre">[trait|trait])</span></code></p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member,</span> <span class="pre">operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member,</span> <span class="pre">[trait|trait])</span></code></p>
 <p><em>A top-level member of an operation's input or output shape, or a trait</em></p>
 </dd>
 <dt>Value type</dt><dd><p>Annotation trait.</p>
@@ -1112,6 +1126,362 @@ identifier.</p>
 </pre></div>
 </div>
 </section>
+<section id="resource-lifecycle-association-traits">
+<span id="id7"></span><h2>Resource lifecycle association traits<a class="headerlink" href="#resource-lifecycle-association-traits" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">createsResources</span></code>, <code class="docutils literal notranslate"><span class="pre">putsResources</span></code>, <code class="docutils literal notranslate"><span class="pre">readsResources</span></code>,
+<code class="docutils literal notranslate"><span class="pre">updatesResources</span></code>, and <code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> traits declare which resources an
+operation affects when that relationship is not expressed through a resource's
+standard lifecycle operations. They let tooling understand, from the model
+alone, that an operation creates, replaces, reads, updates, or deletes one or
+more resources, and where to find the affected resources' identifiers and
+properties.</p>
+<p>These traits are useful for operations that a 1:1 resource lifecycle cannot
+express, such as batch operations, operations that affect several resource
+types at once, or operations that are not bound to the resource they affect.</p>
+<p>For an operation that is bound to a resource's standard lifecycle, including a
+<code class="docutils literal notranslate"><span class="pre">list</span></code> or other collection operation, resource properties and identifiers are
+bound through the operation's members, and the <a class="reference internal" href="#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a> is
+used to bind them within a list element. These traits are for the operations
+that fall outside that standard lifecycle binding, and they locate identifiers
+and properties explicitly with <a class="reference internal" href="#supported-jmespath"><span class="std std-ref">JMESPath</span></a> rather than
+by member binding.</p>
+<p>Each trait is a <code class="docutils literal notranslate"><span class="pre">list</span></code> of bindings. A binding names a resource and,
+optionally, declares where the resource's identifiers and properties are
+located in the operation's input or output.</p>
+<section id="identifiers-properties-and-sides">
+<h3>Identifiers, properties, and sides<a class="headerlink" href="#identifiers-properties-and-sides" title="Link to this heading">#</a></h3>
+<p>A binding can locate two independent kinds of information about the resource:</p>
+<ul class="simple">
+<li><p><strong>identifiers</strong>: where the affected resource's identifiers are located.</p></li>
+<li><p><strong>properties</strong>: where the affected resource's properties are located.</p></li>
+</ul>
+<p>Identifiers and properties each resolve against a fixed side of the operation,
+determined by the trait:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 34.0%" />
+<col style="width: 33.0%" />
+<col style="width: 33.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Identifiers side</p></th>
+<th class="head"><p>Properties side</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">createsResources</span></code></p></td>
+<td><p>output</p></td>
+<td><p>input</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">putsResources</span></code></p></td>
+<td><p>input</p></td>
+<td><p>input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">readsResources</span></code></p></td>
+<td><p>input</p></td>
+<td><p>output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">updatesResources</span></code></p></td>
+<td><p>input</p></td>
+<td><p>input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deletesResources</span></code></p></td>
+<td><p>input</p></td>
+<td><p>(none)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The sides reflect where the data lives: a created resource's identifier is
+generated into the output while its properties are supplied in the input; a read
+resource is selected by an identifier in the input and its state is returned in
+the output; and so on. <code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> does not locate properties, because
+a resource is deleted by its identifier alone.</p>
+</section>
+<section id="specifying-identifiers-and-properties">
+<h3>Specifying identifiers and properties<a class="headerlink" href="#specifying-identifiers-and-properties" title="Link to this heading">#</a></h3>
+<p>Identifiers and properties are each optional and are specified in one of three
+ways:</p>
+<ul class="simple">
+<li><p><strong>Explicit</strong>: an <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> or <code class="docutils literal notranslate"><span class="pre">properties</span></code> map associates each
+resource identifier or property name with a <a class="reference internal" href="#supported-jmespath"><span class="std std-ref">JMESPath</span></a>
+expression that locates its value on the appropriate side.</p></li>
+<li><p><strong>Inferred</strong>: an <code class="docutils literal notranslate"><span class="pre">identifiersFrom</span></code> or <code class="docutils literal notranslate"><span class="pre">propertiesFrom</span></code> expression points
+at a nested structure or a projection whose members are matched by name to the
+resource's identifiers or properties. Member-name differences are reconciled
+with the <a class="reference internal" href="#property-trait"><span class="std std-ref">property trait</span></a> and <a class="reference internal" href="#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a>, and the
+<a class="reference internal" href="#notproperty-trait"><span class="std std-ref">notProperty trait</span></a> excludes a member.</p></li>
+<li><p><strong>Unspecified</strong>: neither the explicit map nor the <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointer is set.
+The binding only asserts that the operation affects the resource; nothing is
+inferred and nothing is validated for it. For example,
+<code class="docutils literal notranslate"><span class="pre">&#64;createsResources([{resource:</span> <span class="pre">Forecast}])</span></code> states only that the operation
+creates a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>.</p></li>
+</ul>
+<p>The explicit map and the <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointer may be combined; the map overrides
+inference for a given name. The value located for an identifier must match the
+resource identifier's target shape, and the value located for a property must
+match the resource property's target shape.</p>
+</section>
+<section id="supported-jmespath">
+<span id="id8"></span><h3>Supported JMESPath<a class="headerlink" href="#supported-jmespath" title="Link to this heading">#</a></h3>
+<p>Locators and <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointers use a structural subset of JMESPath: field
+access, subexpressions, wildcard projections (<code class="docutils literal notranslate"><span class="pre">[*]</span></code>), flatten (<code class="docutils literal notranslate"><span class="pre">[]</span></code>), and
+the current node. Functions, filters, comparators, index and slice expressions,
+and multi-select expressions are not supported. A <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointer must
+resolve to a nested structure or a projection of structures. It must not resolve
+to the whole input or output root, nor to a list, map, or scalar.</p>
+</section>
+<section id="binding-structures">
+<h3>Binding structures<a class="headerlink" href="#binding-structures" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">createsResources</span></code>, <code class="docutils literal notranslate"><span class="pre">putsResources</span></code>, <code class="docutils literal notranslate"><span class="pre">readsResources</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">updatesResources</span></code> use the <code class="docutils literal notranslate"><span class="pre">ResourceLifecycleBinding</span></code> structure,
+which has the following members:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 33.0%" />
+<col style="width: 47.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>resource</p></td>
+<td><p><a class="reference internal" href="model.html#shape-id"><span class="std std-ref">Shape ID</span></a></p></td>
+<td><p><strong>Required</strong>. The absolute shape ID of the affected resource. Must
+target a <a class="reference internal" href="service-types.html#resource"><span class="std std-ref">Resource</span></a> shape.</p></td>
+</tr>
+<tr class="row-odd"><td><p>identifiers</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">ResourceMemberBinding&gt;</span></code></p></td>
+<td><p>Explicit map of resource identifier name to a locator for its value.</p></td>
+</tr>
+<tr class="row-even"><td><p>identifiersFrom</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Structural JMESPath pointing at a nested structure or projection from
+whose members identifiers are inferred by name.</p></td>
+</tr>
+<tr class="row-odd"><td><p>properties</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">ResourceMemberBinding&gt;</span></code></p></td>
+<td><p>Explicit map of resource property name to a locator for its value.</p></td>
+</tr>
+<tr class="row-even"><td><p>propertiesFrom</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Structural JMESPath pointing at a nested structure or projection from
+whose members properties are inferred by name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> uses the <code class="docutils literal notranslate"><span class="pre">ResourceDeletionBinding</span></code> structure, which is
+identical but omits the <code class="docutils literal notranslate"><span class="pre">properties</span></code> and <code class="docutils literal notranslate"><span class="pre">propertiesFrom</span></code> members.</p>
+<p>Both structures locate values with the <code class="docutils literal notranslate"><span class="pre">ResourceMemberBinding</span></code> structure,
+which has the following members:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 33.0%" />
+<col style="width: 47.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>path</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. A structural JMESPath expression that locates the value in
+the operation input or output.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="createsresources-trait">
+<span id="smithy-api-createsresources-trait"></span><span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">createsResources</span></code> trait<a class="headerlink" href="#createsresources-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares which resources an operation creates. Identifiers are located in
+the output; properties are located in the input.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">ResourceLifecycleBinding</span></code> structures.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Removing a binding or changing a binding's <code class="docutils literal notranslate"><span class="pre">resource</span></code> is a breaking change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@createsResources</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Table</span>
+<span class="w">        </span><span class="py">identifiersFrom</span><span class="p">:</span><span class="w"> </span><span class="s2">"table"</span>
+<span class="w">    </span>}
+])
+<span class="kd">operation </span><span class="nc">RestoreTable</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">RestoreTableInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">RestoreTableOutput</span>
+}
+
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">RestoreTableOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">table</span><span class="p">:</span><span class="w"> </span><span class="vc">TableRef</span>
+}
+
+<span class="kd">structure </span><span class="nc">TableRef</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Table</span><span class="w"> </span>{
+<span class="w">    </span><span class="nl">$tableName</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="putsresources-trait">
+<span id="smithy-api-putsresources-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">putsResources</span></code> trait<a class="headerlink" href="#putsresources-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares which resources an operation creates or replaces with put
+semantics (a caller-provided identifier). Identifiers and properties are
+both located in the input.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">ResourceLifecycleBinding</span></code> structures.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Removing a binding or changing a binding's <code class="docutils literal notranslate"><span class="pre">resource</span></code> is a breaking change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@putsResources</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>
+<span class="w">        </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"forecastId"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">        </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"chanceOfRain"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">    </span>}
+])
+<span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">PutForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastOutput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PutForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="readsresources-trait">
+<span id="smithy-api-readsresources-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">readsResources</span></code> trait<a class="headerlink" href="#readsresources-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares which resources an operation reads. Identifiers are located in the
+input; properties are located in the output.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">ResourceLifecycleBinding</span></code> structures.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Removing a binding or changing a binding's <code class="docutils literal notranslate"><span class="pre">resource</span></code> is flagged as a possible
+breaking change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readsResources</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>
+<span class="w">        </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"forecastId"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">        </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"chanceOfRain"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">    </span>}
+])
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="updatesresources-trait">
+<span id="smithy-api-updatesresources-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">updatesResources</span></code> trait<a class="headerlink" href="#updatesresources-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares which resources an operation updates. Identifiers and properties
+are both located in the input.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">ResourceLifecycleBinding</span></code> structures.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Removing a binding or changing a binding's <code class="docutils literal notranslate"><span class="pre">resource</span></code> is flagged as a possible
+breaking change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@updatesResources</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>
+<span class="w">        </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"forecastId"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">        </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"chanceOfRain"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">    </span>}
+])
+<span class="kd">operation </span><span class="nc">UpdateForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastOutput</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">UpdateForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="deletesresources-trait">
+<span id="smithy-api-deletesresources-trait"></span><span id="id13"></span><h3><code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> trait<a class="headerlink" href="#deletesresources-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Declares which resources an operation deletes. Identifiers are located in
+the input. Delete does not locate properties.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">operation</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">ResourceDeletionBinding</span></code> structures.</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Removing a binding or changing a binding's <code class="docutils literal notranslate"><span class="pre">resource</span></code> is a breaking change.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@deletesResources</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Table</span>
+<span class="w">        </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">tableName</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"tableNames[*]"</span><span class="w"> </span>}<span class="w"> </span>}
+<span class="w">    </span>}
+])
+<span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">BatchDeleteTables</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchDeleteTablesInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchDeleteTablesOutput</span>
+}
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -1176,6 +1546,18 @@ identifier.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resourceidentifier-trait"><code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-lifecycle-association-traits">Resource lifecycle association traits</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#identifiers-properties-and-sides">Identifiers, properties, and sides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-identifiers-and-properties">Specifying identifiers and properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-jmespath">Supported JMESPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-structures">Binding structures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#createsresources-trait"><code class="docutils literal notranslate"><span class="pre">createsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#putsresources-trait"><code class="docutils literal notranslate"><span class="pre">putsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#readsresources-trait"><code class="docutils literal notranslate"><span class="pre">readsResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#updatesresources-trait"><code class="docutils literal notranslate"><span class="pre">updatesResources</span></code> trait</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deletesresources-trait"><code class="docutils literal notranslate"><span class="pre">deletesResources</span></code> trait</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

@@ -2935,7 +2935,7 @@ namespace using a relative shape ID.</p>
 <span class="c">/// Explicitly excludes a member from resource property mapping or enables</span>
 <span class="c">/// another trait to carry the same implied meaning.</span>
 <span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">":is(operation -[input, output]-&gt; structure &gt; member, [trait|trait])"</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">":is(operation -[input, output]-&gt; structure &gt; member, operation -[input, output]-&gt; structure &gt; member &gt; list &gt; member &gt; structure &gt; member, [trait|trait])"</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span>{
 <span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"add"</span>
@@ -2948,7 +2948,7 @@ namespace using a relative shape ID.</p>
 <span class="c">/// Adjusts the resource property mapping of a lifecycle operation to the</span>
 <span class="c">/// targeted member.</span>
 <span class="nt">@trait</span>(
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation -[input, output]-&gt; structure &gt; member :test(&gt; structure)"</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation -[input, output]-&gt; structure &gt; member :test(&gt; structure, &gt; list &gt; member &gt; structure)"</span>
 <span class="w">    </span><span class="py">structurallyExclusive</span><span class="p">:</span><span class="w"> </span><span class="s2">"member"</span>
 <span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">        </span>{
@@ -2994,8 +2994,58 @@ namespace using a relative shape ID.</p>
 <span class="kd">structure </span><span class="nc">uniqueItems</span><span class="w"> </span>{}
 
 <span class="c">/// Indicates that the shape is unstable and could change in the future.</span>
-<span class="nt">@trait</span>
-<span class="kd">structure </span><span class="nc">unstable</span><span class="w"> </span>{}
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/featureId"</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"add"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"The `@unstable` trait's `featureId` cannot be added to an existing shape. A preview feature must be declared when the shape is first introduced."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/featureId"</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"The `@unstable` trait's `featureId` cannot be changed after setting."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/featureId"</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"The `@unstable` trait's `featureId` cannot be removed after setting. Please remove the whole `unstable` trait if the shape is GA."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">structure </span><span class="nc">unstable</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The id of the unstable feature this shape belongs to. When set, it must be defined as a key in the</span>
+<span class="w">    </span><span class="c">/// `unstableFeatures` trait of an enclosing service.</span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
+<span class="w">    </span><span class="py">featureId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="c">/// Defines the preview features offered by a service, keyed by `featureId`. Applied to the service shape.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
+<span class="kd">map </span><span class="nc">unstableFeatures</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The id of the unstable feature.</span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// The metadata describing the unstable feature.</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">UnstableFeatureInfo</span>
+}
+
+<span class="c">/// The metadata describing a single unstable feature.</span>
+<span class="nt">@private</span>
+<span class="kd">structure </span><span class="nc">UnstableFeatureInfo</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The message to customers about the unstable feature.</span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// The reason why this feature is unstable.</span>
+<span class="w">    </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="vc">UnstableReason</span>
+}
+
+<span class="nt">@private</span>
+<span class="kd">enum </span><span class="nc">UnstableReason</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// This feature is under preview.</span>
+<span class="w">    </span><span class="vc">PREVIEW</span>
+}
 
 <span class="c">/// The paginated trait indicates that an operation intentionally limits the</span>
 <span class="c">/// number of results returned in a single response and that multiple</span>
@@ -3500,6 +3550,181 @@ namespace using a relative shape ID.</p>
 <span class="kd">structure </span><span class="nc">requestCompression</span><span class="w"> </span>{
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span><span class="vc">RequestCompressionEncodingsList</span>
+}
+
+<span class="c">/// Declares which resources an operation creates and where to find their</span>
+<span class="c">/// identifiers in the operation output.</span>
+<span class="nt">@unstable</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Removing a resource from @createsResources breaks consumers that depend on this lifecycle declaration."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member/resource"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Changing the resource in a @createsResources entry is a breaking change."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">list </span><span class="nc">createsResources</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceLifecycleBinding</span>
+}
+
+<span class="c">/// Declares which resources an operation creates or replaces (put semantics)</span>
+<span class="c">/// and where to find their identifiers in the operation input.</span>
+<span class="nt">@unstable</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Removing a resource from @putsResources breaks consumers that depend on this lifecycle declaration."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member/resource"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Changing the resource in a @putsResources entry is a breaking change."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">list </span><span class="nc">putsResources</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceLifecycleBinding</span>
+}
+
+<span class="c">/// Declares which resources an operation reads outside the standard lifecycle</span>
+<span class="c">/// binding, and where to find their identifiers in the operation input.</span>
+<span class="nt">@unstable</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">"DANGER"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Removing a resource from @readsResources may break consumers that depend on this lifecycle declaration."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">"DANGER"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member/resource"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Changing the resource in a @readsResources entry may break consumers."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">list </span><span class="nc">readsResources</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceLifecycleBinding</span>
+}
+
+<span class="c">/// Declares which resources an operation updates outside the standard lifecycle</span>
+<span class="c">/// binding, and where to find their identifiers in the operation input.</span>
+<span class="nt">@unstable</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">"DANGER"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Removing a resource from @updatesResources may break consumers that depend on this lifecycle declaration."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">"DANGER"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member/resource"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Changing the resource in a @updatesResources entry may break consumers."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">list </span><span class="nc">updatesResources</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceLifecycleBinding</span>
+}
+
+<span class="c">/// Declares which resources an operation deletes and where to find their</span>
+<span class="c">/// identifiers in the operation input.</span>
+<span class="nt">@unstable</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"remove"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Removing a resource from @deletesResources breaks consumers that depend on this lifecycle declaration."</span>
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/member/resource"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"Changing the resource in a @deletesResources entry is a breaking change."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">list </span><span class="nc">deletesResources</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceDeletionBinding</span>
+}
+
+<span class="c">/// A binding that associates a resource with an operation lifecycle effect</span>
+<span class="c">/// and optionally declares where to find resource identifiers.</span>
+<span class="nt">@private</span>
+<span class="kd">structure </span><span class="nc">ResourceLifecycleBinding</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The shape ID of the affected resource.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@idRef</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span><span class="w"> </span><span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// Explicit map of resource identifier name to a JMESPath locator for its</span>
+<span class="w">    </span><span class="c">/// value in the operation input or output.</span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceMemberBindings</span>
+
+<span class="w">    </span><span class="c">/// Structural JMESPath pointing at a nested structure or projection from</span>
+<span class="w">    </span><span class="c">/// whose members identifiers are inferred by name.</span>
+<span class="w">    </span><span class="py">identifiersFrom</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
+
+<span class="w">    </span><span class="c">/// Explicit map of resource property name to a JMESPath locator for its</span>
+<span class="w">    </span><span class="c">/// value in the operation input or output.</span>
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceMemberBindings</span>
+
+<span class="w">    </span><span class="c">/// Structural JMESPath pointing at a nested structure or projection from</span>
+<span class="w">    </span><span class="c">/// whose members properties are inferred by name.</span>
+<span class="w">    </span><span class="py">propertiesFrom</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
+}
+
+<span class="c">/// A binding that associates a deleted resource with an operation and optionally</span>
+<span class="c">/// declares where to find its identifiers. Deletion binds no properties: a</span>
+<span class="c">/// resource is deleted by its identifier alone.</span>
+<span class="nt">@private</span>
+<span class="kd">structure </span><span class="nc">ResourceDeletionBinding</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// The shape ID of the deleted resource.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@idRef</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"resource"</span><span class="p">,</span><span class="w"> </span><span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="c">/// Explicit map of resource identifier name to a JMESPath locator for its</span>
+<span class="w">    </span><span class="c">/// value in the operation input.</span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceMemberBindings</span>
+
+<span class="w">    </span><span class="c">/// Structural JMESPath pointing at a nested structure or projection from</span>
+<span class="w">    </span><span class="c">/// whose members identifiers are inferred by name.</span>
+<span class="w">    </span><span class="py">identifiersFrom</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
+}
+
+<span class="nt">@private</span>
+<span class="kd">map </span><span class="nc">ResourceMemberBindings</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">ResourceMemberBinding</span>
+}
+
+<span class="c">/// Locates the value of a single resource identifier or property within an</span>
+<span class="c">/// operation's input or output using a JMESPath expression.</span>
+<span class="nt">@private</span>
+<span class="kd">structure </span><span class="nc">ResourceMemberBinding</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// A JMESPath expression that locates the value in the operation input or</span>
+<span class="w">    </span><span class="c">/// output.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
 }
 </pre></div>
 </div>

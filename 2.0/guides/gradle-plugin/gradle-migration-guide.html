@@ -736,7 +736,7 @@ for these build-only dependencies.</p>
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath("software.amazon.smithy:smithy-aws-traits:1.73.0")</span>
+<span class="gd">-           classpath("software.amazon.smithy:smithy-aws-traits:1.74.0")</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -745,9 +745,9 @@ for these build-only dependencies.</p>
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation("software.amazon.smithy:smithy-model:1.73.0")
+<span class="w"> </span>   implementation("software.amazon.smithy:smithy-model:1.74.0")
 
-<span class="w"> </span>   implementation("software.amazon.smithy:smithy-aws-traits:1.73.0")
+<span class="w"> </span>   implementation("software.amazon.smithy:smithy-aws-traits:1.74.0")
 <span class="gi">+   smithyBuild("com.foo.baz:foo-internal-model:1.0.0")</span>
 }
 </pre></div>
@@ -766,7 +766,7 @@ dependencies {
 <span class="gd">-       dependencies {</span>
 <span class="gd">-           // Dependency repeated here and below because model discovery previously</span>
 <span class="gd">-           // only ran on buildscript classpath for projections</span>
-<span class="gd">-           classpath 'software.amazon.smithy:smithy-aws-traits:1.73.0'</span>
+<span class="gd">-           classpath 'software.amazon.smithy:smithy-aws-traits:1.74.0'</span>
 <span class="gd">-           // Take a dependency on the internal model package. This</span>
 <span class="gd">-           // dependency *must* be a buildscript only dependency to ensure</span>
 <span class="gd">-           // that is does not appear in the generated JAR.</span>
@@ -775,9 +775,9 @@ dependencies {
 <span class="gd">-}</span>
 
 dependencies {
-<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-model:1.73.0'
+<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-model:1.74.0'
 
-<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-aws-traits:1.73.0'
+<span class="w"> </span>   implementation 'software.amazon.smithy:smithy-aws-traits:1.74.0'
 <span class="gi">+   smithyBuild 'com.foo.baz:foo-internal-model:1.0.0'</span>
 }
 </pre></div>

@@ -670,6 +670,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tags-trait"><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#title-trait"><code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unstable-trait"><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unstablefeatures-trait"><code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait</a></li>
 </ul>
             </nav>
         </div>
@@ -1093,21 +1094,123 @@ provide a user friendly name for a shape.</p>
 </section>
 <section id="unstable-trait">
 <span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Link to this heading">#</a></h2>
-<dl class="simple">
+<dl>
 <dt>Summary</dt><dd><p>Indicates a shape is unstable and MAY change in the future. This trait can
 be applied to trait shapes to indicate that a trait is unstable or
 experimental. If possible, code generators SHOULD use this trait to warn
 when code generated from unstable features are used.</p>
+<p>An optional <code class="docutils literal notranslate"><span class="pre">featureId</span></code> member associates the shape with a preview
+feature defined by the <a class="reference internal" href="#unstablefeatures-trait"><span class="std std-ref">unstableFeatures trait</span></a> of an enclosing service. Backward-incompatible
+changes to shapes in a preview feature are relaxed by Smithy Diff; see
+<a class="reference internal" href="../guides/evolving-models.html#preview-feature-diff"><span class="std std-ref">Preview features</span></a>.</p>
 </dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p>
 </dd>
-<dt>Value type</dt><dd><p>Annotation trait</p>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
 </dd>
 <dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
 </dd>
 </dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait is a structure that supports the following optional
+member:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 25.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>featureId</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>Associates the shape with a preview feature. When set, the value MUST
+match a key defined in the <a class="reference internal" href="#unstablefeatures-trait"><span class="std std-ref">unstableFeatures trait</span></a> of every service that encloses the shape, and
+is limited to 100 characters. When omitted, the shape is marked
+unstable but is not part of any preview feature.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span>
 <span class="kd">string </span><span class="nc">MyString</span>
+</pre></div>
+</div>
+<p>The following example marks an operation as part of a preview feature:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span>(<span class="py">featureId</span><span class="p">:</span><span class="w"> </span><span class="s2">"MYSERVICE_FIRST_PREVIEW"</span>)
+<span class="kd">operation </span><span class="nc">MyPreviewOperation</span><span class="w"> </span>{}
+</pre></div>
+</div>
+</section>
+<section id="unstablefeatures-trait">
+<span id="smithy-api-unstablefeatures-trait"></span><span id="id13"></span><h2><code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait<a class="headerlink" href="#unstablefeatures-trait" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the preview features offered by a service, keyed by <code class="docutils literal notranslate"><span class="pre">featureId</span></code>.
+Each entry provides the metadata for one preview feature that is referenced
+by the <a class="reference internal" href="#unstable-trait"><span class="std std-ref">unstable trait</span></a> of the shapes that make up the
+feature.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">featureId</span></code> (<code class="docutils literal notranslate"><span class="pre">string</span></code>) to feature metadata structures</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>Each value of the <code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> map is a structure that supports the
+following members:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 25.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>message</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>A message to customers describing the preview feature. When omitted,
+tools SHOULD use a default message indicating that the shape is in
+preview and is subject to change.</p></td>
+</tr>
+<tr class="row-odd"><td><p>reason</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The reason the feature is unstable. Currently only supported value is
+<code class="docutils literal notranslate"><span class="pre">PREVIEW</span></code>, indicating that the feature is offered as a public
+preview.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A shape becomes part of a preview feature by applying the <a class="reference internal" href="#unstable-trait"><span class="std std-ref">unstable trait</span></a> with a <code class="docutils literal notranslate"><span class="pre">featureId</span></code> that matches a key in the enclosing
+service's <code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait. A single <code class="docutils literal notranslate"><span class="pre">featureId</span></code> MAY be referenced
+by multiple shapes that release together as one preview feature. Every
+<code class="docutils literal notranslate"><span class="pre">featureId</span></code> referenced by an <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait MUST be defined in the
+enclosing service's <code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@unstableFeatures</span>(
+<span class="w">    </span><span class="py">MYSERVICE_FIRST_PREVIEW</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is my preview operation and is subject to change!"</span>
+<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">"PREVIEW"</span>
+<span class="w">    </span>}
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyPreviewOperation</span>]
+}
+
+<span class="nt">@unstable</span>(<span class="py">featureId</span><span class="p">:</span><span class="w"> </span><span class="s2">"MYSERVICE_FIRST_PREVIEW"</span>)
+<span class="kd">operation </span><span class="nc">MyPreviewOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </section>
@@ -1177,6 +1280,7 @@ when code generated from unstable features are used.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tags-trait"><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#title-trait"><code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unstable-trait"><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unstablefeatures-trait"><code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait</a></li>
 </ul>
   </nav></div>
 

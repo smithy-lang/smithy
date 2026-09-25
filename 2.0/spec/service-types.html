@@ -675,7 +675,8 @@
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-properties">Resource Properties</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-members-to-properties">Binding members to properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-members-to-properties">Binding members to properties</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-properties-to-collection-operations">Binding properties to collection operations</a><ul class="nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-property-binding-validation">Resource property binding validation</a></li>
 </ul>
 </li>
@@ -1372,8 +1373,10 @@ binding, the explicit identifier binding is utilized.</p>
 <p><em class="dfn">Resource properties</em> represent the state of a resource within a service.
 Properties can be referred to in the top level input and output shapes
 of a resource's instance operations, including create, read, update,
-delete, and put. All declared resource properties MUST appear in at
-least one instance operation's input or output.</p>
+delete, and put, and in the list element of a collection operation's
+input or output. All declared resource properties MUST appear in at
+least one instance operation's input or output, or in the list element
+of a collection operation's input or output.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single property <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> read by the GetForecast operation, and the
 output operation shape <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> contains that output property.</p>
@@ -1444,6 +1447,26 @@ but resource property modeling is being added to your Smithy model.</p>
 members, use the <a class="reference internal" href="resource-traits.html#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a> on a member to designate its
 target structure shape as the root to form property bindings. No adjacent
 members can form property bindings when this trait is applied.</p>
+</section>
+<section id="binding-properties-to-collection-operations">
+<h4>Binding properties to collection operations<a class="headerlink" href="#binding-properties-to-collection-operations" title="Link to this heading">#</a></h4>
+<p>Collection operations carry resource state per element of a list rather than
+at the top level of their input or output. A member of a collection-bound
+operation's input or output that targets a list of structures can be marked
+with the <a class="reference internal" href="resource-traits.html#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a> to indicate that each element of the
+list carries the state of one resource instance. Within the element
+structure, members bind to resource properties and identifiers using the
+same rules as top-level members of instance operations, and members that
+bind to neither must be marked with the <code class="docutils literal notranslate"><span class="pre">notProperty</span></code> trait.</p>
+<p>The output of a <code class="docutils literal notranslate"><span class="pre">list</span></code> lifecycle operation that does not use the
+<code class="docutils literal notranslate"><span class="pre">nestedProperties</span></code> trait is resolved automatically when exactly one output
+member targets a list of structures. Because automatically detected element
+structures may be shared between resources or carry derived data, element
+members that do not correspond to a property or identifier are ignored, and
+property binding conflicts are emitted as warnings rather than errors.</p>
+<p>Resource properties that appear only in the list element of a collection
+operation satisfy the requirement that all declared properties appear in at
+least one operation's input or output.</p>
 <section id="resource-property-binding-validation">
 <h5>Resource property binding validation<a class="headerlink" href="#resource-property-binding-validation" title="Link to this heading">#</a></h5>
 <ul class="simple">
@@ -1738,7 +1761,8 @@ being listed.</p></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-properties">Resource Properties</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-members-to-properties">Binding members to properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-members-to-properties">Binding members to properties</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-properties-to-collection-operations">Binding properties to collection operations</a><ul class="nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-property-binding-validation">Resource property binding validation</a></li>
 </ul>
 </li>
