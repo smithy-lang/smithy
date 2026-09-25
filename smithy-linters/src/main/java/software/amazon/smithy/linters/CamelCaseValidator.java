@@ -22,6 +22,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.AuthDefinitionTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.synthetic.SyntheticShapeTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
@@ -128,6 +129,10 @@ public final class CamelCaseValidator extends AbstractValidator {
         model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !shape.hasTrait(TraitDefinition.ID))
+                // Synthetic shapes (e.g. inline collection shapes) are generated, not
+                // authored, and use a reserved `_Synthetic` name prefix, so they are not
+                // subject to camel case naming.
+                .filter(shape -> !shape.hasTrait(SyntheticShapeTrait.ID))
                 .filter(shape -> !MemberNameHandling.UPPER.getRegex().matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape,
                         format(
