@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Fix API Gateway EndpointConfiguration OpenApi mapper to write to the right place",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3304](https://github.com/smithy-lang/smithy/pull/3304)"
+  ]
 }
