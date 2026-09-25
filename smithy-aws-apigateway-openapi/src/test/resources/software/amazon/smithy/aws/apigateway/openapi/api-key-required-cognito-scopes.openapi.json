@@ -1,0 +1,115 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "CognitoScopesService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/e1-disabled-auth-no-key": {
+            "get": {
+                "operationId": "DisabledAuthNoKey",
+                "responses": {
+                    "200": {
+                        "description": "DisabledAuthNoKey 200 response"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/e2-scoped-no-key": {
+            "get": {
+                "operationId": "ScopedNoKey",
+                "responses": {
+                    "200": {
+                        "description": "ScopedNoKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "aws.auth.cognitoUserPools": [
+                            "email",
+                            "profile"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/e3-scoped-with-key": {
+            "get": {
+                "operationId": "ScopedWithKey",
+                "responses": {
+                    "200": {
+                        "description": "ScopedWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "aws.auth.cognitoUserPools": [
+                            "email",
+                            "profile"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/e4-unscoped-with-key": {
+            "get": {
+                "operationId": "UnscopedWithKey",
+                "responses": {
+                    "200": {
+                        "description": "UnscopedWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "aws.auth.cognitoUserPools": []
+                    }
+                ]
+            }
+        },
+        "/e5-disabled-auth-with-key": {
+            "get": {
+                "operationId": "DisabledAuthWithKey",
+                "responses": {
+                    "200": {
+                        "description": "DisabledAuthWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "aws.auth.cognitoUserPools": {
+                "type": "apiKey",
+                "description": "Amazon Cognito User Pools authentication",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "cognito_user_pools",
+                "x-amazon-apigateway-authorizer": {
+                    "type": "cognito_user_pools",
+                    "providerARNs": [
+                        "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_abc123"
+                    ]
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "aws.auth.cognitoUserPools": []
+        }
+    ]
+}
