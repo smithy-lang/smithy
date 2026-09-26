@@ -20,8 +20,11 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.smf.SmfReader;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -66,6 +69,19 @@ final class ModelLoader {
                     new IdlModelLoader(filename, contents, stringTable).parse(operationConsumer);
                 }
                 return true;
+            } else if (filename.endsWith(".smf")) {
+                try (InputStream inputStream = contentSupplier.get()) {
+                    byte[] data = IoUtils.toByteArray(inputStream);
+                    // This is a load-time path: the .smf file was supplied as a
+                    // model import (classpath, JAR, or explicit path) that the
+                    // build already trusts, exactly like the sibling .json /
+                    // .smithy / .jar branches which perform no integrity check.
+                    // CRC-32C verification is an install-time integrity gate (see
+                    // the SMF spec's integrity-checking lifecycle), not a
+                    // per-load cost, so it is intentionally skipped here.
+                    loadSmf(data, operationConsumer, false);
+                }
+                return true;
             } else if (filename.endsWith(".jar")) {
                 loadJar(traitFactory, properties, filename, operationConsumer, stringTable);
                 return true;
@@ -102,6 +118,34 @@ final class ModelLoader {
 
         LOGGER.info("Ignoring unrecognized JSON file: " + node.getSourceLocation());
         return false;
+    }
+
+    private static void loadSmf(byte[] data, Consumer<LoadOperation> operationConsumer, boolean verifyCrc) {
+        SmfReader.readInto(data, new SmfReader.LoadHandler() {
+            final Version version = Version.VERSION_2_0;
+
+            @Override
+            public void modelVersion() {
+                operationConsumer.accept(new LoadOperation.ModelVersion(version, SourceLocation.NONE));
+            }
+
+            @Override
+            public void metadata(String key, Node value) {
+                operationConsumer.accept(new LoadOperation.PutMetadata(version, key, value));
+            }
+
+            @Override
+            public void defineShape(
+                    AbstractShapeBuilder<?, ?> builder,
+                    List<MemberShape.Builder> members
+            ) {
+                LoadOperation.DefineShape op = new LoadOperation.DefineShape(version, builder);
+                for (MemberShape.Builder mb : members) {
+                    op.addMember(mb);
+                }
+                operationConsumer.accept(op);
+            }
+        }, verifyCrc);
     }
 
     // Allows importing JAR files by discovering models inside a JAR file.
