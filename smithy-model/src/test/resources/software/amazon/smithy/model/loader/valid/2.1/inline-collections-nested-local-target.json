@@ -1,0 +1,60 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#MyKey": {
+            "type": "string"
+        },
+        "smithy.example#MyStructure": {
+            "type": "structure",
+            "members": {
+                "entries": {
+                    "target": "smithy.example#_SyntheticMapOf_MyKey_To__MyValue"
+                },
+                "nested": {
+                    "target": "smithy.example#_SyntheticMapOf__String_To___SyntheticListOf_Widget"
+                }
+            }
+        },
+        "smithy.example#MyValue": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.example#Widget": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.example#_SyntheticListOf_Widget": {
+            "type": "list",
+            "member": {
+                "target": "smithy.example#Widget"
+            },
+            "traits": {
+                "smithy.api#synthetic": {}
+            }
+        },
+        "smithy.example#_SyntheticMapOf_MyKey_To__MyValue": {
+            "type": "map",
+            "key": {
+                "target": "smithy.example#MyKey"
+            },
+            "value": {
+                "target": "smithy.example#MyValue"
+            },
+            "traits": {
+                "smithy.api#synthetic": {}
+            }
+        },
+        "smithy.example#_SyntheticMapOf__String_To___SyntheticListOf_Widget": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.example#_SyntheticListOf_Widget"
+            },
+            "traits": {
+                "smithy.api#synthetic": {}
+            }
+        }
+    }
+}

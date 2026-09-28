@@ -1,0 +1,41 @@
+{
+    "smithy": "2.1",
+    "shapes": {
+        "smithy.example#MyStructure": {
+            "type": "structure",
+            "members": {
+                "widgets": {
+                    "target": "smithy.example#_SyntheticListOf_Widget"
+                },
+                "strings": {
+                    "target": "smithy.example#_SyntheticListOf_String"
+                }
+            }
+        },
+        "smithy.example#String": {
+            "type": "string"
+        },
+        "smithy.example#Widget": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.example#_SyntheticListOf_String": {
+            "type": "list",
+            "member": {
+                "target": "smithy.example#String"
+            },
+            "traits": {
+                "smithy.api#synthetic": {}
+            }
+        },
+        "smithy.example#_SyntheticListOf_Widget": {
+            "type": "list",
+            "member": {
+                "target": "smithy.example#Widget"
+            },
+            "traits": {
+                "smithy.api#synthetic": {}
+            }
+        }
+    }
+}
