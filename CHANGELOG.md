@@ -1,5 +1,43 @@
 # Smithy Changelog
 
+## 1.74.0 (2026-09-24)
+
+### Features
+
+- Added benchmark models for measuring the performance of serialization and
+  deserialization ([#3274](https://github.com/smithy-lang/smithy/pull/3274))
+- Expand unstable trait for preview usage.
+  ([#3277](https://github.com/smithy-lang/smithy/pull/3277))
+- Update stale error message for AddedRequiredMember
+  ([#3261](https://github.com/smithy-lang/smithy/pull/3261))
+- Added the `@createsResources`, `@putsResources`, `@deletesResources`,
+  `@readsResources`, and `@updatesResources` traits that declare which resources
+  an operation affects for relationships that fall outside a resource's standard
+  lifecycle. ([#3273](https://github.com/smithy-lang/smithy/pull/3273))
+
+### Bug Fixes
+
+- Fixed resource property and identifier bindings not being discovered through
+  the output list member of `list` lifecycle operations, fixing
+  `ResourceOperationInputOutput` errors for list-only resources. Collection
+  operations can now bind properties and identifiers through list elements
+  explicitly by applying `@nestedProperties` to an input or output member
+  targeting a list of structures.
+  ([#3269](https://github.com/smithy-lang/smithy/pull/3269))
+- Resolve endpoint rule-set components against the model's classloader
+  ([#3267](https://github.com/smithy-lang/smithy/pull/3267))
+- Fixed an issue where closure documentation was not being parsed.
+  ([#3276](https://github.com/smithy-lang/smithy/pull/3276))
+- Unmarked `contentMediaType` as unsupported in 3.1 OpenApi Spec
+  ([#3275](https://github.com/smithy-lang/smithy/pull/3275))
+
+### Documentation
+
+- Added client guidance for interceptors.
+  ([#2992](https://github.com/smithy-lang/smithy/pull/2992))
+- Added client guidance for plugin composition, ordering, and discovery.
+  ([#3283](https://github.com/smithy-lang/smithy/pull/3283))
+
 ## 1.73.0 (2026-08-10)
 
 ### Features
@@ -4699,3 +4737,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+

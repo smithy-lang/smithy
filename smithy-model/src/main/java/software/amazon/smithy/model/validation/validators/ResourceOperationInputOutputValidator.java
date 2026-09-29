@@ -184,10 +184,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         model.getShape(ioShapeId).flatMap(Shape::asStructureShape).ifPresent(shape -> {
             for (MemberShape member : shape.members()) {
                 if (member.hasTrait(NestedPropertiesTrait.ID)) {
-                    events.add(error(member,
+                    events.add(warning(member,
                             String.format(
                                     "The `%s` trait applied to a member of a collection operation's input or output "
-                                            + "must target a list of structures.",
+                                            + "does not target a list of structures.",
                                     NestedPropertiesTrait.ID)));
                 }
             }
