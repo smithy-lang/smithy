@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed the API Gateway `EndpointConfiguration` OpenAPI mapper to write the endpoint configuration extension to the correct location in the generated OpenAPI document.",
+  "pull_requests": [
+    "[#3304](https://github.com/smithy-lang/smithy/pull/3304)"
+  ]
+}
