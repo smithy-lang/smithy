@@ -1,6 +1,6 @@
 {
   "type": "bugfix",
-  "description": "Fix API Gateway ApiKeyRequired OpenApi mapper to work with service level security schemes",
+  "description": "Fixed the API Gateway `@apiKeyRequired` OpenAPI mapper to combine `api_key` with an operation's inherited or existing security requirements instead of replacing them, so authentication is no longer dropped when an API key is required.",
   "pull_requests": [
     "[#3296](https://github.com/smithy-lang/smithy/pull/3296)"
   ]
