@@ -1,0 +1,101 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "ServiceAuthorizerService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/c1-inherits-authorizer-no-key": {
+            "get": {
+                "operationId": "InheritsAuthorizerNoKey",
+                "responses": {
+                    "200": {
+                        "description": "InheritsAuthorizerNoKey 200 response"
+                    }
+                }
+            }
+        },
+        "/c2-inherits-authorizer-with-key": {
+            "get": {
+                "operationId": "InheritsAuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "InheritsAuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        },
+        "/c3-same-authorizer-with-key": {
+            "get": {
+                "operationId": "SameAuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "SameAuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        },
+        "/c4-different-authorizer-with-key": {
+            "get": {
+                "operationId": "DifferentAuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "DifferentAuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "otherAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "otherAuth": {
+                "type": "http",
+                "description": "HTTP Bearer authentication",
+                "scheme": "Bearer",
+                "x-amazon-apigateway-authorizer": {
+                    "type": "token",
+                    "authorizerUri": "arn:other"
+                },
+                "x-amazon-apigateway-authtype": "custom"
+            },
+            "tokenAuth": {
+                "type": "http",
+                "description": "HTTP Bearer authentication",
+                "scheme": "Bearer",
+                "x-amazon-apigateway-authorizer": {
+                    "type": "token",
+                    "authorizerUri": "arn:token"
+                },
+                "x-amazon-apigateway-authtype": "custom"
+            }
+        }
+    },
+    "security": [
+        {
+            "tokenAuth": []
+        }
+    ]
+}

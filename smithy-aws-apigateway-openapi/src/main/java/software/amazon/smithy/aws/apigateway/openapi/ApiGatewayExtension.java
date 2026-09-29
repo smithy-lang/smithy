@@ -19,8 +19,13 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
                 ApiGatewayMapper.wrap(new AddDefaultRestConfigSettings()),
                 ApiGatewayMapper.wrap(new AddApiTlsPolicy()),
                 ApiGatewayMapper.wrap(new AddApiKeySource()),
-                ApiGatewayMapper.wrap(new AddApiKeyRequired()),
+
+                // AddApiKeyRequired must run after every mapper that writes an operation's security
+                // requirements (AddAuthorizers and AddCognitoUserPoolsScopes) so that it can merge
+                // api_key into each of the operation's final requirements. AddApiKeyRequired#getOrder
+                // enforces this ordering; the registration order here just mirrors it for readability.
                 ApiGatewayMapper.wrap(new AddAuthorizers()),
+                ApiGatewayMapper.wrap(new AddApiKeyRequired()),
                 ApiGatewayMapper.wrap(new AddBinaryTypes()),
                 ApiGatewayMapper.wrap(new AddCognitoUserPoolsScopes()),
                 ApiGatewayMapper.wrap(new AddEndpointConfiguration()),

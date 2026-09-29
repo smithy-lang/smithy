@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "BuiltInKeyAuthorizerService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/d1-built-in-key-no-key": {
+            "get": {
+                "operationId": "BuiltInKeyNoKey",
+                "responses": {
+                    "200": {
+                        "description": "BuiltInKeyNoKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "apiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/d2-built-in-key-with-key": {
+            "get": {
+                "operationId": "BuiltInKeyWithKey",
+                "responses": {
+                    "200": {
+                        "description": "BuiltInKeyWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "apiKeyAuth": [],
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKeyAuth": {
+                "type": "apiKey",
+                "description": "API key authentication via the 'x-api-key' header",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKeyAuth": []
+        }
+    ]
+}

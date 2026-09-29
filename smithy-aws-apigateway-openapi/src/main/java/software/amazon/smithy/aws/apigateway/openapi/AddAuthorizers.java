@@ -48,11 +48,11 @@ import software.amazon.smithy.utils.MapUtils;
  * mapper.
  */
 final class AddAuthorizers implements ApiGatewayMapper {
+    private static final Logger LOGGER = Logger.getLogger(AddAuthorizers.class.getName());
 
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
     private static final String CLIENT_EXTENSION_NAME = "x-amazon-apigateway-authtype";
     private static final String DEFAULT_AUTH_TYPE = "custom";
-    private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 
     @Override
     public List<ApiGatewayConfig.ApiType> getApiTypes() {
@@ -110,6 +110,10 @@ final class AddAuthorizers implements ApiGatewayMapper {
             return operation;
         }
 
+        // Operation has a different authorizer than the service's default (or uses API Gateway's built-in API keys,
+        // which are restated on every operation even when the operation and service's authorizers are the same).
+        // Append to the operation's security list to override the document-level one. If the operation also
+        // requires an api key, AddApiKeyRequired runs after this mapper and merges api_key into each requirement.
         return operation.toBuilder()
                 .addSecurity(MapUtils.of(operationAuth, ListUtils.of()))
                 .build();

@@ -1,0 +1,179 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "OperationAuthorizerService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/a4-narrowed-auth-with-key": {
+            "get": {
+                "operationId": "NarrowedAuthWithKey",
+                "responses": {
+                    "200": {
+                        "description": "NarrowedAuthWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "aws.auth.sigv4": []
+                    }
+                ]
+            }
+        },
+        "/a6-two-schemes-with-key": {
+            "get": {
+                "operationId": "TwoSchemesWithKey",
+                "responses": {
+                    "200": {
+                        "description": "TwoSchemesWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "smithy.api.httpBasicAuth": []
+                    },
+                    {
+                        "api_key": [],
+                        "smithy.api.httpBearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/a7-inherits-all-schemes-with-key": {
+            "get": {
+                "operationId": "InheritsAllSchemesWithKey",
+                "responses": {
+                    "200": {
+                        "description": "InheritsAllSchemesWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "smithy.api.httpBasicAuth": []
+                    },
+                    {
+                        "api_key": [],
+                        "smithy.api.httpBearerAuth": []
+                    },
+                    {
+                        "api_key": [],
+                        "aws.auth.sigv4": []
+                    }
+                ]
+            }
+        },
+        "/b1-authorizer-no-key": {
+            "get": {
+                "operationId": "AuthorizerNoKey",
+                "responses": {
+                    "200": {
+                        "description": "AuthorizerNoKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        },
+        "/b2-authorizer-with-key": {
+            "get": {
+                "operationId": "AuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "AuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        },
+        "/b3-narrowed-auth-and-authorizer-with-key": {
+            "get": {
+                "operationId": "NarrowedAuthAndAuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "NarrowedAuthAndAuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        },
+        "/b4-two-schemes-and-authorizer-with-key": {
+            "get": {
+                "operationId": "TwoSchemesAndAuthorizerWithKey",
+                "responses": {
+                    "200": {
+                        "description": "TwoSchemesAndAuthorizerWithKey 200 response"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": [],
+                        "tokenAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "aws.auth.sigv4": {
+                "type": "apiKey",
+                "description": "AWS Signature Version 4 authentication",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "awsSigv4"
+            },
+            "smithy.api.httpBasicAuth": {
+                "type": "http",
+                "description": "HTTP Basic authentication",
+                "scheme": "Basic"
+            },
+            "smithy.api.httpBearerAuth": {
+                "type": "http",
+                "description": "HTTP Bearer authentication",
+                "scheme": "Bearer"
+            },
+            "tokenAuth": {
+                "type": "http",
+                "description": "HTTP Bearer authentication",
+                "scheme": "Bearer",
+                "x-amazon-apigateway-authorizer": {
+                    "type": "token",
+                    "authorizerUri": "arn:token"
+                },
+                "x-amazon-apigateway-authtype": "custom"
+            }
+        }
+    },
+    "security": [
+        {
+            "smithy.api.httpBasicAuth": []
+        },
+        {
+            "smithy.api.httpBearerAuth": []
+        },
+        {
+            "aws.auth.sigv4": []
+        }
+    ]
+}
