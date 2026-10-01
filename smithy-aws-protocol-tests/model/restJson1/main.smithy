@@ -34,6 +34,14 @@ service RestJson {
         HttpRequestWithGreedyLabelInPath
         HttpRequestWithFloatLabels
         HttpRequestWithRegexLiteral
+        // URI conflict resolution and specificity routing tests
+        UriConflictAbcBcdLabel
+        UriConflictAbcLabelCde
+        UriConflictLabelBcdCde
+        UriConflictLabelBcdCdeQuery
+        UriConflictAbcLiteral
+        UriConflictAbcLabel
+        UriConflictAbcGreedyLabel
         // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes
         ConstantQueryString
