@@ -13,7 +13,7 @@ maven-resolver-provider = "3.9.16"
 # require bumping the runtime Java version to 17.
 maven-resolver = "2.0.22"
 slf4j = "2.0.19"
-mockserver = "7.6.0"
+mockserver = "8.0.0"
 compile-testing = "0.23.0"
 json-schema = "1.12.1"
 shadow = "9.6.1"
