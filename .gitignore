@@ -50,3 +50,5 @@ build/
 **/src/test/resources/**/*FuzzTestInputs/**/crash-*
 **/src/test/resources/**/*FuzzTestInputs/
 .cifuzz-corpus/
+node_modules/
+docs/landing-page/dist/

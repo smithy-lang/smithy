@@ -34,6 +34,7 @@ public final class SmithyCommand implements Command {
                 new BuildCommand(getName(), dependencyResolverFactory),
                 new DiffCommand(getName(), dependencyResolverFactory),
                 new AstCommand(getName(), dependencyResolverFactory),
+                new TransformCommand(getName(), dependencyResolverFactory),
                 new SelectCommand(getName(), dependencyResolverFactory),
                 new FormatCommand(getName()),
                 new CleanCommand(getName()),
