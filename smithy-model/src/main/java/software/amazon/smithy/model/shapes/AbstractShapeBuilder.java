@@ -321,6 +321,25 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
         return (B) this;
     }
 
+    /**
+     * Adds a mixin reference to the shape without triggering member recalculation.
+     *
+     * <p>This is used during mixin flattening to re-add interface mixin references
+     * after members/traits have already been flattened. Unlike {@link #addMixin(Shape)},
+     * this method does not trigger {@code NamedMemberUtils.cleanMixins()} in subclasses.
+     *
+     * @param shape Mixin shape to add as a reference.
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B addMixinRef(Shape shape) {
+        if (mixins == null) {
+            mixins = new LinkedHashMap<>();
+        }
+        mixins.put(shape.getId(), shape);
+        return (B) this;
+    }
+
     Map<ShapeId, Shape> getMixins() {
         return mixins == null ? Collections.emptyMap() : mixins;
     }
