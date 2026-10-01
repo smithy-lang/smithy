@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed JMESPath slice evaluation returning an element, or throwing on an empty array, when the slice start is out of bounds. For example, `[5:]` on a three element array now returns `[]`.",
+  "pull_requests": []
+}
