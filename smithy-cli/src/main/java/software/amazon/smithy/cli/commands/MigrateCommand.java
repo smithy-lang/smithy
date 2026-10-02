@@ -60,7 +60,7 @@ final class MigrateCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(MigrateCommand.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1(\\.0)?\"\\s*$");
-    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2(\\.\\d)?\"\\s*$");
+    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version\\s*:\\s*\"(2(?:\\.\\d)?)\"");
     private final String parentCommandName;
 
     MigrateCommand(String parentCommandName) {
@@ -106,7 +106,7 @@ final class MigrateCommand implements Command {
 
     @Override
     public String getSummary() {
-        return "Migrate Smithy IDL models from 1.0 to 2.1 in place.";
+        return "Migrate Smithy IDL models from 1.0 or 2.0 to 2.1 in place.";
     }
 
     @Override
@@ -232,7 +232,11 @@ final class MigrateCommand implements Command {
 
     String upgradeFile(Model completeModel, Path filePath) {
         String contents = IoUtils.readUtf8File(filePath);
-        if (VERSION_2.matcher(contents).find()) {
+        Matcher matcher = VERSION_2.matcher(contents);
+        if (matcher.find()) {
+            if (matcher.group(1).equals("2.0")) {
+                return contents.substring(0, matcher.start(1)) + "2.1" + contents.substring(matcher.end(1));
+            }
             return contents;
         }
 
