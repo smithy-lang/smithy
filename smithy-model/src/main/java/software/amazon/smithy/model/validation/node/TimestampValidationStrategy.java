@@ -8,6 +8,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeTypeFilter;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
 
 /**
  * Defines how timestamps are validated.
@@ -44,6 +45,10 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
 
         @Override
         public void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
+            if (value.isNullNode() && context.hasFeature(NodeValidationVisitor.Feature.ALLOW_OPTIONAL_NULLS)) {
+                return;
+            }
+
             if (!value.isNumberNode()) {
                 emitter.accept(shape,
                         "Invalid " + value.getType() + " value provided for timestamp, `"

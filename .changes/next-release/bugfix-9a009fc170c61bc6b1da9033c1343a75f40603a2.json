@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed node validation rejecting null values for timestamp members in a nullable context",
+  "pull_requests": [
+    "[#3248](https://github.com/smithy-lang/smithy/pull/3248)"
+  ]
+}
