@@ -408,17 +408,10 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
-        List<ValidationEvent> events = new ArrayList<>();
+        List<ValidationEvent> events = applyPlugins(shape);
         if (value.isNullNode()) {
             events.addAll(checkNullMember(shape));
-            if (events.isEmpty()) {
-                // It's null in a place where it's allowed to be, nothing more to validate.
-                return events;
-            }
         }
-
-        events.addAll(applyPlugins(shape));
-
         model.getShape(shape.getTarget()).ifPresent(target -> {
             // We only need to keep track of a single referring member, so a stack of members or anything like that
             // isn't needed here.

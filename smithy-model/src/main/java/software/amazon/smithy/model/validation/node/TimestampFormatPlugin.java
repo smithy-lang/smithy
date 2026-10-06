@@ -15,6 +15,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeTypeFilter;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 
 /**
@@ -36,6 +37,10 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
 
     @Override
     public void applyMatching(Shape shape, Node value, Context context, Emitter emitter) {
+        if (value.isNullNode() && context.hasFeature(NodeValidationVisitor.Feature.ALLOW_OPTIONAL_NULLS)) {
+            return;
+        }
+
         if (shape instanceof TimestampShape) {
             // Don't validate the timestamp target if a referring member had the timestampFormat trait.
             boolean fromMemberWithTrait = context.getReferringMember()
