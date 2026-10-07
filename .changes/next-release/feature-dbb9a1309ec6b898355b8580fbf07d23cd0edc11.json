@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Updated smithy migrate to target IDL 2.1, including upgrading version declarations of \"2\" and \"2.0\". Added opt-in --infer-inline-collections and --force-inline-collections options that retain named declarations and leave unsafe references named.",
+  "pull_requests": []
+}

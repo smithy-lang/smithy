@@ -10,6 +10,7 @@ formats.
 
     converting-to-openapi
     migrating-idl-1-to-2
+    migrating-idl-2-to-2-1
     generating-cloudformation-resources
 
 More model conversion tooling can be found in the

@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added SmithyIdlModelSerializer.serializeTraits to render standalone IDL trait applications with caller-controlled shape ID qualification, including explicit default and enumValue applications.",
+  "pull_requests": []
+}

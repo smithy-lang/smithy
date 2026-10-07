@@ -27,10 +27,12 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -113,6 +115,7 @@ final class MigrateCommand implements Command {
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
 
         CommandAction action = HelpActionWrapper.fromCommand(
                 this,
@@ -120,6 +123,38 @@ final class MigrateCommand implements Command {
                 this::run);
 
         return action.apply(arguments, env);
+    }
+
+    private static final class Options implements ArgumentReceiver {
+        private boolean inferInlineCollections;
+        private boolean forceInlineCollections;
+
+        @Override
+        public boolean testOption(String name) {
+            switch (name) {
+                case "--infer-inline-collections":
+                    inferInlineCollections = true;
+                    return true;
+                case "--force-inline-collections":
+                    inferInlineCollections = true;
+                    forceInlineCollections = true;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.option("--infer-inline-collections",
+                    null,
+                    "Replace references to trait-free lists and maps with inline collections, "
+                            + "keeping the original declarations. Collection members must also have no traits.");
+            printer.option("--force-inline-collections",
+                    null,
+                    "Also inline collections with traits that can be copied to referencing members. "
+                            + "Existing member traits take precedence. Collection members must have no traits.");
+        }
     }
 
     private int run(Arguments arguments, Env env) {
@@ -171,7 +206,11 @@ final class MigrateCommand implements Command {
 
         // Validate upgraded models before writing
         ModelAssembler assembler = ModelBuilder.createModelAssembler(classLoader);
+        assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS,
+                arguments.getReceiver(BuildOptions.class).allowUnknownTraits());
         smithyBuildConfig.getImports().forEach(assembler::addImport);
+        smithyBuildConfig.getSources().forEach(assembler::addImport);
+        models.forEach(assembler::addImport);
 
         List<Pair<Path, String>> upgradedModels = new ArrayList<>();
         for (Path modelFilePath : resolvedModelFiles) {
@@ -181,12 +220,20 @@ final class MigrateCommand implements Command {
             assembler.addUnparsedModel(modelFilePath.toAbsolutePath().toString(), upgradedModelString);
         }
 
-        try {
-            assembler.assemble().validate();
-        } catch (ValidatedResultException e) {
-            throw new RuntimeException("Upgraded Smithy models are invalid. "
-                    + "Please report the following errors to Smithy team.\n"
-                    + e.getMessage());
+        Options options = arguments.getReceiver(Options.class);
+        Model validatedModel = validateUpgradedModels(assembler);
+        if (options.inferInlineCollections) {
+            InlineCollectionMigration migration = new InlineCollectionMigration(validatedModel,
+                    options.forceInlineCollections);
+            List<Pair<Path, String>> eligibleFiles = upgradedModels.stream()
+                    .filter(file -> supportsInlineCollectionMigration(file.right))
+                    .collect(Collectors.toList());
+            Map<Path, String> inlineModels = migration.migrate(eligibleFiles, assembler);
+            List<Pair<Path, String>> migratedModels = new ArrayList<>();
+            for (Pair<Path, String> upgraded : upgradedModels) {
+                migratedModels.add(Pair.of(upgraded.left, inlineModels.getOrDefault(upgraded.left, upgraded.right)));
+            }
+            upgradedModels = migratedModels;
         }
 
         for (Pair<Path, String> upgradedModel : upgradedModels) {
@@ -194,6 +241,22 @@ final class MigrateCommand implements Command {
         }
 
         return 0;
+    }
+
+    private Model validateUpgradedModels(ModelAssembler assembler) {
+        try {
+            return assembler.assemble().unwrap();
+        } catch (ValidatedResultException e) {
+            throw new RuntimeException("Upgraded Smithy models are invalid. "
+                    + "Please report the following errors to Smithy team.\n"
+                    + e.getMessage());
+        }
+    }
+
+    private boolean supportsInlineCollectionMigration(String contents) {
+        Matcher matcher = VERSION_2.matcher(contents);
+        // Version migration runs first, including upgrading "2" to "2.1".
+        return matcher.find() && matcher.group(1).equals("2.1");
     }
 
     private List<Path> resolveModelFiles(Model model, List<String> modelFilesOrDirectories) {
@@ -206,11 +269,10 @@ final class MigrateCommand implements Command {
                 .map(shape -> Paths.get(shape.getSourceLocation().getFilename()).toAbsolutePath())
                 .distinct()
                 .filter(locationPath -> {
-                    for (Path inputPath : absoluteModelFilesOrDirectories) {
-                        if (!locationPath.startsWith(inputPath)) {
-                            LOGGER.finest("Skipping non-target model file: " + locationPath);
-                            return false;
-                        }
+                    if (!absoluteModelFilesOrDirectories.isEmpty()
+                            && absoluteModelFilesOrDirectories.stream().noneMatch(locationPath::startsWith)) {
+                        LOGGER.finest("Skipping non-target model file: " + locationPath);
+                        return false;
                     }
                     if (!locationPath.toString().endsWith(".smithy")) {
                         LOGGER.info("Skipping non-IDL model file: " + locationPath);
@@ -234,7 +296,7 @@ final class MigrateCommand implements Command {
         String contents = IoUtils.readUtf8File(filePath);
         Matcher matcher = VERSION_2.matcher(contents);
         if (matcher.find()) {
-            if (matcher.group(1).equals("2.0")) {
+            if (matcher.group(1).equals("2") || matcher.group(1).equals("2.0")) {
                 return contents.substring(0, matcher.start(1)) + "2.1" + contents.substring(matcher.end(1));
             }
             return contents;

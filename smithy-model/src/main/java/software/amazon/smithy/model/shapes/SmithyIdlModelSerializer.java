@@ -182,6 +182,41 @@ public final class SmithyIdlModelSerializer {
         return result;
     }
 
+    /**
+     * Serializes trait applications without a model header or use statements.
+     *
+     * <p>Documentation is written using documentation comments. Other traits use
+     * the same IDL syntax, trait filter, and ordering as model serialization.
+     * Traits normally written using member assignment syntax, such as
+     * {@code default} and {@code enumValue}, are written as explicit applications.
+     * The caller controls shape ID qualification so the result can be inserted
+     * into an existing file without introducing imports.
+     *
+     * @param model Model used to resolve trait definitions and their value types.
+     * @param traits Traits to serialize.
+     * @param shapeIdFormatter Formats shape IDs used in trait names and values.
+     * @return Trait applications with a trailing newline, or an empty string.
+     */
+    public String serializeTraits(
+            Model model,
+            Collection<? extends Trait> traits,
+            Function<ShapeId, String> shapeIdFormatter
+    ) {
+        Objects.requireNonNull(shapeIdFormatter);
+        SmithyCodeWriter writer = new SmithyCodeWriter("", model);
+        writer.putFormatter('I', (value, indentation) -> shapeIdFormatter.apply(ShapeId.from(String.valueOf(value))));
+        ShapeSerializer serializer = new ShapeSerializer(writer,
+                new NodeSerializer(writer, model),
+                traitFilter,
+                model,
+                Collections.emptySet(),
+                componentOrder);
+        Map<ShapeId, Trait> applications = new LinkedHashMap<>();
+        traits.forEach(trait -> applications.put(trait.toShapeId(), trait));
+        serializer.serializeTraits(applications);
+        return writer.toString();
+    }
+
     private String serialize(Model fullModel, Collection<Shape> shapes) {
         Set<String> namespaces = shapes.stream()
                 .map(shape -> shape.getId().getNamespace())
@@ -786,15 +821,8 @@ public final class SmithyIdlModelSerializer {
             traits.values()
                     .stream()
                     .filter(trait -> noSpecialDocsSyntax || !trait.toShapeId().equals(DocumentationTrait.ID))
-                    // The default and enumValue traits are serialized using the assignment syntactic sugar.
-                    .filter(trait -> {
-                        if (trait instanceof EnumValueTrait) {
-                            return false;
-                        } else {
-                            // Default traits are serialized normally for non-members, but omitted for members.
-                            return !isMember || !(trait instanceof DefaultTrait);
-                        }
-                    })
+                    // Member defaults are serialized using assignment syntactic sugar.
+                    .filter(trait -> !isMember || !(trait instanceof DefaultTrait))
                     .filter(trait -> memberIndex == null || !trait.toShapeId().equals(IDX_TRAIT))
                     .filter(traitFilter)
                     .sorted(traitComparator)
@@ -828,6 +856,11 @@ public final class SmithyIdlModelSerializer {
                 // Additionally, empty structure traits can omit a value.
                 codeWriter.write("@$I", trait.toShapeId());
             } else if (node.isObjectNode()) {
+                if (node.expectObjectNode().isEmpty()) {
+                    // In particular, @documentTrait() would parse as null, not {}.
+                    codeWriter.write("@$I({})", trait.toShapeId());
+                    return;
+                }
                 codeWriter.writeIndent().openBlockInline("@$I(", trait.toShapeId());
                 nodeSerializer.serializeKeyValuePairs(node.expectObjectNode(), shape);
                 codeWriter.closeBlock(")");

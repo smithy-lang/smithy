@@ -138,7 +138,7 @@ public class MigrateCommandTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"2.0, 2.1", "2, 2", "2.1, 2.1"})
+    @CsvSource({"2.0, 2.1", "2, 2.1", "2.1, 2.1"})
     public void testUpgradeV2PreservesContents(String version, String expectedVersion, @TempDir Path tempDir)
             throws IOException {
         String template = "// Model comment\r\n\r\n\t$version \t: \t\"%s\" // Version comment\r\n\r\n"
@@ -157,9 +157,10 @@ public class MigrateCommandTest {
     @ParameterizedTest
     @CsvSource({
             "migrate, 2.0, 2.1",
-            "migrate, 2, 2",
+            "migrate, 2, 2.1",
             "migrate, 2.1, 2.1",
-            "upgrade-1-to-2, 2.0, 2.1"
+            "upgrade-1-to-2, 2.0, 2.1",
+            "upgrade-1-to-2, 2, 2.1"
     })
     public void testMigrateV2InPlace(String command, String version, String expectedVersion, @TempDir Path tempDir)
             throws IOException {

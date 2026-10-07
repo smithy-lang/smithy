@@ -1,15 +1,25 @@
 =====================================
-Smithy IDL 1.0 to 2.0 Migration Guide
+Smithy IDL 1.0 to 2.1 Migration Guide
 =====================================
 
 This guide describes how to migrate your models from Smithy IDL version 1.0
-to version 2.0 without breaking your models or customers.
+to version 2.1 without breaking your models or customers.
+
+The ``smithy migrate`` command applies the required transformations described
+below and updates model files to version 2.1 in place:
+
+.. code-block:: sh
+
+    smithy migrate model/
+
+For migration options, including optional inline collection inference, see the
+:doc:`IDL 2.0 to 2.1 migration guide <migrating-idl-2-to-2-1>`.
 
 Update the model file version
 =============================
 
 For each model file you are upgrading, change the version from ``1`` or
-``1.0`` to ``2.0``. In the IDL this is controlled with the
+``1.0`` to ``2.1``. In the IDL this is controlled with the
 :ref:`version statement <smithy-version>`, and in the AST it is controlled
 with the ``smithy`` :ref:`top level property <ast-top-level-properties>`. For
 example, the following model:
@@ -25,7 +35,7 @@ Should be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     string Foo
@@ -43,12 +53,12 @@ Also needs to be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     string Foo
 
-Smithy's tooling is able to load both 1.0 model files and 2.0 model files into
+Smithy's tooling is able to load both 1.0 model files and 2.1 model files into
 a single combined model. Therefore when migrating, it may be wise to migrate
 one file at a time.
 
@@ -56,7 +66,7 @@ one file at a time.
 Replace the box trait
 =====================
 
-The ``box`` trait is removed in 2.0. Any shape marked with the ``box`` trait
+The ``box`` trait was removed in 2.0. Any shape marked with the ``box`` trait
 needs to be updated.
 
 
@@ -64,7 +74,7 @@ Boxed root-level shapes
 -----------------------
 
 For non-member, root level shapes, simply remove the ``box`` trait. Root level
-shapes in Smithy 2.0 have no default values unless you explicitly assign them
+shapes in Smithy 2.1 have no default values unless you explicitly assign them
 one.
 
 This 1.0 model:
@@ -77,11 +87,11 @@ This 1.0 model:
     @box // < remove this
     boolean MyBoolean
 
-Becomes this 2.0 model:
+Becomes this 2.1 model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     boolean MyBoolean
@@ -112,11 +122,11 @@ This 1.0 model:
         myInteger: MyPrimitiveInteger
     }
 
-Becomes this 2.0 model:
+Becomes this 2.1 model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @default(false)
@@ -150,11 +160,11 @@ This 1.0 model:
         foo: PrimitiveBoolean
     }
 
-Becomes this 2.0 model:
+Becomes this 2.1 model:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     structure MyStructure {
@@ -187,7 +197,7 @@ Needs to be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @uniqueItems
@@ -200,7 +210,7 @@ Add the default trait to streaming blobs
 ========================================
 
 Members that target a blob shape with the :ref:`streaming-trait` have always
-had an implicit default empty value. In IDL 2.0, that will become explicit.
+had an implicit default empty value. IDL 2.1 requires this default to be explicit.
 Any such members that are not already marked with the :ref:`required-trait`
 will now need to be marked with the :ref:`default-trait`.
 
@@ -231,7 +241,7 @@ Needs to be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     structure OptionalStream {
@@ -251,7 +261,7 @@ Optional migration steps
 ========================
 
 The following steps are not required to update a model to be fully compatible
-with 2.0, but instead are refactoring steps that can be taken to simplify a
+with 2.1, but instead are refactoring steps that can be taken to simplify
 your model.
 
 
@@ -291,7 +301,7 @@ can be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation PutUser {
@@ -353,7 +363,7 @@ Can be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin
@@ -386,12 +396,12 @@ Use the target elision syntax sugar to reduce boilerplate
 
 Resource shapes contain a set of identifiers, but when writing structures that
 contain those identifiers you have to duplicate those definitions entirely. In
-IDL 2.0, you can use the target elision syntax with a structure bound to a
+IDL 2.1, you can use the target elision syntax with a structure bound to a
 resource. For example:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     resource User {
@@ -421,7 +431,7 @@ traits to included members.
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     @mixin
@@ -463,7 +473,7 @@ can be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     operation GetUser {
@@ -515,7 +525,7 @@ can be updated to:
 
 .. code-block:: smithy
 
-    $version: "2"
+    $version: "2.1"
     namespace smithy.example
 
     enum Suit {
