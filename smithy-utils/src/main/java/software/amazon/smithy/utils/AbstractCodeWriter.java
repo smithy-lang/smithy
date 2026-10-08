@@ -1052,8 +1052,9 @@ public abstract class AbstractCodeWriter<T extends AbstractCodeWriter<T>> {
             // Don't attempt to intercept anonymous sections.
             if (!(sectionValue instanceof AnonymousCodeSection)) {
                 // Ensure the remaining parent interceptors are applied in the order they were inserted.
-                // This is the reverse order used when normally iterating over the states deque.
-                Iterator<State> insertionOrderedStates = states.descendingIterator();
+                // Snapshot the states because interceptors can push and pop states while they are applied.
+                Deque<State> parentStates = new ArrayDeque<>(states);
+                Iterator<State> insertionOrderedStates = parentStates.descendingIterator();
                 while (insertionOrderedStates.hasNext()) {
                     State state = insertionOrderedStates.next();
                     result = applyPoppedInterceptors(popped, state, sectionValue, result);

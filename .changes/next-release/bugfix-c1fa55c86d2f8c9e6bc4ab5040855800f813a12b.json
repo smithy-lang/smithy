@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed AbstractCodeWriter state interception when interceptors push and pop writer states.",
+  "pull_requests": [
+    "[#3314](https://github.com/smithy-lang/smithy/pull/3314)"
+  ]
+}
