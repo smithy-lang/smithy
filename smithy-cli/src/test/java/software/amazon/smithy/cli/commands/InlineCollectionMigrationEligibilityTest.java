@@ -19,6 +19,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.LengthTrait;
@@ -366,9 +368,12 @@ class InlineCollectionMigrationEligibilityTest {
                 structure Imported { names: Strings }
                 """);
         Path source = write("source.smithy", HEADER + "structure Input { names: Strings }\n");
-        Path config = write("smithy-build.json", """
-                {"version":"1.0","sources":["%s"],"imports":["%s"]}
-                """.formatted(source, imported));
+        Path config = write("smithy-build.json",
+                Node.prettyPrintJson(Node.objectNodeBuilder()
+                        .withMember("version", "1.0")
+                        .withMember("sources", ArrayNode.fromStrings(source.toString()))
+                        .withMember("imports", ArrayNode.fromStrings(imported.toString()))
+                        .build()));
 
         migrate("migrate", "--config", config.toString(), "--infer-inline-collections");
 
@@ -506,9 +511,11 @@ class InlineCollectionMigrationEligibilityTest {
                 structure Control { names: Strings }
                 """;
         Path source = write("source.smithy", contents);
-        Path config = write("smithy-build.json", """
-                {"version":"1.0","imports":["%s"]}
-                """.formatted(imported));
+        Path config = write("smithy-build.json",
+                Node.prettyPrintJson(Node.objectNodeBuilder()
+                        .withMember("version", "1.0")
+                        .withMember("imports", ArrayNode.fromStrings(imported.toString()))
+                        .build()));
 
         migrate("migrate", "--config", config.toString(), option, source.toString());
 

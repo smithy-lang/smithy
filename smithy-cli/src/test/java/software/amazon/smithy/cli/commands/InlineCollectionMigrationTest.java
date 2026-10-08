@@ -18,6 +18,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -63,15 +65,17 @@ class InlineCollectionMigrationTest {
             "upgrade-1-to-2, 2, --infer-inline-collections"
     })
     void infersCollectionsAndKeepsDeclarations(String command, String version, String option) throws IOException {
-        Path path = write("model.smithy", HEADER.replace("\"2.1\"", "\"" + version + "\"") + COLLECTIONS);
+        String newline = version.startsWith("1") ? System.lineSeparator() : "\n";
+        Path path = write("model.smithy",
+                (HEADER.replace("\"2.1\"", "\"" + version + "\"") + COLLECTIONS).replace("\n", newline));
 
         migrate(command, option, path.toString());
 
         String expectedHeader = version.startsWith("1") ? HEADER.replace("\"2.1\"\n", "\"2.1\"\n\n") : HEADER;
         assertThat(Files.readString(path),
-                equalTo(expectedHeader + COLLECTIONS
+                equalTo((expectedHeader + COLLECTIONS
                         .replace("names: Strings", "names: [String]")
-                        .replace("tags: Tags", "tags: {String: String}")));
+                        .replace("tags: Tags", "tags: {String: String}")).replace("\n", newline)));
         Model model = Model.assembler().addImport(path).assemble().unwrap();
         assertThat(model.expectShape(ShapeId.from("smithy.example#Strings")).hasTrait(SyntheticShapeTrait.ID),
                 equalTo(false));
@@ -389,7 +393,10 @@ class InlineCollectionMigrationTest {
                 structure Input { names: Strings }
                 """);
         Path config = write("smithy-build.json",
-                "{\"version\":\"1.0\",\"imports\":[\"" + imported + "\"]}");
+                Node.prettyPrintJson(Node.objectNodeBuilder()
+                        .withMember("version", "1.0")
+                        .withMember("imports", ArrayNode.fromStrings(imported.toString()))
+                        .build()));
         String originalImported = Files.readString(imported);
 
         migrate("migrate", "--config", config.toString(), "--infer-inline-collections", references.toString());
