@@ -494,6 +494,10 @@ following members:
       - The reason the feature is unstable. Currently only supported value is
         ``PREVIEW``, indicating that the feature is offered as a public
         preview.
+    * - since
+      - ``string``
+      - The date the feature became unstable, in ``YYYY-MM-DD`` format.
+        Once set, the value cannot be changed.
 
 A shape becomes part of a preview feature by applying the :ref:`unstable trait
 <unstable-trait>` with a ``featureId`` that matches a key in the enclosing
@@ -511,6 +515,7 @@ enclosing service's ``unstableFeatures`` trait.
         MYSERVICE_FIRST_PREVIEW: {
             message: "This is my preview operation and is subject to change!"
             reason: "PREVIEW"
+            since: "2026-10-08"
         }
     )
     service MyService {

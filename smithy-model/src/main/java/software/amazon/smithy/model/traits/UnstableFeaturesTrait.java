@@ -98,21 +98,28 @@ public final class UnstableFeaturesTrait extends AbstractTrait implements ToSmit
 
         private final String message;
         private final UnstableReason reason;
+        private final String since;
 
-        private UnstableFeatureInfo(String message, UnstableReason reason) {
+        private UnstableFeatureInfo(String message, UnstableReason reason, String since) {
             this.message = message;
             this.reason = reason;
+            this.since = since;
         }
 
         public static UnstableFeatureInfo fromNode(Node node) {
             ObjectNode obj = node.expectObjectNode();
             String message = obj.getStringMember("message").map(StringNode::getValue).orElse(null);
             UnstableReason reason = obj.getMember("reason").map(UnstableReason::fromNode).orElse(null);
-            return new UnstableFeatureInfo(message, reason);
+            String since = obj.getStringMember("since").map(StringNode::getValue).orElse(null);
+            return new UnstableFeatureInfo(message, reason, since);
         }
 
         public static UnstableFeatureInfo of(String message, UnstableReason reason) {
-            return new UnstableFeatureInfo(message, reason);
+            return of(message, reason, null);
+        }
+
+        public static UnstableFeatureInfo of(String message, UnstableReason reason, String since) {
+            return new UnstableFeatureInfo(message, reason, since);
         }
 
         public Optional<String> getMessage() {
@@ -123,11 +130,16 @@ public final class UnstableFeaturesTrait extends AbstractTrait implements ToSmit
             return Optional.ofNullable(reason);
         }
 
+        public Optional<String> getSince() {
+            return Optional.ofNullable(since);
+        }
+
         @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
                     .withOptionalMember("message", getMessage().map(Node::from))
                     .withOptionalMember("reason", getReason().map(UnstableReason::toNode))
+                    .withOptionalMember("since", getSince().map(Node::from))
                     .build();
         }
 
@@ -140,12 +152,14 @@ public final class UnstableFeaturesTrait extends AbstractTrait implements ToSmit
                 return false;
             }
             UnstableFeatureInfo that = (UnstableFeatureInfo) o;
-            return Objects.equals(message, that.message) && reason == that.reason;
+            return Objects.equals(message, that.message)
+                    && reason == that.reason
+                    && Objects.equals(since, that.since);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(message, reason);
+            return Objects.hash(message, reason, since);
         }
     }
 
