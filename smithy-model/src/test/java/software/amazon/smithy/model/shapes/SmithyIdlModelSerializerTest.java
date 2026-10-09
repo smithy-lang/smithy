@@ -150,6 +150,107 @@ public class SmithyIdlModelSerializerTest {
     }
 
     @Test
+    public void serializesStandaloneTraitsWithCallerControlledShapeIds() {
+        Model model = Model.assembler().addUnparsedModel("model.smithy", """
+                $version: "2.1"
+                namespace example
+                @trait(selector: "list")
+                structure reference {
+                    @idRef
+                    target: String
+                }
+                string Target
+                /// List documentation
+                @length(min: 1)
+                @reference(target: Target)
+                @unstable
+                list Values { member: String }
+                """).assemble().unwrap();
+        String actual = SmithyIdlModelSerializer.builder()
+                .build()
+                .serializeTraits(model,
+                        model.expectShape(ShapeId.from("example#Values")).getAllTraits().values(),
+                        ShapeId::toString);
+
+        assertThat(actual, equalTo("""
+                /// List documentation
+                @example#reference(
+                    target: example#Target
+                )
+                @smithy.api#length(
+                    min: 1
+                )
+                @smithy.api#unstable
+                """));
+        assertThat(SmithyIdlModelSerializer.builder()
+                .traitFilter(trait -> false)
+                .build()
+                .serializeTraits(model,
+                        model.expectShape(ShapeId.from("example#Values")).getAllTraits().values(),
+                        ShapeId::toString),
+                equalTo(""));
+    }
+
+    @Test
+    public void serializesAssignmentTraitsAsExplicitStandaloneApplications() {
+        Model model = Model.assembler().addUnparsedModel("model.smithy", """
+                $version: "2.1"
+                namespace example
+                intEnum Numbered {
+                    ONE = 1
+                }
+                list Strings { member: String }
+                structure Input {
+                    names: Strings = []
+                }
+                """).assemble().unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+
+        assertThat(serializer.serializeTraits(model,
+                model.expectShape(ShapeId.from("example#Numbered$ONE")).getAllTraits().values(),
+                ShapeId::toString),
+                equalTo("@smithy.api#enumValue(1)\n"));
+        assertThat(serializer.serializeTraits(model,
+                model.expectShape(ShapeId.from("example#Input$names")).getAllTraits().values(),
+                ShapeId::toString),
+                equalTo("@smithy.api#default([])\n"));
+
+        Model restored = Model.assembler()
+                .addUnparsedModel("restored.smithy", serializer.serialize(model).get(Paths.get("example.smithy")))
+                .assemble()
+                .unwrap();
+        for (String id : new String[] {"example#Numbered$ONE", "example#Input$names"}) {
+            assertThat(restored.expectShape(ShapeId.from(id)).getAllTraits(),
+                    equalTo(model.expectShape(ShapeId.from(id)).getAllTraits()));
+        }
+    }
+
+    @Test
+    public void preservesEmptyObjectDocumentTraitsInStandaloneAndModelSerialization() {
+        Model model = Model.assembler().addUnparsedModel("model.smithy", """
+                $version: "2.1"
+                namespace example
+                @trait(selector: "list")
+                document myDoc
+                @myDoc({})
+                list Values { member: String }
+                """).assemble().unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+        ShapeId values = ShapeId.from("example#Values");
+        assertThat(serializer.serializeTraits(model,
+                model.expectShape(values).getAllTraits().values(),
+                ShapeId::toString),
+                equalTo("@example#myDoc({})\n"));
+
+        Model restored = Model.assembler()
+                .addUnparsedModel("restored.smithy", serializer.serialize(model).get(Paths.get("example.smithy")))
+                .assemble()
+                .unwrap();
+        assertThat(restored.expectShape(values).findTrait("example#myDoc").get().toNode(),
+                equalTo(Node.objectNode()));
+    }
+
+    @Test
     public void traitFilterCanRemoveIdxTraitShorthand() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("idl-serialization/cases/member-indexes.smithy"))

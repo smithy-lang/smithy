@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed smithy migrate to honor --allow-unknown-traits and migrate all requested model paths when multiple paths are provided. Fixed IDL serialization of empty-object document traits to preserve their values.",
+  "pull_requests": [
+    "[#3313](https://github.com/smithy-lang/smithy/pull/3313)"
+  ]
+}

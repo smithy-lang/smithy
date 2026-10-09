@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -23,15 +24,28 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.IoUtils;
 
 public class MigrateCommandTest {
+
+    private static final String VERSION_2_MODEL = "metadata exampleVersion = \"2.0\"\n\n"
+            + "namespace smithy.example\n\n"
+            + "@enum([{value: \"example\", name: \"EXAMPLE\"}])\n"
+            + "string Example\n\n"
+            + "integer Count\n\n"
+            + "structure Input {\n"
+            + "    count: Count\n"
+            + "    example: Example\n"
+            + "}\n";
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("source")
@@ -121,6 +135,52 @@ public class MigrateCommandTest {
         return Files.walk(start)
                 .filter(path -> Files.isRegularFile(path))
                 .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v2.smithy", "")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2.0, 2.1", "2, 2.1", "2.1, 2.1"})
+    public void testUpgradeV2PreservesContents(String version, String expectedVersion, @TempDir Path tempDir)
+            throws IOException {
+        String template = "// Model comment\r\n\r\n\t$version \t: \t\"%s\" // Version comment\r\n\r\n"
+                + VERSION_2_MODEL.replace("\n", "\r\n");
+        String contents = String.format(template, version);
+        Path modelPath = tempDir.resolve("model.smithy");
+        Files.write(modelPath, contents.getBytes(StandardCharsets.UTF_8));
+
+        Model model = Model.assembler().addImport(modelPath).assemble().unwrap();
+        String actual = new MigrateCommand("smithy").upgradeFile(model, modelPath);
+
+        assertThat(actual, equalTo(String.format(template, expectedVersion)));
+        Model.assembler().addUnparsedModel("model.smithy", actual).assemble().unwrap();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "migrate, 2.0, 2.1",
+            "migrate, 2, 2.1",
+            "migrate, 2.1, 2.1",
+            "upgrade-1-to-2, 2.0, 2.1",
+            "upgrade-1-to-2, 2, 2.1"
+    })
+    public void testMigrateV2InPlace(String command, String version, String expectedVersion, @TempDir Path tempDir)
+            throws IOException {
+        Path modelPath = tempDir.resolve("model.smithy");
+        String template = "$version: \"%s\"\n\n" + VERSION_2_MODEL;
+        Files.write(modelPath, String.format(template, version).getBytes(StandardCharsets.UTF_8));
+
+        CliUtils.Result result = CliUtils.runSmithy(command, modelPath.toString());
+
+        assertThat(result.stderr(), result.code(), equalTo(0));
+        assertThat(IoUtils.readUtf8File(modelPath), equalTo(String.format(template, expectedVersion)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"migrate", "upgrade-1-to-2"})
+    public void documentsMigrationToV2_1(String command) {
+        CliUtils.Result result = CliUtils.runSmithy(command, "--help");
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stdout(), containsString("Migrate Smithy IDL models from 1.0 or 2.0 to 2.1 in place."));
     }
 
     private void assertDirEqual(Path actualDir, Path expectedDir) throws Exception {
