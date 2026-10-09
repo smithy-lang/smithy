@@ -9,8 +9,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class SimpleCodeWriterTest {
     @Test
@@ -1291,5 +1294,103 @@ public class SimpleCodeWriterTest {
 
         String result = writer.toString();
         assertThat(result, equalTo("public MyType getValue() {\n    return \"costs $100\";\n}\n"));
+    }
+
+    private static final class DepthSection implements CodeSection {}
+
+    private static final class OuterSection implements CodeSection {}
+
+    private static final class InnerSection implements CodeSection {}
+
+    private static IntStream stateDepths() {
+        return IntStream.range(0, 120);
+    }
+
+    // Exercise enough depths to cross implementation-specific stack growth boundaries.
+    @ParameterizedTest(name = "depth {0}")
+    @MethodSource("stateDepths")
+    public void interceptorsCanPushStateAtAnyStackDepth(int depth) {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.onSection(CodeInterceptor.appender(DepthSection.class, (w, section) -> {
+            w.pushState();
+            w.write("x");
+            w.popState();
+        }));
+
+        for (int i = 0; i < depth; i++) {
+            writer.pushState();
+        }
+        writer.injectSection(new DepthSection());
+        for (int i = 0; i < depth; i++) {
+            writer.popState();
+        }
+
+        assertThat(writer.toString(), equalTo("x\n"));
+    }
+
+    @ParameterizedTest(name = "depth {0}")
+    @MethodSource("stateDepths")
+    public void interceptorsCanScopeContextAtAnyStackDepth(int depth) {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.putContext("value", "outer");
+        writer.onSection(CodeInterceptor.appender(DepthSection.class, (w, section) -> {
+            w.pushState();
+            w.putContext("value", "inner");
+            w.write("$value:L");
+            w.popState();
+        }));
+
+        for (int i = 0; i < depth; i++) {
+            writer.pushState();
+        }
+        writer.injectSection(new DepthSection());
+        for (int i = 0; i < depth; i++) {
+            writer.popState();
+        }
+        writer.write("$value:L");
+
+        assertThat(writer.toString(), equalTo("inner\nouter\n"));
+    }
+
+    @Test
+    public void reentrantInterceptorsPreserveParentOrder() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.onSection(CodeInterceptor.appender(DepthSection.class, (w, section) -> {
+            w.pushState();
+            w.write("root");
+            w.popState();
+        }));
+
+        writer.pushState();
+        writer.onSection(CodeInterceptor.appender(DepthSection.class, (w, section) -> {
+            w.pushState();
+            w.write("parent");
+            w.popState();
+        }));
+
+        writer.pushState(new DepthSection());
+        writer.onSection(CodeInterceptor.appender(DepthSection.class, (w, section) -> {
+            w.pushState();
+            w.write("local");
+            w.popState();
+        }));
+        writer.popState();
+        writer.popState();
+
+        assertThat(writer.toString(), equalTo("root\nparent\nlocal\n"));
+    }
+
+    @Test
+    public void interceptorsCanInjectNestedSections() {
+        SimpleCodeWriter writer = new SimpleCodeWriter();
+        writer.onSection(CodeInterceptor.appender(InnerSection.class, (w, section) -> w.write("inner")));
+        writer.onSection(CodeInterceptor.appender(OuterSection.class, (w, section) -> {
+            w.injectSection(new InnerSection());
+            w.write("outer");
+        }));
+
+        writer.injectSection(new OuterSection());
+
+        assertThat(writer.toString(), equalTo("inner\nouter\n"));
     }
 }
