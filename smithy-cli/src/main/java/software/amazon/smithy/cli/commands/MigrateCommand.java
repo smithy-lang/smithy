@@ -128,6 +128,7 @@ final class MigrateCommand implements Command {
     private static final class Options implements ArgumentReceiver {
         private boolean inferInlineCollections;
         private boolean forceInlineCollections;
+        private boolean removeOrphanedShapes;
 
         @Override
         public boolean testOption(String name) {
@@ -139,6 +140,9 @@ final class MigrateCommand implements Command {
                     inferInlineCollections = true;
                     forceInlineCollections = true;
                     return true;
+                case "--remove-orphaned-shapes":
+                    removeOrphanedShapes = true;
+                    return true;
                 default:
                     return false;
             }
@@ -149,15 +153,24 @@ final class MigrateCommand implements Command {
             printer.option("--infer-inline-collections",
                     null,
                     "Replace references to trait-free lists and maps with inline collections, "
-                            + "keeping the original declarations. Collection members must also have no traits.");
+                            + "keeping the original declarations by default. Collection members must also have no traits.");
             printer.option("--force-inline-collections",
                     null,
                     "Also inline collections with traits that can be copied to referencing members. "
                             + "Existing member traits take precedence. Collection members must have no traits.");
+            printer.option("--remove-orphaned-shapes",
+                    null,
+                    "Remove collection declarations made unused by inline collection migration. "
+                            + "Requires --infer-inline-collections or --force-inline-collections.");
         }
     }
 
     private int run(Arguments arguments, Env env) {
+        Options options = arguments.getReceiver(Options.class);
+        if (options.removeOrphanedShapes && !options.inferInlineCollections) {
+            throw new CliError("--remove-orphaned-shapes requires --infer-inline-collections "
+                    + "or --force-inline-collections.");
+        }
         List<String> models = arguments.getPositional();
         ClassLoader classLoader = env.classLoader();
         ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
@@ -220,7 +233,6 @@ final class MigrateCommand implements Command {
             assembler.addUnparsedModel(modelFilePath.toAbsolutePath().toString(), upgradedModelString);
         }
 
-        Options options = arguments.getReceiver(Options.class);
         Model validatedModel = validateUpgradedModels(assembler);
         if (options.inferInlineCollections) {
             InlineCollectionMigration migration = new InlineCollectionMigration(validatedModel,
@@ -228,7 +240,7 @@ final class MigrateCommand implements Command {
             List<Pair<Path, String>> eligibleFiles = upgradedModels.stream()
                     .filter(file -> supportsInlineCollectionMigration(file.right))
                     .collect(Collectors.toList());
-            Map<Path, String> inlineModels = migration.migrate(eligibleFiles, assembler);
+            Map<Path, String> inlineModels = migration.migrate(eligibleFiles, assembler, options.removeOrphanedShapes);
             List<Pair<Path, String>> migratedModels = new ArrayList<>();
             for (Pair<Path, String> upgraded : upgradedModels) {
                 migratedModels.add(Pair.of(upgraded.left, inlineModels.getOrDefault(upgraded.left, upgraded.right)));

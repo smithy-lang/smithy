@@ -61,7 +61,7 @@ inaccessible elements across namespaces. An unsafe reference does not prevent
 other eligible references or version declarations from being migrated.
 Use ``--logging FINE`` or ``--debug`` to see why references remain named.
 
-Both options keep named collection declarations and ``use`` statements so
+By default, both options keep named collection declarations and ``use`` statements so
 other models can continue referencing the original shapes. References inside
 named list and map declarations are migrated using the same rules, so their
 ``member``, ``key``, or ``value`` targets can change while the declarations
@@ -79,3 +79,29 @@ collection declarations are retained.
 Migration preserves surrounding source text. Copied traits use the model
 serializer's IDL style, which can introduce multiple lines into a single-line
 declaration. Run ``smithy format`` afterward to apply consistent formatting.
+
+Removing orphaned collection declarations
+=========================================
+
+Add ``--remove-orphaned-shapes`` to either inline collection option to remove
+named list and map declarations made unused by the migration:
+
+.. code-block:: sh
+
+    smithy migrate --infer-inline-collections --remove-orphaned-shapes model/
+
+Only collections expanded by accepted migration edits are removal candidates.
+Shapes that were already unused, and declarations outside the selected files,
+are retained. References from any loaded model file, including shape IDs in
+traits marked ``idRef``, prevent removal. Declarations are also retained if
+removing them would invalidate the model. Nested collections can be removed
+after the declarations that referenced them are removed.
+
+Matching ``use`` and ``apply`` statements are removed from selected files along
+with the declaration. Documentation on surviving declarations is preserved.
+Use ``--logging FINE`` or ``--debug`` to see which collections are removed or
+retained.
+
+Models that are not loaded during migration may still reference removed shapes.
+Include downstream models when checking references, or keep the original
+declarations by omitting ``--remove-orphaned-shapes``.
