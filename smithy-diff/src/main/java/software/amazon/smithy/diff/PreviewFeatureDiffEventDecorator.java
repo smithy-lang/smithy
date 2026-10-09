@@ -4,11 +4,13 @@
  */
 package software.amazon.smithy.diff;
 
+import java.util.HashSet;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.UnstableFeatureIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.UnstableFeaturesTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -28,10 +30,10 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
     private static final Set<String> NULLABILITY_EVENT_ID_PREFIXES =
             SetUtils.of("ChangedNullability", "AddedRequiredMember");
 
-    // Adding, updating, or removing @unstable's featureId is a misuse of the trait itself and must stay
-    // blocking rather than be downgraded as a preview change.
-    private static final String UNSTABLE_TRAIT_EVENT_PREFIX = "TraitBreakingChange.";
+    // Event-id suffixes for breaking changes to @unstable's featureId or an @unstableFeatures entry's since. These
+    // are a misuse of the traits themselves and must stay blocking rather than be downgraded as a preview change.
     private static final String UNSTABLE_TRAIT_EVENT_SUFFIX = "." + UnstableTrait.ID;
+    private static final String UNSTABLE_FEATURES_TRAIT_EVENT_SUFFIX = "." + UnstableFeaturesTrait.ID;
 
     @Override
     public ValidationEvent decorate(Differences differences, ValidationEvent event) {
@@ -44,7 +46,8 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
         }
 
         String eventId = event.getId();
-        if (eventId.startsWith(UNSTABLE_TRAIT_EVENT_PREFIX) && eventId.endsWith(UNSTABLE_TRAIT_EVENT_SUFFIX)) {
+        if (eventId.endsWith(UNSTABLE_TRAIT_EVENT_SUFFIX)
+                || eventId.endsWith(UNSTABLE_FEATURES_TRAIT_EVENT_SUFFIX)) {
             return event;
         }
 
@@ -71,7 +74,24 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
             return event;
         }
 
-        return event.toBuilder().severity(Severity.WARNING).build();
+        return event.toBuilder()
+                .severity(Severity.WARNING)
+                .message(event.getMessage()
+                        + " This event is downgraded to WARNING because this shape is part of preview feature "
+                        + getFeatureIds(model, shapeId) + ".")
+                .build();
+    }
+
+    private static String getFeatureIds(Model model, ShapeId shapeId) {
+        Set<String> featureIds = new HashSet<>();
+        for (ShapeId ownerId : UnstableFeatureIndex.of(model).getFeatureOwners(shapeId)) {
+            model.getShape(ownerId)
+                    .flatMap(owner -> owner.findTrait(UnstableTrait.ID))
+                    .map(UnstableTrait.class::cast)
+                    .flatMap(UnstableTrait::getFeatureId)
+                    .ifPresent(featureIds::add);
+        }
+        return String.join(", ", featureIds);
     }
 
     private static boolean hasMemberOwner(Model model, ShapeId shapeId) {

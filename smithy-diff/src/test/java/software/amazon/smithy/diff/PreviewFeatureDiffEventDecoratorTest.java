@@ -5,6 +5,8 @@
 package software.amazon.smithy.diff;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
@@ -15,6 +17,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Verifies that {@link PreviewFeatureDiffEventDecorator} downgrades backward-incompatible diff events to
@@ -28,10 +31,32 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class PreviewFeatureDiffEventDecoratorTest {
 
     private static final String UNSTABLE_ADDED_EVENT_ID = "TraitBreakingChange.Add.smithy.api#unstable";
+    private static final String DOWNGRADE_NOTE =
+            " This event is downgraded to WARNING because this shape is part of preview feature ";
 
     @Test
     public void changedMemberTarget() {
         assertDowngraded(compare("changed-member-target"), "ChangedMemberTarget", "smithy.example#PreviewIn$data");
+    }
+
+    @Test
+    public void downgradedMessageNamesFeature() {
+        List<ValidationEvent> matched = matching(compare("changed-member-target"),
+                "ChangedMemberTarget",
+                "smithy.example#PreviewIn$data");
+        assertThat(matched.get(0).getMessage(), endsWith(DOWNGRADE_NOTE + "EXAMPLE_PREVIEW."));
+    }
+
+    @Test
+    public void downgradedMessageNamesEverySharingFeature() {
+        List<ValidationEvent> matched = matching(compare("changed-member-target-shared-different-preview-features"),
+                "ChangedMemberTarget",
+                "smithy.example#InputStruct$targetChange");
+        String message = matched.get(0).getMessage();
+        String features = message.substring(message.indexOf(DOWNGRADE_NOTE) + DOWNGRADE_NOTE.length(),
+                message.length() - 1);
+        assertThat(SetUtils.of(features.split(", ")),
+                equalTo(SetUtils.of("EXAMPLE_PREVIEW", "EXAMPLE_PREVIEW_TWO")));
     }
 
     @Test
@@ -228,6 +253,24 @@ public class PreviewFeatureDiffEventDecoratorTest {
     }
 
     @Test
+    public void unstableFeaturesSinceCannotBeChanged() {
+        List<ValidationEvent> events = compare("unstable-features-since");
+
+        // Only UPDATED_PREVIEW's change is reported. Removing a since, adding one, and removing a whole entry
+        // as its feature becomes GA are all allowed.
+        List<ValidationEvent> matched = matching(events, "TraitBreakingChange.", "smithy.example#Example");
+        assertThat(matched.size(), equalTo(1));
+        assertThat(matched.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.api#unstableFeatures"));
+        assertThat(matched.get(0).getSeverity(), equalTo(Severity.ERROR));
+
+        // PreviewSvc is itself a preview owner, but changing its since must stay blocking.
+        assertSeverity(events,
+                "TraitBreakingChange.Update.smithy.api#unstableFeatures",
+                "smithy.example#PreviewSvc",
+                Severity.ERROR);
+    }
+
+    @Test
     public void addedEntityBindingIsLeftAlone() {
         // Adding a preview operation is not blocking to begin with, so its severity is untouched.
         assertSeverity(compare("trait-breaking-change"),
@@ -253,6 +296,7 @@ public class PreviewFeatureDiffEventDecoratorTest {
             assertThat(idPrefix + " on preview shape " + shape + " should be downgraded to WARNING",
                     e.getSeverity(),
                     equalTo(Severity.WARNING));
+            assertThat(e.getMessage(), containsString(DOWNGRADE_NOTE));
         }
     }
 
@@ -265,6 +309,7 @@ public class PreviewFeatureDiffEventDecoratorTest {
             assertThat(idPrefix + " on " + shape + " must NOT be downgraded",
                     e.getSeverity(),
                     not(equalTo(Severity.WARNING)));
+            assertThat(e.getMessage(), not(containsString(DOWNGRADE_NOTE)));
         }
     }
 

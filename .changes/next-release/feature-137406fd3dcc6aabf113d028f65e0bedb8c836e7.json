@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Add since field for unstableFeatureInfo and explain for downgrade in diff event",
+  "pull_requests": [
+    "[#3316](https://github.com/smithy-lang/smithy/pull/3316)"
+  ]
+}
