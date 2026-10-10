@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Added `aws.apigateway#apiGatewayConfig` trait, which defines the API Gateway configuration version for a service.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3315](https://github.com/smithy-lang/smithy/pull/3315)"
+  ]
 }
