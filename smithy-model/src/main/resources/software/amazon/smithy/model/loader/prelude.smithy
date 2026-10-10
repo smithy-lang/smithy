@@ -1058,6 +1058,19 @@ structure sparse {}
 )
 structure uniqueItems {}
 
+/// Indicates that the order of the items in a list carries no meaning, so two
+/// lists holding equal items in a different order are the same value.
+@trait(
+    selector: ":is(list, member :test(> list))"
+    breakingChanges: [
+        {
+            change: "presence"
+            severity: "WARNING"
+        }
+    ]
+)
+structure unordered {}
+
 /// Indicates that the shape is unstable and could change in the future.
 @trait(
     breakingChanges: [

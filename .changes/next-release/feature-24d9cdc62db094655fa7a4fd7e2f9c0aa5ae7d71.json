@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added the `@unordered` trait, which indicates that the order of the items in a list carries no meaning. It may be applied to a list shape or to a member that targets one, so that two uses of a shared list shape can disagree about whether its order is significant.",
+  "pull_requests": [
+    "[#3317](https://github.com/smithy-lang/smithy/pull/3317)"
+  ]
+}

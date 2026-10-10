@@ -374,7 +374,10 @@ Two values are considered equal if:
 * Both are booleans and are both true or are both false.
 * Both are timestamps and refer to the same instant in time.
 * Both are lists and have an equal value item-for-item. Note that
-  sets, a deprecated data type, are treated exactly like lists.
+  sets, a deprecated data type, are treated exactly like lists. If the
+  list is marked with the :ref:`unordered <unordered-trait>` trait,
+  position is not compared: the lists are equal if they have the same
+  number of items and each item in one has an equal item in the other.
 * Both are maps, have the same number of entries, and each key value
   pair in one map has an equal key value pair in the other map. The
   order of entries does not matter.

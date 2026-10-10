@@ -1,0 +1,3 @@
+[ERROR] smithy.example#Lookup: Trait `unordered` cannot be applied to `smithy.example#Lookup`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.example#Name: Trait `unordered` cannot be applied to `smithy.example#Name`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.example#Invalid$name: Trait `unordered` cannot be applied to `smithy.example#Invalid$name`. This trait may only be applied to | TraitTarget

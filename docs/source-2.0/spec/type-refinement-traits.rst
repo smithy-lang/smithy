@@ -517,6 +517,76 @@ The following example defines a :ref:`map <map>` shape that MAY contain
     }
 
 
+.. smithy-trait:: smithy.api#unordered
+.. _unordered-trait:
+
+``unordered`` trait
+===================
+
+Summary
+    Indicates that the order of the items in a list carries no meaning. Two
+    lists that hold :ref:`equal <value-equality>` items in a different order
+    are the same value.
+Trait selector
+    ``:is(list, member :test(> list))``
+
+    *A list shape, or a member that targets a list shape*
+Value type
+    Annotation trait.
+
+Smithy lists are ordered: two lists are equal only if they are equal
+item-for-item. Many lists, however, model data for which the service assigns
+no significance to position — a set of allowed audiences, a collection of
+security group identifiers. Without a way to say so, a consumer that compares
+two values of such a list has no choice but to report a reordering as a
+difference.
+
+The following example defines a :ref:`list <list>` shape whose order carries no
+meaning:
+
+.. code-block:: smithy
+
+    @unordered
+    list AllowedAudiences {
+        member: String
+    }
+
+The trait MAY also be applied to a member that targets a list shape, in which
+case it applies only to that member. This supports list shapes that are shared
+across a model, or published in a common model package, where one use of the
+list is order-insensitive and another is not, and where annotating the shape
+itself would change the meaning of every other use of it:
+
+.. code-block:: smithy
+
+    structure HookConfiguration {
+        /// Fire in the order given.
+        orderedHooks: HookList
+
+        /// Position is not meaningful here.
+        @unordered
+        eligibleHooks: HookList
+    }
+
+    list HookList {
+        member: String
+    }
+
+``unordered`` does not restrict the values a list accepts, and it is unrelated
+to uniqueness: a list can be unordered and still admit duplicates, and a list
+marked :ref:`uniqueItems <uniqueItems-trait>` can still be meaningfully
+ordered, so neither trait implies the other. A list marked with both is a set.
+
+.. note::
+
+    Because ``unordered`` changes when two lists are considered equal, it
+    affects ``uniqueItems`` enforcement on a list whose items are themselves
+    lists. Equality is evaluated using the semantics resolved at the position
+    being compared, so the member form of the trait participates in that
+    determination in the same way a member-level
+    :ref:`length <length-trait>` trait participates in validation.
+
+
 .. smithy-trait:: smithy.api#mixin
 .. _mixin-trait:
 
