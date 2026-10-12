@@ -308,6 +308,88 @@ apply EventStreamResponseBlobPayload @eventStreamTests([
     }
 ])
 
+apply EventStreamResponseStructPayload @eventStreamTests([
+    {
+        id: "RpcV2JsonEventStreamResponseStructPayload"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseStructPayloadOutput has no
+            non-stream members, so the frame carries no payload. A structure
+            @eventPayload is written as the JSON message payload and takes
+            the application/json content type. The modeled @eventHeader member
+            is carried as a message header and does not appear in the payload."""
+        protocol: rpcv2Json
+        events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
+            {
+                type: "response"
+                params: {
+                    structPayloadEvent: {
+                        contentType: "custom-metadata"
+                        payload: { stringMember: "payloadString", integerMember: 21, booleanMember: false }
+                    }
+                }
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "structPayloadEvent" }
+                    ":content-type": { string: "application/json" }
+                    contentType: { string: "custom-metadata" }
+                }
+                body: """
+                    {"stringMember":"payloadString","integerMember":21,"booleanMember":false}"""
+                bodyMediaType: "application/json"
+            }
+        ]
+    }
+])
+
+apply EventStreamResponseUnionPayload @eventStreamTests([
+    {
+        id: "RpcV2JsonEventStreamResponseUnionPayload"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamResponseUnionPayloadOutput has no
+            non-stream members, so the frame carries no payload. A union
+            @eventPayload is written as the JSON message payload and takes
+            the application/json content type. The modeled @eventHeader member
+            is carried as a message header and does not appear in the payload."""
+        protocol: rpcv2Json
+        events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
+            {
+                type: "response"
+                params: {
+                    unionPayloadEvent: {
+                        contentType: "custom-metadata"
+                        payload: { stringValue: "payloadUnion" }
+                    }
+                }
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "unionPayloadEvent" }
+                    ":content-type": { string: "application/json" }
+                    contentType: { string: "custom-metadata" }
+                }
+                body: """
+                    {"stringValue":"payloadUnion"}"""
+                bodyMediaType: "application/json"
+            }
+        ]
+    }
+])
+
 apply EventStreamResponseHeaders @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamResponseHeaders"
@@ -334,6 +416,8 @@ apply EventStreamResponseHeaders @eventStreamTests([
                         stringHeader: "headerString"
                         integerHeader: 1234
                         booleanHeader: true
+                        byteHeader: 9
+                        shortHeader: 512
                         longHeader: 9000000000
                         timestampHeader: 1609502096
                         blobHeader: "header"
@@ -347,6 +431,8 @@ apply EventStreamResponseHeaders @eventStreamTests([
                     stringHeader: { string: "headerString" }
                     integerHeader: { integer: 1234 }
                     booleanHeader: { boolean: true }
+                    byteHeader: { byte: 9 }
+                    shortHeader: { short: 512 }
                     longHeader: { long: 9000000000 }
                     timestampHeader: { timestamp: 1609502096 }
                     blobHeader: { blob: "aGVhZGVy" }
@@ -523,6 +609,88 @@ apply EventStreamError @eventStreamTests([
         }
         appliesTo: "client"
     }
+    {
+        id: "RpcV2JsonEventStreamErrorModeledServer"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamErrorOutput has no non-stream members,
+            so the frame carries no payload. A modeled error is sent as an
+            event with :message-type "exception" naming the union member in
+            :exception-type, with the error shape serialized as the payload."""
+        protocol: rpcv2Json
+        events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
+            {
+                type: "response"
+                params: {
+                    streamError: { message: "stream failed", code: 57 }
+                }
+                headers: {
+                    ":message-type": { string: "exception" }
+                    ":exception-type": { string: "streamError" }
+                    ":content-type": { string: "application/json" }
+                }
+                body: """
+                    {"message":"stream failed","code":57}"""
+                bodyMediaType: "application/json"
+            }
+        ]
+        appliesTo: "server"
+    }
+    {
+        id: "RpcV2JsonEventStreamErrorAfterMessageServer"
+        documentation: """
+            The server always sends an in-band initial-response frame ahead
+            of the stream. EventStreamErrorOutput has no non-stream members,
+            so the frame carries no payload. A modeled error raised after
+            events have already been sent is still sent as an exception
+            event, following the events that preceded it."""
+        protocol: rpcv2Json
+        events: [
+            {
+                type: "response"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-response" }
+                }
+            }
+            {
+                type: "response"
+                params: {
+                    messageEvent: { content: "delivered before failure", sequence: 66 }
+                }
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "messageEvent" }
+                    ":content-type": { string: "application/json" }
+                }
+                body: """
+                    {"content":"delivered before failure","sequence":66}"""
+                bodyMediaType: "application/json"
+            }
+            {
+                type: "response"
+                params: {
+                    streamError: { message: "stream failed", code: 57 }
+                }
+                headers: {
+                    ":message-type": { string: "exception" }
+                    ":exception-type": { string: "streamError" }
+                    ":content-type": { string: "application/json" }
+                }
+                body: """
+                    {"message":"stream failed","code":57}"""
+                bodyMediaType: "application/json"
+            }
+        ]
+        appliesTo: "server"
+    }
 ])
 
 apply EventStreamRequest @eventStreamTests([
@@ -530,6 +698,13 @@ apply EventStreamRequest @eventStreamTests([
         id: "RpcV2JsonEventStreamRequestSendMessage"
         documentation: "Serializes a single struct-payload event onto a request stream"
         protocol: rpcv2Json
+        initialRequest: {
+            method: "POST"
+            uri: "/service/RpcV2JsonCorpusTests/operation/EventStreamRequest"
+            headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream", Accept: "application/json" }
+            forbidHeaders: ["Content-Length", "X-Amz-Target"]
+        }
+        initialRequestShape: InitialHttpRequest
         events: [
             {
                 type: "request"
@@ -554,6 +729,13 @@ apply EventStreamRequest @eventStreamTests([
             an empty-structure event that carries no payload and therefore no
             :content-type header."""
         protocol: rpcv2Json
+        initialRequest: {
+            method: "POST"
+            uri: "/service/RpcV2JsonCorpusTests/operation/EventStreamRequest"
+            headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream", Accept: "application/json" }
+            forbidHeaders: ["Content-Length", "X-Amz-Target"]
+        }
+        initialRequestShape: InitialHttpRequest
         events: [
             {
                 type: "request"
@@ -609,6 +791,7 @@ apply EventStreamInitialResponse @eventStreamTests([
         initialResponse: {
             code: 200
             headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream" }
+            forbidHeaders: ["X-Session-Id", "X-Timeout"]
         }
         initialResponseParams: { sessionId: "session4a2f", timeout: 30 }
         initialResponseShape: InitialHttpResponse
@@ -655,6 +838,7 @@ apply EventStreamInitialRequest @eventStreamTests([
             method: "POST"
             uri: "/service/RpcV2JsonCorpusTests/operation/EventStreamInitialRequest"
             headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream", Accept: "application/json" }
+            forbidHeaders: ["Content-Length", "X-Request-Id", "X-Priority"]
         }
         initialRequestShape: InitialHttpRequest
         events: [
@@ -705,12 +889,14 @@ apply EventStreamDuplex @eventStreamTests([
                 "Content-Type": "application/vnd.amazon.eventstream"
                 Accept: "application/vnd.amazon.eventstream"
             }
+            forbidHeaders: ["Content-Length", "X-Request-Id"]
         }
         initialRequestShape: InitialHttpRequest
         initialResponseParams: { sessionId: "duplex-session-77" }
         initialResponse: {
             code: 200
             headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream" }
+            forbidHeaders: ["X-Session-Id"]
         }
         initialResponseShape: InitialHttpResponse
         events: [

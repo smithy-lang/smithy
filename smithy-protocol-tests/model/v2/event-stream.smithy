@@ -11,6 +11,8 @@ service EventStreamProtocolTestService {
     operations: [
         EventStreamResponse
         EventStreamResponseBlobPayload
+        EventStreamResponseStructPayload
+        EventStreamResponseUnionPayload
         EventStreamResponseHeaders
         EventStreamResponseImplicitPayload
         EventStreamError
@@ -114,6 +116,58 @@ structure BlobPayloadEvent {
     data: Blob
 }
 
+operation EventStreamResponseStructPayload {
+    input: EventStreamResponseStructPayloadInput
+    output: EventStreamResponseStructPayloadOutput
+}
+
+structure EventStreamResponseStructPayloadInput {}
+
+structure EventStreamResponseStructPayloadOutput {
+    @httpPayload
+    @required
+    events: StructPayloadEventStream
+}
+
+@streaming
+union StructPayloadEventStream {
+    structPayloadEvent: StructPayloadEvent
+}
+
+structure StructPayloadEvent {
+    @eventHeader
+    contentType: String
+
+    @eventPayload
+    payload: SimpleStruct
+}
+
+operation EventStreamResponseUnionPayload {
+    input: EventStreamResponseUnionPayloadInput
+    output: EventStreamResponseUnionPayloadOutput
+}
+
+structure EventStreamResponseUnionPayloadInput {}
+
+structure EventStreamResponseUnionPayloadOutput {
+    @httpPayload
+    @required
+    events: UnionPayloadEventStream
+}
+
+@streaming
+union UnionPayloadEventStream {
+    unionPayloadEvent: UnionPayloadEvent
+}
+
+structure UnionPayloadEvent {
+    @eventHeader
+    contentType: String
+
+    @eventPayload
+    payload: CorpusUnion
+}
+
 operation EventStreamResponseHeaders {
     input: EventStreamResponseHeadersInput
     output: EventStreamResponseHeadersOutput
@@ -141,6 +195,12 @@ structure HeaderEvent {
 
     @eventHeader
     booleanHeader: Boolean
+
+    @eventHeader
+    byteHeader: Byte
+
+    @eventHeader
+    shortHeader: Short
 
     @eventHeader
     longHeader: Long

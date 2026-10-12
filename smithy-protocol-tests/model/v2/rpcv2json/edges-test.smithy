@@ -57,7 +57,12 @@ apply ScalarMembers @httpResponseTests([
 apply ScalarMembers @httpRequestTests([
     {
         id: "RpcV2JsonScalarMembersNumericMinima"
-        documentation: "Serializes the minimum value of each integral type, including negatives"
+        documentation: """
+            Serializes the minimum value of a byte, short, and integer, including
+            negatives. The long is -(2^53 + 1) rather than the minimum of the long
+            type: it is the smallest negative integer a double cannot represent
+            exactly, so it catches implementations that route longs through a
+            double"""
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
@@ -105,7 +110,12 @@ apply ScalarMembers @httpRequestTests([
 apply ScalarMembers @httpResponseTests([
     {
         id: "RpcV2JsonScalarMembersNumericMinimaDeserialize"
-        documentation: "Deserializes the minimum value of each integral type, including negatives"
+        documentation: """
+            Deserializes the minimum value of a byte, short, and integer,
+            including negatives. The long is -(2^53 + 1) rather than the minimum
+            of the long type: it is the smallest negative integer a double cannot
+            represent exactly, so it catches implementations that route longs
+            through a double"""
         protocol: rpcv2Json
         code: 200
         body: """
@@ -347,6 +357,7 @@ apply EventStreamRequest @eventStreamTests([
             method: "POST"
             uri: "/service/RpcV2JsonCorpusTests/operation/EventStreamRequest"
             headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/vnd.amazon.eventstream", Accept: "application/json" }
+            forbidHeaders: ["Content-Length"]
         }
         initialRequestShape: InitialHttpRequest
     }
