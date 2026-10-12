@@ -8,134 +8,506 @@ use smithy.test#httpResponseTests
 
 apply ScalarMembers @httpRequestTests([
     {
-        id: "RpcV2JsonScalarMembersSerialize"
-        documentation: "Serializes all scalar members"
+        id: "RpcV2JsonScalarMembersSerializeBoolean"
+        documentation: "Serializes a boolean"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
         body: """
             {
-                "booleanMember": true,
-                "byteMember": 5,
-                "shortMember": 256,
-                "integerMember": 1234,
-                "longMember": 999999999999,
-                "floatMember": 1.5,
-                "doubleMember": 2.5,
-                "stringMember": "hello",
-                "blobMember": "Zm9v",
-                "dateTimeMember": 1609504496,
-                "epochSecondsMember": 1612325106,
-                "httpDateMember": 1614834367,
-                "stringEnum": "Foo",
-                "intEnum": 1
+                "booleanMember": true
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
-        params: {
-            booleanMember: true
-            byteMember: 5
-            shortMember: 256
-            integerMember: 1234
-            longMember: 999999999999
-            floatMember: 1.5
-            doubleMember: 2.5
-            stringMember: "hello"
-            blobMember: "foo"
-            dateTimeMember: 1609504496
-            epochSecondsMember: 1612325106
-            httpDateMember: 1614834367
-            stringEnum: "Foo"
-            intEnum: 1
-        }
+        params: { booleanMember: true }
     }
     {
-        id: "RpcV2JsonScalarMembersSerializeZeroValues"
-        documentation: "Serializes zero/false/empty scalar values"
+        id: "RpcV2JsonScalarMembersSerializeBooleanZero"
+        documentation: "Serializes a boolean whose value is false"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
         body: """
             {
-                "booleanMember": false,
-                "byteMember": 0,
-                "shortMember": 0,
-                "integerMember": 0,
-                "longMember": 0,
-                "floatMember": 0,
-                "doubleMember": 0,
+                "booleanMember": false
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { booleanMember: false }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeByte"
+        documentation: "Serializes a byte"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "byteMember": 5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { byteMember: 5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeByteZero"
+        documentation: "Serializes a byte whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "byteMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { byteMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeShort"
+        documentation: "Serializes a short"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "shortMember": 256
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { shortMember: 256 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeShortZero"
+        documentation: "Serializes a short whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "shortMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { shortMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeInteger"
+        documentation: "Serializes a integer"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "integerMember": 1234
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { integerMember: 1234 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeIntegerZero"
+        documentation: "Serializes a integer whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "integerMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { integerMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeLong"
+        documentation: "Serializes a long"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "longMember": 999999999999
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { longMember: 999999999999 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeLongZero"
+        documentation: "Serializes a long whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "longMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { longMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeFloat"
+        documentation: "Serializes a float"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "floatMember": 1.5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { floatMember: 1.5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeFloatZero"
+        documentation: "Serializes a float whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "floatMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { floatMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeDouble"
+        documentation: "Serializes a double"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "doubleMember": 2.5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { doubleMember: 2.5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeDoubleZero"
+        documentation: "Serializes a double whose value is zero"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "doubleMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { doubleMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeBigInteger"
+        documentation: "Serializes a bigInteger as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "bigIntegerMember": "12345"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { bigIntegerMember: 12345 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeBigDecimal"
+        documentation: "Serializes a bigDecimal as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "bigDecimalMember": "123.456"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { bigDecimalMember: 123.456 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeString"
+        documentation: "Serializes a string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "stringMember": "hello"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { stringMember: "hello" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeStringZero"
+        documentation: "Serializes a string whose value is an empty string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
                 "stringMember": ""
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
-        params: {
-            booleanMember: false
-            byteMember: 0
-            shortMember: 0
-            integerMember: 0
-            longMember: 0
-            floatMember: 0
-            doubleMember: 0
-            stringMember: ""
-        }
+        params: { stringMember: "" }
     }
     {
-        id: "RpcV2JsonScalarMembersNaN"
-        tags: ["non-finite-floats"]
-        documentation: "Serializes NaN float values"
+        id: "RpcV2JsonScalarMembersSerializeBlob"
+        documentation: "Serializes a blob as a base64 string"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
         body: """
             {
-                "floatMember": "NaN",
+                "blobMember": "Zm9v"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { blobMember: "foo" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeBlobZero"
+        documentation: "Serializes a blob whose value is an empty blob"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "blobMember": ""
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { blobMember: "" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeDateTime"
+        documentation: "Serializes a timestamp with a date-time format as epoch seconds"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "dateTimeMember": 1609504496
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { dateTimeMember: 1609504496 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeEpochSeconds"
+        documentation: "Serializes a timestamp with an epoch-seconds format as epoch seconds"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "epochSecondsMember": 1612325106
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { epochSecondsMember: 1612325106 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeHttpDate"
+        documentation: "Serializes a timestamp with an http-date format as epoch seconds"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "httpDateMember": 1614834367
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { httpDateMember: 1614834367 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeStringEnum"
+        documentation: "Serializes a string enum"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "stringEnum": "Foo"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { stringEnum: "Foo" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeIntEnum"
+        documentation: "Serializes a intEnum"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "intEnum": 1
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { intEnum: 1 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeFloatNaN"
+        tags: ["non-finite-floats"]
+        documentation: "Serializes a NaN float as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "floatMember": "NaN"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { floatMember: "NaN" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeFloatInfinity"
+        tags: ["non-finite-floats"]
+        documentation: "Serializes a Infinity float as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "floatMember": "Infinity"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { floatMember: "Infinity" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeFloatNegativeInfinity"
+        tags: ["non-finite-floats"]
+        documentation: "Serializes a -Infinity float as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
+                "floatMember": "-Infinity"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: { floatMember: "-Infinity" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersSerializeDoubleNaN"
+        tags: ["non-finite-floats"]
+        documentation: "Serializes a NaN double as a JSON string"
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
+        body: """
+            {
                 "doubleMember": "NaN"
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
-        params: { floatMember: "NaN", doubleMember: "NaN" }
+        params: { doubleMember: "NaN" }
     }
     {
-        id: "RpcV2JsonScalarMembersInfinity"
+        id: "RpcV2JsonScalarMembersSerializeDoubleInfinity"
         tags: ["non-finite-floats"]
-        documentation: "Serializes Infinity float values"
+        documentation: "Serializes a Infinity double as a JSON string"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
         body: """
             {
-                "floatMember": "Infinity",
                 "doubleMember": "Infinity"
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
-        params: { floatMember: "Infinity", doubleMember: "Infinity" }
+        params: { doubleMember: "Infinity" }
     }
     {
-        id: "RpcV2JsonScalarMembersNegativeInfinity"
+        id: "RpcV2JsonScalarMembersSerializeDoubleNegativeInfinity"
         tags: ["non-finite-floats"]
-        documentation: "Serializes -Infinity float values"
+        documentation: "Serializes a -Infinity double as a JSON string"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/ScalarMembers"
         body: """
             {
-                "floatMember": "-Infinity",
                 "doubleMember": "-Infinity"
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
-        params: { floatMember: "-Infinity", doubleMember: "-Infinity" }
+        params: { doubleMember: "-Infinity" }
     }
     {
         id: "RpcV2JsonScalarMembersOmitsNullValues"
@@ -158,119 +530,413 @@ apply ScalarMembers @httpRequestTests([
 
 apply ScalarMembers @httpResponseTests([
     {
-        id: "RpcV2JsonScalarMembersDeserialize"
-        documentation: "Deserializes all scalar members"
+        id: "RpcV2JsonScalarMembersDeserializeBoolean"
+        documentation: "Deserializes a boolean"
         protocol: rpcv2Json
         code: 200
         body: """
             {
-                "booleanMember": true,
-                "byteMember": 5,
-                "shortMember": 256,
-                "integerMember": 1234,
-                "longMember": 999999999999,
-                "floatMember": 1.5,
-                "doubleMember": 2.5,
-                "stringMember": "hello",
-                "blobMember": "Zm9v",
-                "dateTimeMember": 1609504496,
-                "epochSecondsMember": 1612325106,
-                "httpDateMember": 1614834367,
-                "stringEnum": "Foo",
-                "intEnum": 1
+                "booleanMember": true
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
-        params: {
-            booleanMember: true
-            byteMember: 5
-            shortMember: 256
-            integerMember: 1234
-            longMember: 999999999999
-            floatMember: 1.5
-            doubleMember: 2.5
-            stringMember: "hello"
-            blobMember: "foo"
-            dateTimeMember: 1609504496
-            epochSecondsMember: 1612325106
-            httpDateMember: 1614834367
-            stringEnum: "Foo"
-            intEnum: 1
-        }
+        params: { booleanMember: true }
     }
     {
-        id: "RpcV2JsonScalarMembersDeserializeNaN"
-        tags: ["non-finite-floats"]
-        documentation: "Deserializes NaN float values"
+        id: "RpcV2JsonScalarMembersDeserializeBooleanZero"
+        documentation: "Deserializes a boolean whose value is false"
         protocol: rpcv2Json
         code: 200
         body: """
             {
-                "floatMember": "NaN",
-                "doubleMember": "NaN"
+                "booleanMember": false
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
-        params: { floatMember: "NaN", doubleMember: "NaN" }
+        params: { booleanMember: false }
     }
     {
-        id: "RpcV2JsonScalarMembersDeserializeZeroValues"
-        documentation: "Deserializes zero/false/empty scalar values"
+        id: "RpcV2JsonScalarMembersDeserializeByte"
+        documentation: "Deserializes a byte"
         protocol: rpcv2Json
         code: 200
         body: """
             {
-                "booleanMember": false,
-                "byteMember": 0,
-                "shortMember": 0,
-                "integerMember": 0,
-                "longMember": 0,
-                "floatMember": 0,
-                "doubleMember": 0,
+                "byteMember": 5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { byteMember: 5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeByteZero"
+        documentation: "Deserializes a byte whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "byteMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { byteMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeShort"
+        documentation: "Deserializes a short"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "shortMember": 256
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { shortMember: 256 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeShortZero"
+        documentation: "Deserializes a short whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "shortMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { shortMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeInteger"
+        documentation: "Deserializes a integer"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "integerMember": 1234
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { integerMember: 1234 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeIntegerZero"
+        documentation: "Deserializes a integer whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "integerMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { integerMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeLong"
+        documentation: "Deserializes a long"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "longMember": 999999999999
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { longMember: 999999999999 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeLongZero"
+        documentation: "Deserializes a long whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "longMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { longMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeFloat"
+        documentation: "Deserializes a float"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "floatMember": 1.5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { floatMember: 1.5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeFloatZero"
+        documentation: "Deserializes a float whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "floatMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { floatMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeDouble"
+        documentation: "Deserializes a double"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "doubleMember": 2.5
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { doubleMember: 2.5 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeDoubleZero"
+        documentation: "Deserializes a double whose value is zero"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "doubleMember": 0
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { doubleMember: 0 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeBigInteger"
+        documentation: "Deserializes a bigInteger from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "bigIntegerMember": "12345"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { bigIntegerMember: 12345 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeBigDecimal"
+        documentation: "Deserializes a bigDecimal from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "bigDecimalMember": "123.456"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { bigDecimalMember: 123.456 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeString"
+        documentation: "Deserializes a string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "stringMember": "hello"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { stringMember: "hello" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeStringZero"
+        documentation: "Deserializes a string whose value is an empty string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
                 "stringMember": ""
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
-        params: {
-            booleanMember: false
-            byteMember: 0
-            shortMember: 0
-            integerMember: 0
-            longMember: 0
-            floatMember: 0
-            doubleMember: 0
-            stringMember: ""
-        }
+        params: { stringMember: "" }
     }
     {
-        id: "RpcV2JsonScalarMembersDeserializeInfinity"
-        tags: ["non-finite-floats"]
-        documentation: "Deserializes Infinity float values"
+        id: "RpcV2JsonScalarMembersDeserializeBlob"
+        documentation: "Deserializes a blob from a base64 string"
         protocol: rpcv2Json
         code: 200
         body: """
             {
-                "floatMember": "Infinity",
+                "blobMember": "Zm9v"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { blobMember: "foo" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeBlobZero"
+        documentation: "Deserializes a blob whose value is an empty blob"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "blobMember": ""
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { blobMember: "" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeDateTime"
+        documentation: "Deserializes a timestamp with a date-time format from epoch seconds"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "dateTimeMember": 1609504496
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { dateTimeMember: 1609504496 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeEpochSeconds"
+        documentation: "Deserializes a timestamp with an epoch-seconds format from epoch seconds"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "epochSecondsMember": 1612325106
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { epochSecondsMember: 1612325106 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeHttpDate"
+        documentation: "Deserializes a timestamp with an http-date format from epoch seconds"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "httpDateMember": 1614834367
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { httpDateMember: 1614834367 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeStringEnum"
+        documentation: "Deserializes a string enum"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "stringEnum": "Foo"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { stringEnum: "Foo" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeIntEnum"
+        documentation: "Deserializes a intEnum"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "intEnum": 1
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { intEnum: 1 }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeFloatNaN"
+        tags: ["non-finite-floats"]
+        documentation: "Deserializes a NaN float from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "floatMember": "NaN"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { floatMember: "NaN" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeFloatInfinity"
+        tags: ["non-finite-floats"]
+        documentation: "Deserializes a Infinity float from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "floatMember": "Infinity"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { floatMember: "Infinity" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeFloatNegativeInfinity"
+        tags: ["non-finite-floats"]
+        documentation: "Deserializes a -Infinity float from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "floatMember": "-Infinity"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { floatMember: "-Infinity" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeDoubleNaN"
+        tags: ["non-finite-floats"]
+        documentation: "Deserializes a NaN double from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
+                "doubleMember": "NaN"
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        params: { doubleMember: "NaN" }
+    }
+    {
+        id: "RpcV2JsonScalarMembersDeserializeDoubleInfinity"
+        tags: ["non-finite-floats"]
+        documentation: "Deserializes a Infinity double from a JSON string"
+        protocol: rpcv2Json
+        code: 200
+        body: """
+            {
                 "doubleMember": "Infinity"
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
-        params: { floatMember: "Infinity", doubleMember: "Infinity" }
+        params: { doubleMember: "Infinity" }
     }
     {
-        id: "RpcV2JsonScalarMembersDeserializeNegativeInfinity"
+        id: "RpcV2JsonScalarMembersDeserializeDoubleNegativeInfinity"
         tags: ["non-finite-floats"]
-        documentation: "Deserializes -Infinity float values"
+        documentation: "Deserializes a -Infinity double from a JSON string"
         protocol: rpcv2Json
         code: 200
         body: """
             {
-                "floatMember": "-Infinity",
                 "doubleMember": "-Infinity"
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
-        params: { floatMember: "-Infinity", doubleMember: "-Infinity" }
+        params: { doubleMember: "-Infinity" }
     }
     {
         id: "RpcV2JsonScalarMembersDeserializeIgnoresNullValues"
@@ -3265,6 +3931,21 @@ apply EmptyInputOutput @httpRequestTests([
         forbidHeaders: ["X-Amz-Target"]
         params: {}
     }
+    {
+        id: "RpcV2JsonEmptyInputOutputServerAllowsEmptyBody"
+        tags: ["absent-request-body"]
+        documentation: """
+            Servers accept an empty body for an operation with an empty input
+            structure, the request counterpart to clients accepting an empty
+            response body"""
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/EmptyInputOutput"
+        body: ""
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        appliesTo: "server"
+        params: {}
+    }
 ])
 
 apply EmptyInputOutput @httpResponseTests([
@@ -3305,6 +3986,21 @@ apply NoInputOutput @httpRequestTests([
         body: ""
         headers: { "smithy-protocol": "rpc-v2-json", Accept: "application/json" }
         forbidHeaders: ["Content-Type", "X-Amz-Target"]
+        params: {}
+    }
+])
+
+apply NoInputOutput @httpResponseTests([
+    {
+        id: "RpcV2JsonNoInputOutputDeserialize"
+        documentation: """
+            Sends no body at all for an operation whose output targets the Unit
+            shape, and omits Content-Type accordingly"""
+        protocol: rpcv2Json
+        code: 200
+        body: ""
+        headers: { "smithy-protocol": "rpc-v2-json" }
+        forbidHeaders: ["Content-Type"]
         params: {}
     }
 ])

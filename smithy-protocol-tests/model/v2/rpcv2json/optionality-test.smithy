@@ -36,7 +36,7 @@ apply DefaultScalars @httpRequestTests([
         uri: "/service/RpcV2JsonCorpusTests/operation/DefaultScalars"
         body: """
             {
-                "defaultBoolean": true,
+                "defaultBoolean": false,
                 "defaultByte": 5,
                 "defaultShort": 10,
                 "defaultInteger": 42,
@@ -62,7 +62,7 @@ apply DefaultScalars @httpRequestTests([
         requireHeaders: ["Content-Length"]
         forbidHeaders: ["X-Amz-Target"]
         params: {
-            defaultBoolean: true
+            defaultBoolean: false
             defaultByte: 5
             defaultShort: 10
             defaultInteger: 42
@@ -84,6 +84,66 @@ apply DefaultScalars @httpRequestTests([
             emptyBlob: "abc"
         }
     }
+    {
+        id: "RpcV2JsonDefaultScalarsSerializeExplicitDefaults"
+        tags: ["explicit-over-default"]
+        documentation: """
+            Serializes members that are explicitly set to their default value.
+            An explicitly provided value is always sent, even when it equals the
+            default, including the zero values"""
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/DefaultScalars"
+        body: """
+            {
+                "defaultBoolean": true,
+                "defaultByte": 7,
+                "defaultShort": 8,
+                "defaultInteger": 9,
+                "defaultLong": 10,
+                "defaultFloat": 1.25,
+                "defaultDouble": 2.25,
+                "defaultString": "default",
+                "defaultBlob": "ZGVmYXVsdA==",
+                "defaultEnum": "Foo",
+                "defaultIntEnum": 1,
+                "zeroBoolean": false,
+                "zeroByte": 0,
+                "zeroShort": 0,
+                "zeroInteger": 0,
+                "zeroLong": 0,
+                "zeroFloat": 0,
+                "zeroDouble": 0,
+                "emptyString": "",
+                "emptyBlob": ""
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: {
+            defaultBoolean: true
+            defaultByte: 7
+            defaultShort: 8
+            defaultInteger: 9
+            defaultLong: 10
+            defaultFloat: 1.25
+            defaultDouble: 2.25
+            defaultString: "default"
+            defaultBlob: "default"
+            defaultEnum: "Foo"
+            defaultIntEnum: 1
+            zeroBoolean: false
+            zeroByte: 0
+            zeroShort: 0
+            zeroInteger: 0
+            zeroLong: 0
+            zeroFloat: 0
+            zeroDouble: 0
+            emptyString: ""
+            emptyBlob: ""
+        }
+    }
 ])
 
 apply DefaultScalars @httpResponseTests([
@@ -98,15 +158,15 @@ apply DefaultScalars @httpResponseTests([
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
         appliesTo: "client"
         params: {
-            defaultBoolean: false
-            defaultByte: 0
-            defaultShort: 0
-            defaultInteger: 0
-            defaultLong: 0
-            defaultFloat: 0
-            defaultDouble: 0
-            defaultString: ""
-            defaultBlob: ""
+            defaultBoolean: true
+            defaultByte: 7
+            defaultShort: 8
+            defaultInteger: 9
+            defaultLong: 10
+            defaultFloat: 1.25
+            defaultDouble: 2.25
+            defaultString: "default"
+            defaultBlob: "default"
             defaultEnum: "Foo"
             defaultIntEnum: 1
             zeroBoolean: false
@@ -161,6 +221,29 @@ apply DefaultCollections @httpRequestTests([
         params: {
             defaultList: ["a", "b"]
             defaultMap: { key1: "value1", key2: "value2" }
+        }
+    }
+    {
+        id: "RpcV2JsonDefaultCollectionsSerializeExplicitEmpty"
+        tags: ["explicit-over-default"]
+        documentation: """
+            Serializes an explicitly provided empty list and map. An explicitly
+            provided value is always sent, even when it equals the default"""
+        protocol: rpcv2Json
+        method: "POST"
+        uri: "/service/RpcV2JsonCorpusTests/operation/DefaultCollections"
+        body: """
+            {
+                "defaultList": [],
+                "defaultMap": {}
+            }"""
+        bodyMediaType: "application/json"
+        headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json", Accept: "application/json" }
+        requireHeaders: ["Content-Length"]
+        forbidHeaders: ["X-Amz-Target"]
+        params: {
+            defaultList: []
+            defaultMap: {}
         }
     }
 ])
@@ -301,7 +384,7 @@ apply NestedDefaults @httpResponseTests([
 apply RequiredMembers @httpRequestTests([
     {
         id: "RpcV2JsonRequiredMembersSerialize"
-        documentation: "Serializes all required fields"
+        documentation: "Serializes explicitly provided values for all required members"
         protocol: rpcv2Json
         method: "POST"
         uri: "/service/RpcV2JsonCorpusTests/operation/RequiredMembers"

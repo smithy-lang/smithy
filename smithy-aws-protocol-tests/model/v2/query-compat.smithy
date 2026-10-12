@@ -14,17 +14,13 @@ use aws.protocols#awsQueryError
 // records what awsQuery itself would have returned, and the status still comes from
 // the @error trait.
 operation QueryCompatErrorOp {
-    input: QueryCompatErrorOpInput
-    output: QueryCompatErrorOpOutput
+    input := {}
+    output := {}
     errors: [
         QueryCompatError
         QueryCompatCustomCodeError
     ]
 }
-
-structure QueryCompatErrorOpInput {}
-
-structure QueryCompatErrorOpOutput {}
 
 @error("client")
 structure QueryCompatError {

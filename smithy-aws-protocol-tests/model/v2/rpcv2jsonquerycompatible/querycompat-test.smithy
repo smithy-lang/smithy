@@ -44,6 +44,7 @@ apply QueryCompatError @httpResponseTests([
             }"""
         bodyMediaType: "application/json"
         headers: { "smithy-protocol": "rpc-v2-json", "Content-Type": "application/json" }
+        forbidHeaders: ["x-amzn-query-error"]
         params: { message: "query compatible failure" }
         vendorParamsShape: ErrorCodeParams
         vendorParams: { code: "QueryCompatError" }

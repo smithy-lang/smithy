@@ -27,15 +27,15 @@ structure DefaultScalarsOutput with [DefaultScalarsMixin] {}
 
 @mixin
 structure DefaultScalarsMixin {
-    defaultBoolean: Boolean = false
-    defaultByte: Byte = 0
-    defaultShort: Short = 0
-    defaultInteger: Integer = 0
-    defaultLong: Long = 0
-    defaultFloat: Float = 0
-    defaultDouble: Double = 0
-    defaultString: String = ""
-    defaultBlob: Blob = ""
+    defaultBoolean: Boolean = true
+    defaultByte: Byte = 7
+    defaultShort: Short = 8
+    defaultInteger: Integer = 9
+    defaultLong: Long = 10
+    defaultFloat: Float = 1.25
+    defaultDouble: Double = 2.25
+    defaultString: String = "default"
+    defaultBlob: Blob = "ZGVmYXVsdA=="
     defaultEnum: CorpusStringEnum = "Foo"
     defaultIntEnum: CorpusIntEnum = 1
     zeroBoolean: Boolean = false
