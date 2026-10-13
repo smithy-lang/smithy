@@ -1,0 +1,5 @@
+[WARNING] smithy.example#OpInputInA: Removed structure `smithy.example#OpInputInA` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape
+-----
+[NOTE] smithy.example#OpInputInB: Added structure `smithy.example#OpInputInB` | AddedShape
+-----
+[WARNING] smithy.example#OpInputOp: Changed operation input of `smithy.example#OpInputOp` from `smithy.example#OpInputInA` to `smithy.example#OpInputInB` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | ChangedOperationInput.From.smithy.example#OpInputInA.To.smithy.example#OpInputInB

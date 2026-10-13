@@ -1,0 +1,1 @@
+[ERROR] smithy.example#GaIn$previewMember: Member `previewMember` changed from non-nullable to nullable: The @required trait was removed and not replaced with the @default trait and @addedDefault trait. | ChangedNullability.RemovedRequiredTrait

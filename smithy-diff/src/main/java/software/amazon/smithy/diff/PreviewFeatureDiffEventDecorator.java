@@ -14,6 +14,7 @@ import software.amazon.smithy.model.traits.UnstableFeaturesTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -91,7 +92,7 @@ public final class PreviewFeatureDiffEventDecorator implements DiffEventDecorato
                     .flatMap(UnstableTrait::getFeatureId)
                     .ifPresent(featureIds::add);
         }
-        return String.join(", ", featureIds);
+        return ValidationUtils.tickedList(featureIds);
     }
 
     private static boolean hasMemberOwner(Model model, ShapeId shapeId) {

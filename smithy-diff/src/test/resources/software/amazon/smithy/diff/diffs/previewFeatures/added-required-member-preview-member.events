@@ -1,0 +1,3 @@
+[ERROR] smithy.example#GaIn$addedRequiredPreviewMember: Adding a new member with the `required` trait but not the `default` trait or the `clientOptional` trait is backwards-incompatible. | AddedRequiredMember
+-----
+[NOTE] smithy.example#GaIn$addedRequiredPreviewMember: Added member `smithy.example#GaIn$addedRequiredPreviewMember` | AddedShape

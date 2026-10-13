@@ -1,0 +1,1 @@
+[ERROR] smithy.example#NoReasonIn$data: The shape targeted by the member `smithy.example#NoReasonIn$data` changed from `smithy.api#String` (string) to `smithy.api#Integer` (integer). The type of the targeted shape changed from string to integer. | ChangedMemberTarget

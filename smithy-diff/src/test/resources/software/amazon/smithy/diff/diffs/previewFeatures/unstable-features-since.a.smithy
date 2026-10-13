@@ -2,6 +2,9 @@ $version: "2.0"
 
 namespace smithy.example
 
+// Guards around an @unstableFeatures entry's `since`. In -b, UPDATED_PREVIEW changes its since (blocking),
+// REMOVED_PREVIEW drops it, ADDED_PREVIEW gains one, and GRADUATED_PREVIEW is removed as its feature becomes GA
+// (all allowed). PreviewSvc is itself a preview owner, but changing its since must stay blocking.
 @unstableFeatures(
     UPDATED_PREVIEW: { reason: "PREVIEW", since: "2026-01-01" }
     REMOVED_PREVIEW: { reason: "PREVIEW", since: "2026-01-01" }
