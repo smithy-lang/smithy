@@ -1,5 +1,21 @@
 # Smithy Changelog
 
+## 1.74.1 (2026-10-13)
+
+### Bug Fixes
+
+- Fixed the API Gateway `EndpointConfiguration` OpenAPI mapper to write the
+  endpoint configuration extension to the correct location in the generated
+  OpenAPI document. ([#3304](https://github.com/smithy-lang/smithy/pull/3304))
+- Fixed the API Gateway `@apiKeyRequired` OpenAPI mapper to combine `api_key`
+  with an operation's inherited or existing security requirements instead of
+  replacing them, so authentication is no longer dropped when an API key is
+  required. ([#3296](https://github.com/smithy-lang/smithy/pull/3296))
+- Fixed node validation rejecting null values for timestamp members in a
+  nullable context ([#3248](https://github.com/smithy-lang/smithy/pull/3248))
+- Fixed AbstractCodeWriter state interception when interceptors push and pop
+  writer states. ([#3314](https://github.com/smithy-lang/smithy/pull/3314))
+
 ## 1.74.0 (2026-09-24)
 
 ### Features
@@ -4737,4 +4753,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-
