@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -862,9 +862,9 @@ specification from a Smithy model.</p>
 <span class="w">  </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"models"</span><span class="p">],</span>
 <span class="w">  </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi:1.74.0"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi:1.74.1"</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.74.0"</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.74.1"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"plugins"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -905,10 +905,10 @@ specification from a Smithy model.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.1"</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -925,10 +925,10 @@ specification from a Smithy model.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.0'</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.1'</span>
 
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.0'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.1'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -937,7 +937,7 @@ specification from a Smithy model.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>A build-only dependency on &quot;software.amazon.smithy:smithy-openapi:1.74.0&quot; is
+<p>A build-only dependency on &quot;software.amazon.smithy:smithy-openapi:1.74.1&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -2057,10 +2057,10 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="w">  </span><span class="nt">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"models"</span><span class="p">],</span>
 <span class="w">  </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi:1.74.0"</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi-traits:1.74.0"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi:1.74.1"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-openapi-traits:1.74.1"</span><span class="p">,</span>
 <span class="w">      </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.74.0"</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.74.1"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span>
@@ -2082,11 +2082,11 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="p">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.74.1"</span><span class="p">)</span>
 
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi-traits:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi-traits:1.74.1"</span><span class="p">)</span>
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-traits:1.74.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -2101,11 +2101,11 @@ of a Smithy model into an OpenAPI specification.</p>
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi:1.74.0'</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi:1.74.1'</span>
 
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi-traits:1.74.0'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi-traits:1.74.1'</span>
 <span class="w">    </span><span class="c1">// Required for restJson1 trait.</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.0'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-traits:1.74.1'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -2268,7 +2268,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <span class="w">  </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">      </span><span class="s2">"..."</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.0"</span>
+<span class="w">      </span><span class="s2">"software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.1"</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"..."</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span>
@@ -2283,7 +2283,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="literal-block-wrapper docutils container" id="id54">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id54" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -2293,7 +2293,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="literal-block-wrapper docutils container" id="id55">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id55" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.0'</span>
+<span class="w">    </span><span class="n">smithyBuild</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-aws-apigateway-openapi:1.74.1'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -2903,7 +2903,7 @@ uses the <code class="docutils literal notranslate"><span class="pre">Fn::Sub</s
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/credentials</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/uri</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">paths/*/*/x-amazon-apigateway-integration/integrationTarget</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">servers/*/x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*</span></code></p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3028,9 +3028,11 @@ OpenAPI document.</p>
 <a class="reference internal" href="../../aws/amazon-apigateway.html#aws-apigateway-endpointconfiguration-trait"><span class="std std-ref">aws.apigateway#endpointConfiguration trait</span></a>. Smithy writes the
 <code class="docutils literal notranslate"><span class="pre">vpcEndpointIds</span></code> and <code class="docutils literal notranslate"><span class="pre">disableExecuteApiEndpoint</span></code> values to the
 <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html">x-amazon-apigateway-endpoint-configuration</a> extension in the generated
-OpenAPI document. The <code class="docutils literal notranslate"><span class="pre">types</span></code> and <code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> members are not part
-of this extension and are configured outside of the OpenAPI document at
-API import time.</p>
+OpenAPI document. For OpenAPI 3.0, this extension is placed under the
+vendor extensions of the <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md#server-object">Server object</a>. A default server with a URL of
+<code class="docutils literal notranslate"><span class="pre">/</span></code> is added when the document does not define any servers. The <code class="docutils literal notranslate"><span class="pre">types</span></code>
+and <code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> members are not part of this extension and are
+configured outside of the OpenAPI document at API import time.</p>
 <p>The following Smithy model configures a private API with VPC endpoints and
 disables the default <code class="docutils literal notranslate"><span class="pre">execute-api</span></code> endpoint:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
@@ -3058,10 +3060,15 @@ disables the default <code class="docutils literal notranslate"><span class="pre
 <span class="w">        </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Example"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-17"</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">"x-amazon-apigateway-endpoint-configuration"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">"vpcEndpointIds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"vpce-0212a4ababd5b8c3e"</span><span class="p">],</span>
-<span class="w">        </span><span class="nt">"disableExecuteApiEndpoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">"servers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"x-amazon-apigateway-endpoint-configuration"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"vpcEndpointIds"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"vpce-0212a4ababd5b8c3e"</span><span class="p">],</span>
+<span class="w">                </span><span class="nt">"disableExecuteApiEndpoint"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -3093,9 +3100,9 @@ this service.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code></dt><dd><p>Configures endpoint types, VPC endpoint IDs, default-endpoint disable
 flag, and IP address type for a REST API. <code class="docutils literal notranslate"><span class="pre">vpcEndpointIds</span></code> and
 <code class="docutils literal notranslate"><span class="pre">disableExecuteApiEndpoint</span></code> are written to the
-<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html">x-amazon-apigateway-endpoint-configuration</a> extension; <code class="docutils literal notranslate"><span class="pre">types</span></code> and
-<code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> are configured outside of the OpenAPI document at
-API import time.</p>
+<a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html">x-amazon-apigateway-endpoint-configuration</a> extension on the
+<a class="reference external" href="https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md#server-object">Server object</a>; <code class="docutils literal notranslate"><span class="pre">types</span></code> and <code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> are configured
+outside of the OpenAPI document at API import time.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">aws.apigateway#gatewayResponses</span></code></dt><dd><p>Customizes error responses for authentication failures, integration
 errors, and other API Gateway-generated errors. Written to the
@@ -3209,7 +3216,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="literal-block-wrapper docutils container" id="id62">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id62" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.74.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy:smithy-openapi:1.74.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -3219,7 +3226,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="literal-block-wrapper docutils container" id="id63">
 <div class="code-block-caption"><span class="caption-text">build.gradle</span><a class="headerlink" href="#id63" title="Link to this code">#</a></div>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi:1.74.0'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'software.amazon.smithy:smithy-openapi:1.74.1'</span>
 <span class="o">}</span>
 </pre></div>
 </div>

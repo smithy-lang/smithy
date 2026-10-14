@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.6.1/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -722,10 +722,10 @@ The  <code class="docutils literal notranslate"><span class="pre">client-core`</
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// Add the code generation plugins to the smithy build classpath</span>
-<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.6.1"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.7.0"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add the client-core dependency needed by the generated code</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.6.1"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.7.0"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Protocol implementations and auth schemes used by client</span>
 <span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-protocol:1.0.0"</span><span class="p">)</span>
@@ -809,14 +809,14 @@ Gradle project to generate a Smithy Java client:</p>
 
 <span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">     </span><span class="c1">// Add the code generation plugin to the smithy build dependencies</span>
-<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.6.1"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">smithyBuild</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:codegen-plugin:1.7.0"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add any smithy model dependencies as `implementation` dependencies here.</span>
 <span class="w">     </span><span class="c1">// For example, you might add additional trait packages here.</span>
 <span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"..."</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Add the client-core dependency needed by the generated code</span>
-<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.6.1"</span><span class="p">)</span>
+<span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-core:1.7.0"</span><span class="p">)</span>
 
 <span class="w">     </span><span class="c1">// Also add your protocol implementations or auth schemes as dependencies</span>
 <span class="w">     </span><span class="n">implementation</span><span class="p">(</span><span class="s">"com.example:my-protocol:1.0.0"</span><span class="p">)</span>

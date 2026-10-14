@@ -2294,7 +2294,7 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 - ``paths/*/*/x-amazon-apigateway-integration/credentials``
 - ``paths/*/*/x-amazon-apigateway-integration/uri``
 - ``paths/*/*/x-amazon-apigateway-integration/integrationTarget``
-- ``x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*``
+- ``servers/*/x-amazon-apigateway-endpoint-configuration/vpcEndpointIds/*``
 
 .. note::
 
@@ -2438,9 +2438,11 @@ The endpoint configuration for an API Gateway REST API can be set using the
 :ref:`aws.apigateway#endpointConfiguration-trait`. Smithy writes the
 ``vpcEndpointIds`` and ``disableExecuteApiEndpoint`` values to the
 `x-amazon-apigateway-endpoint-configuration`_ extension in the generated
-OpenAPI document. The ``types`` and ``ipAddressType`` members are not part
-of this extension and are configured outside of the OpenAPI document at
-API import time.
+OpenAPI document. For OpenAPI 3.0, this extension is placed under the
+vendor extensions of the `Server object`_. A default server with a URL of
+``/`` is added when the document does not define any servers. The ``types``
+and ``ipAddressType`` members are not part of this extension and are
+configured outside of the OpenAPI document at API import time.
 
 The following Smithy model configures a private API with VPC endpoints and
 disables the default ``execute-api`` endpoint:
@@ -2474,10 +2476,15 @@ is converted to the following OpenAPI model:
             "title": "Example",
             "version": "2019-06-17"
         },
-        "x-amazon-apigateway-endpoint-configuration": {
-            "vpcEndpointIds": ["vpce-0212a4ababd5b8c3e"],
-            "disableExecuteApiEndpoint": true
-        }
+        "servers": [
+            {
+                "url": "/",
+                "x-amazon-apigateway-endpoint-configuration": {
+                    "vpcEndpointIds": ["vpce-0212a4ababd5b8c3e"],
+                    "disableExecuteApiEndpoint": true
+                }
+            }
+        ]
     }
 
 
@@ -2513,9 +2520,9 @@ Other traits that influence API Gateway
     Configures endpoint types, VPC endpoint IDs, default-endpoint disable
     flag, and IP address type for a REST API. ``vpcEndpointIds`` and
     ``disableExecuteApiEndpoint`` are written to the
-    `x-amazon-apigateway-endpoint-configuration`_ extension; ``types`` and
-    ``ipAddressType`` are configured outside of the OpenAPI document at
-    API import time.
+    `x-amazon-apigateway-endpoint-configuration`_ extension on the
+    `Server object`_; ``types`` and ``ipAddressType`` are configured
+    outside of the OpenAPI document at API import time.
 
 ``aws.apigateway#gatewayResponses``
     Customizes error responses for authentication failures, integration
@@ -2710,6 +2717,7 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-security-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-security-policy.html
 .. _x-amazon-apigateway-endpoint-access-mode: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-endpoint-access-mode.html
 .. _x-amazon-apigateway-endpoint-configuration: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-endpoint-configuration.html
+.. _Server object: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md#server-object
 .. _x-amazon-apigateway-minimum-compression-size: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-openapi-minimum-compression-size.html
 .. _x-amazon-apigateway-policy: https://docs.aws.amazon.com/apigateway/latest/developerguide/openapi-extensions-policy.html
 .. _Application Load Balancer (ALB): https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html
