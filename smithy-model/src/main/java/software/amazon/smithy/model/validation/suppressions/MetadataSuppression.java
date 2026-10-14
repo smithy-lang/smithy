@@ -7,6 +7,8 @@ package software.amazon.smithy.model.validation.suppressions;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -17,7 +19,7 @@ import software.amazon.smithy.utils.ListUtils;
  *
  * <p>"*" is used as a wildcard to suppress events in any namespace.
  */
-final class MetadataSuppression implements Suppression {
+final class MetadataSuppression implements Suppression, FromSourceLocation {
 
     private static final String ID = "id";
     private static final String NAMESPACE = "namespace";
@@ -28,12 +30,14 @@ final class MetadataSuppression implements Suppression {
     private final String id;
     private final String namespace;
     private final String reason;
+    private final SourceLocation sourceLocation;
     private final Predicate<ValidationEvent> namespaceMatcher;
 
-    MetadataSuppression(String id, String namespace, String reason) {
+    MetadataSuppression(String id, String namespace, String reason, SourceLocation sourceLocation) {
         this.id = id;
         this.namespace = namespace;
         this.reason = reason;
+        this.sourceLocation = sourceLocation;
         this.namespaceMatcher = namespace.equals("*") ? STAR_MATCHER : new NamespacePredicate(namespace);
     }
 
@@ -43,7 +47,20 @@ final class MetadataSuppression implements Suppression {
         String id = rule.expectStringMember(ID).getValue();
         String namespace = rule.expectStringMember(NAMESPACE).getValue();
         String reason = rule.getStringMemberOrDefault(REASON, null);
-        return new MetadataSuppression(id, namespace, reason);
+        return new MetadataSuppression(id, namespace, reason, rule.getSourceLocation());
+    }
+
+    String getId() {
+        return id;
+    }
+
+    String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
     }
 
     @Override
