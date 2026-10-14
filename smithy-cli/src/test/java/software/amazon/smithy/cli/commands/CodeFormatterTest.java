@@ -99,6 +99,81 @@ public class CodeFormatterTest {
     }
 
     @Test
+    public void doesNotTruncateLineThatExactlyFits() {
+        StringBuilder builder = new StringBuilder();
+        ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
+        List<SourceContextLoader.Line> lines = Collections.singletonList(
+                new SourceContextLoader.Line(1, "abcdefghi"));
+
+        formatter.writeCode(1, 9, lines);
+
+        assertThat(builder.toString(),
+                equalTo("1| abcdefghi" + ls
+                        + " |         ^" + ls2));
+    }
+
+    @Test
+    public void keepsPointerInsideTruncatedLine() {
+        StringBuilder builder = new StringBuilder();
+        ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
+        List<SourceContextLoader.Line> lines = Collections.singletonList(
+                new SourceContextLoader.Line(1, "abcdefghijklmnopqrstuvwxyz"));
+
+        formatter.writeCode(1, 4, lines);
+
+        assertThat(builder.toString(),
+                equalTo("1| abcdefghi…" + ls
+                        + " |    ^" + ls2));
+    }
+
+    @Test
+    public void clampsPointerToTruncationMarker() {
+        StringBuilder builder = new StringBuilder();
+        ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
+        List<SourceContextLoader.Line> lines = Collections.singletonList(
+                new SourceContextLoader.Line(1, "abcdefghijklmnopqrstuvwxyz"));
+
+        formatter.writeCode(1, 25, lines);
+
+        assertThat(builder.toString(),
+                equalTo("1| abcdefghi…" + ls
+                        + " |          ^" + ls2));
+    }
+
+    @Test
+    public void positionsPointerAtStartOfTruncatedLine() {
+        StringBuilder builder = new StringBuilder();
+        ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
+        List<SourceContextLoader.Line> lines = Collections.singletonList(
+                new SourceContextLoader.Line(1, "abcdefghijklmnopqrstuvwxyz"));
+
+        formatter.writeCode(1, 1, lines);
+
+        assertThat(builder.toString(),
+                equalTo("1| abcdefghi…" + ls
+                        + " | ^" + ls2));
+    }
+
+    @Test
+    public void positionsPointerAtLastVisibleCharacterOfTruncatedLine() {
+        StringBuilder builder = new StringBuilder();
+        ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
+        List<SourceContextLoader.Line> lines = Collections.singletonList(
+                new SourceContextLoader.Line(1, "abcdefghijklmnopqrstuvwxyz"));
+
+        formatter.writeCode(1, 9, lines);
+
+        assertThat(builder.toString(),
+                equalTo("1| abcdefghi…" + ls
+                        + " |         ^" + ls2));
+    }
+
+    @Test
     public void ignoresEmptyLines() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;

@@ -44,7 +44,7 @@ final class CodeFormatter {
             writeColumnAndContent(numberLength, line.getLineNumber(), line.getContent());
 
             if (line.getLineNumber() == cursorLine) {
-                writePointer(numberLength, cursorColumn);
+                writePointer(numberLength, clampPointerColumn(line.getContent(), numberLength, cursorColumn));
             }
 
             lastLine = line.getLineNumber();
@@ -94,6 +94,17 @@ final class CodeFormatter {
         writer.println();
     }
 
+    // The pointer must never extend past the truncation marker of a truncated line, so
+    // clamp the pointer column to the marker's position when the error column isn't
+    // visible within the truncated line.
+    private int clampPointerColumn(CharSequence content, int numberLength, int cursorColumn) {
+        int allowedSize = maxWidth - numberLength;
+        if (content.length() <= allowedSize) {
+            return cursorColumn;
+        }
+        return Math.min(cursorColumn, allowedSize + 1);
+    }
+
     private int findLongestNumber(Collection<SourceContextLoader.Line> lines) {
         int maxLineNumber = 1;
         for (SourceContextLoader.Line line : lines) {
@@ -105,7 +116,7 @@ final class CodeFormatter {
     private void writeStringWithMaxWidth(CharSequence line, int offsetSize) {
         int allowedSize = maxWidth - offsetSize;
         writer.append(line, 0, Math.min(line.length(), allowedSize));
-        if (line.length() >= allowedSize) {
+        if (line.length() > allowedSize) {
             writer.append("…");
         }
     }
