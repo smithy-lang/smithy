@@ -10,3 +10,4 @@ software.amazon.smithy.aws.apigateway.traits.MinimumCompressionSizeTrait$Provide
 software.amazon.smithy.aws.apigateway.traits.EndpointConfigurationTrait$Provider
 software.amazon.smithy.aws.apigateway.traits.ResourcePolicyTrait$Provider
 software.amazon.smithy.aws.apigateway.traits.ApiTlsPolicyTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.ApiGatewayConfigTrait$Provider

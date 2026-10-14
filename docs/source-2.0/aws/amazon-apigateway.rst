@@ -825,6 +825,60 @@ The following example defines an operation that uses a mock integration.
 API endpoint and access control
 -------------------------------
 
+.. smithy-trait:: aws.apigateway#apiGatewayConfig
+    :package: smithy-aws-apigateway-traits
+.. _aws.apigateway#apiGatewayConfig-trait:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``aws.apigateway#apiGatewayConfig`` trait
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Summary
+    Defines the API Gateway configuration version for a service. The version
+    selects how API Gateway interprets the service's ``aws.apigateway`` traits
+    and which defaults apply when a setting is omitted.
+Trait selector
+    ``service``
+Value type
+    ``structure``
+
+The ``aws.apigateway#apiGatewayConfig`` trait is a structure that supports
+the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - version
+      - ``string``
+      - **Required**. The API Gateway configuration version. Valid values
+        are ``"1"``.
+
+The following example declares that ``Weather`` uses API Gateway
+configuration version 1:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.apigateway#apiGatewayConfig
+
+    @apiGatewayConfig(version: "1")
+    service Weather {
+        version: "2026-10-02"
+    }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
 .. smithy-trait:: aws.apigateway#apiTlsPolicy
     :package: smithy-aws-apigateway-traits
 .. _aws.apigateway#apiTlsPolicy-trait:

@@ -21,6 +21,18 @@ string apiKeySource
 @trait(selector: "operation")
 structure apiKeyRequired {}
 
+/// Defines the API Gateway configuration version for a service. The version
+/// selects how API Gateway interprets the service's aws.apigateway traits and
+/// which defaults apply when a setting is omitted.
+@internal
+@tags(["internal"])
+@trait(selector: "service")
+structure apiGatewayConfig {
+    /// The API Gateway configuration version.
+    @required
+    version: ApiGatewayConfigVersion
+}
+
 /// Attaches an authorizer to a service, resource, or operation.
 @internal
 @tags(["internal"])
@@ -216,6 +228,13 @@ structure apiTlsPolicy {
 
     /// The endpoint access mode for the API.
     endpointAccessMode: EndpointAccessMode
+}
+
+/// The API Gateway configuration versions a service can declare.
+@private
+enum ApiGatewayConfigVersion {
+    /// The initial API Gateway configuration version.
+    V1 = "1"
 }
 
 /// An object that associates an authorizer and associated metadata with an
