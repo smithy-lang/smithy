@@ -1,0 +1,3 @@
+[ERROR] smithy.example#Example: Changed trait contents of `smithy.api#unstableFeatures` at path `/UPDATED_PREVIEW/since` from `2026-01-01` to `2026-02-01`; The `since` date of an `@unstableFeatures` entry cannot be changed after setting. | TraitBreakingChange.Update.smithy.api#unstableFeatures
+-----
+[ERROR] smithy.example#PreviewSvc: Changed trait contents of `smithy.api#unstableFeatures` at path `/SERVICE_PREVIEW/since` from `2026-01-01` to `2026-02-01`; The `since` date of an `@unstableFeatures` entry cannot be changed after setting. | TraitBreakingChange.Update.smithy.api#unstableFeatures

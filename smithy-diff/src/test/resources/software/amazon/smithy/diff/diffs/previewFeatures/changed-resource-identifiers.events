@@ -1,0 +1,1 @@
+[WARNING] smithy.example#IdResource: Identifiers of resource `smithy.example#IdResource` changed from {id=smithy.api#String} to {id=smithy.api#String, extra=smithy.api#String}. This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | ChangedResourceIdentifiers

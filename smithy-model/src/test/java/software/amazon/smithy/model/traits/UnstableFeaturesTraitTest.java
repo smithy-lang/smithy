@@ -48,6 +48,18 @@ public class UnstableFeaturesTraitTest {
     }
 
     @Test
+    public void loadsEntryWithSince() {
+        Node node = Node.parse("{\"MYSERVICE_FIRST_PREVIEW\": {\"reason\": \"PREVIEW\", \"since\": \"2026-10-08\"}}");
+        UnstableFeaturesTrait trait = new UnstableFeaturesTrait.Provider()
+                .createTrait(ShapeId.from("ns.qux#MyService"), node);
+
+        UnstableFeatureInfo info = trait.getFeature("MYSERVICE_FIRST_PREVIEW").get();
+        assertThat(info.getSince().get(), equalTo("2026-10-08"));
+        assertThat(trait.toNode(), equalTo(node));
+        assertThat(trait.toBuilder().build(), equalTo(trait));
+    }
+
+    @Test
     public void expectsValidReason() {
         Assertions.assertThrows(SourceException.class, () -> {
             new UnstableFeaturesTrait.Provider().createTrait(

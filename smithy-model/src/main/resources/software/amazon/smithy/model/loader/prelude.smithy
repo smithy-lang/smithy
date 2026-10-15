@@ -1086,7 +1086,16 @@ structure unstable {
 }
 
 /// Defines the preview features offered by a service, keyed by `featureId`. Applied to the service shape.
-@trait(selector: "service")
+@trait(
+    selector: "service"
+    breakingChanges: [
+        {
+            path: "/value/since"
+            change: "update"
+            message: "The `since` date of an `@unstableFeatures` entry cannot be changed after setting."
+        }
+    ]
+)
 map unstableFeatures {
     /// The id of the unstable feature.
     @length(max: 100)
@@ -1104,6 +1113,10 @@ structure UnstableFeatureInfo {
 
     /// The reason why this feature is unstable.
     reason: UnstableReason
+
+    /// The date the feature became unstable, in `YYYY-MM-DD` format.
+    @pattern("^\\d{4}-\\d{2}-\\d{2}$")
+    since: String
 }
 
 @private

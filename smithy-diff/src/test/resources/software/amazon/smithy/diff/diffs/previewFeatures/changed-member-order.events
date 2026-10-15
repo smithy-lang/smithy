@@ -1,0 +1,1 @@
+[WARNING] smithy.example#PreviewIn: structure shape members were reordered. This can cause ABI compatibility issues in languages like C and C++ where the layout and alignment of a data structure matters. This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | ChangedMemberOrder

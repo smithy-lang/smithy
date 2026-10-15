@@ -1,0 +1,9 @@
+[ERROR] smithy.example#AsymStr: smithy.api#length trait value `min` was made more restrictive by raising from 1 to 5 | ChangedLengthTrait
+-----
+[NOTE] smithy.example#AsymStr: Changed trait `smithy.api#length` from | ModifiedTrait.Update.smithy.api#length
+-----
+[ERROR] smithy.example#Example: Operation binding of `smithy.example#GaAsymOp` was removed from service shape, `smithy.example#Example` | RemovedOperationBinding.FromService.GaAsymOp
+-----
+[ERROR] smithy.example#GaAsymIn: Removed structure `smithy.example#GaAsymIn` | RemovedShape
+-----
+[ERROR] smithy.example#GaAsymOp: Removed operation `smithy.example#GaAsymOp` | RemovedShape

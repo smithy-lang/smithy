@@ -1,0 +1,3 @@
+[WARNING] smithy.example#LenStr: smithy.api#length trait value `min` was made more restrictive by raising from 1 to 5 This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | ChangedLengthTrait
+-----
+[NOTE] smithy.example#LenStr: Changed trait `smithy.api#length` from | ModifiedTrait.Update.smithy.api#length

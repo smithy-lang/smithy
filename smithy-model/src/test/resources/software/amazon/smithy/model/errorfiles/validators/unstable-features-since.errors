@@ -1,0 +1,1 @@
+[ERROR] smithy.example#MyService: Error validating trait `unstableFeatures`.INVALID_SINCE_PREVIEW.since: String value provided for `smithy.api#UnstableFeatureInfo$since` must match regular expression: ^\d{4}-\d{2}-\d{2}$ | TraitValue

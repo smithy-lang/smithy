@@ -1,0 +1,19 @@
+[ERROR] smithy.example#Example: Operation binding of `smithy.example#GaGoneOp` was removed from service shape, `smithy.example#Example` | RemovedOperationBinding.FromService.GaGoneOp
+-----
+[ERROR] smithy.example#Example: Operation binding of `smithy.example#PreviewGoneOp` was removed from service shape, `smithy.example#Example` | RemovedOperationBinding.FromService.PreviewGoneOp
+-----
+[ERROR] smithy.example#Example: Resource binding of `smithy.example#PreviewGoneResource` was removed from service shape, `smithy.example#Example` | RemovedResourceBinding.FromService.PreviewGoneResource
+-----
+[ERROR] smithy.example#GaGoneOp: Removed operation `smithy.example#GaGoneOp` | RemovedShape
+-----
+[ERROR] smithy.example#GaHostResource: Operation binding of `smithy.example#PreviewBoundOp` was removed from resource shape, `smithy.example#GaHostResource` | RemovedOperationBinding.FromResource.PreviewBoundOp
+-----
+[WARNING] smithy.example#PreviewBoundOp: Removed operation `smithy.example#PreviewBoundOp` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape
+-----
+[WARNING] smithy.example#PreviewBoundOpInput: Removed structure `smithy.example#PreviewBoundOpInput` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape
+-----
+[WARNING] smithy.example#PreviewGoneIn: Removed structure `smithy.example#PreviewGoneIn` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape
+-----
+[WARNING] smithy.example#PreviewGoneOp: Removed operation `smithy.example#PreviewGoneOp` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape
+-----
+[WARNING] smithy.example#PreviewGoneResource: Removed resource `smithy.example#PreviewGoneResource` This event is downgraded to WARNING because this shape is part of preview feature `EXAMPLE_PREVIEW`. | RemovedShape

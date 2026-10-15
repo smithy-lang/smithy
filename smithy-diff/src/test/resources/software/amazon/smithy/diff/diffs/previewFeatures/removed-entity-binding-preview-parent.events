@@ -1,0 +1,3 @@
+[WARNING] smithy.example#PreviewSvc: Operation binding of `smithy.example#SvcGoneOp` was removed from service shape, `smithy.example#PreviewSvc` This event is downgraded to WARNING because this shape is part of preview feature `PREVIEWSVC`. | RemovedOperationBinding.FromService.SvcGoneOp
+-----
+[WARNING] smithy.example#SvcGoneOp: Removed operation `smithy.example#SvcGoneOp` This event is downgraded to WARNING because this shape is part of preview feature `PREVIEWSVC`. | RemovedShape

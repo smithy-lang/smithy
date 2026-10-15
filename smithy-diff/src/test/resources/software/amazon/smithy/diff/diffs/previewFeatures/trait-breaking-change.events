@@ -1,0 +1,11 @@
+[NOTE] smithy.example#Example: Operation binding of `smithy.example#GuardNewOp` was added to the service shape, `smithy.example#Example` | AddedOperationBinding.ToService.GuardNewOp
+-----
+[ERROR] smithy.example#GuardFeatureIdOp: Added trait contents to `smithy.api#unstable` at path `/featureId` with value `EXAMPLE_PREVIEW`; The `@unstable` trait's `featureId` cannot be added to an existing shape. A preview feature must be declared when the shape is first introduced. | TraitBreakingChange.Add.smithy.api#unstable
+-----
+[ERROR] smithy.example#GuardIn$data: The shape targeted by the member `smithy.example#GuardIn$data` changed from `smithy.api#String` (string) to `smithy.api#Integer` (integer). The type of the targeted shape changed from string to integer. | ChangedMemberTarget
+-----
+[NOTE] smithy.example#GuardNewOp: Added operation `smithy.example#GuardNewOp` | AddedShape
+-----
+[ERROR] smithy.example#GuardRemoveOp: Removed trait contents from `smithy.api#unstable` at path `/featureId`. Removed value: `EXAMPLE_PREVIEW`; The `@unstable` trait's `featureId` cannot be removed after setting. Please remove the whole `unstable` trait if the shape is GA. | TraitBreakingChange.Remove.smithy.api#unstable
+-----
+[ERROR] smithy.example#GuardUpdateOp: Changed trait contents of `smithy.api#unstable` at path `/featureId` from `EXAMPLE_PREVIEW` to `EXAMPLE_PREVIEW_TWO`; The `@unstable` trait's `featureId` cannot be changed after setting. | TraitBreakingChange.Update.smithy.api#unstable
