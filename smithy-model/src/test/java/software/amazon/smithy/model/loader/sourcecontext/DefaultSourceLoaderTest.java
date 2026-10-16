@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.io.UncheckedIOException;
 import java.util.Collection;
@@ -66,6 +67,50 @@ public class DefaultSourceLoaderTest {
         SourceLocation location = new SourceLocation("https://test.com", 1, 1);
 
         Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location));
+    }
+
+    @Test
+    public void doesNotLoadJarOverHttp() {
+        assertRefused("jar:http://127.0.0.1:8080/x.jar!/a.smithy");
+    }
+
+    @Test
+    public void doesNotLoadJarOverHttps() {
+        assertRefused("jar:https://127.0.0.1:8080/x.jar!/a.smithy");
+    }
+
+    @Test
+    public void doesNotLoadFileUrlWithHost() {
+        assertRefused("file://127.0.0.1:1/a.smithy");
+    }
+
+    @Test
+    public void doesNotLoadPathWithHost() {
+        assertRefused("//127.0.0.1:1/a.smithy");
+    }
+
+    @Test
+    public void doesNotLoadJarFileUrlWithHost() {
+        assertRefused("jar:file://127.0.0.1/x.jar!/a.smithy");
+    }
+
+    @Test
+    public void doesNotLoadNestedJar() {
+        SourceContextLoader loader = SourceContextLoader.createLineBasedLoader(1);
+        SourceLocation location = new SourceLocation("jar:jar:file:/x.jar!/y.jar!/a.smithy", 1, 1);
+
+        Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location));
+    }
+
+    private void assertRefused(String filename) {
+        SourceContextLoader loader = SourceContextLoader.createLineBasedLoader(1);
+        SourceLocation location = new SourceLocation(filename, 1, 1);
+
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
+    }
+
+    private void assertRefused(UncheckedIOException e) {
+        assertThat(e.getCause().getMessage(), startsWith("Refusing to load source context"));
     }
 
     @Test

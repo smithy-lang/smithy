@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Only load source context for validation events from local files and JARs.",
+  "pull_requests": []
+}
