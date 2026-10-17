@@ -1551,4 +1551,65 @@ public class ModelAssemblerTest {
 
         assertThat(fileContents, containsString("string ExampleString"));
     }
+
+    @Test
+    public void unparsedModelWithLocalJarSourceLocationDoesNotLoadJar() throws Exception {
+        URL jar = getClass().getResource("jar-import.jar");
+        String path = Paths.get(jar.toURI()).toAbsolutePath().toString();
+
+        // The reserved .invalid TLD never resolves, so opening this label would fail with UnknownHostException.
+        String remote = "jar:http://invalid.invalid/x.jar";
+
+        for (String label : ListUtils.of(jar.toExternalForm(), path, "jar-import.jar", remote)) {
+            ValidatedResult<Model> result = Model.assembler().addUnparsedModel(label, "").assemble();
+
+            assertThat(result.getValidationEvents(), empty());
+            assertFalse(result.unwrap().getShape(ShapeId.from("foo.baz#A")).isPresent(), label);
+        }
+    }
+
+    @Test
+    public void importReplacingUnparsedJarSourceLocationLoadsJar() throws Exception {
+        Path jar = Paths.get(getClass().getResource("jar-import.jar").toURI()).toAbsolutePath();
+
+        Model model = Model.assembler()
+                .addUnparsedModel(jar.toString(), "")
+                .addImport(jar)
+                .assemble()
+                .unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("foo.baz#A")).isPresent());
+    }
+
+    @Test
+    public void unparsedJarSourceLocationReplacingImportDoesNotLoadJar() throws Exception {
+        Path jar = Paths.get(getClass().getResource("jar-import.jar").toURI()).toAbsolutePath();
+
+        Model model = Model.assembler()
+                .addImport(jar)
+                .addUnparsedModel(jar.toString(), "")
+                .assemble()
+                .unwrap();
+
+        assertFalse(model.getShape(ShapeId.from("foo.baz#A")).isPresent());
+    }
+
+    @Test
+    public void copiedAssemblerKeepsUnparsedJarSourceLocationInert() throws Exception {
+        URL jar = getClass().getResource("jar-import.jar");
+        ModelAssembler assembler = Model.assembler().addUnparsedModel(jar.toExternalForm(), "");
+
+        Model model = assembler.copy().assemble().unwrap();
+
+        assertFalse(model.getShape(ShapeId.from("foo.baz#A")).isPresent());
+    }
+
+    @Test
+    public void copiedAssemblerKeepsJarImport() {
+        ModelAssembler assembler = Model.assembler().addImport(getClass().getResource("jar-import.jar"));
+
+        Model model = assembler.copy().assemble().unwrap();
+
+        assertTrue(model.getShape(ShapeId.from("foo.baz#A")).isPresent());
+    }
 }
