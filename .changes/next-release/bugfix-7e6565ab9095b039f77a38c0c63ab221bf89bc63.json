@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Stop treating the source location given to `ModelAssembler#addUnparsedModel` as a JAR to import. In-memory models with a `.jar` source location are now ignored with a warning. Use `addImport` to load JARs.",
+  "pull_requests": []
+}

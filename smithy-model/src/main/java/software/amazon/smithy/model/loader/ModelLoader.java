@@ -48,6 +48,9 @@ final class ModelLoader {
      * @param contentSupplier The supplier that provides an InputStream. The
      *   supplied {@code InputStream} is automatically closed when the loader
      *   has finished reading from it.
+     * @param stringTable String table used to intern strings.
+     * @param allowJarImport Set to true to allow a filename that ends with ".jar" to be imported as a JAR.
+     *   Set to false for in-memory content, whose filename must never be opened.
      * @return Returns true if the file was loaded. Some JSON files might be ignored and return false.
      * @throws SourceException if there is an error reading from the contents.
      */
@@ -57,7 +60,8 @@ final class ModelLoader {
             String filename,
             Consumer<LoadOperation> operationConsumer,
             Supplier<InputStream> contentSupplier,
-            Function<CharSequence, String> stringTable
+            Function<CharSequence, String> stringTable,
+            boolean allowJarImport
     ) {
         try {
             if (filename.endsWith(".smithy")) {
@@ -67,6 +71,11 @@ final class ModelLoader {
                 }
                 return true;
             } else if (filename.endsWith(".jar")) {
+                if (!allowJarImport) {
+                    LOGGER.warning(() -> "Ignoring in-memory model with a .jar source location; "
+                            + "JARs can only be loaded with addImport: " + filename);
+                    return false;
+                }
                 loadJar(traitFactory, properties, filename, operationConsumer, stringTable);
                 return true;
             } else if (filename.endsWith(".json") || filename.equals(SourceLocation.NONE.getFilename())) {
@@ -141,7 +150,7 @@ final class ModelLoader {
                     } catch (IOException e) {
                         throw throwIoJarException(model, e);
                     }
-                }, stringTable);
+                }, stringTable, true);
 
                 // Smithy will skip unrecognized model files, including JSON files that don't contain a "smithy"
                 // version key/value pair. However, JAR manifests are not allowed to refer to unrecognized files.
