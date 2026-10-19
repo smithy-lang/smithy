@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UncheckedIOException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 final class DefaultSourceLoader implements SourceContextLoader {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultSourceLoader.class.getName());
-    private final List<Line> lines = new ArrayList<>();
+    private List<Line> lines = Collections.emptyList();
     private final Model model;
     private final int defaultCodeLines;
     private SourceLocation lastLoadedLocation;
@@ -86,18 +87,23 @@ final class DefaultSourceLoader implements SourceContextLoader {
     }
 
     private void loadNextFile(SourceLocation source) {
-        lines.clear();
-        lastLoadedLocation = source;
         LOGGER.finer(() -> "Opening source location file for " + source);
+        List<Line> newLines = new ArrayList<>();
 
         try (LineNumberReader reader = openSourceLocation(source)) {
             String lineString;
             while ((lineString = reader.readLine()) != null) {
-                lines.add(new Line(reader.getLineNumber(), lineString));
+                newLines.add(new Line(reader.getLineNumber(), lineString));
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+
+        // Only replace the previously loaded lines and remember this location once the file has been fully
+        // and successfully read, so that a rejected or failed location never corrupts the existing cache nor
+        // is later treated as a cache hit.
+        lines = newLines;
+        lastLoadedLocation = source;
     }
 
     private LineNumberReader openSourceLocation(FromSourceLocation source) {
@@ -106,7 +112,8 @@ final class DefaultSourceLoader implements SourceContextLoader {
             SourceLocation location = source.getSourceLocation();
             String normalizedFile = location.getFilename();
 
-            // Refuse to open URLs that are not files or JARs by forcing the file protocol.
+            // Treat anything that isn't a file or JAR URL as a local path by adding the file protocol.
+            // The parsed URL is then checked by requireLocalFile, which refuses any non-local location.
             if (!location.getFilename().startsWith("file:") && !location.getFilename().startsWith("jar:")) {
                 normalizedFile = "file:" + normalizedFile;
             }
@@ -114,13 +121,46 @@ final class DefaultSourceLoader implements SourceContextLoader {
             // Loading from a JAR needs special treatment, but this can
             // all actually be handled in a uniform way using URLs.
             URL url = new URL(normalizedFile);
+            requireLocalFile(url, source);
             URLConnection connection = url.openConnection();
+
+            // Check the exact JAR file URL the JDK will read before any I/O happens.
+            if (connection instanceof JarURLConnection
+                    && !isLocalFileUrl(((JarURLConnection) connection).getJarFileURL())) {
+                throw new IOException("Refusing to load source context from non-local location " + source);
+            }
+
             connection.setUseCaches(false);
 
             return new LineNumberReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException("Unable to load source location context for " + source, e);
         }
+    }
+
+    // Only local files and JAR files that are local files can be read, so that no network connection is made.
+    private static void requireLocalFile(URL url, FromSourceLocation source) throws IOException {
+        URL target = url;
+        if ("jar".equals(url.getProtocol())) {
+            // Same split JarURLConnection uses: the JAR file URL is everything before the first "!/".
+            String spec = url.getFile();
+            int separator = spec.indexOf("!/");
+            if (separator < 0) {
+                throw new IOException("Refusing to load source context from " + source + ": not a valid jar URL");
+            }
+            target = new URL(spec.substring(0, separator));
+        }
+        if (!isLocalFileUrl(target)) {
+            throw new IOException("Refusing to load source context from non-local location " + source);
+        }
+    }
+
+    private static boolean isLocalFileUrl(URL url) {
+        return url != null && "file".equals(url.getProtocol()) && isLocalHost(url.getHost());
+    }
+
+    private static boolean isLocalHost(String host) {
+        return host == null || host.isEmpty() || host.equalsIgnoreCase("localhost");
     }
 
     private boolean isValidLine(int line) {
