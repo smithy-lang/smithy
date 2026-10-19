@@ -109,6 +109,49 @@ public class DefaultSourceLoaderTest {
         assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
     }
 
+    @Test
+    public void repeatedCallsToRejectedLocationKeepThrowing() {
+        SourceContextLoader loader = SourceContextLoader.createLineBasedLoader(1);
+        SourceLocation location = new SourceLocation("jar:http://127.0.0.1:8080/x.jar!/a.smithy", 1, 1);
+
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
+    }
+
+    @Test
+    public void repeatedCallsToRejectedLocationAfterValidLoadKeepThrowing() {
+        String file = getClass().getResource("context.smithy").getFile();
+        SourceContextLoader loader = SourceContextLoader.createLineBasedLoader(1);
+
+        // First, successfully load a valid local file.
+        loader.loadContext(new SourceLocation(file, 1, 1));
+
+        // Then repeatedly request a rejected remote location; it must throw every time.
+        SourceLocation location = new SourceLocation("jar:http://127.0.0.1:8080/x.jar!/a.smithy", 1, 1);
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(location)));
+    }
+
+    @Test
+    public void reloadingPreviousValidLocationAfterRejectionStillWorks() {
+        String file = getClass().getResource("context.smithy").getFile();
+        SourceContextLoader loader = SourceContextLoader.createLineBasedLoader(1);
+        SourceLocation validLocation = new SourceLocation(file, 1, 1);
+
+        // Load a valid local file, then its cached result.
+        Collection<SourceContextLoader.Line> first = loader.loadContext(validLocation);
+        assertThat(first, not(empty()));
+
+        // A rejected remote location in a different file clears the in-memory lines but must not corrupt
+        // the cache for the previously loaded, still-valid location.
+        SourceLocation rejected = new SourceLocation("jar:http://127.0.0.1:8080/x.jar!/a.smithy", 1, 1);
+        assertRefused(Assertions.assertThrows(UncheckedIOException.class, () -> loader.loadContext(rejected)));
+
+        // Re-requesting the original valid location must still return correct, non-stale content.
+        Collection<SourceContextLoader.Line> second = loader.loadContext(validLocation);
+        assertThat(second, not(empty()));
+    }
+
     private void assertRefused(UncheckedIOException e) {
         assertThat(e.getCause().getMessage(), startsWith("Refusing to load source context"));
     }

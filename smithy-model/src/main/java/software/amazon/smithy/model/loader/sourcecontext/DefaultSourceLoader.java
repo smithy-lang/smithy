@@ -37,7 +37,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 final class DefaultSourceLoader implements SourceContextLoader {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultSourceLoader.class.getName());
-    private final List<Line> lines = new ArrayList<>();
+    private List<Line> lines = Collections.emptyList();
     private final Model model;
     private final int defaultCodeLines;
     private SourceLocation lastLoadedLocation;
@@ -87,18 +87,23 @@ final class DefaultSourceLoader implements SourceContextLoader {
     }
 
     private void loadNextFile(SourceLocation source) {
-        lines.clear();
-        lastLoadedLocation = source;
         LOGGER.finer(() -> "Opening source location file for " + source);
+        List<Line> newLines = new ArrayList<>();
 
         try (LineNumberReader reader = openSourceLocation(source)) {
             String lineString;
             while ((lineString = reader.readLine()) != null) {
-                lines.add(new Line(reader.getLineNumber(), lineString));
+                newLines.add(new Line(reader.getLineNumber(), lineString));
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+
+        // Only replace the previously loaded lines and remember this location once the file has been fully
+        // and successfully read, so that a rejected or failed location never corrupts the existing cache nor
+        // is later treated as a cache hit.
+        lines = newLines;
+        lastLoadedLocation = source;
     }
 
     private LineNumberReader openSourceLocation(FromSourceLocation source) {
