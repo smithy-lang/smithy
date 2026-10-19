@@ -93,7 +93,7 @@ public final class ModelAssembler {
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
     private boolean disableValidation;
-    private final Map<String, Supplier<InputStream>> inputStreamModels = new LinkedHashMap<>();
+    private final Map<String, ModelSource> inputStreamModels = new LinkedHashMap<>();
     private final List<Validator> validators = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
@@ -104,6 +104,17 @@ public final class ModelAssembler {
     private boolean disablePrelude;
     private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
     private StringTable stringTable;
+
+    // Model content to load, and whether its key may be imported as a JAR.
+    private static final class ModelSource {
+        final Supplier<InputStream> content;
+        final boolean allowJarImport;
+
+        ModelSource(Supplier<InputStream> content, boolean allowJarImport) {
+            this.content = content;
+            this.allowJarImport = allowJarImport;
+        }
+    }
 
     // Lazy initialization holder class idiom to hold a default trait factory.
     static final class LazyTraitFactoryHolder {
@@ -214,13 +225,18 @@ public final class ModelAssembler {
      * <p>The provided {@code sourceLocation} string must end with
      * ".json" or ".smithy" to be parsed correctly.
      *
+     * <p>The {@code sourceLocation} is only used as the name of the content
+     * and to choose the parser. It is never opened or read. A source location
+     * that ends with ".jar" is ignored. Use {@link #addImport(URL)} or
+     * {@link #addImport(Path)} to load JAR files.
+     *
      * @param sourceLocation Source location to assume for the unparsed content.
      * @param model Unparsed model source.
      * @return Returns the assembler.
      */
     public ModelAssembler addUnparsedModel(String sourceLocation, String model) {
         inputStreamModels.put(sourceLocation,
-                () -> new ByteArrayInputStream(model.getBytes(StandardCharsets.UTF_8)));
+                new ModelSource(() -> new ByteArrayInputStream(model.getBytes(StandardCharsets.UTF_8)), false));
         return this;
     }
 
@@ -270,7 +286,7 @@ public final class ModelAssembler {
             }
         } else if (Files.isRegularFile(importPath)) {
             // Use an absolute path for better de-duping of the same file.
-            inputStreamModels.put(importPath.toAbsolutePath().toString(), () -> {
+            inputStreamModels.put(importPath.toAbsolutePath().toString(), new ModelSource(() -> {
                 try {
                     return Files.newInputStream(importPath);
                 } catch (IOException e) {
@@ -278,7 +294,7 @@ public final class ModelAssembler {
                             "Unable to import Smithy model from " + importPath + ": " + e.getMessage(),
                             e);
                 }
-            });
+            }, true));
         } else {
             throw new ModelImportException("Cannot find import file: " + importPath);
         }
@@ -321,7 +337,7 @@ public final class ModelAssembler {
             }
         }
 
-        inputStreamModels.put(key, () -> {
+        inputStreamModels.put(key, new ModelSource(() -> {
             try {
                 URLConnection connection = url.openConnection();
                 if (properties.containsKey(ModelAssembler.DISABLE_JAR_CACHE)) {
@@ -331,7 +347,7 @@ public final class ModelAssembler {
             } catch (IOException | UncheckedIOException e) {
                 throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
             }
-        });
+        }, true));
 
         return this;
     }
@@ -566,9 +582,16 @@ public final class ModelAssembler {
         }
 
         // Load model files into the processor.
-        for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
+        for (Map.Entry<String, ModelSource> entry : inputStreamModels.entrySet()) {
+            ModelSource source = entry.getValue();
             try {
-                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue(), stringTable);
+                ModelLoader.load(traitFactory,
+                        properties,
+                        entry.getKey(),
+                        processor,
+                        source.content,
+                        stringTable,
+                        source.allowJarImport);
             } catch (SourceException e) {
                 processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
             }
