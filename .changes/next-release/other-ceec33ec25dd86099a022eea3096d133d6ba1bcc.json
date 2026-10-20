@@ -1,0 +1,7 @@
+{
+  "type": "other",
+  "description": "Added negative event stream protocol tests for oversized string headers, covering both single-byte ASCII overflow and multibyte UTF-8 byte-limit overflow.",
+  "pull_requests": [
+    "[#3325](https://github.com/smithy-lang/smithy/pull/3325)"
+  ]
+}
