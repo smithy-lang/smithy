@@ -24,6 +24,7 @@ service RpcV2JsonProtocol {
         SparseNullsOperation
         BigDecimalOperation
         BigIntegerOperation
+        DiscriminatedUnionOperation
     ]
 }
 
