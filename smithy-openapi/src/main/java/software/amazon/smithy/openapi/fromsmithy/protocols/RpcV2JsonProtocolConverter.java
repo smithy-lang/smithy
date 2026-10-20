@@ -127,12 +127,14 @@ public final class RpcV2JsonProtocolConverter implements OpenApiProtocol<Rpcv2Js
                     buildResponseObject(context,
                             operation.getOutputShape(),
                             operation,
+                            operation,
                             "ResponseContent"));
 
             OperationIndex operationIndex = OperationIndex.of(context.getModel());
             for (StructureShape error : operationIndex.getErrors(operation)) {
                 String errorCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, error);
-                result.put(errorCode, buildResponseObject(context, error.toShapeId(), error, "ErrorContent"));
+                result.put(errorCode,
+                        buildResponseObject(context, error.toShapeId(), error, operation, "ErrorContent"));
             }
         }
         return result;
@@ -142,10 +144,11 @@ public final class RpcV2JsonProtocolConverter implements OpenApiProtocol<Rpcv2Js
             Context<Rpcv2JsonTrait> context,
             ShapeId shape,
             Shape operationOrError,
+            OperationShape operation,
             String suffix
     ) {
         Schema schema = convertToSchema(context, shape);
-        MediaTypeObject mediaTypeObject = createMediaTypeObject(context, schema, operationOrError, suffix);
+        MediaTypeObject mediaTypeObject = createMediaTypeObject(context, schema, operationOrError, operation, suffix);
 
         return ResponseObject.builder()
                 .description("Response Object")
@@ -159,7 +162,8 @@ public final class RpcV2JsonProtocolConverter implements OpenApiProtocol<Rpcv2Js
     ) {
         if (operation.getInput().isPresent()) {
             Schema schema = convertToSchema(context, operation.getInputShape());
-            MediaTypeObject mediaTypeObject = createMediaTypeObject(context, schema, operation, "RequestContent");
+            MediaTypeObject mediaTypeObject =
+                    createMediaTypeObject(context, schema, operation, operation, "RequestContent");
 
             return Optional.of(RequestBodyObject.builder()
                     .description("Request Object")
@@ -173,12 +177,32 @@ public final class RpcV2JsonProtocolConverter implements OpenApiProtocol<Rpcv2Js
             Context<Rpcv2JsonTrait> context,
             Schema schema,
             Shape operationOrError,
+            OperationShape operation,
             String suffix
     ) {
-        return getMediaTypeObject(context, schema, operationOrError, shape -> {
-            String shapeName = context.getService().getContextualName(shape.getId());
-            return shapeName + suffix;
-        });
+        return getMediaTypeObject(context,
+                schema,
+                operationOrError,
+                shape -> getSynthesizedContentName(context, shape, operation, suffix));
+    }
+
+    private String getSynthesizedContentName(
+            Context<Rpcv2JsonTrait> context,
+            Shape operationOrError,
+            OperationShape operation,
+            String suffix
+    ) {
+        if (context.getConfig().getUseOperationInputOutputShapeNames()
+                && !operation.getInputShape().equals(operation.getOutputShape())) {
+            if ("RequestContent".equals(suffix)) {
+                return context.getService().getContextualName(operation.getInputShape());
+            } else if ("ResponseContent".equals(suffix)) {
+                return context.getService().getContextualName(operation.getOutputShape());
+            }
+        }
+
+        String shapeName = context.getService().getContextualName(operationOrError.getId());
+        return shapeName + suffix;
     }
 
     private MediaTypeObject getMediaTypeObject(
