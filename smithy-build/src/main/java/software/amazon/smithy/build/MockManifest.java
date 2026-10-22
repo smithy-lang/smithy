@@ -82,10 +82,7 @@ public final class MockManifest implements FileManifest {
 
     @Override
     public Path addFile(Path path) {
-        if (!path.startsWith(baseDir) || !path.isAbsolute()) {
-            path = resolvePath(path);
-        }
-
+        path = resolvePath(path);
         files.put(path, new byte[0]);
         return path;
     }

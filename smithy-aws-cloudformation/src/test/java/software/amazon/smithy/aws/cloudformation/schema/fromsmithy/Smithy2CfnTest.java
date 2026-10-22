@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.aws.cloudformation.schema.CfnException;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 
@@ -80,5 +82,28 @@ public class Smithy2CfnTest {
         assertThrows(CfnException.class, () -> {
             new Smithy2Cfn().execute(context);
         });
+    }
+
+    @Test
+    public void doesNotWriteOutsideOfManifestBaseDir() {
+        Model model = Model.assembler()
+                .addImport(Smithy2CfnTest.class.getResource("test-service.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest(Paths.get("/build/cloudformation"));
+        PluginContext context = PluginContext.builder()
+                .settings(Node.objectNode()
+                        .withMember("organizationName", "../../Escaped")
+                        .withMember("service", "smithy.example#TestService"))
+                .fileManifest(manifest)
+                .model(model)
+                .originalModel(model)
+                .build();
+
+        assertThrows(SmithyBuildException.class, () -> {
+            new Smithy2Cfn().execute(context);
+        });
+        assertTrue(manifest.getFiles().isEmpty());
     }
 }

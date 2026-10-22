@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed `FileManifest` path validation so that paths containing `..` segments can no longer escape the manifest's base directory.",
+  "pull_requests": [
+    "[#3334](https://github.com/smithy-lang/smithy/pull/3334)"
+  ]
+}

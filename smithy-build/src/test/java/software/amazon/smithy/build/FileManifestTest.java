@@ -61,6 +61,61 @@ public class FileManifestTest {
     }
 
     @Test
+    public void rejectsRelativePathsThatEscapeBaseDir() {
+        Path base = outputDirectory.resolve("out");
+        FileManifest a = FileManifest.create(base);
+
+        Exception thrown = Assertions.assertThrows(SmithyBuildException.class,
+                () -> a.writeJson("../escape.json", Node.objectNode()));
+        assertThat(thrown.getMessage(), containsString("must be relative to the base directory"));
+        thrown = Assertions.assertThrows(SmithyBuildException.class,
+                () -> a.writeJson("foo/../../escape.json", Node.objectNode()));
+        assertThat(thrown.getMessage(), containsString("must be relative to the base directory"));
+        thrown = Assertions.assertThrows(SmithyBuildException.class, () -> a.writeFile("..", "x"));
+        assertThat(thrown.getMessage(), containsString("must be relative to the base directory"));
+
+        assertThat(Files.exists(outputDirectory.resolve("escape.json")), is(false));
+        assertThat(a.getFiles().isEmpty(), is(true));
+    }
+
+    @Test
+    public void rejectsAbsolutePathsThatEscapeBaseDir() {
+        Path base = outputDirectory.resolve("out");
+        FileManifest a = FileManifest.create(base);
+
+        Exception thrown = Assertions.assertThrows(SmithyBuildException.class,
+                () -> a.addFile(base.resolve("../escape")));
+
+        assertThat(thrown.getMessage(), containsString("must be relative to the base directory"));
+        assertThat(Files.exists(outputDirectory.resolve("escape")), is(false));
+    }
+
+    @Test
+    public void resolvesAgainstRelativeBaseDir() {
+        for (Path base : new Path[] {Paths.get("."), Paths.get(""), Paths.get("./out"), Paths.get("../out")}) {
+            FileManifest a = FileManifest.create(base);
+
+            assertThat(a.resolvePath(Paths.get("x.json")), equalTo(base.resolve("x.json")));
+            assertThat(a.resolvePath(Paths.get("y/../x.json")), equalTo(base.resolve("x.json")));
+            Assertions.assertThrows(SmithyBuildException.class, () -> a.resolvePath(Paths.get("../x.json")));
+        }
+    }
+
+    @Test
+    public void keepsFormOfUnnormalizedBaseDir() throws IOException {
+        Files.createDirectories(outputDirectory.resolve("a"));
+        Path base = outputDirectory.resolve("a/../out");
+        FileManifest a = FileManifest.create(base);
+
+        Path resolved = a.writeJson("x.json", Node.objectNode());
+        assertThat(resolved, equalTo(base.resolve("x.json")));
+        assertThat(resolved.startsWith(a.getBaseDir()), is(true));
+        assertThat(a.writeJson("y/../x.json", Node.objectNode()), equalTo(resolved));
+        assertThat(Files.isRegularFile(outputDirectory.resolve("out/x.json")), is(true));
+        Assertions.assertThrows(SmithyBuildException.class, () -> a.writeJson("../x.json", Node.objectNode()));
+    }
+
+    @Test
     public void mergesRelativeWithBasePath() throws IOException {
         FileManifest a = FileManifest.create(outputDirectory);
         a.writeFile("foo/file.txt", "The contents");
