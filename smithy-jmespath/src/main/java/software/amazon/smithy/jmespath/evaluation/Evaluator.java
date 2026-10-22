@@ -307,9 +307,9 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
                 start = length + start;
             }
             if (start < 0) {
-                start = 0;
+                start = step > 0 ? 0 : -1;
             } else if (start > length - 1) {
-                start = length - 1;
+                start = step > 0 ? length : length - 1;
             }
         }
 
