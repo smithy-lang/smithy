@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,9 +63,12 @@ public final class AwsPartition extends LibraryFunction {
         if (override != null && override.isEmpty()) {
             override = null;
         }
-
+        Path overridePath = null;
+        if (override != null) {
+            overridePath = Paths.get(override).toAbsolutePath();
+        }
         try (InputStream in = override != null
-                ? Files.newInputStream(Paths.get(override))
+                ? Files.newInputStream(overridePath)
                 : Partitions.class.getResourceAsStream("partitions.json")) {
             if (in == null) {
                 throw new IllegalStateException("partitions.json not found in JAR"); // should never happen
@@ -72,8 +76,12 @@ public final class AwsPartition extends LibraryFunction {
             PARTITIONS.addAll(Partitions.fromNode(Node.parse(in)).getPartitions());
             initializeRegionMap();
         } catch (IOException io) {
+            String actual = "JAR";
+            if (override != null) {
+                actual = overridePath.toString();
+            }
             throw new UncheckedIOException(
-                    "Failed to load partitions data from " + (override != null ? override : "JAR"),
+                    "Failed to load partitions data from " + actual,
                     io);
         }
     }
