@@ -87,7 +87,7 @@ JMESPath as an object with the following members:
 - ``output``: an instance of the output shape on a successful call; absent on failure.
 - ``error``: an object ``{shapeId, content}`` on a failed call; absent on success.
   ``output`` and ``error`` are mutually exclusive.
-- ``before`` and ``after``: :ref:`world snapshots <shape-instances>` immediately
+- ``before`` and ``after``: :ref:`world snapshots <world-snapshot>` immediately
   before and after the call. These are model-only (see below).
 
 Expressions reference these members, for example ``input.start < input.end``.
@@ -118,5 +118,44 @@ observable identifier members rather than data on the wire. The identifiers
 inside it are observable, but the handle itself is not.
 
 
+.. _jmespath-functions:
+
+--------------------
+Functions
+--------------------
+
+In addition to the `built-in JMESPath functions`_, Smithy defines the following
+functions for use in expressions over this data model. Each is available
+wherever the members it reads are in scope.
+
+``resource``
+~~~~~~~~~~~~
+
+::
+
+    resource(world, handle) -> object
+
+Looks up a single resource instance in a ``world`` snapshot (a ``before`` or
+``after`` state) and returns it, or ``null`` when no instance matches. ``world``
+is a :ref:`world snapshot <world-snapshot>`. ``handle`` is an object
+``{service, resource, ids}`` (``service`` optional) where ``ids`` maps each
+resource identifier name to its value; a named :ref:`references-trait` projects
+such a handle automatically (see `Reference handles`_).
+
+``requires``
+~~~~~~~~~~~~
+
+::
+
+    requires(call, predicate) -> boolean
+
+Declares a necessary precondition on an operation ``call``. When the call
+succeeds (its ``error`` is absent), ``predicate`` MUST be truthy; when the call
+fails the requirement is vacuously satisfied. ``predicate`` is evaluated
+eagerly, because a necessary precondition reads only pre-call state (``input``
+and ``before``) that is present on both the success and failure paths.
+
+
 .. _JMESPath: https://jmespath.org/
 .. _JMESPath types: https://jmespath.org/specification.html#data-types
+.. _built-in JMESPath functions: https://jmespath.org/specification.html#built-in-functions

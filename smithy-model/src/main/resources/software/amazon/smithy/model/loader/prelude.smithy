@@ -553,12 +553,12 @@ structure Example {
 
     /// A snapshot of resource state before the call (ghost state). This is
     /// specification-only and is never observed by a client at runtime; it
-    /// exists so operation `@conditions` can be checked against the example.
+    /// exists so operation `@contracts` can be checked against the example.
     before: Document
 
     /// A snapshot of resource state after the call (ghost state). This is
     /// specification-only and is never observed by a client at runtime; it
-    /// exists so operation `@conditions` can be checked against the example.
+    /// exists so operation `@contracts` can be checked against the example.
     after: Document
 
     allowConstraintErrors: Boolean
@@ -778,12 +778,8 @@ structure Reference {
     @required
     resource: NonEmptyString
 
-    /// An optional name for the reference. When set, the reference is projected as
-    /// a resource handle reachable in JMESPath as `input.<name>` (or `output.<name>`)
-    /// so that operation `@conditions` can pass it to `resource(...)`. The handle is
-    /// ghost state: it is a specification-only pointer synthesized from the observable
-    /// identifier members, and is never part of the wire data. The name MUST NOT
-    /// collide with a real member of the structure.
+    /// An optional name for the reference. The name MUST NOT collide with a
+    /// member of the structure, or with the name of any other reference.
     name: NonEmptyString
 
     /// Defines a mapping of each resource identifier name to a structure member

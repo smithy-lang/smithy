@@ -1,0 +1,1 @@
+[ERROR] ns.foo#MyStructure: `references` trait reference name `thing` is used by more than one reference. Reference names must be distinct so the handle projection `input.thing` resolves to a single reference. | ReferencesTrait

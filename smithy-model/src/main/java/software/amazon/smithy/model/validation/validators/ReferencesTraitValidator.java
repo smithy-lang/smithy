@@ -49,6 +49,27 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateShape(Model model, Shape shape, ReferencesTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
+
+        // Count how many references declare each name so a name shared by two
+        // references can be reported once as a collision.
+        Map<String, Long> nameCounts = trait.getReferences().stream()
+                .map(ReferencesTrait.Reference::getName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.groupingBy(identity(), Collectors.counting()));
+        nameCounts.forEach((name, count) -> {
+            if (count > 1) {
+                events.add(error(shape,
+                        trait,
+                        format(
+                                "`references` trait reference name `%s` is used by more than one reference. "
+                                        + "Reference names must be distinct so the handle projection `input.%s` "
+                                        + "resolves to a single reference.",
+                                name,
+                                name)));
+            }
+        });
+
         for (ReferencesTrait.Reference reference : trait.getReferences()) {
             reference.getName().ifPresent(name -> {
                 if (shape.getMember(name).isPresent()) {

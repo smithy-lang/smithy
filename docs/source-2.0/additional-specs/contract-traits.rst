@@ -106,75 +106,53 @@ Preconditions and postconditions are ordinary entries gated on the call outcome
 time, with ``before`` and ``after`` supplied by the example's ``before`` and
 ``after`` members.
 
+The following operation requires the document it publishes to be approved before
+the call. The precondition reads the referenced document's state from the
+``before`` snapshot using the ``resource`` and ``requires`` functions defined
+below.
+
 .. code-block:: smithy
 
     @contracts({
-        StartBeforeEnd: {
-            documentation: "The requested start time must be strictly less than the end time"
-            expression: "input.start < input.end"
+        DocumentApprovedOnSuccess: {
+            documentation: "A successful publish requires the referenced document to be approved beforehand"
+            expression: "requires(@, resource(before, input.document).status == 'APPROVED')"
         }
     })
-    operation FetchLogs {
-        input: FetchLogsInput
+    resource Document {
+        identifiers: {documentId: String}
     }
+
+    operation PublishDocument {
+        input: PublishDocumentInput
+        output: PublishDocumentOutput
+    }
+
+    @input
+    @references([
+        {resource: Document, name: "document", ids: {documentId: "documentId"}}
+    ])
+    structure PublishDocumentInput {
+        @required
+        documentId: String
+    }
+
+    @output
+    structure PublishDocumentOutput {}
 
 ------------------
 Contract functions
 ------------------
 
-In addition to the built-in JMESPath_ functions, the following functions are
-available in ``contracts`` expressions:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 26 74
-
-    * - Function
-      - Description
-    * - ``requires(instance, predicate)``
-      - Declares a necessary precondition. On a successful call (its ``error`` is
-        null), ``predicate`` MUST be truthy; on a failed call the requirement is
-        vacuously satisfied. ``predicate`` is evaluated eagerly, because a
-        necessary precondition reads only pre-call state that is present on both
-        the success and failure paths.
-    * - ``resource(world, handle)``
-      - Looks up a single resource instance in a ``before`` or ``after`` world
-        snapshot and returns it, or null when none matches. The ``handle`` is an
-        object ``{service, resource, ids}`` (``service`` optional) where ``ids``
-        maps each resource identifier name to its value.
+Contract expressions use the functions defined in the
+:ref:`JMESPath data model <jmespath-functions>`: ``requires`` for necessary
+preconditions and ``resource`` for resolving a resource against a ``before`` or
+``after`` snapshot.
 
 A named :ref:`references-trait` on the input structure projects a resource
-handle reachable as ``input.<name>``, so a precondition over resource state can
-be written directly:
-
-.. code-block:: smithy
-
-    @contracts({
-        KeyEnabledOnSuccess: {
-            documentation: "A successful call requires the referenced key to be ENABLED beforehand"
-            expression: "requires(@, resource(before, input.key).keyState == 'ENABLED')"
-        }
-    })
-    resource Key {
-        identifiers: {keyId: String}
-    }
-
-    operation Encrypt {
-        input: EncryptInput
-        output: EncryptOutput
-    }
-
-    @input
-    @references([
-        {resource: Key, name: "key", ids: {keyId: "keyId"}}
-    ])
-    structure EncryptInput {
-        @required
-        keyId: String
-    }
-
-    @output
-    structure EncryptOutput {}
+handle reachable as ``input.<name>`` (``input.document`` above), so a
+precondition over resource state can be written without constructing the handle
+by hand.
 
 
 .. _CommonMark: https://spec.commonmark.org/
