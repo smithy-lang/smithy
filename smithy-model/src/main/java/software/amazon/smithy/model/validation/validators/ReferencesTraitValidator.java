@@ -63,10 +63,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                 events.add(error(shape,
                         trait,
                         format(
-                                "`references` trait reference name `%s` is used by more than one reference. "
-                                        + "Reference names must be distinct so the handle projection `input.%s` "
-                                        + "resolves to a single reference.",
-                                name,
+                                "`references` trait reference name `%s` is used by more than one reference.",
                                 name)));
             }
         });

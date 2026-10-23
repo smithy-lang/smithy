@@ -5,8 +5,10 @@ JMESPath data model
 ===================
 
 Several Smithy features use JMESPath_ expressions over model data, including
-:ref:`waiters <waiters>`, the :ref:`conditions trait <conditions-trait>`, and
-the :ref:`contracts trait <contracts-trait>`. This section defines the data
+:ref:`waiters <waiters>`, the :ref:`operationContextParams trait
+<smithy.rules#operationContextParams-trait>`, the :ref:`conditions trait
+<conditions-trait>`, and the :ref:`contracts trait <contracts-trait>`. This
+section defines the data
 model those expressions are evaluated against: how Smithy types are exposed as
 `JMESPath types`_, and how an operation call is exposed.
 

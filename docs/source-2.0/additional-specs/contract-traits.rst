@@ -27,7 +27,7 @@ Services will usually check these contracts outside of service frameworks in mor
 --------------------
 
 Summary
-    Restricts the values of a shape to those which satisfy the given JMESPath expressions.
+    Restricts shape values to those which satisfy the given JMESPath expressions.
 Trait selector
     ``:not(:test(service, operation, resource))``
 
@@ -102,7 +102,7 @@ the operation's :ref:`call <jmespath-operation-call>`, the
 map of named ``Condition`` structures as ``conditions``.
 
 Preconditions and postconditions are ordinary entries gated on the call outcome
-(``error``). A call is materialized from an :ref:`examples-trait` value at build
+(``output`` and ``error``). A call is materialized from an :ref:`examples-trait` value at build
 time, with ``before`` and ``after`` supplied by the example's ``before`` and
 ``after`` members.
 
@@ -121,6 +121,7 @@ below.
     })
     resource Document {
         identifiers: {documentId: String}
+        properties: {status: String}
     }
 
     operation PublishDocument {

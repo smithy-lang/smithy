@@ -826,6 +826,30 @@ target from traits and how their values are defined in
         object mapping each resource contained in the service to an array of
         instances of that resource.
 
+A resource instance is a flat object of the resource's identifiers and
+properties. For example, a ``Document`` resource with a ``documentId``
+identifier and a ``status`` property is exposed as:
+
+.. code-block:: json
+
+    {
+        "documentId": "doc-1",
+        "status": "APPROVED"
+    }
+
+A service instance maps each resource the service contains to an array of that
+resource's instances. For example, a service containing the ``Document``
+resource is exposed as:
+
+.. code-block:: json
+
+    {
+        "Document": [
+            {"documentId": "doc-1", "status": "APPROVED"},
+            {"documentId": "doc-2", "status": "DRAFT"}
+        ]
+    }
+
 .. _world-snapshot:
 
 A *world snapshot* maps each service shape to the set of that service's instances
