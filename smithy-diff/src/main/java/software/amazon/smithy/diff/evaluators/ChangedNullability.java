@@ -16,6 +16,7 @@ import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
+import software.amazon.smithy.model.knowledge.NullableIndex.CheckMode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -32,8 +33,10 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Validates that only backward compatible changes are made to
  * structure member nullability to ensure that if something was
- * previously nullable to clients then it continue to be nullable
- * and vice versa.
+ * previously nullable to clients then it continues to be nullable
+ * and vice versa. Also detects when a member of an input structure
+ * becomes required for authoritative validation while remaining
+ * optional in generated types.
  */
 public final class ChangedNullability extends AbstractDiffEvaluator {
     @Override
@@ -47,13 +50,21 @@ public final class ChangedNullability extends AbstractDiffEvaluator {
                 differences.changedShapes(MemberShape.class),
                 // Get members of structures that added/removed the input trait.
                 changedInputMembers(differences)).forEach(change -> {
-                    // If NullableIndex says the nullability of a member changed, then that's a breaking change.
+                    // Detect changes to generated type nullability using the default client mode.
                     MemberShape oldShape = change.getOldShape();
                     MemberShape newShape = change.getNewShape();
                     boolean wasNullable = oldIndex.isMemberNullable(oldShape);
                     boolean isNowNullable = newIndex.isMemberNullable(newShape);
+                    // Input members remain client-optional after adding required, but authoritative
+                    // validation becomes stricter when the member did not already have a default.
+                    boolean becameRequiredForValidation = hasInputTrait(differences.getNewModel(), newShape)
+                            && change.isTraitAdded(RequiredTrait.ID)
+                            && oldIndex.isMemberNullable(oldShape, CheckMode.SERVER)
+                            && !newIndex.isMemberNullable(newShape, CheckMode.SERVER);
                     if (wasNullable != isNowNullable) {
                         createErrors(differences, change, wasNullable, events);
+                    } else if (becameRequiredForValidation) {
+                        addAddedRequiredTraitToInput(change, events);
                     }
                 });
 
@@ -161,6 +172,22 @@ public final class ChangedNullability extends AbstractDiffEvaluator {
         }
 
         events.addAll(eventsToAdd);
+    }
+
+    private void addAddedRequiredTraitToInput(
+            ChangedShape<MemberShape> change,
+            Collection<ValidationEvent> events
+    ) {
+        MemberShape oldMember = change.getOldShape();
+        events.add(emit(
+                Severity.ERROR,
+                "AddedRequiredTraitToInput",
+                change.getShapeId(),
+                oldMember.getSourceLocation(),
+                String.format(
+                        "Member `%s` changed from optional to required for authoritative validation",
+                        oldMember.getMemberName()),
+                "Previously valid requests that omit this member may now be rejected."));
     }
 
     private void addRemovedInputTrait(
