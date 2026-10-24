@@ -736,15 +736,19 @@ duplicated on the ``MyList`` shape with different values:
     apply MyList @length(min: 10, max: 20)
 
 
-.. _trait-node-values:
+.. _shape-instances:
 
-Trait node values
------------------
+Shape instances
+---------------
 
-The value provided for a trait MUST be compatible with the ``shape`` of the
-trait. The following table defines each shape type that is available to
-target from traits and how their values are defined in
-:token:`node <smithy:NodeValue>` values.
+A node value is an *instance* of a shape when it is compatible with the shape
+as defined in this section. Node value compatibility is checked wherever node
+values are validated against shapes, including trait values (see
+:ref:`trait-node-values`), the :ref:`examples-trait`, and the
+:ref:`default-trait`.
+
+The following table defines each Smithy type and the node values that are
+valid instances of a shape of that type.
 
 .. list-table::
     :header-rows: 1
@@ -815,16 +819,29 @@ target from traits and how their values are defined in
       - The object MUST contain a single key-value pair. The key MUST be
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
+    * - operation
+      - object
+      - An operation instance represents a single call as an object with the
+        members ``input``, ``output``, ``error``, ``before``, and ``after``.
+        ``input`` MUST be an instance of the operation's input shape. A
+        successful call sets ``output`` to an instance of the output shape; a
+        failed call instead sets ``error`` to an object with a ``shapeId`` that
+        names one of the operation's errors and a ``content`` instance of that
+        error shape. ``output`` and ``error`` MUST NOT both be present.
+        ``before`` and ``after`` are *world snapshots* (see below) that capture
+        resource state before and after the call, and are not sent over the wire.
     * - resource
       - object
-      - A resource instance is an object whose members are the resource's
-        identifiers and properties, representing its state.
+      - A resource instance is a flat object of the resource's identifiers and
+        properties, representing its state. Child resources are not nested inside
+        a resource instance; they appear as separate entries in the enclosing
+        service instance.
     * - service
       - object
-      - A service instance is the state of a single instance of a service (a
-        service can have more than one instance, for example one per region): an
-        object mapping each resource contained in the service to an array of
-        instances of that resource.
+      - A service instance is the state of a single deployed instance of the
+        service (a service can have more than one instance, for example one per
+        region): an object mapping each resource the service contains, at any
+        depth, to an array of instances of that resource.
 
 A resource instance is a flat object of the resource's identifiers and
 properties. For example, a ``Document`` resource with a ``documentId``
@@ -837,16 +854,21 @@ identifier and a ``status`` property is exposed as:
         "status": "APPROVED"
     }
 
-A service instance maps each resource the service contains to an array of that
-resource's instances. For example, a service containing the ``Document``
+A service instance maps each resource the service contains (at any depth,
+including child resources) to a flat array of that resource's instances. Child
+resources are not nested inside their parent resource instances. For example, a
+``ContentService`` that contains a ``Folder`` resource and a child ``Document``
 resource is exposed as:
 
 .. code-block:: json
 
     {
+        "Folder": [
+            {"folderId": "folder-1", "name": "Drafts"}
+        ],
         "Document": [
-            {"documentId": "doc-1", "status": "APPROVED"},
-            {"documentId": "doc-2", "status": "DRAFT"}
+            {"documentId": "doc-1", "folderId": "folder-1", "status": "DRAFT"},
+            {"documentId": "doc-2", "folderId": "folder-1", "status": "APPROVED"}
         ]
     }
 
@@ -856,15 +878,41 @@ A *world snapshot* maps each service shape to the set of that service's instance
 (an array, since a service can have multiple instances such as one per region).
 It is used as the ``before`` and ``after`` state of an operation call (see the
 :ref:`contracts trait <contracts-trait>`). The full set is required so that
-references across services and across instances can be resolved. A
-:ref:`reference <references-trait>` without a ``service`` resolves against the
-current service instance; with a ``service`` it resolves against that shape's
-only or default instance.
+references across instances can be resolved.
+
+For example, a world snapshot for a single-region deployment of ``ContentService``
+is exposed as:
+
+.. code-block:: json
+
+    {
+        "ContentService": [
+            {
+                "Folder": [
+                    {"folderId": "folder-1", "name": "Drafts"}
+                ],
+                "Document": [
+                    {"documentId": "doc-1", "folderId": "folder-1", "status": "DRAFT"},
+                    {"documentId": "doc-2", "folderId": "folder-1", "status": "APPROVED"}
+                ]
+            }
+        ]
+    }
 
 .. important::
 
-    Trait values MUST be compatible with the :ref:`required-trait` and any
+    An instance MUST be compatible with the :ref:`required-trait` and any
     associated :doc:`constraint traits <constraint-traits>`.
+
+
+.. _trait-node-values:
+
+Trait node values
+-----------------
+
+The value provided for a trait MUST be compatible with the ``shape`` of the
+trait. See :ref:`shape-instances` for the definition of node value
+compatibility.
 
 
 .. _trait-shapes:

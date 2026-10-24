@@ -102,16 +102,20 @@ the operation's :ref:`call <jmespath-operation-call>`, the
 map of named ``Condition`` structures as ``conditions``.
 
 Preconditions and postconditions are ordinary entries gated on the call outcome
-(``output`` and ``error``). A call is materialized from an :ref:`examples-trait` value at build
-time, with ``before`` and ``after`` supplied by the example's ``before`` and
-``after`` members.
+(``output`` and ``error``). A call is materialized from an :ref:`examples-trait` value,
+with ``before`` and ``after`` provided as part of the example.
 
 The following operation requires the document it publishes to be approved before
 the call. The precondition reads the referenced document's state from the
-``before`` snapshot using the ``resource`` and ``requires`` functions defined
-below.
+``before`` snapshot using the ``resource`` and ``requires`` functions defined in
+:ref:`jmespath-functions`.
 
 .. code-block:: smithy
+
+    resource Document {
+        identifiers: {documentId: String}
+        properties: {status: String}
+    }
 
     @contracts({
         DocumentApprovedOnSuccess: {
@@ -119,11 +123,6 @@ below.
             expression: "requires(@, resource(before, input.document).status == 'APPROVED')"
         }
     })
-    resource Document {
-        identifiers: {documentId: String}
-        properties: {status: String}
-    }
-
     operation PublishDocument {
         input: PublishDocumentInput
         output: PublishDocumentOutput

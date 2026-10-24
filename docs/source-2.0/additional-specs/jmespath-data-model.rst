@@ -110,10 +110,10 @@ Model-only members are available only to build-time analysis such as the
 Reference handles
 --------------------
 
-A named :ref:`references-trait` on a structure is projected into the data model
-as a resource *handle* reachable as ``<member-root>.<name>`` (for example
-``input.key``). The handle is an object ``{service, resource, ids}`` (with
-``service`` optional) synthesized from the reference's identifier bindings, and
+Named :ref:`references-trait` entries on a structure are projected into the data model
+as resource *handles* reachable as ``<member-root>.<name>`` (for example
+``input.key``). Each handle is an object ``{resource, ids}`` synthesized from
+the reference's identifier bindings, and
 is intended to be passed to functions that resolve a resource against a state
 snapshot. A handle is model-only: it is a pointer synthesized from the
 observable identifier members rather than data on the wire. The identifiers
@@ -140,7 +140,7 @@ wherever the members it reads are in scope.
 Looks up a single resource instance in a ``world`` snapshot (a ``before`` or
 ``after`` state) and returns it, or ``null`` when no instance matches. ``world``
 is a :ref:`world snapshot <world-snapshot>`. ``handle`` is an object
-``{service, resource, ids}`` (``service`` optional) where ``ids`` maps each
+``{resource, ids}`` where ``ids`` maps each
 resource identifier name to its value; a named :ref:`references-trait` projects
 such a handle automatically (see `Reference handles`_).
 
