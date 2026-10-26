@@ -160,9 +160,12 @@ Resolution follows the handle's coordinates into the snapshot. The ``service``
 shape ID selects that service's instances in the ``world``. Because the handle
 carries no service identifiers, exactly one instance must be present: the
 function returns ``null`` if the service has no instance in the snapshot, and it
-is an error if the service has more than one. Within that instance, the resource
-instance whose ``resource`` shape and ``ids`` match is returned, or ``null`` when
-none matches.
+is an error if the service has more than one. Within that instance's
+``resources`` member, the instance of the ``resource`` shape whose
+``identifiers`` match the handle's ``ids`` is returned, or ``null`` when none
+matches. The returned resource instance is an object with ``identifiers`` and
+``properties`` members, so a property is read through ``properties`` (for example
+``resource(before, input.document).properties.status``).
 
 ``requires``
 ~~~~~~~~~~~~

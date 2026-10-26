@@ -120,7 +120,7 @@ the call. The precondition reads the referenced document's state from the
     @contracts({
         DocumentApprovedOnSuccess: {
             documentation: "A successful publish requires the referenced document to be approved beforehand"
-            expression: "requires(@, resource(before, input.document).status == 'APPROVED')"
+            expression: "requires(@, resource(before, input.document).properties.status == 'APPROVED')"
         }
     })
     operation PublishDocument {

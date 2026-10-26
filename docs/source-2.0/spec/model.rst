@@ -832,44 +832,52 @@ valid instances of a shape of that type.
         resource state before and after the call, and are not sent over the wire.
     * - resource
       - object
-      - A resource instance is a flat object of the resource's identifiers and
-        properties, representing its state. Child resources are not nested inside
-        a resource instance; they appear as separate entries in the enclosing
-        service instance.
+      - A resource instance is an object with an ``identifiers`` member and a
+        ``properties`` member, each a nested object, representing its state.
+        Child resources are not nested inside a resource instance; they appear
+        under the enclosing service instance's ``resources`` member.
     * - service
       - object
       - A service instance is the state of a single deployed instance of the
         service (a service can have more than one instance, for example one per
-        region): an object mapping each resource the service contains, at any
-        depth, to an array of instances of that resource.
+        region): an object with a ``resources`` member mapping each resource the
+        service contains, at any depth, to an array of instances of that resource.
 
-A resource instance is a flat object of the resource's identifiers and
-properties. For example, a ``Document`` resource with a ``documentId``
-identifier and a ``status`` property is exposed as:
+A resource instance mirrors the resource shape's own sections: an ``identifiers``
+object and a ``properties`` object, each mapping names to values. For example, a
+``Document`` resource with a ``documentId`` identifier and a ``status`` property
+is exposed as:
 
 .. code-block:: json
 
     {
-        "documentId": "doc-1",
-        "status": "APPROVED"
+        "identifiers": {"documentId": "doc-1"},
+        "properties": {"status": "APPROVED"}
     }
 
-A service instance maps each resource the service contains (at any depth,
-including child resources) to a flat array of that resource's instances. Child
-resources are not nested inside their parent resource instances. For example, a
-``ContentService`` that contains a ``Folder`` resource and a child ``Document``
-resource is exposed as:
+Keeping identifiers and properties in their own objects, rather than flattening
+them to the top level, means a user-defined identifier or property name can never
+collide with a structural member, and leaves room to add further members (such as
+future service-instance identifiers) without reshaping existing instances.
+
+A service instance has a ``resources`` member mapping each resource the service
+contains (at any depth, including child resources) to a flat array of that
+resource's instances. Child resources are not nested inside their parent resource
+instances. For example, a ``ContentService`` that contains a ``Folder`` resource
+and a child ``Document`` resource is exposed as:
 
 .. code-block:: json
 
     {
-        "Folder": [
-            {"folderId": "folder-1", "name": "Drafts"}
-        ],
-        "Document": [
-            {"documentId": "doc-1", "folderId": "folder-1", "status": "DRAFT"},
-            {"documentId": "doc-2", "folderId": "folder-1", "status": "APPROVED"}
-        ]
+        "resources": {
+            "Folder": [
+                {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+            ],
+            "Document": [
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+            ]
+        }
     }
 
 .. _world-snapshot:
@@ -890,13 +898,15 @@ is exposed as:
     {
         "ContentService": [
             {
-                "Folder": [
-                    {"folderId": "folder-1", "name": "Drafts"}
-                ],
-                "Document": [
-                    {"documentId": "doc-1", "folderId": "folder-1", "status": "DRAFT"},
-                    {"documentId": "doc-2", "folderId": "folder-1", "status": "APPROVED"}
-                ]
+                "resources": {
+                    "Folder": [
+                        {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+                    ],
+                    "Document": [
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+                    ]
+                }
             }
         ]
     }
