@@ -31,7 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * naming convention of all upper case letters separated by underscores.
  */
 public final class EnumShapeValidator extends AbstractValidator {
-    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
+    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z][A-Z_0-9]*$");
 
     @Override
     public List<ValidationEvent> validate(Model model) {

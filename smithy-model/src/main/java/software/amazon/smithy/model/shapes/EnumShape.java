@@ -30,7 +30,7 @@ import software.amazon.smithy.utils.BuilderRef;
 
 public final class EnumShape extends StringShape {
 
-    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
+    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s][a-zA-Z_0-9-.:/\\s]*$");
     private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;

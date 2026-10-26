@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed super-linear regex backtracking when validating enum member and trait names, enum values, CloudWatch namespaces, ARN templates, and endpoint patterns, and when formatting generated trait Javadoc.",
+  "pull_requests": []
+}

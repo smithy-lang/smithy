@@ -111,8 +111,8 @@ public final class CamelCaseValidator extends AbstractValidator {
         }
     }
 
-    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("^[A-Z]+[A-Za-z0-9]*$");
-    private static final Pattern LOWER_CAMEL_CASE = Pattern.compile("^[a-z]+[A-Za-z0-9]*$");
+    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("^[A-Z][A-Za-z0-9]*$");
+    private static final Pattern LOWER_CAMEL_CASE = Pattern.compile("^[a-z][A-Za-z0-9]*$");
 
     private final Config config;
 

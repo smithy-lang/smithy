@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * definitions.
  */
 public final class EnumTraitValidator extends AbstractValidator {
-    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
+    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z][A-Z_0-9]*$");
 
     @Override
     public List<ValidationEvent> validate(Model model) {

@@ -19,7 +19,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Validates that CloudWatch metric namespaces follow conventions.
  */
 public final class CloudWatchNamespaceValidator extends AbstractValidator {
-    private static final Pattern PASCAL_CASE_PATTERN = Pattern.compile("^[A-Z][a-zA-Z0-9]*(?:[A-Z][a-zA-Z0-9]*)*$");
+    private static final Pattern PASCAL_CASE_PATTERN = Pattern.compile("^[A-Z][a-zA-Z0-9]*$");
 
     @Override
     public List<ValidationEvent> validate(Model model) {

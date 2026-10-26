@@ -7,8 +7,10 @@ package software.amazon.smithy.model.shapes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -471,6 +473,21 @@ public class EnumShapeTest {
                 .build();
         assertTrue(EnumShape.canConvertToEnum(string, false));
         assertTrue(EnumShape.canConvertToEnum(string, true));
+    }
+
+    @Test
+    public void rejectsLongUnconvertableValueInLinearTime() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("a".repeat(200_000) + "#")
+                        .build())
+                .build();
+        StringShape string = StringShape.builder()
+                .id("ns.foo#bar")
+                .addTrait(trait)
+                .build();
+        assertFalse(assertTimeoutPreemptively(Duration.ofSeconds(5),
+                () -> EnumShape.canConvertToEnum(string, true)));
     }
 
     @Test

@@ -11,10 +11,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -117,5 +124,30 @@ public class ArnTraitTest {
                             ShapeId.from("ns.foo#foo"),
                             node);
         });
+    }
+
+    @Test
+    public void parsesLabelsOfUnclosedBracesInLinearTime() {
+        String template = "{".repeat(200_000);
+        ArnTrait trait = assertTimeoutPreemptively(Duration.ofSeconds(5),
+                () -> ArnTrait.builder().template(template).build());
+
+        assertThat(trait.getLabels(), empty());
+    }
+
+    @ParameterizedTest
+    @MethodSource("labelCases")
+    public void parsesLabels(String template, List<String> expected) {
+        assertThat(ArnTrait.builder().template(template).build().getLabels(), equalTo(expected));
+    }
+
+    public static Stream<Arguments> labelCases() {
+        return Stream.of(
+                Arguments.of("{a}{b}", List.of("a", "b")),
+                Arguments.of("{}{a}", List.of("a")),
+                Arguments.of("{a{b}", List.of("a{b")),
+                Arguments.of("a}{b", List.of()),
+                Arguments.of("{a\nb}", List.of("a\nb")),
+                Arguments.of("foo/{a}/{}", List.of("a")));
     }
 }
