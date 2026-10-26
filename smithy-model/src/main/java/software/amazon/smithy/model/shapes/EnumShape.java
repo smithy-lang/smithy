@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
@@ -29,8 +28,6 @@ import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.BuilderRef;
 
 public final class EnumShape extends StringShape {
-
-    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
     private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;
@@ -44,7 +41,7 @@ public final class EnumShape extends StringShape {
                 getId(),
                 getSourceLocation());
         validateMemberShapeIds();
-        if (members.size() < 1) {
+        if (members.isEmpty()) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
         }
     }
@@ -53,7 +50,7 @@ public final class EnumShape extends StringShape {
         super(builder);
         this.members = members;
         validateMemberShapeIds();
-        if (members.size() < 1) {
+        if (members.isEmpty()) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
         }
     }
@@ -270,7 +267,69 @@ public final class EnumShape extends StringShape {
      */
     static boolean canConvertEnumDefinitionToMember(EnumDefinition definition, boolean withSynthesizedNames) {
         return definition.getName().isPresent()
-                || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(definition.getValue()).find());
+                || (withSynthesizedNames && isValueConvertable(definition.getValue()));
+    }
+
+    /**
+     * Returns true if the value can be converted to a name. This method unrolls the
+     * "^[a-zA-Z-_.:/\\s][a-zA-Z_0-9-.:/\\s]*$" regex.
+     */
+    static boolean isValueConvertable(String name) {
+        int length = name.length();
+        if (length == 0) {
+            return false;
+        }
+        char ch = name.charAt(0);
+        if (!isAsciiLetter(ch) && !isConvertableSymbol(ch)) {
+            return false;
+        }
+        for (int i = 1; i < length; i++) {
+            ch = name.charAt(i);
+            if (isAsciiLetter(ch) || isDigit(ch) || isConvertableSymbol(ch)) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if the given char is an ASCII letter.
+     */
+    static boolean isAsciiLetter(char ch) {
+        return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z';
+    }
+
+    /**
+     * Returns true if the given char is a digit.
+     */
+    static boolean isDigit(char ch) {
+        return ch >= '0' && ch <= '9';
+    }
+
+    /**
+     * Returns true if the given char is a symbol that can be converted into
+     * a name. That is, matches this regex '[-_.:/\s]'
+     */
+    static boolean isConvertableSymbol(char ch) {
+        switch (ch) {
+            case '-':
+            case '_':
+            case '.':
+            case ':':
+            case '/':
+                // Equivalent to the \s character class:
+            case ' ':
+            case '\t':
+            case '\n':
+                // vertical tab (\v in other languages)
+            case '\u000B':
+            case '\f':
+            case '\r':
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

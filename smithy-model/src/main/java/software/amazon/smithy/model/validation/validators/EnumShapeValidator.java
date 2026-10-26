@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -31,8 +30,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * naming convention of all upper case letters separated by underscores.
  */
 public final class EnumShapeValidator extends AbstractValidator {
-    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
-
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
@@ -128,12 +125,49 @@ public final class EnumShapeValidator extends AbstractValidator {
     }
 
     private void validateEnumMemberName(List<ValidationEvent> events, MemberShape member) {
-        if (!RECOMMENDED_NAME_PATTERN.matcher(member.getMemberName()).find()) {
+        if (!isRecommendedEnumMemberName(member.getMemberName())) {
             events.add(warning(member,
                     String.format(
                             "The name `%s` does not match the recommended enum name format of beginning with an "
                                     + "uppercase letter, followed by any number of uppercase letters, numbers, or underscores.",
                             member.getMemberName())));
         }
+    }
+
+    /**
+     * Returns true if the name follows the recommended naming pattern. This method unrolls the
+     * "^[A-Z][A-Z_0-9]*$" regex.
+     */
+    static boolean isRecommendedEnumMemberName(String name) {
+        int length = name.length();
+        if (length == 0) {
+            return false;
+        }
+        char ch = name.charAt(0);
+        if (!isUpperAsciiLetter(ch)) {
+            return false;
+        }
+        for (int i = 1; i < length; i++) {
+            ch = name.charAt(i);
+            if (isUpperAsciiLetter(ch) || isDigitOrUnderscore(ch)) {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if the given char is an upper case ASCII letter.
+     */
+    static boolean isUpperAsciiLetter(char ch) {
+        return ch >= 'A' && ch <= 'Z';
+    }
+
+    /**
+     * Returns true if the given char is an underscore or an ASCII digit.
+     */
+    static boolean isDigitOrUnderscore(char ch) {
+        return (ch >= '0' && ch <= '9') || ch == '_';
     }
 }
