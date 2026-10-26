@@ -877,8 +877,10 @@ resource is exposed as:
 A *world snapshot* maps each service shape to the set of that service's instances
 (an array, since a service can have multiple instances such as one per region).
 It is used as the ``before`` and ``after`` state of an operation call (see the
-:ref:`contracts trait <contracts-trait>`). The full set is required so that
-references across instances can be resolved.
+:ref:`contracts trait <contracts-trait>`). A resource handle selects a service by
+its shape ID and resolves the resource within that service's single instance; a
+service shape with more than one instance in the snapshot cannot yet be addressed
+by a handle.
 
 For example, a world snapshot for a single-region deployment of ``ContentService``
 is exposed as:

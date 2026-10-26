@@ -112,12 +112,23 @@ Reference handles
 
 Named :ref:`references-trait` entries on a structure are projected into the data model
 as resource *handles* reachable as ``<member-root>.<name>`` (for example
-``input.key``). Each handle is an object ``{resource, ids}`` synthesized from
-the reference's identifier bindings, and
-is intended to be passed to functions that resolve a resource against a state
-snapshot. A handle is model-only: it is a pointer synthesized from the
-observable identifier members rather than data on the wire. The identifiers
-inside it are observable, but the handle itself is not.
+``input.key``). Each handle is an object ``{service, resource, ids}`` synthesized
+from the reference's bindings: ``resource`` is the shape ID of the referenced
+resource, ``service`` is the shape ID of the service that contains it, and
+``ids`` maps each resource identifier name to its value. The handle mirrors the
+coordinates that locate the resource in a :ref:`world snapshot <world-snapshot>`:
+the service shape, then the resource shape, then the identifiers.
+
+``service`` is a service shape ID only. A world snapshot can hold more than one
+instance of a service (for example one per region), but a handle does not yet
+carry anything to choose among them, so ``service`` denotes the singleton
+instance of that service shape. Resolving a handle against a world that holds
+more than one instance of the service is an error. A future revision may add
+service identifiers to the handle to address a specific instance.
+
+A handle is model-only: it is a pointer synthesized from the observable
+identifier members rather than data on the wire. The identifiers inside it are
+observable, but the handle itself is not.
 
 
 .. _jmespath-functions:
@@ -140,9 +151,18 @@ wherever the members it reads are in scope.
 Looks up a single resource instance in a ``world`` snapshot (a ``before`` or
 ``after`` state) and returns it, or ``null`` when no instance matches. ``world``
 is a :ref:`world snapshot <world-snapshot>`. ``handle`` is an object
-``{resource, ids}`` where ``ids`` maps each
-resource identifier name to its value; a named :ref:`references-trait` projects
-such a handle automatically (see `Reference handles`_).
+``{service, resource, ids}`` where ``service`` and ``resource`` are the service
+and resource shape IDs and ``ids`` maps each resource identifier name to its
+value; a named :ref:`references-trait` projects such a handle automatically
+(see `Reference handles`_).
+
+Resolution follows the handle's coordinates into the snapshot. The ``service``
+shape ID selects that service's instances in the ``world``. Because the handle
+carries no service identifiers, exactly one instance must be present: the
+function returns ``null`` if the service has no instance in the snapshot, and it
+is an error if the service has more than one. Within that instance, the resource
+instance whose ``resource`` shape and ``ids`` match is returned, or ``null`` when
+none matches.
 
 ``requires``
 ~~~~~~~~~~~~
