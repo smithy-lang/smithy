@@ -927,7 +927,7 @@ structure EnumDefinition {
 /// This property is used in code generation to provide a label for
 /// each enum value. No two enums can have the same 'name' value.
 @private
-@pattern("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
+@pattern("^[a-zA-Z_][a-zA-Z_0-9]*$")
 string EnumConstantBodyName
 
 /// Defines the value of an enum member.

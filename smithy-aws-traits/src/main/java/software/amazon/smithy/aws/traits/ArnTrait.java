@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -35,7 +33,6 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
     private static final String NO_ACCOUNT = "noAccount";
     private static final String RESOURCE_DELIMITER = "resourceDelimiter";
     private static final String REUSABLE = "reusable";
-    private static final Pattern PATTERN = Pattern.compile("\\{([^}]+)}");
 
     private final boolean noRegion;
     private final boolean noAccount;
@@ -84,9 +81,18 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     private static List<String> parseLabels(String resource) {
         List<String> result = new ArrayList<>();
-        Matcher matcher = PATTERN.matcher(resource);
-        while (matcher.find()) {
-            result.add(matcher.group(1));
+        // Finds each non-empty "{label}". A linear scan is used instead of a regex
+        // because a regex retries from every unclosed '{', which is quadratic.
+        int i = 0;
+        while ((i = resource.indexOf('{', i)) >= 0) {
+            int j = resource.indexOf('}', i + 1);
+            if (j < 0) {
+                break;
+            }
+            if (j > i + 1) {
+                result.add(resource.substring(i + 1, j));
+            }
+            i = j + 1;
         }
         return result;
     }

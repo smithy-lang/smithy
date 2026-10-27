@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
@@ -24,8 +23,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * definitions.
  */
 public final class EnumTraitValidator extends AbstractValidator {
-    private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
-
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
@@ -64,7 +61,7 @@ public final class EnumTraitValidator extends AbstractValidator {
                                     "Duplicate enum trait values found with the same `name` property of '%s'",
                                     name)));
                 }
-                if (!RECOMMENDED_NAME_PATTERN.matcher(name).find()) {
+                if (!isNameFormatRecommended(name)) {
                     events.add(warning(
                             shape,
                             trait,
@@ -99,5 +96,25 @@ public final class EnumTraitValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    // Inline the name validation instead of using a pattern, matches "^[A-Z][A-Z_0-9]*$".
+    private static boolean isNameFormatRecommended(String name) {
+        int length = name.length();
+        if (length == 0) {
+            return false;
+        }
+        char ch = name.charAt(0);
+        if (!(ch >= 'A' && ch <= 'Z')) {
+            return false;
+        }
+        for (int idx = 1; idx < length; idx++) {
+            ch = name.charAt(idx);
+            if ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_') {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
 }

@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.StringUtils;
  */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
-    private static final Pattern PATTERN = Pattern.compile("<([a-z]+)*>.*?</\\1>", Pattern.DOTALL);
+    private static final Pattern PATTERN = Pattern.compile("<([a-z]+)>.*?</\\1>", Pattern.DOTALL);
     private final String namespace;
     private final String fileName;
     private final TraitCodegenSettings settings;

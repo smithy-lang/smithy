@@ -10,8 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -34,8 +32,6 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
             "{service}",
             "{dnsSuffix}",
             "{dualStackDnsSuffix}");
-
-    private static final Pattern PATTERN = Pattern.compile("\\{[^\\}]*\\}");
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -105,11 +101,10 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
     ) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        Matcher m = PATTERN.matcher(endpoint);
         List<String> unsupportedPatterns = new ArrayList<>();
-        while (m.find()) {
-            if (!SUPPORTED_PATTERNS.contains(m.group())) {
-                unsupportedPatterns.add(m.group());
+        for (String pattern : findPatterns(endpoint)) {
+            if (!SUPPORTED_PATTERNS.contains(pattern)) {
+                unsupportedPatterns.add(pattern);
             }
         }
 
@@ -142,6 +137,29 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
         }
 
         return events;
+    }
+
+    /**
+     * Finds each "{...}" pattern in the endpoint, in order.
+     *
+     * <p>A linear scan is used instead of a regex because a regex retries from
+     * every unclosed '{', which is quadratic.
+     *
+     * @param endpoint Endpoint to scan.
+     * @return Returns the patterns found, including their braces.
+     */
+    static List<String> findPatterns(String endpoint) {
+        List<String> result = new ArrayList<>();
+        int i = 0;
+        while ((i = endpoint.indexOf('{', i)) >= 0) {
+            int j = endpoint.indexOf('}', i + 1);
+            if (j < 0) {
+                break;
+            }
+            result.add(endpoint.substring(i, j + 1));
+            i = j + 1;
+        }
+        return result;
     }
 
     private boolean isValidUrl(String endpointPattern) {

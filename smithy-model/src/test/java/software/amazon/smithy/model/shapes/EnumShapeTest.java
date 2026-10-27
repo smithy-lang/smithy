@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -559,5 +561,29 @@ public class EnumShapeTest {
         for (EnumDefinition definition : trait.getValues()) {
             assertEquals(ListUtils.of("internal"), definition.getTags());
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "foo, true",
+            "Foo-Bar_baz.qux:quux/corge, true",
+            "foo9, true",
+            "foo bar, true",
+            "-1abc, true",
+            "/, true",
+            "9foo, false",
+            "foo!, false",
+            "foo@bar, false",
+            "'', false"
+    })
+    public void detectsConvertableValues(String value, boolean expected) {
+        assertEquals(expected, EnumShape.isValueConvertable(value));
+    }
+
+    @Test
+    public void whitespaceCharactersAreConvertable() {
+        assertTrue(EnumShape.isValueConvertable("a\t\n\u000B\f\r b"));
+        assertTrue(EnumShape.isValueConvertable("\t"));
+        assertFalse(EnumShape.isValueConvertable("a\u00A0b"));
     }
 }
