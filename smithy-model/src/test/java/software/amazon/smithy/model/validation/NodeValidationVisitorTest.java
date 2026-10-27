@@ -8,9 +8,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -394,6 +397,14 @@ public class NodeValidationVisitorTest {
                         "[\"a\", \"a\", \"b\", \"b\"]",
                         new String[] {
                                 "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`, `b`]"}},
+                {"ns.foo#UniqueList",
+                        "[\"b\", \"a\", \"a\", \"b\"]",
+                        new String[] {
+                                "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`, `b`]"}},
+                {"ns.foo#UniqueList",
+                        "[\"a\", \"b\", \"b\", \"a\"]",
+                        new String[] {
+                                "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`b`, `a`]"}},
 
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},
@@ -540,6 +551,25 @@ public class NodeValidationVisitorTest {
                         "{\"c\": 5}",
                         new String[] {
                                 "c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}}
+        });
+    }
+
+    @Test
+    public void uniqueItemsWithDuplicateIsLinear() {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            List<String> values = new ArrayList<>();
+            for (int i = 0; i < 200_000; i++) {
+                values.add("v" + i);
+            }
+            values.add("v0");
+            NodeValidationVisitor visitor = NodeValidationVisitor.builder()
+                    .value(Node.fromStrings(values))
+                    .model(MODEL)
+                    .build();
+            List<ValidationEvent> events = MODEL.expectShape(ShapeId.from("ns.foo#UniqueList")).accept(visitor);
+
+            assertThat(events, hasSize(1));
+            assertThat(events.get(0).getMessage(), endsWith("[`v0`]"));
         });
     }
 

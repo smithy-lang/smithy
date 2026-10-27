@@ -4,11 +4,9 @@
  */
 package software.amazon.smithy.model.validation.node;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -35,19 +33,17 @@ public final class UniqueItemsPlugin extends MemberAndShapeTraitPlugin<ArrayNode
 
     @Override
     protected void check(Shape shape, UniqueItemsTrait trait, ArrayNode value, Context context, Emitter emitter) {
-        Set<Node> uniqueNodes = new HashSet<>(value.getElements());
-        if (uniqueNodes.size() != value.size()) {
-            List<Node> duplicateNodes = new ArrayList<>(value.getElements());
-            for (Node uniqueNode : uniqueNodes) {
-                // Collections remove the first encountered entry, so our unique
-                // nodes through a set will leave behind any duplicates.
-                duplicateNodes.remove(uniqueNode);
+        // Find duplicates in a single pass so the check stays linear in the list size.
+        // The duplicates are recorded in the order of their second occurrence.
+        Set<Node> seen = new HashSet<>(value.size());
+        Set<String> duplicateValues = new LinkedHashSet<>();
+        for (Node element : value.getElements()) {
+            if (!seen.add(element)) {
+                duplicateValues.add(element.toString());
             }
+        }
 
-            Set<String> duplicateValues = new LinkedHashSet<>();
-            for (Node duplicateNode : duplicateNodes) {
-                duplicateValues.add(duplicateNode.toString());
-            }
+        if (!duplicateValues.isEmpty()) {
             emitter.accept(value,
                     String.format(
                             "Value provided for `%s` must have unique items, but the following items had multiple entries: "
