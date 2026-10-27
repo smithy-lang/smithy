@@ -7,7 +7,7 @@ use smithy.contracts#contracts
 @contracts({
     KeyEnabledOnSuccess: {
         documentation: "A successful Encrypt requires the referenced key to have been ENABLED beforehand"
-        expression: "requires(@, resource(before, {resource: 'Key', ids: {keyId: input.keyId}}).keyState == 'ENABLED')"
+        expression: "requires(@, resource(before, {service: 'Crypto', resource: 'Key', ids: {keyId: input.keyId}}).properties.keyState == 'ENABLED')"
     }
 })
 @examples([
@@ -15,13 +15,13 @@ use smithy.contracts#contracts
         title: "Enabled key succeeds"
         input: {keyId: "k1"}
         output: {}
-        before: {Key: [{keyId: "k1", keyState: "ENABLED"}]}
+        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "ENABLED"}}]}}]}
     }
     {
         title: "Disabled key must not succeed"
         input: {keyId: "k1"}
         output: {}
-        before: {Key: [{keyId: "k1", keyState: "DISABLED"}]}
+        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "DISABLED"}}]}}]}
     }
 ])
 operation Encrypt {

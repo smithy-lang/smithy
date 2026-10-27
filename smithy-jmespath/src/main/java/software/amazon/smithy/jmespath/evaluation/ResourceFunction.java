@@ -5,25 +5,32 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
+import software.amazon.smithy.jmespath.JmespathException;
+import software.amazon.smithy.jmespath.JmespathExceptionType;
 import software.amazon.smithy.jmespath.RuntimeType;
 
 /**
  * {@code resource(world, handle)} looks up a single resource instance in a world
  * snapshot (a {@code before} or {@code after} state) and returns it, or null when
- * no such instance exists.
+ * no instance matches.
  *
  * <p>The handle is a reference structure:
  * <pre>
- * { service: String (optional), resource: String, ids: { idName: idValue, ... } }
+ * { service: String, resource: String, ids: { idName: idValue, ... } }
  * </pre>
+ * where {@code service} and {@code resource} are the service and resource shape IDs.
  *
- * <p>The world is navigated by resource type: {@code world[service][resource]} when
- * the handle names a service, otherwise {@code world[resource]}. That yields a
- * collection of instances (an array, or an object keyed by instance), and the first
- * instance whose identifier members all equal {@code handle.ids} is returned.
+ * <p>Resolution follows the handle's coordinates into the snapshot. The world is keyed
+ * by service shape ID, and each entry is the array of that service's instances. The
+ * handle carries no service identifiers, so exactly one instance must be present: the
+ * function returns null when the service has no instance, and it is an error when the
+ * service has more than one. Within that instance's {@code resources} member, the
+ * instance of the handle's {@code resource} shape whose {@code identifiers} all equal
+ * {@code handle.ids} is returned, or null when none matches.
  *
- * <p>The result type is coarsely typed as any for now; a dependent result type keyed
- * off the handle's resource is a later refinement.
+ * <p>The returned resource instance is an object with {@code identifiers} and
+ * {@code properties} members, so a property is read through {@code properties} (for
+ * example {@code resource(before, handle).properties.status}).
  */
 class ResourceFunction implements Function {
     @Override
@@ -40,42 +47,48 @@ class ResourceFunction implements Function {
             return runtime.createNull();
         }
 
+        T service = runtime.value(handle, runtime.createString("service"));
         T resourceType = runtime.value(handle, runtime.createString("resource"));
-        if (!runtime.is(resourceType, RuntimeType.STRING)) {
+        if (!runtime.is(service, RuntimeType.STRING) || !runtime.is(resourceType, RuntimeType.STRING)) {
             return runtime.createNull();
         }
         T ids = runtime.value(handle, runtime.createString("ids"));
 
-        // A handle may name a service, in which case the world is keyed by service first.
-        T container = world;
-        T service = runtime.value(handle, runtime.createString("service"));
-        if (runtime.is(service, RuntimeType.STRING)) {
-            container = runtime.value(container, service);
+        // The world is keyed by service shape ID; each entry is the array of that
+        // service's instances. With no service identifiers in the handle, exactly one
+        // instance must be present: none resolves to null, more than one is an error.
+        T instances = runtime.value(world, service);
+        if (!runtime.is(instances, RuntimeType.ARRAY)) {
+            return runtime.createNull();
         }
-        T collection = runtime.value(container, resourceType);
+        int count = runtime.length(instances);
+        if (count == 0) {
+            return runtime.createNull();
+        }
+        if (count > 1) {
+            throw new JmespathException(JmespathExceptionType.INVALID_VALUE,
+                    String.format(
+                            "resource() cannot resolve service `%s`: the world snapshot holds %d instances of it, "
+                                    + "but the handle carries no service identifiers to choose among them",
+                            runtime.asString(service),
+                            count));
+        }
+        T serviceInstance = runtime.element(instances, 0);
 
+        // Within the single service instance, find the resource whose identifiers match.
+        T resources = runtime.value(serviceInstance, runtime.createString("resources"));
+        T collection = runtime.value(resources, resourceType);
         return firstMatch(runtime, collection, ids);
     }
 
     private <T> T firstMatch(JmespathRuntime<T> runtime, T collection, T ids) {
-        switch (runtime.typeOf(collection)) {
-            case ARRAY:
-                for (T instance : runtime.asIterable(collection)) {
-                    if (matchesIds(runtime, instance, ids)) {
-                        return instance;
-                    }
-                }
-                break;
-            case OBJECT:
-                for (T key : runtime.asIterable(collection)) {
-                    T instance = runtime.value(collection, key);
-                    if (matchesIds(runtime, instance, ids)) {
-                        return instance;
-                    }
-                }
-                break;
-            default:
-                break;
+        if (!runtime.is(collection, RuntimeType.ARRAY)) {
+            return runtime.createNull();
+        }
+        for (T instance : runtime.asIterable(collection)) {
+            if (matchesIds(runtime, instance, ids)) {
+                return instance;
+            }
         }
         return runtime.createNull();
     }
@@ -84,9 +97,13 @@ class ResourceFunction implements Function {
         if (!runtime.is(instance, RuntimeType.OBJECT) || !runtime.is(ids, RuntimeType.OBJECT)) {
             return false;
         }
+        T identifiers = runtime.value(instance, runtime.createString("identifiers"));
+        if (!runtime.is(identifiers, RuntimeType.OBJECT)) {
+            return false;
+        }
         for (T idName : runtime.asIterable(ids)) {
             T expected = runtime.value(ids, idName);
-            T actual = runtime.value(instance, idName);
+            T actual = runtime.value(identifiers, idName);
             if (!runtime.equal(expected, actual)) {
                 return false;
             }

@@ -7,10 +7,14 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.ExamplesTrait;
@@ -98,10 +102,41 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             ObjectNode.Builder handle = Node.objectNodeBuilder()
                     .withMember("resource", reference.getResource().getName())
                     .withMember("ids", ids.build());
-            reference.getService().ifPresent(service -> handle.withMember("service", service.getName()));
+            // The handle locates the resource under a service shape in the world snapshot.
+            // Use the reference's explicit service, else the single service that contains
+            // the resource; leave it unset when that is ambiguous.
+            serviceName(model, reference)
+                    .ifPresent(service -> handle.withMember("service", service));
             result = result.withMember(reference.getName().get(), handle.build());
         }
         return result;
+    }
+
+    // The service shape name that locates the referenced resource: the reference's own
+    // service when set, otherwise the sole service whose closure contains the resource.
+    private Optional<String> serviceName(Model model, ReferencesTrait.Reference reference) {
+        if (reference.getService().isPresent()) {
+            return Optional.of(reference.getService().get().getName());
+        }
+        TopDownIndex index = TopDownIndex.of(model);
+        ShapeId resource = reference.getResource();
+        ServiceShape found = null;
+        for (ServiceShape service : model.getServiceShapes()) {
+            boolean contains = false;
+            for (ResourceShape contained : index.getContainedResources(service)) {
+                if (contained.getId().equals(resource)) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (contains) {
+                if (found != null) {
+                    return Optional.empty();
+                }
+                found = service;
+            }
+        }
+        return Optional.ofNullable(found).map(service -> service.getId().getName());
     }
 
     private NodeValidationVisitor createVisitor(

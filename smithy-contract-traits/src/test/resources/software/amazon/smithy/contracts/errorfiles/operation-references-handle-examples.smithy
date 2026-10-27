@@ -16,7 +16,7 @@ resource Key {
 @contracts({
     KeyEnabledOnSuccess: {
         documentation: "A successful Encrypt requires the referenced key to have been ENABLED beforehand"
-        expression: "requires(@, resource(before, input.key).keyState == 'ENABLED')"
+        expression: "requires(@, resource(before, input.key).properties.keyState == 'ENABLED')"
     }
 })
 @examples([
@@ -24,13 +24,13 @@ resource Key {
         title: "Enabled key succeeds"
         input: {keyRef: "k1"}
         output: {}
-        before: {Key: [{keyId: "k1", keyState: "ENABLED"}]}
+        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "ENABLED"}}]}}]}
     }
     {
         title: "Disabled key must not succeed"
         input: {keyRef: "k1"}
         output: {}
-        before: {Key: [{keyId: "k1", keyState: "DISABLED"}]}
+        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "DISABLED"}}]}}]}
     }
 ])
 operation Encrypt {
