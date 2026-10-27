@@ -146,7 +146,7 @@ Contract functions
 
 Contract expressions use the functions defined in the
 :ref:`JMESPath data model <jmespath-functions>`: ``requires`` for necessary
-preconditions and ``resource`` for resolving a resource against a ``before`` or
+preconditions and ``resource`` for resolving a resource handle against a ``before`` or
 ``after`` snapshot.
 
 A named :ref:`references-trait` on the input structure projects a resource

@@ -819,17 +819,6 @@ valid instances of a shape of that type.
       - The object MUST contain a single key-value pair. The key MUST be
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
-    * - operation
-      - object
-      - An operation instance represents a single call as an object with the
-        members ``input``, ``output``, ``error``, ``before``, and ``after``.
-        ``input`` MUST be an instance of the operation's input shape. A
-        successful call sets ``output`` to an instance of the output shape; a
-        failed call instead sets ``error`` to an object with a ``shapeId`` that
-        names one of the operation's errors and a ``content`` instance of that
-        error shape. ``output`` and ``error`` MUST NOT both be present.
-        ``before`` and ``after`` are *world snapshots* (see below) that capture
-        resource state before and after the call, and are not sent over the wire.
     * - resource
       - object
       - A resource instance is an object with an ``identifiers`` member and a

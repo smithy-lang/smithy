@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.isA;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -30,5 +31,13 @@ public class ContractsTraitTest {
         assertThat(trait.getContracts().size(), equalTo(1));
         Condition contract = trait.getContracts().get("StartBeforeEnd");
         assertThat(contract.getExpression(), isA(ComparatorExpression.class));
+
+        // A deeper contract reads resource state from the before snapshot through a
+        // projected reference handle.
+        shape = result.expectShape(ShapeId.from("smithy.example#PublishDocument"));
+        trait = shape.expectTrait(ContractsTrait.class);
+        assertThat(trait.getContracts().size(), equalTo(1));
+        contract = trait.getContracts().get("DocumentApprovedOnSuccess");
+        assertThat(contract.getExpression(), isA(FunctionExpression.class));
     }
 }

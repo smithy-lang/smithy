@@ -123,8 +123,8 @@ the service shape, then the resource shape, then the identifiers.
 instance of a service (for example one per region), but a handle does not yet
 carry anything to choose among them, so ``service`` denotes the singleton
 instance of that service shape. Resolving a handle against a world that holds
-more than one instance of the service is an error. A future revision may add
-service identifiers to the handle to address a specific instance.
+more than one instance of the service is an error. A future revision may extend
+the handle to address a specific instance.
 
 A handle is model-only: it is a pointer synthesized from the observable
 identifier members rather than data on the wire. The identifiers inside it are
@@ -138,8 +138,7 @@ Functions
 --------------------
 
 In addition to the `built-in JMESPath functions`_, Smithy defines the following
-functions for use in expressions over this data model. Each is available
-wherever the members it reads are in scope.
+functions for use in expressions over this data model.
 
 ``resource``
 ~~~~~~~~~~~~
@@ -157,10 +156,10 @@ value; a named :ref:`references-trait` projects such a handle automatically
 (see `Reference handles`_).
 
 Resolution follows the handle's coordinates into the snapshot. The ``service``
-shape ID selects that service's instances in the ``world``. Because the handle
-carries no service identifiers, exactly one instance must be present: the
-function returns ``null`` if the service has no instance in the snapshot, and it
-is an error if the service has more than one. Within that instance's
+shape ID selects that service's instances in the ``world``. A world snapshot
+holds at most one instance of each service shape: the function returns ``null``
+if the service has no instance in the snapshot, and it is an error if the
+service has more than one. Within that instance's
 ``resources`` member, the instance of the ``resource`` shape whose
 ``identifiers`` match the handle's ``ids`` is returned, or ``null`` when none
 matches. The returned resource instance is an object with ``identifiers`` and

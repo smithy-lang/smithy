@@ -552,12 +552,12 @@ structure Example {
     error: ExampleError
 
     /// A snapshot of resource state before the call (ghost state). This is
-    /// specification-only and is never observed by a client at runtime; it
+    /// model-only and is never observed by a client at runtime; it
     /// exists so operation `@contracts` can be checked against the example.
     before: Document
 
     /// A snapshot of resource state after the call (ghost state). This is
-    /// specification-only and is never observed by a client at runtime; it
+    /// model-only and is never observed by a client at runtime; it
     /// exists so operation `@contracts` can be checked against the example.
     after: Document
 
