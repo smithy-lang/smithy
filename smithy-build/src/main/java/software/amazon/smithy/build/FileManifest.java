@@ -80,16 +80,17 @@ public interface FileManifest {
      *   falls outside of the base URL of the manifest.
      */
     default Path resolvePath(Path path) {
-        Path result = getBaseDir().resolve(path);
-
-        if (!result.startsWith(getBaseDir())) {
+        Path normalizedBase = getBaseDir().toAbsolutePath().normalize();
+        Path target = getBaseDir().resolve(path).toAbsolutePath().normalize();
+        if (!target.startsWith(normalizedBase)) {
             throw new SmithyBuildException(String.format(
                     "Paths must be relative to the base directory, %s, but found %s",
                     getBaseDir(),
-                    result));
+                    target));
         }
 
-        return result;
+        // Keep the original base dir form so returned paths still start with getBaseDir().
+        return getBaseDir().resolve(normalizedBase.relativize(target));
     }
 
     /**

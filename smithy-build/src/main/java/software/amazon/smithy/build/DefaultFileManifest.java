@@ -42,9 +42,7 @@ final class DefaultFileManifest implements FileManifest {
     @Override
     public Path addFile(Path path) {
         Objects.requireNonNull(path);
-        if (!path.startsWith(baseDir) || !path.isAbsolute()) {
-            path = resolvePath(path);
-        }
+        path = resolvePath(path);
 
         Path parent = path.getParent();
         if (parent != null) {

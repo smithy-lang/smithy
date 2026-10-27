@@ -29,6 +29,17 @@ public class MockManifestTest {
     }
 
     @Test
+    public void rejectsPathsThatEscapeBaseDir() {
+        MockManifest a = new MockManifest(Paths.get("/foo"));
+
+        Assertions.assertThrows(SmithyBuildException.class, () -> a.addFile(Paths.get("../x")));
+        Assertions.assertThrows(SmithyBuildException.class, () -> a.writeFile("../x", "hello"));
+        Assertions.assertThrows(SmithyBuildException.class, () -> a.addFile(Paths.get("/foo/../x")));
+        Assertions.assertThrows(SmithyBuildException.class, () -> a.writeFile("/foo/../x", "hello"));
+        assertThat(a.getFiles(), hasSize(0));
+    }
+
+    @Test
     public void mergesRelativeWithBasePath() {
         MockManifest a = new MockManifest();
         a.writeFile("foo/file.txt", "The contents");
