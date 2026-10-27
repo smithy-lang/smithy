@@ -45,8 +45,15 @@ public final class ModelJmespathUtils {
      * of the given shape, or {@link LiteralExpression#ANY} if the shape is null.
      */
     public static LiteralExpression sampleShapeValue(Model model, Shape shape) {
-        return shape == null
-                ? LiteralExpression.ANY
-                : new LiteralExpression(shape.accept(new ModelRuntimeTypeGenerator(model)));
+        if (shape == null) {
+            return LiteralExpression.ANY;
+        }
+        ModelRuntimeTypeGenerator generator = new ModelRuntimeTypeGenerator(model);
+        // An operation call is not an instance of the operation shape, so build the
+        // call tuple directly rather than visiting the operation shape.
+        Object value = shape.asOperationShape().isPresent()
+                ? generator.operationCall(shape.asOperationShape().get())
+                : shape.accept(generator);
+        return new LiteralExpression(value);
     }
 }

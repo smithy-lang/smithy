@@ -1,3 +1,3 @@
-[ERROR] ns.foo#WithError: Example `Testing 2`: Operation instance `error` references `ns.foo#ServiceError`, which is not an error of this operation. | ExamplesTrait
-[ERROR] ns.foo#WithoutError: Example `Testing 3`: Operation instance `error` references `ns.foo#OperationError`, which is not an error of this operation. | ExamplesTrait
-[ERROR] ns.foo#WithoutError: Example `Testing 4`: Operation instance `error` references `ns.foo#ServiceError`, which is not an error of this operation. | ExamplesTrait
+[ERROR] ns.foo#WithError: Example `Testing 2`: Operation call `error` references `ns.foo#ServiceError`, which is not an error of this operation. | ExamplesTrait
+[ERROR] ns.foo#WithoutError: Example `Testing 3`: Operation call `error` references `ns.foo#OperationError`, which is not an error of this operation. | ExamplesTrait
+[ERROR] ns.foo#WithoutError: Example `Testing 4`: Operation call `error` references `ns.foo#ServiceError`, which is not an error of this operation. | ExamplesTrait

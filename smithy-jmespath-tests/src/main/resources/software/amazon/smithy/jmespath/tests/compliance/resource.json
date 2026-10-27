@@ -1,0 +1,70 @@
+[{
+  "comment": "Smithy resource() builtin against a record-layout world snapshot",
+  "given":
+  {
+    "before": {
+      "example#DocumentService": [
+        {
+          "resources": {
+            "example#Document": [
+              {"identifiers": {"id": "d1"}, "properties": {"status": "DRAFT"}},
+              {"identifiers": {"id": "d2"}, "properties": {"status": "PUBLISHED"}}
+            ]
+          }
+        }
+      ]
+    },
+    "twoInstances": {
+      "example#DocumentService": [
+        {"resources": {"example#Document": []}},
+        {"resources": {"example#Document": []}}
+      ]
+    },
+    "handleD1": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1"}},
+    "handleMissingId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "zzz"}},
+    "handleMissingService": {"service": "example#OtherService", "resource": "example#Document", "ids": {"id": "d1"}},
+    "notAHandle": "nope"
+  },
+  "cases": [
+    {
+      "comment": "resolves a matching resource and reads a property through properties",
+      "expression": "resource(before, handleD1).properties.status",
+      "result": "DRAFT"
+    },
+    {
+      "comment": "the returned instance carries its identifiers",
+      "expression": "resource(before, handleD1).identifiers.id",
+      "result": "d1"
+    },
+    {
+      "comment": "matches the second instance by its ids",
+      "expression": "resource(before, {service: 'example#DocumentService', resource: 'example#Document', ids: {id: 'd2'}}).properties.status",
+      "result": "PUBLISHED"
+    },
+    {
+      "comment": "no resource matches the ids, so null",
+      "expression": "resource(before, handleMissingId)",
+      "result": null
+    },
+    {
+      "comment": "the world holds no instance of the handle's service, so null",
+      "expression": "resource(before, handleMissingService)",
+      "result": null
+    },
+    {
+      "comment": "a world with more than one instance of the service shape is an error",
+      "expression": "resource(twoInstances, handleD1)",
+      "error": "invalid-value"
+    },
+    {
+      "comment": "a non-object handle is a top-level argument type error",
+      "expression": "resource(before, notAHandle)",
+      "error": "invalid-value"
+    },
+    {
+      "comment": "resource requires exactly two arguments",
+      "expression": "resource(before)",
+      "error": "invalid-arity"
+    }
+  ]
+}]

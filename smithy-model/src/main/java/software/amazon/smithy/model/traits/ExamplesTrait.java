@@ -158,14 +158,14 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         /**
-         * @return Gets the ghost pre-state snapshot (specification-only).
+         * @return Gets the ghost pre-state snapshot (model-only).
          */
         public Optional<ObjectNode> getBefore() {
             return Optional.ofNullable(before);
         }
 
         /**
-         * @return Gets the ghost post-state snapshot (specification-only).
+         * @return Gets the ghost post-state snapshot (model-only).
          */
         public Optional<ObjectNode> getAfter() {
             return Optional.ofNullable(after);

@@ -188,11 +188,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
             return LiteralExpression.ANY;
         }
 
-        return model.getShape(shape.getTarget())
-                .map(target -> target.accept(this))
-                // Rather than fail on broken models during waiter validation,
-                // return an ANY to get *some* validation.
-                .orElse(LiteralExpression.ANY);
+        return sampleForShapeId(shape.getTarget());
     }
 
     @Override
@@ -202,14 +198,23 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     @Override
     public Object operationShape(OperationShape shape) {
-        // An operation instance is the tuple of a single call. Expressions on an
-        // operation reference these members rather than a bare shape value.
+        // An operation shape is never itself an instance; an operation CALL is modeled
+        // instead, via operationCall(), invoked directly where a call is in scope.
+        throw new UnsupportedOperationException(shape.toString());
+    }
+
+    // Builds the runtime type of an operation CALL: the {input, output, error, before,
+    // after} tuple observed for a single call. An operation call is NOT an instance of
+    // the operation shape, so this is invoked directly rather than through accept().
+    Object operationCall(OperationShape shape) {
         return withCopiedVisitors(() -> {
             Map<String, Object> result = new LinkedHashMap<>();
             Object inputSample = sampleForShapeId(shape.getInputShape());
             addReferenceHandleTypes(shape.getInputShape(), inputSample);
             result.put("input", inputSample);
-            result.put("output", sampleForShapeId(shape.getOutputShape()));
+            Object outputSample = sampleForShapeId(shape.getOutputShape());
+            addReferenceHandleTypes(shape.getOutputShape(), outputSample);
+            result.put("output", outputSample);
             // error, before, and after are coarsely typed for now. Precise typing of
             // the error union and the before/after world snapshots is a later refinement.
             result.put("error", LiteralExpression.ANY);
@@ -239,6 +244,8 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     private Object sampleForShapeId(ShapeId target) {
         return model.getShape(target)
                 .map(shape -> shape.accept(this))
+                // Rather than fail on broken models during waiter validation,
+                // return an ANY to get *some* validation.
                 .orElse(LiteralExpression.ANY);
     }
 

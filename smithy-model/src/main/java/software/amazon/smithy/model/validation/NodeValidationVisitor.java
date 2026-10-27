@@ -452,80 +452,91 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return ListUtils.of();
     }
 
-    private static final Set<String> OPERATION_INSTANCE_MEMBERS =
+    private static final Set<String> OPERATION_CALL_MEMBERS =
             SetUtils.of("input", "output", "error", "before", "after");
 
     @Override
     public List<ValidationEvent> operationShape(OperationShape shape) {
-        return value.asObjectNode()
-                .map(object -> validateOperationInstance(shape, object))
-                .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
+        // A node is never an instance of an operation shape. An operation CALL (the
+        // {input, output, error, before, after} tuple of a single call) is validated
+        // instead, via validateOperationCall, which callers such as the examples
+        // validator invoke directly.
+        return invalidSchema(shape);
     }
 
-    // An operation instance is the {input, output, error, before, after} tuple of a
-    // single call. input/output/error are validated against their modeled shapes;
-    // before/after are ghost state (opaque, never observed at runtime).
-    private List<ValidationEvent> validateOperationInstance(OperationShape shape, ObjectNode object) {
-        // Run node validator plugins (for example @conditions) against the whole tuple.
-        List<ValidationEvent> events = applyPlugins(shape);
+    /**
+     * Validates an operation call node against an operation.
+     *
+     * <p>An operation call is the {@code {input, output, error, before, after}} tuple
+     * of a single call; it is not an instance of the operation shape. {@code input},
+     * {@code output}, and {@code error} are validated against their modeled shapes;
+     * {@code before} and {@code after} are ghost state (opaque, never observed at
+     * runtime). Callers build the call node and invoke this directly.
+     *
+     * @param shape Operation the call is for.
+     * @param call The {@code {input, output, error, before, after}} call node.
+     * @return Returns the validation events.
+     */
+    public List<ValidationEvent> validateOperationCall(OperationShape shape, ObjectNode call) {
+        List<ValidationEvent> events = new ArrayList<>();
 
-        for (String member : object.getStringMap().keySet()) {
-            if (!OPERATION_INSTANCE_MEMBERS.contains(member)) {
+        for (String member : call.getStringMap().keySet()) {
+            if (!OPERATION_CALL_MEMBERS.contains(member)) {
                 events.add(unknownMember(member, shape, Severity.WARNING));
             }
         }
 
         model.getShape(shape.getInputShape()).ifPresent(inputShape -> {
-            Node inputValue = object.getMember("input").orElse(Node.objectNode());
+            Node inputValue = call.getMember("input").orElse(Node.objectNode());
             // Reference-handle projections (input.<name>) are ghost state, not real
             // structure members, so strip them before validating the input structurally.
             events.addAll(inputShape.accept(traverse("input", stripReferenceHandles(inputShape, inputValue))));
         });
 
-        boolean hasOutput = object.getMember("output").filter(node -> !node.isNullNode()).isPresent();
-        boolean hasError = object.getMember("error").filter(node -> !node.isNullNode()).isPresent();
+        boolean hasOutput = call.getMember("output").filter(node -> !node.isNullNode()).isPresent();
+        boolean hasError = call.getMember("error").filter(node -> !node.isNullNode()).isPresent();
 
         // A success carries output; a failure carries error; never both.
         if (hasOutput && hasError) {
-            events.add(event("An operation instance cannot define both `output` and `error`."));
+            events.add(event("An operation call cannot define both `output` and `error`."));
         }
 
         if (hasOutput) {
             model.getShape(shape.getOutputShape())
                     .ifPresent(
-                            output -> events.addAll(output.accept(traverse("output", object.expectMember("output")))));
+                            output -> events.addAll(output.accept(traverse("output", call.expectMember("output")))));
         }
 
         if (hasError) {
-            events.addAll(validateInstanceError(shape, object.expectMember("error")));
+            events.addAll(validateCallError(shape, call.expectMember("error")));
         }
 
         return events;
     }
 
-    private List<ValidationEvent> validateInstanceError(OperationShape operation, Node errorNode) {
+    private List<ValidationEvent> validateCallError(OperationShape operation, Node errorNode) {
         if (!errorNode.isObjectNode()) {
-            return ListUtils.of(event("Operation instance `error` must be an object with `shapeId` and `content`."));
+            return ListUtils.of(event("Operation call `error` must be an object with `shapeId` and `content`."));
         }
 
         ObjectNode error = errorNode.expectObjectNode();
         Optional<String> shapeId = error.getStringMember("shapeId").map(StringNode::getValue);
         if (!shapeId.isPresent()) {
-            return ListUtils.of(event("Operation instance `error` must define a `shapeId`."));
+            return ListUtils.of(event("Operation call `error` must define a `shapeId`."));
         }
 
         ShapeId errorId;
         try {
             errorId = ShapeId.from(shapeId.get());
         } catch (RuntimeException e) {
-            return ListUtils.of(event("Operation instance `error` has an invalid `shapeId`: " + shapeId.get()));
+            return ListUtils.of(event("Operation call `error` has an invalid `shapeId`: " + shapeId.get()));
         }
 
         Optional<Shape> errorShape = model.getShape(errorId);
         if (!errorShape.isPresent()
                 || !(operation.getErrorsSet().contains(errorId) || servicesContainError(operation, errorId))) {
             return ListUtils.of(event(String.format(
-                    "Operation instance `error` references `%s`, which is not an error of this operation.",
+                    "Operation call `error` references `%s`, which is not an error of this operation.",
                     errorId)));
         }
 

@@ -21,12 +21,12 @@ import software.amazon.smithy.jmespath.RuntimeType;
  * where {@code service} and {@code resource} are the service and resource shape IDs.
  *
  * <p>Resolution follows the handle's coordinates into the snapshot. The world is keyed
- * by service shape ID, and each entry is the array of that service's instances. The
- * handle carries no service identifiers, so exactly one instance must be present: the
- * function returns null when the service has no instance, and it is an error when the
- * service has more than one. Within that instance's {@code resources} member, the
- * instance of the handle's {@code resource} shape whose {@code identifiers} all equal
- * {@code handle.ids} is returned, or null when none matches.
+ * by service shape ID, and each entry is the array of that service's instances. A world
+ * snapshot may hold at most one instance of each service shape, so the function returns
+ * null when the service has no instance, and it is an error when the service has more
+ * than one. Within that instance's {@code resources} member, the instance of the
+ * handle's {@code resource} shape whose {@code identifiers} all equal {@code handle.ids}
+ * is returned, or null when none matches.
  *
  * <p>The returned resource instance is an object with {@code identifiers} and
  * {@code properties} members, so a property is read through {@code properties} (for
@@ -44,7 +44,8 @@ class ResourceFunction implements Function {
         T world = arguments.get(0).expectValue();
         T handle = arguments.get(1).expectValue();
         if (!runtime.is(handle, RuntimeType.OBJECT)) {
-            return runtime.createNull();
+            throw new JmespathException(JmespathExceptionType.INVALID_VALUE,
+                    "resource() expects its second argument to be a reference handle object");
         }
 
         T service = runtime.value(handle, runtime.createString("service"));
@@ -55,8 +56,8 @@ class ResourceFunction implements Function {
         T ids = runtime.value(handle, runtime.createString("ids"));
 
         // The world is keyed by service shape ID; each entry is the array of that
-        // service's instances. With no service identifiers in the handle, exactly one
-        // instance must be present: none resolves to null, more than one is an error.
+        // service's instances. A world snapshot may hold at most one instance of each
+        // service shape: none resolves to null, more than one is an error.
         T instances = runtime.value(world, service);
         if (!runtime.is(instances, RuntimeType.ARRAY)) {
             return runtime.createNull();
@@ -69,7 +70,7 @@ class ResourceFunction implements Function {
             throw new JmespathException(JmespathExceptionType.INVALID_VALUE,
                     String.format(
                             "resource() cannot resolve service `%s`: the world snapshot holds %d instances of it, "
-                                    + "but the handle carries no service identifiers to choose among them",
+                                    + "but a world snapshot may hold at most one instance of each service shape",
                             runtime.asString(service),
                             count));
         }

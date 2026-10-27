@@ -27,11 +27,11 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Validates that examples traits are valid for their operations.
  *
  * <p>Each example is assembled into the operation's
- * {@code {input, output, error, before, after}} instance node and validated
- * against the operation shape. All structural checks (input/output/error
- * validation, output-XOR-error, and error binding) live in
- * {@link NodeValidationVisitor} so that operation {@code @conditions} are
- * evaluated against the same instance node.
+ * {@code {input, output, error, before, after}} call node and validated as an
+ * operation call (an operation call is not an instance of the operation shape).
+ * All structural checks (input/output/error validation, output-XOR-error, and
+ * error binding) live in {@link NodeValidationVisitor#validateOperationCall} so
+ * that the same logic can be reused by other callers.
  */
 public final class ExamplesTraitValidator extends AbstractValidator {
 
@@ -58,15 +58,27 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                                 example.getTitle())));
             }
 
-            ObjectNode instance = buildInstanceNode(model, shape, example);
-            events.addAll(shape.accept(createVisitor(instance, model, shape, example)));
+            ObjectNode call = buildOperationCall(model, shape, example);
+            events.addAll(createVisitor(call, model, shape, example).validateOperationCall(shape, call));
         }
 
         return events;
     }
 
-    // Assembles the {input, output, error, before, after} instance node for an example.
-    private ObjectNode buildInstanceNode(Model model, OperationShape shape, ExamplesTrait.Example example) {
+    /**
+     * Assembles the {@code {input, output, error, before, after}} call node for an
+     * example, projecting each declared {@code @references} on the input into a ghost
+     * resource handle reachable as {@code input.<name>}.
+     *
+     * <p>Shared so that other validators (such as contract evaluation) check the same
+     * call node this validator validates structurally.
+     *
+     * @param model The model the operation belongs to.
+     * @param shape The operation the example is for.
+     * @param example The example to assemble.
+     * @return Returns the assembled call node.
+     */
+    public static ObjectNode buildOperationCall(Model model, OperationShape shape, ExamplesTrait.Example example) {
         ObjectNode input = withReferenceHandles(model, shape.getInputShape(), example.getInput());
         ObjectNode.Builder builder = Node.objectNodeBuilder().withMember("input", input);
         example.getOutput().ifPresent(output -> builder.withMember("output", output));
@@ -83,7 +95,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     // Projects each named @references on the structure into a ghost resource handle
     // reachable as input.<name>, synthesized from the observable identifier members.
-    private ObjectNode withReferenceHandles(Model model, ShapeId structureId, ObjectNode values) {
+    private static ObjectNode withReferenceHandles(Model model, ShapeId structureId, ObjectNode values) {
         Shape shape = model.getShape(structureId).orElse(null);
         if (shape == null || !shape.hasTrait(ReferencesTrait.class)) {
             return values;
@@ -114,7 +126,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     // The service shape name that locates the referenced resource: the reference's own
     // service when set, otherwise the sole service whose closure contains the resource.
-    private Optional<String> serviceName(Model model, ReferencesTrait.Reference reference) {
+    private static Optional<String> serviceName(Model model, ReferencesTrait.Reference reference) {
         if (reference.getService().isPresent()) {
             return Optional.of(reference.getService().get().getName());
         }

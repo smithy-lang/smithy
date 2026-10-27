@@ -17,6 +17,6 @@
 [WARNING] ns.foo#Operation: Example `Testing 5`.input.stringMax: String value provided for `ns.foo#OperationInput$stringMax` must be <= 3 characters, but the provided value is 6 characters. | ExamplesTrait
 [WARNING] ns.foo#Operation2: Example `Testing 4`.input: Member `foo` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember.smithy.api#Unit.foo
 [WARNING] ns.foo#Operation2: Example `Testing 4`.output: Member `bam` does not exist in `smithy.api#Unit` | ExamplesTrait.UnknownMember.smithy.api#Unit.bam
-[ERROR] ns.foo#Operation2: Example `Testing 5`: Operation instance `error` references `ns.foo#OperationError`, which is not an error of this operation. | ExamplesTrait
-[ERROR] ns.foo#Operation: Example `Testing 3`: An operation instance cannot define both `output` and `error`. | ExamplesTrait
+[ERROR] ns.foo#Operation2: Example `Testing 5`: Operation call `error` references `ns.foo#OperationError`, which is not an error of this operation. | ExamplesTrait
+[ERROR] ns.foo#Operation: Example `Testing 3`: An operation call cannot define both `output` and `error`. | ExamplesTrait
 [ERROR] ns.foo#Operation: Example: `Testing 4` has allowConstraintErrors enabled, so error must be defined. | ExamplesTrait

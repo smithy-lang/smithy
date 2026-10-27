@@ -59,6 +59,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         FunctionDefinition.ArgValidator isString = isType(RuntimeType.STRING);
         FunctionDefinition.ArgValidator isNumber = isType(RuntimeType.NUMBER);
         FunctionDefinition.ArgValidator isArray = isType(RuntimeType.ARRAY);
+        FunctionDefinition.ArgValidator isObject = isType(RuntimeType.OBJECT);
 
         FUNCTIONS.put("abs", new FunctionDefinition(NUMBER, isNumber));
         FUNCTIONS.put("avg", new FunctionDefinition(NUMBER, listOfType(RuntimeType.NUMBER)));
@@ -86,8 +87,8 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         FUNCTIONS.put("min_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("not_null", new FunctionDefinition(ANY, Collections.singletonList(isAny), isAny));
         FUNCTIONS.put("reverse", new FunctionDefinition(ARRAY, oneOf(RuntimeType.ARRAY, RuntimeType.STRING)));
-        FUNCTIONS.put("requires", new FunctionDefinition(BOOLEAN, isAny, isAny));
-        FUNCTIONS.put("resource", new FunctionDefinition(ANY, isAny, isAny));
+        FUNCTIONS.put("requires", new FunctionDefinition(BOOLEAN, isObject, isAny));
+        FUNCTIONS.put("resource", new FunctionDefinition(ANY, isObject, isObject));
         FUNCTIONS.put("sort", new FunctionDefinition(ARRAY, isArray));
         FUNCTIONS.put("sort_by", new FunctionDefinition(ARRAY, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("starts_with", new FunctionDefinition(BOOLEAN, isString, isString));

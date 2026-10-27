@@ -70,28 +70,9 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Service", "true", new String[] {"Encountered invalid shape type: service"}},
                 {"ns.foo#Resource", "true", new String[] {"Encountered invalid shape type: resource"}},
 
-                // Operations are validated as their {input, output, error, before, after} instance tuple.
-                {"ns.foo#Operation",
-                        "true",
-                        new String[] {
-                                "Expected object value for operation shape, `ns.foo#Operation`; found boolean value, "
-                                        + "`true`"
-                        }},
-                // An empty instance is valid (input defaults to the empty Unit input).
-                {"ns.foo#Operation", "{}", null},
-                // before/after are ghost state and always structurally valid.
-                {"ns.foo#Operation", "{\"before\": {\"any\": 1}, \"after\": {\"any\": 2}}", null},
-                // Members outside the instance tuple are flagged.
-                {"ns.foo#Operation",
-                        "{\"bogus\": true}",
-                        new String[] {"Member `bogus` does not exist in `ns.foo#Operation`"}},
-                // The error must be one of the operation's errors.
-                {"ns.foo#Operation",
-                        "{\"error\": {\"shapeId\": \"ns.foo#Resource\", \"content\": {}}}",
-                        new String[] {
-                                "Operation instance `error` references `ns.foo#Resource`, which is not an error of "
-                                        + "this operation."
-                        }},
+                // A node is never an instance of an operation shape. An operation CALL is
+                // validated instead, via validateOperationCall (see ExamplesTraitValidator).
+                {"ns.foo#Operation", "{}", new String[] {"Encountered invalid shape type: operation"}},
 
                 // Booleans
                 {"ns.foo#Boolean", "true", null},

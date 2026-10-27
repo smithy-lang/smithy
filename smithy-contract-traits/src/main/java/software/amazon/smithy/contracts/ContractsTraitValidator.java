@@ -10,12 +10,19 @@ import java.util.Map;
 import software.amazon.smithy.jmespath.ExpressionProblem;
 import software.amazon.smithy.jmespath.LinterResult;
 import software.amazon.smithy.jmespath.RuntimeType;
+import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.jmespath.node.ModelJmespathUtils;
+import software.amazon.smithy.model.jmespath.node.NodeJmespathRuntime;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -41,6 +48,56 @@ public final class ContractsTraitValidator extends AbstractValidator {
 
         for (Map.Entry<String, Condition> entry : contracts.getContracts().entrySet()) {
             events.addAll(validateContract(model, shape, entry.getKey(), entry.getValue()));
+        }
+
+        // A contract constrains an operation call. The example calls declared by
+        // @examples are the calls available at model-build time, so evaluate each
+        // contract against each example call. (Operation calls are not instances of
+        // operations, so this does not run through node-instance validation.)
+        if (shape.isOperationShape() && shape.hasTrait(ExamplesTrait.class)) {
+            evaluateExampleCalls(model, shape.asOperationShape().get(), contracts, events);
+        }
+    }
+
+    private void evaluateExampleCalls(
+            Model model,
+            OperationShape operation,
+            ContractsTrait contracts,
+            List<ValidationEvent> events
+    ) {
+        ExamplesTrait examples = operation.expectTrait(ExamplesTrait.class);
+        for (ExamplesTrait.Example example : examples.getExamples()) {
+            ObjectNode call = ExamplesTraitValidator.buildOperationCall(model, operation, example);
+            Severity severity = example.getAllowConstraintErrors() ? Severity.WARNING : Severity.ERROR;
+            for (Map.Entry<String, Condition> entry : contracts.getContracts().entrySet()) {
+                evaluateExampleCall(operation, example, call, severity, entry.getKey(), entry.getValue(), events);
+            }
+        }
+    }
+
+    private void evaluateExampleCall(
+            OperationShape operation,
+            ExamplesTrait.Example example,
+            ObjectNode call,
+            Severity severity,
+            String contractName,
+            Condition contract,
+            List<ValidationEvent> events
+    ) {
+        Evaluator<Node> evaluator = new Evaluator<>(call, NodeJmespathRuntime.INSTANCE);
+        Node result = evaluator.visit(contract.getExpression());
+        if (!result.expectBooleanNode().getValue()) {
+            events.add(ValidationEvent.builder()
+                    .id(getName() + "." + contractName)
+                    .shape(operation)
+                    .sourceLocation(contract.getSourceLocation())
+                    .severity(severity)
+                    .message(String.format(
+                            "Example `%s`: Call of `%s` must match the %s contract expression",
+                            example.getTitle(),
+                            operation.getId(),
+                            contractName))
+                    .build());
         }
     }
 
