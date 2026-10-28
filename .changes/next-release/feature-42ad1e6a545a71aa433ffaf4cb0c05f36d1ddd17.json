@@ -1,5 +1,7 @@
 {
   "type": "feature",
   "description": "Added the unstable `@discriminated` trait for modeling unions that are serialized as internally tagged objects in JSON, along with validation that members target structures and that the discriminator does not collide with a targeted structure member. Support for the trait is optional.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3343](https://github.com/smithy-lang/smithy/pull/3343)"
+  ]
 }
