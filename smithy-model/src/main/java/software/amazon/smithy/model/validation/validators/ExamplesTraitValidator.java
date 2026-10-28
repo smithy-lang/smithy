@@ -25,13 +25,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
  * Validates that examples traits are valid for their operations.
- *
- * <p>Each example is assembled into the operation's
- * {@code {input, output, error, before, after}} call node and validated as an
- * operation call (an operation call is not an instance of the operation shape).
- * All structural checks (input/output/error validation, output-XOR-error, and
- * error binding) live in {@link NodeValidationVisitor#validateOperationCall} so
- * that the same logic can be reused by other callers.
  */
 public final class ExamplesTraitValidator extends AbstractValidator {
 
