@@ -394,6 +394,14 @@ public class NodeValidationVisitorTest {
                         "[\"a\", \"a\", \"b\", \"b\"]",
                         new String[] {
                                 "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`, `b`]"}},
+                {"ns.foo#UniqueList",
+                        "[\"b\", \"a\", \"a\", \"b\"]",
+                        new String[] {
+                                "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`, `b`]"}},
+                {"ns.foo#UniqueList",
+                        "[\"a\", \"b\", \"b\", \"a\"]",
+                        new String[] {
+                                "Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`b`, `a`]"}},
 
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},

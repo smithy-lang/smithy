@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix quadratic-time duplicate detection in the `@uniqueItems` node validator.",
+  "pull_requests": [
+    "[#3338](https://github.com/smithy-lang/smithy/pull/3338)"
+  ]
+}
