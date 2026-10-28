@@ -59,7 +59,12 @@
     {
       "comment": "a non-object handle is a top-level argument type error",
       "expression": "resource(before, notAHandle)",
-      "error": "invalid-value"
+      "error": "invalid-type"
+    },
+    {
+      "comment": "a non-object world is a top-level argument type error",
+      "expression": "resource(notAHandle, handleD1)",
+      "error": "invalid-type"
     },
     {
       "comment": "resource requires exactly two arguments",

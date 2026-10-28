@@ -26,7 +26,7 @@ class RequiresFunction implements Function {
     @Override
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments) {
         checkArgumentCount(2, arguments);
-        T instance = arguments.get(0).expectValue();
+        T instance = arguments.get(0).expectObject();
         T predicate = arguments.get(1).expectValue();
         T error = runtime.value(instance, runtime.createString("error"));
         boolean succeeded = runtime.is(error, RuntimeType.NULL);

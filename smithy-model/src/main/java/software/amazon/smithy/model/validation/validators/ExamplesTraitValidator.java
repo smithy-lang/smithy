@@ -59,7 +59,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             }
 
             ObjectNode call = buildOperationCall(model, shape, example);
-            events.addAll(createVisitor(call, model, shape, example).validateOperationCall(shape, call));
+            events.addAll(createVisitor(call, model, shape, example).validateOperationCall(shape));
         }
 
         return events;
@@ -112,7 +112,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 ids.withMember(entry.getKey(), value);
             }
             ObjectNode.Builder handle = Node.objectNodeBuilder()
-                    .withMember("resource", reference.getResource().getName())
+                    .withMember("resource", reference.getResource().toString())
                     .withMember("ids", ids.build());
             // The handle locates the resource under a service shape in the world snapshot.
             // Use the reference's explicit service, else the single service that contains
@@ -148,7 +148,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 found = service;
             }
         }
-        return Optional.ofNullable(found).map(service -> service.getId().getName());
+        return Optional.ofNullable(found).map(service -> service.getId().toString());
     }
 
     private NodeValidationVisitor createVisitor(

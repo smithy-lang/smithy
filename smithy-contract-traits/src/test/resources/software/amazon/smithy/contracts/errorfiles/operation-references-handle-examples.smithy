@@ -24,13 +24,13 @@ resource Key {
         title: "Enabled key succeeds"
         input: {keyRef: "k1"}
         output: {}
-        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "ENABLED"}}]}}]}
+        before: {"smithy.example#Crypto": [{resources: {"smithy.example#Key": [{identifiers: {keyId: "k1"}, properties: {keyState: "ENABLED"}}]}}]}
     }
     {
         title: "Disabled key must not succeed"
         input: {keyRef: "k1"}
         output: {}
-        before: {Crypto: [{resources: {Key: [{identifiers: {keyId: "k1"}, properties: {keyState: "DISABLED"}}]}}]}
+        before: {"smithy.example#Crypto": [{resources: {"smithy.example#Key": [{identifiers: {keyId: "k1"}, properties: {keyState: "DISABLED"}}]}}]}
     }
 ])
 operation Encrypt {

@@ -41,12 +41,8 @@ class ResourceFunction implements Function {
     @Override
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> arguments) {
         checkArgumentCount(2, arguments);
-        T world = arguments.get(0).expectValue();
-        T handle = arguments.get(1).expectValue();
-        if (!runtime.is(handle, RuntimeType.OBJECT)) {
-            throw new JmespathException(JmespathExceptionType.INVALID_VALUE,
-                    "resource() expects its second argument to be a reference handle object");
-        }
+        T world = arguments.get(0).expectObject();
+        T handle = arguments.get(1).expectObject();
 
         T service = runtime.value(handle, runtime.createString("service"));
         T resourceType = runtime.value(handle, runtime.createString("resource"));
