@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Improved performance when merging repeated array metadata values, which now scales linearly instead of quadratically.",
+  "pull_requests": [
+    "[#3344](https://github.com/smithy-lang/smithy/pull/3344)"
+  ]
+}
