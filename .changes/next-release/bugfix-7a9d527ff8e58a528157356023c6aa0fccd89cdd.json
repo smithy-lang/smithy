@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Fixed a `StackOverflowError` when validating long `sdkId` values on the `@aws.api#service` trait.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3346](https://github.com/smithy-lang/smithy/pull/3346)"
+  ]
 }
