@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
@@ -42,20 +43,83 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (ExamplesTrait.Example example : trait.getExamples()) {
-            // allowConstraintErrors only makes sense when the example demonstrates an error.
-            if (example.getAllowConstraintErrors() && !example.getError().isPresent()) {
+            boolean isOutputDefined = example.getOutput().isPresent();
+            boolean isErrorDefined = example.getError().isPresent();
+
+            model.getShape(shape.getInputShape()).ifPresent(input -> {
+                if (example.getAllowConstraintErrors() && !isErrorDefined) {
+                    events.add(error(shape,
+                            trait,
+                            String.format(
+                                    "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
+                                    example.getTitle())));
+                }
+                events.addAll(input.accept(createVisitor("input", example.getInput(), model, shape, example)));
+            });
+
+            if (isOutputDefined && isErrorDefined) {
                 events.add(error(shape,
                         trait,
                         String.format(
-                                "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
+                                "Example: `%s` has both output and error defined, only one should be present.",
                                 example.getTitle())));
+            } else if (isOutputDefined) {
+                model.getShape(shape.getOutputShape())
+                        .ifPresent(output -> events.addAll(
+                                output.accept(
+                                        createVisitor("output", example.getOutput().get(), model, shape, example))));
+            } else if (isErrorDefined) {
+                ExamplesTrait.ErrorExample errorExample = example.getError().get();
+                Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
+                if (errorShape.isPresent() && (
+                // The error is directly bound to the operation.
+                shape.getErrorsSet().contains(errorExample.getShapeId())
+                        // The error is bound to all services that contain the operation.
+                        || servicesContainError(model, shape, errorExample.getShapeId()))) {
+                    events.addAll(errorShape.get()
+                            .accept(createVisitor("error", errorExample.getContent(), model, shape, example)));
+                } else {
+                    events.add(error(shape,
+                            trait,
+                            String.format(
+                                    "Error parameters provided for operation without the `%s` error: `%s`",
+                                    errorExample.getShapeId(),
+                                    example.getTitle())));
+                }
             }
 
+            // Per-section structural validation above mirrors a plain example. The call-level
+            // invariants that only an operation call has (the ghost `before`/`after` world
+            // snapshots, any unexpected call member, and dynamic `@contracts` evaluation) run
+            // once over the assembled {input, output, error, before, after} call node, with
+            // each declared `@references` projected onto the input as a resource handle.
             ObjectNode call = buildOperationCall(model, shape, example);
-            events.addAll(createVisitor(call, model, shape, example).validateOperationCall(shape));
+            events.addAll(callVisitor(call, model, shape, example).validateOperationCall(shape));
         }
 
         return events;
+    }
+
+    // A service that contains the operation must also declare the error for the error to
+    // be a valid error of a call to that operation.
+    private boolean servicesContainError(Model model, OperationShape shape, ShapeId errorId) {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<ServiceShape> services = model.getServiceShapes();
+        if (services.isEmpty()) {
+            return false;
+        }
+        for (ServiceShape service : services) {
+            // Skip if the service doesn't have the operation.
+            if (!topDownIndex.getContainedOperations(service).contains(shape)) {
+                continue;
+            }
+            // We've already checked if the operation contains the error,
+            // so a service having no errors means we've failed.
+            if (service.getErrorsSet().isEmpty() || !service.getErrorsSet().contains(errorId)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -144,7 +208,34 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         return Optional.ofNullable(found).map(service -> service.getId().toString());
     }
 
+    // Builds a visitor for one named section (input, output, error) of an example, so a
+    // structural problem is reported as "Example <name> of `<title>`".
     private NodeValidationVisitor createVisitor(
+            String name,
+            ObjectNode value,
+            Model model,
+            OperationShape shape,
+            ExamplesTrait.Example example
+    ) {
+        return visitorBuilder(value, model, shape, example)
+                .startingContext("Example " + name + " of `" + example.getTitle() + "`")
+                .build();
+    }
+
+    // Builds a visitor for the whole call node, used for the call-level invariants
+    // (ghost before/after world snapshots, unexpected members, and @contracts).
+    private NodeValidationVisitor callVisitor(
+            ObjectNode value,
+            Model model,
+            OperationShape shape,
+            ExamplesTrait.Example example
+    ) {
+        return visitorBuilder(value, model, shape, example)
+                .startingContext("Example `" + example.getTitle() + "`")
+                .build();
+    }
+
+    private NodeValidationVisitor.Builder visitorBuilder(
             ObjectNode value,
             Model model,
             OperationShape shape,
@@ -154,11 +245,10 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .model(model)
                 .eventShapeId(shape.getId())
                 .value(value)
-                .startingContext("Example `" + example.getTitle() + "`")
                 .eventId(getName());
         if (example.getAllowConstraintErrors()) {
             builder.addFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS);
         }
-        return builder.build();
+        return builder;
     }
 }
