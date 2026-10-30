@@ -89,7 +89,9 @@ public final class SdkServiceIdValidator extends AbstractValidator {
 
         List<String> messages = new ArrayList<>();
 
-        if (!validForPattern(serviceId)) {
+        if (serviceId.isEmpty() || serviceId.length() > 50) {
+            messages.add("Must be between 1 and 50 characters long.");
+        } else if (!validForPattern(serviceId)) {
             messages.add(String.format("Does not match the required pattern `%s`", SERVICE_ID_PATTERN.pattern()));
         }
 
@@ -102,10 +104,6 @@ public final class SdkServiceIdValidator extends AbstractValidator {
         endsWithForbiddenWord(serviceId).ifPresent(suffix -> {
             messages.add(String.format("Must not case-insensitively end with `%s`", suffix));
         });
-
-        if (serviceId.isEmpty() || serviceId.length() > 50) {
-            messages.add("Must be between 1 and 50 characters long.");
-        }
 
         if (!messages.isEmpty()) {
             throw new IllegalArgumentException(String.format(
