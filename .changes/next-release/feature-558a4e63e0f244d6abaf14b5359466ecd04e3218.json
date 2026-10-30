@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Added a `@contracts` trait for operation call contracts, a predicate that must hold for every `{input, output, error, before, after}` call of an operation, alongside `@conditions` for value and state constraints. Added optional `before` and `after` members to the `@examples` trait and an optional `name` member to `@references` (projecting a resource handle), plus the `requires` and `resource` JMESPath built-in functions for expressing operation contracts over model-only resource state.",
+  "pull_requests": [
+    "[#8](https://github.com/robin-aws/smithy/pull/8)"
+  ]
+}

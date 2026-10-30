@@ -53,7 +53,7 @@ the following members:
       - ``string``
       - **Required**. Documentation about the condition defined using CommonMark_.
 
-See the :ref:`JMESPath data model <waiter-jmespath-data-model>` for details on how Smithy types are mapped to JMESPath types.
+See the :ref:`JMESPath data model <jmespath-data-model>` for details on how Smithy types are mapped to JMESPath types.
 
 .. code-block:: smithy
 
@@ -78,6 +78,82 @@ See the :ref:`JMESPath data model <waiter-jmespath-data-model>` for details on h
         }
     })
     string Name
+
+
+.. smithy-trait:: smithy.contracts#contracts
+.. _contracts-trait:
+
+-------------------
+``contracts`` trait
+-------------------
+
+Summary
+    Constrains the calls of an operation to those which satisfy the given JMESPath
+    expressions. Each expression must hold for every call.
+Trait selector
+    ``operation``
+Value type
+    ``map``
+
+Where ``conditions`` restricts the *values* of a data shape, ``contracts``
+constrains the *calls* of an operation. An operation is a procedure and has no
+value; a contract is a predicate that must hold for every call, evaluated over
+the operation's :ref:`call <jmespath-operation-call>`, the
+``{input, output, error, before, after}`` object. The value type is the same
+map of named ``Condition`` structures as ``conditions``.
+
+Preconditions and postconditions are ordinary entries gated on the call outcome
+(``output`` and ``error``). A call is materialized from an :ref:`examples-trait` value,
+with ``before`` and ``after`` provided as part of the example.
+
+The following operation requires the document it publishes to be approved before
+the call. The precondition reads the referenced document's state from the
+``before`` snapshot using the ``resource`` and ``requires`` functions defined in
+:ref:`jmespath-functions`.
+
+.. code-block:: smithy
+
+    resource Document {
+        identifiers: {documentId: String}
+        properties: {status: String}
+    }
+
+    @contracts({
+        DocumentApprovedOnSuccess: {
+            documentation: "A successful publish requires the referenced document to be approved beforehand"
+            expression: "requires(@, resource(before, input.document).properties.status == 'APPROVED')"
+        }
+    })
+    operation PublishDocument {
+        input: PublishDocumentInput
+        output: PublishDocumentOutput
+    }
+
+    @input
+    @references([
+        {resource: Document, name: "document", ids: {documentId: "documentId"}}
+    ])
+    structure PublishDocumentInput {
+        @required
+        documentId: String
+    }
+
+    @output
+    structure PublishDocumentOutput {}
+
+------------------
+Contract functions
+------------------
+
+Contract expressions use the functions defined in the
+:ref:`JMESPath data model <jmespath-functions>`: ``requires`` for necessary
+preconditions and ``resource`` for resolving a resource handle against a ``before`` or
+``after`` snapshot.
+
+A named :ref:`references-trait` on the input structure projects a resource
+handle reachable as ``input.<name>`` (``input.document`` above), so a
+precondition over resource state can be written without constructing the handle
+by hand.
 
 
 .. _CommonMark: https://spec.commonmark.org/

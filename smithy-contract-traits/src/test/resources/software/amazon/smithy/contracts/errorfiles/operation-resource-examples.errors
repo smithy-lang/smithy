@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Encrypt: Example `Disabled key must not succeed`: Call of `smithy.example#Encrypt` must match the KeyEnabledOnSuccess contract expression | ExamplesTrait.KeyEnabledOnSuccess

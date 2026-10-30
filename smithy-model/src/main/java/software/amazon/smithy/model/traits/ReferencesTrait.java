@@ -134,12 +134,14 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         private final Map<String, String> ids;
         private final ShapeId service;
         private final String rel;
+        private final String name;
 
         private Reference(Builder builder) {
             resource = SmithyBuilder.requiredState("resource", builder.resource);
             ids = Collections.unmodifiableMap(new TreeMap<>(builder.ids));
             rel = builder.rel;
             service = builder.service;
+            name = builder.name;
         }
 
         public static Builder builder() {
@@ -148,7 +150,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
         @Override
         public Builder toBuilder() {
-            return builder().resource(resource).ids(ids).service(service).rel(rel);
+            return builder().resource(resource).ids(ids).service(service).rel(rel).name(name);
         }
 
         /**
@@ -183,6 +185,13 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             return Optional.ofNullable(rel);
         }
 
+        /**
+         * @return Gets the optional reference name used to project a resource handle.
+         */
+        public Optional<String> getName() {
+            return Optional.ofNullable(name);
+        }
+
         @Override
         public String toString() {
             return "Reference" + Node.printJson(toNode());
@@ -200,12 +209,13 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             return resource.equals(reference.resource)
                     && Objects.equals(ids, reference.ids)
                     && Objects.equals(service, reference.service)
-                    && Objects.equals(rel, reference.rel);
+                    && Objects.equals(rel, reference.rel)
+                    && Objects.equals(name, reference.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(resource, ids, service, rel);
+            return Objects.hash(resource, ids, service, rel, name);
         }
 
         @Override
@@ -218,6 +228,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
                                     : Optional.of(ObjectNode.fromStringMap(getIds())))
                     .withOptionalMember("service", getService().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("rel", getRel().map(Node::from))
+                    .withOptionalMember("name", getName().map(Node::from))
                     .build();
         }
 
@@ -229,6 +240,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             private String rel;
             private Map<String, String> ids = MapUtils.of();
             private ShapeId service;
+            private String name;
 
             private Builder() {}
 
@@ -254,6 +266,11 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
             public Builder rel(String rel) {
                 this.rel = rel;
+                return this;
+            }
+
+            public Builder name(String name) {
+                this.name = name;
                 return this;
             }
         }
@@ -289,7 +306,8 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
                         builder.ids(result);
                     })
                     .getMember("service", ShapeId::fromNode, builder::service)
-                    .getStringMember("rel", builder::rel);
+                    .getStringMember("rel", builder::rel)
+                    .getStringMember("name", builder::name);
             return builder.build();
         }
     }

@@ -16,6 +16,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     event-stream-protocol-compliance-tests
     smoke-tests
     waiters
+    jmespath-data-model
     mqtt
     rules-engine/index
     protocols/index

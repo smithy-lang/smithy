@@ -13,6 +13,19 @@ map conditions {
     value: Condition
 }
 
+/// Constrains the calls of an operation to those that satisfy one or more JMESPath
+/// expressions. Each expression must produce `true` for every call, evaluated over
+/// the operation's `{input, output, error, before, after}` call
+/// (for example `input.start < input.end`).
+@trait(selector: "operation")
+map contracts {
+    /// Name of the contract
+    key: ConditionName
+
+    /// Definition of the contract
+    value: Condition
+}
+
 /// A name of a condition.
 @pattern("^[A-Z]+[A-Za-z0-9]*$")
 string ConditionName

@@ -10,6 +10,7 @@ indices.json
 literal.json
 multiselect.json
 pipe.json
+resource.json
 slice.json
 syntax.json
 unicode.json

@@ -736,15 +736,19 @@ duplicated on the ``MyList`` shape with different values:
     apply MyList @length(min: 10, max: 20)
 
 
-.. _trait-node-values:
+.. _shape-instances:
 
-Trait node values
------------------
+Shape instances
+---------------
 
-The value provided for a trait MUST be compatible with the ``shape`` of the
-trait. The following table defines each shape type that is available to
-target from traits and how their values are defined in
-:token:`node <smithy:NodeValue>` values.
+A node value is an *instance* of a shape when it is compatible with the shape
+as defined in this section. Node value compatibility is checked wherever node
+values are validated against shapes, including trait values (see
+:ref:`trait-node-values`), the :ref:`examples-trait`, and the
+:ref:`default-trait`.
+
+The following table defines each Smithy type and the node values that are
+valid instances of a shape of that type.
 
 .. list-table::
     :header-rows: 1
@@ -815,11 +819,101 @@ target from traits and how their values are defined in
       - The object MUST contain a single key-value pair. The key MUST be
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
+    * - resource
+      - object
+      - A resource instance is an object with an ``identifiers`` member and a
+        ``properties`` member, each a nested object, representing its state.
+        Child resources are not nested inside a resource instance; they appear
+        under the enclosing service instance's ``resources`` member.
+    * - service
+      - object
+      - A service instance is the state of a single deployed instance of the
+        service (a service can have more than one instance, for example one per
+        region): an object with a ``resources`` member mapping each resource the
+        service contains, at any depth, to an array of instances of that resource.
+
+A resource instance mirrors the resource shape's own sections: an ``identifiers``
+object and a ``properties`` object, each mapping names to values. For example, a
+``Document`` resource with a ``documentId`` identifier and a ``status`` property
+is exposed as:
+
+.. code-block:: json
+
+    {
+        "identifiers": {"documentId": "doc-1"},
+        "properties": {"status": "APPROVED"}
+    }
+
+Keeping identifiers and properties in their own objects, rather than flattening
+them to the top level, means a user-defined identifier or property name can never
+collide with a structural member, and leaves room to add further members (such as
+future service-instance identifiers) without reshaping existing instances.
+
+A service instance has a ``resources`` member mapping each resource the service
+contains (at any depth, including child resources) to a flat array of that
+resource's instances. Child resources are not nested inside their parent resource
+instances. For example, a ``ContentService`` that contains a ``Folder`` resource
+and a child ``Document`` resource is exposed as:
+
+.. code-block:: json
+
+    {
+        "resources": {
+            "Folder": [
+                {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+            ],
+            "Document": [
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+            ]
+        }
+    }
+
+.. _world-snapshot:
+
+A *world snapshot* maps each service shape to the set of that service's instances
+(an array, since a service can have multiple instances such as one per region).
+It is used as the ``before`` and ``after`` state of an operation call (see the
+:ref:`contracts trait <contracts-trait>`). A resource handle selects a service by
+its shape ID and resolves the resource within that service's single instance; a
+service shape with more than one instance in the snapshot cannot yet be addressed
+by a handle.
+
+For example, a world snapshot for a single-region deployment of ``ContentService``
+is exposed as:
+
+.. code-block:: json
+
+    {
+        "ContentService": [
+            {
+                "resources": {
+                    "Folder": [
+                        {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+                    ],
+                    "Document": [
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+                    ]
+                }
+            }
+        ]
+    }
 
 .. important::
 
-    Trait values MUST be compatible with the :ref:`required-trait` and any
+    An instance MUST be compatible with the :ref:`required-trait` and any
     associated :doc:`constraint traits <constraint-traits>`.
+
+
+.. _trait-node-values:
+
+Trait node values
+-----------------
+
+The value provided for a trait MUST be compatible with the ``shape`` of the
+trait. See :ref:`shape-instances` for the definition of node value
+compatibility.
 
 
 .. _trait-shapes:

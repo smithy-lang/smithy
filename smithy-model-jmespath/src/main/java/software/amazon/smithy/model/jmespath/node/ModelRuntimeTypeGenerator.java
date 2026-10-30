@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -39,6 +40,7 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
+import software.amazon.smithy.model.traits.ReferencesTrait;
 
 /**
  * Generates fake data from a modeled shape for static JMESPath analysis.
@@ -186,11 +188,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
             return LiteralExpression.ANY;
         }
 
-        return model.getShape(shape.getTarget())
-                .map(target -> target.accept(this))
-                // Rather than fail on broken models during waiter validation,
-                // return an ANY to get *some* validation.
-                .orElse(LiteralExpression.ANY);
+        return sampleForShapeId(shape.getTarget());
     }
 
     @Override
@@ -200,7 +198,55 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     @Override
     public Object operationShape(OperationShape shape) {
+        // An operation shape is never itself an instance; an operation CALL is modeled
+        // instead, via operationCall(), invoked directly where a call is in scope.
         throw new UnsupportedOperationException(shape.toString());
+    }
+
+    // Builds the runtime type of an operation CALL: the {input, output, error, before,
+    // after} tuple observed for a single call. An operation call is NOT an instance of
+    // the operation shape, so this is invoked directly rather than through accept().
+    Object operationCall(OperationShape shape) {
+        return withCopiedVisitors(() -> {
+            Map<String, Object> result = new LinkedHashMap<>();
+            Object inputSample = sampleForShapeId(shape.getInputShape());
+            addReferenceHandleTypes(shape.getInputShape(), inputSample);
+            result.put("input", inputSample);
+            Object outputSample = sampleForShapeId(shape.getOutputShape());
+            addReferenceHandleTypes(shape.getOutputShape(), outputSample);
+            result.put("output", outputSample);
+            // error, before, and after are coarsely typed for now. Precise typing of
+            // the error union and the before/after world snapshots is a later refinement.
+            result.put("error", LiteralExpression.ANY);
+            result.put("before", LiteralExpression.ANY);
+            result.put("after", LiteralExpression.ANY);
+            return result;
+        });
+    }
+
+    // Reference-handle projections (input.<name>) are ghost state, coarsely typed as
+    // any until the dependent handle type lands with the type system.
+    @SuppressWarnings("unchecked")
+    private void addReferenceHandleTypes(ShapeId structureId, Object sample) {
+        if (!(sample instanceof Map)) {
+            return;
+        }
+        model.getShape(structureId)
+                .flatMap(shape -> shape.getTrait(ReferencesTrait.class))
+                .ifPresent(trait -> {
+                    for (ReferencesTrait.Reference reference : trait.getReferences()) {
+                        reference.getName()
+                                .ifPresent(name -> ((Map<String, Object>) sample).put(name, LiteralExpression.ANY));
+                    }
+                });
+    }
+
+    private Object sampleForShapeId(ShapeId target) {
+        return model.getShape(target)
+                .map(shape -> shape.accept(this))
+                // Rather than fail on broken models during waiter validation,
+                // return an ANY to get *some* validation.
+                .orElse(LiteralExpression.ANY);
     }
 
     @Override

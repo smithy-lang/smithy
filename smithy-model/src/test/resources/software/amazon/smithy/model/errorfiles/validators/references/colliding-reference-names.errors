@@ -1,0 +1,1 @@
+[ERROR] ns.foo#MyStructure: `references` trait reference name `thing` is used by more than one reference. | ReferencesTrait
