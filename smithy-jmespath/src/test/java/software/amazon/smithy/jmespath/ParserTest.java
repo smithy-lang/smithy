@@ -408,4 +408,44 @@ public class ParserTest {
     public void validatesTooManyColonsInSlice() {
         Assertions.assertThrows(JmespathException.class, () -> JmespathExpression.parse("[10:::]"));
     }
+
+    @Test
+    public void rejectsDeeplyNestedExpressions() {
+        // One shape nests through nud recursion and one through a chain of led operators.
+        String[] expressions = {
+                repeat("!", 100_000) + "foo",
+                "a" + repeat("|a", 100_000)
+        };
+        for (String text : expressions) {
+            JmespathException e = Assertions.assertThrows(
+                    JmespathException.class,
+                    () -> JmespathExpression.parse(text));
+            assertThat(e.getType(), equalTo(JmespathExceptionType.SYNTAX));
+            assertThat(e.getMessage(), containsString("maximum allowed nesting depth"));
+        }
+    }
+
+    @Test
+    public void parsesAndLintsModeratelyDeepExpressions() {
+        String[] expressions = {
+                repeat("!", 100) + "foo",
+                "a" + repeat(".b", 100),
+                repeat("[", 50) + "foo" + repeat("]", 50)
+        };
+        for (String text : expressions) {
+            JmespathExpression expression = JmespathExpression.parse(text);
+            expression.lint();
+            expression.toString();
+            String serialized = new ExpressionSerializer().serialize(expression);
+            assertThat(JmespathExpression.parse(serialized), equalTo(expression));
+        }
+    }
+
+    private static String repeat(String value, int times) {
+        StringBuilder builder = new StringBuilder(value.length() * times);
+        for (int i = 0; i < times; i++) {
+            builder.append(value);
+        }
+        return builder.toString();
+    }
 }
