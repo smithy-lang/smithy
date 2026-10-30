@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "JMESPath expressions are now limited to a nesting depth of 256. Deeper expressions fail with a syntax error instead of a StackOverflowError.",
+  "pull_requests": []
+}
