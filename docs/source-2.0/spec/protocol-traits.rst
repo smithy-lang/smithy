@@ -86,6 +86,96 @@ support configuration settings.
     }
 
 
+.. smithy-trait:: smithy.api#discriminated
+.. _discriminated-trait:
+
+``discriminated`` trait
+=======================
+
+Summary
+    Indicates that a union is serialized in JSON as a flat object, in which a
+    discriminator field identifies the member that is set and the members of
+    that member's target structure appear alongside it.
+Trait selector
+    ``union``
+Value type
+    ``string`` that contains the name of the discriminator field. When the
+    trait is applied without a value, the discriminator field is named
+    ``__type``. The value MUST NOT be empty.
+Conflicts with
+    :ref:`streaming-trait`
+
+.. warning::
+    This trait is unstable and MAY change in the future. Support for it is
+    optional, so it SHOULD only be used when every implementation that
+    exchanges data using the model supports it.
+
+Given the following union definition,
+
+.. code-block:: smithy
+
+    @discriminated("type")
+    union Shape {
+        circle: CircleData
+        rectangle: RectangleData
+    }
+
+    structure CircleData {
+        radius: Integer
+    }
+
+    structure RectangleData {
+        width: Integer
+        height: Integer
+    }
+
+a value of ``Shape`` with the ``circle`` member set is serialized as:
+
+.. code-block:: json
+
+    {
+        "type": "circle",
+        "radius": 5
+    }
+
+rather than with the standard encoding of a :ref:`union <union>`:
+
+.. code-block:: json
+
+    {
+        "circle": {
+            "radius": 5
+        }
+    }
+
+The following rules apply to a union marked with the ``discriminated`` trait:
+
+* Every member of the union MUST target a structure, and MUST NOT target
+  ``smithy.api#Unit``. A union can be nested by targeting a structure that has
+  a member that targets the union.
+* The discriminator field MUST NOT have the same name as the serialized name
+  of a member of any structure targeted by the union. The serialized name of a
+  member is its member name or, in protocols that use the
+  :ref:`jsonName-trait`, the value of that trait. A collision that only occurs
+  in some protocols, because a member has a ``jsonName`` trait, is reported as
+  a validation event that can be suppressed, so that a service that only uses
+  protocols in which it does not occur can still use the model.
+* The value of the discriminator field is the name of the union member that
+  is set. The ``jsonName`` trait has no effect on the members of the union.
+* Serializers SHOULD write the discriminator field first. Deserializers MUST
+  accept it at any position in the object.
+* If the discriminator field is missing, ``null``, or not a string, including
+  when the object is empty, the deserializer SHOULD report an error. A
+  discriminator value that does not match a member of the union is handled in
+  the same way as an unrecognized member of a standard union.
+
+The trait applies to the JSON serialization used by the ``restJson1``,
+``awsJson1_0``, ``awsJson1_1``, and ``rpcv2Json`` protocols, and to values
+serialized to and from JSON without a protocol, in implementations that support
+it. Every other protocol and serialization format ignores the trait, and
+serializes the union using its standard union encoding.
+
+
 .. smithy-trait:: smithy.api#jsonName
 .. _jsonName-trait:
 

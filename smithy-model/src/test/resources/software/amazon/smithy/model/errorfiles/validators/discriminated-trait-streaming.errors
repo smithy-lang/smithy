@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Streamed: Found conflicting traits on union shape: `discriminated` conflicts with `streaming` | TraitConflict
