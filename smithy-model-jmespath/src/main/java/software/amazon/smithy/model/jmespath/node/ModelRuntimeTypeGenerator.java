@@ -225,20 +225,31 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     }
 
     // Reference-handle projections (input.<name>) are ghost state, coarsely typed as
-    // any until the dependent handle type lands with the type system.
+    // any until the dependent handle type lands with the type system. A reference is
+    // declared either on the structure or directly on a member's target string shape.
     @SuppressWarnings("unchecked")
     private void addReferenceHandleTypes(ShapeId structureId, Object sample) {
         if (!(sample instanceof Map)) {
             return;
         }
-        model.getShape(structureId)
-                .flatMap(shape -> shape.getTrait(ReferencesTrait.class))
-                .ifPresent(trait -> {
-                    for (ReferencesTrait.Reference reference : trait.getReferences()) {
-                        reference.getName()
-                                .ifPresent(name -> ((Map<String, Object>) sample).put(name, LiteralExpression.ANY));
-                    }
-                });
+        Shape container = model.getShape(structureId).orElse(null);
+        if (container == null) {
+            return;
+        }
+        Map<String, Object> map = (Map<String, Object>) sample;
+        container.getTrait(ReferencesTrait.class).ifPresent(trait -> addHandleNames(trait, map));
+        for (MemberShape member : container.members()) {
+            model.getShape(member.getTarget())
+                    .filter(Shape::isStringShape)
+                    .flatMap(shape -> shape.getTrait(ReferencesTrait.class))
+                    .ifPresent(trait -> addHandleNames(trait, map));
+        }
+    }
+
+    private static void addHandleNames(ReferencesTrait trait, Map<String, Object> map) {
+        for (ReferencesTrait.Reference reference : trait.getReferences()) {
+            reference.getName().ifPresent(name -> map.put(name, LiteralExpression.ANY));
+        }
     }
 
     private Object sampleForShapeId(ShapeId target) {

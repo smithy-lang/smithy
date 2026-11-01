@@ -88,6 +88,11 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                                 + reference));
             }
 
+            if (shape.isStringShape()) {
+                reference.getName()
+                        .ifPresent(name -> events.addAll(stringReferenceNameCollisions(model, shape, trait, name)));
+            }
+
             ShapeId shapeId = reference.getResource();
             Optional<Shape> targetedShape = model.getShape(shapeId);
             if (targetedShape.isPresent()) {
@@ -144,6 +149,41 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         }
 
         return ListUtils.of();
+    }
+
+    // A named reference on a string shape projects a resource handle beside the member
+    // that targets it, so the name must stay distinct from the members of any structure
+    // that uses this string shape, mirroring the member check for structure references.
+    private List<ValidationEvent> stringReferenceNameCollisions(
+            Model model,
+            Shape shape,
+            ReferencesTrait trait,
+            String name
+    ) {
+        List<ValidationEvent> events = new ArrayList<>();
+        for (StructureShape structure : model.getStructureShapes()) {
+            boolean usesShape = false;
+            for (MemberShape member : structure.members()) {
+                if (member.getTarget().equals(shape.getId())) {
+                    usesShape = true;
+                    break;
+                }
+            }
+            if (usesShape && structure.getMemberNames().contains(name)) {
+                events.add(error(shape,
+                        trait,
+                        format(
+                                "`references` trait reference name `%s` on string shape `%s` collides with a member of "
+                                        + "structure `%s`, which targets it. The resource handle projects as `input.%s` "
+                                        + "beside that member, so the reference name must be distinct from the members "
+                                        + "of structures that use this shape.",
+                                name,
+                                shape.getId(),
+                                structure.getId(),
+                                name)));
+            }
+        }
+        return events;
     }
 
     private enum ErrorReason {

@@ -110,14 +110,19 @@ Model-only members are available only to build-time analysis such as the
 Reference handles
 --------------------
 
-Named :ref:`references-trait` entries on a structure are projected into the data model
-as resource *handles* reachable as ``<member-root>.<name>`` (for example
-``input.key``). Each handle is an object ``{service, resource, ids}`` synthesized
-from the reference's bindings: ``resource`` is the shape ID of the referenced
-resource, ``service`` is the shape ID of the service that contains it, and
-``ids`` maps each resource identifier name to its value. The handle mirrors the
-coordinates that locate the resource in a :ref:`world snapshot <world-snapshot>`:
-the service shape, then the resource shape, then the identifiers.
+Named :ref:`references-trait` entries are projected into the data model as
+resource *handles* reachable as ``<member-root>.<name>`` (for example
+``input.key``). The entry is declared either on a structure or directly on a
+string shape used as one of its members. Each handle is an object
+``{service, resource, ids}`` synthesized from the reference's bindings:
+``resource`` is the shape ID of the referenced resource, ``service`` is the shape
+ID of the service that contains it, and ``ids`` maps each resource identifier name
+to its value. For a reference on a structure, ``ids`` comes from the reference's
+own ``ids`` mapping. For a reference on a string shape, which has exactly one
+identifier and no ``ids`` mapping, that identifier's value is the member's own
+value. The handle mirrors the coordinates that locate the resource in a
+:ref:`world snapshot <world-snapshot>`: the service shape, then the resource
+shape, then the identifiers.
 
 ``service`` is a service shape ID only. A world snapshot can hold more than one
 instance of a service (for example one per region), but a handle does not yet

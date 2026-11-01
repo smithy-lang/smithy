@@ -13,6 +13,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -150,35 +151,76 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         return builder.build();
     }
 
-    // Projects each named @references on the structure into a ghost resource handle
-    // reachable as input.<name>, synthesized from the observable identifier members.
+    // Projects each named @references into a ghost resource handle reachable as
+    // input.<name>, synthesized from the observable identifier members. A reference is
+    // declared either on the structure (ids maps each identifier to a member) or directly
+    // on a member's target string shape (the member's own value is the single identifier).
     private static ObjectNode withReferenceHandles(Model model, ShapeId structureId, ObjectNode values) {
         Shape shape = model.getShape(structureId).orElse(null);
-        if (shape == null || !shape.hasTrait(ReferencesTrait.class)) {
+        if (shape == null) {
             return values;
         }
         ObjectNode result = values;
-        for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class).getReferences()) {
-            if (!reference.getName().isPresent()) {
+
+        // Structure references: ids maps a resource identifier name to the member that
+        // provides its value.
+        if (shape.hasTrait(ReferencesTrait.class)) {
+            for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class).getReferences()) {
+                if (!reference.getName().isPresent()) {
+                    continue;
+                }
+                ObjectNode.Builder ids = Node.objectNodeBuilder();
+                for (Map.Entry<String, String> entry : reference.getIds().entrySet()) {
+                    Node value = values.getMember(entry.getValue()).orElse(Node.nullNode());
+                    ids.withMember(entry.getKey(), value);
+                }
+                result = result.withMember(reference.getName().get(), buildHandle(model, reference, ids.build()));
+            }
+        }
+
+        // String-shape references: the trait is on a member's target string shape, whose
+        // own value is the referenced resource's single identifier.
+        for (MemberShape member : shape.members()) {
+            Shape target = model.getShape(member.getTarget()).orElse(null);
+            if (target == null || !target.isStringShape() || !target.hasTrait(ReferencesTrait.class)) {
                 continue;
             }
-            ObjectNode.Builder ids = Node.objectNodeBuilder();
-            for (Map.Entry<String, String> entry : reference.getIds().entrySet()) {
-                // ids maps a resource identifier name to the member that provides its value.
-                Node value = values.getMember(entry.getValue()).orElse(Node.nullNode());
-                ids.withMember(entry.getKey(), value);
+            for (ReferencesTrait.Reference reference : target.expectTrait(ReferencesTrait.class).getReferences()) {
+                if (!reference.getName().isPresent()) {
+                    continue;
+                }
+                Optional<String> identifier = singleIdentifierName(model, reference.getResource());
+                if (!identifier.isPresent()) {
+                    continue;
+                }
+                Node value = values.getMember(member.getMemberName()).orElse(Node.nullNode());
+                ObjectNode ids = Node.objectNodeBuilder().withMember(identifier.get(), value).build();
+                result = result.withMember(reference.getName().get(), buildHandle(model, reference, ids));
             }
-            ObjectNode.Builder handle = Node.objectNodeBuilder()
-                    .withMember("resource", reference.getResource().toString())
-                    .withMember("ids", ids.build());
-            // The handle locates the resource under a service shape in the world snapshot.
-            // Use the reference's explicit service, else the single service that contains
-            // the resource; leave it unset when that is ambiguous.
-            serviceName(model, reference)
-                    .ifPresent(service -> handle.withMember("service", service));
-            result = result.withMember(reference.getName().get(), handle.build());
         }
+
         return result;
+    }
+
+    // Builds the {service, resource, ids} handle object. The handle locates the resource
+    // under a service shape in the world snapshot: the reference's explicit service, else
+    // the single service that contains the resource; left unset when that is ambiguous.
+    private static ObjectNode buildHandle(Model model, ReferencesTrait.Reference reference, ObjectNode ids) {
+        ObjectNode.Builder handle = Node.objectNodeBuilder()
+                .withMember("resource", reference.getResource().toString())
+                .withMember("ids", ids);
+        serviceName(model, reference).ifPresent(service -> handle.withMember("service", service));
+        return handle.build();
+    }
+
+    // The single identifier name of a resource referenced from a string shape, or empty
+    // when the resource is missing or does not have exactly one identifier.
+    private static Optional<String> singleIdentifierName(Model model, ShapeId resourceId) {
+        return model.getShape(resourceId)
+                .flatMap(Shape::asResourceShape)
+                .map(ResourceShape::getIdentifiers)
+                .filter(ids -> ids.size() == 1)
+                .map(ids -> ids.keySet().iterator().next());
     }
 
     // The service shape name that locates the referenced resource: the reference's own

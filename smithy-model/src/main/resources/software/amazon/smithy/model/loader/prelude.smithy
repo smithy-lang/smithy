@@ -778,8 +778,10 @@ structure Reference {
     @required
     resource: NonEmptyString
 
-    /// An optional name for the reference. The name MUST NOT collide with a
-    /// member of the structure, or with the name of any other reference.
+    /// An optional name for the reference. The name MUST NOT collide with the name
+    /// of any other reference, with a member of the structure the trait is applied
+    /// to, or, when the trait is applied to a string shape, with a member of any
+    /// structure that uses that shape.
     name: NonEmptyString
 
     /// Defines a mapping of each resource identifier name to a structure member
