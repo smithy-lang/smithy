@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Report resource mixins that define properties as a validation event instead of throwing an `IllegalStateException` from the model assembler.",
+  "pull_requests": [
+    "[#3350](https://github.com/smithy-lang/smithy/pull/3350)"
+  ]
+}
