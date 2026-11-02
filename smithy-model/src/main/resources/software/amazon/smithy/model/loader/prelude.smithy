@@ -1804,3 +1804,20 @@ structure ResourceMemberBinding {
     @required
     path: NonEmptyString
 }
+
+/// Indicates that a union is serialized as an internally tagged union in JSON documents: a flat object with a
+/// field, named by the value of the trait, whose value is the name of the active union member. When the value is
+/// omitted, the field is named `__type`.
+@trait(
+    selector: "union"
+    conflicts: [streaming]
+    breakingChanges: [
+        {
+            change: "any"
+        }
+    ]
+)
+@unstable
+@default("__type")
+@length(min: 1)
+string discriminated
