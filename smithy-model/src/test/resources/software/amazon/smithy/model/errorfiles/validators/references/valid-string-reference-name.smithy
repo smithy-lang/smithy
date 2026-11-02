@@ -9,8 +9,8 @@ resource FooResource {
 }
 
 // The reference name is distinct from the member that targets the string shape, so the
-// handle projection input.fooHandle does not shadow the input.fooId value.
-@references([{resource: FooResource, name: "fooHandle"}])
+// handle projection input.foo does not shadow the input.fooId value.
+@references([{resource: FooResource, name: "foo"}])
 string FooReference
 
 structure MyStructure {
