@@ -1,0 +1,1 @@
+[ERROR] smithy.example#AppliedMixinResource: Resource shapes with the mixin trait may not define any properties. Resource mixin shape `smithy.example#AppliedMixinResource` defines one or more properties. | Model
