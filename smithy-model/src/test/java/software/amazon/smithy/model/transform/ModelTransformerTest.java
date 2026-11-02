@@ -199,6 +199,7 @@ public class ModelTransformerTest {
                 "mixins-with-member-override-3",
                 "mixins-with-member-override-4",
                 "mixins-with-mixin-local-traits",
+                "mixins-with-conflicting-trait-values",
                 "operations",
                 "resources",
                 "services",
