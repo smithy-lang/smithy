@@ -154,6 +154,13 @@ to convert each shape type:
         shape, but only a single member can be set to a non-null value.
         Deserializers MUST ignore an unrecognized ``__type`` member if present.
 
+        Support for the :ref:`discriminated-trait` is optional and this protocol
+        does not require it. A union marked with that trait is serialized as
+        described by the trait instead, and its discriminator field, which
+        defaults to ``__type``, is not ignored. Clients and services that do
+        not support the trait might fail at build time or at runtime when
+        a model uses it.
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Empty body serialization
