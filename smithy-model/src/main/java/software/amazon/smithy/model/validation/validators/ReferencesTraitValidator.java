@@ -52,12 +52,11 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
         // Count how many references declare each name so a name shared by two
         // references can be reported once as a collision.
-        Map<String, Long> nameCounts = trait.getReferences()
-                .stream()
-                .map(ReferencesTrait.Reference::getName)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.groupingBy(identity(), Collectors.counting()));
+        Map<String, Long> nameCounts = new HashMap<>();
+        for (ReferencesTrait.Reference reference : trait.getReferences()) {
+            Optional<String> referenceName = reference.getName();
+            referenceName.ifPresent(s -> nameCounts.merge(s, 1L, Long::sum));
+        }
         nameCounts.forEach((name, count) -> {
             if (count > 1) {
                 events.add(error(shape,

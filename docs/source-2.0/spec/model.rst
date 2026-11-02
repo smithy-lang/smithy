@@ -849,20 +849,21 @@ them to the top level, means a user-defined identifier or property name can neve
 collide with a structural member, and leaves room to add further members (such as
 future service-instance identifiers) without reshaping existing instances.
 
-A service instance has a ``resources`` member mapping each resource the service
-contains (at any depth, including child resources) to a flat array of that
-resource's instances. Child resources are not nested inside their parent resource
-instances. For example, a ``ContentService`` that contains a ``Folder`` resource
-and a child ``Document`` resource is exposed as:
+A service instance has a ``resources`` member mapping the absolute shape ID of
+each resource the service contains (at any depth, including child resources) to a
+flat array of that resource's instances. Child resources are not nested inside
+their parent resource instances. For example, an ``example.content#ContentService``
+that contains a ``Folder`` resource and a child ``Document`` resource is exposed
+as:
 
 .. code-block:: json
 
     {
         "resources": {
-            "Folder": [
+            "example.content#Folder": [
                 {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
             ],
-            "Document": [
+            "example.content#Document": [
                 {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
                 {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
             ]
@@ -871,27 +872,35 @@ and a child ``Document`` resource is exposed as:
 
 .. _world-snapshot:
 
-A *world snapshot* maps each service shape to the set of that service's instances
-(an array, since a service can have multiple instances such as one per region).
-It is used as the ``before`` and ``after`` state of an operation call (see the
-:ref:`contracts trait <contracts-trait>`). A resource handle selects a service by
-its shape ID and resolves the resource within that service's single instance; a
-service shape with more than one instance in the snapshot cannot yet be addressed
-by a handle.
+World snapshots
+~~~~~~~~~~~~~~~
 
-For example, a world snapshot for a single-region deployment of ``ContentService``
-is exposed as:
+A resource or service instance describes one piece of state. A call is
+described by the state of the world before and after it, so a *world snapshot*
+captures that state at one moment. It maps the absolute shape ID of each service
+to an array of that service's instances (an array because a service can have
+several, such as one per region). A snapshot can contain more than one service
+shape, so state in related services can be described together.
+
+The :ref:`contracts trait <contracts-trait>` uses two world snapshots, ``before``
+and ``after``, to describe the state on either side of a call. A resource handle
+selects a service by its shape ID and resolves the resource within that
+service's single instance. A snapshot with more than one instance of a service
+cannot yet be addressed by a handle.
+
+For example, a world snapshot for a single-region deployment of
+``example.content#ContentService`` is exposed as:
 
 .. code-block:: json
 
     {
-        "ContentService": [
+        "example.content#ContentService": [
             {
                 "resources": {
-                    "Folder": [
+                    "example.content#Folder": [
                         {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
                     ],
-                    "Document": [
+                    "example.content#Document": [
                         {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
                         {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
                     ]
