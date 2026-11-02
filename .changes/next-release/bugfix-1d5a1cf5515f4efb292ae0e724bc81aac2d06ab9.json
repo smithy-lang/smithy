@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed flattening mixins so that when a shape uses multiple mixins that apply the same trait, the trait from the mixin that appears later in the list takes precedence, matching how traits are resolved when a model is loaded.",
+  "pull_requests": []
+}

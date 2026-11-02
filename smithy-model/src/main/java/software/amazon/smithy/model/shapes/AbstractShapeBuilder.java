@@ -7,6 +7,7 @@ package software.amazon.smithy.model.shapes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -306,15 +307,19 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
             return (B) this;
         }
 
+        // Resolve inherited traits the same way Shape does when it is built: traits of mixins that come later in
+        // the list of mixins take precedence over traits of mixins that come earlier in the list.
+        Map<ShapeId, Trait> inheritedTraits = new HashMap<>();
         for (Shape mixin : mixins.values()) {
-            // Only inherit non-local traits that aren't already on the shape.
-            Map<ShapeId, Trait> nonLocalTraits = MixinTrait.getNonLocalTraitsFromMap(mixin.getAllTraits());
-            for (Map.Entry<ShapeId, Trait> entry : nonLocalTraits.entrySet()) {
-                if (!traits.hasValue() || !traits.get().containsKey(entry.getKey())) {
-                    addTrait(entry.getValue());
-                }
-            }
+            inheritedTraits.putAll(MixinTrait.getNonLocalTraitsFromMap(mixin.getAllTraits()));
         }
+
+        // Traits applied directly to the shape take precedence over inherited traits.
+        for (ShapeId localTrait : traits.peek().keySet()) {
+            inheritedTraits.remove(localTrait);
+        }
+
+        addTraits(inheritedTraits.values());
 
         // Don't call clearMixins here because its side effects are unwanted.
         mixins.clear();
