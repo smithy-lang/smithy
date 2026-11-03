@@ -1,5 +1,84 @@
 # Smithy Changelog
 
+## 1.75.0 (2026-11-05)
+
+### Features
+
+- Bumped the IDL version to 2.1.
+  ([#3059](https://github.com/smithy-lang/smithy/pull/3059))
+- Added the new `idx` trait to declare the expected wire order of a shape's
+  members as well as the new `indexed` trait to declare that every structure and
+  union in the closure of a service MUST be indexed.
+  ([#3238](https://github.com/smithy-lang/smithy/pull/3238))
+- Added inline collection declarations to IDL 2.1, allowing list and map shapes
+  to be declared directly in member target positions using `[Target]` and
+  `{KeyTarget: ValueTarget}` instead of a separate top-level shape. The
+  assembler generates one shared synthetic shape per distinct collection type in
+  a namespace. ([#3134](https://github.com/smithy-lang/smithy/pull/3134))
+- Added `aws.apigateway#apiGatewayConfig` trait, which defines the API Gateway
+  configuration version for a service.
+  ([#3315](https://github.com/smithy-lang/smithy/pull/3315))
+- Added tagged string literals to IDL 2.1. Prefixing a string or text block with
+  `#re`, `#b`, `#hex`, or `#timestamp` changes how its content is interpreted at
+  parse time, making regular expressions, binary data, hex dumps, and RFC 3339
+  timestamps easier to write and read.
+  ([#3163](https://github.com/smithy-lang/smithy/pull/3163))
+- Added syntax sugar for `idx` traits so that indexes can be defined more
+  concisely. Models serialized with `SmithyIdlModelSerializer` will use this
+  syntax by default and the Smithy formatter will update IDL 2.1+ models to use
+  it. ([#3238](https://github.com/smithy-lang/smithy/pull/3238))
+- Added the unstable `@discriminated` trait for modeling unions that are
+  serialized as internally tagged objects in JSON, along with validation that
+  members target structures and that the discriminator does not collide with a
+  targeted structure member. Support for the trait is optional.
+  ([#3343](https://github.com/smithy-lang/smithy/pull/3343))
+- Add since field for unstableFeatureInfo and explain for downgrade in diff
+  event ([#3316](https://github.com/smithy-lang/smithy/pull/3316))
+
+### Bug Fixes
+
+- Fixed flattening mixins so that when a shape uses multiple mixins that apply
+  the same trait, the trait from the mixin that appears later in the list takes
+  precedence, matching how traits are resolved when a model is loaded.
+  ([#3349](https://github.com/smithy-lang/smithy/pull/3349))
+- Stop treating the source location given to `ModelAssembler#addUnparsedModel`
+  as a JAR to import. In-memory models with a `.jar` source location are now
+  ignored with a warning. Use `addImport` to load JARs.
+  ([#3323](https://github.com/smithy-lang/smithy/pull/3323))
+- Fix quadratic-time duplicate detection in the `@uniqueItems` node validator.
+  ([#3338](https://github.com/smithy-lang/smithy/pull/3338))
+- Report resource mixins that define properties as a validation event instead of
+  throwing an `IllegalStateException` from the model assembler.
+  ([#3350](https://github.com/smithy-lang/smithy/pull/3350))
+- Fixed Smithy IDL serialization of member and inline collection targets that
+  reference public prelude shapes omitted from a programmatically built model.
+- Fixed `FileManifest` path validation so that paths containing `..` segments
+  can no longer escape the manifest's base directory.
+  ([#3334](https://github.com/smithy-lang/smithy/pull/3334))
+- Improved performance when merging repeated array metadata values, which now
+  scales linearly instead of quadratically.
+  ([#3344](https://github.com/smithy-lang/smithy/pull/3344))
+- Fixed super-linear regex backtracking when validating enum member and trait
+  names, enum values, CloudWatch namespaces, ARN templates, and endpoint
+  patterns, and when formatting generated trait Javadoc. Most of the affected
+  regular expressions were replaced with linear scans.
+  ([#3336](https://github.com/smithy-lang/smithy/pull/3336))
+- Only load source context for validation events from local files and JARs.
+  ([#3322](https://github.com/smithy-lang/smithy/pull/3322))
+
+### Documentation
+
+- Clarified that the order of values in concatenated list traits and metadata
+  arrays is unspecified, and documented how `ModelAssembler` handles repeated
+  shapes and metadata added in code.
+  ([#3363](https://github.com/smithy-lang/smithy/pull/3363))
+
+### Other
+
+- Added negative event stream protocol tests for oversized string headers,
+  covering both single-byte ASCII overflow and multibyte UTF-8 byte-limit
+  overflow. ([#3325](https://github.com/smithy-lang/smithy/pull/3325))
+
 ## 1.74.1 (2026-10-13)
 
 ### Bug Fixes
