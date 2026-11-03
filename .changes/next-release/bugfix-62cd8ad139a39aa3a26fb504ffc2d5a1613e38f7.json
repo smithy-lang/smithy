@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed docgen links to operation members and auth schemes, which pointed at anchors that were never written. Members and auth schemes now get anchors, and links within a page use only the fragment.",
+  "pull_requests": []
+}
