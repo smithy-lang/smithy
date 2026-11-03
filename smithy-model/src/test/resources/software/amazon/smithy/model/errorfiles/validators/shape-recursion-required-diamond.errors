@@ -1,0 +1,5 @@
+[ERROR] smithy.example#S0: Found invalid shape recursion: | ShapeRecursion
+[ERROR] smithy.example#S1: Found invalid shape recursion: | ShapeRecursion
+[ERROR] smithy.example#S2: Found invalid shape recursion: | ShapeRecursion
+[ERROR] smithy.example#S3: Found invalid shape recursion: | ShapeRecursion
+[ERROR] smithy.example#S4: Found invalid shape recursion: | ShapeRecursion
