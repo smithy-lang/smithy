@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added the Smithy IDL version 2.x, which resolves to the latest supported minor version under major version 2. The smithy migrate command now upgrades models to 2.x.",
+  "pull_requests": []
+}

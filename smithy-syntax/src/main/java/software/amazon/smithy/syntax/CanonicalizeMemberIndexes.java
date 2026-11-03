@@ -158,6 +158,9 @@ final class CanonicalizeMemberIndexes implements Function<TokenTree, TokenTree> 
     }
 
     private static boolean supportsMemberIndexVersion(String version) {
+        if ("2.x".equals(version)) {
+            return true;
+        }
         if (version == null) {
             return false;
         }

@@ -339,7 +339,7 @@ The value provided in a version control statement is a string that MUST
 adhere to the following ABNF:
 
 .. productionlist:: smithy
-    version_string :1*DIGIT [ "." 1*DIGIT ]
+    version_string :1*DIGIT [ "." 1*DIGIT ] / DIGIT %s".x"
 
 The following example sets the version to ``2``, meaning that tooling MUST
 support a version greater than or equal to ``2.0`` and less than ``3.0``:
@@ -384,6 +384,18 @@ version greater than or equal to ``2.1`` and less than ``3.0``:
    <tagged-string-literals>`, which provide alternative syntax for expressing
    regex patterns, binary data, hex dumps, and timestamps. It also introduces
    :ref:`member index shorthand <idx-trait>`.
+
+The version ``2.x`` resolves to the latest minor version of Smithy IDL 2
+supported by the tooling loading the model. For example, tooling that supports
+IDL 2.1 interprets the following version statement as ``2.1``:
+
+.. code-block:: smithy
+
+    $version: "2.x"
+
+Models using ``2.x`` can use all IDL features supported by the tooling within
+major version 2. Use an explicit minor version when a model needs to declare
+a specific minimum version requirement.
 
 .. rubric:: Version compatibility
 

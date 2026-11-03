@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -17,6 +18,17 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public class AstModelLoaderTest {
+    @Test
+    public void loadsLatestMajorVersion() {
+        Model model = Model.assembler()
+                .addDocumentNode(Node.parse("{\"smithy\": \"2.x\", \"shapes\": {"
+                        + "\"smithy.example#Example\": {\"type\": \"string\"}}}"))
+                .assemble()
+                .unwrap();
+
+        assertTrue(model.expectShape(ShapeId.from("smithy.example#Example")).isStringShape());
+    }
+
     @Test
     public void failsToLoadPropertiesFromV1() {
         ValidatedResult<Model> model = Model.assembler()

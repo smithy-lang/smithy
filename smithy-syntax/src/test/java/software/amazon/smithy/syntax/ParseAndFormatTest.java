@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
@@ -26,6 +27,17 @@ import software.amazon.smithy.utils.IoUtils;
 public class ParseAndFormatTest {
 
     private static final String CORPUS_DIR = "formatter";
+
+    @Test
+    public void latestMajorVersionCanonicalizesMemberIndexes() {
+        String model = IoUtils.readUtf8Resource(getClass(), "formatter/member-index-traits.smithy")
+                .replace("\"2.1\"", "\"2.x\"");
+        String expected = IoUtils.readUtf8Resource(getClass(), "formatter/member-index-traits.formatted.smithy")
+                .replace("\"2.1\"", "\"2.x\"");
+
+        TokenTree tree = TokenTree.of(IdlTokenizer.create("test.smithy", model));
+        assertEquals(expected, Formatter.format(tree, 120));
+    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("tests")

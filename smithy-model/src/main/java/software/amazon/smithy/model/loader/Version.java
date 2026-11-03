@@ -70,6 +70,8 @@ enum Version {
             case "2.0":
                 return VERSION_2_0;
             case "2.1":
+                // Keep 2.x aliased to the latest supported minor version of Smithy 2.
+            case "2.x":
                 return VERSION_2_1;
             default:
                 return null;

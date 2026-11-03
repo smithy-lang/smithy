@@ -22,6 +22,8 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opentest4j.AssertionFailedError;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -45,10 +47,27 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 public class IdlModelLoaderTest {
+    @ParameterizedTest
+    @ValueSource(strings = {"inline-collections", "member-indexes", "tagged-literals"})
+    public void latestMajorVersionSupportsLatestMinorVersionFeatures(String fixture) {
+        String contents = IoUtils.readUtf8Resource(getClass(), "valid/2.1/" + fixture + ".smithy");
+        Model expected = Model.assembler()
+                .addUnparsedModel("test.smithy", contents)
+                .assemble()
+                .unwrap();
+        Model actual = Model.assembler()
+                .addUnparsedModel("test.smithy", contents.replace("$version: \"2.1\"", "$version: \"2.x\""))
+                .assemble()
+                .unwrap();
+
+        assertEquals(expected, actual);
+    }
+
     @Test
     public void loadsAppropriateSourceLocations() {
         Model model = Model.assembler()

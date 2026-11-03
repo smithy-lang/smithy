@@ -38,7 +38,8 @@ properties:
       - **Required**. Defines the :ref:`version <smithy-version>` of the
         Smithy specification (e.g., "|release|"). The version can be set to
         a single number like "2" or include a point release like "2.0" or
-        "2.1".
+        "2.1", or to "2.x" to use the latest supported minor version under
+        major version 2.
     * - metadata
       - object
       - Defines all of the :ref:`metadata <metadata>` about the model

@@ -67,7 +67,10 @@ public class MigrateCommandTest {
         Path modelsDir = tempDir.resolve("model");
         Path config = tempDir.resolve("smithy-build.json");
 
-        SmithyCli.create().run("upgrade-1-to-2", "--config", config.toString(), modelsDir.toString());
+        assertThat(SmithyCli.create().run("migrate", "--config", config.toString(), modelsDir.toString()), equalTo(0));
+        assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
+
+        assertThat(SmithyCli.create().run("migrate", "--config", config.toString(), modelsDir.toString()), equalTo(0));
         assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
     }
 
