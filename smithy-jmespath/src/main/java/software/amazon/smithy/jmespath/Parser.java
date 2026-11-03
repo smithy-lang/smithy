@@ -72,8 +72,12 @@ final class Parser {
             TokenType.LPAREN
     };
 
+    /** Maximum nesting depth of an expression, counting both recursion and chained led operators. */
+    private static final int MAX_NESTING_DEPTH = 256;
+
     private final String expression;
     private final TokenIterator iterator;
+    private int depth;
 
     private Parser(String expression, JmespathRuntime<?> runtime) {
         this.expression = expression;
@@ -88,11 +92,26 @@ final class Parser {
     }
 
     private JmespathExpression expression(int rbp) {
-        JmespathExpression left = nud();
-        while (iterator.hasNext() && rbp < iterator.peek().type.lbp) {
-            left = led(left);
+        int entryDepth = depth;
+        try {
+            // Each nested sub-expression adds one level.
+            increaseDepth();
+            JmespathExpression left = nud();
+            while (iterator.hasNext() && rbp < iterator.peek().type.lbp) {
+                // Each led wraps the left expression in another AST node, so it adds a level too.
+                increaseDepth();
+                left = led(left);
+            }
+            return left;
+        } finally {
+            depth = entryDepth;
         }
-        return left;
+    }
+
+    private void increaseDepth() {
+        if (++depth > MAX_NESTING_DEPTH) {
+            throw iterator.syntax("Expression exceeds the maximum allowed nesting depth of " + MAX_NESTING_DEPTH);
+        }
     }
 
     private JmespathExpression nud() {
