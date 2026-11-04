@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -30,8 +31,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -238,6 +243,83 @@ public class SmithyIdlModelSerializerTest {
                 .build();
         Map<Path, String> serialized = serializer.serialize(model);
         assertThat(serialized.get(Paths.get("smithy.api.smithy")), containsString("namespace smithy.api"));
+    }
+
+    @Test
+    public void serializesMemberTargetsWithoutPreludeDefinitions() {
+        Model model = Model.builder()
+                .addShapes(
+                        StringShape.builder().id("smithy.example#String").build(),
+                        StructureShape.builder()
+                                .id("smithy.example#Example")
+                                .addMember("stringValue", ShapeId.from("smithy.api#String"))
+                                .addMember("bigIntegerValue", ShapeId.from("smithy.api#BigInteger"))
+                                .build(),
+                        ListShape.builder()
+                                .id("smithy.example#Strings")
+                                .member(ShapeId.from("smithy.api#String"))
+                                .build(),
+                        MapShape.builder()
+                                .id("smithy.example#Numbers")
+                                .key(ShapeId.from("smithy.api#String"))
+                                .value(ShapeId.from("smithy.api#BigInteger"))
+                                .build())
+                .build();
+
+        String result = SmithyIdlModelSerializer.builder()
+                .build()
+                .serialize(model)
+                .get(Paths.get("smithy.example.smithy"));
+
+        assertThat(result, containsString("stringValue: smithy.api#String"));
+        assertThat(result, containsString("bigIntegerValue: BigInteger"));
+        assertThat(result, containsString("member: smithy.api#String"));
+        assertThat(result, containsString("key: smithy.api#String"));
+        assertThat(result, containsString("value: BigInteger"));
+        Model.assembler().addUnparsedModel("test.smithy", result).assemble().unwrap();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[BigInteger]",
+            "{String: BigInteger}",
+            "[{String: [BigInteger]}]",
+            "{String: {String: [BigInteger]}}"})
+    public void serializesInlineCollectionsWithoutPreludeDefinitions(String target) {
+        Model completeModel = Model.assembler()
+                .addUnparsedModel("test.smithy",
+                        "$version: \"2.1\"\n"
+                                + "namespace smithy.example\n"
+                                + "structure Example { value: " + target + " }\n")
+                .assemble()
+                .unwrap();
+        Model model = Model.builder()
+                .addShapes(completeModel.shapes().filter(shape -> !Prelude.isPreludeShape(shape)).toArray(Shape[]::new))
+                .build();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+
+        Map<Path, String> serialized = serializer.serialize(model);
+
+        assertThat(serialized, equalTo(serializer.serialize(completeModel)));
+        String result = serialized.get(Paths.get("smithy.example.smithy"));
+        assertThat(result, containsString("value: " + target));
+        Model.assembler().addUnparsedModel("test.smithy", result).assemble().unwrap();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"smithy.example#Missing", "smithy.api#Missing"})
+    public void rejectsUnknownMemberTargets(String target) {
+        Model model = Model.builder()
+                .addShape(StructureShape.builder()
+                        .id("smithy.example#Example")
+                        .addMember("value", ShapeId.from(target))
+                        .build())
+                .build();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
+
+        ExpectationNotMetException exception = assertThrows(ExpectationNotMetException.class,
+                () -> serializer.serialize(model));
+
+        assertThat(exception.getMessage(), containsString(target));
     }
 
     @Test

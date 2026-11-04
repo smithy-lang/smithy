@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fixed Smithy IDL serialization of member and inline collection targets that reference public prelude shapes omitted from a programmatically built model.",
+  "pull_requests": []
+}
