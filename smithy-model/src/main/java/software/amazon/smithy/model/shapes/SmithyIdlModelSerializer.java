@@ -660,7 +660,7 @@ public final class SmithyIdlModelSerializer {
                             assignment = " = " + Node.printJson(member.expectTrait(DefaultTrait.class).toNode());
                         }
                         ShapeId targetId = member.getTarget();
-                        if (model.expectShape(targetId).hasTrait(SyntheticShapeTrait.ID)) {
+                        if (isSyntheticTarget(targetId)) {
                             String inlineSyntax = renderInlineCollectionTarget(targetId);
                             codeWriter.write("$L: $L$L", member.getMemberName(), inlineSyntax, assignment);
                         } else {
@@ -686,11 +686,23 @@ public final class SmithyIdlModelSerializer {
             }
         }
 
+        private boolean isSyntheticTarget(ShapeId targetId) {
+            Shape target = model.getShape(targetId).orElse(null);
+            if (target == null) {
+                // Public prelude shapes can be serialized as named references without their definitions.
+                if (Prelude.isPublicPreludeShape(targetId)) {
+                    return false;
+                }
+                target = model.expectShape(targetId);
+            }
+            return target.hasTrait(SyntheticShapeTrait.ID);
+        }
+
         private String renderInlineCollectionTarget(ShapeId targetId) {
             Shape target = model.expectShape(targetId);
             if (target.isListShape()) {
                 ShapeId memberTarget = target.asListShape().get().getMember().getTarget();
-                if (model.expectShape(memberTarget).hasTrait(SyntheticShapeTrait.ID)) {
+                if (isSyntheticTarget(memberTarget)) {
                     return "[" + renderInlineCollectionTarget(memberTarget) + "]";
                 }
                 return "[" + codeWriter.formatShapeId(memberTarget) + "]";
@@ -698,10 +710,10 @@ public final class SmithyIdlModelSerializer {
                 MapShape map = target.asMapShape().get();
                 ShapeId keyTarget = map.getKey().getTarget();
                 ShapeId valueTarget = map.getValue().getTarget();
-                String keyStr = model.expectShape(keyTarget).hasTrait(SyntheticShapeTrait.ID)
+                String keyStr = isSyntheticTarget(keyTarget)
                         ? renderInlineCollectionTarget(keyTarget)
                         : codeWriter.formatShapeId(keyTarget);
-                String valueStr = model.expectShape(valueTarget).hasTrait(SyntheticShapeTrait.ID)
+                String valueStr = isSyntheticTarget(valueTarget)
                         ? renderInlineCollectionTarget(valueTarget)
                         : codeWriter.formatShapeId(valueTarget);
                 return "{" + keyStr + ": " + valueStr + "}";
