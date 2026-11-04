@@ -55,6 +55,7 @@ execution hooks, but do not receive `modifyBeforeCall` for the current call. An
 error raised by this hook is propagated directly because execution has not yet
 started.
 
+(client-guidance-interceptors-call-wrappers)=
 ### Call wrappers
 
 Most interceptor hooks run at a fixed point in the execution pipeline. The
@@ -93,6 +94,7 @@ by execution completion hooks. Errors produced by a delegated execution are
 processed by that execution's completion hooks before propagating back to the
 wrapper.
 
+(client-guidance-interceptors-hook-sequence)=
 ### Hook sequence
 
 The following is an ordered list of recommended hooks for one execution. The
@@ -153,6 +155,7 @@ protocols, these are HTTP requests and HTTP responses.
 8. **readAfterExecution** *(immutable)* — The last thing called during an
    execution.
 
+(client-guidance-interceptors-error-handling)=
 ### Error handling
 
 Error handling behavior depends on where in the pipeline the hook is called and
