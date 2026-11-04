@@ -8,12 +8,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jmespath.ast.ComparatorExpression;
 import software.amazon.smithy.jmespath.ast.FunctionExpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ContractsTraitTest {
     @Test
@@ -39,5 +41,32 @@ public class ContractsTraitTest {
         assertThat(trait.getContracts().size(), equalTo(1));
         contract = trait.getContracts().get("DocumentApprovedOnSuccess");
         assertThat(contract.getExpression(), isA(FunctionExpression.class));
+    }
+
+    @Test
+    public void staticallyLintsContractExpressions() {
+        // ContractsTraitValidator lints each expression against the operation call's
+        // static type, independently of any example evaluation.
+        List<ValidationEvent> events = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("errorfiles/operation-contracts-static-lint.smithy"))
+                .assemble()
+                .getValidationEvents();
+
+        // An expression that does not return a boolean is flagged.
+        assertThat(events.stream()
+                .anyMatch(e -> e.getMessage()
+                        .contains("Contract NotBoolean expression must return a boolean type")),
+                equalTo(true));
+        // A malformed function call is flagged.
+        assertThat(events.stream()
+                .anyMatch(e -> e.getMessage()
+                        .contains("resource function expected 2 arguments")),
+                equalTo(true));
+        // A reference to a member the input does not have is flagged.
+        assertThat(events.stream()
+                .anyMatch(e -> e.getMessage()
+                        .contains("Object field 'nope' does not exist")),
+                equalTo(true));
     }
 }

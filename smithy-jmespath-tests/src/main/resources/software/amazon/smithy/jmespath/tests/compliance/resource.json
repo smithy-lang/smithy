@@ -20,10 +20,19 @@
         {"resources": {"example#Document": []}}
       ]
     },
+    "badCollection": {
+      "example#DocumentService": [
+        {"resources": {"example#Document": {"not": "an array"}}}
+      ]
+    },
     "handleD1": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1"}},
     "handleMissingId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "zzz"}},
     "handleMissingService": {"service": "example#OtherService", "resource": "example#Document", "ids": {"id": "d1"}},
-    "notAHandle": "nope"
+    "handleNoIds": {"service": "example#DocumentService", "resource": "example#Document"},
+    "handleExtraId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1", "bogus": "x"}},
+    "notAHandle": "nope",
+    "successCall": {"input": {"count": 1}, "error": null},
+    "failCall": {"input": {"count": 1}, "error": {"shapeId": "example#SomeError", "content": {}}}
   },
   "cases": [
     {
@@ -52,6 +61,21 @@
       "result": null
     },
     {
+      "comment": "a handle with no ids member matches nothing, so null",
+      "expression": "resource(before, handleNoIds)",
+      "result": null
+    },
+    {
+      "comment": "an ids object with a key absent from the identifiers does not match, so null",
+      "expression": "resource(before, handleExtraId)",
+      "result": null
+    },
+    {
+      "comment": "a resources collection that is not an array yields null",
+      "expression": "resource(badCollection, handleD1)",
+      "result": null
+    },
+    {
       "comment": "a world with more than one instance of the service shape is an error",
       "expression": "resource(twoInstances, handleD1)",
       "error": "invalid-value"
@@ -69,6 +93,26 @@
     {
       "comment": "resource requires exactly two arguments",
       "expression": "resource(before)",
+      "error": "invalid-arity"
+    },
+    {
+      "comment": "requires is satisfied when a successful call meets the predicate",
+      "expression": "requires(successCall, successCall.input.count == `1`)",
+      "result": true
+    },
+    {
+      "comment": "requires fails when a successful call violates the predicate",
+      "expression": "requires(successCall, successCall.input.count == `2`)",
+      "result": false
+    },
+    {
+      "comment": "requires is vacuously satisfied on a failed call, whatever the predicate",
+      "expression": "requires(failCall, failCall.input.count == `2`)",
+      "result": true
+    },
+    {
+      "comment": "requires requires exactly two arguments",
+      "expression": "requires(successCall)",
       "error": "invalid-arity"
     }
   ]
