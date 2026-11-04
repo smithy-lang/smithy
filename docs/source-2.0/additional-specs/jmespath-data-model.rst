@@ -65,7 +65,8 @@ Footnotes
 .. [#fnumbers] ``long``, ``bigInteger``, ``bigDecimal`` are exposed as
    numbers to JMESPath. If a value for one of these types truly exceeds
    the value of a double (the native numeric type of JMESPath), then
-   querying these types is a bad idea.
+   the behavior of querying these types is undefined and might produce
+   an error.
 .. [#ftimestamp] ``timestamp`` values are represented in JMESPath expressions
    as epoch seconds with optional decimal precision. This allows for
    timestamp values to be used with relative comparators like ``<`` and ``>``.
@@ -75,11 +76,37 @@ Footnotes
 .. [#funion] ``union`` values are represented exactly like structures except
    only a single member is set to a non-null value.
 
+.. _jmespath-contract-extensions:
+
+------------------------------
+Contract expression extensions
+------------------------------
+
+JMESPath_ on its own can only query a value. The :ref:`contract traits
+<contract-traits>` also need to say things about an operation *call* and about
+the state of resources before and after it, so Smithy extends the data model
+and the function set available to contract expressions. These extensions are
+defined by Smithy and are not part of the JMESPath specification. They are
+available only in the expressions of contract traits, such as the
+:ref:`contracts trait <contracts-trait>`. Other uses of JMESPath, such as
+:ref:`waiters <waiters>`, are not meant to use them.
+
+The pieces fit together as follows:
+
+1. A *call* exposes ``input``, ``output``, ``error``, ``before`` and ``after``.
+2. A named :ref:`references-trait` entry on a structure projects a resource
+   *handle*, such as ``input.document``.
+3. The ``resource`` function looks that handle up in the ``before`` or
+   ``after`` snapshot and returns the resource's state.
+
+Contract expressions are currently checked against :ref:`examples-trait`
+values that provide ``before`` and ``after`` snapshots. See the :ref:`contracts
+trait <contracts-trait>` for a complete example.
+
 .. _jmespath-operation-call:
 
---------------------
 Operation calls
---------------------
+~~~~~~~~~~~~~~~
 
 An operation has no value instance; it is a procedure. What a
 :ref:`contract <contracts-trait>` constrains is a single *call*, exposed to
@@ -90,13 +117,12 @@ JMESPath as an object with the following members:
 - ``error``: an object ``{shapeId, content}`` on a failed call; absent on success.
   ``output`` and ``error`` are mutually exclusive.
 - ``before`` and ``after``: :ref:`world snapshots <world-snapshot>` immediately
-  before and after the call. These are model-only (see below).
+  before and after the call. These are model-only (see `Model-only members`_).
 
 Expressions reference these members, for example ``input.start < input.end``.
 
---------------------
 Model-only members
---------------------
+~~~~~~~~~~~~~~~~~~
 
 The ``input``, ``output``, and ``error`` members are *observable*: they are the
 data a client actually sends and receives. The ``before`` and ``after``
@@ -106,9 +132,8 @@ at runtime, such as waiters, may reference only the observable members.
 Model-only members are available only to build-time analysis such as the
 :ref:`conditions trait <conditions-trait>`.
 
---------------------
 Reference handles
---------------------
+~~~~~~~~~~~~~~~~~
 
 Named :ref:`references-trait` entries are projected into the data model as
 resource *handles* reachable as ``<member-root>.<name>`` (for example
@@ -138,15 +163,14 @@ observable, but the handle itself is not.
 
 .. _jmespath-functions:
 
---------------------
 Functions
---------------------
+~~~~~~~~~
 
 In addition to the `built-in JMESPath functions`_, Smithy defines the following
-functions for use in expressions over this data model.
+functions for use in contract expressions.
 
 ``resource``
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 ::
 
@@ -172,7 +196,7 @@ matches. The returned resource instance is an object with ``identifiers`` and
 ``resource(before, input.document).properties.status``).
 
 ``requires``
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 ::
 

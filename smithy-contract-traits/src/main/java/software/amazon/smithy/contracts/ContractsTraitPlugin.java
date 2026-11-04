@@ -6,6 +6,7 @@ package software.amazon.smithy.contracts;
 
 import java.util.EnumSet;
 import java.util.Map;
+import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.jmespath.node.NodeJmespathRuntime;
 import software.amazon.smithy.model.node.Node;
@@ -51,16 +52,29 @@ public final class ContractsTraitPlugin implements NodeValidatorPlugin {
         for (Map.Entry<String, Condition> entry : operation.expectTrait(ContractsTrait.class)
                 .getContracts()
                 .entrySet()) {
-            Evaluator<Node> evaluator = new Evaluator<>(call, NodeJmespathRuntime.INSTANCE);
-            Node result = evaluator.visit(entry.getValue().getExpression());
+            String name = entry.getKey();
+            Node result;
+            try {
+                result = new Evaluator<>(call, NodeJmespathRuntime.INSTANCE).visit(entry.getValue().getExpression());
+            } catch (JmespathException e) {
+                emitter.accept(call,
+                        severity,
+                        String.format(
+                                "Contract `%s` of `%s` could not be evaluated: %s",
+                                name,
+                                operation.getId(),
+                                e.getMessage()),
+                        name);
+                continue;
+            }
             if (!result.expectBooleanNode().getValue()) {
                 emitter.accept(call,
                         severity,
                         String.format(
                                 "Call of `%s` must match the %s contract expression",
                                 operation.getId(),
-                                entry.getKey()),
-                        entry.getKey());
+                                name),
+                        name);
             }
         }
     }

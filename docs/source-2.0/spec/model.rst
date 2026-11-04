@@ -832,6 +832,11 @@ valid instances of a shape of that type.
         region): an object with a ``resources`` member mapping each resource the
         service contains, at any depth, to an array of instances of that resource.
 
+.. important::
+
+    An instance MUST be compatible with the :ref:`required-trait` and any
+    associated :doc:`constraint traits <constraint-traits>`.
+
 A resource instance mirrors the resource shape's own sections: an ``identifiers``
 object and a ``properties`` object, each mapping names to values. For example, a
 ``Document`` resource with a ``documentId`` identifier and a ``status`` property
@@ -908,11 +913,6 @@ For example, a world snapshot for a single-region deployment of
             }
         ]
     }
-
-.. important::
-
-    An instance MUST be compatible with the :ref:`required-trait` and any
-    associated :doc:`constraint traits <constraint-traits>`.
 
 
 .. _trait-node-values:

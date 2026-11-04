@@ -125,8 +125,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     /**
      * Assembles the {@code {input, output, error, before, after}} call node for an
-     * example, projecting each declared {@code @references} on the input into a ghost
-     * resource handle reachable as {@code input.<name>}.
+     * example, projecting each declared {@code @references} on the input and output into
+     * ghost resource handles reachable as {@code input.<name>} and {@code output.<name>}.
      *
      * <p>Shared so that other validators (such as contract evaluation) check the same
      * call node this validator validates structurally.
@@ -139,7 +139,9 @@ public final class ExamplesTraitValidator extends AbstractValidator {
     public static ObjectNode buildOperationCall(Model model, OperationShape shape, ExamplesTrait.Example example) {
         ObjectNode input = withReferenceHandles(model, shape.getInputShape(), example.getInput());
         ObjectNode.Builder builder = Node.objectNodeBuilder().withMember("input", input);
-        example.getOutput().ifPresent(output -> builder.withMember("output", output));
+        example.getOutput()
+                .ifPresent(output -> builder.withMember("output",
+                        withReferenceHandles(model, shape.getOutputShape(), output)));
         example.getError()
                 .ifPresent(error -> builder.withMember("error",
                         Node.objectNodeBuilder()
@@ -152,8 +154,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
     }
 
     // Projects each named @references into a ghost resource handle reachable as
-    // input.<name>, synthesized from the observable identifier members. A reference is
-    // declared either on the structure (ids maps each identifier to a member) or directly
+    // <member-root>.<name>, synthesized from the observable identifier members. A reference
+    // is declared either on the structure (ids maps each identifier to a member) or directly
     // on a member's target string shape (the member's own value is the single identifier).
     private static ObjectNode withReferenceHandles(Model model, ShapeId structureId, ObjectNode values) {
         Shape shape = model.getShape(structureId).orElse(null);
@@ -227,7 +229,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
     // service when set, otherwise the sole service whose closure contains the resource.
     private static Optional<String> serviceName(Model model, ReferencesTrait.Reference reference) {
         if (reference.getService().isPresent()) {
-            return Optional.of(reference.getService().get().getName());
+            return Optional.of(reference.getService().get().toString());
         }
         TopDownIndex index = TopDownIndex.of(model);
         ShapeId resource = reference.getResource();
