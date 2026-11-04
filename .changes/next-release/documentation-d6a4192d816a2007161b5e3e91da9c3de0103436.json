@@ -1,0 +1,5 @@
+{
+  "type": "documentation",
+  "description": "Clarified that the order of values in concatenated list traits and metadata arrays is unspecified, and documented how `ModelAssembler` handles repeated shapes and metadata added in code.",
+  "pull_requests": []
+}

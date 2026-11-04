@@ -167,7 +167,8 @@ When a conflict occurs between top-level metadata key-value pairs,
 the following conflict resolution logic is used:
 
 1. If both values are arrays, the values of both arrays are concatenated
-   into a single array.
+   into a single array. The order of the values in the concatenated array
+   is unspecified.
 2. Otherwise, if both values are exactly equal, the conflict is ignored.
 3. Otherwise, the conflict is invalid.
 
@@ -190,7 +191,8 @@ Given the following two Smithy models:
     metadata "validConflict" = "hi!"
 
 Merging ``model-a.smithy`` and ``model-b.smithy`` produces the following
-model:
+model, where ``foo`` contains the values of both arrays in an unspecified
+order:
 
 .. code-block:: smithy
 
@@ -686,7 +688,8 @@ times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:
 
 1. If the trait is a ``list`` or ``set`` shape, then the conflicting trait
-   values are concatenated into a single trait value.
+   values are concatenated into a single trait value. The order of the
+   values in the concatenated trait value is unspecified.
 2. If both values are exactly equal, then the conflict is ignored.
 
 All other instances of trait collisions are prohibited.
@@ -708,7 +711,8 @@ duplicated on the ``MyList`` shape with the same values:
 
 The following model definition is **valid** because the ``tags`` trait
 is a list. The resulting value assigned to the ``tags`` trait on the
-``Hello`` shape is a list that contains "a", "b", and "c".
+``Hello`` shape is a list that contains "a", "b", and "c", in an
+unspecified order.
 
 .. code-block:: smithy
 

@@ -365,6 +365,13 @@ public final class ModelAssembler {
     /**
      * Explicitly injects a shape into the assembled model.
      *
+     * <p>Shapes added with this method are not merged with each other: if more than one shape
+     * with the same ID is added, the last one is used. Shapes from models added with
+     * {@link #addModel(Model)} are registered after shapes added with this method, regardless
+     * of the order the methods are called in, so they replace shapes with the same ID. A shape
+     * added with this method is merged with a definition of the same shape from a model file
+     * like any other definition. Shapes in the prelude namespace are ignored.
+     *
      * @param shape Shape to add.
      * @return Returns the assembler.
      */
@@ -375,6 +382,8 @@ public final class ModelAssembler {
 
     /**
      * Explicitly injects multiple shapes into the assembled model.
+     *
+     * <p>Shapes are handled like shapes added with {@link #addShape(Shape)}.
      *
      * @param shapes Shapes to add.
      * @return Returns the assembler.
@@ -401,6 +410,14 @@ public final class ModelAssembler {
     /**
      * Merges a loaded model into the model assembler.
      *
+     * <p>The shapes of the model are not merged with shapes added with
+     * {@link #addShape(Shape)} or with the shapes of other models: they are registered after
+     * shapes added with {@link #addShape(Shape)}, regardless of the order the methods are
+     * called in, and the last shape with a given ID is used. A shape of the model is merged
+     * with a definition of the same shape from a model file like any other definition. Shapes
+     * in the prelude namespace are ignored. Metadata of the model is merged with other
+     * metadata using the normal metadata conflict rules.
+     *
      * @param model Model to merge in.
      * @return Returns the model assembler.
      */
@@ -411,6 +428,10 @@ public final class ModelAssembler {
 
     /**
      * Adds metadata to the model.
+     *
+     * <p>If this method is called more than once with the same key, the last value is used.
+     * The value is then merged with metadata from models and model files using the normal
+     * metadata conflict rules.
      *
      * @param name Metadata key to set.
      * @param value Metadata value to set.
