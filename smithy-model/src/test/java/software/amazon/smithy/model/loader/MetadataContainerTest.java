@@ -80,6 +80,22 @@ public class MetadataContainerTest {
     }
 
     @Test
+    public void ignoresSameValueFromSameLocationAfterMerge() {
+        // The same model file included twice after arrays were merged for its key, as when a
+        // Model is added to an assembler that loads the same files again: the merged array takes
+        // the location of the last value, so the repeated value is ignored rather than appended.
+        MetadataContainer container = new MetadataContainer();
+        List<ValidationEvent> events = new ArrayList<>();
+        container.putMetadata("foo", array(A), events);
+        container.putMetadata("foo", array(B, "b"), events);
+        container.putMetadata("foo", array(B, "b"), events);
+
+        assertThat(events, empty());
+        assertThat(container.getData().get("foo"), equalTo(array(SourceLocation.NONE, "b")));
+        assertThat(container.getData().get("foo").getSourceLocation(), equalTo(B));
+    }
+
+    @Test
     public void preservesKeyOrder() {
         MetadataContainer container = new MetadataContainer();
         List<ValidationEvent> events = new ArrayList<>();

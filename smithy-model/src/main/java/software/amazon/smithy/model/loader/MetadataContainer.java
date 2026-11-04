@@ -60,7 +60,7 @@ final class MetadataContainer {
 
         List<Node> mergedArray = mergedArrays.get(key);
 
-        if (mergedArray == null && LoaderUtils.isSameLocation(value, previous) && value.equals(previous)) {
+        if (LoaderUtils.isSameLocation(value, previous) && isSameValue(value, previous, mergedArray)) {
             // The assumption here is that if the metadata value is exactly the
             // same and from the same location, then the same model file was
             // included more than once in a way that side-steps file and URL
@@ -92,6 +92,22 @@ final class MetadataContainer {
         } else {
             LOGGER.fine(() -> "Ignoring duplicate metadata definition of " + key);
         }
+    }
+
+    /**
+     * Checks if {@code value} is equal to the current value of a key, without materializing the
+     * key's merged array.
+     *
+     * @param value Value being set.
+     * @param previous Current value of the key, or its last merged value if arrays were merged.
+     * @param mergedArray Accumulated elements of the key's merged array, or null if none.
+     * @return Returns true if the values are equal.
+     */
+    private static boolean isSameValue(Node value, Node previous, List<Node> mergedArray) {
+        if (mergedArray == null) {
+            return value.equals(previous);
+        }
+        return value.isArrayNode() && value.expectArrayNode().getElements().equals(mergedArray);
     }
 
     /**
