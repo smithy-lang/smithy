@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.empty;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
 
 public class TypeCheckerTest {
 
@@ -442,5 +443,29 @@ public class TypeCheckerTest {
         assertThat(check("ceil(`null` && `0.9`)"),
                 contains(
                         "[ERROR] ceil function argument 0 error: Expected argument to be number, but found null (1:13)"));
+    }
+
+    private List<String> checkModelOnly(String expr) {
+        return JmespathExpression.parse(expr)
+                .lint(LiteralExpression.ANY, true)
+                .getProblems()
+                .stream()
+                .map(ExpressionProblem::toString)
+                .collect(Collectors.toList());
+    }
+
+    @Test
+    public void contractFunctionsAreNotInTheDefaultSet() {
+        // resource and requires are Smithy contract extensions. A default lint, such as the
+        // one waiters use, does not know them.
+        assertThat(check("resource(@, @)"), contains("[ERROR] Unknown function: resource (1:1)"));
+        assertThat(check("requires(@, @)"), contains("[ERROR] Unknown function: requires (1:1)"));
+    }
+
+    @Test
+    public void contractFunctionsResolveWhenModelOnlyEnabled() {
+        // With the opt-in the same expressions resolve, so no unknown-function problem.
+        assertThat(checkModelOnly("resource(@, @)"), empty());
+        assertThat(checkModelOnly("requires(@, @)"), empty());
     }
 }

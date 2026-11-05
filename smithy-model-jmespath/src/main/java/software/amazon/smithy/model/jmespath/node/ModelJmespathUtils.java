@@ -50,7 +50,10 @@ public final class ModelJmespathUtils {
      * @return Returns the problems that were detected.
      */
     public static LinterResult lintOperationCall(Model model, OperationShape operation, JmespathExpression expression) {
-        return expression.lint(sampleOperationCall(model, operation));
+        // Operation-call linting is the contracts-trait path, so the Smithy contract
+        // extension functions (resource, requires) are resolvable here; plain shape-value
+        // linting does not enable them.
+        return expression.lint(sampleOperationCall(model, operation), true);
     }
 
     /**

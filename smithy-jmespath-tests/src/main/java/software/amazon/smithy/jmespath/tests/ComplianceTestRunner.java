@@ -122,7 +122,9 @@ public class ComplianceTestRunner<T> {
         public void run() {
             try {
                 var parsed = JmespathExpression.parse(expression);
-                var result = new Evaluator<>(given, runtime).visit(parsed);
+                // Enable Smithy's contract extension functions (resource, requires) so
+                // custom_functions.json can exercise them; upstream suites do not use them.
+                var result = new Evaluator<>(given, runtime, true).visit(parsed);
                 if (benchmark != null) {
                     // Benchmarks don't include expected results or errors
                     return;
