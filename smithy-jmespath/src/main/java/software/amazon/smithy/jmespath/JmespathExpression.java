@@ -103,8 +103,12 @@ public abstract class JmespathExpression {
      * @return Returns the problems that were detected.
      */
     public LinterResult lint(LiteralExpression currentNode) {
+        return lint(currentNode, false);
+    }
+
+    public LinterResult lint(LiteralExpression currentNode, boolean modelOnlyFunctions) {
         Set<ExpressionProblem> problems = new TreeSet<>();
-        TypeChecker typeChecker = new TypeChecker(currentNode, problems);
+        TypeChecker typeChecker = new TypeChecker(currentNode, problems, modelOnlyFunctions);
         LiteralExpression result = this.accept(typeChecker);
         return new LinterResult(result.getType(), problems);
     }

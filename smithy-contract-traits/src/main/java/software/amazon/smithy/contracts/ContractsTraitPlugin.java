@@ -55,7 +55,8 @@ public final class ContractsTraitPlugin implements NodeValidatorPlugin {
             String name = entry.getKey();
             Node result;
             try {
-                result = new Evaluator<>(call, NodeJmespathRuntime.INSTANCE).visit(entry.getValue().getExpression());
+                result = new Evaluator<>(call, NodeJmespathRuntime.INSTANCE, true)
+                        .visit(entry.getValue().getExpression());
             } catch (JmespathException e) {
                 emitter.accept(call,
                         severity,
