@@ -140,6 +140,9 @@ public final class ServiceGenerator implements Consumer<GenerateServiceDirective
             var authTraitSymbol = context.symbolProvider().toSymbol(authTraitShape);
 
             writer.pushState(new ShapeSection(context, authTraitShape));
+            // Each scheme's title links to its own definition, so it needs an anchor.
+            authTraitSymbol.getProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class)
+                    .ifPresent(writer::writeAnchor);
             writer.openDefinitionListItem(w -> w.write("$R", authTraitSymbol));
 
             writer.injectSection(new ShapeSubheadingSection(context, authTraitShape));
