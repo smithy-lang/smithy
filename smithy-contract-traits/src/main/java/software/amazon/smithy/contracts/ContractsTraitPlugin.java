@@ -67,7 +67,7 @@ public final class ContractsTraitPlugin implements NodeValidatorPlugin {
                         name);
                 continue;
             }
-            if (!result.expectBooleanNode().getValue()) {
+            if (!result.isBooleanNode() || !result.expectBooleanNode().getValue()) {
                 emitter.accept(call,
                         severity,
                         String.format(

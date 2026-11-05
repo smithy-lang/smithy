@@ -6,6 +6,7 @@ package software.amazon.smithy.contracts;
 
 import java.util.EnumSet;
 import java.util.Map;
+import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.model.jmespath.node.NodeJmespathRuntime;
 import software.amazon.smithy.model.node.Node;
@@ -48,9 +49,21 @@ public final class ConditionsTraitPlugin extends MemberAndShapeTraitPlugin<Node,
             Context context,
             Emitter emitter
     ) {
-        Evaluator<Node> evaluator = new Evaluator<>(value, NodeJmespathRuntime.INSTANCE);
-        Node result = evaluator.visit(condition.getExpression());
-        if (!result.expectBooleanNode().getValue()) {
+        Node result;
+        try {
+            result = new Evaluator<>(value, NodeJmespathRuntime.INSTANCE).visit(condition.getExpression());
+        } catch (JmespathException e) {
+            emitter.accept(value,
+                    getSeverity(context),
+                    String.format(
+                            "Condition `%s` of `%s` could not be evaluated: %s",
+                            conditionName,
+                            shape.getId(),
+                            e.getMessage()),
+                    conditionName);
+            return;
+        }
+        if (!result.isBooleanNode() || !result.expectBooleanNode().getValue()) {
             emitter.accept(value,
                     getSeverity(context),
                     String.format(

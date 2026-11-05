@@ -140,6 +140,23 @@ the call. The precondition reads the referenced document's state from the
     @output
     structure PublishDocumentOutput {}
 
+A ``@references`` can also be declared directly on a string shape used as an
+identifier member, which Smithy allows for a resource with a single identifier.
+The reference then applies wherever that string is used, and ``name`` projects
+the same handle while the member keeps its own value. Equivalently to the input
+above:
+
+.. code-block:: smithy
+
+    @references([{resource: Document, name: "document"}])
+    string DocumentId
+
+    @input
+    structure PublishDocumentInput {
+        @required
+        documentId: DocumentId
+    }
+
 ------------------
 Contract functions
 ------------------
@@ -149,10 +166,10 @@ Contract expressions use the functions defined in the
 preconditions and ``resource`` for resolving a resource handle against a ``before`` or
 ``after`` snapshot.
 
-A named :ref:`references-trait` on the input structure projects a resource
-handle reachable as ``input.<name>`` (``input.document`` above), so a
-precondition over resource state can be written without constructing the handle
-by hand.
+A named :ref:`references-trait` on the input structure, or on a string shape
+used as one of its members, projects a resource handle reachable as
+``input.<name>`` (``input.document`` above), so a precondition over resource
+state can be written without constructing the handle by hand.
 
 
 .. _CommonMark: https://spec.commonmark.org/

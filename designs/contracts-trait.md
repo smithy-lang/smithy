@@ -109,6 +109,21 @@ structure EncryptRequest {
 
 Here `input.key` (the reference name, not the `keyId` member) projects to the handle `{ resource: "Key", ids: { keyId: <value of keyId> } }`, which is what the `Encrypt` example below passes to `resource(before, ...)`.
 
+`@references` can also be declared directly on a string shape, which Smithy already allows for a resource with a single identifier. The reference then applies wherever that string is used as a member, and `name` projects the handle the same way. The member keeps its string value, and the handle is reachable under the distinct `name`:
+
+```smithy
+@references([{ resource: Key, name: key }])
+string KeyId
+
+structure EncryptRequest {
+    @required
+    keyId: KeyId
+    // ...
+}
+```
+
+Here `input.keyId` is still the string value and `input.key` is the handle, so the two never collide. The `name` is validated to be distinct from the members of any structure that uses the shape.
+
 ## New functions for `@contracts`
 
 A small, fixed set of built-in functions makes these contracts usable for real services. In the initial delivery these ship as ordinary built-ins typed by the existing linter, without yet exposing a general user-facing "declare your own function" surface. Their names are reserved so a later user-declared function cannot collide. A general custom-function mechanism and the precise typing of these built-ins are possible later work (see Future Work).
