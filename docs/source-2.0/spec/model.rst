@@ -581,6 +581,193 @@ same semantic model. This restriction also extends to member names:
     definitions for the same shape ID are handled when assembling the
     semantic model from multiple model files.
 
+.. _shape-instances:
+
+---------------
+Shape instances
+---------------
+
+A node value is an *instance* of a shape when it is compatible with the shape
+as defined in this section. Node value compatibility is checked wherever node
+values are validated against shapes, including trait values (see
+:ref:`trait-node-values`), the :ref:`examples-trait`, and the
+:ref:`default-trait`.
+
+The following table defines each Smithy type and the node values that are
+valid instances of a shape of that type.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 20 60
+
+    * - Smithy type
+      - Node type
+      - Description
+    * - blob
+      - string
+      - A ``string`` value that is base64 encoded.
+    * - boolean
+      - boolean
+      - Can be set to ``true`` or ``false``.
+    * - byte
+      - number
+      - The value MUST fall within the range of -128 to 127
+    * - short
+      - number
+      - The value MUST fall within the range of -32,768 to 32,767
+    * - integer
+      - number
+      - The value MUST fall within the range of -2^31 to (2^31)-1.
+    * - long
+      - number
+      - The value MUST fall within the range of -2^63 to (2^63)-1.
+    * - float
+      - string | number
+      - The value MUST be either a normal JSON number or one of the following
+        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
+    * - double
+      - string | number
+      - The value MUST be either a normal JSON number or one of the following
+        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
+    * - bigDecimal
+      - string | number
+      - bigDecimal values can be serialized as strings to avoid rounding
+        issues when parsing a Smithy model in various languages.
+    * - bigInteger
+      - string | number
+      - bigInteger values can be serialized as strings to avoid truncation
+        issues when parsing a Smithy model in various languages.
+    * - string
+      - string
+      - The provided value SHOULD be compatible with the ``mediaType`` of the
+        string shape if present; however, this is not validated by Smithy.
+    * - timestamp
+      - number | string
+      - If a number is provided, it represents Unix epoch seconds with optional
+        millisecond precision. If a string is provided, it MUST be a valid
+        :rfc:`3339` string with optional fractional precision but no UTC offset
+        (for example, ``1985-04-12T23:20:50.52Z``).
+    * - list
+      - array
+      - Each value in the array MUST be compatible with the targeted member.
+    * - map
+      - object
+      - Each key MUST be compatible with the ``key`` member of the map, and
+        each value MUST be compatible with the ``value`` member of the map.
+    * - structure
+      - object
+      - All members marked as required MUST be provided in a corresponding
+        key-value pair. Each key MUST correspond to a single member name of
+        the structure. Each value MUST be compatible with the member that
+        corresponds to the member name.
+    * - union
+      - object
+      - The object MUST contain a single key-value pair. The key MUST be
+        one of the member names of the union shape, and the value MUST be
+        compatible with the corresponding shape.
+    * - resource
+      - object
+      - A resource instance is an object with an ``identifiers`` member and a
+        ``properties`` member, each a nested object, representing its state.
+        For both nested objects, each key MUST correspond to a single identifier
+        or property of the resource, respectively.
+        Each value MUST be compatible with the shape for that identifier or property.
+    * - service
+      - object
+      - A service instance is the state of a single deployed instance of the
+        service: an object with a ``resources`` member mapping each resource the
+        service contains, at any depth, to an array of instances of that resource.
+        Each instance in each array MUST be compatible with the corresponding resource shape.
+
+.. important::
+
+    An instance MUST be compatible with the :ref:`required-trait` and any
+    associated :doc:`constraint traits <constraint-traits>`.
+
+Resource instances
+==================
+
+A resource instance mirrors the resource shape's own sections: an ``identifiers``
+object and a ``properties`` object, each mapping names to values. For example, a
+``Document`` resource with a ``documentId`` identifier and a ``status`` property
+is exposed as:
+
+.. code-block:: json
+
+    {
+        "identifiers": {"documentId": "doc-1"},
+        "properties": {"status": "APPROVED"}
+    }
+
+Keeping identifiers and properties in their own objects, rather than flattening
+them to the top level, means a user-defined identifier or property name can never
+collide with a structural member, and leaves room to add further members (such as
+future service-instance identifiers) without reshaping existing instances.
+
+Child resources are not nested inside a resource instance; they appear
+under the enclosing service instance's ``resources`` member.
+
+Service instances
+=================
+
+A service instance has a ``resources`` member mapping the absolute shape ID of
+each resource the service contains (at any depth, including child resources) to a
+flat array of that resource's instances. Child resources are not nested inside
+their parent resource instances. For example, an ``example.content#ContentService``
+that contains a ``Folder`` resource and a child ``Document`` resource is exposed
+as:
+
+.. code-block:: json
+
+    {
+        "resources": {
+            "example.content#Folder": [
+                {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+            ],
+            "example.content#Document": [
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+            ]
+        }
+    }
+
+.. _world-snapshot:
+
+World snapshots
+===============
+
+Some traits require the definition of multiple service instances together
+with references between them.
+A *world snapshot* maps the absolute shape ID of each service
+to an array of that service's instances (an array because a service can have
+several, such as one per region). A snapshot can contain more than one service
+shape, so state in related services can be described together.
+It is not an instance of any individual shape,
+but can be thought of as an instance of an entire Smithy model.
+
+For example, a world snapshot for a single-region deployment of
+``example.content#ContentService`` is exposed as:
+
+.. code-block:: json
+
+    {
+        "example.content#ContentService": [
+            {
+                "resources": {
+                    "example.content#Folder": [
+                        {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
+                    ],
+                    "example.content#Document": [
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
+                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
+                    ]
+                }
+            }
+        ]
+    }
+
+The :ref:`examples trait <examples-trait>` uses two world snapshots, ``before``
+and ``after``, to describe the state on either side of a call.
 
 .. _non-aws-traits:
 .. _traits:
@@ -734,185 +921,6 @@ duplicated on the ``MyList`` shape with different values:
     }
 
     apply MyList @length(min: 10, max: 20)
-
-
-.. _shape-instances:
-
-Shape instances
----------------
-
-A node value is an *instance* of a shape when it is compatible with the shape
-as defined in this section. Node value compatibility is checked wherever node
-values are validated against shapes, including trait values (see
-:ref:`trait-node-values`), the :ref:`examples-trait`, and the
-:ref:`default-trait`.
-
-The following table defines each Smithy type and the node values that are
-valid instances of a shape of that type.
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 20 60
-
-    * - Smithy type
-      - Node type
-      - Description
-    * - blob
-      - string
-      - A ``string`` value that is base64 encoded.
-    * - boolean
-      - boolean
-      - Can be set to ``true`` or ``false``.
-    * - byte
-      - number
-      - The value MUST fall within the range of -128 to 127
-    * - short
-      - number
-      - The value MUST fall within the range of -32,768 to 32,767
-    * - integer
-      - number
-      - The value MUST fall within the range of -2^31 to (2^31)-1.
-    * - long
-      - number
-      - The value MUST fall within the range of -2^63 to (2^63)-1.
-    * - float
-      - string | number
-      - The value MUST be either a normal JSON number or one of the following
-        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
-    * - double
-      - string | number
-      - The value MUST be either a normal JSON number or one of the following
-        string values: ``"NaN"``, ``"Infinity"``, ``"-Infinity"``.
-    * - bigDecimal
-      - string | number
-      - bigDecimal values can be serialized as strings to avoid rounding
-        issues when parsing a Smithy model in various languages.
-    * - bigInteger
-      - string | number
-      - bigInteger values can be serialized as strings to avoid truncation
-        issues when parsing a Smithy model in various languages.
-    * - string
-      - string
-      - The provided value SHOULD be compatible with the ``mediaType`` of the
-        string shape if present; however, this is not validated by Smithy.
-    * - timestamp
-      - number | string
-      - If a number is provided, it represents Unix epoch seconds with optional
-        millisecond precision. If a string is provided, it MUST be a valid
-        :rfc:`3339` string with optional fractional precision but no UTC offset 
-        (for example, ``1985-04-12T23:20:50.52Z``).
-    * - list
-      - array
-      - Each value in the array MUST be compatible with the targeted member.
-    * - map
-      - object
-      - Each key MUST be compatible with the ``key`` member of the map, and
-        each value MUST be compatible with the ``value`` member of the map.
-    * - structure
-      - object
-      - All members marked as required MUST be provided in a corresponding
-        key-value pair. Each key MUST correspond to a single member name of
-        the structure. Each value MUST be compatible with the member that
-        corresponds to the member name.
-    * - union
-      - object
-      - The object MUST contain a single key-value pair. The key MUST be
-        one of the member names of the union shape, and the value MUST be
-        compatible with the corresponding shape.
-    * - resource
-      - object
-      - A resource instance is an object with an ``identifiers`` member and a
-        ``properties`` member, each a nested object, representing its state.
-        Child resources are not nested inside a resource instance; they appear
-        under the enclosing service instance's ``resources`` member.
-    * - service
-      - object
-      - A service instance is the state of a single deployed instance of the
-        service (a service can have more than one instance, for example one per
-        region): an object with a ``resources`` member mapping each resource the
-        service contains, at any depth, to an array of instances of that resource.
-
-.. important::
-
-    An instance MUST be compatible with the :ref:`required-trait` and any
-    associated :doc:`constraint traits <constraint-traits>`.
-
-A resource instance mirrors the resource shape's own sections: an ``identifiers``
-object and a ``properties`` object, each mapping names to values. For example, a
-``Document`` resource with a ``documentId`` identifier and a ``status`` property
-is exposed as:
-
-.. code-block:: json
-
-    {
-        "identifiers": {"documentId": "doc-1"},
-        "properties": {"status": "APPROVED"}
-    }
-
-Keeping identifiers and properties in their own objects, rather than flattening
-them to the top level, means a user-defined identifier or property name can never
-collide with a structural member, and leaves room to add further members (such as
-future service-instance identifiers) without reshaping existing instances.
-
-A service instance has a ``resources`` member mapping the absolute shape ID of
-each resource the service contains (at any depth, including child resources) to a
-flat array of that resource's instances. Child resources are not nested inside
-their parent resource instances. For example, an ``example.content#ContentService``
-that contains a ``Folder`` resource and a child ``Document`` resource is exposed
-as:
-
-.. code-block:: json
-
-    {
-        "resources": {
-            "example.content#Folder": [
-                {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
-            ],
-            "example.content#Document": [
-                {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
-                {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
-            ]
-        }
-    }
-
-.. _world-snapshot:
-
-World snapshots
-~~~~~~~~~~~~~~~
-
-A resource or service instance describes one piece of state. A call is
-described by the state of the world before and after it, so a *world snapshot*
-captures that state at one moment. It maps the absolute shape ID of each service
-to an array of that service's instances (an array because a service can have
-several, such as one per region). A snapshot can contain more than one service
-shape, so state in related services can be described together.
-
-The :ref:`contracts trait <contracts-trait>` uses two world snapshots, ``before``
-and ``after``, to describe the state on either side of a call. A resource handle
-selects a service by its shape ID and resolves the resource within that
-service's single instance. A snapshot with more than one instance of a service
-cannot yet be addressed by a handle.
-
-For example, a world snapshot for a single-region deployment of
-``example.content#ContentService`` is exposed as:
-
-.. code-block:: json
-
-    {
-        "example.content#ContentService": [
-            {
-                "resources": {
-                    "example.content#Folder": [
-                        {"identifiers": {"folderId": "folder-1"}, "properties": {"name": "Drafts"}}
-                    ],
-                    "example.content#Document": [
-                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-1"}, "properties": {"status": "DRAFT"}},
-                        {"identifiers": {"folderId": "folder-1", "documentId": "doc-2"}, "properties": {"status": "APPROVED"}}
-                    ]
-                }
-            }
-        ]
-    }
 
 
 .. _trait-node-values:
