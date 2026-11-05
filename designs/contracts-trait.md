@@ -12,7 +12,7 @@ The constraints and behaviors of an API usually live in prose documentation or i
 
 ## Background: `@conditions` today
 
-`@conditions` is a [contract trait](https://smithy.io/2.0/additional-specs/contract-traits.html) from the `smithy-contract-traits` package: a `map` from condition names to `Condition` structures, each carrying a JMESPath `expression` that must evaluate to true and required `documentation`. It is distinct from the built-in *constraint traits* (`@range`, `@pattern`, `@length`, and the rest), which are a separate category, each expressing one fixed kind of restriction. `@conditions` instead expresses arbitrary boolean restrictions in an established query language.
+`@conditions` is a [contract trait](https://smithy.io/2.0/additional-specs/contract-traits.html) from the `smithy-contract-traits` package: a `map` from condition names to `Condition` structures, each carrying a JMESPath `expression` that must evaluate to true and required `documentation`. It is distinct from the built-in *constraint traits* (`@range`, `@pattern`, `@length`, and the rest), which are a separate category, each expressing one fixed kind of restriction. `@conditions` instead expresses arbitrary boolean restrictions in an established query language, JMESPath.
 
 Contract traits are validation only. The spec is explicit that they SHOULD NOT change generated type signatures and SHOULD NOT be enforced during serialization by default, since services usually check these contracts outside frameworks in more efficient ways.
 
@@ -128,6 +128,9 @@ Here `input.keyId` is still the string value and `input.key` is the handle, so t
 
 A small, fixed set of built-in functions makes these contracts usable for real services. In the initial delivery these ship as ordinary built-ins typed by the existing linter, without yet exposing a general user-facing "declare your own function" surface. Their names are reserved so a later user-declared function cannot collide. A general custom-function mechanism and the precise typing of these built-ins are possible later work (see Future Work).
 
+These are "model-only" and only usable from `@contracts` traits for now. 
+This means that existing client generators do not have to support evaluating them at runtime.
+
 ### `resource(world, handle)`
 
 Resolves a resource in a world snapshot. The `handle` is the reference structure a named `@references` reference projects into JMESPath (see "Naming references"):
@@ -200,17 +203,6 @@ We prefer a separate `@contracts` trait for operations. `@conditions` is defined
 **Q: Do you need quantifiers for invariants?** No. Service state is exposed as finite collections, so existence and universality are filters and `length` over those collections. Dedicated `any` and `all` array functions would make many such invariants read better; they are a possible later addition (see Future Work).
 
 **Q: How do these stay in sync with real service behavior?** Same orthogonal concern as all constraint and contract traits: checking against `@examples`, shadow-mode monitoring, and log analysis. Because the contracts sit next to the operations and shapes, service owners are likely to imitate them on new operations, as they already do with existing constraint traits.
-
-## Appendix A: Trait selectors and value
-
-`@conditions` selector. The selector is `:not(:test(service, operation, resource))`, which admits any shape except services, operations, and resources. This proposal does not change it.
-
-`@contracts` selector. `@contracts` is a new trait with selector `operation`, so it applies only to operations.
-
-Both share the value type: a `map` from condition names to `Condition` structures, where the names give `smithy-diff` per-clause precision and each `Condition` has:
-
-- `expression` (**required**): a JMESPath expression that must evaluate to true. For `@conditions` it is evaluated over a value of the shape; for `@contracts` it is evaluated over an operation call.
-- `documentation` (**required**): CommonMark documentation of the condition, used in messages when it is violated.
 
 ## Future Work
 
