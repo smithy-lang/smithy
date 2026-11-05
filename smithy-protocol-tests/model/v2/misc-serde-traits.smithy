@@ -10,6 +10,7 @@ service MiscSerdeTraitProtocolTestService {
     operations: [
         EndpointHostPrefix
         EndpointHostLabel
+        EndpointWithPath
         IdempotencyTokenOp
         RequestCompressionOp
         MediaTypeOp
@@ -40,6 +41,15 @@ structure EndpointHostLabelInput {
 
 structure EndpointHostLabelOutput {}
 
+operation EndpointWithPath {
+    input: EndpointWithPathInput
+    output: EndpointWithPathOutput
+}
+
+structure EndpointWithPathInput {}
+
+structure EndpointWithPathOutput {}
+
 operation IdempotencyTokenOp {
     input: IdempotencyTokenOpInput
     output: IdempotencyTokenOpOutput
@@ -61,6 +71,9 @@ operation RequestCompressionOp {
 }
 
 structure RequestCompressionOpInput {
+    @httpHeader("Content-Encoding")
+    encoding: String
+
     data: String
 }
 

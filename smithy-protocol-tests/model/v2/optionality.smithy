@@ -9,6 +9,7 @@ service OptionalityProtocolTestService {
     operations: [
         DefaultScalars
         DefaultCollections
+        DefaultTimestamps
         NestedDefaults
         RequiredMembers
         NullSparseMembers
@@ -47,6 +48,21 @@ structure DefaultScalarsMixin {
     zeroDouble: Double = 0
     emptyString: String = ""
     emptyBlob: Blob = ""
+}
+
+operation DefaultTimestamps {
+    input: DefaultTimestampsInput
+    output: DefaultTimestampsOutput
+}
+
+structure DefaultTimestampsInput with [DefaultTimestampsMixin] {}
+
+structure DefaultTimestampsOutput with [DefaultTimestampsMixin] {}
+
+@mixin
+structure DefaultTimestampsMixin {
+    defaultTimestamp: NoFormatTimestamp = 1609502096
+    zeroTimestamp: NoFormatTimestamp = 0
 }
 
 operation DefaultCollections {
