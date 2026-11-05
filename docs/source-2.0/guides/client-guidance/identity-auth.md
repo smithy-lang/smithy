@@ -545,6 +545,7 @@ record SelectedAuthScheme(
 ) {}
 ```
 
+(client-guidance-identity-auth-order)=
 ## Order of Operations
 
 For every request attempt within the retry loop, the Smithy client should
