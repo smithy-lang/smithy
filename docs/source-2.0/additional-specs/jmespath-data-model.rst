@@ -89,7 +89,7 @@ and the function set available to contract expressions. These extensions are
 defined by Smithy and are not part of the JMESPath specification. They are
 available only in the expressions of contract traits, such as the
 :ref:`contracts trait <contracts-trait>`. Other uses of JMESPath, such as
-:ref:`waiters <waiters>`, are not meant to use them.
+:ref:`waiters <waiters>`, cannot use them.
 
 The pieces fit together as follows:
 
@@ -167,7 +167,7 @@ Functions
 ~~~~~~~~~
 
 In addition to the `built-in JMESPath functions`_, Smithy defines the following
-functions for use in contract expressions.
+model-only functions for use in contract expressions.
 
 ``resource``
 ^^^^^^^^^^^^
