@@ -1,0 +1,119 @@
+[{
+  "comment": "Smithy resource() builtin against a record-layout world snapshot",
+  "given":
+  {
+    "before": {
+      "example#DocumentService": [
+        {
+          "resources": {
+            "example#Document": [
+              {"identifiers": {"id": "d1"}, "properties": {"status": "DRAFT"}},
+              {"identifiers": {"id": "d2"}, "properties": {"status": "PUBLISHED"}}
+            ]
+          }
+        }
+      ]
+    },
+    "twoInstances": {
+      "example#DocumentService": [
+        {"resources": {"example#Document": []}},
+        {"resources": {"example#Document": []}}
+      ]
+    },
+    "badCollection": {
+      "example#DocumentService": [
+        {"resources": {"example#Document": {"not": "an array"}}}
+      ]
+    },
+    "handleD1": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1"}},
+    "handleMissingId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "zzz"}},
+    "handleMissingService": {"service": "example#OtherService", "resource": "example#Document", "ids": {"id": "d1"}},
+    "handleNoIds": {"service": "example#DocumentService", "resource": "example#Document"},
+    "handleExtraId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1", "bogus": "x"}},
+    "notAHandle": "nope",
+    "successCall": {"input": {"count": 1}, "error": null},
+    "failCall": {"input": {"count": 1}, "error": {"shapeId": "example#SomeError", "content": {}}}
+  },
+  "cases": [
+    {
+      "comment": "resolves a matching resource and reads a property through properties",
+      "expression": "resource(before, handleD1).properties.status",
+      "result": "DRAFT"
+    },
+    {
+      "comment": "the returned instance carries its identifiers",
+      "expression": "resource(before, handleD1).identifiers.id",
+      "result": "d1"
+    },
+    {
+      "comment": "matches the second instance by its ids",
+      "expression": "resource(before, {service: 'example#DocumentService', resource: 'example#Document', ids: {id: 'd2'}}).properties.status",
+      "result": "PUBLISHED"
+    },
+    {
+      "comment": "no resource matches the ids, so null",
+      "expression": "resource(before, handleMissingId)",
+      "result": null
+    },
+    {
+      "comment": "the world holds no instance of the handle's service, so null",
+      "expression": "resource(before, handleMissingService)",
+      "result": null
+    },
+    {
+      "comment": "a handle with no ids member matches nothing, so null",
+      "expression": "resource(before, handleNoIds)",
+      "result": null
+    },
+    {
+      "comment": "an ids object with a key absent from the identifiers does not match, so null",
+      "expression": "resource(before, handleExtraId)",
+      "result": null
+    },
+    {
+      "comment": "a resources collection that is not an array yields null",
+      "expression": "resource(badCollection, handleD1)",
+      "result": null
+    },
+    {
+      "comment": "a world with more than one instance of the service shape is an error",
+      "expression": "resource(twoInstances, handleD1)",
+      "error": "invalid-value"
+    },
+    {
+      "comment": "a non-object handle is a top-level argument type error",
+      "expression": "resource(before, notAHandle)",
+      "error": "invalid-type"
+    },
+    {
+      "comment": "a non-object world is a top-level argument type error",
+      "expression": "resource(notAHandle, handleD1)",
+      "error": "invalid-type"
+    },
+    {
+      "comment": "resource requires exactly two arguments",
+      "expression": "resource(before)",
+      "error": "invalid-arity"
+    },
+    {
+      "comment": "requires is satisfied when a successful call meets the predicate",
+      "expression": "requires(successCall, successCall.input.count == `1`)",
+      "result": true
+    },
+    {
+      "comment": "requires fails when a successful call violates the predicate",
+      "expression": "requires(successCall, successCall.input.count == `2`)",
+      "result": false
+    },
+    {
+      "comment": "requires is vacuously satisfied on a failed call, whatever the predicate",
+      "expression": "requires(failCall, failCall.input.count == `2`)",
+      "result": true
+    },
+    {
+      "comment": "requires requires exactly two arguments",
+      "expression": "requires(successCall)",
+      "error": "invalid-arity"
+    }
+  ]
+}]

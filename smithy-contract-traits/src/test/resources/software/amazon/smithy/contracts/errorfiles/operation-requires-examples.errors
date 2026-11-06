@@ -1,0 +1,1 @@
+[ERROR] smithy.example#FetchLogs: Example `Success violating contract`: Call of `smithy.example#FetchLogs` must match the StartBeforeEndOnSuccess contract expression | ExamplesTrait.StartBeforeEndOnSuccess

@@ -39,9 +39,19 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     // This would make evaluation not thread-safe, but it's unclear how much that matters.
     private final T current;
 
+    // When true, the Smithy contract extension functions (resource, requires) resolve in
+    // addition to the standard JMESPath built-ins. Off by default so other uses of JMESPath,
+    // such as waiters, never resolve them.
+    private final boolean modelOnlyFunctions;
+
     public Evaluator(T current, JmespathRuntime<T> runtime) {
+        this(current, runtime, false);
+    }
+
+    public Evaluator(T current, JmespathRuntime<T> runtime, boolean modelOnlyFunctions) {
         this.current = current;
         this.runtime = runtime;
+        this.modelOnlyFunctions = modelOnlyFunctions;
     }
 
     public T visit(JmespathExpression expression) {
@@ -119,7 +129,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
 
     @Override
     public T visitFunction(FunctionExpression functionExpression) {
-        Function function = FunctionRegistry.lookup(functionExpression.getName());
+        Function function = FunctionRegistry.lookup(functionExpression.getName(), modelOnlyFunctions);
         if (function == null) {
             throw new JmespathException(JmespathExceptionType.UNKNOWN_FUNCTION, functionExpression.getName());
         }
@@ -239,7 +249,8 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         }
         JmespathRuntime.ArrayBuilder<T> projectedResults = runtime.arrayBuilder();
         for (T result : runtime.asIterable(resultList)) {
-            T projected = new Evaluator<T>(result, runtime).visit(projectionExpression.getRight());
+            T projected = new Evaluator<T>(result, runtime, modelOnlyFunctions)
+                    .visit(projectionExpression.getRight());
             if (!runtime.typeOf(projected).equals(RuntimeType.NULL)) {
                 projectedResults.add(projected);
             }
@@ -255,9 +266,11 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         }
         JmespathRuntime.ArrayBuilder<T> results = runtime.arrayBuilder();
         for (T val : runtime.asIterable(left)) {
-            T output = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getComparison());
+            T output = new Evaluator<>(val, runtime, modelOnlyFunctions)
+                    .visit(filterProjectionExpression.getComparison());
             if (runtime.isTruthy(output)) {
-                T result = new Evaluator<>(val, runtime).visit(filterProjectionExpression.getRight());
+                T result = new Evaluator<>(val, runtime, modelOnlyFunctions)
+                        .visit(filterProjectionExpression.getRight());
                 if (!runtime.is(result, RuntimeType.NULL)) {
                     results.add(result);
                 }
@@ -276,7 +289,8 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         for (T member : runtime.asIterable(resultObject)) {
             T memberValue = runtime.value(resultObject, member);
             if (!runtime.is(memberValue, RuntimeType.NULL)) {
-                T projectedResult = new Evaluator<T>(memberValue, runtime).visit(objectProjectionExpression.getRight());
+                T projectedResult = new Evaluator<T>(memberValue, runtime, modelOnlyFunctions)
+                        .visit(objectProjectionExpression.getRight());
                 if (!runtime.is(projectedResult, RuntimeType.NULL)) {
                     projectedResults.add(projectedResult);
                 }
@@ -335,6 +349,6 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
     @Override
     public T visitSubexpression(Subexpression subexpression) {
         T left = visit(subexpression.getLeft());
-        return new Evaluator<>(left, runtime).visit(subexpression.getRight());
+        return new Evaluator<>(left, runtime, modelOnlyFunctions).visit(subexpression.getRight());
     }
 }

@@ -49,12 +49,48 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateShape(Model model, Shape shape, ReferencesTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
+
+        // Count how many references declare each name so a name shared by two
+        // references can be reported once as a collision.
+        Map<String, Long> nameCounts = new HashMap<>();
         for (ReferencesTrait.Reference reference : trait.getReferences()) {
+            Optional<String> referenceName = reference.getName();
+            referenceName.ifPresent(s -> nameCounts.merge(s, 1L, Long::sum));
+        }
+        nameCounts.forEach((name, count) -> {
+            if (count > 1) {
+                events.add(error(shape,
+                        trait,
+                        format(
+                                "`references` trait reference name `%s` is used by more than one reference.",
+                                name)));
+            }
+        });
+
+        for (ReferencesTrait.Reference reference : trait.getReferences()) {
+            reference.getName().ifPresent(name -> {
+                if (shape.getMember(name).isPresent()) {
+                    events.add(error(shape,
+                            trait,
+                            format(
+                                    "`references` trait reference name `%s` collides with a member of the same name. "
+                                            + "Reference names must be distinct from members so the handle projection "
+                                            + "`input.%s` is reachable.",
+                                    name,
+                                    name)));
+                }
+            });
+
             if (shape.isStringShape() && !reference.getIds().isEmpty()) {
                 events.add(error(shape,
                         trait,
                         "References applied to string shapes cannot contain 'ids': "
                                 + reference));
+            }
+
+            if (shape.isStringShape()) {
+                reference.getName()
+                        .ifPresent(name -> events.addAll(stringReferenceNameCollisions(model, shape, trait, name)));
             }
 
             ShapeId shapeId = reference.getResource();
@@ -113,6 +149,41 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         }
 
         return ListUtils.of();
+    }
+
+    // A named reference on a string shape projects a resource handle beside the member
+    // that targets it, so the name must stay distinct from the members of any structure
+    // that uses this string shape, mirroring the member check for structure references.
+    private List<ValidationEvent> stringReferenceNameCollisions(
+            Model model,
+            Shape shape,
+            ReferencesTrait trait,
+            String name
+    ) {
+        List<ValidationEvent> events = new ArrayList<>();
+        for (StructureShape structure : model.getStructureShapes()) {
+            boolean usesShape = false;
+            for (MemberShape member : structure.members()) {
+                if (member.getTarget().equals(shape.getId())) {
+                    usesShape = true;
+                    break;
+                }
+            }
+            if (usesShape && structure.getMemberNames().contains(name)) {
+                events.add(error(shape,
+                        trait,
+                        format(
+                                "`references` trait reference name `%s` on string shape `%s` collides with a member of "
+                                        + "structure `%s`, which targets it. The resource handle projects as `input.%s` "
+                                        + "beside that member, so the reference name must be distinct from the members "
+                                        + "of structures that use this shape.",
+                                name,
+                                shape.getId(),
+                                structure.getId(),
+                                name)));
+            }
+        }
+        return events;
     }
 
     private enum ErrorReason {

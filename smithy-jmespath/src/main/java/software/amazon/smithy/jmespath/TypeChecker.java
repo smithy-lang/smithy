@@ -54,11 +54,17 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
     private static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
 
+    // Smithy contract extension functions, resolvable only when the caller opts in (the
+    // contracts trait does); kept out of the default set so other uses of JMESPath such as
+    // waiters never resolve them.
+    private static final Map<String, FunctionDefinition> MODEL_ONLY_FUNCTIONS = new HashMap<>();
+
     static {
         FunctionDefinition.ArgValidator isAny = isType(RuntimeType.ANY);
         FunctionDefinition.ArgValidator isString = isType(RuntimeType.STRING);
         FunctionDefinition.ArgValidator isNumber = isType(RuntimeType.NUMBER);
         FunctionDefinition.ArgValidator isArray = isType(RuntimeType.ARRAY);
+        FunctionDefinition.ArgValidator isObject = isType(RuntimeType.OBJECT);
 
         FUNCTIONS.put("abs", new FunctionDefinition(NUMBER, isNumber));
         FUNCTIONS.put("avg", new FunctionDefinition(NUMBER, listOfType(RuntimeType.NUMBER)));
@@ -86,6 +92,8 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         FUNCTIONS.put("min_by", new FunctionDefinition(NUMBER, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("not_null", new FunctionDefinition(ANY, Collections.singletonList(isAny), isAny));
         FUNCTIONS.put("reverse", new FunctionDefinition(ARRAY, oneOf(RuntimeType.ARRAY, RuntimeType.STRING)));
+        MODEL_ONLY_FUNCTIONS.put("requires", new FunctionDefinition(BOOLEAN, isObject, isAny));
+        MODEL_ONLY_FUNCTIONS.put("resource", new FunctionDefinition(ANY, isObject, isObject));
         FUNCTIONS.put("sort", new FunctionDefinition(ARRAY, isArray));
         FUNCTIONS.put("sort_by", new FunctionDefinition(ARRAY, isArray, isType(RuntimeType.EXPRESSION)));
         FUNCTIONS.put("starts_with", new FunctionDefinition(BOOLEAN, isString, isString));
@@ -99,11 +107,21 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
 
     private final LiteralExpression current;
     private final Set<ExpressionProblem> problems;
+    private final boolean modelOnlyFunctions;
     private LiteralExpression knownFunctionType = ANY;
 
     TypeChecker(LiteralExpression current, Set<ExpressionProblem> problems) {
+        this(current, problems, false);
+    }
+
+    TypeChecker(LiteralExpression current, Set<ExpressionProblem> problems, boolean modelOnlyFunctions) {
         this.current = current;
         this.problems = problems;
+        this.modelOnlyFunctions = modelOnlyFunctions;
+    }
+
+    private TypeChecker child(LiteralExpression childCurrent) {
+        return new TypeChecker(childCurrent, problems, modelOnlyFunctions);
     }
 
     @Override
@@ -128,7 +146,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     public LiteralExpression visitExpressionType(ExpressionTypeExpression expression) {
         // Expression references are late bound, so the type is only known
         // when the reference is used in a function.
-        expression.getExpression().accept(new TypeChecker(knownFunctionType, problems));
+        expression.getExpression().accept(child(knownFunctionType));
         return EXPREF;
     }
 
@@ -256,13 +274,13 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
                 danger(expression, "Array projection performed on " + leftResult.getType());
             }
             // Run RHS once using an ANY to test it too.
-            expression.getRight().accept(new TypeChecker(ANY, problems));
+            expression.getRight().accept(child(ANY));
             return ARRAY;
         } else {
             // LHS is an array, so do the projection.
             List<Object> result = new ArrayList<>();
             for (Object value : leftResult.expectArrayValue()) {
-                TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
+                TypeChecker checker = child(LiteralExpression.from(value));
                 result.add(expression.getRight().accept(checker).getValue());
             }
             return new LiteralExpression(result);
@@ -278,7 +296,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
             if (leftResult.getType() != RuntimeType.ANY) {
                 danger(expression, "Object projection performed on " + leftResult.getType());
             }
-            TypeChecker checker = new TypeChecker(ANY, problems);
+            TypeChecker checker = child(ANY);
             expression.getRight().accept(checker);
             return OBJECT;
         }
@@ -286,7 +304,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         // LHS is an object, so do the projection.
         List<Object> result = new ArrayList<>();
         for (Object value : leftResult.expectObjectValue().values()) {
-            TypeChecker checker = new TypeChecker(LiteralExpression.from(value), problems);
+            TypeChecker checker = child(LiteralExpression.from(value));
             result.add(expression.getRight().accept(checker).getValue());
         }
 
@@ -303,7 +321,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
                 danger(expression, "Filter projection performed on " + leftResult.getType());
             }
             // Check the comparator and RHS.
-            TypeChecker rightVisitor = new TypeChecker(ANY, problems);
+            TypeChecker rightVisitor = child(ANY);
             expression.getComparison().accept(rightVisitor);
             expression.getRight().accept(rightVisitor);
             return ARRAY;
@@ -313,7 +331,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         List<Object> result = new ArrayList<>();
         for (Object value : leftResult.expectArrayValue()) {
             LiteralExpression literalValue = LiteralExpression.from(value);
-            TypeChecker rightVisitor = new TypeChecker(literalValue, problems);
+            TypeChecker rightVisitor = child(literalValue);
             LiteralExpression comparisonValue = expression.getComparison().accept(rightVisitor);
             if (comparisonValue.isTruthy()) {
                 LiteralExpression rightValue = expression.getRight().accept(rightVisitor);
@@ -343,7 +361,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
     @Override
     public LiteralExpression visitSubexpression(Subexpression expression) {
         LiteralExpression leftResult = expression.getLeft().accept(this);
-        TypeChecker rightVisitor = new TypeChecker(leftResult, problems);
+        TypeChecker rightVisitor = child(leftResult);
         return expression.getRight().accept(rightVisitor);
     }
 
@@ -352,7 +370,7 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         List<LiteralExpression> arguments = new ArrayList<>();
 
         // Give expression references the right context.
-        TypeChecker checker = new TypeChecker(current, problems);
+        TypeChecker checker = child(current);
         checker.knownFunctionType = current;
 
         for (JmespathExpression arg : expression.getArguments()) {
@@ -360,6 +378,9 @@ final class TypeChecker implements ExpressionVisitor<LiteralExpression> {
         }
 
         FunctionDefinition def = FUNCTIONS.get(expression.getName());
+        if (def == null && modelOnlyFunctions) {
+            def = MODEL_ONLY_FUNCTIONS.get(expression.getName());
+        }
 
         // Function must be known.
         if (def == null) {
