@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix quadratic-time container lookup in ModelTransformer.replaceShapes.",
+  "pull_requests": []
+}
