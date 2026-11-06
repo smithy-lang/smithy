@@ -106,7 +106,7 @@ final class MigrateCommand implements Command {
 
     @Override
     public String getSummary() {
-        return "Migrate Smithy IDL models from 1.0 to 2.1 in place.";
+        return "Migrate Smithy IDL models from 1 to 2 in place.";
     }
 
     @Override
@@ -252,9 +252,9 @@ final class MigrateCommand implements Command {
     private String updateVersion(String modelString) {
         Matcher matcher = VERSION_1.matcher(modelString);
         if (matcher.find()) {
-            return matcher.replaceFirst(format("\\$version: \"2.1\"%n"));
+            return matcher.replaceFirst(format("\\$version: \"%s\"%n", Model.MODEL_MAJOR_VERSION));
         }
-        return format("$version: \"2.1\"%n%n") + modelString;
+        return format("$version: \"%s\"%n%n", Model.MODEL_MAJOR_VERSION) + modelString;
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {

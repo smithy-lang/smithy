@@ -35,6 +35,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ModelSerializerTest {
     @TestFactory
@@ -113,7 +114,8 @@ public class ModelSerializerTest {
                 .unwrap();
 
         String serializedString2 = Node.prettyPrintJson(serializer.serialize(other));
-        assertThat(serialized.expectMember("smithy").expectStringNode(), equalTo(Node.from(Model.MODEL_VERSION)));
+        assertThat(serialized.expectMember("smithy").expectStringNode(),
+                equalTo(Node.from(Model.MODEL_MAJOR_VERSION)));
         assertThat(serializedString, equalTo(serializedString2));
         assertThat(model, equalTo(other));
     }
@@ -284,7 +286,7 @@ public class ModelSerializerTest {
                 .build();
         Model model = Model.builder().addShape(shape).build();
         Node node = ModelSerializer.builder().build().serialize(model);
-        Node expectedNode = Node.parse("{\"smithy\":\"2.1\",\"shapes\":{\"ns.foo#Bar\":" +
+        Node expectedNode = Node.parse("{\"smithy\":\"2\",\"shapes\":{\"ns.foo#Bar\":" +
                 "{\"type\":\"resource\",\"properties\":{\"fooProperty\":{\"target\":\"ns.foo#Shape\"}}}}}");
         Node.assertEquals(node, expectedNode);
     }
@@ -298,8 +300,54 @@ public class ModelSerializerTest {
 
     @Test
     public void failsWhenUsingV1WithPrelude() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            ModelSerializer.builder().version("1.0").includePrelude(true).build();
-        });
+        for (String version : ListUtils.of("1", "1.0")) {
+            Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+                ModelSerializer.builder().version(version).includePrelude(true).build();
+            });
+        }
+    }
+
+    // Serializing only the major version by default keeps models from churning each time a new minor
+    // version of the IDL is released.
+    @Test
+    public void serializesMajorVersionByDefault() {
+        assertThat(serializeVersion(ModelSerializer.builder()), equalTo("2"));
+    }
+
+    // Whatever version the caller asks for is written verbatim rather than normalized, so callers that
+    // pin a specific minor version keep getting it.
+    @Test
+    public void serializesRequestedVersionVerbatim() {
+        assertThat(serializeVersion(ModelSerializer.builder().version("2")), equalTo("2"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("2.0")), equalTo("2.0"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("2.1")), equalTo("2.1"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("1")), equalTo("1"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("1.0")), equalTo("1.0"));
+    }
+
+    // Both spellings of version 1 must take the downgrade path, which converts enums back to strings
+    // carrying the enum trait.
+    @Test
+    public void downgradesToV1ForEveryV1Spelling() {
+        Model model = Model.assembler()
+                .addShape(EnumShape.builder().id("ns.foo#Enum").addMember("FOO", "foo").build())
+                .assemble()
+                .unwrap();
+
+        for (String version : ListUtils.of("1", "1.0")) {
+            ObjectNode serialized = ModelSerializer.builder().version(version).build().serialize(model);
+            ObjectNode shape = NodePointer.parse("/shapes/ns.foo#Enum").getValue(serialized).expectObjectNode();
+
+            assertThat(version, serialized.expectStringMember("smithy").getValue(), equalTo(version));
+            assertThat(version, shape.expectStringMember("type").getValue(), equalTo("string"));
+            assertThat(version, shape.expectObjectMember("traits").getStringMap(), hasKey("smithy.api#enum"));
+        }
+    }
+
+    private String serializeVersion(ModelSerializer.Builder builder) {
+        return builder.build()
+                .serialize(Model.builder().build())
+                .expectStringMember("smithy")
+                .getValue();
     }
 }

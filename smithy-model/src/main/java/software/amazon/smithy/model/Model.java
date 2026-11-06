@@ -68,6 +68,16 @@ public final class Model implements ToSmithyBuilder<Model> {
     /** Specifies the highest supported version of the IDL. */
     public static final String MODEL_VERSION = "2.1";
 
+    /**
+     * Specifies the highest supported major version of the IDL.
+     *
+     * <p>A version requirement that omits the minor version resolves to the latest minor version
+     * supported by the tool loading the model, so this is the version models are serialized with by
+     * default. Serializing {@link #MODEL_VERSION} instead would churn every serialized model each
+     * time a minor version is released.
+     */
+    public static final String MODEL_MAJOR_VERSION = "2";
+
     /** The map of metadata keys to their "node" values. */
     private final Map<String, Node> metadata;
 

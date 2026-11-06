@@ -246,7 +246,7 @@ The following example defines a ``video/quicktime`` blob:
 
 .. code-block:: smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace smithy.example
 
     @mediaType("video/quicktime")
@@ -415,7 +415,10 @@ Member index shorthand
 ~~~~~~~~~~~~~~~~~~~~~~
 
 IDL 2.1 adds a member-index shorthand that places a positive integer and period
-before an explicit or elided member:
+before an explicit or elided member. Using it requires a
+:ref:`version requirement <smithy-version>` that resolves to ``2.1`` or later,
+that is, either an explicit ``$version: "2.1"`` or a bare ``$version: "2"``
+loaded by tooling that supports ``2.1``:
 
 .. code-block:: smithy
 
@@ -436,8 +439,8 @@ If the shorthand and an explicit ``@idx`` application are both used on the
 same member, equal values are treated as a redundant trait application while
 different values produce the normal conflicting-trait error.
 
-Only the shorthand is an IDL 2.1 feature. The ``idx`` trait itself is
-independent of IDL 2.1:
+Only the shorthand depends on the IDL version. The ``idx`` trait itself can be
+used with any version requirement, including one that resolves to ``2.0``:
 
 .. code-block:: smithy
 

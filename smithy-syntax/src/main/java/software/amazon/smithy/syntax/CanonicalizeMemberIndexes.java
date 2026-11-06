@@ -163,18 +163,29 @@ final class CanonicalizeMemberIndexes implements Function<TokenTree, TokenTree> 
         }
 
         int separator = version.indexOf('.');
-        if (separator < 0 || version.indexOf('.', separator + 1) >= 0) {
+        if (separator >= 0 && version.indexOf('.', separator + 1) >= 0) {
             return false;
         }
 
+        // The major version, ignoring any leading zeros, must be exactly 2.
+        int majorEnd = separator < 0 ? version.length() : separator;
         int firstMajorDigit = 0;
-        while (firstMajorDigit < separator - 1 && version.charAt(firstMajorDigit) == '0') {
+        while (firstMajorDigit < majorEnd - 1 && version.charAt(firstMajorDigit) == '0') {
             firstMajorDigit++;
         }
-        if (firstMajorDigit != separator - 1 || version.charAt(firstMajorDigit) != '2') {
+        if (firstMajorDigit != majorEnd - 1 || version.charAt(firstMajorDigit) != '2') {
             return false;
         }
 
+        // A requirement that omits the minor version, like "2", resolves to the latest 2.x version
+        // supported by the tool loading the model, which always has member indexes. Note that this
+        // makes "2" and "2.0" deliberately differ.
+        if (separator < 0) {
+            return true;
+        }
+
+        // An explicit minor version must be 2.1 or later, including minor versions released after
+        // this formatter was written.
         boolean positiveMinor = false;
         for (int i = separator + 1; i < version.length(); i++) {
             char c = version.charAt(i);
@@ -183,7 +194,7 @@ final class CanonicalizeMemberIndexes implements Function<TokenTree, TokenTree> 
             }
             positiveMinor |= c != '0';
         }
-        return separator + 1 < version.length() && positiveMinor;
+        return positiveMinor;
     }
 
     private static final class IndexTrait {

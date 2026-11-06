@@ -320,7 +320,7 @@ public final class SmithyIdlModelSerializer {
             boolean addMetadata
     ) {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
-        codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
+        codeWriter.write("$$version: \"$L\"", Model.MODEL_MAJOR_VERSION);
 
         if (shapes.stream().anyMatch(Shape::isOperationShape)) {
             if (!inputSuffix.equals(DEFAULT_INLINE_INPUT_SUFFIX)) {
