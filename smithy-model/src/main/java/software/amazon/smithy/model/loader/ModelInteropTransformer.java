@@ -73,7 +73,8 @@ final class ModelInteropTransformer {
         // TODO: can these transforms be more efficiently moved into the loader?
         for (StructureShape struct : model.getStructureShapes()) {
             if (!Prelude.isPreludeShape(struct)) {
-                if (fileToVersion.apply(struct) == Version.VERSION_1_0) {
+                Version structVersion = fileToVersion.apply(struct);
+                if (structVersion == Version.VERSION_1_0) {
                     // Upgrade structure members in v1 models to add the default trait if needed. Upgrading unknown
                     // versions can cause things like projections to build a model, feed it back into the assembler,
                     // and then lose the original context of which version the model was built with, causing it to be
@@ -83,8 +84,7 @@ final class ModelInteropTransformer {
                             upgradeV1Member(member, target);
                         });
                     }
-                } else if (fileToVersion.apply(struct) == Version.VERSION_2_0
-                        || fileToVersion.apply(struct) == Version.VERSION_2_1) {
+                } else if (structVersion.isV2()) {
                     // Patch v2 based members with the box trait when necessary in order for v1 based tooling to
                     // correctly interpret a v2 model.
                     for (MemberShape member : struct.getAllMembers().values()) {
@@ -202,7 +202,7 @@ final class ModelInteropTransformer {
                 DefaultTrait syntheticDefault = new DefaultTrait(defaultZeroValue);
                 builder.addTrait(syntheticDefault);
             }
-        } else if (defineShape.version == Version.VERSION_2_0 || defineShape.version == Version.VERSION_2_1) {
+        } else if (defineShape.version.isV2()) {
             // Add the box trait to root level shapes not marked with the default trait, or that are marked with
             // the default trait, and it isn't set to the zero value of a v1 type.
             Trait defaultTrait = builder.getAllTraits().get(DefaultTrait.ID);

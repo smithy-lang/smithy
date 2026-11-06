@@ -320,6 +320,8 @@ public final class SmithyIdlModelSerializer {
             boolean addMetadata
     ) {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
+        // The serializer can emit syntax added in a minor version, such as member index shorthand, so
+        // it declares the highest supported version rather than a bare major version.
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
 
         if (shapes.stream().anyMatch(Shape::isOperationShape)) {

@@ -285,7 +285,7 @@ The following example creates a reference to a ``HistoricalForecast`` resource
 
 .. code-block:: smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace smithy.example
 
     resource HistoricalForecast {
@@ -314,7 +314,7 @@ defined if needed. For example:
 
 .. code-block:: smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace smithy.example
 
     @references([

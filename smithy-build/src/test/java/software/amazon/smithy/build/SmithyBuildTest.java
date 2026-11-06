@@ -976,7 +976,8 @@ public class SmithyBuildTest {
         assertThat(output, containsString("SMITHY_INCLUDES_PRELUDE: false"));
         assertThat(output, containsString("FOO_BAR: BAZ"));
         assertThat(output, containsString("FOO_PATH: "));
-        assertThat(output, containsString("\"smithy\":\"" + Model.MODEL_VERSION + "\",\"shapes\":{}}"));
+        // RunPlugin pipes a JSON AST, which the AST serializer declares as 2.0 by default.
+        assertThat(output, containsString("\"smithy\":\"2.0\",\"shapes\":{}}"));
         // No prelude by default.
         assertThat(output, not(containsString("smithy.api#String")));
     }

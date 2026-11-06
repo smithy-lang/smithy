@@ -38,7 +38,10 @@ properties:
       - **Required**. Defines the :ref:`version <smithy-version>` of the
         Smithy specification (e.g., "|release|"). The version can be set to
         a single number like "2" or include a point release like "2.0" or
-        "2.1".
+        "2.1". When the minor version is omitted, the version requirement
+        resolves to the latest minor version of that major version supported
+        by the tool loading the model, so ``"smithy": "2"`` permits every
+        ``2.x`` feature the tool implements.
     * - metadata
       - object
       - Defines all of the :ref:`metadata <metadata>` about the model
@@ -66,7 +69,7 @@ a ``type`` property to define the shape type or ``apply``.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string"
@@ -96,7 +99,7 @@ The following example defines a string shape with a documentation trait.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -118,7 +121,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#Blob": {
                 "type": "blob"
@@ -175,7 +178,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -214,7 +217,7 @@ The following example defines a list shape and its member.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -250,7 +253,7 @@ list of a service shape.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#Service": {
                 "type": "service",
@@ -280,7 +283,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#IntegerMap": {
                 "type": "map",
@@ -316,7 +319,7 @@ member:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyStructure": {
                 "type": "structure",
@@ -340,7 +343,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyUnion": {
                 "type": "union",
@@ -361,7 +364,7 @@ The following example defines an :ref:`enum`:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyEnum": {
                 "type": "enum",
@@ -382,7 +385,7 @@ The following example defines an :ref:`intEnum`:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyIntEnum": {
                 "type": "intEnum",
@@ -447,7 +450,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyService": {
                 "type": "service",
@@ -547,7 +550,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#Thing": {
                 "type": "resource",
@@ -632,7 +635,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",
@@ -687,7 +690,7 @@ marked with the :ref:`mixin trait <mixin-trait>`.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#BaseUser": {
                 "type": "structure",
@@ -731,7 +734,7 @@ applied. The ``apply`` type allows only the ``traits`` property.
 .. code-block:: json
 
     {
-        "smithy": "2.1",
+        "smithy": "2",
         "shapes": {
             "smithy.example#Struct": {
                 "type": "structure",
