@@ -64,20 +64,23 @@ public final class ModelSerializer {
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
     private final String version;
+    private final boolean serializeV1;
 
     private ModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
         version = builder.version;
+        // The version is serialized verbatim, so "1" and "1.0" both select the v1 behavior below.
+        serializeV1 = version.equals("1") || version.equals("1.0");
 
         if (!builder.includePrelude) {
             shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
-        } else if (version.equals("1.0")) {
-            throw new UnsupportedOperationException("Cannot serialize prelude and set model version to 1.0");
+        } else if (serializeV1) {
+            throw new UnsupportedOperationException("Cannot serialize prelude and set model version to " + version);
         } else {
             shapeFilter = builder.shapeFilter;
         }
 
-        if (version.equals("1.0")) {
+        if (serializeV1) {
             traitFilter = builder.traitFilter.and(trait -> {
                 if (trait.toShapeId().equals(BoxTrait.ID)) {
                     // Include the box trait in 1.0 models.
@@ -98,7 +101,7 @@ public final class ModelSerializer {
     public ObjectNode serialize(Model model) {
         ShapeSerializer shapeSerializer = new ShapeSerializer();
 
-        if (version.equals("1.0")) {
+        if (serializeV1) {
             model = ModelTransformer.create().downgradeToV1(model);
         }
 
@@ -162,7 +165,9 @@ public final class ModelSerializer {
         private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
         private boolean includePrelude = false;
         private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
-        private String version = "2.1";
+        // The JSON AST has no version-specific features beyond 2.0, so the default declares 2.0 to stay
+        // loadable by the widest range of tooling. Unlike the IDL, it never needs a minor version.
+        private String version = "2.0";
 
         private Builder() {}
 
@@ -221,26 +226,22 @@ public final class ModelSerializer {
         }
 
         /**
-         * Sets the IDL version to serialize. Defaults to 2.1.
+         * Sets the IDL version to serialize. Defaults to "2.0".
          *
-         * <p>Version "1.0" serialization cannot be used with {@link #includePrelude}.
+         * <p>Version "1" or "1.0" serialization cannot be used with {@link #includePrelude}.
          *
-         * @param version IDL version to set. Can be "1", "1.0", "2", "2.0", or "2.1".
-         *                "1" and "2" are normalized to "1.0" and "2.0".
+         * @param version IDL version to set. Can be "1", "1.0", "2", "2.0", or "2.1". The given value
+         *                is serialized verbatim, so "2" is serialized as "2" rather than "2.0".
          * @return Returns the builder.
          */
         public Builder version(String version) {
             switch (version) {
-                case "2":
-                case "2.0":
-                    this.version = "2.0";
-                    break;
-                case "2.1":
-                    this.version = "2.1";
-                    break;
                 case "1":
                 case "1.0":
-                    this.version = "1.0";
+                case "2":
+                case "2.0":
+                case "2.1":
+                    this.version = version;
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported Smithy model version: " + version);

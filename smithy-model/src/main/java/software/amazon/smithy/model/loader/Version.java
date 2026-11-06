@@ -42,11 +42,16 @@ enum Version {
                     | Feature.MEMBER_INDEXES);
 
     private final String label;
+    private final String majorLabel;
+    private final int minor;
     private final int features;
 
     Version(String label, int features) {
         this.label = label;
         this.features = features;
+        int dot = label.indexOf('.');
+        this.majorLabel = dot < 0 ? label : label.substring(0, dot);
+        this.minor = dot < 0 ? -1 : Integer.parseInt(label.substring(dot + 1));
     }
 
     @Override
@@ -58,22 +63,28 @@ enum Version {
      * Creates a Version from a string, or returns null if the version
      * cannot be found.
      *
+     * <p>A version requirement that omits the minor version, like {@code "2"}, resolves to the
+     * latest known minor version of that major version. {@code "2"} therefore resolves to
+     * {@code 2.1} today, and would resolve to {@code 2.2} once a 2.2 is added.
+     *
      * @param value Value to convert to a Version enum.
      * @return Returns the resolved enum value or null if not found.
      */
     static Version fromString(String value) {
-        switch (value) {
-            case "1.0":
-            case "1":
-                return VERSION_1_0;
-            case "2":
-            case "2.0":
-                return VERSION_2_0;
-            case "2.1":
-                return VERSION_2_1;
-            default:
-                return null;
+        Version latestInMajor = null;
+
+        for (Version version : values()) {
+            if (version == UNKNOWN) {
+                continue;
+            } else if (version.label.equals(value)) {
+                return version;
+            } else if (version.majorLabel.equals(value)
+                    && (latestInMajor == null || version.minor > latestInMajor.minor)) {
+                latestInMajor = version;
+            }
         }
+
+        return latestInMajor;
     }
 
     /**
@@ -81,6 +92,15 @@ enum Version {
      */
     boolean isDeprecated() {
         return this == VERSION_1_0;
+    }
+
+    /**
+     * Checks if this is any 2.x version of the IDL.
+     *
+     * @return Returns true for every 2.x version, and false for 1.x and UNKNOWN.
+     */
+    boolean isV2() {
+        return majorLabel.equals("2");
     }
 
     /**
@@ -162,11 +182,11 @@ enum Version {
      * @return Returns true if the shape type is supported in this version.
      */
     boolean isShapeTypeSupported(ShapeType shapeType) {
-        switch (this) {
-            case VERSION_1_0:
+        // Shape types are gated on the major version, so minor releases need no changes here.
+        switch (majorLabel) {
+            case "1":
                 return shapeType != ShapeType.ENUM && shapeType != ShapeType.INT_ENUM;
-            case VERSION_2_0:
-            case VERSION_2_1:
+            case "2":
                 return shapeType != ShapeType.SET;
             default:
                 return true;
@@ -183,11 +203,11 @@ enum Version {
      */
     @SuppressWarnings("deprecation")
     ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
-        switch (this) {
-            case VERSION_1_0:
+        // Trait validation is gated on the major version, so minor releases need no changes here.
+        switch (majorLabel) {
+            case "1":
                 return validateV1VersionedTrait(target, traitId, value);
-            case VERSION_2_0:
-            case VERSION_2_1:
+            case "2":
                 return validateV2VersionedTrait(target, traitId, value);
             default:
                 return null;
