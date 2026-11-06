@@ -1,5 +1,5 @@
 {
-    "smithy": "2.1",
+    "smithy": "2",
     "shapes": {
         "smithy.example#A": {
             "type": "structure",
