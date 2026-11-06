@@ -227,11 +227,17 @@ final class ReplaceShapes {
     }
 
     private Set<Shape> getUpdatedContainers(Model model, Collection<Shape> shouldReplace) {
+        // Index the replacement set by ID so container lookups don't scan it for every member.
+        Map<ShapeId, Shape> replacementIndex = new HashMap<>(shouldReplace.size());
+        for (Shape shape : shouldReplace) {
+            replacementIndex.putIfAbsent(shape.getId(), shape);
+        }
+
         // Determine what shapes being updated are members, and group them by their container shapes.
         Map<Shape, List<MemberShape>> containerToMemberMapping = new HashMap<>();
         for (Shape shape : shouldReplace) {
             shape.asMemberShape().ifPresent(member -> {
-                findMostUpToDateShape(member.getContainer(), model, shouldReplace).ifPresent(container -> {
+                findMostUpToDateShape(member.getContainer(), model, replacementIndex).ifPresent(container -> {
                     // Ignore members that are already a current member of a shape.
                     if (!isMemberPresent(member, container)) {
                         containerToMemberMapping.computeIfAbsent(container, c -> new ArrayList<>()).add(member);
@@ -262,15 +268,15 @@ final class ReplaceShapes {
         return shape.getMember(member.getMemberName()).filter(m -> m == member).isPresent();
     }
 
-    private Optional<Shape> findMostUpToDateShape(ShapeId shapeId, Model model, Collection<Shape> shouldReplace) {
+    private Optional<Shape> findMostUpToDateShape(
+            ShapeId shapeId,
+            Model model,
+            Map<ShapeId, Shape> replacementIndex
+    ) {
         // Shapes in the replacement set take precedence over shapes in the previous model.
         // This accounts for newly added shapes and not overwriting changes also made to the
         // container shape.
-        for (Shape shape : shouldReplace) {
-            if (shape.getId().equals(shapeId)) {
-                return Optional.of(shape);
-            }
-        }
-        return model.getShape(shapeId);
+        Shape replaced = replacementIndex.get(shapeId);
+        return replaced != null ? Optional.of(replaced) : model.getShape(shapeId);
     }
 }
