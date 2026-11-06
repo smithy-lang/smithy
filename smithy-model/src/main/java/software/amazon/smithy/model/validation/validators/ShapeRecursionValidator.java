@@ -6,6 +6,7 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +28,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -45,11 +45,14 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * code generators where a list of itself or a list of maps of itself
  * is impossible to define.
  *
- * <p>Each recursive shape gets one event with the shortest recursion path.
+ * <p>Each recursive shape gets one event with one of its recursion paths.
  * Every possible path is not enumerated, because the number of paths can be
  * exponential in the size of the model.
  */
 public final class ShapeRecursionValidator extends AbstractValidator {
+
+    // The number of shapes shown at each end of a truncated recursion path.
+    private static final int MAX_PATH_ENDPOINT_SHAPES = 16;
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -106,88 +109,99 @@ public final class ShapeRecursionValidator extends AbstractValidator {
         }
     }
 
-    private String formatPath(PathFinder.Path path) {
+    private String formatPath(RecursionPath path) {
+        // Each relationship adds the shape it points to. The subject itself is
+        // left out to shorten the error message.
         StringJoiner joiner = new StringJoiner(" > ");
-        List<Shape> shapes = path.getShapes();
-        for (int i = 0; i < shapes.size(); i++) {
-            // Skip the first shape (the subject) to shorten the error message.
-            if (i > 0) {
-                joiner.add(shapes.get(i).getId().toString());
+        for (Relationship rel : path.head) {
+            joiner.add(rel.getNeighborShapeId().toString());
+        }
+        if (path.omitted > 0) {
+            joiner.add("... (" + path.omitted + " more) ...");
+            for (Relationship rel : path.tail) {
+                joiner.add(rel.getNeighborShapeId().toString());
             }
         }
         return joiner.toString();
     }
 
     private void validateUnions(Model model, List<ValidationEvent> events) {
-        UnionTerminatesVisitor visitor = new UnionTerminatesVisitor(model);
+        Set<ShapeId> terminating = findTerminatingShapes(model);
         for (UnionShape union : model.getUnionShapes()) {
             // Don't evaluate empty unions since that's a different error.
-            if (!union.members().isEmpty() && !union.accept(visitor)) {
+            if (!union.members().isEmpty() && !terminating.contains(union.getId())) {
                 events.add(error(union, "It is impossible to create instances of this recursive union"));
             }
-            visitor.reset();
         }
     }
 
-    private static final class UnionTerminatesVisitor extends ShapeVisitor.Default<Boolean> {
+    /**
+     * Finds every structure and union shape that terminates, meaning a value
+     * of the shape can be built without infinite recursion.
+     *
+     * <p>Any shape other than a structure or union terminates. A structure
+     * terminates if it has no members, has a member that isn't required, or
+     * has a required member that targets a terminating shape. A union
+     * terminates if any member targets a terminating shape.
+     *
+     * <p>This is computed once for the whole model by propagating termination
+     * backward from member targets to the shapes that contain them, rather
+     * than searching from each union, so it runs in linear time and doesn't
+     * recurse.
+     */
+    private static Set<ShapeId> findTerminatingShapes(Model model) {
+        Set<ShapeId> terminating = new HashSet<>();
+        Map<ShapeId, List<ShapeId>> containers = new HashMap<>();
+        Deque<ShapeId> queue = new ArrayDeque<>();
 
-        private final Set<MemberShape> visited = new HashSet<>();
-        private final Model model;
-
-        UnionTerminatesVisitor(Model model) {
-            this.model = model;
-        }
-
-        void reset() {
-            this.visited.clear();
-        }
-
-        @Override
-        protected Boolean getDefault(Shape shape) {
-            return true;
-        }
-
-        @Override
-        public Boolean structureShape(StructureShape shape) {
-            if (shape.members().isEmpty()) {
-                return true;
-            }
-
-            // If the structure has any non-required members, then it terminates.
-            for (MemberShape member : shape.members()) {
+        for (StructureShape structure : model.getStructureShapes()) {
+            boolean terminates = structure.members().isEmpty();
+            for (MemberShape member : structure.members()) {
                 if (!member.isRequired()) {
-                    return true;
+                    terminates = true;
+                    break;
                 }
             }
-
-            // Now check if any of the required members terminate.
-            for (MemberShape member : shape.members()) {
-                if (member.isRequired()) {
-                    if (memberShape(member)) {
-                        return true;
-                    }
-                }
+            if (terminates) {
+                markTerminating(structure.getId(), terminating, queue);
+            } else {
+                addContainer(model, structure, containers, terminating, queue);
             }
-
-            return false;
         }
 
-        @Override
-        public Boolean unionShape(UnionShape shape) {
-            for (MemberShape member : shape.members()) {
-                if (memberShape(member)) {
-                    return true;
-                }
-            }
-
-            return false;
+        for (UnionShape union : model.getUnionShapes()) {
+            addContainer(model, union, containers, terminating, queue);
         }
 
-        @Override
-        public Boolean memberShape(MemberShape shape) {
-            return visited.add(shape)
-                    ? model.expectShape(shape.getTarget()).accept(this)
-                    : false;
+        while (!queue.isEmpty()) {
+            for (ShapeId container : containers.getOrDefault(queue.poll(), Collections.emptyList())) {
+                markTerminating(container, terminating, queue);
+            }
+        }
+
+        return terminating;
+    }
+
+    private static void addContainer(
+            Model model,
+            Shape container,
+            Map<ShapeId, List<ShapeId>> containers,
+            Set<ShapeId> terminating,
+            Deque<ShapeId> queue
+    ) {
+        for (MemberShape member : container.members()) {
+            Shape target = model.expectShape(member.getTarget());
+            if (target.isStructureShape() || target.isUnionShape()) {
+                containers.computeIfAbsent(target.getId(), id -> new ArrayList<>()).add(container.getId());
+            } else {
+                markTerminating(container.getId(), terminating, queue);
+            }
+        }
+    }
+
+    private static void markTerminating(ShapeId id, Set<ShapeId> terminating, Deque<ShapeId> queue) {
+        if (terminating.add(id)) {
+            queue.add(id);
         }
     }
 
@@ -198,10 +212,15 @@ public final class ShapeRecursionValidator extends AbstractValidator {
      * exponentially with the size of the model (for example, a chain of
      * structures that each have two required members targeting the next
      * structure). Instead, strongly connected components of the filtered
-     * graph are computed once with an iterative Tarjan's algorithm, and a
-     * breadth-first search confined to the component of the subject finds
-     * the shortest recursion path, if one exists. Everything is iterative so
-     * that deep models can't overflow the stack.
+     * graph are computed once with an iterative Tarjan's algorithm. Every
+     * shape in a component with a cycle is recursive. For each such component,
+     * a root shape is chosen and two breadth-first searches find a path from
+     * every shape in the component to the root and from the root back to it.
+     * The recursion path of a shape is its path to the root followed by the
+     * root's path back to the shape. This path isn't necessarily the shortest,
+     * and it may visit a shape more than once, but it's found without searching
+     * the component again for each shape. Everything is iterative so that deep
+     * models can't overflow the stack.
      *
      * <p>The graph is walked over the reverse neighbor provider, following
      * directed relationships that match the filter, which is the same graph
@@ -213,6 +232,8 @@ public final class ShapeRecursionValidator extends AbstractValidator {
         private final Map<ShapeId, Integer> index = new HashMap<>();
         private final Map<ShapeId, Integer> lowlink = new HashMap<>();
         private final Map<ShapeId, Integer> component = new HashMap<>();
+        private final Map<Integer, RootPaths> rootPaths = new HashMap<>();
+        private final Map<ShapeId, List<Relationship>> edges = new HashMap<>();
         private final Deque<Shape> sccStack = new ArrayDeque<>();
         private final Set<ShapeId> onStack = new HashSet<>();
         private int nextIndex;
@@ -223,65 +244,214 @@ public final class ShapeRecursionValidator extends AbstractValidator {
             this.filter = filter;
         }
 
-        Optional<PathFinder.Path> findCycle(Shape start) {
+        Optional<RecursionPath> findCycle(Shape start) {
             ShapeId startId = start.getId();
             if (!index.containsKey(startId)) {
                 strongConnect(start);
             }
 
-            int comp = component.get(startId);
-            Map<ShapeId, Relationship> parent = new HashMap<>();
-            Set<ShapeId> visited = new HashSet<>();
-            visited.add(startId);
-            Deque<Shape> queue = new ArrayDeque<>();
-            queue.add(start);
-
-            while (!queue.isEmpty()) {
-                Shape current = queue.poll();
-                for (Relationship rel : edges(current)) {
-                    Shape previous = rel.getShape();
-                    ShapeId previousId = previous.getId();
-                    if (previousId.equals(startId)) {
-                        return Optional.of(buildPath(startId, rel, current.getId(), parent));
-                    }
-                    Integer previousComponent = component.get(previousId);
-                    if (previousComponent != null
-                            && previousComponent == comp
-                            && visited.add(previousId)) {
-                        parent.put(previousId, rel);
-                        queue.add(previous);
-                    }
-                }
-            }
-
-            return Optional.empty();
+            // Only components with a cycle have root paths.
+            RootPaths paths = rootPaths.get(component.get(startId));
+            return paths == null ? Optional.empty() : Optional.of(paths.pathOf(startId));
         }
 
-        private PathFinder.Path buildPath(
-                ShapeId startId,
-                Relationship closing,
-                ShapeId current,
-                Map<ShapeId, Relationship> parent
-        ) {
-            List<Relationship> relationships = new ArrayList<>();
-            relationships.add(closing);
-            ShapeId next = current;
-            while (!next.equals(startId)) {
-                Relationship rel = parent.get(next);
-                relationships.add(rel);
-                next = rel.getNeighborShapeId();
-            }
-            return new PathFinder.Path(relationships);
+        private boolean inComponent(Shape shape, int comp) {
+            Integer shapeComponent = component.get(shape.getId());
+            return shapeComponent != null && shapeComponent == comp;
         }
 
+        // Filtered edges are computed once per shape and reused by every search.
         private List<Relationship> edges(Shape shape) {
-            List<Relationship> result = new ArrayList<>();
-            for (Relationship rel : reverse.getNeighbors(shape)) {
-                if (rel.getDirection() == RelationshipDirection.DIRECTED && filter.test(rel)) {
-                    result.add(rel);
+            return edges.computeIfAbsent(shape.getId(), id -> {
+                List<Relationship> result = new ArrayList<>();
+                for (Relationship rel : reverse.getNeighbors(shape)) {
+                    if (rel.getDirection() == RelationshipDirection.DIRECTED && filter.test(rel)) {
+                        result.add(rel);
+                    }
+                }
+                return result;
+            });
+        }
+
+        /**
+         * Paths between the root of a component and every other shape in it.
+         *
+         * <p>The root is the shape with the smallest ID so that the reported
+         * paths don't depend on the order shapes are visited in.
+         */
+        private final class RootPaths {
+            private final ShapeId root;
+            // A relationship from a shape in the component to the root, if any.
+            private Relationship closing;
+            // For each shape, the next relationship on its path to the root.
+            private final Map<ShapeId, Relationship> toRoot = new HashMap<>();
+            // For each shape, the last relationship on the root's path to it.
+            private final Map<ShapeId, Relationship> fromRoot = new HashMap<>();
+            // The number of relationships on each shape's path to the root and from it.
+            private final Map<ShapeId, Integer> toRootLength = new HashMap<>();
+            private final Map<ShapeId, Integer> fromRootLength = new HashMap<>();
+            // The relationships nearest the root, up to MAX_PATH_ENDPOINT_SHAPES of
+            // them, at the end of each shape's path to the root and at the start of
+            // the root's path to it. Shapes far from the root share their parent's list.
+            private final Map<ShapeId, List<Relationship>> toRootEnd = new HashMap<>();
+            private final Map<ShapeId, List<Relationship>> fromRootStart = new HashMap<>();
+
+            RootPaths(int comp, Shape rootShape) {
+                root = rootShape.getId();
+
+                for (Relationship rel : edges(rootShape)) {
+                    if (inComponent(rel.getShape(), comp)) {
+                        closing = rel;
+                        break;
+                    }
+                }
+                if (closing == null) {
+                    // A single shape without a relationship to itself isn't recursive.
+                    return;
+                }
+
+                // Each edge of a shape is a relationship from another shape to it,
+                // so searching along them from the root finds paths to the root.
+                Map<ShapeId, List<Relationship>> outgoing = new HashMap<>();
+                toRootLength.put(root, 0);
+                toRootEnd.put(root, Collections.emptyList());
+                fromRootLength.put(root, 0);
+                fromRootStart.put(root, Collections.emptyList());
+                Deque<Shape> queue = new ArrayDeque<>();
+                queue.add(rootShape);
+                Set<ShapeId> visited = new HashSet<>();
+                visited.add(root);
+                while (!queue.isEmpty()) {
+                    Shape current = queue.poll();
+                    for (Relationship rel : edges(current)) {
+                        Shape previous = rel.getShape();
+                        if (inComponent(previous, comp)) {
+                            outgoing.computeIfAbsent(previous.getId(), id -> new ArrayList<>()).add(rel);
+                            if (visited.add(previous.getId())) {
+                                ShapeId id = previous.getId();
+                                int length = toRootLength.get(current.getId());
+                                List<Relationship> end = toRootEnd.get(current.getId());
+                                if (length < MAX_PATH_ENDPOINT_SHAPES) {
+                                    List<Relationship> longer = new ArrayList<>(end.size() + 1);
+                                    longer.add(rel);
+                                    longer.addAll(end);
+                                    end = longer;
+                                }
+                                toRoot.put(id, rel);
+                                toRootLength.put(id, length + 1);
+                                toRootEnd.put(id, end);
+                                queue.add(previous);
+                            }
+                        }
+                    }
+                }
+
+                // Searching along the same relationships in their own direction
+                // finds paths from the root.
+                queue.add(rootShape);
+                visited.clear();
+                visited.add(root);
+                while (!queue.isEmpty()) {
+                    Shape current = queue.poll();
+                    for (Relationship rel : outgoing.getOrDefault(current.getId(), Collections.emptyList())) {
+                        Shape next = rel.getNeighborShape().get();
+                        if (visited.add(next.getId())) {
+                            ShapeId id = next.getId();
+                            int length = fromRootLength.get(current.getId());
+                            List<Relationship> start = fromRootStart.get(current.getId());
+                            if (length < MAX_PATH_ENDPOINT_SHAPES) {
+                                List<Relationship> longer = new ArrayList<>(start.size() + 1);
+                                longer.addAll(start);
+                                longer.add(rel);
+                                start = longer;
+                            }
+                            fromRoot.put(id, rel);
+                            fromRootLength.put(id, length + 1);
+                            fromRootStart.put(id, start);
+                            queue.add(next);
+                        }
+                    }
                 }
             }
-            return result;
+
+            /**
+             * Gets the parts of a shape's recursion path that are printed.
+             *
+             * <p>The path is the shape's path to the root followed by the root's
+             * path back to it. For the root itself, the second part is the root's
+             * path to the start of the closing relationship, then that relationship.
+             * Only the relationships at each end of the path are read, so this
+             * doesn't depend on the length of the path.
+             */
+            RecursionPath pathOf(ShapeId shape) {
+                boolean isRoot = shape.equals(root);
+                ShapeId end = isRoot ? closing.getShape().getId() : shape;
+                Relationship last = isRoot ? closing : null;
+                int toLength = toRootLength.get(shape);
+                int fromLength = fromRootLength.get(end) + (isRoot ? 1 : 0);
+                int max = MAX_PATH_ENDPOINT_SHAPES;
+
+                if (toLength + fromLength <= 2 * max) {
+                    List<Relationship> all = firstToRoot(shape, toLength);
+                    all.addAll(lastFromRoot(end, last, fromLength));
+                    return new RecursionPath(all, 0, Collections.emptyList());
+                }
+
+                // If either part is shorter than max, the other part supplies
+                // the rest of that end of the path.
+                int headToRoot = Math.min(toLength, max);
+                List<Relationship> head = firstToRoot(shape, headToRoot);
+                head.addAll(firstFromRoot(end, last, max - headToRoot));
+                int tailFromRoot = Math.min(fromLength, max);
+                List<Relationship> tail = lastToRoot(shape, max - tailFromRoot);
+                tail.addAll(lastFromRoot(end, last, tailFromRoot));
+                return new RecursionPath(head, toLength + fromLength - 2 * max, tail);
+            }
+
+            // The first count relationships of the shape's path to the root.
+            private List<Relationship> firstToRoot(ShapeId shape, int count) {
+                List<Relationship> result = new ArrayList<>(count);
+                ShapeId current = shape;
+                while (result.size() < count) {
+                    Relationship rel = toRoot.get(current);
+                    result.add(rel);
+                    current = rel.getNeighborShapeId();
+                }
+                return result;
+            }
+
+            // The last count relationships of the shape's path to the root, where
+            // count is at most MAX_PATH_ENDPOINT_SHAPES.
+            private List<Relationship> lastToRoot(ShapeId shape, int count) {
+                List<Relationship> nearRoot = toRootEnd.get(shape);
+                return new ArrayList<>(nearRoot.subList(nearRoot.size() - count, nearRoot.size()));
+            }
+
+            // The first count relationships of the root's path to end followed by
+            // last, where count is at most MAX_PATH_ENDPOINT_SHAPES.
+            private List<Relationship> firstFromRoot(ShapeId end, Relationship last, int count) {
+                List<Relationship> nearRoot = fromRootStart.get(end);
+                List<Relationship> result = new ArrayList<>(nearRoot.subList(0, Math.min(count, nearRoot.size())));
+                if (result.size() < count) {
+                    result.add(last);
+                }
+                return result;
+            }
+
+            // The last count relationships of the root's path to end followed by last.
+            private List<Relationship> lastFromRoot(ShapeId end, Relationship last, int count) {
+                Deque<Relationship> result = new ArrayDeque<>(count);
+                if (last != null && count > 0) {
+                    result.addFirst(last);
+                }
+                ShapeId current = end;
+                while (result.size() < count) {
+                    Relationship rel = fromRoot.get(current);
+                    result.addFirst(rel);
+                    current = rel.getShape().getId();
+                }
+                return new ArrayList<>(result);
+            }
         }
 
         private void strongConnect(Shape root) {
@@ -306,12 +476,20 @@ public final class ShapeRecursionValidator extends AbstractValidator {
                         lowlink.put(p, Math.min(lowlink.get(p), lowlink.get(v)));
                     }
                     if (lowlink.get(v).equals(index.get(v))) {
-                        ShapeId member;
+                        Shape member;
+                        Shape smallest = frame.shape;
                         do {
-                            member = sccStack.pop().getId();
-                            onStack.remove(member);
-                            component.put(member, nextComponent);
-                        } while (!member.equals(v));
+                            member = sccStack.pop();
+                            onStack.remove(member.getId());
+                            component.put(member.getId(), nextComponent);
+                            if (member.getId().compareTo(smallest.getId()) < 0) {
+                                smallest = member;
+                            }
+                        } while (!member.getId().equals(v));
+                        RootPaths paths = new RootPaths(nextComponent, smallest);
+                        if (paths.closing != null) {
+                            rootPaths.put(nextComponent, paths);
+                        }
                         nextComponent++;
                     }
                 }
@@ -337,6 +515,24 @@ public final class ShapeRecursionValidator extends AbstractValidator {
                 this.shape = shape;
                 this.edges = edges;
             }
+        }
+    }
+
+    /**
+     * The printed parts of a recursion path, which starts and ends at the
+     * subject shape. If omitted is zero, head holds the whole path.
+     * Otherwise, head and tail hold the relationships at each end and
+     * omitted relationships are left out between them.
+     */
+    private static final class RecursionPath {
+        private final List<Relationship> head;
+        private final int omitted;
+        private final List<Relationship> tail;
+
+        RecursionPath(List<Relationship> head, int omitted, List<Relationship> tail) {
+            this.head = head;
+            this.omitted = omitted;
+            this.tail = tail;
         }
     }
 }
