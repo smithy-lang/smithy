@@ -34,6 +34,10 @@
   ([#3343](https://github.com/smithy-lang/smithy/pull/3343))
 - Add since field for unstableFeatureInfo and explain for downgrade in diff
   event ([#3316](https://github.com/smithy-lang/smithy/pull/3316))
+- Added support for setting a model to a bare major version, which will then
+  resolve to the latest minor version of that major version. For example, "2"
+  will resolve to "2.1".
+  ([#3367](https://github.com/smithy-lang/smithy/pull/3367))
 
 ### Bug Fixes
 
@@ -4832,3 +4836,4 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
+
