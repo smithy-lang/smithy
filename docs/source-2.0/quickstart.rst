@@ -119,7 +119,7 @@ Next, we will start to model a ``Weather`` service in the ``weather.smithy`` fil
 .. code-block:: smithy
     :caption: model/weather.smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace example.weather
 
     /// Provides weather forecasts.
@@ -152,7 +152,7 @@ identifiers, operations, and any number of child resources.
 .. code-block:: smithy
     :caption: model/weather.smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace example.weather
 
     /// Provides weather forecasts.
@@ -622,7 +622,7 @@ The complete ``weather.smithy`` model should look like:
 .. code-block:: smithy
     :caption: weather.smithy
 
-    $version: "2.1"
+    $version: "2"
 
     namespace example.weather
 

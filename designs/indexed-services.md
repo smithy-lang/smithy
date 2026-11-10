@@ -283,10 +283,10 @@ structure Indexed {
 }
 ```
 
-When formatting a file with a version requirement greater than or equal to
-IDL 2.1 and less than 3.0, a formatter SHOULD render resolvable, valid `idx`
-trait applications using the shorthand. A formatter MUST NOT add or upgrade a
-version statement to enable the shorthand.
+When formatting a file whose version requirement resolves to a version greater
+than or equal to IDL 2.1 and less than 3.0, a formatter SHOULD render
+resolvable, valid `idx` trait applications using the shorthand. A formatter
+MUST NOT add or upgrade a version statement to enable the shorthand.
 
 IDL serializers SHOULD emit the shorthand for member traits by default and
 provide a way to retain the explicit trait form. Trait applications emitted as
@@ -349,9 +349,9 @@ unnecessary churn.
 * Member indexes cannot be reserved. Removing a non-final member requires
   reindexing later members to maintain contiguity. A separate reservation
   mechanism can be introduced in the future.
-* The shorthand is only available to compatible IDL 2.x versions with a
-  version requirement of 2.1 or later. Other model representations use the
-  `idx` trait directly.
+* The shorthand is only available to compatible IDL 2.x versions whose version
+  requirement resolves to 2.1 or later, including the bare major version `2`.
+  Other model representations use the `idx` trait directly.
 * Member indexes define stable ordering metadata but do not define a wire
   encoding. Each protocol decides how to use them.
 

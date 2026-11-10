@@ -35,6 +35,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ModelSerializerTest {
     @TestFactory
@@ -113,7 +114,8 @@ public class ModelSerializerTest {
                 .unwrap();
 
         String serializedString2 = Node.prettyPrintJson(serializer.serialize(other));
-        assertThat(serialized.expectMember("smithy").expectStringNode(), equalTo(Node.from(Model.MODEL_VERSION)));
+        assertThat(serialized.expectMember("smithy").expectStringNode(),
+                equalTo(Node.from("2.0")));
         assertThat(serializedString, equalTo(serializedString2));
         assertThat(model, equalTo(other));
     }
@@ -284,7 +286,7 @@ public class ModelSerializerTest {
                 .build();
         Model model = Model.builder().addShape(shape).build();
         Node node = ModelSerializer.builder().build().serialize(model);
-        Node expectedNode = Node.parse("{\"smithy\":\"2.1\",\"shapes\":{\"ns.foo#Bar\":" +
+        Node expectedNode = Node.parse("{\"smithy\":\"2.0\",\"shapes\":{\"ns.foo#Bar\":" +
                 "{\"type\":\"resource\",\"properties\":{\"fooProperty\":{\"target\":\"ns.foo#Shape\"}}}}}");
         Node.assertEquals(node, expectedNode);
     }
@@ -298,8 +300,96 @@ public class ModelSerializerTest {
 
     @Test
     public void failsWhenUsingV1WithPrelude() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            ModelSerializer.builder().version("1.0").includePrelude(true).build();
-        });
+        for (String version : ListUtils.of("1", "1.0")) {
+            Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+                ModelSerializer.builder().version(version).includePrelude(true).build();
+            });
+        }
+    }
+
+    // The JSON AST gained no features after 2.0, so it declares 2.0 rather than tracking
+    // Model.MODEL_VERSION. The IDL serializer differs because it can emit 2.1-only syntax.
+    @Test
+    public void serializesVersion2Point0ByDefault() {
+        assertThat(serializeVersion(ModelSerializer.builder()), equalTo("2.0"));
+    }
+
+    // Whatever version the caller asks for is written verbatim rather than normalized, so callers that
+    // pin a specific minor version keep getting it.
+    @Test
+    public void serializesRequestedVersionVerbatim() {
+        assertThat(serializeVersion(ModelSerializer.builder().version("2")), equalTo("2"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("2.0")), equalTo("2.0"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("2.1")), equalTo("2.1"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("1")), equalTo("1"));
+        assertThat(serializeVersion(ModelSerializer.builder().version("1.0")), equalTo("1.0"));
+    }
+
+    // Both spellings of version 1 must take the downgrade path, which converts enums back to strings
+    // carrying the enum trait.
+    @Test
+    public void downgradesToV1ForEveryV1Spelling() {
+        Model model = Model.assembler()
+                .addShape(EnumShape.builder().id("ns.foo#Enum").addMember("FOO", "foo").build())
+                .assemble()
+                .unwrap();
+
+        for (String version : ListUtils.of("1", "1.0")) {
+            ObjectNode serialized = ModelSerializer.builder().version(version).build().serialize(model);
+            ObjectNode shape = NodePointer.parse("/shapes/ns.foo#Enum").getValue(serialized).expectObjectNode();
+
+            assertThat(version, serialized.expectStringMember("smithy").getValue(), equalTo(version));
+            assertThat(version, shape.expectStringMember("type").getValue(), equalTo("string"));
+            assertThat(version, shape.expectObjectMember("traits").getStringMap(), hasKey("smithy.api#enum"));
+        }
+    }
+
+    // Declaring 2.0 is only safe because every 2.1 IDL feature desugars into something version-neutral
+    // before it reaches the AST: inline collections become real list and map shapes, tagged literals
+    // become an ordinary default node, and member index shorthand becomes an idx trait application.
+    @Test
+    public void serializedAstOfA21ModelRoundTripsUnderThe2Point0Default() {
+        Model model = Model.assembler()
+                .addUnparsedModel("2-1-features.smithy",
+                        "$version: \"2.1\"\n"
+                                + "namespace smithy.protocols\n"
+                                // Define idx locally so this model is self-contained.
+                                + "@trait(selector: \"member\")\n"
+                                + "integer idx\n"
+                                + "structure Indexed {\n"
+                                + "    strings: [String]\n"
+                                + "    nested: {String: [Integer]}\n"
+                                + "    @default(#hex \"89504e47\")\n"
+                                + "    1. header: Blob\n"
+                                + "}\n")
+                .assemble()
+                .unwrap();
+
+        ObjectNode serialized = ModelSerializer.builder().build().serialize(model);
+        assertThat(serialized.expectStringMember("smithy").getValue(), equalTo("2.0"));
+
+        // Guard against the round trip passing vacuously: each feature must actually be represented.
+        assertThat(serialized.expectObjectMember("shapes").getStringMap(),
+                hasKey("smithy.protocols#_SyntheticListOf__String"));
+        ObjectNode header = NodePointer.parse("/shapes/smithy.protocols#Indexed/members/header")
+                .getValue(serialized)
+                .expectObjectNode();
+        Map<String, Node> headerTraits = header.expectObjectMember("traits").getStringMap();
+        assertThat(headerTraits, hasKey("smithy.protocols#idx"));
+        assertThat(headerTraits, hasKey("smithy.api#default"));
+
+        Model roundTrip = Model.assembler()
+                .addDocumentNode(serialized)
+                .assemble()
+                .unwrap();
+
+        assertThat(roundTrip, equalTo(model));
+    }
+
+    private String serializeVersion(ModelSerializer.Builder builder) {
+        return builder.build()
+                .serialize(Model.builder().build())
+                .expectStringMember("smithy")
+                .getValue();
     }
 }

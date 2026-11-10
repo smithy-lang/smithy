@@ -7,6 +7,7 @@ package software.amazon.smithy.model.validation.validators;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,5 +123,100 @@ public class ShapeRecursionValidatorTest {
                 .startsWith("Found invalid shape recursion: smithy.example#B$a > smithy.example#A > "
                         + "smithy.example#A$b > smithy.example#B. "),
                 b.getMessage());
+    }
+
+    @Test
+    public void truncatesLongRecursionPaths() {
+        int n = 100;
+        StringBuilder sb = new StringBuilder(HEADER);
+        for (int i = 0; i < n; i++) {
+            sb.append("structure S")
+                    .append(i)
+                    .append(" {\n    @required\n    a: S")
+                    .append((i + 1) % n)
+                    .append("\n}\n");
+        }
+        List<ValidationEvent> events = validate(sb.toString());
+
+        assertOneEventPerShape(events, n);
+        ValidationEvent s0 = events.stream()
+                .filter(e -> e.getShapeId().get().equals(ShapeId.from("smithy.example#S0")))
+                .findFirst()
+                .get();
+        // The path has 2 * n shapes after the subject: 16 are shown at each end.
+        String expected = "Found invalid shape recursion: smithy.example#S0$a > smithy.example#S1 > "
+                + "smithy.example#S1$a > smithy.example#S2 > ";
+        assertTrue(s0.getMessage().startsWith(expected), s0.getMessage());
+        assertTrue(s0.getMessage()
+                .contains(" > smithy.example#S7$a > smithy.example#S8 > ... (168 more) ... > "
+                        + "smithy.example#S92$a > smithy.example#S93 > "),
+                s0.getMessage());
+        assertTrue(s0.getMessage().contains(" > smithy.example#S99$a > smithy.example#S0. "), s0.getMessage());
+    }
+
+    @Test
+    public void handlesDeepValidUnionChains() {
+        int n = 20000;
+        StringBuilder sb = new StringBuilder(HEADER);
+        for (int i = 0; i < n; i++) {
+            sb.append("union U").append(i).append(" {\n    a: U").append(i + 1).append("\n}\n");
+        }
+        sb.append("union U").append(n).append(" {\n    tail: String\n}\n");
+
+        assertEquals(0, validate(sb.toString()).size());
+    }
+
+    @Test
+    public void reportsEveryUnionInDeepNonTerminatingChains() {
+        int n = 20000;
+        StringBuilder sb = new StringBuilder(HEADER);
+        for (int i = 0; i < n; i++) {
+            sb.append("union U").append(i).append(" {\n    a: U").append(i + 1).append("\n}\n");
+        }
+        sb.append("structure U").append(n).append(" {\n    @required\n    back: U0\n}\n");
+        List<ValidationEvent> events = validate(sb.toString());
+
+        assertEquals(n, events.size());
+        for (ValidationEvent event : events) {
+            assertEquals("It is impossible to create instances of this recursive union", event.getMessage());
+        }
+    }
+
+    @Test
+    public void printsTheOnlyCycleOfEveryShapeInARing() {
+        // A ring of n structures has a single cycle of 2 * n shapes through each
+        // structure. 16 structures fit in the message, 17 are just over it, and
+        // the root and the shapes next to it are covered in every ring.
+        for (int n : new int[] {1, 2, 16, 17, 40}) {
+            StringBuilder sb = new StringBuilder(HEADER);
+            for (int i = 0; i < n; i++) {
+                sb.append("structure S")
+                        .append(i)
+                        .append(" {\n    @required\n    a: S")
+                        .append((i + 1) % n)
+                        .append("\n}\n");
+            }
+            List<ValidationEvent> events = validate(sb.toString());
+            assertOneEventPerShape(events, n);
+
+            for (ValidationEvent event : events) {
+                int subject = Integer.parseInt(event.getShapeId().get().getName().substring(1));
+                List<String> shapes = new ArrayList<>();
+                for (int step = 0; step < n; step++) {
+                    int current = (subject + step) % n;
+                    shapes.add("smithy.example#S" + current + "$a");
+                    shapes.add("smithy.example#S" + (current + 1) % n);
+                }
+                if (shapes.size() > 32) {
+                    List<String> truncated = new ArrayList<>(shapes.subList(0, 16));
+                    truncated.add("... (" + (shapes.size() - 32) + " more) ...");
+                    truncated.addAll(shapes.subList(shapes.size() - 16, shapes.size()));
+                    shapes = truncated;
+                }
+                String expected = "Found invalid shape recursion: " + String.join(" > ", shapes) + ". ";
+                assertTrue(event.getMessage().startsWith(expected),
+                        "n=" + n + "\nexpected: " + expected + "\nactual:   " + event.getMessage());
+            }
+        }
     }
 }

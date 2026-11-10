@@ -458,7 +458,7 @@ Value type
 
 .. code-block:: smithy
 
-    $version: "2.1"
+    $version: "2"
     namespace acme.example
 
     @title("ACME Simple Image Service")
