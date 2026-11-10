@@ -65,3 +65,73 @@ union RecursiveNext {
     a: Start,
     b: Start
 }
+
+// An optional member doesn't make this structure terminate, because the
+// required member still targets the union, so the union is impossible.
+union RecursiveThroughOptional {
+    a: HasOptionalMember
+}
+
+structure HasOptionalMember {
+    @required
+    union: RecursiveThroughOptional
+
+    optional: String
+}
+
+// This union is impossible because one required member of the structure
+// leads back to the union, even though the other required member terminates.
+union RecursiveThroughRequired {
+    a: HasTerminatingRequiredMember
+}
+
+structure HasTerminatingRequiredMember {
+    @required
+    union: RecursiveThroughRequired
+
+    @required
+    str: String
+}
+
+// This union is fine because every required member of the structure terminates
+// and the recursive member is optional: {"a": {"str": "hi"}}
+union RecursiveThroughOptionalOnly {
+    a: HasOptionalRecursiveMember
+}
+
+structure HasOptionalRecursiveMember {
+    union: RecursiveThroughOptionalOnly
+
+    @required
+    str: String
+}
+
+// This union is impossible because a structure needs all of its required
+// members, and only one of the two required members can be built.
+union RecursiveThroughSecondRequired {
+    a: HasTwoRequiredTargets
+}
+
+structure HasTwoRequiredTargets {
+    @required
+    empty: EmptyStructure
+
+    @required
+    union: RecursiveThroughSecondRequired
+}
+
+structure EmptyStructure {}
+
+// This union is fine because its only member targets a structure whose two
+// required members target the same buildable shape: {"a": {"x": {}, "y": {}}}
+union BuildableThroughSameTargetTwice {
+    a: HasSameRequiredTargetTwice
+}
+
+structure HasSameRequiredTargetTwice {
+    @required
+    x: EmptyStructure
+
+    @required
+    y: EmptyStructure
+}
