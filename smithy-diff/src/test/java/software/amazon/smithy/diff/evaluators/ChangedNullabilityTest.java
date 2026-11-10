@@ -135,6 +135,91 @@ public class ChangedNullabilityTest {
     }
 
     @Test
+    public void detectsAddingRequiredTraitToInputMember() {
+        SourceLocation memberSource = new SourceLocation("a.smithy", 5, 6);
+        StringShape target = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape oldInput = StructureShape.builder()
+                .addTrait(new InputTrait())
+                .id("smithy.example#OperationInput")
+                .addMember("id", target.getId(), member -> member.source(memberSource))
+                .build();
+        StructureShape newInput = oldInput.toBuilder()
+                .addMember("id", target.getId(), member -> {
+                    member.source(memberSource);
+                    member.addTrait(new RequiredTrait());
+                })
+                .build();
+        Model oldModel = Model.builder().addShapes(target, oldInput).build();
+        Model newModel = Model.builder().addShapes(target, newInput).build();
+
+        ModelDiff.Result result = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();
+        List<ValidationEvent> events = TestHelper.findEvents(
+                result.getDiffEvents(),
+                "ChangedNullability.AddedRequiredTraitToInput");
+
+        assertThat(result.isDiffBreaking(), is(true));
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getSeverity(), is(Severity.ERROR));
+        assertThat(events.get(0).getShapeId().get(), is(oldInput.getMember("id").get().getId()));
+        assertThat(events.get(0).getSourceLocation(), is(memberSource));
+        assertThat(events.get(0).getMessage(),
+                equalTo("Member `id` changed from optional to required for authoritative validation: "
+                        + "Previously valid requests that omit this member may now be rejected."));
+    }
+
+    @Test
+    public void detectsAddingRequiredTraitToInlineInputMember() {
+        String oldModelText = "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "operation GetItem {\n"
+                + "    input := {\n"
+                + "        id: String\n"
+                + "    }\n"
+                + "}\n";
+        String newModelText = "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "operation GetItem {\n"
+                + "    input := {\n"
+                + "        @required\n"
+                + "        id: String\n"
+                + "    }\n"
+                + "}\n";
+        Model oldModel = Model.assembler().addUnparsedModel("old.smithy", oldModelText).assemble().unwrap();
+        Model newModel = Model.assembler().addUnparsedModel("new.smithy", newModelText).assemble().unwrap();
+
+        ModelDiff.Result result = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();
+        List<ValidationEvent> events = TestHelper.findEvents(
+                result.getDiffEvents(),
+                "ChangedNullability.AddedRequiredTraitToInput");
+
+        assertThat(result.isDiffBreaking(), is(true));
+        assertThat(events, hasSize(1));
+        assertThat(events.get(0).getShapeId().get(), is(ShapeId.from("smithy.example#GetItemInput$id")));
+    }
+
+    @Test
+    public void addingRequiredTraitToInputMemberWithDefaultIsOk() {
+        StringShape target = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape oldInput = StructureShape.builder()
+                .addTrait(new InputTrait())
+                .id("smithy.example#OperationInput")
+                .addMember("id", target.getId(), member -> member.addTrait(new DefaultTrait(Node.from("default"))))
+                .build();
+        StructureShape newInput = oldInput.toBuilder()
+                .addMember("id", target.getId(), member -> {
+                    member.addTrait(new DefaultTrait(Node.from("default")));
+                    member.addTrait(new RequiredTrait());
+                })
+                .build();
+        Model oldModel = Model.builder().addShapes(target, oldInput).build();
+        Model newModel = Model.builder().addShapes(target, newInput).build();
+
+        List<ValidationEvent> events = ModelDiff.compare(oldModel, newModel);
+
+        assertThat(TestHelper.findEvents(events, "ChangedNullability.AddedRequiredTraitToInput"), empty());
+    }
+
+    @Test
     public void detectsInvalidRemovalOfRequired() {
         SourceLocation memberSource = new SourceLocation("a.smithy", 7, 7);
         StringShape s = StringShape.builder().id("smithy.example#Str").build();

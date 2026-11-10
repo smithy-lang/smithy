@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fixed smithy-diff to report adding `@required` to an existing member of an `@input` structure as backward-incompatible because it tightens authoritative input validation.",
+  "pull_requests": [
+    "[#3259](https://github.com/smithy-lang/smithy/pull/3259)"
+  ]
+}
