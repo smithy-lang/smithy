@@ -102,6 +102,14 @@ public final class DocgenUtils {
      * <p>If the given symbol has no definition file or no
      * {@link DocSymbolProvider#LINK_ID_PROPERTY}, the response will be empty.
      *
+     * <p>A symbol defined in the file containing the link is linked by its fragment
+     * alone. MyST, the markdown parser the Sphinx integration uses, resolves the
+     * fragment of a link that names a file ({@code ./Page.md#id}) only against that
+     * file's heading anchors, so such a link misses an anchor written with
+     * {@link software.amazon.smithy.docgen.writers.DocWriter#writeAnchor}, even when
+     * {@code Page.md} is the current file. A fragment-only link ({@code #id}) also
+     * resolves against those anchors.
+     *
      * @param symbol The symbol to link to.
      * @param relativeTo A path that the symbol should be relative to. This must be the
      *                   path to the file containing the link.
@@ -115,6 +123,9 @@ public final class DocgenUtils {
                 || StringUtils.isBlank(linkId.get())
                 || relativeToParent == null) {
             return Optional.empty();
+        }
+        if (Paths.get(symbol.getDefinitionFile()).normalize().equals(relativeTo.normalize())) {
+            return Optional.of("#" + linkId.get());
         }
         return Optional.of(format(
                 "./%s#%s",
