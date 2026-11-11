@@ -57,6 +57,7 @@ Smithy clients should follow these tenets:
 ```{toctree}
 :maxdepth: 1
 
+client-execution
 application-protocols/index
 context
 retries
