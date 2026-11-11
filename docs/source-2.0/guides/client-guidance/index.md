@@ -58,10 +58,10 @@ Smithy clients should follow these tenets:
 :maxdepth: 1
 
 application-protocols/index
-dns
 context
 retries
 endpoints
+dns
 identity-auth
 plugins
 interceptors

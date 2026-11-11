@@ -109,7 +109,9 @@ should raise an error when resolution fails or produces no usable addresses.
 
 Addresses should use the language or transport's native parsed representation
 when that representation is available. Returning parsed addresses avoids
-repeated parsing and prevents ambiguity around IPv6 text formatting.
+repeated parsing and prevents ambiguity around IPv6 text formatting. In the
+example above, `NetworkAddress` stands in for that native type, such as
+`java.net.InetAddress` in Java.
 
 `reportFailure`, `purge`, and `purgeAll` are optional capabilities. Stateless
 resolvers and resolvers whose caching is owned by the operating system can
@@ -129,7 +131,8 @@ protocol-specific options unless the transport uses them.
 
 `DnsRequest` should initially contain only the hostname. It can later add
 transport-relevant information without requiring DNS features that clients do
-not currently use.
+not currently use. For example, a transport that queries HTTPS records
+({rfc}`9460`) to discover HTTP/3 support also needs the port.
 
 ## Hostname identity
 
@@ -171,7 +174,7 @@ Resolver interfaces should return the ordered address set without prescribing
 the racing algorithm.
 
 Failure feedback should come from the component that attempted the connection.
-A resolver must not infer address health from HTTP response status codes.
+It must not be derived from HTTP response status codes.
 Implementations that temporarily deprioritize a failed address should use
 bounded failure state and make the address eligible again after a bounded
 cooldown or a successful refresh.
@@ -198,14 +201,14 @@ underlying API provides TTLs, a custom cache should honor them. If it does not,
 an application-level cache duration is a local policy rather than the
 authoritative DNS TTL. Cache documentation should identify it as a local policy.
 
-Resolver implementations own background refresh, stale-address retention, and
-eviction policies. The transport and deployment environment determine these
-policies.
+This guide does not prescribe background refresh, stale-address retention, or
+eviction policies. A custom resolver that owns a cache should choose them to
+suit the transport and deployment environment it serves.
 
 ## Retries and connection pools
 
-An operation retry that reuses a healthy pooled connection does not perform DNS
-resolution.
+An operation [retry](retries.md) that reuses a healthy pooled connection does
+not perform DNS resolution.
 
 When a retry requires a new connection, the connection strategy should
 try other addresses from the current result before forcing another lookup. A
@@ -249,9 +252,9 @@ hostname does not establish the identity of the remote peer. Authentication and
 TLS certificate verification must continue to use the original hostname.
 
 Features that restrict requests to particular networks must validate resolved
-addresses, not only the hostname text. They should repeat that validation after
-redirects and later resolutions so that DNS changes cannot bypass the
-restriction.
+addresses, not only the hostname text. They should validate the address the
+transport connects to at connection time, including after redirects and later
+resolutions, so that DNS changes cannot bypass the restriction.
 
 Explicit static hostname mappings should take precedence only when configured
 for the transport or call where they are intended. They should not silently

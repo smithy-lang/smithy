@@ -1,5 +1,7 @@
 {
   "type": "documentation",
   "description": "Added client guidance for DNS resolution and transport integration.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3360](https://github.com/smithy-lang/smithy/pull/3360)"
+  ]
 }
