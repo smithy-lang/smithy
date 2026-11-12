@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Fix exponential time in `TopologicalIndex` on models with many converging paths. Recursive closures are now computed lazily and capped for very large models.",
+  "pull_requests": []
+}
