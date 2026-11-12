@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -959,6 +959,12 @@ linters to have clear, actionable error messages.</p>
 <span class="w">    </span>}
 }
 </pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Selectors matching <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">map</span></code> also match synthetic shapes created
+by <a class="reference internal" href="../spec/idl.html#idl-inline-collections"><span class="std std-ref">inline collection declarations</span></a>. To
+exclude synthetic shapes, add <code class="docutils literal notranslate"><span class="pre">:not([trait|smithy.api#synthetic])</span></code>
+to the selector.</p>
 </div>
 </section>
 <section id="require-strings-to-have-a-pattern-constraint">

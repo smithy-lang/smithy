@@ -86,6 +86,96 @@ support configuration settings.
     }
 
 
+.. smithy-trait:: smithy.api#discriminated
+.. _discriminated-trait:
+
+``discriminated`` trait
+=======================
+
+Summary
+    Indicates that a union is serialized in JSON as a flat object, in which a
+    discriminator field identifies the member that is set and the members of
+    that member's target structure appear alongside it.
+Trait selector
+    ``union``
+Value type
+    ``string`` that contains the name of the discriminator field. When the
+    trait is applied without a value, the discriminator field is named
+    ``__type``. The value MUST NOT be empty.
+Conflicts with
+    :ref:`streaming-trait`
+
+.. warning::
+    This trait is unstable and MAY change in the future. Support for it is
+    optional, so it SHOULD only be used when every implementation that
+    exchanges data using the model supports it.
+
+Given the following union definition,
+
+.. code-block:: smithy
+
+    @discriminated("type")
+    union Shape {
+        circle: CircleData
+        rectangle: RectangleData
+    }
+
+    structure CircleData {
+        radius: Integer
+    }
+
+    structure RectangleData {
+        width: Integer
+        height: Integer
+    }
+
+a value of ``Shape`` with the ``circle`` member set is serialized as:
+
+.. code-block:: json
+
+    {
+        "type": "circle",
+        "radius": 5
+    }
+
+rather than with the standard encoding of a :ref:`union <union>`:
+
+.. code-block:: json
+
+    {
+        "circle": {
+            "radius": 5
+        }
+    }
+
+The following rules apply to a union marked with the ``discriminated`` trait:
+
+* Every member of the union MUST target a structure, and MUST NOT target
+  ``smithy.api#Unit``. A union can be nested by targeting a structure that has
+  a member that targets the union.
+* The discriminator field MUST NOT have the same name as the serialized name
+  of a member of any structure targeted by the union. The serialized name of a
+  member is its member name or, in protocols that use the
+  :ref:`jsonName-trait`, the value of that trait. A collision that only occurs
+  in some protocols, because a member has a ``jsonName`` trait, is reported as
+  a validation event that can be suppressed, so that a service that only uses
+  protocols in which it does not occur can still use the model.
+* The value of the discriminator field is the name of the union member that
+  is set. The ``jsonName`` trait has no effect on the members of the union.
+* Serializers SHOULD write the discriminator field first. Deserializers MUST
+  accept it at any position in the object.
+* If the discriminator field is missing, ``null``, or not a string, including
+  when the object is empty, the deserializer SHOULD report an error. A
+  discriminator value that does not match a member of the union is handled in
+  the same way as an unrecognized member of a standard union.
+
+The trait applies to the JSON serialization used by the ``restJson1``,
+``awsJson1_0``, ``awsJson1_1``, and ``rpcv2Json`` protocols, and to values
+serialized to and from JSON without a protocol, in implementations that support
+it. Every other protocol and serialization format ignores the trait, and
+serializes the union using its standard union encoding.
+
+
 .. smithy-trait:: smithy.api#jsonName
 .. _jsonName-trait:
 
@@ -255,6 +345,165 @@ The following steps are taken to determine the serialization format of a
     This trait SHOULD NOT be used unless the intended serialization format of
     a timestamp differs from the default protocol format. Using this trait too
     liberally can cause other tooling to improperly interpret the timestamp.
+
+
+.. _indexed-shapes:
+
+Indexed shapes
+==============
+
+Some protocols serialize members in a predetermined order so that parsing can
+be made more efficient and wire size can be made more compact. Smithy member
+declaration order has no semantic meaning and can change when a model is
+transformed or converted between representations. Indexed shapes assign
+explicit, stable wire indexes to members, allowing protocols to use a compact,
+ordered representation without relying on source declaration order.
+
+
+.. smithy-trait:: smithy.protocols#idx
+    :package: smithy-protocol-traits
+.. _idx-trait:
+
+``idx`` trait
+-------------
+
+Summary
+    Defines the stable wire index of a structure or union member.
+Trait selector
+    ``:is(structure, union) :not([trait|mixin]) > member``
+
+    *Any member of a structure or union that is not a mixin*
+Value type
+    ``integer`` between 1 and 65535, inclusive
+
+If any member of a structure or union has the ``idx`` trait, every member of
+that shape MUST have a unique ``idx`` value. Values MUST start at 1 and
+increase without gaps.
+
+Changing an existing member's ``idx`` value is a non backward-compatible change
+because it changes the member's wire index. New members are assigned the next
+contiguous value so that existing member indexes remain stable.
+
+Mixins MUST NOT apply ``idx`` to their members. A structure or union that
+uses a mixin MUST index the elided members it consumes:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use smithy.protocols#idx
+
+    @mixin
+    structure Identified {
+        id: String
+    }
+
+    structure Record with [Identified] {
+        @idx(2)
+        value: String
+
+        @idx(1)
+        $id
+    }
+
+Members marked with :ref:`eventHeader <eventHeader-trait>` or
+:ref:`eventPayload <eventPayload-trait>` are exempt from the requirement to
+have an index. Members that target a streaming blob or union are also exempt.
+
+Member index shorthand
+~~~~~~~~~~~~~~~~~~~~~~
+
+IDL 2.1 adds a member-index shorthand that places a positive integer and period
+before an explicit or elided member. Using it requires a
+:ref:`version requirement <smithy-version>` that resolves to ``2.1`` or later,
+that is, either an explicit ``$version: "2.1"`` or a bare ``$version: "2"``
+loaded by tooling that supports ``2.1``:
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    structure Record {
+        2. value: String
+        1. id: String
+    }
+
+This example is equivalent to applying the absolute
+``@idx`` trait to each member. It does not require a ``use`` statement, but does
+require that the `smithy-protocol-traits` model is available.
+
+The shorthand syntax and explicit ``@idx`` trait SHOULD NOT be used together.
+If the shorthand and an explicit ``@idx`` application are both used on the
+same member, equal values are treated as a redundant trait application while
+different values produce the normal conflicting-trait error.
+
+Only the shorthand depends on the IDL version. The ``idx`` trait itself can be
+used with any version requirement, including one that resolves to ``2.0``:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    use smithy.protocols#idx
+
+    structure Record {
+        @idx(2)
+        value: String
+
+        @idx(1)
+        id: String
+    }
+
+
+.. smithy-trait:: smithy.protocols#indexed
+    :package: smithy-protocol-traits
+.. _indexed-trait:
+
+``indexed`` trait
+-----------------
+
+Summary
+    Requires structures and unions in a service closure to use stable member
+    indexes.
+Trait selector
+    ``service``
+
+    *Any service*
+Value type
+    Annotation trait
+
+Every member of every non-mixin structure and union in the
+:ref:`service closure <service-closure>` of an ``indexed`` service MUST be
+targeted by the :ref:`idx trait <idx-trait>`, unless one of its explicit
+exemptions apply.
+
+The following service uses the IDL 2.1 shorthand, but ``indexed`` can also be
+used with explicit ``idx`` traits in earlier IDL versions:
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    use smithy.protocols#indexed
+
+    @indexed
+    service Example {
+        version: "2026-01-01"
+        operations: [GetRecord]
+    }
+
+    operation GetRecord {
+        output: Record
+    }
+
+    structure Record {
+        1. id: String
+        2. value: String
+    }
 
 
 .. _xml-bindings:

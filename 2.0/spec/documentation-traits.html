@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -663,6 +663,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#externaldocumentation-trait"><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-trait"><code class="docutils literal notranslate"><span class="pre">synthetic</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-trait"><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-trait"><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitive-trait"><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
@@ -936,8 +937,65 @@ URL.</p>
 </pre></div>
 </div>
 </section>
+<section id="synthetic-trait">
+<span id="smithy-api-synthetic-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">synthetic</span></code> trait<a class="headerlink" href="#synthetic-trait" title="Link to this heading">#</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Marks a shape as produced by the model assembler rather than written by a
+model author, such as the synthetic list and map shapes created by
+<a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">inline collection declarations</span></a>.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(list,</span> <span class="pre">map)</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<p>A model MUST NOT apply this trait manually, only the assembler may attach it.
+A shape that carries it MUST be named using the reserved <code class="docutils literal notranslate"><span class="pre">_Synthetic</span></code> prefix.</p>
+<p>The trait is serialized in the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a> so that AST
+consumers can tell generated shapes apart from authored ones. It is never
+serialized in the IDL, where the IDL 2.1 inline collection syntax carries the
+same information.
+The following two models are therefore equivalent:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"smithy.example#_SyntheticListOf__String"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"list"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"member"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.api#String"</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"traits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"smithy.api#synthetic"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"smithy.example#Playlist"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"structure"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"members"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"songs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"smithy.example#_SyntheticListOf__String"</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.1"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">Playlist</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">songs</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+}
+</pre></div>
+</div>
+</section>
 <section id="internal-trait">
-<span id="smithy-api-internal-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait<a class="headerlink" href="#internal-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-internal-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait<a class="headerlink" href="#internal-trait" title="Link to this heading">#</a></h2>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Shapes marked with the internal trait are meant only for internal use.
 Tooling can use the <code class="docutils literal notranslate"><span class="pre">internal</span></code> trait to filter out shapes from models
@@ -964,7 +1022,7 @@ filtered version of the model.</p>
 </div>
 </section>
 <section id="recommended-trait">
-<span id="smithy-api-recommended-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait<a class="headerlink" href="#recommended-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-recommended-trait"></span><span id="id8"></span><h2><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait<a class="headerlink" href="#recommended-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Indicates that a structure member SHOULD be set. This trait is useful when
 the majority of use cases for a structure benefit from providing a value
@@ -1012,7 +1070,7 @@ or cannot be made required backward compatibly.</p>
 </div>
 </section>
 <section id="sensitive-trait">
-<span id="smithy-api-sensitive-trait"></span><span id="id8"></span><h2><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait<a class="headerlink" href="#sensitive-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-sensitive-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait<a class="headerlink" href="#sensitive-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Indicates that the data stored in the shape is sensitive and MUST be
 handled with care.</p>
@@ -1034,7 +1092,7 @@ output. Application of this trait SHOULD NOT affect wire logging
 </div>
 </section>
 <section id="since-trait">
-<span id="smithy-api-since-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-since-trait"></span><span id="id10"></span><h2><code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Link to this heading">#</a></h2>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines the version or date in which a shape or member was added to
 the model.</p>
@@ -1048,7 +1106,7 @@ the model.</p>
 </dl>
 </section>
 <section id="tags-trait">
-<span id="smithy-api-tags-trait"></span><span id="id10"></span><h2><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait<a class="headerlink" href="#tags-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-tags-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait<a class="headerlink" href="#tags-trait" title="Link to this heading">#</a></h2>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Tags a shape with arbitrary tag names that can be used to filter and group
 shapes in the model.</p>
@@ -1069,7 +1127,7 @@ tags trait are arbitrary and up to the model author.</p>
 </div>
 </section>
 <section id="title-trait">
-<span id="smithy-api-title-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-title-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Link to this heading">#</a></h2>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines a proper name for a shape. This title can be
 used in automatically generated documentation and other contexts to
@@ -1093,7 +1151,7 @@ provide a user friendly name for a shape.</p>
 </div>
 </section>
 <section id="unstable-trait">
-<span id="smithy-api-unstable-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-unstable-trait"></span><span id="id13"></span><h2><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Indicates a shape is unstable and MAY change in the future. This trait can
 be applied to trait shapes to indicate that a trait is unstable or
@@ -1147,7 +1205,7 @@ unstable but is not part of any preview feature.</p></td>
 </div>
 </section>
 <section id="unstablefeatures-trait">
-<span id="smithy-api-unstablefeatures-trait"></span><span id="id13"></span><h2><code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait<a class="headerlink" href="#unstablefeatures-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-unstablefeatures-trait"></span><span id="id14"></span><h2><code class="docutils literal notranslate"><span class="pre">unstableFeatures</span></code> trait<a class="headerlink" href="#unstablefeatures-trait" title="Link to this heading">#</a></h2>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines the preview features offered by a service, keyed by <code class="docutils literal notranslate"><span class="pre">featureId</span></code>.
 Each entry provides the metadata for one preview feature that is referenced
@@ -1188,6 +1246,11 @@ preview and is subject to change.</p></td>
 <code class="docutils literal notranslate"><span class="pre">PREVIEW</span></code>, indicating that the feature is offered as a public
 preview.</p></td>
 </tr>
+<tr class="row-even"><td><p>since</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p>The date the feature became unstable, in <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DD</span></code> format.
+Once set, the value cannot be changed.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1203,6 +1266,7 @@ enclosing service's <code class="docutils literal notranslate"><span class="pre"
 <span class="w">    </span><span class="py">MYSERVICE_FIRST_PREVIEW</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"This is my preview operation and is subject to change!"</span>
 <span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">"PREVIEW"</span>
+<span class="w">        </span><span class="py">since</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-08"</span>
 <span class="w">    </span>}
 )
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
@@ -1273,6 +1337,7 @@ enclosing service's <code class="docutils literal notranslate"><span class="pre"
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#externaldocumentation-trait"><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-trait"><code class="docutils literal notranslate"><span class="pre">synthetic</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-trait"><code class="docutils literal notranslate"><span class="pre">internal</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-trait"><code class="docutils literal notranslate"><span class="pre">recommended</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitive-trait"><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>

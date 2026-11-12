@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -723,6 +723,16 @@ The following example defines a list with a string member from the
 }
 </pre></div>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Lists can be declared inline using <code class="docutils literal notranslate"><span class="pre">[Target]</span></code> syntax. Inline
+lists produce a synthetic shape that is shared across all members
+using the same target type. See <a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">Inline collection declarations</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+}
+</pre></div>
+</div>
+</div>
 <section id="list-member-optionality">
 <h3>List member optionality<a class="headerlink" href="#list-member-optionality" title="Link to this heading">#</a></h3>
 <p>Lists are considered <em>dense</em> by default, meaning they cannot contain <code class="docutils literal notranslate"><span class="pre">null</span></code>
@@ -757,6 +767,17 @@ The following example defines a map of strings to integers:</p>
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 }
 </pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>maps can be declared inline using <code class="docutils literal notranslate"><span class="pre">{Key:</span> <span class="pre">Value}</span></code> syntax. Inline
+maps produce a synthetic shape that is shared across all members
+using the same key and value target types. See
+<a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">Inline collection declarations</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+</pre></div>
+</div>
 </div>
 <section id="map-member-optionality">
 <h3>Map member optionality<a class="headerlink" href="#map-member-optionality" title="Link to this heading">#</a></h3>

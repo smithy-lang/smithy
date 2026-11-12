@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1070,13 +1070,8 @@ cities, so there's no way we could provide a <code class="docutils literal notra
 <span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span>[<span class="vc">CitySummary</span>]
 <span class="w">    </span>}
-}
-
-<span class="c">// CitySummaries is a list of CitySummary structures.</span>
-<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span>
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>
@@ -1100,6 +1095,12 @@ the results of invoking the operation can be truncated, requiring subsequent
 calls to retrieve the entire list of results. It's usually a good idea to add
 pagination to an API that lists resources because it can help prevent
 operational issues in the future if the list grows to an unpredicted size.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">items:</span> <span class="pre">[CitySummary]</span></code> syntax was added in Smithy 2.1. It declares a
+list inline without needing a separate named shape. See
+<a class="reference internal" href="spec/idl.html#idl-inline-collections"><span class="std std-ref">Inline collection declarations</span></a>.</p>
+</div>
 <p>The <code class="docutils literal notranslate"><span class="pre">CitySummary</span></code> structure defines a <a class="reference internal" href="spec/resource-traits.html#references-trait"><span class="std std-ref">reference</span></a>
 to a <code class="docutils literal notranslate"><span class="pre">City</span></code> resource. This gives tooling a better understanding of the
 relationships in your service.</p>
@@ -1389,13 +1390,8 @@ show how to use tools like the Smithy CLI or
 <span class="w">        </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
 <span class="w">        </span><span class="nt">@required</span>
-<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span>
+<span class="w">        </span><span class="py">items</span><span class="p">:</span><span class="w"> </span>[<span class="vc">CitySummary</span>]
 <span class="w">    </span>}
-}
-
-<span class="c">// CitySummaries is a list of CitySummary structures.</span>
-<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span>
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>

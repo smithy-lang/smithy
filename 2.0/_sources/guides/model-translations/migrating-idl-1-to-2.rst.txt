@@ -9,7 +9,7 @@ Update the model file version
 =============================
 
 For each model file you are upgrading, change the version from ``1`` or
-``1.0`` to ``2.0``. In the IDL this is controlled with the
+``1.0`` to ``2``. In the IDL this is controlled with the
 :ref:`version statement <smithy-version>`, and in the AST it is controlled
 with the ``smithy`` :ref:`top level property <ast-top-level-properties>`. For
 example, the following model:

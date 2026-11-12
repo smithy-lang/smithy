@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -678,9 +678,10 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apigatewayconfig-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiGatewayConfig</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apitlspolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-endpointconfiguration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Validation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Validation</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-resourcepolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait</a></li>
@@ -1520,7 +1521,7 @@ responses.</p></td>
 </div>
 <p>The following example defines an operation that uses a mock integration.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"smithy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">"shapes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">"smithy.example#MyOperation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"operation"</span><span class="p">,</span>
@@ -1578,8 +1579,65 @@ customers.</p>
 </section>
 <section id="api-endpoint-and-access-control">
 <h2>API endpoint and access control<a class="headerlink" href="#api-endpoint-and-access-control" title="Link to this heading">#</a></h2>
+<section id="aws-apigateway-apigatewayconfig-trait">
+<span id="aws-apigateway-apigatewayconfig-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiGatewayConfig</span></code> trait<a class="headerlink" href="#aws-apigateway-apigatewayconfig-trait" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Defines the API Gateway configuration version for a service. The version
+selects how API Gateway interprets the service's <code class="docutils literal notranslate"><span class="pre">aws.apigateway</span></code> traits
+and which defaults apply when a setting is omitted.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-aws-apigateway-traits"><code class="docutils literal notranslate"><span class="pre">smithy-aws-apigateway-traits</span></code></a> package.</p>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiGatewayConfig</span></code> trait is a structure that supports
+the following members:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>version</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">string</span></code></p></td>
+<td><p><strong>Required</strong>. The API Gateway configuration version. Valid values
+are <code class="docutils literal notranslate"><span class="pre">&quot;1&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example declares that <code class="docutils literal notranslate"><span class="pre">Weather</span></code> uses API Gateway
+configuration version 1:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.apigateway#apiGatewayConfig</span>
+
+<span class="nt">@apiGatewayConfig</span>(<span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-02"</span>
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</section>
 <section id="aws-apigateway-apitlspolicy-trait">
-<span id="aws-apigateway-apitlspolicy-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-apitlspolicy-trait" title="Link to this heading">#</a></h3>
+<span id="aws-apigateway-apitlspolicy-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-apitlspolicy-trait" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines the TLS security policy and endpoint access mode for an API
 Gateway REST API. The security policy specifies the TLS version and
@@ -1655,7 +1713,7 @@ customers.</p>
 </div>
 </section>
 <section id="aws-apigateway-endpointconfiguration-trait">
-<span id="aws-apigateway-endpointconfiguration-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait<a class="headerlink" href="#aws-apigateway-endpointconfiguration-trait" title="Link to this heading">#</a></h3>
+<span id="aws-apigateway-endpointconfiguration-trait"></span><span id="id13"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait<a class="headerlink" href="#aws-apigateway-endpointconfiguration-trait" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines the endpoint configuration for an API Gateway REST API,
 including the endpoint type, Virtual Private Cloud (VPC) <a class="reference external" href="https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html#concepts-vpc-endpoints">endpoint IDs</a>,
@@ -1734,8 +1792,8 @@ disables the default endpoint:</p>
 }
 </pre></div>
 </div>
-<section id="id13">
-<h4>Validation<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<section id="id14">
+<h4>Validation<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
 <p>Smithy emits an <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> validation event when the <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code> endpoint
 type is used with an <code class="docutils literal notranslate"><span class="pre">ipAddressType</span></code> other than <code class="docutils literal notranslate"><span class="pre">dualstack</span></code>. API Gateway
 requires <code class="docutils literal notranslate"><span class="pre">dualstack</span></code> for private endpoints.</p>
@@ -1747,7 +1805,7 @@ customers.</p>
 </section>
 </section>
 <section id="aws-apigateway-resourcepolicy-trait">
-<span id="aws-apigateway-resourcepolicy-trait"></span><span id="id14"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-resourcepolicy-trait" title="Link to this heading">#</a></h3>
+<span id="aws-apigateway-resourcepolicy-trait"></span><span id="id15"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait<a class="headerlink" href="#aws-apigateway-resourcepolicy-trait" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>Summary</dt><dd><p>Defines a resource policy for an API Gateway REST API. A resource
 policy is a JSON policy document attached to an API that controls
@@ -2225,9 +2283,10 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-endpoint-and-access-control">API endpoint and access control</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apigatewayconfig-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiGatewayConfig</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-apitlspolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiTlsPolicy</span></code> trait</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-endpointconfiguration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#endpointConfiguration</span></code> trait</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Validation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Validation</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aws-apigateway-resourcepolicy-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#resourcePolicy</span></code> trait</a></li>

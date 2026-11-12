@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -842,6 +842,13 @@ single line.</p>
 <li><p>Enums should use a singular noun (e.g., prefer &quot;Suit&quot; over &quot;Suits&quot;).</p></li>
 <li><p>Lists should use plural names (e.g., prefer &quot;Users&quot; over &quot;UserList&quot;).</p></li>
 <li><p>Operations should follow the format of &quot;VerbNoun&quot; (e.g., &quot;UpdateUser&quot;).</p></li>
+</ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>For simple, single-use lists and maps that need no shape-level traits,
+prefer <a class="reference internal" href="../spec/idl.html#idl-inline-collections"><span class="std std-ref">inline collection syntax</span></a> over
+defining a separate named shape.</p>
+</div>
+<ul class="simple">
 <li><p>Resources should use a singular noun (e.g., use &quot;User&quot; over &quot;Users&quot;).</p></li>
 <li><p>Services should be named after the name of a service, omitting the word
 &quot;Service&quot; and branding when possible (e.g., prefer &quot;S3&quot; over

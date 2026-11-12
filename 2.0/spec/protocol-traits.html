@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -654,6 +654,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocoldefinition-trait"><code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discriminated-trait"><code class="docutils literal notranslate"><span class="pre">discriminated</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jsonname-trait"><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mediatype-trait"><code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use cases</a></li>
@@ -663,6 +664,14 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestampformat-trait"><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp-formats">Timestamp formats</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolving-timestamp-formats">Resolving timestamp formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexed-shapes">Indexed shapes</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idx-trait"><code class="docutils literal notranslate"><span class="pre">idx</span></code> trait</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#member-index-shorthand">Member index shorthand</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexed-trait"><code class="docutils literal notranslate"><span class="pre">indexed</span></code> trait</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xml-bindings">XML bindings</a><ul class="pst-show_toc_level nav section-nav flex-column">
@@ -791,8 +800,91 @@ support configuration settings.</p>
 </pre></div>
 </div>
 </section>
+<section id="discriminated-trait">
+<span id="smithy-api-discriminated-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">discriminated</span></code> trait<a class="headerlink" href="#discriminated-trait" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>Summary</dt><dd><p>Indicates that a union is serialized in JSON as a flat object, in which a
+discriminator field identifies the member that is set and the members of
+that member's target structure appear alongside it.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">union</span></code></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> that contains the name of the discriminator field. When the
+trait is applied without a value, the discriminator field is named
+<code class="docutils literal notranslate"><span class="pre">__type</span></code>. The value MUST NOT be empty.</p>
+</dd>
+<dt>Conflicts with</dt><dd><p><a class="reference internal" href="streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a></p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="model.html#prelude">prelude</a>, available to all models.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This trait is unstable and MAY change in the future. Support for it is
+optional, so it SHOULD only be used when every implementation that
+exchanges data using the model supports it.</p>
+</div>
+<p>Given the following union definition,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@discriminated</span>(<span class="s2">"type"</span>)
+<span class="kd">union </span><span class="nc">Shape</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">circle</span><span class="p">:</span><span class="w"> </span><span class="vc">CircleData</span>
+<span class="w">    </span><span class="py">rectangle</span><span class="p">:</span><span class="w"> </span><span class="vc">RectangleData</span>
+}
+
+<span class="kd">structure </span><span class="nc">CircleData</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">radius</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
+
+<span class="kd">structure </span><span class="nc">RectangleData</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">width</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">    </span><span class="py">height</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
+</pre></div>
+</div>
+<p>a value of <code class="docutils literal notranslate"><span class="pre">Shape</span></code> with the <code class="docutils literal notranslate"><span class="pre">circle</span></code> member set is serialized as:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"circle"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"radius"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>rather than with the standard encoding of a <a class="reference internal" href="aggregate-types.html#union"><span class="std std-ref">union</span></a>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"circle"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"radius"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following rules apply to a union marked with the <code class="docutils literal notranslate"><span class="pre">discriminated</span></code> trait:</p>
+<ul class="simple">
+<li><p>Every member of the union MUST target a structure, and MUST NOT target
+<code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>. A union can be nested by targeting a structure that has
+a member that targets the union.</p></li>
+<li><p>The discriminator field MUST NOT have the same name as the serialized name
+of a member of any structure targeted by the union. The serialized name of a
+member is its member name or, in protocols that use the
+<a class="reference internal" href="#jsonname-trait"><span class="std std-ref">jsonName trait</span></a>, the value of that trait. A collision that only occurs
+in some protocols, because a member has a <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait, is reported as
+a validation event that can be suppressed, so that a service that only uses
+protocols in which it does not occur can still use the model.</p></li>
+<li><p>The value of the discriminator field is the name of the union member that
+is set. The <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait has no effect on the members of the union.</p></li>
+<li><p>Serializers SHOULD write the discriminator field first. Deserializers MUST
+accept it at any position in the object.</p></li>
+<li><p>If the discriminator field is missing, <code class="docutils literal notranslate"><span class="pre">null</span></code>, or not a string, including
+when the object is empty, the deserializer SHOULD report an error. A
+discriminator value that does not match a member of the union is handled in
+the same way as an unrecognized member of a standard union.</p></li>
+</ul>
+<p>The trait applies to the JSON serialization used by the <code class="docutils literal notranslate"><span class="pre">restJson1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code>, <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code>, and <code class="docutils literal notranslate"><span class="pre">rpcv2Json</span></code> protocols, and to values
+serialized to and from JSON without a protocol, in implementations that support
+it. Every other protocol and serialization format ignores the trait, and
+serializes the union using its standard union encoding.</p>
+</section>
 <section id="jsonname-trait">
-<span id="smithy-api-jsonname-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait<a class="headerlink" href="#jsonname-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-jsonname-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait<a class="headerlink" href="#jsonname-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Allows a serialized object property name in a JSON document to differ from
 a structure or union member name used in the model.</p>
@@ -834,7 +926,7 @@ same case-sensitive <code class="docutils literal notranslate"><span class="pre"
 </div>
 </section>
 <section id="mediatype-trait">
-<span id="smithy-api-mediatype-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait<a class="headerlink" href="#mediatype-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-mediatype-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait<a class="headerlink" href="#mediatype-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Describes the contents of a blob or string shape using a design-time
 media type as defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6838.html"><strong>RFC 6838</strong></a> (for example, <code class="docutils literal notranslate"><span class="pre">application/json</span></code>).</p>
@@ -879,7 +971,7 @@ application to function.</p>
 </section>
 </section>
 <section id="timestampformat-trait">
-<span id="smithy-api-timestampformat-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait<a class="headerlink" href="#timestampformat-trait" title="Link to this heading">#</a></h2>
+<span id="smithy-api-timestampformat-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait<a class="headerlink" href="#timestampformat-trait" title="Link to this heading">#</a></h2>
 <dl>
 <dt>Summary</dt><dd><p>Defines a custom timestamp serialization format.</p>
 </dd>
@@ -953,8 +1045,143 @@ liberally can cause other tooling to improperly interpret the timestamp.</p>
 </div>
 </section>
 </section>
+<section id="indexed-shapes">
+<span id="id6"></span><h2>Indexed shapes<a class="headerlink" href="#indexed-shapes" title="Link to this heading">#</a></h2>
+<p>Some protocols serialize members in a predetermined order so that parsing can
+be made more efficient and wire size can be made more compact. Smithy member
+declaration order has no semantic meaning and can change when a model is
+transformed or converted between representations. Indexed shapes assign
+explicit, stable wire indexes to members, allowing protocols to use a compact,
+ordered representation without relying on source declaration order.</p>
+<section id="idx-trait">
+<span id="smithy-protocols-idx-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">idx</span></code> trait<a class="headerlink" href="#idx-trait" title="Link to this heading">#</a></h3>
+<dl>
+<dt>Summary</dt><dd><p>Defines the stable wire index of a structure or union member.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(structure,</span> <span class="pre">union)</span> <span class="pre">:not([trait|mixin])</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p><em>Any member of a structure or union that is not a mixin</em></p>
+</dd>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">integer</span></code> between 1 and 65535, inclusive</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-protocol-traits"><code class="docutils literal notranslate"><span class="pre">smithy-protocol-traits</span></code></a> package.</p>
+</dd>
+</dl>
+<p>If any member of a structure or union has the <code class="docutils literal notranslate"><span class="pre">idx</span></code> trait, every member of
+that shape MUST have a unique <code class="docutils literal notranslate"><span class="pre">idx</span></code> value. Values MUST start at 1 and
+increase without gaps.</p>
+<p>Changing an existing member's <code class="docutils literal notranslate"><span class="pre">idx</span></code> value is a non backward-compatible change
+because it changes the member's wire index. New members are assigned the next
+contiguous value so that existing member indexes remain stable.</p>
+<p>Mixins MUST NOT apply <code class="docutils literal notranslate"><span class="pre">idx</span></code> to their members. A structure or union that
+uses a mixin MUST index the elided members it consumes:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">smithy.protocols#idx</span>
+
+<span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">Identified</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="kd">structure </span><span class="nc">Record</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">Identified</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="nt">@idx</span>(<span class="m">2</span>)
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="nt">@idx</span>(<span class="m">1</span>)
+<span class="w">    </span><span class="nl">$id</span>
+}
+</pre></div>
+</div>
+<p>Members marked with <a class="reference internal" href="streaming.html#eventheader-trait"><span class="std std-ref">eventHeader</span></a> or
+<a class="reference internal" href="streaming.html#eventpayload-trait"><span class="std std-ref">eventPayload</span></a> are exempt from the requirement to
+have an index. Members that target a streaming blob or union are also exempt.</p>
+<section id="member-index-shorthand">
+<h4>Member index shorthand<a class="headerlink" href="#member-index-shorthand" title="Link to this heading">#</a></h4>
+<p>IDL 2.1 adds a member-index shorthand that places a positive integer and period
+before an explicit or elided member. Using it requires a
+<a class="reference internal" href="idl.html#smithy-version"><span class="std std-ref">version requirement</span></a> that resolves to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> or later,
+that is, either an explicit <code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2.1&quot;</span></code> or a bare <code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2&quot;</span></code>
+loaded by tooling that supports <code class="docutils literal notranslate"><span class="pre">2.1</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.1"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">structure </span><span class="nc">Record</span><span class="w"> </span>{
+<span class="w">    </span><span class="m">2</span><span class="vc">.</span><span class="w"> </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="m">1</span><span class="vc">.</span><span class="w"> </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+<p>This example is equivalent to applying the absolute
+<code class="docutils literal notranslate"><span class="pre">&#64;idx</span></code> trait to each member. It does not require a <code class="docutils literal notranslate"><span class="pre">use</span></code> statement, but does
+require that the <cite>smithy-protocol-traits</cite> model is available.</p>
+<p>The shorthand syntax and explicit <code class="docutils literal notranslate"><span class="pre">&#64;idx</span></code> trait SHOULD NOT be used together.
+If the shorthand and an explicit <code class="docutils literal notranslate"><span class="pre">&#64;idx</span></code> application are both used on the
+same member, equal values are treated as a redundant trait application while
+different values produce the normal conflicting-trait error.</p>
+<p>Only the shorthand depends on the IDL version. The <code class="docutils literal notranslate"><span class="pre">idx</span></code> trait itself can be
+used with any version requirement, including one that resolves to <code class="docutils literal notranslate"><span class="pre">2.0</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">smithy.protocols#idx</span>
+
+<span class="kd">structure </span><span class="nc">Record</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@idx</span>(<span class="m">2</span>)
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+
+<span class="w">    </span><span class="nt">@idx</span>(<span class="m">1</span>)
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="indexed-trait">
+<span id="smithy-protocols-indexed-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">indexed</span></code> trait<a class="headerlink" href="#indexed-trait" title="Link to this heading">#</a></h3>
+<dl>
+<dt>Summary</dt><dd><p>Requires structures and unions in a service closure to use stable member
+indexes.</p>
+</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p>
+<p><em>Any service</em></p>
+</dd>
+<dt>Value type</dt><dd><p>Annotation trait</p>
+</dd>
+<dt>Provided by</dt><dd><p>Provided by the <a class="reference external" href="https://central.sonatype.com/artifact/software.amazon.smithy/smithy-protocol-traits"><code class="docutils literal notranslate"><span class="pre">smithy-protocol-traits</span></code></a> package.</p>
+</dd>
+</dl>
+<p>Every member of every non-mixin structure and union in the
+<a class="reference internal" href="service-types.html#service-closure"><span class="std std-ref">service closure</span></a> of an <code class="docutils literal notranslate"><span class="pre">indexed</span></code> service MUST be
+targeted by the <a class="reference internal" href="#idx-trait"><span class="std std-ref">idx trait</span></a>, unless one of its explicit
+exemptions apply.</p>
+<p>The following service uses the IDL 2.1 shorthand, but <code class="docutils literal notranslate"><span class="pre">indexed</span></code> can also be
+used with explicit <code class="docutils literal notranslate"><span class="pre">idx</span></code> traits in earlier IDL versions:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.1"</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">smithy.protocols#indexed</span>
+
+<span class="nt">@indexed</span>
+<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-01-01"</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetRecord</span>]
+}
+
+<span class="kd">operation </span><span class="nc">GetRecord</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Record</span>
+}
+
+<span class="kd">structure </span><span class="nc">Record</span><span class="w"> </span>{
+<span class="w">    </span><span class="m">1</span><span class="vc">.</span><span class="w"> </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="m">2</span><span class="vc">.</span><span class="w"> </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+</section>
+</section>
 <section id="xml-bindings">
-<span id="id5"></span><h2>XML bindings<a class="headerlink" href="#xml-bindings" title="Link to this heading">#</a></h2>
+<span id="id9"></span><h2>XML bindings<a class="headerlink" href="#xml-bindings" title="Link to this heading">#</a></h2>
 <p>Defines how to bind Smithy shapes to XML documents.</p>
 <section id="structure-and-union-serialization">
 <span id="xml-structure-and-union-serialization"></span><h3>Structure and union serialization<a class="headerlink" href="#structure-and-union-serialization" title="Link to this heading">#</a></h3>
@@ -1381,7 +1608,7 @@ the following:</p>
 </section>
 </section>
 <section id="xmlattribute-trait">
-<span id="smithy-api-xmlattribute-trait"></span><span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait<a class="headerlink" href="#xmlattribute-trait" title="Link to this heading">#</a></h3>
+<span id="smithy-api-xmlattribute-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlAttribute</span></code> trait<a class="headerlink" href="#xmlattribute-trait" title="Link to this heading">#</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Serializes an object property as an XML attribute rather than a nested
 XML element.</p>
@@ -1429,7 +1656,7 @@ Given the following:</p>
 </div>
 </section>
 <section id="xmlflattened-trait">
-<span id="smithy-api-xmlflattened-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait<a class="headerlink" href="#xmlflattened-trait" title="Link to this heading">#</a></h3>
+<span id="smithy-api-xmlflattened-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait<a class="headerlink" href="#xmlflattened-trait" title="Link to this heading">#</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Unwraps the values of a list or map into the containing structure.</p>
 </dd>
@@ -1508,7 +1735,7 @@ Given the following:</p>
 </div>
 </section>
 <section id="xmlname-trait">
-<span id="smithy-api-xmlname-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait<a class="headerlink" href="#xmlname-trait" title="Link to this heading">#</a></h3>
+<span id="smithy-api-xmlname-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait<a class="headerlink" href="#xmlname-trait" title="Link to this heading">#</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Changes the serialized element or attribute name of a structure, union,
 or member.</p>
@@ -1561,7 +1788,7 @@ following</p>
 </div>
 </section>
 <section id="xmlnamespace-trait">
-<span id="smithy-api-xmlnamespace-trait"></span><span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait<a class="headerlink" href="#xmlnamespace-trait" title="Link to this heading">#</a></h3>
+<span id="smithy-api-xmlnamespace-trait"></span><span id="id13"></span><h3><code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait<a class="headerlink" href="#xmlnamespace-trait" title="Link to this heading">#</a></h3>
 <dl>
 <dt>Summary</dt><dd><p>Adds an <a class="reference external" href="https://www.w3.org/TR/REC-xml-names/">XML namespace</a> to an XML element.</p>
 </dd>
@@ -1692,6 +1919,7 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
   <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocoldefinition-trait"><code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discriminated-trait"><code class="docutils literal notranslate"><span class="pre">discriminated</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jsonname-trait"><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mediatype-trait"><code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use cases</a></li>
@@ -1701,6 +1929,14 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestampformat-trait"><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp-formats">Timestamp formats</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolving-timestamp-formats">Resolving timestamp formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexed-shapes">Indexed shapes</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idx-trait"><code class="docutils literal notranslate"><span class="pre">idx</span></code> trait</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#member-index-shorthand">Member index shorthand</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexed-trait"><code class="docutils literal notranslate"><span class="pre">indexed</span></code> trait</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xml-bindings">XML bindings</a><ul class="pst-show_toc_level nav section-nav flex-column">

@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -856,7 +856,8 @@ a model validator:</p>
 the following conflict resolution logic is used:</p>
 <ol class="arabic simple">
 <li><p>If both values are arrays, the values of both arrays are concatenated
-into a single array.</p></li>
+into a single array. The order of the values in the concatenated array
+is unspecified.</p></li>
 <li><p>Otherwise, if both values are exactly equal, the conflict is ignored.</p></li>
 <li><p>Otherwise, the conflict is invalid.</p></li>
 </ol>
@@ -880,7 +881,8 @@ into a single array.</p></li>
 </div>
 </div>
 <p>Merging <code class="docutils literal notranslate"><span class="pre">model-a.smithy</span></code> and <code class="docutils literal notranslate"><span class="pre">model-b.smithy</span></code> produces the following
-model:</p>
+model, where <code class="docutils literal notranslate"><span class="pre">foo</span></code> contains the values of both arrays in an unspecified
+order:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">metadata </span><span class="nc">"foo" </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">"baz"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bar"</span><span class="p">,</span><span class="w"> </span><span class="s2">"lorem"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ipsum"</span>]
 <span class="kd">metadata </span><span class="nc">"qux" </span><span class="nd">=</span><span class="w"> </span><span class="s2">"test"</span>
@@ -1192,6 +1194,22 @@ documentation for <a class="reference internal" href="#shapes"><span class="std 
 }
 </pre></div>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>In IDL 2.1+, members in structures and unions can declare their target
+using <a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">inline collection syntax</span></a> instead of
+referencing a separately defined shape. The assembler creates a synthetic
+shape for the inline declaration.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>A member can be prefixed with a positive integer and a period as shorthand
+for the <a class="reference internal" href="protocol-traits.html#idx-trait"><span class="std std-ref">idx trait</span></a>. For example, <code class="docutils literal notranslate"><span class="pre">1.</span> <span class="pre">name:</span> <span class="pre">String</span></code> is
+equivalent to applying <code class="docutils literal notranslate"><span class="pre">&#64;idx(1)</span></code> to <code class="docutils literal notranslate"><span class="pre">name</span></code>. The shorthand requires a
+<a class="reference internal" href="idl.html#smithy-version"><span class="std std-ref">version requirement</span></a> that resolves to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> or
+later, that is, either an explicit <code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2.1&quot;</span></code> or a bare
+<code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2&quot;</span></code> loaded by tooling that supports <code class="docutils literal notranslate"><span class="pre">2.1</span></code>. The <code class="docutils literal notranslate"><span class="pre">idx</span></code> and
+<code class="docutils literal notranslate"><span class="pre">indexed</span></code> traits themselves can be used in any supported model or IDL
+version.</p>
+</div>
 </section>
 <section id="shape-id">
 <span id="id3"></span><h3>Shape ID<a class="headerlink" href="#shape-id" title="Link to this heading">#</a></h3>
@@ -1244,6 +1262,12 @@ this easier for consumers of a model, model authors SHOULD utilize a strict
 form of PascalCase in which only the first letter of acronyms,
 abbreviations, and initialisms are capitalized. For example, prefer
 <code class="docutils literal notranslate"><span class="pre">UserId</span></code> over <code class="docutils literal notranslate"><span class="pre">UserID</span></code>, and <code class="docutils literal notranslate"><span class="pre">Arn</span></code> over <code class="docutils literal notranslate"><span class="pre">ARN</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Shape names starting with <code class="docutils literal notranslate"><span class="pre">_Synthetic</span></code> are reserved for
+assembler-generated shapes created by <a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">inline collection
+declarations</span></a>. User-defined shapes SHOULD NOT
+use this prefix.</p>
+</div>
 </dd>
 <dt>Root shape ID</dt><dd><p>A <em class="dfn">root shape ID</em> is a shape ID that does not contain a member.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> are root shape IDs.</p>
@@ -1325,6 +1349,12 @@ description of how traits are applied in the IDL.</p></li>
 <li><p>Refer to the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST specification</span></a> for a
 description of how traits are applied in the JSON AST.</p></li>
 </ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Traits MUST NOT be applied to synthetic shapes generated by
+<a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">inline collection declarations</span></a>.
+Collections requiring shape-level traits must use explicit shape
+definitions.</p>
+</div>
 <section id="scope-of-member-traits">
 <h4>Scope of member traits<a class="headerlink" href="#scope-of-member-traits" title="Link to this heading">#</a></h4>
 <p>Traits that target <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> apply only in the context of
@@ -1377,7 +1407,8 @@ times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>
 <ol class="arabic simple">
 <li><p>If the trait is a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape, then the conflicting trait
-values are concatenated into a single trait value.</p></li>
+values are concatenated into a single trait value. The order of the
+values in the concatenated trait value is unspecified.</p></li>
 <li><p>If both values are exactly equal, then the conflict is ignored.</p></li>
 </ol>
 <p>All other instances of trait collisions are prohibited.</p>
@@ -1396,7 +1427,8 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 </div>
 <p>The following model definition is <strong>valid</strong> because the <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait
 is a list. The resulting value assigned to the <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait on the
-<code class="docutils literal notranslate"><span class="pre">Hello</span></code> shape is a list that contains &quot;a&quot;, &quot;b&quot;, and &quot;c&quot;.</p>
+<code class="docutils literal notranslate"><span class="pre">Hello</span></code> shape is a list that contains &quot;a&quot;, &quot;b&quot;, and &quot;c&quot;, in an
+unspecified order.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -2116,6 +2148,18 @@ namespace using a relative shape ID.</p>
 <span class="s2">        member &gt; :test(boolean, byte, short, integer, long, float, double))"""</span>
 )
 <span class="kd">structure </span><span class="nc">box</span><span class="w"> </span>{}
+
+<span class="c">/// Marks a shape as generated by the model assembler rather than authored by a</span>
+<span class="c">/// model author, such as the synthetic list and map shapes created by inline</span>
+<span class="c">/// collection declarations.</span>
+<span class="c">///</span>
+<span class="c">/// Only the assembler may apply this trait; it must not be applied manually. A</span>
+<span class="c">/// shape that carries it is named using the reserved `_Synthetic` prefix. The</span>
+<span class="c">/// trait is serialized in the JSON AST so that AST consumers can tell generated</span>
+<span class="c">/// shapes apart from authored ones; it is never serialized in the IDL, where</span>
+<span class="c">/// the IDL 2.1 inline collection syntax carries the same information.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">":is(list, map)"</span>)
+<span class="kd">structure </span><span class="nc">synthetic</span><span class="w"> </span>{}
 
 <span class="c">/// Adds documentation to a shape or member using CommonMark syntax.</span>
 <span class="nt">@trait</span>
@@ -2862,7 +2906,7 @@ namespace using a relative shape ID.</p>
 <span class="c">/// This property is used in code generation to provide a label for</span>
 <span class="c">/// each enum value. No two enums can have the same 'name' value.</span>
 <span class="nt">@private</span>
-<span class="nt">@pattern</span>(<span class="s2">"^[a-zA-Z_]+[a-zA-Z_0-9]*$"</span>)
+<span class="nt">@pattern</span>(<span class="s2">"^[a-zA-Z_][a-zA-Z_0-9]*$"</span>)
 <span class="kd">string </span><span class="nc">EnumConstantBodyName</span>
 
 <span class="c">/// Defines the value of an enum member.</span>
@@ -3021,7 +3065,16 @@ namespace using a relative shape ID.</p>
 }
 
 <span class="c">/// Defines the preview features offered by a service, keyed by `featureId`. Applied to the service shape.</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>)
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"service"</span>
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">"/value/since"</span>
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span>
+<span class="w">            </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">"The `since` date of an `@unstableFeatures` entry cannot be changed after setting."</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
 <span class="kd">map </span><span class="nc">unstableFeatures</span><span class="w"> </span>{
 <span class="w">    </span><span class="c">/// The id of the unstable feature.</span>
 <span class="w">    </span><span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
@@ -3039,6 +3092,10 @@ namespace using a relative shape ID.</p>
 
 <span class="w">    </span><span class="c">/// The reason why this feature is unstable.</span>
 <span class="w">    </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="vc">UnstableReason</span>
+
+<span class="w">    </span><span class="c">/// The date the feature became unstable, in `YYYY-MM-DD` format.</span>
+<span class="w">    </span><span class="nt">@pattern</span>(<span class="s2">"^</span><span class="se">\\</span><span class="s2">d{4}-</span><span class="se">\\</span><span class="s2">d{2}-</span><span class="se">\\</span><span class="s2">d{2}$"</span>)
+<span class="w">    </span><span class="py">since</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 
 <span class="nt">@private</span>
@@ -3726,6 +3783,23 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="nt">@required</span>
 <span class="w">    </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="vc">NonEmptyString</span>
 }
+
+<span class="c">/// Indicates that a union is serialized as an internally tagged union in JSON documents: a flat object with a</span>
+<span class="c">/// field, named by the value of the trait, whose value is the name of the active union member. When the value is</span>
+<span class="c">/// omitted, the field is named `__type`.</span>
+<span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">"union"</span>
+<span class="w">    </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">streaming</span>]
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">"any"</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="nt">@unstable</span>
+<span class="nt">@default</span>(<span class="s2">"__type"</span>)
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="kd">string </span><span class="nc">discriminated</span>
 </pre></div>
 </div>
 </div>

@@ -27,6 +27,17 @@ The following example defines a list with a string member from the
         member: String
     }
 
+.. versionadded:: 2.1
+   Lists can be declared inline using ``[Target]`` syntax. Inline
+   lists produce a synthetic shape that is shared across all members
+   using the same target type. See :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           names: [String]
+       }
+
 
 List member optionality
 -----------------------
@@ -50,7 +61,6 @@ The shape ID of the member of a list is the list shape ID followed by
 ``$member``. For example, the shape ID of the list member in the above
 example is ``smithy.example#MyList$member``.
 
-
 .. _map:
 
 Map
@@ -71,6 +81,18 @@ The following example defines a map of strings to integers:
         key: String
         value: Integer
     }
+
+.. versionadded:: 2.1
+   maps can be declared inline using ``{Key: Value}`` syntax. Inline
+   maps produce a synthetic shape that is shared across all members
+   using the same key and value target types. See
+   :ref:`idl-inline-collections`.
+
+   .. code-block:: smithy
+
+       structure Example {
+           tags: {String: String}
+       }
 
 
 Map member optionality
@@ -107,7 +129,6 @@ The shape ID of the ``key`` member of a map is the map shape ID followed by
 followed by ``$value``. For example, the shape ID of the ``key`` member in
 the above map is ``smithy.example#IntegerMap$key``, and the ``value``
 member is ``smithy.example#IntegerMap$value``.
-
 
 .. _structure:
 

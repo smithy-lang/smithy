@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1245,6 +1245,14 @@ trait does not exist.</p>
 attribute without a namespace.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|deprecated]
 </pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>To select synthetic shapes created by <a class="reference internal" href="idl.html#idl-inline-collections"><span class="std std-ref">inline collection
+declarations</span></a>, use the fully qualified trait
+ID:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[trait|smithy.api#synthetic]
+</pre></div>
+</div>
 </div>
 <p>Traits are converted to their serialized <a class="reference internal" href="idl.html#grammar-token-smithy-NodeValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> form
 when matching against their values. Only string, boolean, and numeric
@@ -2416,7 +2424,7 @@ the expected matched shapes, and additional configuration options. The test case
 </table>
 </div>
 <p>Below is an example selector compliance test:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.0"</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
 
 <span class="kd">metadata </span><span class="nc">selectorTests </span><span class="nd">=</span><span class="w"> </span>[
 <span class="w">    </span>{

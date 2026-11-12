@@ -721,7 +721,7 @@ output operation shape ``GetForecastOutput`` contains that output property.
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2"
     namespace smithy.example
 
     resource Forecast {
@@ -749,7 +749,7 @@ name and property name by default.
 
 .. code-block:: smithy
 
-    $version: "2.0"
+    $version: "2"
     namespace smithy.example
 
     resource Forecast {

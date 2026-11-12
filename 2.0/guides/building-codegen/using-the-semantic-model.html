@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -862,6 +862,13 @@ implement a visitor.</p></li>
 <li><p>A simpler way to get the answer of the above example is to just call
 <code class="docutils literal notranslate"><span class="pre">shape.members().size()</span></code>.</p></li>
 </ul>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Synthetic list and map shapes created by <a class="reference internal" href="../../spec/idl.html#idl-inline-collections"><span class="std std-ref">inline collection
+declarations</span></a> are visited like any other shape.
+Generators that produce named types for collections should check for the
+<code class="docutils literal notranslate"><span class="pre">smithy.api#synthetic</span></code> trait to avoid generating types with
+synthetic names.</p>
 </div>
 </section>
 </section>

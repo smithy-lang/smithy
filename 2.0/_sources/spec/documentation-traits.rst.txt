@@ -243,6 +243,68 @@ Value type
     }
 
 
+.. smithy-trait:: smithy.api#synthetic
+    :package: smithy-model
+.. _synthetic-trait:
+
+``synthetic`` trait
+===================
+
+.. versionadded:: 2.1
+
+Summary
+    Marks a shape as produced by the model assembler rather than written by a
+    model author, such as the synthetic list and map shapes created by
+    :ref:`inline collection declarations <idl-inline-collections>`.
+Trait selector
+    ``:is(list, map)``
+Value type
+    Annotation trait
+
+A model MUST NOT apply this trait manually, only the assembler may attach it.
+A shape that carries it MUST be named using the reserved ``_Synthetic`` prefix.
+
+The trait is serialized in the :ref:`JSON AST <json-ast>` so that AST
+consumers can tell generated shapes apart from authored ones. It is never
+serialized in the IDL, where the IDL 2.1 inline collection syntax carries the
+same information.
+The following two models are therefore equivalent:
+
+.. code-block:: json
+
+    {
+        "smithy": "2.1",
+        "shapes": {
+            "smithy.example#_SyntheticListOf__String": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "traits": {
+                    "smithy.api#synthetic": {}
+                }
+            },
+            "smithy.example#Playlist": {
+                "type": "structure",
+                "members": {
+                    "songs": {
+                        "target": "smithy.example#_SyntheticListOf__String"
+                    }
+                }
+            }
+        }
+    }
+
+.. code-block:: smithy
+
+    $version: "2.1"
+    namespace smithy.example
+
+    structure Playlist {
+        songs: [String]
+    }
+
+
 .. smithy-trait:: smithy.api#internal
 .. _internal-trait:
 
@@ -494,6 +556,10 @@ following members:
       - The reason the feature is unstable. Currently only supported value is
         ``PREVIEW``, indicating that the feature is offered as a public
         preview.
+    * - since
+      - ``string``
+      - The date the feature became unstable, in ``YYYY-MM-DD`` format.
+        Once set, the value cannot be changed.
 
 A shape becomes part of a preview feature by applying the :ref:`unstable trait
 <unstable-trait>` with a ``featureId`` that matches a key in the enclosing
@@ -511,6 +577,7 @@ enclosing service's ``unstableFeatures`` trait.
         MYSERVICE_FIRST_PREVIEW: {
             message: "This is my preview operation and is subject to change!"
             reason: "PREVIEW"
+            since: "2026-10-08"
         }
     )
     service MyService {

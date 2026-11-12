@@ -460,7 +460,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.7.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -680,6 +680,7 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#service-shape">Service shape</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#operation-shape">Operation shape</a><ul class="nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-input-output-shapes">Inline input / output shapes</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-collection-declarations">Inline collection declarations</a></li>
 </ul>
 </li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-shape">Resource shape</a></li>
@@ -704,6 +705,13 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incidental-white-space-removal">Incidental white space removal</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#significant-trailing-line">Significant trailing line</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#escapes-in-text-blocks">Escapes in text blocks</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tagged-string-literals">Tagged string literals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#re-tag"><code class="docutils literal notranslate"><span class="pre">#re</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b-tag"><code class="docutils literal notranslate"><span class="pre">#b</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hex-tag"><code class="docutils literal notranslate"><span class="pre">#hex</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp-tag"><code class="docutils literal notranslate"><span class="pre">#timestamp</span></code> tag</a></li>
 </ul>
 </li>
 </ul>
@@ -853,104 +861,123 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
 </pre>
 <p class="rubric">Node values</p>
 <pre class="productionlist highlight">
-<strong id="grammar-token-smithy-NodeValue">NodeValue</strong>        = <a class="reference internal" href="#grammar-token-smithy-NodeArray"><code class="xref docutils literal notranslate"><span class="pre">NodeArray</span></code></a>
+<strong id="grammar-token-smithy-NodeValue">NodeValue</strong>           = <a class="reference internal" href="#grammar-token-smithy-NodeArray"><code class="xref docutils literal notranslate"><span class="pre">NodeArray</span></code></a>
 
-                   / <a class="reference internal" href="#grammar-token-smithy-NodeObject"><code class="xref docutils literal notranslate"><span class="pre">NodeObject</span></code></a>
+                      / <a class="reference internal" href="#grammar-token-smithy-NodeObject"><code class="xref docutils literal notranslate"><span class="pre">NodeObject</span></code></a>
 
-                   / <a class="reference internal" href="#grammar-token-smithy-Number"><code class="xref docutils literal notranslate"><span class="pre">Number</span></code></a>
+                      / <a class="reference internal" href="#grammar-token-smithy-Number"><code class="xref docutils literal notranslate"><span class="pre">Number</span></code></a>
 
-                   / <a class="reference internal" href="#grammar-token-smithy-NodeKeyword"><code class="xref docutils literal notranslate"><span class="pre">NodeKeyword</span></code></a>
+                      / <a class="reference internal" href="#grammar-token-smithy-NodeKeyword"><code class="xref docutils literal notranslate"><span class="pre">NodeKeyword</span></code></a>
 
-                   / <a class="reference internal" href="#grammar-token-smithy-NodeStringValue"><code class="xref docutils literal notranslate"><span class="pre">NodeStringValue</span></code></a>
-
-
-<strong id="grammar-token-smithy-NodeArray">NodeArray</strong>        = &quot;[&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] *(<a class="reference internal" href="#grammar-token-smithy-NodeValue"><code class="xref docutils literal notranslate"><span class="pre">NodeValue</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>]) &quot;]&quot;
+                      / <a class="reference internal" href="#grammar-token-smithy-NodeStringValue"><code class="xref docutils literal notranslate"><span class="pre">NodeStringValue</span></code></a>
 
 
-<strong id="grammar-token-smithy-NodeObject">NodeObject</strong>       = &quot;{&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] [<a class="reference internal" href="#grammar-token-smithy-NodeObjectKvp"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKvp</span></code></a> *(<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-NodeObjectKvp"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKvp</span></code></a>)] [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;}&quot;
+<strong id="grammar-token-smithy-NodeArray">NodeArray</strong>           = &quot;[&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] *(<a class="reference internal" href="#grammar-token-smithy-NodeValue"><code class="xref docutils literal notranslate"><span class="pre">NodeValue</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>]) &quot;]&quot;
 
 
-<strong id="grammar-token-smithy-NodeObjectKvp">NodeObjectKvp</strong>    = <a class="reference internal" href="#grammar-token-smithy-NodeObjectKey"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKey</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;:&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NodeValue"><code class="xref docutils literal notranslate"><span class="pre">NodeValue</span></code></a>
+<strong id="grammar-token-smithy-NodeObject">NodeObject</strong>          = &quot;{&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] [<a class="reference internal" href="#grammar-token-smithy-NodeObjectKvp"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKvp</span></code></a> *(<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-NodeObjectKvp"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKvp</span></code></a>)] [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;}&quot;
 
 
-<strong id="grammar-token-smithy-NodeObjectKey">NodeObjectKey</strong>    = <a class="reference internal" href="#grammar-token-smithy-QuotedText"><code class="xref docutils literal notranslate"><span class="pre">QuotedText</span></code></a> / <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+<strong id="grammar-token-smithy-NodeObjectKvp">NodeObjectKvp</strong>       = <a class="reference internal" href="#grammar-token-smithy-NodeObjectKey"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKey</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;:&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NodeValue"><code class="xref docutils literal notranslate"><span class="pre">NodeValue</span></code></a>
 
 
-<strong id="grammar-token-smithy-Number">Number</strong>           = [<a class="reference internal" href="#grammar-token-smithy-Minus"><code class="xref docutils literal notranslate"><span class="pre">Minus</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-Int"><code class="xref docutils literal notranslate"><span class="pre">Int</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Frac"><code class="xref docutils literal notranslate"><span class="pre">Frac</span></code></a>] [<a class="reference internal" href="#grammar-token-smithy-Exp"><code class="xref docutils literal notranslate"><span class="pre">Exp</span></code></a>]
+<strong id="grammar-token-smithy-NodeObjectKey">NodeObjectKey</strong>       = <a class="reference internal" href="#grammar-token-smithy-QuotedText"><code class="xref docutils literal notranslate"><span class="pre">QuotedText</span></code></a> / <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
 
-<strong id="grammar-token-smithy-DecimalPoint">DecimalPoint</strong>     = %x2E ; .
+<strong id="grammar-token-smithy-Number">Number</strong>              = [<a class="reference internal" href="#grammar-token-smithy-Minus"><code class="xref docutils literal notranslate"><span class="pre">Minus</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-Int"><code class="xref docutils literal notranslate"><span class="pre">Int</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Frac"><code class="xref docutils literal notranslate"><span class="pre">Frac</span></code></a>] [<a class="reference internal" href="#grammar-token-smithy-Exp"><code class="xref docutils literal notranslate"><span class="pre">Exp</span></code></a>]
 
 
-<strong id="grammar-token-smithy-DigitOneToNine">DigitOneToNine</strong>   = %x31-39 ; 1-9
+<strong id="grammar-token-smithy-DecimalPoint">DecimalPoint</strong>        = %x2E ; .
 
 
-<strong id="grammar-token-smithy-E">E</strong>                = %x65 / %x45 ; e E
+<strong id="grammar-token-smithy-DigitOneToNine">DigitOneToNine</strong>      = %x31-39 ; 1-9
 
 
-<strong id="grammar-token-smithy-Exp">Exp</strong>              = <a class="reference internal" href="#grammar-token-smithy-E"><code class="xref docutils literal notranslate"><span class="pre">E</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Minus"><code class="xref docutils literal notranslate"><span class="pre">Minus</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-Plus"><code class="xref docutils literal notranslate"><span class="pre">Plus</span></code></a>] 1*DIGIT
+<strong id="grammar-token-smithy-E">E</strong>                   = %x65 / %x45 ; e E
 
 
-<strong id="grammar-token-smithy-Frac">Frac</strong>             = <a class="reference internal" href="#grammar-token-smithy-DecimalPoint"><code class="xref docutils literal notranslate"><span class="pre">DecimalPoint</span></code></a> 1*DIGIT
+<strong id="grammar-token-smithy-Exp">Exp</strong>                 = <a class="reference internal" href="#grammar-token-smithy-E"><code class="xref docutils literal notranslate"><span class="pre">E</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Minus"><code class="xref docutils literal notranslate"><span class="pre">Minus</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-Plus"><code class="xref docutils literal notranslate"><span class="pre">Plus</span></code></a>] 1*DIGIT
 
 
-<strong id="grammar-token-smithy-Int">Int</strong>              = <a class="reference internal" href="#grammar-token-smithy-Zero"><code class="xref docutils literal notranslate"><span class="pre">Zero</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-DigitOneToNine"><code class="xref docutils literal notranslate"><span class="pre">DigitOneToNine</span></code></a> *DIGIT)
+<strong id="grammar-token-smithy-Frac">Frac</strong>                = <a class="reference internal" href="#grammar-token-smithy-DecimalPoint"><code class="xref docutils literal notranslate"><span class="pre">DecimalPoint</span></code></a> 1*DIGIT
 
 
-<strong id="grammar-token-smithy-Minus">Minus</strong>            = %x2D ; -
+<strong id="grammar-token-smithy-Int">Int</strong>                 = <a class="reference internal" href="#grammar-token-smithy-Zero"><code class="xref docutils literal notranslate"><span class="pre">Zero</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-DigitOneToNine"><code class="xref docutils literal notranslate"><span class="pre">DigitOneToNine</span></code></a> *DIGIT)
 
 
-<strong id="grammar-token-smithy-Plus">Plus</strong>             = %x2B ; +
+<strong id="grammar-token-smithy-Minus">Minus</strong>               = %x2D ; -
 
 
-<strong id="grammar-token-smithy-Zero">Zero</strong>             = %x30 ; 0
+<strong id="grammar-token-smithy-Plus">Plus</strong>                = %x2B ; +
 
 
-<strong id="grammar-token-smithy-NodeKeyword">NodeKeyword</strong>      = %s&quot;true&quot; / %s&quot;false&quot; / %s&quot;null&quot;
+<strong id="grammar-token-smithy-Zero">Zero</strong>                = %x30 ; 0
 
 
-<strong id="grammar-token-smithy-NodeStringValue">NodeStringValue</strong>  = <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-TextBlock"><code class="xref docutils literal notranslate"><span class="pre">TextBlock</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-QuotedText"><code class="xref docutils literal notranslate"><span class="pre">QuotedText</span></code></a>
+<strong id="grammar-token-smithy-NodeKeyword">NodeKeyword</strong>         = %s&quot;true&quot; / %s&quot;false&quot; / %s&quot;null&quot;
 
 
-<strong id="grammar-token-smithy-QuotedText">QuotedText</strong>       = DQUOTE *<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> DQUOTE
+<strong id="grammar-token-smithy-NodeStringValue">NodeStringValue</strong>     = <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-TextBlock"><code class="xref docutils literal notranslate"><span class="pre">TextBlock</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-QuotedText"><code class="xref docutils literal notranslate"><span class="pre">QuotedText</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-TaggedStringLiteral"><code class="xref docutils literal notranslate"><span class="pre">TaggedStringLiteral</span></code></a>
 
 
-<strong id="grammar-token-smithy-QuotedChar">QuotedChar</strong>       = %x09        ; tab
-
-                   / %x20-21     ; space - &quot;!&quot;
-
-                   / %x23-5B     ; &quot;#&quot; - &quot;[&quot;
-
-                   / %x5D-10FFFF ; &quot;]&quot;+
-
-                   / <a class="reference internal" href="#grammar-token-smithy-EscapedChar"><code class="xref docutils literal notranslate"><span class="pre">EscapedChar</span></code></a>
-
-                   / <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a>
+<strong id="grammar-token-smithy-QuotedText">QuotedText</strong>          = DQUOTE *<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> DQUOTE
 
 
-<strong id="grammar-token-smithy-EscapedChar">EscapedChar</strong>      = <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> / DQUOTE / %s&quot;b&quot; / %s&quot;f&quot;
+<strong id="grammar-token-smithy-QuotedChar">QuotedChar</strong>          = %x09        ; tab
 
-                   / %s&quot;n&quot; / %s&quot;r&quot; / %s&quot;t&quot; / &quot;/&quot;
+                      / %x20-21     ; space - &quot;!&quot;
 
-                   / <a class="reference internal" href="#grammar-token-smithy-UnicodeEscape"><code class="xref docutils literal notranslate"><span class="pre">UnicodeEscape</span></code></a>)
+                      / %x23-5B     ; &quot;#&quot; - &quot;[&quot;
 
+                      / %x5D-10FFFF ; &quot;]&quot;+
 
-<strong id="grammar-token-smithy-UnicodeEscape">UnicodeEscape</strong>    = %s&quot;u&quot; <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a>
+                      / <a class="reference internal" href="#grammar-token-smithy-EscapedChar"><code class="xref docutils literal notranslate"><span class="pre">EscapedChar</span></code></a>
 
-
-<strong id="grammar-token-smithy-Hex">Hex</strong>              = DIGIT / %x41-46 / %x61-66
-
-
-<strong id="grammar-token-smithy-Escape">Escape</strong>           = %x5C ; backslash
+                      / <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a>
 
 
-<strong id="grammar-token-smithy-TextBlock">TextBlock</strong>        = <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-TextBlockContent"><code class="xref docutils literal notranslate"><span class="pre">TextBlockContent</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a>
+<strong id="grammar-token-smithy-EscapedChar">EscapedChar</strong>         = <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> / DQUOTE / %s&quot;b&quot; / %s&quot;f&quot;
+
+                      / %s&quot;n&quot; / %s&quot;r&quot; / %s&quot;t&quot; / &quot;/&quot;
+
+                      / <a class="reference internal" href="#grammar-token-smithy-UnicodeEscape"><code class="xref docutils literal notranslate"><span class="pre">UnicodeEscape</span></code></a>)
 
 
-<strong id="grammar-token-smithy-TextBlockContent">TextBlockContent</strong> = <a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> / (1*2DQUOTE 1*<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a>)
+<strong id="grammar-token-smithy-UnicodeEscape">UnicodeEscape</strong>       = %s&quot;u&quot; <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a>
 
 
-<strong id="grammar-token-smithy-ThreeDquotes">ThreeDquotes</strong>     = DQUOTE DQUOTE DQUOTE
+<strong id="grammar-token-smithy-Hex">Hex</strong>                 = DIGIT / %x41-46 / %x61-66
+
+
+<strong id="grammar-token-smithy-Escape">Escape</strong>              = %x5C ; backslash
+
+
+<strong id="grammar-token-smithy-TextBlock">TextBlock</strong>           = <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-TextBlockContent"><code class="xref docutils literal notranslate"><span class="pre">TextBlockContent</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a>
+
+
+<strong id="grammar-token-smithy-TextBlockContent">TextBlockContent</strong>    = <a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> / (1*2DQUOTE 1*<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a>)
+
+
+<strong id="grammar-token-smithy-ThreeDquotes">ThreeDquotes</strong>        = DQUOTE DQUOTE DQUOTE
+
+
+<strong id="grammar-token-smithy-TaggedStringLiteral">TaggedStringLiteral</strong> = &quot;#&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] (<a class="reference internal" href="#grammar-token-smithy-RawQuotedText"><code class="xref docutils literal notranslate"><span class="pre">RawQuotedText</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-RawTextBlock"><code class="xref docutils literal notranslate"><span class="pre">RawTextBlock</span></code></a>)
+
+
+<strong id="grammar-token-smithy-RawQuotedText">RawQuotedText</strong>       = DQUOTE *<a class="reference internal" href="#grammar-token-smithy-RawQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">RawQuotedChar</span></code></a> DQUOTE
+
+
+<strong id="grammar-token-smithy-RawQuotedChar">RawQuotedChar</strong>       = %x09 / %x20-21 / %x23-5B / %x5D-10FFFF
+
+                      / <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (%x09 / %x20-7E / %x80-10FFFF)
+
+                      / <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a>
+
+
+<strong id="grammar-token-smithy-RawTextBlock">RawTextBlock</strong>        = <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-RawTextBlockContent"><code class="xref docutils literal notranslate"><span class="pre">RawTextBlockContent</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a>
+
+
+<strong id="grammar-token-smithy-RawTextBlockContent">RawTextBlockContent</strong> = <a class="reference internal" href="#grammar-token-smithy-RawQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">RawQuotedChar</span></code></a> / (1*2DQUOTE 1*<a class="reference internal" href="#grammar-token-smithy-RawQuotedChar"><code class="xref docutils literal notranslate"><span class="pre">RawQuotedChar</span></code></a>)
 
 </pre>
 <p class="rubric">Shapes</p>
@@ -1031,15 +1058,27 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
 <strong id="grammar-token-smithy-ShapeMembers">ShapeMembers</strong>          = &quot;{&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] *(<a class="reference internal" href="#grammar-token-smithy-ShapeMember"><code class="xref docutils literal notranslate"><span class="pre">ShapeMember</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>]) &quot;}&quot;
 
 
-<strong id="grammar-token-smithy-ShapeMember">ShapeMember</strong>           = <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ExplicitShapeMember"><code class="xref docutils literal notranslate"><span class="pre">ExplicitShapeMember</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ElidedShapeMember"><code class="xref docutils literal notranslate"><span class="pre">ElidedShapeMember</span></code></a>)
+<strong id="grammar-token-smithy-ShapeMember">ShapeMember</strong>           = <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-MemberIndex"><code class="xref docutils literal notranslate"><span class="pre">MemberIndex</span></code></a>]
 
-                        [<a class="reference internal" href="#grammar-token-smithy-ValueAssignment"><code class="xref docutils literal notranslate"><span class="pre">ValueAssignment</span></code></a>]
+                        (<a class="reference internal" href="#grammar-token-smithy-ExplicitShapeMember"><code class="xref docutils literal notranslate"><span class="pre">ExplicitShapeMember</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ElidedShapeMember"><code class="xref docutils literal notranslate"><span class="pre">ElidedShapeMember</span></code></a>) [<a class="reference internal" href="#grammar-token-smithy-ValueAssignment"><code class="xref docutils literal notranslate"><span class="pre">ValueAssignment</span></code></a>]
 
 
-<strong id="grammar-token-smithy-ExplicitShapeMember">ExplicitShapeMember</strong>   = <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] &quot;:&quot; [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a>
+<strong id="grammar-token-smithy-MemberIndex">MemberIndex</strong>           = %x31-39 *(DIGIT) &quot;.&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>
+
+
+<strong id="grammar-token-smithy-ExplicitShapeMember">ExplicitShapeMember</strong>   = <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] &quot;:&quot; [<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-MemberTarget"><code class="xref docutils literal notranslate"><span class="pre">MemberTarget</span></code></a>
 
 
 <strong id="grammar-token-smithy-ElidedShapeMember">ElidedShapeMember</strong>     = &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+
+
+<strong id="grammar-token-smithy-MemberTarget">MemberTarget</strong>          = <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-InlineListTarget"><code class="xref docutils literal notranslate"><span class="pre">InlineListTarget</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-InlineMapTarget"><code class="xref docutils literal notranslate"><span class="pre">InlineMapTarget</span></code></a>
+
+
+<strong id="grammar-token-smithy-InlineListTarget">InlineListTarget</strong>      = &quot;[&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-MemberTarget"><code class="xref docutils literal notranslate"><span class="pre">MemberTarget</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;]&quot;
+
+
+<strong id="grammar-token-smithy-InlineMapTarget">InlineMapTarget</strong>       = &quot;{&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-MemberTarget"><code class="xref docutils literal notranslate"><span class="pre">MemberTarget</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;:&quot; [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-MemberTarget"><code class="xref docutils literal notranslate"><span class="pre">MemberTarget</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] &quot;}&quot;
 
 
 <strong id="grammar-token-smithy-EntityShape">EntityShape</strong>           = <a class="reference internal" href="#grammar-token-smithy-EntityTypeName"><code class="xref docutils literal notranslate"><span class="pre">EntityTypeName</span></code></a> <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Mixins"><code class="xref docutils literal notranslate"><span class="pre">Mixins</span></code></a>] [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-NodeObject"><code class="xref docutils literal notranslate"><span class="pre">NodeObject</span></code></a>
@@ -1071,6 +1110,23 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
                         [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>] <a class="reference internal" href="#grammar-token-smithy-ShapeMembers"><code class="xref docutils literal notranslate"><span class="pre">ShapeMembers</span></code></a>
 
 </pre>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>The <code class="docutils literal notranslate"><span class="pre">MemberTarget</span></code>, <code class="docutils literal notranslate"><span class="pre">InlineListTarget</span></code>, and <code class="docutils literal notranslate"><span class="pre">InlineMapTarget</span></code>
+productions were added to support inline collection declarations.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>The <code class="docutils literal notranslate"><span class="pre">MemberIndex</span></code> production was added to provide shorthand for the
+<a class="reference internal" href="protocol-traits.html#idx-trait"><span class="std std-ref">idx trait</span></a>.</p>
+<p>The grammar does not limit the number of digits in a member index, so
+syntax-only tools can parse and format values of any magnitude. When
+assembling a semantic model, the value MUST fit in a Smithy <code class="docutils literal notranslate"><span class="pre">integer</span></code> and
+therefore MUST NOT exceed 2147483647. The <a class="reference internal" href="protocol-traits.html#idx-trait"><span class="std std-ref">idx trait</span></a>
+further constrains valid member indexes to values no greater than 65535.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>The <code class="docutils literal notranslate"><span class="pre">TaggedStringLiteral</span></code> production was added to support tagged
+string literals.</p>
+</div>
 <p class="rubric">Traits</p>
 <pre class="productionlist highlight">
 <strong id="grammar-token-smithy-TraitStatements">TraitStatements</strong>        = *(<a class="reference internal" href="#grammar-token-smithy-Trait"><code class="xref docutils literal notranslate"><span class="pre">Trait</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a>])
@@ -1177,8 +1233,12 @@ adhere to the following ABNF:</p>
 <strong id="grammar-token-smithy-version_string">version_string</strong> = 1*DIGIT [ &quot;.&quot; 1*DIGIT ]
 
 </pre>
-<p>The following example sets the version to <code class="docutils literal notranslate"><span class="pre">2</span></code>, meaning that tooling MUST
-support a version greater than or equal to <code class="docutils literal notranslate"><span class="pre">2.0</span></code> and less than <code class="docutils literal notranslate"><span class="pre">3.0</span></code>:</p>
+<p>When the minor version is omitted, the version requirement resolves to the
+latest minor version of the given major version that is supported by the tool
+loading the model. The following example sets the version to <code class="docutils literal notranslate"><span class="pre">2</span></code>, meaning
+that tooling MUST support a version greater than or equal to <code class="docutils literal notranslate"><span class="pre">2.0</span></code> and less
+than <code class="docutils literal notranslate"><span class="pre">3.0</span></code>, and that the model MAY use the features of every <code class="docutils literal notranslate"><span class="pre">2.x</span></code> minor
+version the tool implements:</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio" /><label class="tab-label" for="tab-set--1-input--1">Smithy</label><div class="tab-content docutils">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2"</span>
@@ -1193,8 +1253,14 @@ support a version greater than or equal to <code class="docutils literal notrans
 </div>
 </div>
 </div>
-<p>A minor version SHOULD be provided when a model depends on a feature released
-in a minor update of the specification. The following example sets the
+<p>Because a model that omits the minor version MAY use features from any minor
+version of its major version, such a model MAY fail to load in tooling that
+implements an older minor version than its features require. A model that must
+load in a specific range of tooling SHOULD state an explicit minor version.</p>
+<p>An explicit minor version SHOULD therefore be provided when a model depends on
+a feature released in a minor update of the specification and needs to state
+that dependency, or when the model needs to remain loadable by tooling that
+implements only a specific minor version. The following example sets the
 version requirement of a file to <code class="docutils literal notranslate"><span class="pre">2.1</span></code>, meaning that tooling MUST support a
 version greater than or equal to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> and less than <code class="docutils literal notranslate"><span class="pre">3.0</span></code>:</p>
 <div class="tab-set docutils">
@@ -1210,6 +1276,12 @@ version greater than or equal to <code class="docutils literal notranslate"><spa
 </pre></div>
 </div>
 </div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Version <code class="docutils literal notranslate"><span class="pre">2.1</span></code> introduces <a class="reference internal" href="#idl-inline-collections"><span class="std std-ref">inline collection declarations</span></a>, which allow list and map shapes to be declared
+directly in member target positions, and <a class="reference internal" href="#tagged-string-literals"><span class="std std-ref">tagged string literals</span></a>, which provide alternative syntax for expressing
+regex patterns, binary data, hex dumps, and timestamps. It also introduces
+<a class="reference internal" href="protocol-traits.html#idx-trait"><span class="std std-ref">member index shorthand</span></a>.</p>
 </div>
 <p class="rubric">Version compatibility</p>
 <p>A single version statement can appear in a model file, but different versions
@@ -1727,6 +1799,15 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 </div>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Lists can also be declared inline using <code class="docutils literal notranslate"><span class="pre">[Target]</span></code> syntax. See
+<a class="reference internal" href="#idl-inline-collections"><span class="std std-ref">Inline collection declarations</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">myList</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+}
+</pre></div>
+</div>
+</div>
 </section>
 <section id="map-shapes">
 <span id="idl-map"></span><h4>Map shapes<a class="headerlink" href="#map-shapes" title="Link to this heading">#</a></h4>
@@ -1815,6 +1896,15 @@ member. The following example defines an <a class="reference internal" href="sim
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Maps can also be declared inline using <code class="docutils literal notranslate"><span class="pre">{Key:</span> <span class="pre">Value}</span></code> syntax. See
+<a class="reference internal" href="#idl-inline-collections"><span class="std std-ref">Inline collection declarations</span></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+</pre></div>
 </div>
 </div>
 </section>
@@ -1921,6 +2011,15 @@ member. The following example:</p>
 }
 </pre></div>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Structure members can use <a class="reference internal" href="#idl-inline-collections"><span class="std std-ref">inline collection syntax</span></a> to declare list and map targets directly:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+<span class="w">    </span><span class="py">metadata</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+</pre></div>
+</div>
+</div>
 </section>
 <section id="union-shapes">
 <span id="idl-union"></span><h4>Union shapes<a class="headerlink" href="#union-shapes" title="Link to this heading">#</a></h4>
@@ -1968,6 +2067,15 @@ member. The following example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1: </span>Union members can also use <a class="reference internal" href="#idl-inline-collections"><span class="std std-ref">inline collection syntax</span></a>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">MyUnion</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+</pre></div>
 </div>
 </div>
 </section>
@@ -2151,6 +2259,65 @@ shape with the <code class="docutils literal notranslate"><span class="pre">Outp
 }
 </pre></div>
 </div>
+</section>
+<section id="inline-collection-declarations">
+<span id="idl-inline-collections"></span><h5>Inline collection declarations<a class="headerlink" href="#inline-collection-declarations" title="Link to this heading">#</a></h5>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<p>Members can declare list and map shapes inline using a compact syntax instead
+of referencing a separately defined shape.</p>
+<p>A list is declared inline using <code class="docutils literal notranslate"><span class="pre">[Target]</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Playlist</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">songs</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]
+}
+</pre></div>
+</div>
+<p>A map is declared inline using <code class="docutils literal notranslate"><span class="pre">{KeyTarget:</span> <span class="pre">ValueTarget}</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Metadata</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+</pre></div>
+</div>
+<p>Inline collections can be nested:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Account</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// A map from group name to a list of user IDs</span>
+<span class="w">    </span><span class="py">groups</span><span class="p">:</span><span class="w"> </span>{<span class="py">String</span><span class="p">:</span><span class="w"> </span>[<span class="vc">String</span>]}
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Nesting is supported up to 3 levels deep.</p>
+</div>
+<p><strong>Synthetic shapes</strong></p>
+<p>Inline collection declarations produce assembler-generated <em>synthetic shapes</em>.
+These shapes are:</p>
+<ul class="simple">
+<li><p>Named using a reserved <code class="docutils literal notranslate"><span class="pre">_Synthetic</span></code> prefix. The rest of the name is
+derived deterministically from the collection's resolved element types, so
+the same collection always produces the same name and structurally different
+collections produce different names. The exact encoding is an implementation
+detail and MUST NOT be relied upon.</p></li>
+<li><p>Marked with the <code class="docutils literal notranslate"><span class="pre">smithy.api#synthetic</span></code> trait.</p></li>
+<li><p>Placed in the same namespace as the declaring structure.</p></li>
+<li><p>Grouped: multiple members using the same inline type (e.g., two members
+both using <code class="docutils literal notranslate"><span class="pre">[String]</span></code>) share a single synthetic shape.</p></li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>Inline collections require a <a class="reference internal" href="#smithy-version"><span class="std std-ref">version requirement</span></a>
+that resolves to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> or later, that is, either an explicit
+<code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2.1&quot;</span></code> or a bare <code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2&quot;</span></code> loaded by tooling that
+supports <code class="docutils literal notranslate"><span class="pre">2.1</span></code>.</p></li>
+<li><p>Traits cannot be applied to synthetic shapes. Collections requiring
+shape-level traits (such as <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;uniqueItems</span></code>, or <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code>)
+must use explicit shape definitions.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">apply</span></code> statement cannot target synthetic shapes.</p></li>
+<li><p>Shape names starting with <code class="docutils literal notranslate"><span class="pre">_Synthetic</span></code> SHOULD NOT be used for
+user-defined shapes to avoid potential conflicts with
+assembler-generated names.</p></li>
+</ul>
 </section>
 </section>
 <section id="resource-shape">
@@ -2999,6 +3166,227 @@ example is interpreted as <code class="docutils literal notranslate"><span class
 </div>
 </section>
 </section>
+<section id="tagged-string-literals">
+<span id="id12"></span><h3>Tagged string literals<a class="headerlink" href="#tagged-string-literals" title="Link to this heading">#</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<p>A tagged string literal is a string prefixed with <code class="docutils literal notranslate"><span class="pre">#</span></code> followed by a tag
+identifier that changes how the string content is interpreted at parse time.
+The tag instructs the parser to apply alternative escape and encoding rules,
+ultimately producing a regular string or number value. Tagged string literals
+can appear anywhere a string value is expected in the IDL (trait values, node
+values, default values).</p>
+<p>Tagged string literals are purely syntactic sugar; the AST and semantic model
+remain unchanged. After parsing, a tagged literal and its equivalent plain
+value are indistinguishable.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">"2.1"</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@pattern</span>(<span class="vc">#re</span><span class="w"> </span><span class="s2">"^</span><span class="se">\d</span><span class="s2">{3}-</span><span class="se">\d</span><span class="s2">{2}-</span><span class="se">\d</span><span class="s2">{4}$"</span>)
+<span class="kd">string </span><span class="nc">SSN</span>
+
+<span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@default</span>(<span class="vc">#timestamp</span><span class="w"> </span><span class="s2">"2024-01-01T00:00:00Z"</span>)
+<span class="w">    </span><span class="py">startDate</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+
+<span class="w">    </span><span class="nt">@default</span>(<span class="vc">#hex</span><span class="w"> </span><span class="s2">"""</span>
+<span class="s2">        89 50 4e 47 0d 0a 1a 0a  # PNG magic bytes</span>
+<span class="s2">        """</span>)
+<span class="w">    </span><span class="py">pngHeader</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span>
+}
+</pre></div>
+</div>
+<p>Smithy defines the following built-in tags:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 85.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tag</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#re</span></code></p></td>
+<td><p>Regular expression literal. All characters are passed through literally
+with no escape evaluation. Newlines are stripped, allowing patterns to
+span multiple lines in text blocks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#b</span></code></p></td>
+<td><p>Binary literal. Interprets the string as a sequence of bytes using
+hex escapes (<code class="docutils literal notranslate"><span class="pre">\xHH</span></code>), octal escapes (<code class="docutils literal notranslate"><span class="pre">\OOO</span></code>), and named escapes.
+Produces a base64-encoded string.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#hex</span></code></p></td>
+<td><p>Hex dump literal. Interprets the string as hexadecimal byte values where
+spaces are ignored and <code class="docutils literal notranslate"><span class="pre">#</span></code> begins a comment until end of line.
+Produces a base64-encoded string. See <a class="reference internal" href="#tagged-literal-hex"><span class="std std-ref">#hex tag</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#timestamp</span></code></p></td>
+<td><p>Timestamp literal. Converts an RFC 3339 date/time string into its
+<code class="docutils literal notranslate"><span class="pre">epoch-seconds</span></code> representation following the same rules as the
+<a class="reference external" href="https://smithy.io/2.0/spec/protocol-traits.html#timestamp-formats">epoch-seconds timestamp format</a>.
+Produces a number value.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The set of tags is closed and tied to the Smithy IDL version. Models using
+tagged string literals require a <a class="reference internal" href="#smithy-version"><span class="std std-ref">version requirement</span></a>
+that resolves to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> or later, that is, either an explicit
+<code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2.1&quot;</span></code> or a bare <code class="docutils literal notranslate"><span class="pre">$version:</span> <span class="pre">&quot;2&quot;</span></code> loaded by tooling that
+supports <code class="docutils literal notranslate"><span class="pre">2.1</span></code>.</p>
+<section id="re-tag">
+<h4><code class="docutils literal notranslate"><span class="pre">#re</span></code> tag<a class="headerlink" href="#re-tag" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">#re</span></code> tag passes all characters through literally without any escape
+evaluation. This allows regular expression patterns to be written naturally
+without double-escaping. Newlines are stripped from the content, so patterns
+in text blocks are concatenated across lines. To match a newline character in
+the regex, use <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="vc">#re</span><span class="w"> </span><span class="s2">"^</span><span class="se">\d</span><span class="s2">{5}(-</span><span class="se">\d</span><span class="s2">{4})?$"</span>)
+<span class="kd">string </span><span class="nc">ZipCode</span>
+</pre></div>
+</div>
+<p>The above is equivalent to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">"^</span><span class="se">\\</span><span class="s2">d{5}(-</span><span class="se">\\</span><span class="s2">d{4})?$"</span>)
+<span class="kd">string </span><span class="nc">ZipCode</span>
+</pre></div>
+</div>
+<p class="rubric">Escaping in <code class="docutils literal notranslate"><span class="pre">#re</span></code></p>
+<p>Because the content is passed through literally, the only special handling is
+at the tokenizer level: a <code class="docutils literal notranslate"><span class="pre">\&quot;</span></code> sequence prevents the string from being
+terminated but is included in the output as-is. In regular expressions,
+<code class="docutils literal notranslate"><span class="pre">\&quot;</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">&quot;</span></code> so this does not change the pattern's meaning.
+In text blocks, quotes do not need escaping.</p>
+<p class="rubric">Text blocks</p>
+<p>In text blocks, newlines are stripped and lines are concatenated. This lets
+you split long patterns across multiple lines without any special syntax:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="vc">#re</span><span class="w"> </span><span class="s2">"""</span>
+<span class="s2">    [A-Z]:</span><span class="se">\\\\</span>
+<span class="s2">    ([</span><span class="se">\w\s\d</span><span class="s2">]+</span><span class="se">\\</span><span class="s2">)*</span>
+<span class="s2">    ([</span><span class="se">\w\s\d</span><span class="s2">]+(</span><span class="se">\.</span><span class="s2">[</span><span class="se">\w\d</span><span class="s2">]+)?)?</span>
+<span class="s2">    """</span>)
+<span class="kd">string </span><span class="nc">WindowsPath</span>
+</pre></div>
+</div>
+<p>The above produces the pattern <code class="docutils literal notranslate"><span class="pre">[A-Z]:\\\\([\w\s\d]+\\)*([\w\s\d]+(\.[\w\d]+)?)?</span></code>
+with all lines joined together. If you need a literal newline in your regex,
+use <code class="docutils literal notranslate"><span class="pre">\n</span></code>.</p>
+</section>
+<section id="b-tag">
+<h4><code class="docutils literal notranslate"><span class="pre">#b</span></code> tag<a class="headerlink" href="#b-tag" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">#b</span></code> tag interprets the string as a sequence of bytes, similar to
+Python's <code class="docutils literal notranslate"><span class="pre">b'...'</span></code> syntax. The resulting value is the base64-encoded
+representation of the bytes.</p>
+<p>The following escapes are supported:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Escape</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\xHH</span></code></p></td>
+<td><p>Byte with hex value HH</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\OOO</span></code></p></td>
+<td><p>Byte with octal value OOO (1-3 digits, max 377)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\\</span></code></p></td>
+<td><p>Literal backslash (0x5C)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\&quot;</span></code></p></td>
+<td><p>Literal double quote (0x22)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\a</span></code></p></td>
+<td><p>Bell (0x07)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\b</span></code></p></td>
+<td><p>Backspace (0x08)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\f</span></code></p></td>
+<td><p>Form feed (0x0C)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\n</span></code></p></td>
+<td><p>Newline (0x0A)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\r</span></code></p></td>
+<td><p>Carriage return (0x0D)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\t</span></code></p></td>
+<td><p>Horizontal tab (0x09)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\v</span></code></p></td>
+<td><p>Vertical tab (0x0B)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\0</span></code></p></td>
+<td><p>Null byte (0x00)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All other characters are encoded as their UTF-8 byte representation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@default</span>(<span class="vc">#b</span><span class="w"> </span><span class="s2">"</span><span class="se">\x</span><span class="s2">89PNG</span><span class="se">\x</span><span class="s2">0D</span><span class="se">\x</span><span class="s2">0A</span><span class="se">\x</span><span class="s2">1A</span><span class="se">\x</span><span class="s2">0A"</span>)
+<span class="w">    </span><span class="py">pngMagic</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span>
+}
+</pre></div>
+</div>
+</section>
+<section id="hex-tag">
+<span id="tagged-literal-hex"></span><h4><code class="docutils literal notranslate"><span class="pre">#hex</span></code> tag<a class="headerlink" href="#hex-tag" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">#hex</span></code> tag interprets the string as a hex dump. Hexadecimal digit pairs
+are decoded into bytes, spaces and tabs are ignored for readability, and
+<code class="docutils literal notranslate"><span class="pre">#</span></code> begins a comment that continues until end of line. The resulting value is
+base64-encoded.</p>
+<p>The content of the string is parsed according to the following grammar:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>HexContent = *(HexPair / WS / Comment / NL)
+HexPair    = Hex Hex
+Comment    = "#" *`NotNL`
+</pre></div>
+</div>
+<p>The number of hex digits (excluding those in comments) MUST be even. Each pair
+of hex digits produces one byte in the output.</p>
+<p>This is particularly useful in protocol tests where binary formats like CBOR
+are expressed as annotated hex dumps:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="vc">#hex</span><span class="w"> </span><span class="s2">"""</span>
+<span class="s2">    81                        # array(1)</span>
+<span class="s2">       c1                     #   epoch datetime value, tag(1)</span>
+<span class="s2">          fb 41d9ad970f9b4396 #     float(1,723,227,198.426)</span>
+<span class="s2">    """</span>
+</pre></div>
+</div>
+</section>
+<section id="timestamp-tag">
+<h4><code class="docutils literal notranslate"><span class="pre">#timestamp</span></code> tag<a class="headerlink" href="#timestamp-tag" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">#timestamp</span></code> tag converts an RFC 3339 date/time string (as defined by
+the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> production in RFC 3339 Section 5.6) into a number using the
+<code class="docutils literal notranslate"><span class="pre">epoch-seconds</span></code> format. The output is the number of seconds that have elapsed
+since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
+with optional millisecond precision. Values that are more granular than
+millisecond precision are truncated to fit millisecond precision.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@default</span>(<span class="vc">#timestamp</span><span class="w"> </span><span class="s2">"2024-01-01T00:00:00Z"</span>)
+<span class="w">    </span><span class="py">startDate</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+}
+</pre></div>
+</div>
+<p>The above is equivalent to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@default</span>(<span class="m">1704067200</span>)
+<span class="w">    </span><span class="py">startDate</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+}
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 </section>
 
@@ -3076,6 +3464,7 @@ example is interpreted as <code class="docutils literal notranslate"><span class
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#service-shape">Service shape</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#operation-shape">Operation shape</a><ul class="nav section-nav flex-column">
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-input-output-shapes">Inline input / output shapes</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#inline-collection-declarations">Inline collection declarations</a></li>
 </ul>
 </li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-shape">Resource shape</a></li>
@@ -3100,6 +3489,13 @@ example is interpreted as <code class="docutils literal notranslate"><span class
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#incidental-white-space-removal">Incidental white space removal</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#significant-trailing-line">Significant trailing line</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#escapes-in-text-blocks">Escapes in text blocks</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tagged-string-literals">Tagged string literals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#re-tag"><code class="docutils literal notranslate"><span class="pre">#re</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b-tag"><code class="docutils literal notranslate"><span class="pre">#b</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hex-tag"><code class="docutils literal notranslate"><span class="pre">#hex</span></code> tag</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp-tag"><code class="docutils literal notranslate"><span class="pre">#timestamp</span></code> tag</a></li>
 </ul>
 </li>
 </ul>
