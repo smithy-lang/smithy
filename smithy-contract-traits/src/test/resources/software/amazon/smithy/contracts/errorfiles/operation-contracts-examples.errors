@@ -1,0 +1,1 @@
+[ERROR] smithy.example#FetchLogs: Example `Invalid range`: Call of `smithy.example#FetchLogs` must match the StartBeforeEnd contract expression | ExamplesTrait.StartBeforeEnd

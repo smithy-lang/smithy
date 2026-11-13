@@ -266,6 +266,13 @@ the following members:
       - Defines the semantics of the relationship. The ``rel`` property SHOULD
         contain a link relation as defined in :rfc:`5988#section-4` (i.e.,
         this value SHOULD contain either a `standard link relation`_ or URI).
+    * - name
+      - ``string``
+      - An optional name that identifies the reference. Tooling MAY use the name
+        to refer to this specific reference, for example to project it into an
+        expression language (see the :ref:`jmespath-data-model`). The name MUST
+        NOT collide with a member of the structure, or with the name of any
+        other reference in the set.
 
 Runtime resolution of references
 --------------------------------

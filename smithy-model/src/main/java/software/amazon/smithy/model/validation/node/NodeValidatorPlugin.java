@@ -13,8 +13,10 @@ import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeTypeFilter;
@@ -64,6 +66,27 @@ public interface NodeValidatorPlugin {
      * @param emitter Consumer to notify of validation event locations and messages.
      */
     void applyMatching(Shape shape, Node value, Context context, Emitter emitter);
+
+    /**
+     * Applies the plugin to a whole operation call node.
+     *
+     * <p>An operation call is the {@code {input, output, error, before, after}} tuple of a
+     * single call. It is not an instance of the operation shape, so it is not dispatched
+     * through {@link #apply}; instead {@link NodeValidationVisitor#validateOperationCall}
+     * invokes this directly. The default implementation does nothing, so a plugin only
+     * overrides it when it constrains calls (such as {@code @contracts}).
+     *
+     * @param operation Operation the call is for.
+     * @param call The call node.
+     * @param context Evaluation context.
+     * @param emitter Consumer to notify of validation event locations and messages.
+     */
+    default void applyForOperationCall(
+            OperationShape operation,
+            ObjectNode call,
+            Context context,
+            Emitter emitter
+    ) {}
 
     /**
      * @return Gets the built-in Node validation plugins.

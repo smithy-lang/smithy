@@ -14,13 +14,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -49,6 +52,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -447,19 +451,218 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return ListUtils.of();
     }
 
+    private static final Set<String> OPERATION_CALL_MEMBERS =
+            SetUtils.of("input", "output", "error", "before", "after");
+
     @Override
     public List<ValidationEvent> operationShape(OperationShape shape) {
+        // A node is never an instance of an operation shape. An operation CALL (the
+        // {input, output, error, before, after} tuple of a single call) is validated
+        // instead, via validateOperationCall, which callers such as the examples
+        // validator invoke directly.
         return invalidSchema(shape);
+    }
+
+    /**
+     * Validates the call-level invariants of an operation call node.
+     *
+     * <p>An operation call is the {@code {input, output, error, before, after}} tuple of a
+     * single call; it is not an instance of the operation shape. This method checks only the
+     * invariants that belong to the call as a whole: that it carries no unexpected member,
+     * that the {@code before} and {@code after} ghost world snapshots are well formed, and
+     * that any {@code @contracts} hold (through the operation-call plugin hook). The
+     * structural validation of {@code input}, {@code output}, and {@code error} against their
+     * modeled shapes is the caller's responsibility, since the surrounding context (such as an
+     * example title) is the caller's to phrase.
+     *
+     * @param shape Operation the call is for.
+     * @return Returns the validation events.
+     */
+    public List<ValidationEvent> validateOperationCall(OperationShape shape) {
+        ObjectNode call = value.expectObjectNode();
+        List<ValidationEvent> events = new ArrayList<>();
+
+        // Let plugins validate the call as a whole (for example, @contracts). An operation
+        // call is not an instance of any shape, so this is a dedicated hook rather than the
+        // shape-dispatched applyPlugins path.
+        COMPOSITE_PLUGIN.applyForOperationCall(shape,
+                call,
+                validationContext,
+                (location, severity, message, parts) -> events
+                        .add(event(message, severity, location.getSourceLocation(), parts)));
+
+        for (String member : call.getStringMap().keySet()) {
+            if (!OPERATION_CALL_MEMBERS.contains(member)) {
+                events.add(unknownMember(member, shape, Severity.WARNING));
+            }
+        }
+
+        // before and after are world snapshots: the ghost pre-state and post-state.
+        call.getMember("before")
+                .filter(node -> !node.isNullNode())
+                .ifPresent(before -> events.addAll(validateWorldSnapshot("before", before)));
+        call.getMember("after")
+                .filter(node -> !node.isNullNode())
+                .ifPresent(after -> events.addAll(validateWorldSnapshot("after", after)));
+
+        return events;
+    }
+
+    /**
+     * Validates a world snapshot (the {@code before} or {@code after} ghost state).
+     *
+     * <p>A world snapshot is an object keyed by service shape ID, where each value is the
+     * list of that service's instances. A world snapshot may hold at most one instance of
+     * each service shape. Each instance is validated against its service shape.
+     *
+     * @param name Context segment ("before" or "after").
+     * @param worldValue The world snapshot node.
+     * @return Returns the validation events.
+     */
+    private List<ValidationEvent> validateWorldSnapshot(String name, Node worldValue) {
+        NodeValidationVisitor world = traverse(name, worldValue);
+        if (!worldValue.isObjectNode()) {
+            return ListUtils.of(world.event("A world snapshot must be an object keyed by service shape ID."));
+        }
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Map.Entry<String, Node> entry : worldValue.expectObjectNode().getStringMap().entrySet()) {
+            String serviceId = entry.getKey();
+            Optional<ServiceShape> service = resolveShape(serviceId).flatMap(Shape::asServiceShape);
+            if (!service.isPresent()) {
+                events.add(world.event(String.format(
+                        "`%s` is not a service shape in the model, so it cannot key a world snapshot.",
+                        serviceId)));
+                continue;
+            }
+            NodeValidationVisitor serviceEntry = world.traverse(serviceId, entry.getValue());
+            if (!entry.getValue().isArrayNode()) {
+                events.addAll(serviceEntry.invalidShape(service.get(), NodeType.ARRAY));
+                continue;
+            }
+            List<Node> instances = entry.getValue().expectArrayNode().getElements();
+            if (instances.size() > 1) {
+                events.add(serviceEntry.event(String.format(
+                        "A world snapshot may hold at most one instance of service `%s`, but found %d.",
+                        serviceId,
+                        instances.size())));
+            }
+            for (int i = 0; i < instances.size(); i++) {
+                events.addAll(service.get().accept(serviceEntry.traverse(String.valueOf(i), instances.get(i))));
+            }
+        }
+        return events;
+    }
+
+    private Optional<Shape> resolveShape(String id) {
+        try {
+            return model.getShape(ShapeId.from(id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public List<ValidationEvent> resourceShape(ResourceShape shape) {
-        return invalidSchema(shape);
+        // A resource instance in a world snapshot is a {identifiers, properties} record.
+        if (!value.isObjectNode()) {
+            return invalidShape(shape, NodeType.OBJECT);
+        }
+        ObjectNode object = value.expectObjectNode();
+        List<ValidationEvent> events = applyPlugins(shape);
+        for (String member : object.getStringMap().keySet()) {
+            if (!member.equals("identifiers") && !member.equals("properties")) {
+                events.add(unknownMember(member, shape, Severity.WARNING));
+            }
+        }
+        object.getMember("identifiers")
+                .ifPresent(ids -> events.addAll(
+                        validateResourceMembers(shape, "identifiers", ids, shape.getIdentifiers(), true)));
+        object.getMember("properties")
+                .ifPresent(props -> events.addAll(
+                        validateResourceMembers(shape, "properties", props, shape.getProperties(), false)));
+        return events;
+    }
+
+    // Validates a named map of a resource instance (identifiers or properties): each value
+    // is checked against that member's declared shape. When warnUnknown is set, a key that is
+    // not declared is reported; properties are lenient because world state can carry fields
+    // beyond the resource's declared properties.
+    private List<ValidationEvent> validateResourceMembers(
+            ResourceShape shape,
+            String segment,
+            Node node,
+            Map<String, ShapeId> declared,
+            boolean warnUnknown
+    ) {
+        NodeValidationVisitor members = traverse(segment, node);
+        if (!node.isObjectNode()) {
+            return members.invalidShape(shape, NodeType.OBJECT);
+        }
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Map.Entry<String, Node> entry : node.expectObjectNode().getStringMap().entrySet()) {
+            ShapeId target = declared.get(entry.getKey());
+            if (target == null) {
+                if (warnUnknown) {
+                    events.add(members.unknownMember(entry.getKey(), shape, Severity.WARNING));
+                }
+            } else {
+                model.getShape(target)
+                        .ifPresent(targetShape -> events.addAll(
+                                targetShape.accept(members.traverse(entry.getKey(), entry.getValue()))));
+            }
+        }
+        return events;
     }
 
     @Override
     public List<ValidationEvent> serviceShape(ServiceShape shape) {
-        return invalidSchema(shape);
+        // A service instance in a world snapshot is a {resources} record, where resources is
+        // keyed by the shape ID of each resource bound to the service.
+        if (!value.isObjectNode()) {
+            return invalidShape(shape, NodeType.OBJECT);
+        }
+        ObjectNode object = value.expectObjectNode();
+        List<ValidationEvent> events = applyPlugins(shape);
+        for (String member : object.getStringMap().keySet()) {
+            if (!member.equals("resources")) {
+                events.add(unknownMember(member, shape, Severity.WARNING));
+            }
+        }
+        Optional<Node> resourcesNode = object.getMember("resources");
+        if (!resourcesNode.isPresent()) {
+            return events;
+        }
+        NodeValidationVisitor resources = traverse("resources", resourcesNode.get());
+        if (!resourcesNode.get().isObjectNode()) {
+            events.add(resources.event(
+                    "A service instance `resources` member must be an object keyed by resource shape ID."));
+            return events;
+        }
+        TopDownIndex index = TopDownIndex.of(model);
+        Set<ShapeId> contained = new HashSet<>();
+        for (ResourceShape resource : index.getContainedResources(shape)) {
+            contained.add(resource.getId());
+        }
+        for (Map.Entry<String, Node> entry : resourcesNode.get().expectObjectNode().getStringMap().entrySet()) {
+            Optional<ResourceShape> resource = resolveShape(entry.getKey()).flatMap(Shape::asResourceShape);
+            if (!resource.isPresent() || !contained.contains(resource.get().getId())) {
+                events.add(resources.event(String.format(
+                        "`%s` is not a resource of service `%s`.",
+                        entry.getKey(),
+                        shape.getId())));
+                continue;
+            }
+            NodeValidationVisitor resourceEntry = resources.traverse(entry.getKey(), entry.getValue());
+            if (!entry.getValue().isArrayNode()) {
+                events.addAll(resourceEntry.invalidShape(resource.get(), NodeType.ARRAY));
+                continue;
+            }
+            List<Node> instances = entry.getValue().expectArrayNode().getElements();
+            for (int i = 0; i < instances.size(); i++) {
+                events.addAll(resource.get().accept(resourceEntry.traverse(String.valueOf(i), instances.get(i))));
+            }
+        }
+        return events;
     }
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {

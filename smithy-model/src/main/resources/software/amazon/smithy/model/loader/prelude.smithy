@@ -563,6 +563,16 @@ structure Example {
 
     error: ExampleError
 
+    /// A snapshot of resource state before the call (ghost state). This is
+    /// model-only and is never observed by a client at runtime; it
+    /// exists so operation `@contracts` can be checked against the example.
+    before: Document
+
+    /// A snapshot of resource state after the call (ghost state). This is
+    /// model-only and is never observed by a client at runtime; it
+    /// exists so operation `@contracts` can be checked against the example.
+    after: Document
+
     allowConstraintErrors: Boolean
 }
 
@@ -779,6 +789,12 @@ structure Reference {
     /// The shape ID of the referenced resource.
     @required
     resource: NonEmptyString
+
+    /// An optional name for the reference. The name MUST NOT collide with the name
+    /// of any other reference, with a member of the structure the trait is applied
+    /// to, or, when the trait is applied to a string shape, with a member of any
+    /// structure that uses that shape.
+    name: NonEmptyString
 
     /// Defines a mapping of each resource identifier name to a structure member
     /// name that provides its value. Each key in the map MUST refer to one of the
