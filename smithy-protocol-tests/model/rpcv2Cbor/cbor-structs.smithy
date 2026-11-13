@@ -209,6 +209,55 @@ use smithy.test#httpResponseTests
         }
         appliesTo: "server"
     }
+    {
+        id: "RpcV2CborSerializesMultibyteUtf8String"
+        protocol: rpcv2Cbor
+        documentation: """
+            Serializes a string containing multibyte UTF-8 characters. The CBOR text string length
+            argument MUST be the number of UTF-8 bytes, not the number of UTF-16 code units, so that
+            multibyte strings produce valid RFC 8949 output."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor", Accept: "application/cbor" }
+        requireHeaders: ["Content-Length"]
+        method: "POST"
+        bodyMediaType: "application/cbor"
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties"
+        body: "v2tzdHJpbmdWYWx1ZXFoZWxsbyDkvaDlpb0g8J+Qov8="
+        params: { stringValue: "hello 你好 🐢" }
+    }
+    {
+        id: "RpcV2CborDeserializesIntegerEncodedFloatsAndDoubles"
+        protocol: rpcv2Cbor
+        documentation: """
+            Deserializes floating-point members that arrive encoded as CBOR integers (major type 0 or
+            1). Because the FLOAT16/32/64 minor values collide with the integer argument-size markers,
+            deserializers MUST dispatch on the major type first. Includes a multibyte integer argument
+            (uint 1000) and a negative integer."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor", Accept: "application/cbor" }
+        requireHeaders: ["Content-Length"]
+        method: "POST"
+        bodyMediaType: "application/cbor"
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties"
+        body: "v2pmbG9hdFZhbHVlGQPoa2RvdWJsZVZhbHVlIP8="
+        params: { floatValue: 1000, doubleValue: -1 }
+        appliesTo: "server"
+    }
+    {
+        id: "RpcV2CborDeserializesLargeIntegerEncodedFloatsAndDoubles"
+        protocol: rpcv2Cbor
+        documentation: """
+            Deserializes floating-point members encoded as CBOR integers whose arguments occupy four
+            and eight bytes. The four- and eight-byte integer argument markers collide with the
+            single- and double-precision float minor values, so deserializers MUST dispatch on the
+            major type first."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor", Accept: "application/cbor" }
+        requireHeaders: ["Content-Length"]
+        method: "POST"
+        bodyMediaType: "application/cbor"
+        uri: "/service/RpcV2Protocol/operation/SimpleScalarProperties"
+        body: "v2pmbG9hdFZhbHVlGgABhqBrZG91YmxlVmFsdWUbAAAAAQAAAAD/"
+        params: { floatValue: 100000, doubleValue: 4294967296 }
+        appliesTo: "server"
+    }
 ])
 @httpResponseTests([
     {
@@ -338,6 +387,48 @@ use smithy.test#httpResponseTests
             trueBooleanValue: true
             blobValue: "foo"
         }
+        appliesTo: "client"
+    }
+    {
+        id: "RpcV2CborDeserializesMultibyteUtf8String"
+        protocol: rpcv2Cbor
+        documentation: """
+            Deserializes a string containing multibyte UTF-8 characters. The CBOR text string length
+            argument is a UTF-8 byte count."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
+        code: 200
+        bodyMediaType: "application/cbor"
+        body: "v2tzdHJpbmdWYWx1ZXFoZWxsbyDkvaDlpb0g8J+Qov8="
+        params: { stringValue: "hello 你好 🐢" }
+    }
+    {
+        id: "RpcV2CborDeserializesIntegerEncodedFloatsAndDoubles"
+        protocol: rpcv2Cbor
+        documentation: """
+            Deserializes floating-point members that arrive encoded as CBOR integers (major type 0 or
+            1). Because the FLOAT16/32/64 minor values collide with the integer argument-size markers,
+            deserializers MUST dispatch on the major type first. Includes a multibyte integer argument
+            (uint 1000) and a negative integer."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
+        code: 200
+        bodyMediaType: "application/cbor"
+        body: "v2pmbG9hdFZhbHVlGQPoa2RvdWJsZVZhbHVlIP8="
+        params: { floatValue: 1000, doubleValue: -1 }
+        appliesTo: "client"
+    }
+    {
+        id: "RpcV2CborDeserializesLargeIntegerEncodedFloatsAndDoubles"
+        protocol: rpcv2Cbor
+        documentation: """
+            Deserializes floating-point members encoded as CBOR integers whose arguments occupy four
+            and eight bytes. The four- and eight-byte integer argument markers collide with the
+            single- and double-precision float minor values, so deserializers MUST dispatch on the
+            major type first."""
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
+        code: 200
+        bodyMediaType: "application/cbor"
+        body: "v2pmbG9hdFZhbHVlGgABhqBrZG91YmxlVmFsdWUbAAAAAQAAAAD/"
+        params: { floatValue: 100000, doubleValue: 4294967296 }
         appliesTo: "client"
     }
 ])
