@@ -140,9 +140,10 @@ public final class ShapeRecursionValidator extends AbstractValidator {
      * of the shape can be built without infinite recursion.
      *
      * <p>Any shape other than a structure or union terminates. A structure
-     * terminates if it has no members, has a member that isn't required, or
-     * has a required member that targets a terminating shape. A union
-     * terminates if any member targets a terminating shape.
+     * terminates if every required member targets a terminating shape.
+     * Members that aren't required can be omitted, so they neither make a
+     * structure terminate nor prevent it from terminating. A union terminates
+     * if any member targets a terminating shape.
      *
      * <p>This is computed once for the whole model by propagating termination
      * backward from member targets to the shapes that contain them, rather
@@ -152,51 +153,54 @@ public final class ShapeRecursionValidator extends AbstractValidator {
     private static Set<ShapeId> findTerminatingShapes(Model model) {
         Set<ShapeId> terminating = new HashSet<>();
         Map<ShapeId, List<ShapeId>> containers = new HashMap<>();
+        // For each structure, the number of required members that don't yet
+        // target a terminating shape.
+        Map<ShapeId, Integer> remaining = new HashMap<>();
         Deque<ShapeId> queue = new ArrayDeque<>();
 
         for (StructureShape structure : model.getStructureShapes()) {
-            boolean terminates = structure.members().isEmpty();
+            int count = 0;
             for (MemberShape member : structure.members()) {
-                if (!member.isRequired()) {
-                    terminates = true;
-                    break;
+                if (member.isRequired()) {
+                    Shape target = model.expectShape(member.getTarget());
+                    if (target.isStructureShape() || target.isUnionShape()) {
+                        containers.computeIfAbsent(target.getId(), id -> new ArrayList<>()).add(structure.getId());
+                        count++;
+                    }
                 }
             }
-            if (terminates) {
+            if (count == 0) {
                 markTerminating(structure.getId(), terminating, queue);
             } else {
-                addContainer(model, structure, containers, terminating, queue);
+                remaining.put(structure.getId(), count);
             }
         }
 
         for (UnionShape union : model.getUnionShapes()) {
-            addContainer(model, union, containers, terminating, queue);
+            for (MemberShape member : union.members()) {
+                Shape target = model.expectShape(member.getTarget());
+                if (target.isStructureShape() || target.isUnionShape()) {
+                    containers.computeIfAbsent(target.getId(), id -> new ArrayList<>()).add(union.getId());
+                } else {
+                    markTerminating(union.getId(), terminating, queue);
+                }
+            }
         }
 
         while (!queue.isEmpty()) {
             for (ShapeId container : containers.getOrDefault(queue.poll(), Collections.emptyList())) {
-                markTerminating(container, terminating, queue);
+                // A union terminates once any member terminates, and a structure
+                // once all of its required members do.
+                Integer count = remaining.get(container);
+                if (count == null || count == 1) {
+                    markTerminating(container, terminating, queue);
+                } else {
+                    remaining.put(container, count - 1);
+                }
             }
         }
 
         return terminating;
-    }
-
-    private static void addContainer(
-            Model model,
-            Shape container,
-            Map<ShapeId, List<ShapeId>> containers,
-            Set<ShapeId> terminating,
-            Deque<ShapeId> queue
-    ) {
-        for (MemberShape member : container.members()) {
-            Shape target = model.expectShape(member.getTarget());
-            if (target.isStructureShape() || target.isUnionShape()) {
-                containers.computeIfAbsent(target.getId(), id -> new ArrayList<>()).add(container.getId());
-            } else {
-                markTerminating(container.getId(), terminating, queue);
-            }
-        }
     }
 
     private static void markTerminating(ShapeId id, Set<ShapeId> terminating, Deque<ShapeId> queue) {

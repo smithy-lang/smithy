@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix recursive union validation to require all required structure members to terminate.",
+  "pull_requests": [
+    "[#3370](https://github.com/smithy-lang/smithy/pull/3370)"
+  ]
+}
