@@ -68,7 +68,7 @@ public final class TopologicalIndex implements KnowledgeIndex {
     // Recursive shape -> number of closure paths kept, ordered by closure edge count.
     private final Map<Shape, Integer> recursiveShapes = new LinkedHashMap<>();
 
-    // Graph of reachable shapes. Read-only after construction.
+    // Graph of reachable shapes. After construction, only recursive shapes and their recursive edges remain.
     private final Map<Shape, Node> nodes = new HashMap<>();
 
     // Recursive shapes whose closure was truncated, sorted by shape ID.
@@ -117,6 +117,7 @@ public final class TopologicalIndex implements KnowledgeIndex {
         // This map ensures that more recursive shapes come after less recursive shapes.
         Map<Integer, Map<Shape, Integer>> frequencyMap = new TreeMap<>();
         Map<Node, FirstPath> firstPaths = new HashMap<>();
+        // One-element arrays (also count and edges below) so the walk visitor lambda can update them.
         long[] remaining = {maxClosureEdges};
 
         for (Shape shape : roots) {
@@ -152,6 +153,13 @@ public final class TopologicalIndex implements KnowledgeIndex {
                 truncatedShapes.add(shape);
             }
             frequencyMap.computeIfAbsent(edges[0], e -> new LinkedHashMap<>()).put(shape, count[0]);
+        }
+
+        // getRecursiveClosure only needs recursive nodes and their recursive edges.
+        nodes.values().removeIf(node -> !node.recursive);
+        for (Node node : nodes.values()) {
+            node.rels = null;
+            node.targets = null;
         }
 
         // Flatten the ordered frequency map into the collection of all recursive values.
@@ -465,8 +473,19 @@ public final class TopologicalIndex implements KnowledgeIndex {
         return !truncatedShapes.isEmpty();
     }
 
-    // True if getRecursiveClosure returns fewer paths than the shape has. Package-private for tests.
-    boolean isTruncated(ToShapeId shape) {
+    /**
+     * Checks if the recursive closure of a shape was truncated.
+     *
+     * <p>When the recursive closures of a model contain more than 1,000,000
+     * edges in total, {@link #getRecursiveClosure(ToShapeId)} returns only
+     * the first paths of some closures. The edge budget is spent in shape ID
+     * order, so adding shapes to a model can truncate the closure of an
+     * existing shape.
+     *
+     * @param shape Shape to check.
+     * @return True if the closure of the shape holds fewer paths than the shape has.
+     */
+    public boolean isTruncated(ToShapeId shape) {
         Shape recursiveShape = findRecursiveShape(shape);
         return recursiveShape != null && truncatedShapes.contains(recursiveShape);
     }
