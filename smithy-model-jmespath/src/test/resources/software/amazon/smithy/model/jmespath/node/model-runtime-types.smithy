@@ -57,3 +57,37 @@ structure RecursiveStruct {
 list RecursiveStructList {
     member: RecursiveStruct
 }
+
+@length(min: 2000000000)
+list HugeList {
+    member: String
+}
+
+@length(min: 2000000000)
+string HugeString
+
+@length(min: 2000000000)
+map HugeMap {
+    key: String,
+    value: String
+}
+
+@length(min: 3000000000)
+list OverflowList {
+    member: String
+}
+
+@length(min: 20)
+list Min20List {
+    member: String
+}
+
+@length(min: 2000000000)
+list HugeNestedL1 {
+    member: HugeNestedL2
+}
+
+@length(min: 2000000000)
+list HugeNestedL2 {
+    member: HugeList
+}

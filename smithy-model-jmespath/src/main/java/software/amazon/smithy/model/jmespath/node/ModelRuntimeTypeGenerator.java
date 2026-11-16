@@ -42,11 +42,23 @@ import software.amazon.smithy.model.traits.RangeTrait;
 
 /**
  * Generates fake data from a modeled shape for static JMESPath analysis.
+ *
+ * <p>The generated sample is bounded. Strings, lists, and maps are capped in
+ * length, the number of values in the sample (counting each reuse of a shared
+ * value) is capped by a node budget, and nesting is capped in depth. Values
+ * past these limits become {@link LiteralExpression#ANY}.
  */
 final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
+    static final int MAX_STRING_SAMPLE_LENGTH = 16;
+    static final int MAX_COLLECTION_SAMPLE_LENGTH = 1000;
+    static final long MAX_SAMPLE_NODES = 100_000L;
+    static final int MAX_SAMPLE_DEPTH = 256;
+
     private final Model model;
     private Set<MemberShape> visited = new HashSet<>();
+    private long nodes;
+    private int depth;
 
     ModelRuntimeTypeGenerator(Model model) {
         this.model = model;
@@ -110,7 +122,7 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     @Override
     public Object stringShape(StringShape shape) {
         // Create a random string that does not exceed or go under the length trait.
-        int chars = computeLength(shape);
+        int chars = computeLength(shape, MAX_STRING_SAMPLE_LENGTH);
 
         // Fill a string with "a"'s up to chars.
         return new String(new char[chars]).replace("\0", "a");
@@ -119,13 +131,13 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     @Override
     public Object listShape(ListShape shape) {
         return withCopiedVisitors(() -> {
-            int size = computeLength(shape);
-            List<Object> result = new ArrayList<>(size);
+            int size = computeLength(shape, MAX_COLLECTION_SAMPLE_LENGTH);
+            long before = nodes;
             Object memberValue = shape.getMember().accept(this);
-            if (memberValue != null) {
-                for (int i = 0; i < size; i++) {
-                    result.add(memberValue);
-                }
+            int count = affordableElements(size, nodes - before);
+            List<Object> result = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                result.add(memberValue);
             }
             return result;
         });
@@ -146,15 +158,31 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
     @Override
     public Object mapShape(MapShape shape) {
         return withCopiedVisitors(() -> {
-            int size = computeLength(shape);
-            Map<String, Object> result = new HashMap<>();
-            String key = (String) shape.getKey().accept(this);
+            int size = computeLength(shape, MAX_COLLECTION_SAMPLE_LENGTH);
+            long before = nodes;
+            Object keyValue = shape.getKey().accept(this);
+            String key = keyValue instanceof String ? (String) keyValue : "key";
             Object memberValue = shape.getValue().accept(this);
-            for (int i = 0; i < size; i++) {
+            int count = affordableElements(size, nodes - before);
+            Map<String, Object> result = new HashMap<>();
+            for (int i = 0; i < count; i++) {
                 result.put(key + i, memberValue);
             }
             return result;
         });
+    }
+
+    // Returns how many of the wanted elements to emit and charges the node budget for them.
+    // The first element was already charged while it was built. The linter walks every
+    // element, so each further copy costs the same number of nodes as the first one.
+    private int affordableElements(int wanted, long elementCost) {
+        if (wanted == 0) {
+            return 0;
+        }
+        long cost = Math.max(1, elementCost);
+        int copies = (int) Math.min(wanted - 1, Math.max(0, (MAX_SAMPLE_NODES - nodes) / cost));
+        nodes += copies * cost;
+        return 1 + copies;
     }
 
     @Override
@@ -180,17 +208,34 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
 
     @Override
     public Object memberShape(MemberShape shape) {
+        // Stop expanding once the node budget is spent.
+        if (nodes >= MAX_SAMPLE_NODES) {
+            return LiteralExpression.ANY;
+        }
+
+        // Charge every value before any early return so recursion leaves are counted.
+        nodes++;
+
         // Account for recursive shapes.
         // A false return value means it was in the set.
         if (!visited.add(shape)) {
             return LiteralExpression.ANY;
         }
 
-        return model.getShape(shape.getTarget())
-                .map(target -> target.accept(this))
-                // Rather than fail on broken models during waiter validation,
-                // return an ANY to get *some* validation.
-                .orElse(LiteralExpression.ANY);
+        if (depth >= MAX_SAMPLE_DEPTH) {
+            return LiteralExpression.ANY;
+        }
+
+        depth++;
+        try {
+            return model.getShape(shape.getTarget())
+                    .map(target -> target.accept(this))
+                    // Rather than fail on broken models during waiter validation,
+                    // return an ANY to get *some* validation.
+                    .orElse(LiteralExpression.ANY);
+        } finally {
+            depth--;
+        }
     }
 
     @Override
@@ -213,21 +258,21 @@ final class ModelRuntimeTypeGenerator implements ShapeVisitor<Object> {
         throw new UnsupportedOperationException(shape.toString());
     }
 
-    private int computeLength(Shape shape) {
-        // Create a random string that does not exceed or go under the length trait.
-        int chars = 2;
+    private int computeLength(Shape shape, int cap) {
+        // Create a length that does not exceed or go under the length trait, clamped to [0, cap].
+        long length = 2;
 
         if (shape.hasTrait(LengthTrait.ID)) {
             LengthTrait trait = shape.expectTrait(LengthTrait.class);
             if (trait.getMin().isPresent()) {
-                chars = Math.max(chars, trait.getMin().get().intValue());
+                length = Math.max(length, trait.getMin().get());
             }
             if (trait.getMax().isPresent()) {
-                chars = Math.min(chars, trait.getMax().get().intValue());
+                length = Math.min(length, trait.getMax().get());
             }
         }
 
-        return chars;
+        return (int) Math.max(0, Math.min(length, cap));
     }
 
     private double computeRange(Shape shape) {

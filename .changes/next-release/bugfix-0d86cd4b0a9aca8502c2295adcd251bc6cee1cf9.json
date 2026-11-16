@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Bound the size of sample values generated for waiter JMESPath linting.",
+  "pull_requests": []
+}
