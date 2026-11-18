@@ -30,6 +30,7 @@ import software.amazon.smithy.jmespath.ast.OrExpression;
 import software.amazon.smithy.jmespath.ast.ProjectionExpression;
 import software.amazon.smithy.jmespath.ast.SliceExpression;
 import software.amazon.smithy.jmespath.ast.Subexpression;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 public class Evaluator<T> implements ExpressionVisitor<T> {
 
@@ -48,6 +49,7 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         this(current, runtime, false);
     }
 
+    @SmithyInternalApi
     public Evaluator(T current, JmespathRuntime<T> runtime, boolean modelOnlyFunctions) {
         this.current = current;
         this.runtime = runtime;
@@ -136,9 +138,11 @@ public class Evaluator<T> implements ExpressionVisitor<T> {
         List<FunctionArgument<T>> arguments = new ArrayList<>();
         for (JmespathExpression expr : functionExpression.getArguments()) {
             if (expr instanceof ExpressionTypeExpression) {
-                arguments.add(FunctionArgument.of(runtime, ((ExpressionTypeExpression) expr).getExpression()));
+                arguments.add(FunctionArgument.of(runtime,
+                        ((ExpressionTypeExpression) expr).getExpression(),
+                        modelOnlyFunctions));
             } else {
-                arguments.add(FunctionArgument.of(runtime, visit(expr)));
+                arguments.add(FunctionArgument.of(runtime, visit(expr), modelOnlyFunctions));
             }
         }
         return function.apply(runtime, arguments);

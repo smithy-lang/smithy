@@ -20,23 +20,32 @@
         {"resources": {"example#Document": []}}
       ]
     },
+    "twoServices": {
+      "example#DocumentService": [
+        {"resources": {"example#Document": [{"identifiers": {"id": "d1"}, "properties": {"status": "DRAFT"}}]}}
+      ],
+      "example#OtherService": [
+        {"resources": {"example#Document": []}}
+      ]
+    },
     "badCollection": {
       "example#DocumentService": [
         {"resources": {"example#Document": {"not": "an array"}}}
       ]
     },
-    "handleD1": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1"}},
-    "handleMissingId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "zzz"}},
+    "handleD1": {"resource": "example#Document", "ids": {"id": "d1"}},
+    "handleD1Service": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1"}},
+    "handleMissingId": {"resource": "example#Document", "ids": {"id": "zzz"}},
     "handleMissingService": {"service": "example#OtherService", "resource": "example#Document", "ids": {"id": "d1"}},
-    "handleNoIds": {"service": "example#DocumentService", "resource": "example#Document"},
-    "handleExtraId": {"service": "example#DocumentService", "resource": "example#Document", "ids": {"id": "d1", "bogus": "x"}},
+    "handleNoIds": {"resource": "example#Document"},
+    "handleExtraId": {"resource": "example#Document", "ids": {"id": "d1", "bogus": "x"}},
     "notAHandle": "nope",
     "successCall": {"input": {"count": 1}, "error": null},
     "failCall": {"input": {"count": 1}, "error": {"shapeId": "example#SomeError", "content": {}}}
   },
   "cases": [
     {
-      "comment": "resolves a matching resource and reads a property through properties",
+      "comment": "a handle with no service resolves against the single service in the world",
       "expression": "resource(before, handleD1).properties.status",
       "result": "DRAFT"
     },
@@ -46,9 +55,14 @@
       "result": "d1"
     },
     {
-      "comment": "matches the second instance by its ids",
+      "comment": "a handle with an explicit service resolves against that named service",
       "expression": "resource(before, {service: 'example#DocumentService', resource: 'example#Document', ids: {id: 'd2'}}).properties.status",
       "result": "PUBLISHED"
+    },
+    {
+      "comment": "an explicit service picks its named service even when the world holds several",
+      "expression": "resource(twoServices, handleD1Service).properties.status",
+      "result": "DRAFT"
     },
     {
       "comment": "no resource matches the ids, so null",
@@ -56,7 +70,7 @@
       "result": null
     },
     {
-      "comment": "the world holds no instance of the handle's service, so null",
+      "comment": "the world holds no instance of the handle's explicit service, so null",
       "expression": "resource(before, handleMissingService)",
       "result": null
     },
@@ -76,8 +90,13 @@
       "result": null
     },
     {
-      "comment": "a world with more than one instance of the service shape is an error",
+      "comment": "a world with more than one instance of the chosen service shape is an error",
       "expression": "resource(twoInstances, handleD1)",
+      "error": "invalid-value"
+    },
+    {
+      "comment": "a handle with no service against a world that holds more than one service is an error",
+      "expression": "resource(twoServices, handleD1)",
       "error": "invalid-value"
     },
     {
@@ -114,6 +133,21 @@
       "comment": "requires requires exactly two arguments",
       "expression": "requires(successCall)",
       "error": "invalid-arity"
+    }
+  ]
+}, {
+  "comment": "model-only functions resolve inside expression references (map, sort_by, min_by, max_by)",
+  "given": {
+    "calls": [
+      {"n": 1},
+      {"n": 2}
+    ]
+  },
+  "cases": [
+    {
+      "comment": "map evaluates the model-only requires function inside an expression reference",
+      "expression": "map(&requires(@, @.n == `1`), calls)",
+      "result": [true, false]
     }
   ]
 }]

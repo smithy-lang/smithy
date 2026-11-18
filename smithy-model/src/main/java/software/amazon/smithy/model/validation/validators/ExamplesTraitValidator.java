@@ -155,9 +155,14 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     // Projects each named @references into a ghost resource handle reachable as
     // <member-root>.<name>, synthesized from the observable identifier members. A reference
-    // is declared either on the structure (ids maps each identifier to a member) or directly
-    // on a member's target string shape (the member's own value is the single identifier).
-    private static ObjectNode withReferenceHandles(Model model, ShapeId structureId, ObjectNode values) {
+    // is declared either on the structure (ids maps each identifier to a member, or, when
+    // omitted, each identifier binds to the member of the same name) or directly on a
+    // member's target string shape (the member's own value is the single identifier).
+    private static ObjectNode withReferenceHandles(
+            Model model,
+            ShapeId structureId,
+            ObjectNode values
+    ) {
         Shape shape = model.getShape(structureId).orElse(null);
         if (shape == null) {
             return values;
@@ -165,18 +170,28 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         ObjectNode result = values;
 
         // Structure references: ids maps a resource identifier name to the member that
-        // provides its value.
+        // provides its value; an omitted ids binds each identifier to the member of the
+        // same name.
         if (shape.hasTrait(ReferencesTrait.class)) {
             for (ReferencesTrait.Reference reference : shape.expectTrait(ReferencesTrait.class).getReferences()) {
                 if (!reference.getName().isPresent()) {
                     continue;
                 }
-                ObjectNode.Builder ids = Node.objectNodeBuilder();
-                for (Map.Entry<String, String> entry : reference.getIds().entrySet()) {
-                    Node value = values.getMember(entry.getValue()).orElse(Node.nullNode());
-                    ids.withMember(entry.getKey(), value);
+                Map<String, String> explicitIds = reference.getIds();
+                Set<String> idNames = explicitIds.keySet();
+                if (idNames.isEmpty()) {
+                    idNames = model.getShape(reference.getResource())
+                            .flatMap(Shape::asResourceShape)
+                            .map(resource -> resource.getIdentifiers().keySet())
+                            .orElse(idNames);
                 }
-                result = result.withMember(reference.getName().get(), buildHandle(model, reference, ids.build()));
+                ObjectNode.Builder ids = Node.objectNodeBuilder();
+                for (String idName : idNames) {
+                    String memberName = explicitIds.getOrDefault(idName, idName);
+                    ids.withMember(idName, values.getMember(memberName).orElse(Node.nullNode()));
+                }
+                result = result.withMember(reference.getName().get(),
+                        buildHandle(reference, ids.build()));
             }
         }
 
@@ -197,21 +212,25 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 }
                 Node value = values.getMember(member.getMemberName()).orElse(Node.nullNode());
                 ObjectNode ids = Node.objectNodeBuilder().withMember(identifier.get(), value).build();
-                result = result.withMember(reference.getName().get(), buildHandle(model, reference, ids));
+                result = result.withMember(reference.getName().get(),
+                        buildHandle(reference, ids));
             }
         }
 
         return result;
     }
 
-    // Builds the {service, resource, ids} handle object. The handle locates the resource
-    // under a service shape in the world snapshot: the reference's explicit service, else
-    // the single service that contains the resource; left unset when that is ambiguous.
-    private static ObjectNode buildHandle(Model model, ReferencesTrait.Reference reference, ObjectNode ids) {
+    // Builds the {service, resource, ids} handle object. The handle carries a service only
+    // when the reference declares one explicitly; it is never guessed. When the handle has
+    // no service, resource() requires the world snapshot to hold exactly one service.
+    private static ObjectNode buildHandle(
+            ReferencesTrait.Reference reference,
+            ObjectNode ids
+    ) {
         ObjectNode.Builder handle = Node.objectNodeBuilder()
                 .withMember("resource", reference.getResource().toString())
                 .withMember("ids", ids);
-        serviceName(model, reference).ifPresent(service -> handle.withMember("service", service));
+        reference.getService().ifPresent(service -> handle.withMember("service", service.toString()));
         return handle.build();
     }
 
@@ -223,33 +242,6 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .map(ResourceShape::getIdentifiers)
                 .filter(ids -> ids.size() == 1)
                 .map(ids -> ids.keySet().iterator().next());
-    }
-
-    // The service shape name that locates the referenced resource: the reference's own
-    // service when set, otherwise the sole service whose closure contains the resource.
-    private static Optional<String> serviceName(Model model, ReferencesTrait.Reference reference) {
-        if (reference.getService().isPresent()) {
-            return Optional.of(reference.getService().get().toString());
-        }
-        TopDownIndex index = TopDownIndex.of(model);
-        ShapeId resource = reference.getResource();
-        ServiceShape found = null;
-        for (ServiceShape service : model.getServiceShapes()) {
-            boolean contains = false;
-            for (ResourceShape contained : index.getContainedResources(service)) {
-                if (contained.getId().equals(resource)) {
-                    contains = true;
-                    break;
-                }
-            }
-            if (contains) {
-                if (found != null) {
-                    return Optional.empty();
-                }
-                found = service;
-            }
-        }
-        return Optional.ofNullable(found).map(service -> service.getId().toString());
     }
 
     // Builds a visitor for one named section (input, output, error) of an example, so a

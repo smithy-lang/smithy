@@ -72,9 +72,9 @@ A small world snapshot with one SQS instance and one KMS instance:
 }
 ```
 
-Each top-level key is a service shape mapped to the array of its instances; each instance exposes its `resources`; each resource instance is a record with its `identifiers` and `properties`. Here the queue's `kmsMasterKey` ARN points into the `KMS` entry, which is why a world snapshot carries the full set of services rather than only the one handling the call.
+Each top-level key is a service shape mapped to the array of its instances; each instance exposes its `resources`; each resource instance is a record with its `identifiers` and `properties`. A world snapshot can describe several services together, for example the queue's `kmsMasterKey` ARN pointing into the `KMS` entry.
 
-Because a world holds a set of instances per service, a reference must say which instance it means. A named `@references` reference without a `service` resolves against the current service instance, the one handling the call ("this service"). With a `service` it resolves against that shape's only or default instance. Selecting an arbitrary non-default instance, such as a specific region, needs explicit coordinates such as an ARN.
+This increment keeps resolution simple: a reference handle carries a `service` only when the reference declares one explicitly. When the handle names a `service`, `resource(...)` (see New functions below) resolves against it. When it names none, `resource(...)` requires the world snapshot it resolves to hold exactly one service, so nothing has to guess a "current service". Following the queue's ARN into the `KMS` entry, or selecting a specific non-default instance such as a region, needs explicit coordinates such as an ARN and is future work.
 
 ### Naming references
 
@@ -139,7 +139,7 @@ Resolves a resource in a world snapshot. The `handle` is the reference structure
 { service: String (optional), resource: String, ids: { <idName>: <idValue>, ... } }
 ```
 
-`resource(world, handle)` finds, in `world`, the service instance (`handle.service`, defaulting to the current service instance) and the resource of type `handle.resource` whose identifiers equal `handle.ids`, returning the resource value or `null`. The result type depends on `handle.resource`, so a fixed signature cannot type it precisely; in this increment it is typed coarsely.
+`resource(world, handle)` resolves against `handle.service` when the handle names one, otherwise it requires `world` to hold exactly one service and uses that. In that service's single instance it finds the resource of type `handle.resource` whose identifiers equal `handle.ids`, returning the resource value or `null`. A handle without a `service` against a world that holds more than one service, or a chosen service with more than one instance, is an error. The result type depends on `handle.resource`, so a fixed signature cannot type it precisely; in this increment it is typed coarsely.
 
 The world snapshot argument is explicit and required, so `before` and `after` are always named at the call site.
 

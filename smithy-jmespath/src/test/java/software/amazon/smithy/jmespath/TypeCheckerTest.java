@@ -468,4 +468,11 @@ public class TypeCheckerTest {
         assertThat(checkModelOnly("resource(@, @)"), empty());
         assertThat(checkModelOnly("requires(@, @)"), empty());
     }
+
+    @Test
+    public void modelOnlyFunctionsResolveInsideExpressionReferences() {
+        // A model-only function resolves inside an expression reference when model-only is
+        // on, so lint agrees with evaluation (map/sort_by/min_by/max_by carry the opt-in).
+        assertThat(checkModelOnly("map(&resource(@, @), `[]`)"), empty());
+    }
 }

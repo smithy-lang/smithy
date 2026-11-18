@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import software.amazon.smithy.jmespath.ast.LiteralExpression;
 import software.amazon.smithy.jmespath.evaluation.Evaluator;
 import software.amazon.smithy.jmespath.evaluation.JmespathRuntime;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Represents a JMESPath AST node.
@@ -106,6 +107,7 @@ public abstract class JmespathExpression {
         return lint(currentNode, false);
     }
 
+    @SmithyInternalApi
     public LinterResult lint(LiteralExpression currentNode, boolean modelOnlyFunctions) {
         Set<ExpressionProblem> problems = new TreeSet<>();
         TypeChecker typeChecker = new TypeChecker(currentNode, problems, modelOnlyFunctions);

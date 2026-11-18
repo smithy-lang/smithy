@@ -16,7 +16,7 @@ resource Key {
 @contracts({
     KeyEnabledOnSuccess: {
         documentation: "A successful Encrypt requires the referenced key to have been ENABLED beforehand"
-        expression: "requires(@, resource(before, {service: 'smithy.example#Crypto', resource: 'smithy.example#Key', ids: {id: input.keyId}}).properties.keyState == 'ENABLED')"
+        expression: "requires(@, resource(before, {resource: 'smithy.example#Key', ids: {id: input.keyId}}).properties.keyState == 'ENABLED')"
     }
 })
 @examples([

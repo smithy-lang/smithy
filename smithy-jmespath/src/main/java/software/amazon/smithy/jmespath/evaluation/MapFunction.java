@@ -5,7 +5,6 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
-import software.amazon.smithy.jmespath.JmespathExpression;
 
 class MapFunction implements Function {
     @Override
@@ -16,12 +15,13 @@ class MapFunction implements Function {
     @Override
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
-        JmespathExpression expression = functionArguments.get(0).expectExpression();
+        FunctionArgument<T> expression = functionArguments.get(0);
+        expression.expectExpression();
         T array = functionArguments.get(1).expectArray();
 
         JmespathRuntime.ArrayBuilder<T> builder = runtime.arrayBuilder();
         for (T element : runtime.asIterable(array)) {
-            builder.add(expression.evaluate(element, runtime));
+            builder.add(expression.evaluateExpression(element));
         }
         return builder.build();
     }

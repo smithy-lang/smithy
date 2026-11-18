@@ -162,14 +162,26 @@ public final class ReferencesTraitValidator extends AbstractValidator {
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         for (StructureShape structure : model.getStructureShapes()) {
-            boolean usesShape = false;
+            int targetingMembers = 0;
             for (MemberShape member : structure.members()) {
                 if (member.getTarget().equals(shape.getId())) {
-                    usesShape = true;
-                    break;
+                    targetingMembers++;
                 }
             }
-            if (usesShape && structure.getMemberNames().contains(name)) {
+            if (targetingMembers > 1) {
+                events.add(error(shape,
+                        trait,
+                        format(
+                                "`references` trait reference name `%s` on string shape `%s` is ambiguous in "
+                                        + "structure `%s`: %d members target the shape, and each would project the "
+                                        + "handle `%s`.",
+                                name,
+                                shape.getId(),
+                                structure.getId(),
+                                targetingMembers,
+                                name)));
+            }
+            if (targetingMembers > 0 && structure.getMemberNames().contains(name)) {
                 events.add(error(shape,
                         trait,
                         format(
