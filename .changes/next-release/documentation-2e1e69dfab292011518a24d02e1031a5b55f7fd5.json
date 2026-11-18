@@ -1,5 +1,7 @@
 {
   "type": "documentation",
   "description": "Added a documentation placeholder for Smithy PHP.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3374](https://github.com/smithy-lang/smithy/pull/3374)"
+  ]
 }
