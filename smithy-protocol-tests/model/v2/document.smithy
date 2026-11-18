@@ -10,6 +10,7 @@ service DocumentProtocolTestService {
         ListOfDocuments
         MapOfDocuments
         DocumentUnion
+        DocumentDefaults
     ]
 }
 
@@ -85,4 +86,23 @@ union DocumentUnionShape {
     documentValue: Document
     stringValue: String
     integerValue: Integer
+}
+
+operation DocumentDefaults {
+    input: DocumentDefaultsInput
+    output: DocumentDefaultsOutput
+}
+
+structure DocumentDefaultsInput with [DocumentDefaultsMixin] {}
+
+structure DocumentDefaultsOutput with [DocumentDefaultsMixin] {}
+
+@mixin
+structure DocumentDefaultsMixin {
+    defaultDocumentString: Document = "default"
+    defaultDocumentBoolean: Document = true
+    defaultDocumentNumber: Document = 7
+    defaultDocumentList: Document = []
+    defaultDocumentMap: Document = {}
+    defaultDocumentNull: Document = null
 }

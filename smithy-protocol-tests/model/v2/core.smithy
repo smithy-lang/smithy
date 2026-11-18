@@ -238,7 +238,10 @@ operation StructOfScalars {
 
 structure StructOfScalarsInputOutput {
     value: ScalarStruct
+    emptyValue: EmptyStruct
 }
+
+structure EmptyStruct {}
 
 structure ScalarStruct {
     booleanMember: Boolean

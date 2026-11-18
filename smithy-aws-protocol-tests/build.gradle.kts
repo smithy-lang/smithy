@@ -16,6 +16,7 @@ dependencies {
     implementation(project(path = ":smithy-cli", configuration = "shadow"))
     api(project(":smithy-aws-traits"))
     api(project(":smithy-protocol-test-traits"))
+    api(project(":smithy-protocol-tests"))
     api(project(":smithy-protocol-traits"))
     api(project(":smithy-validation-model"))
 }
