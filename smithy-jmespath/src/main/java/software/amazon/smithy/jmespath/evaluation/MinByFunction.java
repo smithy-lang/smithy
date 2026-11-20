@@ -5,7 +5,6 @@
 package software.amazon.smithy.jmespath.evaluation;
 
 import java.util.List;
-import software.amazon.smithy.jmespath.JmespathExpression;
 
 class MinByFunction implements Function {
     @Override
@@ -17,7 +16,8 @@ class MinByFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
-        JmespathExpression expression = functionArguments.get(1).expectExpression();
+        FunctionArgument<T> expression = functionArguments.get(1);
+        expression.expectExpression();
         if (runtime.length(array) == 0) {
             return runtime.createNull();
         }
@@ -26,7 +26,7 @@ class MinByFunction implements Function {
         T minBy = null;
         boolean first = true;
         for (T element : runtime.asIterable(array)) {
-            T by = expression.evaluate(element, runtime);
+            T by = expression.evaluateExpression(element);
             if (first) {
                 first = false;
                 min = element;

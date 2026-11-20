@@ -1,0 +1,1 @@
+[ERROR] ns.foo#KeyId: `references` trait reference name `key` on string shape `ns.foo#KeyId` is ambiguous in structure `ns.foo#CopyKeyInput`: 2 members target the shape, and each would project the handle `key`. | ReferencesTrait

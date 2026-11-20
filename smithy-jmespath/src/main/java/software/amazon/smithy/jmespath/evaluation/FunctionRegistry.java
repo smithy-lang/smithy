@@ -11,8 +11,19 @@ final class FunctionRegistry {
 
     private static final Map<String, Function> BUILTINS = new HashMap<>();
 
+    // Smithy contract extension functions. Not part of the default JMESPath function set:
+    // a caller must opt in (the contracts trait does), so other uses of JMESPath such as
+    // waiters never resolve them.
+    private static final Map<String, Function> MODEL_ONLY = new HashMap<>();
+
     private static void registerFunction(Function function) {
         if (BUILTINS.put(function.name(), function) != null) {
+            throw new IllegalArgumentException("Duplicate function name: " + function.name());
+        }
+    }
+
+    private static void registerModelOnlyFunction(Function function) {
+        if (MODEL_ONLY.put(function.name(), function) != null) {
             throw new IllegalArgumentException("Duplicate function name: " + function.name());
         }
     }
@@ -44,9 +55,20 @@ final class FunctionRegistry {
         registerFunction(new ToStringFunction());
         registerFunction(new TypeFunction());
         registerFunction(new ValuesFunction());
+
+        registerModelOnlyFunction(new RequiresFunction());
+        registerModelOnlyFunction(new ResourceFunction());
     }
 
     static Function lookup(String name) {
         return BUILTINS.get(name);
+    }
+
+    static Function lookup(String name, boolean includeModelOnly) {
+        Function function = BUILTINS.get(name);
+        if (function == null && includeModelOnly) {
+            function = MODEL_ONLY.get(name);
+        }
+        return function;
     }
 }

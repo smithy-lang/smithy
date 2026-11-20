@@ -1,0 +1,1 @@
+[ERROR] ns.foo#MyStructure: `references` trait reference name `fooId` collides with a member of the same name. Reference names must be distinct from members so the handle projection `input.fooId` is reachable. | ReferencesTrait

@@ -1,0 +1,4 @@
+[ERROR] smithy.example#DoThing: Contract `BadFunctionCall`: Problem found in JMESPath expression for contract BadFunctionCall: resource function expected 2 arguments, but was given 1 (1:1) | ContractsTrait
+[DANGER] smithy.example#DoThing: Contract BadFunctionCall expression must return a boolean type, but this expression was statically determined to return a `any` type. | ContractsTrait
+[DANGER] smithy.example#DoThing: Contract NotBoolean expression must return a boolean type, but this expression was statically determined to return a `string` type. | ContractsTrait
+[DANGER] smithy.example#DoThing: Contract `UnknownMember`: Problem found in JMESPath expression for contract UnknownMember: Object field 'nope' does not exist in object with properties [name] (1:7) | ContractsTrait.JmespathProblem.JmespathEventDanger.UnknownMember

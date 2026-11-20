@@ -1,0 +1,1 @@
+[ERROR] ns.foo#FooReference: `references` trait reference name `thing` on string shape `ns.foo#FooReference` collides with a member of structure `ns.foo#MyStructure`, which targets it. The resource handle projects as `input.thing` beside that member, so the reference name must be distinct from the members of structures that use this shape. | ReferencesTrait

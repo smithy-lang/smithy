@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Encrypt: Example `Referenced key absent must fail`: Call of `smithy.example#Encrypt` must match the KeyEnabledOnSuccess contract expression | ExamplesTrait.KeyEnabledOnSuccess
+[WARNING] smithy.example#Encrypt: The `smithy.example#Encrypt` operation is bound to the `smithy.example#Crypto` service but has members that match identifiers of the following resource shapes: [`smithy.example#Key`]. It may be more accurately bound to one of them than directly to the service. | ServiceBoundResourceOperation.smithy.example#Crypto.Encrypt

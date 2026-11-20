@@ -479,65 +479,9 @@ support the following members:
 JMESPath data model
 -------------------
 
-The data model exposed to JMESPath_ for input and output structures is
-converted from Smithy types to `JMESPath types`_ using the following
-conversion table:
-
-.. list-table::
-    :header-rows: 1
-
-    * - Smithy type
-      - JMESPath type
-    * - blob
-      - string (base64 encoded)
-    * - boolean
-      - boolean
-    * - byte
-      - number
-    * - short
-      - number
-    * - integer
-      - number
-    * - long
-      - number [#fnumbers]_
-    * - float
-      - number
-    * - double
-      - number
-    * - bigDecimal
-      - number [#fnumbers]_
-    * - bigInteger
-      - number [#fnumbers]_
-    * - string
-      - string
-    * - timestamp
-      - number [#ftimestamp]_
-    * - document
-      - any type
-    * - list and set
-      - array
-    * - map
-      - object
-    * - structure
-      - object [#fstructure]_
-    * - union
-      - object [#funion]_
-
-Footnotes
-~~~~~~~~~
-
-.. [#fnumbers] ``long``, ``bigInteger``, ``bigDecimal`` are exposed as
-   numbers to JMESPath. If a value for one of these types truly exceeds
-   the value of a double (the native numeric type of JMESPath), then
-   querying these types in a waiter is a bad idea.
-.. [#ftimestamp] ``timestamp`` values are represented in JMESPath expressions
-   as epoch seconds with optional decimal precision. This allows for
-   timestamp values to be used with relative comparators like ``<`` and ``>``.
-.. [#fstructure] Structure members are referred to by member name and not
-   the data sent over the wire. For example, the :ref:`jsonname-trait` is not
-   respected in JMESPath expressions that select structure members.
-.. [#funion] ``union`` values are represented exactly like structures except
-   only a single member is set to a non-null value.
+The data model exposed to JMESPath_ for waiter ``input`` and ``output``
+structures is described in the shared :ref:`JMESPath data model
+<jmespath-data-model>` section.
 
 
 JMESPath static analysis

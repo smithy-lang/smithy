@@ -67,9 +67,19 @@ public class NodeValidationVisitorTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 // Invalid shapes
-                {"ns.foo#Service", "true", new String[] {"Encountered invalid shape type: service"}},
-                {"ns.foo#Operation", "true", new String[] {"Encountered invalid shape type: operation"}},
-                {"ns.foo#Resource", "true", new String[] {"Encountered invalid shape type: resource"}},
+                // A service/resource instance (a world-snapshot record) must be an object.
+                {"ns.foo#Service",
+                        "true",
+                        new String[] {
+                                "Expected object value for service shape, `ns.foo#Service`; found boolean value, `true`"}},
+                {"ns.foo#Resource",
+                        "true",
+                        new String[] {
+                                "Expected object value for resource shape, `ns.foo#Resource`; found boolean value, `true`"}},
+
+                // A node is never an instance of an operation shape. An operation CALL is
+                // validated instead, via validateOperationCall (see ExamplesTraitValidator).
+                {"ns.foo#Operation", "{}", new String[] {"Encountered invalid shape type: operation"}},
 
                 // Booleans
                 {"ns.foo#Boolean", "true", null},

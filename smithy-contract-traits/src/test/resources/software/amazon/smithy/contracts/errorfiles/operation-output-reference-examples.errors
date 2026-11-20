@@ -1,0 +1,1 @@
+[ERROR] smithy.example#GenerateKey: Example `Generated key must not be disabled`: Call of `smithy.example#GenerateKey` must match the ResultKeyEnabled contract expression | ExamplesTrait.ResultKeyEnabled
