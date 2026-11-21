@@ -1680,10 +1680,16 @@ list createsResources {
             path: "/member/resource"
             message: "Changing the resource in a @putsResources entry is a breaking change."
         }
+        {
+            change: "any"
+            severity: "WARNING"
+            path: "/member/noReplace"
+            message: "Changing noReplace in a @putsResources entry changes whether consumers treat the operation as able to replace the resource."
+        }
     ]
 )
 list putsResources {
-    member: ResourceLifecycleBinding
+    member: ResourcePutBinding
 }
 
 /// Declares which resources an operation reads outside the standard lifecycle
@@ -1780,6 +1786,38 @@ structure ResourceLifecycleBinding {
     /// Structural JMESPath pointing at a nested structure or projection from
     /// whose members properties are inferred by name.
     propertiesFrom: NonEmptyString
+}
+
+/// A binding that associates a resource with an operation that creates or
+/// replaces it with put semantics, and optionally declares where to find the
+/// resource's identifiers and properties.
+@private
+structure ResourcePutBinding {
+    /// The shape ID of the affected resource.
+    @required
+    @idRef(selector: "resource", failWhenMissing: true)
+    resource: String
+
+    /// Explicit map of resource identifier name to a JMESPath locator for its
+    /// value in the operation input.
+    identifiers: ResourceMemberBindings
+
+    /// Structural JMESPath pointing at a nested structure or projection from
+    /// whose members identifiers are inferred by name.
+    identifiersFrom: NonEmptyString
+
+    /// Explicit map of resource property name to a JMESPath locator for its
+    /// value in the operation input.
+    properties: ResourceMemberBindings
+
+    /// Structural JMESPath pointing at a nested structure or projection from
+    /// whose members properties are inferred by name.
+    propertiesFrom: NonEmptyString
+
+    /// Indicates that the operation can only create the resource and cannot
+    /// replace an existing one, like the noReplace trait does for a resource's
+    /// put lifecycle operation.
+    noReplace: Boolean
 }
 
 /// A binding that associates a deleted resource with an operation and optionally

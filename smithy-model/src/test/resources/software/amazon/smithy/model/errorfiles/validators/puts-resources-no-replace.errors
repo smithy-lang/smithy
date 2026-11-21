@@ -1,0 +1,2 @@
+[WARNING] com.example#MakeGadget: Error validating trait `createsResources`.0: Member `noReplace` does not exist in `smithy.api#ResourceLifecycleBinding` | TraitValue
+[WARNING] com.example#PutWidget: Resource `com.example#Widget` in `@putsResources` is already bound to this operation via the resource's lifecycle. The trait is redundant. Apply `@noReplace` to the resource instead of setting `noReplace` on the binding. | ResourceLifecycleTrait

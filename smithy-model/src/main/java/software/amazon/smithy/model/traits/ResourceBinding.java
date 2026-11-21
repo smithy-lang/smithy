@@ -15,8 +15,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * traits: every binding names an affected resource and may declare where to
  * find that resource's identifiers.
  *
- * <p>{@link ResourceLifecycleBinding} adds property location for the create,
- * put, read, and update traits; {@link ResourceDeletionBinding} omits
+ * <p>{@link ResourcePropertiesBinding} adds property location: {@link ResourceLifecycleBinding}
+ * for the create, read, and update traits, and {@link ResourcePutBinding}, which also
+ * adds {@code noReplace}, for the put trait. {@link ResourceDeletionBinding} omits
  * properties because a resource is deleted by its identifiers alone.
  */
 @SmithyUnstableApi

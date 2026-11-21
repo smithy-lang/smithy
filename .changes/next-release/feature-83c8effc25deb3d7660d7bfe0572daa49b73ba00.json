@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Add a `noReplace` member to `@putsResources` bindings to declare that an operation can only create the resource and cannot replace an existing one. The unstable `PutsResourcesTrait` now holds `ResourcePutBinding` instead of `ResourceLifecycleBinding`.",
+  "pull_requests": []
+}

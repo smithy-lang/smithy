@@ -21,9 +21,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * {@code @readsResources}, and {@code @updatesResources}), each of which is a
  * list of {@link ResourceBinding}.
  *
- * @param <R> The concrete binding type held by the trait. Create, put, read, and
- *  update use {@link ResourceLifecycleBinding}; delete uses
- *  {@link ResourceDeletionBinding}, which has no properties.
+ * @param <R> The concrete binding type held by the trait. Create, read, and
+ *  update use {@link ResourceLifecycleBinding}; put uses {@link ResourcePutBinding},
+ *  which adds {@code noReplace}; delete uses {@link ResourceDeletionBinding}, which
+ *  has no properties.
  */
 @SmithyUnstableApi
 public abstract class AbstractResourceLifecycleTrait<R extends ResourceBinding> extends AbstractTrait {

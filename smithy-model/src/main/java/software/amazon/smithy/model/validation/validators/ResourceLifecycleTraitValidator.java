@@ -24,9 +24,11 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
+import software.amazon.smithy.model.traits.NoReplaceTrait;
 import software.amazon.smithy.model.traits.ResourceBinding;
-import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
+import software.amazon.smithy.model.traits.ResourcePropertiesBinding;
+import software.amazon.smithy.model.traits.ResourcePutBinding;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -130,11 +132,19 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
         // Warn if the resource is already lifecycle-bound to this operation.
         if (descriptor.isLifecycleBound(ctx.resource, ctx.operation.getId())) {
+            // A redundant put binding's noReplace is not read by consumers of the standard put,
+            // which only check the resource's @noReplace trait, so point there.
+            String noReplaceHint = binding instanceof ResourcePutBinding
+                    && ((ResourcePutBinding) binding).isNoReplace()
+                    && !ctx.resource.hasTrait(NoReplaceTrait.ID)
+                            ? " Apply `@noReplace` to the resource instead of setting `noReplace` on the binding."
+                            : "";
             ctx.warning(format(
                     "Resource `%s` in `@%s` is already bound to this operation via the resource's "
-                            + "lifecycle. The trait is redundant.",
+                            + "lifecycle. The trait is redundant.%s",
                     binding.getResource(),
-                    descriptor.name));
+                    descriptor.name,
+                    noReplaceHint));
         }
 
         validateBindingKind(ctx,
@@ -143,16 +153,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 binding.getIdentifiers(),
                 binding.getIdentifiersFrom());
 
-        // A properties side is only defined for the non-delete traits, whose bindings are always
-        // ResourceLifecycleBinding. Delete uses ResourceDeletionBinding, which has no properties at
-        // all, so there is nothing to validate here.
+        // A properties side is only defined for the non-delete traits, whose bindings always
+        // implement ResourcePropertiesBinding. Delete uses ResourceDeletionBinding, which has no
+        // properties at all, so there is nothing to validate here.
         if (descriptor.propertySide != null) {
-            ResourceLifecycleBinding lifecycleBinding = (ResourceLifecycleBinding) binding;
+            ResourcePropertiesBinding propertiesBinding = (ResourcePropertiesBinding) binding;
             validateBindingKind(ctx,
                     ResourceMemberInference.BindingKind.PROPERTY,
                     descriptor.propertySide,
-                    lifecycleBinding.getProperties(),
-                    lifecycleBinding.getPropertiesFrom());
+                    propertiesBinding.getProperties(),
+                    propertiesBinding.getPropertiesFrom());
         }
     }
 
