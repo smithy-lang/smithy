@@ -169,3 +169,43 @@ operation GetGadget {
 structure GadgetDescription {
     nickname: String
 }
+
+// Delete bindings locate no properties; this checks they are skipped for a resource that has
+// properties.
+@deletesResources([
+    {
+        resource: Widget
+        identifiers: { widgetId: { path: "widgetId" } }
+    }
+])
+@idempotent
+operation DiscardWidget {
+    input := {
+        @required
+        widgetId: WidgetId
+    }
+}
+
+// One operation binds both resources, but only its Widget binding locates `color`, so
+// Sprocket's `color` is reported as unused.
+resource Sprocket {
+    identifiers: { sprocketId: SprocketId }
+    properties: { color: String }
+}
+
+string SprocketId
+
+@createsResources([
+    {
+        resource: Widget
+        properties: { color: { path: "color" } }
+    }
+    {
+        resource: Sprocket
+    }
+])
+operation MakeWidgetAndSprocket {
+    input := {
+        color: String
+    }
+}

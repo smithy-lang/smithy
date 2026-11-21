@@ -3,3 +3,4 @@
 [DANGER] smithy.example#WeighWidget: JMESPath expression `widget.weight` for property `weight` in `@readsResources` has problems when resolved against `smithy.example#WeighWidgetOutput`: no member `weight` on `smithy.example#WidgetDescription` | ResourceLifecycleTrait
 [ERROR] smithy.example#Gadget: Resource property `nickname` is not used in the input or output of create, an instance operation, or the list element of a collection operation. | ResourceOperationInputOutput
 [WARNING] smithy.example#GetGadget: Resource `smithy.example#Gadget` in `@readsResources` is already bound to this operation via the resource's lifecycle. The trait is redundant. | ResourceLifecycleTrait
+[ERROR] smithy.example#Sprocket: Resource property `color` is not used in the input or output of create, an instance operation, or the list element of a collection operation. | ResourceOperationInputOutput
