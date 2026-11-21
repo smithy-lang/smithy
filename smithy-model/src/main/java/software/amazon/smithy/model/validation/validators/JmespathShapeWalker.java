@@ -48,8 +48,8 @@ import software.amazon.smithy.model.shapes.UnionShape;
  * </ul>
  *
  * <p>Only the structural JMESPath subset is supported (field, subexpression, projection
- * {@code [*]}, flatten {@code []}, current node). Callers reject unsupported expressions
- * before walking.
+ * {@code [*]}, flatten {@code []}, current node). Callers check paths with
+ * {@link LifecycleTraitJmespath} before walking.
  */
 final class JmespathShapeWalker {
 
