@@ -544,6 +544,14 @@ inference for a given name. The value located for an identifier must match the
 resource identifier's target shape, and the value located for a property must
 match the resource property's target shape.
 
+A property that a binding locates satisfies the requirement that every declared
+:ref:`resource property <resource-properties>` is used. A property only counts as
+located when its locator or ``...From`` pointer resolves against the operation's
+input or output. A binding on the resource's own lifecycle operation of the same
+kind, such as ``@readsResources`` on the resource's ``read`` operation, is
+redundant and does not count; that operation's members are bound to the resource
+directly.
+
 .. _supported-jmespath:
 
 Supported JMESPath
