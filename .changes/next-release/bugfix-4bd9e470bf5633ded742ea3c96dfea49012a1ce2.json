@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Count resource properties located by resource lifecycle trait bindings as used in `ResourceOperationInputOutput` validation.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3380](https://github.com/smithy-lang/smithy/pull/3380)"
+  ]
 }
