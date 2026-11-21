@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Count resource properties located by resource lifecycle trait bindings as used in `ResourceOperationInputOutput` validation.",
+  "pull_requests": []
+}

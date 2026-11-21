@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Widget: Resource property `owner` is not used in the input or output of create, an instance operation, or the list element of a collection operation. | ResourceOperationInputOutput

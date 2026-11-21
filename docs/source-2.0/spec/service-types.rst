@@ -713,7 +713,8 @@ of a resource's instance operations, including create, read, update,
 delete, and put, and in the list element of a collection operation's
 input or output. All declared resource properties MUST appear in at
 least one instance operation's input or output, or in the list element
-of a collection operation's input or output.
+of a collection operation's input or output, or be located by a binding
+of a :ref:`resource lifecycle association trait <resource-lifecycle-association-traits>`.
 
 For example, the following model defines a ``Forecast`` resource with a
 single property ``chanceOfRain`` read by the GetForecast operation, and the
