@@ -373,9 +373,14 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                     memberNames(inference.unmatched)));
         }
 
-        // Type agreement for matched members.
+        // Type agreement for matched members, and for members bound to the other kind, which are
+        // not inferred here but must still target that identifier's or property's shape.
         for (Map.Entry<String, MemberShape> matched : inference.matched.entrySet()) {
             checkMemberType(ctx, kind, matched.getKey(), matched.getValue());
+        }
+        ResourceMemberInference.BindingKind otherKind = ResourceMemberInference.otherKind(kind);
+        for (Map.Entry<String, MemberShape> other : inference.otherKind.entrySet()) {
+            checkMemberType(ctx, otherKind, other.getKey(), other.getValue());
         }
     }
 

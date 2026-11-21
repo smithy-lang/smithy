@@ -20,9 +20,10 @@ import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
  * given the structure a {@code identifiersFrom}/{@code propertiesFrom} pointer
  * resolves to, it reports which members map to a resource identifier or property
  * and which do not. A member bound to the other kind (an identifier when inferring
- * properties, or a property when inferring identifiers) is neither matched nor
- * unmatched, because a structure commonly carries both, as the standard lifecycle
- * allows.
+ * properties, or a property when inferring identifiers) is reported separately
+ * rather than as unmatched, because a structure commonly carries both. Matching is
+ * by name only; the caller checks that each matched or other-kind member targets
+ * the shape of the identifier or property it is bound to.
  */
 final class ResourceMemberInference {
 
@@ -39,23 +40,36 @@ final class ResourceMemberInference {
      * @param resource The resource being bound.
      * @param element The structure to match members against.
      * @param kind Whether to match identifier names or property names.
-     * @return The matched and unmatched members. Members bound to the other kind are in neither.
+     * @return The matched and unmatched members, and the members bound to the other kind.
      */
     static MemberInferenceResult inferByName(ResourceShape resource, StructureShape element, BindingKind kind) {
-        BindingKind otherKind = kind == BindingKind.IDENTIFIER ? BindingKind.PROPERTY : BindingKind.IDENTIFIER;
+        BindingKind otherKind = otherKind(kind);
         MemberInferenceResult result = new MemberInferenceResult();
         for (MemberShape member : element.members()) {
             if (member.hasTrait(NotPropertyTrait.ID)) {
                 continue;
             }
             String boundName = boundName(member, kind);
+            String otherName = boundName(member, otherKind);
             if (isBound(resource, boundName, kind)) {
                 result.matched.put(boundName, member);
-            } else if (!isBound(resource, boundName(member, otherKind), otherKind)) {
+            } else if (isBound(resource, otherName, otherKind)) {
+                result.otherKind.put(otherName, member);
+            } else {
                 result.unmatched.add(member);
             }
         }
         return result;
+    }
+
+    /**
+     * Gets the kind that is not the given one.
+     *
+     * @param kind The kind being inferred.
+     * @return The other kind.
+     */
+    static BindingKind otherKind(BindingKind kind) {
+        return kind == BindingKind.IDENTIFIER ? BindingKind.PROPERTY : BindingKind.IDENTIFIER;
     }
 
     private static boolean isBound(ResourceShape resource, String name, BindingKind kind) {
