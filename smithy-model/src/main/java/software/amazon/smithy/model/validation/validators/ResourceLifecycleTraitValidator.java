@@ -447,7 +447,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         // are equal. Scalars (empty signature) broadcast and are not compared.
         Map<String, List<ShapeId>> identifierToArrays = new LinkedHashMap<>();
         for (Map.Entry<String, ResourceMemberBinding> entry : identifiers.entrySet()) {
-            JmespathExpression parsed = LifecycleTraitJmespath.parse(entry.getValue().getPath());
+            JmespathExpression parsed = LifecycleTraitJmespath.parseSupported(entry.getValue().getPath());
             if (parsed == null) {
                 continue;
             }

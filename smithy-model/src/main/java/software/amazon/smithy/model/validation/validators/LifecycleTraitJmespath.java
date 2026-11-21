@@ -52,7 +52,7 @@ final class LifecycleTraitJmespath {
      * @param path The JMESPath expression to parse.
      * @return The parsed expression, or null.
      */
-    static JmespathExpression parse(String path) {
+    static JmespathExpression parseSupported(String path) {
         JmespathExpression parsed;
         try {
             parsed = JmespathExpression.parse(path);

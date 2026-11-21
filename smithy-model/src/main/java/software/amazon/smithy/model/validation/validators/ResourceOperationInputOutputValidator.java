@@ -221,7 +221,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
 
     // Walks a path against a structure, or returns null when the path is invalid or unsupported.
     private static JmespathPathResult walk(Model model, StructureShape start, String path) {
-        JmespathExpression parsed = LifecycleTraitJmespath.parse(path);
+        JmespathExpression parsed = LifecycleTraitJmespath.parseSupported(path);
         return parsed == null ? null : JmespathShapeWalker.walk(model, start, parsed);
     }
 
