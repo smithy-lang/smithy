@@ -69,6 +69,23 @@ apply RpcV2CborDenseMaps @httpRequestTests([
             }
         }
     }
+    {
+        id: "RpcV2CborSerializesMultibyteUtf8MapKeys"
+        documentation: """
+            Serializes a map whose key contains multibyte UTF-8 characters. The CBOR text string
+            length argument for the key MUST be the number of UTF-8 bytes, not the number of UTF-16
+            code units."""
+        protocol: rpcv2Cbor
+        method: "POST"
+        uri: "/service/RpcV2Protocol/operation/RpcV2CborDenseMaps"
+        body: "oW5kZW5zZVN0cmluZ01hcKFq5L2g5aW98J+Qoml3b3JsZHdpZGU="
+        bodyMediaType: "application/cbor"
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor", Accept: "application/cbor" }
+        requireHeaders: ["Content-Length"]
+        params: {
+            denseStringMap: { "你好🐢": "worldwide" }
+        }
+    }
 ])
 
 apply RpcV2CborDenseMaps @httpResponseTests([
@@ -113,6 +130,20 @@ apply RpcV2CborDenseMaps @httpResponseTests([
                 x: []
                 y: ["a", "b"]
             }
+        }
+    }
+    {
+        id: "RpcV2CborDeserializesMultibyteUtf8MapKeys"
+        documentation: """
+            Deserializes a map whose key contains multibyte UTF-8 characters. The CBOR text string
+            length argument for the key is a UTF-8 byte count."""
+        protocol: rpcv2Cbor
+        code: 200
+        body: "oW5kZW5zZVN0cmluZ01hcKFq5L2g5aW98J+Qoml3b3JsZHdpZGU="
+        bodyMediaType: "application/cbor"
+        headers: { "smithy-protocol": "rpc-v2-cbor", "Content-Type": "application/cbor" }
+        params: {
+            denseStringMap: { "你好🐢": "worldwide" }
         }
     }
 ])
