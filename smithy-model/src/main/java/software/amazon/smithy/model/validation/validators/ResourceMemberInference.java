@@ -19,11 +19,13 @@ import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
  * <p>This is the {@code ...From} inference used by the resource lifecycle traits:
  * given the structure a {@code identifiersFrom}/{@code propertiesFrom} pointer
  * resolves to, it reports which members map to a resource identifier or property
- * and which do not. A member bound to the other kind (an identifier when inferring
- * properties, or a property when inferring identifiers) is reported separately
- * rather than as unmatched, because a structure commonly carries both. Matching is
- * by name only; the caller checks that each matched or other-kind member targets
- * the shape of the identifier or property it is bound to.
+ * and which do not. An explicit {@code @resourceIdentifier} or {@code @property}
+ * decides which kind a member is bound to, as in the standard lifecycle; otherwise
+ * the member name is matched against both. A member bound to the other kind (an
+ * identifier when inferring properties, or a property when inferring identifiers)
+ * is reported separately rather than as unmatched, because a structure commonly
+ * carries both. Matching is by name only; the caller checks that each matched or
+ * other-kind member targets the shape of the identifier or property it is bound to.
  */
 final class ResourceMemberInference {
 
@@ -43,18 +45,20 @@ final class ResourceMemberInference {
      * @return The matched and unmatched members, and the members bound to the other kind.
      */
     static MemberInferenceResult inferByName(ResourceShape resource, StructureShape element, BindingKind kind) {
-        BindingKind otherKind = otherKind(kind);
         MemberInferenceResult result = new MemberInferenceResult();
         for (MemberShape member : element.members()) {
             if (member.hasTrait(NotPropertyTrait.ID)) {
                 continue;
             }
-            String boundName = boundName(member, kind);
-            String otherName = boundName(member, otherKind);
-            if (isBound(resource, boundName, kind)) {
-                result.matched.put(boundName, member);
-            } else if (isBound(resource, otherName, otherKind)) {
-                result.otherKind.put(otherName, member);
+            String identifier = identifierName(resource, member);
+            String property = propertyName(resource, member);
+            // When a member matches both by name, the kind being inferred wins.
+            String matched = kind == BindingKind.IDENTIFIER ? identifier : property;
+            String other = kind == BindingKind.IDENTIFIER ? property : identifier;
+            if (matched != null) {
+                result.matched.put(matched, member);
+            } else if (other != null) {
+                result.otherKind.put(other, member);
             } else {
                 result.unmatched.add(member);
             }
@@ -72,20 +76,29 @@ final class ResourceMemberInference {
         return kind == BindingKind.IDENTIFIER ? BindingKind.PROPERTY : BindingKind.IDENTIFIER;
     }
 
-    private static boolean isBound(ResourceShape resource, String name, BindingKind kind) {
-        return kind == BindingKind.IDENTIFIER
-                ? resource.getIdentifiers().containsKey(name)
-                : resource.getProperties().containsKey(name);
+    // The resource identifier a member is bound to, or null. An explicit @resourceIdentifier names
+    // it; otherwise the member name is used, unless the member is explicitly a @property.
+    private static String identifierName(ResourceShape resource, MemberShape member) {
+        String name;
+        if (member.hasTrait(ResourceIdentifierTrait.ID)) {
+            name = member.expectTrait(ResourceIdentifierTrait.class).getValue();
+        } else if (member.hasTrait(PropertyTrait.ID)) {
+            return null;
+        } else {
+            name = member.getMemberName();
+        }
+        return resource.getIdentifiers().containsKey(name) ? name : null;
     }
 
-    private static String boundName(MemberShape member, BindingKind kind) {
-        if (kind == BindingKind.IDENTIFIER) {
-            return member.getTrait(ResourceIdentifierTrait.class)
-                    .map(ResourceIdentifierTrait::getValue)
-                    .orElseGet(member::getMemberName);
+    // The resource property a member is bound to, or null. An explicit @property(name) names it;
+    // otherwise the member name is used, unless the member is explicitly a @resourceIdentifier.
+    private static String propertyName(ResourceShape resource, MemberShape member) {
+        if (member.hasTrait(ResourceIdentifierTrait.ID)) {
+            return null;
         }
-        return member.getTrait(PropertyTrait.class)
+        String name = member.getTrait(PropertyTrait.class)
                 .flatMap(PropertyTrait::getName)
                 .orElseGet(member::getMemberName);
+        return resource.getProperties().containsKey(name) ? name : null;
     }
 }

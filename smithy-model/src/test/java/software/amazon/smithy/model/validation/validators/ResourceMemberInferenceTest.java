@@ -43,6 +43,11 @@ public class ResourceMemberInferenceTest {
             + "structure RenamedElem {\n"
             + "  @required @resourceIdentifier(\"widgetId\") id: String\n"
             + "  size: Integer\n"
+            + "}\n"
+            + "operation ExplicitDummy { output: ExplicitElem }\n"
+            + "structure ExplicitElem {\n"
+            + "  @required @resourceIdentifier(\"widgetId\") size: String\n"
+            + "  @property(name: \"color\") widgetId: String\n"
             + "}\n";
 
     private Model model() {
@@ -64,8 +69,9 @@ public class ResourceMemberInferenceTest {
         assertThat(r.matched, hasKey("size"));
         assertThat(r.matched, hasKey("color")); // colour -> color via @property
         assertThat(r.matched.get("color").getMemberName(), is("colour"));
-        // extra is @notProperty (excluded); widgetId is an identifier, so it is neither matched nor
-        // unmatched; other is neither a property nor an identifier (unmatched).
+        // extra is @notProperty (excluded); widgetId is an identifier (other kind); other is neither
+        // a property nor an identifier (unmatched).
+        assertThat(r.otherKind.keySet(), containsInAnyOrder("widgetId"));
         assertThat(unmatchedNames(r), containsInAnyOrder("other"));
     }
 
@@ -79,8 +85,9 @@ public class ResourceMemberInferenceTest {
                         ResourceMemberInference.BindingKind.IDENTIFIER);
         assertThat(r.matched, hasKey("widgetId"));
         assertThat(r.matched.get("widgetId").getMemberName(), is("widgetId"));
-        // size and colour are properties, so they are neither matched nor unmatched; extra is
-        // excluded; other is neither a property nor an identifier (unmatched).
+        // size and colour are properties (other kind); extra is excluded; other is neither a
+        // property nor an identifier (unmatched).
+        assertThat(r.otherKind.keySet(), containsInAnyOrder("size", "color"));
         assertThat(unmatchedNames(r), containsInAnyOrder("other"));
     }
 
@@ -93,9 +100,28 @@ public class ResourceMemberInferenceTest {
                         struct(model, "RenamedElem"),
                         ResourceMemberInference.BindingKind.PROPERTY);
         assertThat(r.matched, hasKey("size"));
-        // id is bound to the widgetId identifier through @resourceIdentifier, so it is neither
-        // matched nor unmatched.
+        // id is bound to the widgetId identifier through @resourceIdentifier (other kind).
+        assertThat(r.otherKind.get("widgetId").getMemberName(), is("id"));
         assertThat(r.unmatched, empty());
+    }
+
+    @Test
+    public void explicitTraitsDecideTheKindOverMemberNames() {
+        Model model = model();
+        ResourceShape widget = model.expectShape(ShapeId.from("com.test#Widget"), ResourceShape.class);
+        StructureShape explicit = struct(model, "ExplicitElem");
+
+        // size is named like a property but is the widgetId identifier through @resourceIdentifier,
+        // and widgetId is named like the identifier but is the color property through @property.
+        MemberInferenceResult properties =
+                ResourceMemberInference.inferByName(widget, explicit, ResourceMemberInference.BindingKind.PROPERTY);
+        assertThat(properties.matched.get("color").getMemberName(), is("widgetId"));
+        assertThat(properties.otherKind.get("widgetId").getMemberName(), is("size"));
+
+        MemberInferenceResult identifiers =
+                ResourceMemberInference.inferByName(widget, explicit, ResourceMemberInference.BindingKind.IDENTIFIER);
+        assertThat(identifiers.matched.get("widgetId").getMemberName(), is("size"));
+        assertThat(identifiers.otherKind.get("color").getMemberName(), is("widgetId"));
     }
 
     private static List<String> unmatchedNames(MemberInferenceResult r) {
