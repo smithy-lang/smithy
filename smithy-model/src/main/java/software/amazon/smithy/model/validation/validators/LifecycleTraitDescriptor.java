@@ -5,7 +5,10 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
 import software.amazon.smithy.model.traits.CreatesResourcesTrait;
@@ -50,45 +53,68 @@ final class LifecycleTraitDescriptor {
                     CreatesResourcesTrait.ID,
                     "createsResources",
                     Side.OUTPUT,
-                    Side.INPUT),
+                    Side.INPUT,
+                    ResourceShape::getCreate),
             new LifecycleTraitDescriptor(PutsResourcesTrait.class,
                     PutsResourcesTrait.ID,
                     "putsResources",
                     Side.INPUT,
-                    Side.INPUT),
+                    Side.INPUT,
+                    ResourceShape::getPut),
             new LifecycleTraitDescriptor(ReadsResourcesTrait.class,
                     ReadsResourcesTrait.ID,
                     "readsResources",
                     Side.INPUT,
-                    Side.OUTPUT),
+                    Side.OUTPUT,
+                    ResourceShape::getRead),
             new LifecycleTraitDescriptor(UpdatesResourcesTrait.class,
                     UpdatesResourcesTrait.ID,
                     "updatesResources",
                     Side.INPUT,
-                    Side.INPUT),
+                    Side.INPUT,
+                    ResourceShape::getUpdate),
             new LifecycleTraitDescriptor(DeletesResourcesTrait.class,
                     DeletesResourcesTrait.ID,
                     "deletesResources",
                     Side.INPUT,
-                    null));
+                    null,
+                    ResourceShape::getDelete));
 
     final Class<? extends AbstractResourceLifecycleTrait<?>> traitClass;
     final ShapeId traitId;
     final String name;
     final Side identifierSide;
     final Side propertySide; // null when the trait binds no properties (delete).
+    private final Function<ResourceShape, Optional<ShapeId>> lifecycleOperation;
 
     private LifecycleTraitDescriptor(
             Class<? extends AbstractResourceLifecycleTrait<?>> traitClass,
             ShapeId traitId,
             String name,
             Side identifierSide,
-            Side propertySide
+            Side propertySide,
+            Function<ResourceShape, Optional<ShapeId>> lifecycleOperation
     ) {
         this.traitClass = traitClass;
         this.traitId = traitId;
         this.name = name;
         this.identifierSide = identifierSide;
         this.propertySide = propertySide;
+        this.lifecycleOperation = lifecycleOperation;
+    }
+
+    /**
+     * Checks whether an operation is the resource's standard lifecycle operation of the same
+     * kind as this trait, for example its {@code read} operation for {@code @readsResources}.
+     *
+     * <p>A binding on such an operation is redundant: the standard lifecycle binding already
+     * relates the operation to the resource.
+     *
+     * @param resource The resource the binding targets.
+     * @param operationId The operation carrying the trait.
+     * @return Returns true if the operation fills the matching lifecycle slot of the resource.
+     */
+    boolean isLifecycleBound(ResourceShape resource, ShapeId operationId) {
+        return lifecycleOperation.apply(resource).map(operationId::equals).orElse(false);
     }
 }

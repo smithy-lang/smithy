@@ -24,15 +24,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
-import software.amazon.smithy.model.traits.CreatesResourcesTrait;
-import software.amazon.smithy.model.traits.DeletesResourcesTrait;
-import software.amazon.smithy.model.traits.PutsResourcesTrait;
-import software.amazon.smithy.model.traits.ReadsResourcesTrait;
 import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.UpdatesResourcesTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -134,7 +129,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         LifecycleTraitDescriptor descriptor = ctx.descriptor;
 
         // Warn if the resource is already lifecycle-bound to this operation.
-        if (isLifecycleBound(ctx.resource, ctx.operation.getId(), descriptor.traitId)) {
+        if (descriptor.isLifecycleBound(ctx.resource, ctx.operation.getId())) {
             ctx.warning(format(
                     "Resource `%s` in `@%s` is already bound to this operation via the resource's "
                             + "lifecycle. The trait is redundant.",
@@ -436,24 +431,6 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             shape = model.expectShape(((ListShape) shape).getMember().getTarget());
         }
         return shape.getId();
-    }
-
-    private boolean isLifecycleBound(ResourceShape resource, ShapeId operationId, ShapeId traitId) {
-        Optional<ShapeId> lifecycleOperation;
-        if (traitId.equals(CreatesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getCreate();
-        } else if (traitId.equals(PutsResourcesTrait.ID)) {
-            lifecycleOperation = resource.getPut();
-        } else if (traitId.equals(ReadsResourcesTrait.ID)) {
-            lifecycleOperation = resource.getRead();
-        } else if (traitId.equals(UpdatesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getUpdate();
-        } else if (traitId.equals(DeletesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getDelete();
-        } else {
-            return false;
-        }
-        return lifecycleOperation.map(operationId::equals).orElse(false);
     }
 
     private void validateCompositeCardinality(

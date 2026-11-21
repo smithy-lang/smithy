@@ -163,7 +163,11 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     continue;
                 }
                 for (ResourceBinding binding : trait.getBindings()) {
-                    if (binding.getResource().equals(resource.getId())) {
+                    // A binding on the resource's own lifecycle operation of the same kind is
+                    // redundant (ResourceLifecycleTrait warns about it), and that operation's
+                    // members are already checked above, so it does not count here.
+                    if (binding.getResource().equals(resource.getId())
+                            && !descriptor.isLifecycleBound(resource, operationId)) {
                         addBindingProperties(model,
                                 resource,
                                 operation,

@@ -136,3 +136,36 @@ operation WeighWidget {
         widget: WidgetDescription
     }
 }
+
+// A binding on the resource's own read operation is redundant, so it does not count: `nickname`
+// is reported as unused, as it would be without the trait.
+resource Gadget {
+    identifiers: { gadgetId: GadgetId }
+    properties: { nickname: String }
+    read: GetGadget
+}
+
+string GadgetId
+
+@readonly
+@readsResources([
+    {
+        resource: Gadget
+        identifiers: { gadgetId: { path: "gadgetId" } }
+        properties: { nickname: { path: "gadget.nickname" } }
+    }
+])
+operation GetGadget {
+    input := {
+        @required
+        gadgetId: GadgetId
+    }
+    output := {
+        @notProperty
+        gadget: GadgetDescription
+    }
+}
+
+structure GadgetDescription {
+    nickname: String
+}
