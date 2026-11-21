@@ -266,12 +266,12 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                         ctx.traitName(),
                         kindWord,
                         ctx.resourceId(),
-                        kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifiers" : "properties",
+                        kindPlural(kind),
                         ValidationUtils.tickedList(validNames)));
                 continue;
             }
 
-            JmespathExpression parsed = parseAndCheck(ctx, kindWord, name, path);
+            JmespathExpression parsed = parseAndCheck(ctx, format("%s `%s`", kindWord, name), path);
             if (parsed == null) {
                 continue;
             }
@@ -313,7 +313,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         String fromMember = kind == ResourceMemberInference.BindingKind.IDENTIFIER
                 ? "identifiersFrom"
                 : "propertiesFrom";
-        JmespathExpression parsed = parseAndCheck(ctx, fromMember, fromMember, fromPath);
+        JmespathExpression parsed = parseAndCheck(ctx, format("`%s`", fromMember), fromPath);
         if (parsed == null || sideStructure == null) {
             return;
         }
@@ -449,15 +449,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
     }
 
-    private JmespathExpression parseAndCheck(Context ctx, String kind, String name, String path) {
+    // Parses a path and reports it when invalid or unsupported. The subject names what the path is for,
+    // such as "property `size`" or "`propertiesFrom`".
+    private JmespathExpression parseAndCheck(Context ctx, String subject, String path) {
         JmespathExpression parsed;
         try {
             parsed = JmespathExpression.parse(path);
         } catch (JmespathException e) {
-            ctx.error(format("Invalid JMESPath expression `%s` for %s `%s` in `@%s`: %s",
+            ctx.error(format("Invalid JMESPath expression `%s` for %s in `@%s`: %s",
                     path,
-                    kind,
-                    name,
+                    subject,
                     ctx.traitName(),
                     e.getMessage()));
             return null;
@@ -472,10 +473,9 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 }
                 list.append("'").append(expr).append("'");
             }
-            ctx.error(format("JMESPath expression `%s` for %s `%s` in `@%s` contains unsupported expressions: %s",
+            ctx.error(format("JMESPath expression `%s` for %s in `@%s` contains unsupported expressions: %s",
                     path,
-                    kind,
-                    name,
+                    subject,
                     ctx.traitName(),
                     list));
             return null;
@@ -485,6 +485,10 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private static String kindWord(ResourceMemberInference.BindingKind kind) {
         return kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifier" : "property";
+    }
+
+    private static String kindPlural(ResourceMemberInference.BindingKind kind) {
+        return kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifiers" : "properties";
     }
 
     private static String sideName(ShapeId sideStructureId, OperationShape operation) {
