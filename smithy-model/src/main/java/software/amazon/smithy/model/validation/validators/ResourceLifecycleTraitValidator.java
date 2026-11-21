@@ -260,13 +260,13 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             String path = entry.getValue().getPath();
 
             if (!validNames.contains(name)) {
-                ctx.error(format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %ss: [%s]",
+                ctx.error(format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %s: [%s]",
                         capitalize(kindWord),
                         name,
                         ctx.traitName(),
                         kindWord,
                         ctx.resourceId(),
-                        kindWord,
+                        kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifiers" : "properties",
                         ValidationUtils.tickedList(validNames)));
                 continue;
             }
@@ -363,13 +363,12 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
 
         if (!inference.unmatched.isEmpty()) {
-            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither a %s nor an "
-                    + "identifier of resource `%s` and are not marked `@notProperty`: [%s]",
+            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither an identifier "
+                    + "nor a property of resource `%s` and are not marked `@notProperty`: [%s]",
                     fromMember,
                     fromPath,
                     ctx.traitName(),
                     element.getId(),
-                    kindWord,
                     ctx.resourceId(),
                     memberNames(inference.unmatched)));
         }

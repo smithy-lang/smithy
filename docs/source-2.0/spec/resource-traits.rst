@@ -532,7 +532,9 @@ ways:
   at a nested structure or a projection whose members are matched by name to the
   resource's identifiers or properties. Member-name differences are reconciled
   with the :ref:`property-trait` and :ref:`resourceIdentifier-trait`, and the
-  :ref:`notProperty-trait` excludes a member.
+  :ref:`notProperty-trait` excludes a member. A member bound to the other kind
+  is ignored, so a structure can carry both the resource's identifiers and its
+  properties. Any other member must be marked with the :ref:`notProperty-trait`.
 * **Unspecified**: neither the explicit map nor the ``...From`` pointer is set.
   The binding only asserts that the operation affects the resource; nothing is
   inferred and nothing is validated for it. For example,

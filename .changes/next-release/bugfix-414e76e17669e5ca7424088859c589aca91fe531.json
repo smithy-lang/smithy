@@ -1,0 +1,5 @@
+{
+  "type": "bugfix",
+  "description": "Allow `propertiesFrom` and `identifiersFrom` in resource lifecycle traits to point at structures that carry both the resource's identifiers and its properties.",
+  "pull_requests": []
+}
