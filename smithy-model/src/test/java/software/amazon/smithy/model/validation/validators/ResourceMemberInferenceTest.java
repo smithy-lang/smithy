@@ -37,6 +37,7 @@ public class ResourceMemberInferenceTest {
             + "  size: Integer\n"
             + "  @property(name: \"color\") colour: String\n"
             + "  @notProperty extra: String\n"
+            + "  @idempotencyToken clientToken: String\n"
             + "  other: String\n"
             + "}\n"
             + "operation RenamedDummy { output: RenamedElem }\n"
@@ -63,14 +64,15 @@ public class ResourceMemberInferenceTest {
         Model model = model();
         ResourceShape widget = model.expectShape(ShapeId.from("com.test#Widget"), ResourceShape.class);
         MemberInferenceResult r =
-                ResourceMemberInference.inferByName(widget,
+                ResourceMemberInference.inferByName(model,
+                        widget,
                         struct(model, "Elem"),
                         ResourceMemberInference.BindingKind.PROPERTY);
         assertThat(r.matched, hasKey("size"));
         assertThat(r.matched, hasKey("color")); // colour -> color via @property
         assertThat(r.matched.get("color").getMemberName(), is("colour"));
-        // extra is @notProperty (excluded); widgetId is an identifier (other kind); other is neither
-        // a property nor an identifier (unmatched).
+        // extra is @notProperty and clientToken is an @idempotencyToken (excluded); widgetId is an
+        // identifier (other kind); other is neither a property nor an identifier (unmatched).
         assertThat(r.otherKind.keySet(), containsInAnyOrder("widgetId"));
         assertThat(unmatchedNames(r), containsInAnyOrder("other"));
     }
@@ -80,13 +82,14 @@ public class ResourceMemberInferenceTest {
         Model model = model();
         ResourceShape widget = model.expectShape(ShapeId.from("com.test#Widget"), ResourceShape.class);
         MemberInferenceResult r =
-                ResourceMemberInference.inferByName(widget,
+                ResourceMemberInference.inferByName(model,
+                        widget,
                         struct(model, "Elem"),
                         ResourceMemberInference.BindingKind.IDENTIFIER);
         assertThat(r.matched, hasKey("widgetId"));
         assertThat(r.matched.get("widgetId").getMemberName(), is("widgetId"));
-        // size and colour are properties (other kind); extra is excluded; other is neither a
-        // property nor an identifier (unmatched).
+        // size and colour are properties (other kind); extra and clientToken are excluded; other is
+        // neither a property nor an identifier (unmatched).
         assertThat(r.otherKind.keySet(), containsInAnyOrder("size", "color"));
         assertThat(unmatchedNames(r), containsInAnyOrder("other"));
     }
@@ -96,7 +99,8 @@ public class ResourceMemberInferenceTest {
         Model model = model();
         ResourceShape widget = model.expectShape(ShapeId.from("com.test#Widget"), ResourceShape.class);
         MemberInferenceResult r =
-                ResourceMemberInference.inferByName(widget,
+                ResourceMemberInference.inferByName(model,
+                        widget,
                         struct(model, "RenamedElem"),
                         ResourceMemberInference.BindingKind.PROPERTY);
         assertThat(r.matched, hasKey("size"));
@@ -114,12 +118,18 @@ public class ResourceMemberInferenceTest {
         // size is named like a property but is the widgetId identifier through @resourceIdentifier,
         // and widgetId is named like the identifier but is the color property through @property.
         MemberInferenceResult properties =
-                ResourceMemberInference.inferByName(widget, explicit, ResourceMemberInference.BindingKind.PROPERTY);
+                ResourceMemberInference.inferByName(model,
+                        widget,
+                        explicit,
+                        ResourceMemberInference.BindingKind.PROPERTY);
         assertThat(properties.matched.get("color").getMemberName(), is("widgetId"));
         assertThat(properties.otherKind.get("widgetId").getMemberName(), is("size"));
 
         MemberInferenceResult identifiers =
-                ResourceMemberInference.inferByName(widget, explicit, ResourceMemberInference.BindingKind.IDENTIFIER);
+                ResourceMemberInference.inferByName(model,
+                        widget,
+                        explicit,
+                        ResourceMemberInference.BindingKind.IDENTIFIER);
         assertThat(identifiers.matched.get("widgetId").getMemberName(), is("size"));
         assertThat(identifiers.otherKind.get("color").getMemberName(), is("widgetId"));
     }

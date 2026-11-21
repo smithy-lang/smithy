@@ -349,7 +349,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
         StructureShape element = (StructureShape) result.leaf;
         MemberInferenceResult inference =
-                ResourceMemberInference.inferByName(ctx.resource, element, kind);
+                ResourceMemberInference.inferByName(ctx.model, ctx.resource, element, kind);
 
         if (inference.matched.isEmpty()) {
             ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",

@@ -4,6 +4,8 @@
  */
 package software.amazon.smithy.model.validation.validators;
 
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -13,8 +15,8 @@ import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 
 /**
  * Matches the members of a structure to a resource's identifiers or properties
- * by name, honoring {@code @resourceIdentifier}, {@code @property}, and
- * {@code @notProperty}, mirroring the standard lifecycle resolution.
+ * by name, honoring {@code @resourceIdentifier}, {@code @property}, {@code @notProperty},
+ * and traits marked with {@code @notProperty}, mirroring the standard lifecycle resolution.
  *
  * <p>This is the {@code ...From} inference used by the resource lifecycle traits:
  * given the structure a {@code identifiersFrom}/{@code propertiesFrom} pointer
@@ -39,19 +41,29 @@ final class ResourceMemberInference {
     /**
      * Infers which members of a structure provide the resource's identifiers or properties.
      *
+     * @param model The model, used to find the traits marked with {@code @notProperty}.
      * @param resource The resource being bound.
      * @param element The structure to match members against.
      * @param kind Whether to match identifier names or property names.
      * @return The matched and unmatched members, and the members bound to the other kind.
      */
-    static MemberInferenceResult inferByName(ResourceShape resource, StructureShape element, BindingKind kind) {
+    static MemberInferenceResult inferByName(
+            Model model,
+            ResourceShape resource,
+            StructureShape element,
+            BindingKind kind
+    ) {
+        PropertyBindingIndex propertyIndex = PropertyBindingIndex.of(model);
         MemberInferenceResult result = new MemberInferenceResult();
         for (MemberShape member : element.members()) {
             if (member.hasTrait(NotPropertyTrait.ID)) {
                 continue;
             }
+            // As in the standard lifecycle, a member with a trait marked @notProperty, such as
+            // @resourceIdentifier or @idempotencyToken, is never a property.
+            boolean notProperty = propertyIndex.isNotPropertyMember(member);
             String identifier = identifierName(resource, member);
-            String property = propertyName(resource, member);
+            String property = notProperty ? null : propertyName(resource, member);
             // When a member matches both by name, the kind being inferred wins.
             String matched = kind == BindingKind.IDENTIFIER ? identifier : property;
             String other = kind == BindingKind.IDENTIFIER ? property : identifier;
@@ -59,7 +71,9 @@ final class ResourceMemberInference {
                 result.matched.put(matched, member);
             } else if (other != null) {
                 result.otherKind.put(other, member);
-            } else {
+            } else if (!notProperty || member.hasTrait(ResourceIdentifierTrait.ID)) {
+                // A member that is neither kind is unmatched, unless a trait marked @notProperty
+                // excludes it. A @resourceIdentifier that names no identifier is still unmatched.
                 result.unmatched.add(member);
             }
         }
@@ -91,11 +105,8 @@ final class ResourceMemberInference {
     }
 
     // The resource property a member is bound to, or null. An explicit @property(name) names it;
-    // otherwise the member name is used, unless the member is explicitly a @resourceIdentifier.
+    // otherwise the member name is used. Callers skip members that cannot be properties.
     private static String propertyName(ResourceShape resource, MemberShape member) {
-        if (member.hasTrait(ResourceIdentifierTrait.ID)) {
-            return null;
-        }
         String name = member.getTrait(PropertyTrait.class)
                 .flatMap(PropertyTrait::getName)
                 .orElseGet(member::getMemberName);
