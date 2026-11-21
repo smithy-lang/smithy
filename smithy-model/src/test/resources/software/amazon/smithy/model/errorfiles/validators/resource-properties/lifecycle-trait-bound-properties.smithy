@@ -6,8 +6,9 @@ metadata suppressions = [
 
 namespace smithy.example
 
-// Each property except `owner` is located only by a resource lifecycle trait binding on an
-// operation that is not bound to Widget, so only `owner` is reported as unused.
+// Each property except `owner` and `weight` is located only by a resource lifecycle trait
+// binding on an operation that is not bound to Widget. `owner` is located nowhere, and the only
+// binding for `weight` has a path that resolves to nothing, so both are reported as unused.
 resource Widget {
     identifiers: { widgetId: WidgetId }
     properties: {
@@ -17,6 +18,7 @@ resource Widget {
         createdAt: Timestamp
         status: String
         owner: String
+        weight: Integer
     }
 }
 
@@ -114,4 +116,23 @@ operation GetWidgetStatus {
 
 structure WidgetState {
     status: String
+}
+
+// Explicit property whose path resolves to nothing, so it does not count as used.
+@readonly
+@readsResources([
+    {
+        resource: Widget
+        identifiers: { widgetId: { path: "widgetId" } }
+        properties: { weight: { path: "widget.weight" } }
+    }
+])
+operation WeighWidget {
+    input := {
+        @required
+        widgetId: WidgetId
+    }
+    output := {
+        widget: WidgetDescription
+    }
 }

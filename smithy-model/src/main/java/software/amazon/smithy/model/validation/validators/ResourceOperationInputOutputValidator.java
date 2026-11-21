@@ -32,6 +32,7 @@ import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
+import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -140,7 +141,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
      * <p>Operations carrying these traits are usually not bound to the resource, so the
      * checks for bound operations never see them. Only the names are collected here:
      * {@link ResourceLifecycleTraitValidator} validates the bindings themselves, so a path
-     * that does not parse or resolve is skipped rather than reported again.
+     * that does not parse or resolve is not counted and not reported again.
      */
     private void addLifecycleTraitProperties(Model model, ResourceShape resource, Set<String> properties) {
         Set<ShapeId> operationIds = new HashSet<>();
@@ -175,6 +176,10 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         }
     }
 
+    // Adds the properties a binding locates. A name only counts when its path parses, uses the
+    // supported subset, and resolves against the binding's side, for both the explicit map and
+    // `propertiesFrom`. An unresolved path is only a DANGER in ResourceLifecycleTrait, so counting
+    // it would let a typo clear the unused-property ERROR.
     private void addBindingProperties(
             Model model,
             ResourceShape resource,
@@ -183,9 +188,17 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ResourceLifecycleBinding binding,
             Set<String> properties
     ) {
-        for (String name : binding.getProperties().keySet()) {
-            if (resource.getProperties().containsKey(name)) {
-                properties.add(name);
+        StructureShape sideStructure = model.getShape(side.of(operation))
+                .flatMap(Shape::asStructureShape)
+                .orElse(null);
+        if (sideStructure == null) {
+            return;
+        }
+
+        for (Map.Entry<String, ResourceMemberBinding> entry : binding.getProperties().entrySet()) {
+            JmespathPathResult result = walk(model, sideStructure, entry.getValue().getPath());
+            if (result != null && result.error == null) {
+                properties.add(entry.getKey());
             }
         }
 
@@ -193,20 +206,19 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         if (!from.isPresent()) {
             return;
         }
-        StructureShape sideStructure = model.getShape(side.of(operation))
-                .flatMap(Shape::asStructureShape)
-                .orElse(null);
-        JmespathExpression parsed = LifecycleTraitJmespath.parse(from.get());
-        if (sideStructure == null || parsed == null) {
-            return;
-        }
-        JmespathPathResult result = JmespathShapeWalker.walk(model, sideStructure, parsed);
-        if (result.error == null && !result.root && result.leaf instanceof StructureShape) {
+        JmespathPathResult result = walk(model, sideStructure, from.get());
+        if (result != null && result.error == null && !result.root && result.leaf instanceof StructureShape) {
             MemberInferenceResult inference = ResourceMemberInference.inferByName(resource,
                     (StructureShape) result.leaf,
                     ResourceMemberInference.BindingKind.PROPERTY);
             properties.addAll(inference.matched.keySet());
         }
+    }
+
+    // Walks a path against a structure, or returns null when the path is invalid or unsupported.
+    private static JmespathPathResult walk(Model model, StructureShape start, String path) {
+        JmespathExpression parsed = LifecycleTraitJmespath.parse(path);
+        return parsed == null ? null : JmespathShapeWalker.walk(model, start, parsed);
     }
 
     private void processCollectionBoundOperation(
