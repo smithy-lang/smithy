@@ -531,8 +531,17 @@ ways:
 * **Inferred**: an ``identifiersFrom`` or ``propertiesFrom`` expression points
   at a nested structure or a projection whose members are matched by name to the
   resource's identifiers or properties. Member-name differences are reconciled
-  with the :ref:`property-trait` and :ref:`resourceIdentifier-trait`, and the
-  :ref:`notProperty-trait` excludes a member.
+  with the :ref:`property-trait` and :ref:`resourceIdentifier-trait`, which also
+  decide whether a member is an identifier or a property, and the
+  :ref:`notProperty-trait` excludes a member. As for the standard lifecycle, a
+  member with a trait that is marked with the ``notProperty`` trait, such as
+  :ref:`idempotencyToken-trait`, is never a property. The structure may carry
+  both the resource's identifiers and its properties: when inferring properties,
+  a member that matches an identifier is not inferred, and when inferring
+  identifiers, a member that matches a property is not inferred, but such a
+  member must still target the shape of the identifier or property it matches.
+  Any other member must be excluded, for example with the
+  :ref:`notProperty-trait`.
 * **Unspecified**: neither the explicit map nor the ``...From`` pointer is set.
   The binding only asserts that the operation affects the resource; nothing is
   inferred and nothing is validated for it. For example,

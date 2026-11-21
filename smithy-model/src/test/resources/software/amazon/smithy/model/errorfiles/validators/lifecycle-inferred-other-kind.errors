@@ -1,0 +1,2 @@
+[ERROR] com.example#DescribeBadIdentifier: Inferred identifier `widgetId` in `@readsResources` (member `widgetId`) resolves to `smithy.api#Integer`, but the resource identifier targets `com.example#WidgetId`. | ResourceLifecycleTrait
+[ERROR] com.example#MakeBadProperty: Inferred property `size` in `@createsResources` (member `size`) resolves to `smithy.api#String`, but the resource property targets `smithy.api#Integer`. | ResourceLifecycleTrait

@@ -1,0 +1,2 @@
+[ERROR] com.example#MakeHeavyWidget: Property `weight` in `@createsResources` does not match any property of resource `com.example#Widget`. Valid properties: [`size`] | ResourceLifecycleTrait
+[ERROR] com.example#MakeIndexedWidget: JMESPath expression `specs[0]` for `propertiesFrom` in `@createsResources` contains unsupported expressions: 'index' | ResourceLifecycleTrait
