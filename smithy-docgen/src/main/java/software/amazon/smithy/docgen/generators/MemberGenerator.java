@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.docgen.DocFormat;
@@ -109,9 +110,9 @@ public final class MemberGenerator implements Runnable {
         writer.pushState(new ShapeMembersSection(context, shape, members, listingType));
         var parentSymbol = context.symbolProvider().toSymbol(shape);
         if (!members.isEmpty()) {
-            parentSymbol.getProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class).ifPresent(linkId -> {
-                writer.writeAnchor(linkId + "-" + listingType.getLinkIdSuffix());
-            });
+            var listingLinkId = parentSymbol.getProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class)
+                    .map(linkId -> linkId + "-" + listingType.getLinkIdSuffix());
+            listingLinkId.ifPresent(writer::writeAnchor);
             writer.openHeading(listingType.getTitle());
             writer.openDefinitionList();
             for (MemberShape member : members) {
@@ -120,6 +121,18 @@ public final class MemberGenerator implements Runnable {
                 var symbol = context.symbolProvider().toSymbol(member);
                 var target = context.model().expectShape(member.getTarget());
 
+                // Other generated docs link to members, e.g. pagination tokens, so each
+                // member needs an anchor for those links to resolve. A member whose id
+                // matches the listing's, such as one named "members", is reached by the
+                // listing's anchor, and a second anchor would be a duplicate label.
+                // Resource identifiers and properties get none: nothing links to them,
+                // and their ids can match the resource page's other section anchors,
+                // such as "<resource>-operations".
+                if (writesMemberAnchors()) {
+                    symbol.getProperty(DocSymbolProvider.LINK_ID_PROPERTY, String.class)
+                            .filter(linkId -> !listingLinkId.equals(Optional.of(linkId)))
+                            .ifPresent(writer::writeAnchor);
+                }
                 var typeWriter = writer.consumer(w -> target.accept(new MemberTypeVisitor(w, context, member)));
                 writer.openDefinitionListItem(w -> w.writeInline("$L ($C)", symbol.getName(), typeWriter));
 
@@ -134,6 +147,11 @@ public final class MemberGenerator implements Runnable {
             writer.closeHeading();
         }
         writer.popState();
+    }
+
+    private boolean writesMemberAnchors() {
+        return listingType != MemberListingType.RESOURCE_IDENTIFIERS
+                && listingType != MemberListingType.RESOURCE_PROPERTIES;
     }
 
     private Collection<MemberShape> getMembers() {

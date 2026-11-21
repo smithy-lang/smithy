@@ -7,6 +7,7 @@ service TestService {
         NoSnippets
         BasicOperation
         PaginatedOperation
+        GroupOperation
     ]
 }
 
@@ -105,4 +106,15 @@ structure PaginatedOperationInput {
 
 list Items {
     member: String
+}
+
+operation GroupOperation {
+    output := {
+        group: Group
+    }
+}
+
+// The member's link id matches the id of the member listing it appears in.
+structure Group {
+    members: Items
 }
