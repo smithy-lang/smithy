@@ -127,10 +127,11 @@ public final class DocgenUtils {
         if (Paths.get(symbol.getDefinitionFile()).normalize().equals(relativeTo.normalize())) {
             return Optional.of("#" + linkId.get());
         }
-        return Optional.of(format(
-                "./%s#%s",
-                relativeToParent.relativize(Paths.get(symbol.getDefinitionFile())),
-                linkId.get()));
+        // Links are URLs, so they always use "/" even where the file system separator differs.
+        var relativePath = relativeToParent.relativize(Paths.get(symbol.getDefinitionFile()))
+                .toString()
+                .replace(relativeToParent.getFileSystem().getSeparator(), "/");
+        return Optional.of(format("./%s#%s", relativePath, linkId.get()));
     }
 
     /**
