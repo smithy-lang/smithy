@@ -1,5 +1,7 @@
 {
   "type": "bugfix",
   "description": "Allow `propertiesFrom` and `identifiersFrom` in resource lifecycle traits to point at structures that carry both the resource's identifiers and its properties.",
-  "pull_requests": []
+  "pull_requests": [
+    "[#3381](https://github.com/smithy-lang/smithy/pull/3381)"
+  ]
 }
