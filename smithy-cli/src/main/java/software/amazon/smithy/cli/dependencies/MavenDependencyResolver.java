@@ -56,6 +56,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
     private final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
     private final RepositorySystem repositorySystem;
     private final String cacheLocation;
+    private CloseableSession session;
     private final Proxy commonProxy;
     private final LongConsumer sleeper;
 
@@ -88,21 +89,20 @@ public final class MavenDependencyResolver implements DependencyResolver {
         // services this class wired by hand under 1.x. SessionBuilderSupplier likewise reproduces the
         // dependency traverser/manager/selector, conflict resolver, and artifact type registry that
         // MavenRepositorySystemUtils.newSession() set up under 1.x, so resolution behavior is preserved.
-        // Both replace the 1.x ServiceLocator error handler by throwing unchecked, so wrap them.
+        // Both replace the 1.x ServiceLocator error handler by throwing unchecked, so wrap them together.
         //
-        // The repository system is a shutdownable resource in 2.x, but this resolver is short-lived (built, used
-        // for a single resolve(), then discarded per CLI invocation), so we let process exit reclaim it rather
-        // than thread Closeable through the customer-facing DependencyResolver SPI. Revisit if this is ever
-        // reused in a long-lived or embedded context.
+        // The session and repository system are both closeable/shutdownable resources in 2.x, but this resolver
+        // is short-lived (built, used for a single resolve(), then discarded per CLI invocation), so we let
+        // process exit reclaim them rather than thread Closeable through the customer-facing DependencyResolver
+        // SPI. Revisit if this is ever reused in a long-lived or embedded context.
         try {
             repositorySystem = new RepositorySystemSupplier().get();
         } catch (RuntimeException e) {
             throw new DependencyResolverException(e);
         }
+        session = newSession();
     }
 
-    // A new session is created for each resolution attempt because a session remembers which artifacts it has
-    // already checked, and would not request an artifact again after a failed transfer.
     private CloseableSession newSession() {
         try {
             return new SessionBuilderSupplier(repositorySystem)
@@ -268,7 +268,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
         int maxAttempts = getMaxAttempts();
 
         for (int attempt = 1;; attempt++) {
-            try (CloseableSession session = newSession()) {
+            try {
                 List<ArtifactResult> results = repositorySystem
                         .resolveDependencies(session, dependencyRequest)
                         .getArtifactResults();
@@ -283,6 +283,11 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 LOGGER.warning("Maven dependency resolution attempt " + attempt + " of " + maxAttempts
                         + " failed, retrying in " + delay + " ms: " + e.getMessage() + ": " + retryableFailure);
                 sleeper.accept(delay);
+                // A session remembers which artifacts it has already checked, and would not request an artifact
+                // again after a failed transfer, so retry with a new session. Only retries create one: calling
+                // resolve() again with a new session fails in maven-resolver's prefixes filter with "Recursive
+                // update" during `smithy warmup` on Java 25.
+                session = newSession();
             }
         }
     }
