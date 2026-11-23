@@ -49,6 +49,11 @@ public class ResourceMemberInferenceTest {
             + "structure ExplicitElem {\n"
             + "  @required @resourceIdentifier(\"widgetId\") size: String\n"
             + "  @property(name: \"color\") widgetId: String\n"
+            + "}\n"
+            + "operation GhostDummy { output: GhostElem }\n"
+            + "structure GhostElem {\n"
+            + "  @required @resourceIdentifier(\"nope\") ghost: String\n"
+            + "  size: Integer\n"
             + "}\n";
 
     private Model model() {
@@ -132,6 +137,20 @@ public class ResourceMemberInferenceTest {
                         ResourceMemberInference.BindingKind.IDENTIFIER);
         assertThat(identifiers.matched.get("widgetId").getMemberName(), is("size"));
         assertThat(identifiers.otherKind.get("color").getMemberName(), is("widgetId"));
+    }
+
+    @Test
+    public void reportsResourceIdentifierThatNamesNoIdentifier() {
+        Model model = model();
+        ResourceShape widget = model.expectShape(ShapeId.from("com.test#Widget"), ResourceShape.class);
+        MemberInferenceResult r =
+                ResourceMemberInference.inferByName(model,
+                        widget,
+                        struct(model, "GhostElem"),
+                        ResourceMemberInference.BindingKind.PROPERTY);
+        // @resourceIdentifier is marked @notProperty, but a binding to an unknown identifier is
+        // still reported rather than excluded.
+        assertThat(unmatchedNames(r), containsInAnyOrder("ghost"));
     }
 
     private static List<String> unmatchedNames(MemberInferenceResult r) {
