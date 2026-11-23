@@ -25,6 +25,14 @@ public enum EnvironmentVariable {
     SMITHY_MAVEN_REPOS,
 
     /**
+     * The maximum number of attempts, including the first, to resolve Maven dependencies.
+     *
+     * <p>Resolution is retried with exponential backoff only when a transfer fails with a connection,
+     * DNS, TLS, or timeout error. Defaults to 3. An empty value uses the default. Set to 1 to disable retries.
+     */
+    SMITHY_MAVEN_MAX_ATTEMPTS,
+
+    /**
      * Configures if and how the Smithy CLI handles dependencies declared in smithy-build.json files.
      *
      * <ul>

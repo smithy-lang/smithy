@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.MavenRepository;
+import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.IoUtils;
@@ -158,6 +159,27 @@ public class FileCacheResolverTest {
         // A second resolver with the same hash should get a cache hit.
         DependencyResolver secondResolver = new FileCacheResolver(cache, jar.lastModified(), hash, new Mock(result));
         assertThat(secondResolver.resolve(), contains(artifact));
+    }
+
+    @Test
+    public void cacheHitIgnoresInvalidMaxAttempts() throws IOException {
+        File cache = File.createTempFile("classpath", ".json");
+        File jar = File.createTempFile("foo", ".jar");
+        Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
+        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        new FileCacheResolver(cache, jar.lastModified(), 1, new Mock(ListUtils.of(artifact))).resolve();
+
+        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set("abc");
+        try {
+            DependencyResolver resolver = new FileCacheResolver(cache,
+                    jar.lastModified(),
+                    1,
+                    new MavenDependencyResolver());
+
+            assertThat(resolver.resolve(), contains(artifact));
+        } finally {
+            EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.clear();
+        }
     }
 
     @Test

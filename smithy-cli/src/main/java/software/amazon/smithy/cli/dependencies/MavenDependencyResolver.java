@@ -7,6 +7,7 @@ package software.amazon.smithy.cli.dependencies;
 import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
 import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +15,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.LongConsumer;
 import java.util.logging.Logger;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession.CloseableSession;
@@ -28,8 +31,11 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.spi.connector.transport.http.RFC9457.HttpRFC9457Exception;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import org.eclipse.aether.supplier.SessionBuilderSupplier;
+import org.eclipse.aether.transfer.ArtifactNotFoundException;
+import org.eclipse.aether.transfer.MetadataNotFoundException;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import software.amazon.smithy.build.model.MavenRepository;
@@ -41,13 +47,17 @@ import software.amazon.smithy.cli.EnvironmentVariable;
 public final class MavenDependencyResolver implements DependencyResolver {
 
     private static final Logger LOGGER = Logger.getLogger(DependencyResolver.class.getName());
+    private static final int DEFAULT_MAX_ATTEMPTS = 3;
+    private static final long BASE_BACKOFF_MILLIS = 1000;
+    private static final long MAX_BACKOFF_MILLIS = 20000;
 
     private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
     private final List<Dependency> dependencies = new ArrayList<>();
     private final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
     private final RepositorySystem repositorySystem;
-    private final CloseableSession session;
+    private final String cacheLocation;
     private final Proxy commonProxy;
+    private final LongConsumer sleeper;
 
     public MavenDependencyResolver() {
         this(null);
@@ -57,6 +67,11 @@ public final class MavenDependencyResolver implements DependencyResolver {
      * @param cacheLocation Maven local cache location.
      */
     public MavenDependencyResolver(String cacheLocation) {
+        this(cacheLocation, MavenDependencyResolver::sleep);
+    }
+
+    MavenDependencyResolver(String cacheLocation, LongConsumer sleeper) {
+        this.sleeper = sleeper;
         commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
                 EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
 
@@ -66,27 +81,56 @@ public final class MavenDependencyResolver implements DependencyResolver {
             cacheLocation = Paths.get(userHome, ".m2", "repository").toString();
             LOGGER.fine("Set default Maven local cache location to ~/.m2/repository");
         }
+        this.cacheLocation = cacheLocation;
 
         // RepositorySystemSupplier replaces the DefaultServiceLocator removed in resolver 2.x. Its default
         // factories already register the file + Apache HTTP transports and the basic connector, matching the
         // services this class wired by hand under 1.x. SessionBuilderSupplier likewise reproduces the
         // dependency traverser/manager/selector, conflict resolver, and artifact type registry that
         // MavenRepositorySystemUtils.newSession() set up under 1.x, so resolution behavior is preserved.
-        // Both replace the 1.x ServiceLocator error handler by throwing unchecked, so wrap them together.
+        // Both replace the 1.x ServiceLocator error handler by throwing unchecked, so wrap them.
         //
-        // The session and repository system are both closeable/shutdownable resources in 2.x, but this resolver
-        // is short-lived (built, used for a single resolve(), then discarded per CLI invocation), so we let
-        // process exit reclaim them rather than thread Closeable through the customer-facing DependencyResolver
-        // SPI. Revisit if this is ever reused in a long-lived or embedded context.
+        // The repository system is a shutdownable resource in 2.x, but this resolver is short-lived (built, used
+        // for a single resolve(), then discarded per CLI invocation), so we let process exit reclaim it rather
+        // than thread Closeable through the customer-facing DependencyResolver SPI. Revisit if this is ever
+        // reused in a long-lived or embedded context.
         try {
             repositorySystem = new RepositorySystemSupplier().get();
-            session = new SessionBuilderSupplier(repositorySystem)
+        } catch (RuntimeException e) {
+            throw new DependencyResolverException(e);
+        }
+    }
+
+    // A new session is created for each resolution attempt because a session remembers which artifacts it has
+    // already checked, and would not request an artifact again after a failed transfer.
+    private CloseableSession newSession() {
+        try {
+            return new SessionBuilderSupplier(repositorySystem)
                     .get()
                     .withLocalRepositories(new LocalRepository(cacheLocation))
                     .build();
         } catch (RuntimeException e) {
             throw new DependencyResolverException(e);
         }
+    }
+
+    // Read when resolving rather than in the constructor, so an invalid value doesn't fail commands that are
+    // served from the dependency cache. An empty value is treated as unset.
+    private static int getMaxAttempts() {
+        String value = EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.get();
+        if (value == null || value.trim().isEmpty()) {
+            return DEFAULT_MAX_ATTEMPTS;
+        }
+        try {
+            int result = Integer.parseInt(value.trim());
+            if (result >= 1) {
+                return result;
+            }
+        } catch (NumberFormatException ignored) {
+            // Fall through to the error below.
+        }
+        throw new DependencyResolverException("Expected a positive integer for "
+                + EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS + ", but found " + value);
     }
 
     @Override
@@ -221,14 +265,63 @@ public final class MavenDependencyResolver implements DependencyResolver {
         collectRequest.setRepositories(remoteRepositories);
         collectRequest.setDependencies(dependencies);
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, filter);
+        int maxAttempts = getMaxAttempts();
 
+        for (int attempt = 1;; attempt++) {
+            try (CloseableSession session = newSession()) {
+                List<ArtifactResult> results = repositorySystem
+                        .resolveDependencies(session, dependencyRequest)
+                        .getArtifactResults();
+                LOGGER.fine(() -> "Resolved Maven dependencies: " + results);
+                return results;
+            } catch (DependencyResolutionException e) {
+                IOException retryableFailure = findRetryableFailure(e);
+                if (attempt >= maxAttempts || retryableFailure == null) {
+                    throw new DependencyResolverException(e);
+                }
+                long delay = computeBackoff(attempt - 1);
+                LOGGER.warning("Maven dependency resolution attempt " + attempt + " of " + maxAttempts
+                        + " failed, retrying in " + delay + " ms: " + e.getMessage() + ": " + retryableFailure);
+                sleeper.accept(delay);
+            }
+        }
+    }
+
+    // Exponential backoff with full jitter, following the AWS SDKs' standard retry mode.
+    static long computeBackoff(int retry) {
+        long ceiling = Math.min(MAX_BACKOFF_MILLIS, BASE_BACKOFF_MILLIS << Math.min(retry, 30));
+        return (long) (ThreadLocalRandom.current().nextDouble() * ceiling);
+    }
+
+    // Retry when any transfer failed with an I/O error, such as a refused connection, a DNS failure, a TLS
+    // error, or a timeout. Failures that are only missing artifacts or HTTP error responses are not retried.
+    // DependencyCollectionException exposes only its first failure as the cause and adds every failure as a
+    // suppressed exception, so suppressed exceptions are checked too. Returns the I/O error that makes the
+    // failure retryable, or null if it isn't retryable.
+    static IOException findRetryableFailure(Throwable e) {
+        if (e == null
+                || e instanceof ArtifactNotFoundException
+                || e instanceof MetadataNotFoundException
+                // An HTTP error response with an RFC 9457 problem details body.
+                || e instanceof HttpRFC9457Exception) {
+            return null;
+        } else if (e instanceof IOException) {
+            return (IOException) e;
+        }
+        for (Throwable suppressed : e.getSuppressed()) {
+            IOException failure = findRetryableFailure(suppressed);
+            if (failure != null) {
+                return failure;
+            }
+        }
+        return findRetryableFailure(e.getCause());
+    }
+
+    private static void sleep(long millis) {
         try {
-            List<ArtifactResult> results = repositorySystem
-                    .resolveDependencies(session, dependencyRequest)
-                    .getArtifactResults();
-            LOGGER.fine(() -> "Resolved Maven dependencies: " + results);
-            return results;
-        } catch (DependencyResolutionException e) {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new DependencyResolverException(e);
         }
     }
