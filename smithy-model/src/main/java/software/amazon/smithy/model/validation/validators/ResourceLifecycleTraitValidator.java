@@ -272,7 +272,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         MemberInferenceResult inference =
                 ResourceMemberInference.inferByName(ctx.model, ctx.resource, element, kind);
 
-        if (inference.matched.isEmpty()) {
+        String location = format("`%s` `%s` in `@%s` resolves to `%s`",
+                fromMember,
+                fromPath,
+                ctx.traitName(),
+                element.getId());
+        reportPropertyConflicts(ctx, location, inference.propertyConflicts);
+
+        boolean conflicts = kind == ResourceMemberInference.BindingKind.PROPERTY
+                && !inference.propertyConflicts.isEmpty();
+        if (inference.matched.isEmpty() && !conflicts) {
             ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",
                     fromMember,
                     fromPath,
@@ -302,6 +311,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         ResourceMemberInference.BindingKind otherKind = ResourceMemberInference.otherKind(kind);
         for (Map.Entry<String, MemberShape> other : inference.otherKind.entrySet()) {
             checkMemberType(ctx, otherKind, other.getKey(), other.getValue());
+        }
+    }
+
+    // Reports properties that several members of an inferred structure resolve to.
+    private void reportPropertyConflicts(Context ctx, String location, Map<String, List<MemberShape>> conflicts) {
+        for (Map.Entry<String, List<MemberShape>> entry : conflicts.entrySet()) {
+            ctx.error(format("%s, which has several members bound to property `%s`: [%s]",
+                    location,
+                    entry.getKey(),
+                    memberNames(entry.getValue())));
         }
     }
 

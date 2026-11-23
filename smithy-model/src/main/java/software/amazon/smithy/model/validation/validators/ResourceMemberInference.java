@@ -4,6 +4,12 @@
  */
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -54,30 +60,82 @@ final class ResourceMemberInference {
             BindingKind kind
     ) {
         PropertyBindingIndex propertyIndex = PropertyBindingIndex.of(model);
-        MemberInferenceResult result = new MemberInferenceResult();
+        Map<String, List<MemberShape>> identifiers = new LinkedHashMap<>();
+        Map<String, List<MemberShape>> properties = new LinkedHashMap<>();
+        Set<MemberShape> unmatched = new HashSet<>();
         for (MemberShape member : element.members()) {
             if (member.hasTrait(NotPropertyTrait.ID)) {
                 continue;
             }
             // As in the standard lifecycle, a member with a trait marked @notProperty, such as
-            // @resourceIdentifier or @idempotencyToken, is never a property.
+            // @resourceIdentifier or @idempotencyToken, is never a property. A resource cannot
+            // declare an identifier and a property with the same name, so at most one matches.
             boolean notProperty = propertyIndex.isNotPropertyMember(member);
             String identifier = identifierName(resource, member);
             String property = notProperty ? null : propertyName(resource, member);
-            // When a member matches both by name, the kind being inferred wins.
-            String matched = kind == BindingKind.IDENTIFIER ? identifier : property;
-            String other = kind == BindingKind.IDENTIFIER ? property : identifier;
-            if (matched != null) {
-                result.matched.put(matched, member);
-            } else if (other != null) {
-                result.otherKind.put(other, member);
+            if (identifier != null) {
+                identifiers.computeIfAbsent(identifier, name -> new ArrayList<>()).add(member);
+            } else if (property != null) {
+                properties.computeIfAbsent(property, name -> new ArrayList<>()).add(member);
             } else if (!notProperty || member.hasTrait(ResourceIdentifierTrait.ID)) {
                 // A member that is neither kind is unmatched, unless a trait marked @notProperty
                 // excludes it. A @resourceIdentifier that names no identifier is still unmatched.
+                unmatched.add(member);
+            }
+        }
+
+        MemberInferenceResult result = new MemberInferenceResult();
+        Map<String, MemberShape> identifierTarget = kind == BindingKind.IDENTIFIER ? result.matched : result.otherKind;
+        Map<String, MemberShape> propertyTarget = kind == BindingKind.PROPERTY ? result.matched : result.otherKind;
+        for (Map.Entry<String, List<MemberShape>> entry : identifiers.entrySet()) {
+            resolveIdentifier(entry.getKey(), entry.getValue(), identifierTarget, unmatched);
+        }
+        for (Map.Entry<String, List<MemberShape>> entry : properties.entrySet()) {
+            if (entry.getValue().size() == 1) {
+                propertyTarget.put(entry.getKey(), entry.getValue().get(0));
+            } else {
+                // As in the standard lifecycle, members resolving to the same property conflict.
+                result.propertyConflicts.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        // Report unmatched members in definition order.
+        for (MemberShape member : element.members()) {
+            if (unmatched.contains(member)) {
                 result.unmatched.add(member);
             }
         }
         return result;
+    }
+
+    // Resolves the members bound to one identifier. As in the standard lifecycle, an explicit
+    // @resourceIdentifier wins over a member that only matches by name; that member is then neither
+    // kind. Several explicit bindings to one identifier are already an error (ResourceIdentifierBinding),
+    // so none of them is used.
+    private static void resolveIdentifier(
+            String name,
+            List<MemberShape> members,
+            Map<String, MemberShape> target,
+            Set<MemberShape> unmatched
+    ) {
+        if (members.size() == 1) {
+            target.put(name, members.get(0));
+            return;
+        }
+        List<MemberShape> explicit = new ArrayList<>();
+        for (MemberShape member : members) {
+            if (member.hasTrait(ResourceIdentifierTrait.ID)) {
+                explicit.add(member);
+            }
+        }
+        if (explicit.size() == 1) {
+            target.put(name, explicit.get(0));
+        }
+        for (MemberShape member : members) {
+            if (!explicit.contains(member)) {
+                unmatched.add(member);
+            }
+        }
     }
 
     /**

@@ -20,6 +20,9 @@ final class MemberInferenceResult {
     // Name of an identifier or property of the other kind to the member bound to it. These members
     // are not inferred, but they must still target that identifier's or property's shape.
     final Map<String, MemberShape> otherKind = new LinkedHashMap<>();
-    // Members that matched no identifier or property name and are not @notProperty.
+    // Property name to the members that resolve to it, when more than one does.
+    final Map<String, List<MemberShape>> propertyConflicts = new LinkedHashMap<>();
+    // Members bound to neither an identifier nor a property, in definition order. Members excluded
+    // by @notProperty or by a trait marked @notProperty are not included.
     final List<MemberShape> unmatched = new ArrayList<>();
 }

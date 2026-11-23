@@ -103,3 +103,54 @@ structure BadPropertyDescription {
     widgetId: WidgetId
     size: String
 }
+
+// An explicit @resourceIdentifier wins over a member that only matches the identifier by name,
+// so `widgetId` is neither kind and is reported.
+@readonly
+@readsResources([
+    {
+        resource: Widget
+        identifiers: { widgetId: { path: "widgetId" } }
+        propertiesFrom: "widget"
+    }
+])
+operation DescribeShadowedIdentifier {
+    input := {
+        @required
+        widgetId: WidgetId
+    }
+    output := {
+        widget: ShadowedIdentifierDescription
+    }
+}
+
+structure ShadowedIdentifierDescription {
+    widgetId: Integer
+
+    @required
+    @resourceIdentifier("widgetId")
+    id: WidgetId
+
+    name: String
+}
+
+// Two members resolving to the same property conflict.
+@createsResources([
+    {
+        resource: Widget
+        identifiersFrom: "widget"
+    }
+])
+operation MakeConflictingProperty {
+    output := {
+        widget: ConflictingPropertyDescription
+    }
+}
+
+structure ConflictingPropertyDescription {
+    widgetId: WidgetId
+    size: String
+
+    @property(name: "size")
+    sz: Integer
+}
