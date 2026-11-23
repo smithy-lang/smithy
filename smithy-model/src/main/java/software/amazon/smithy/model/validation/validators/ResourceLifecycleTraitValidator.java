@@ -310,7 +310,32 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
         ResourceMemberInference.BindingKind otherKind = ResourceMemberInference.otherKind(kind);
         for (Map.Entry<String, MemberShape> other : inference.otherKind.entrySet()) {
-            checkMemberType(ctx, otherKind, other.getKey(), other.getValue());
+            checkOtherKindType(ctx, location, otherKind, other.getKey(), other.getValue());
+        }
+    }
+
+    // Checks that a member bound to the kind not being inferred targets that identifier's or
+    // property's shape. The message names the pointer, since nothing infers this member.
+    private void checkOtherKindType(
+            Context ctx,
+            String location,
+            ResourceMemberInference.BindingKind kind,
+            String name,
+            MemberShape member
+    ) {
+        ShapeId declared = kind == ResourceMemberInference.BindingKind.IDENTIFIER
+                ? ctx.resource.getIdentifiers().get(name)
+                : ctx.resource.getProperties().get(name);
+        ShapeId expected = unwrapBaseId(ctx.model, declared);
+        ShapeId actual = unwrapBaseId(ctx.model, member.getTarget());
+        if (!actual.equals(expected)) {
+            ctx.error(format("%s, whose member `%s` matches %s `%s` but targets `%s` instead of `%s`.",
+                    location,
+                    member.getMemberName(),
+                    kindWord(kind),
+                    name,
+                    actual,
+                    expected));
         }
     }
 
