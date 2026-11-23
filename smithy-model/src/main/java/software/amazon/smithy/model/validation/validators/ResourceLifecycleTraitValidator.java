@@ -7,34 +7,14 @@ package software.amazon.smithy.model.validation.validators;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import software.amazon.smithy.jmespath.ExpressionVisitor;
 import software.amazon.smithy.jmespath.JmespathException;
 import software.amazon.smithy.jmespath.JmespathExpression;
-import software.amazon.smithy.jmespath.ast.AndExpression;
-import software.amazon.smithy.jmespath.ast.ComparatorExpression;
-import software.amazon.smithy.jmespath.ast.CurrentExpression;
-import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
-import software.amazon.smithy.jmespath.ast.FieldExpression;
-import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
-import software.amazon.smithy.jmespath.ast.FlattenExpression;
-import software.amazon.smithy.jmespath.ast.FunctionExpression;
-import software.amazon.smithy.jmespath.ast.IndexExpression;
-import software.amazon.smithy.jmespath.ast.LiteralExpression;
-import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
-import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
-import software.amazon.smithy.jmespath.ast.NotExpression;
-import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
-import software.amazon.smithy.jmespath.ast.OrExpression;
-import software.amazon.smithy.jmespath.ast.ProjectionExpression;
-import software.amazon.smithy.jmespath.ast.SliceExpression;
-import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -44,19 +24,14 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
-import software.amazon.smithy.model.traits.CreatesResourcesTrait;
-import software.amazon.smithy.model.traits.DeletesResourcesTrait;
-import software.amazon.smithy.model.traits.PutsResourcesTrait;
-import software.amazon.smithy.model.traits.ReadsResourcesTrait;
 import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.UpdatesResourcesTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.model.validation.validators.LifecycleTraitDescriptor.Side;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -71,63 +46,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
-    private enum Side {
-        INPUT, OUTPUT
-    }
-
-    private static final class Descriptor {
-        final Class<? extends AbstractResourceLifecycleTrait<?>> traitClass;
-        final ShapeId traitId;
-        final String name;
-        final Side identifierSide;
-        final Side propertySide; // null when the trait binds no properties (delete).
-
-        Descriptor(
-                Class<? extends AbstractResourceLifecycleTrait<?>> traitClass,
-                ShapeId traitId,
-                String name,
-                Side identifierSide,
-                Side propertySide
-        ) {
-            this.traitClass = traitClass;
-            this.traitId = traitId;
-            this.name = name;
-            this.identifierSide = identifierSide;
-            this.propertySide = propertySide;
-        }
-    }
-
-    private static final List<Descriptor> DESCRIPTORS = ListUtils.of(
-            new Descriptor(CreatesResourcesTrait.class,
-                    CreatesResourcesTrait.ID,
-                    "createsResources",
-                    Side.OUTPUT,
-                    Side.INPUT),
-            new Descriptor(PutsResourcesTrait.class,
-                    PutsResourcesTrait.ID,
-                    "putsResources",
-                    Side.INPUT,
-                    Side.INPUT),
-            new Descriptor(ReadsResourcesTrait.class,
-                    ReadsResourcesTrait.ID,
-                    "readsResources",
-                    Side.INPUT,
-                    Side.OUTPUT),
-            new Descriptor(UpdatesResourcesTrait.class,
-                    UpdatesResourcesTrait.ID,
-                    "updatesResources",
-                    Side.INPUT,
-                    Side.INPUT),
-            new Descriptor(DeletesResourcesTrait.class,
-                    DeletesResourcesTrait.ID,
-                    "deletesResources",
-                    Side.INPUT,
-                    null));
-
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (Descriptor descriptor : DESCRIPTORS) {
+        for (LifecycleTraitDescriptor descriptor : LifecycleTraitDescriptor.ALL) {
             for (OperationShape operation : model.getOperationShapesWithTrait(descriptor.traitClass)) {
                 AbstractResourceLifecycleTrait<?> trait = operation.expectTrait(descriptor.traitClass);
                 for (ResourceBinding binding : trait.getBindings()) {
@@ -153,7 +75,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         final Model model;
         final OperationShape operation;
         final Trait trait;
-        final Descriptor descriptor;
+        final LifecycleTraitDescriptor descriptor;
         final ResourceShape resource;
         final List<ValidationEvent> events;
 
@@ -161,7 +83,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 Model model,
                 OperationShape operation,
                 Trait trait,
-                Descriptor descriptor,
+                LifecycleTraitDescriptor descriptor,
                 ResourceShape resource,
                 List<ValidationEvent> events
         ) {
@@ -183,12 +105,11 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
         // The input or output structure a given binding kind resolves against, or null if absent.
         StructureShape sideStructure(Side side) {
-            ShapeId id = side == Side.OUTPUT ? operation.getOutputShape() : operation.getInputShape();
-            return model.getShape(id).flatMap(Shape::asStructureShape).orElse(null);
+            return model.getShape(side.of(operation)).flatMap(Shape::asStructureShape).orElse(null);
         }
 
         ShapeId sideStructureId(Side side) {
-            return side == Side.OUTPUT ? operation.getOutputShape() : operation.getInputShape();
+            return side.of(operation);
         }
 
         void error(String message) {
@@ -205,10 +126,10 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
     }
 
     private void validateBinding(Context ctx, ResourceBinding binding) {
-        Descriptor descriptor = ctx.descriptor;
+        LifecycleTraitDescriptor descriptor = ctx.descriptor;
 
         // Warn if the resource is already lifecycle-bound to this operation.
-        if (isLifecycleBound(ctx.resource, ctx.operation.getId(), descriptor.traitId)) {
+        if (descriptor.isLifecycleBound(ctx.resource, ctx.operation.getId())) {
             ctx.warning(format(
                     "Resource `%s` in `@%s` is already bound to this operation via the resource's "
                             + "lifecycle. The trait is redundant.",
@@ -464,7 +385,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             return null;
         }
 
-        List<String> unsupported = parsed.accept(new UnsupportedJmesPathVisitor());
+        List<String> unsupported = LifecycleTraitJmespath.unsupportedExpressions(parsed);
         if (!unsupported.isEmpty()) {
             StringBuilder list = new StringBuilder();
             for (String expr : unsupported) {
@@ -520,24 +441,6 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         return shape.getId();
     }
 
-    private boolean isLifecycleBound(ResourceShape resource, ShapeId operationId, ShapeId traitId) {
-        Optional<ShapeId> lifecycleOperation;
-        if (traitId.equals(CreatesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getCreate();
-        } else if (traitId.equals(PutsResourcesTrait.ID)) {
-            lifecycleOperation = resource.getPut();
-        } else if (traitId.equals(ReadsResourcesTrait.ID)) {
-            lifecycleOperation = resource.getRead();
-        } else if (traitId.equals(UpdatesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getUpdate();
-        } else if (traitId.equals(DeletesResourcesTrait.ID)) {
-            lifecycleOperation = resource.getDelete();
-        } else {
-            return false;
-        }
-        return lifecycleOperation.map(operationId::equals).orElse(false);
-    }
-
     private void validateCompositeCardinality(
             Context ctx,
             StructureShape sideStructure,
@@ -552,7 +455,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         // are equal. Scalars (empty signature) broadcast and are not compared.
         Map<String, List<ShapeId>> identifierToArrays = new LinkedHashMap<>();
         for (Map.Entry<String, ResourceMemberBinding> entry : identifiers.entrySet()) {
-            JmespathExpression parsed = parseQuietly(entry.getValue().getPath());
+            JmespathExpression parsed = LifecycleTraitJmespath.parseSupported(entry.getValue().getPath());
             if (parsed == null) {
                 continue;
             }
@@ -595,119 +498,5 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             sb.append("`").append(arrays.get(i)).append("`");
         }
         return sb.append("]").toString();
-    }
-
-    // Parses a path, returning null when it is invalid or uses unsupported expressions. Such paths
-    // are reported elsewhere; here we simply skip them when computing cardinality.
-    private JmespathExpression parseQuietly(String path) {
-        JmespathExpression parsed;
-        try {
-            parsed = JmespathExpression.parse(path);
-        } catch (JmespathException e) {
-            return null;
-        }
-        return parsed.accept(new UnsupportedJmesPathVisitor()).isEmpty() ? parsed : null;
-    }
-
-    private static final class UnsupportedJmesPathVisitor implements ExpressionVisitor<List<String>> {
-
-        @Override
-        public List<String> visitComparator(ComparatorExpression expression) {
-            return ListUtils.of("comparator");
-        }
-
-        @Override
-        public List<String> visitCurrentNode(CurrentExpression expression) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> visitExpressionType(ExpressionTypeExpression expression) {
-            return expression.getExpression().accept(this);
-        }
-
-        @Override
-        public List<String> visitFlatten(FlattenExpression expression) {
-            return expression.getExpression().accept(this);
-        }
-
-        @Override
-        public List<String> visitFunction(FunctionExpression expression) {
-            return ListUtils.of("`" + expression.getName() + "` function");
-        }
-
-        @Override
-        public List<String> visitField(FieldExpression expression) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> visitIndex(IndexExpression expression) {
-            return ListUtils.of("index");
-        }
-
-        @Override
-        public List<String> visitLiteral(LiteralExpression expression) {
-            return ListUtils.of("literal");
-        }
-
-        @Override
-        public List<String> visitMultiSelectList(MultiSelectListExpression expression) {
-            return ListUtils.of("multiselect list");
-        }
-
-        @Override
-        public List<String> visitMultiSelectHash(MultiSelectHashExpression expression) {
-            return ListUtils.of("multiselect hash");
-        }
-
-        @Override
-        public List<String> visitAnd(AndExpression expression) {
-            return ListUtils.of("and");
-        }
-
-        @Override
-        public List<String> visitOr(OrExpression expression) {
-            return ListUtils.of("or");
-        }
-
-        @Override
-        public List<String> visitNot(NotExpression expression) {
-            return ListUtils.of("not");
-        }
-
-        @Override
-        public List<String> visitProjection(ProjectionExpression expression) {
-            List<String> unsupported = new ArrayList<>();
-            unsupported.addAll(expression.getLeft().accept(this));
-            unsupported.addAll(expression.getRight().accept(this));
-            return Collections.unmodifiableList(unsupported);
-        }
-
-        @Override
-        public List<String> visitFilterProjection(FilterProjectionExpression expression) {
-            return ListUtils.of("filter projection");
-        }
-
-        @Override
-        public List<String> visitObjectProjection(ObjectProjectionExpression expression) {
-            List<String> unsupported = new ArrayList<>();
-            unsupported.addAll(expression.getLeft().accept(this));
-            unsupported.addAll(expression.getRight().accept(this));
-            return Collections.unmodifiableList(unsupported);
-        }
-
-        @Override
-        public List<String> visitSlice(SliceExpression expression) {
-            return ListUtils.of("slice");
-        }
-
-        @Override
-        public List<String> visitSubexpression(Subexpression expression) {
-            List<String> unsupported = new ArrayList<>();
-            unsupported.addAll(expression.getLeft().accept(this));
-            unsupported.addAll(expression.getRight().accept(this));
-            return Collections.unmodifiableList(unsupported);
-        }
     }
 }

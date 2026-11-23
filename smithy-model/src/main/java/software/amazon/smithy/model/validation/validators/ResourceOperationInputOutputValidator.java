@@ -14,19 +14,25 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import software.amazon.smithy.jmespath.JmespathExpression;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.PropertyBindingIndex;
+import software.amazon.smithy.model.knowledge.ResourceLifecycleIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.AbstractResourceLifecycleTrait;
 import software.amazon.smithy.model.traits.NestedPropertiesTrait;
 import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
+import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
+import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
+import software.amazon.smithy.model.traits.ResourceMemberBinding;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -113,16 +119,112 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     events);
         }
 
+        addLifecycleTraitProperties(model, resource, propertiesInOperations);
+
         Set<String> definedProperties = new HashSet<>(resource.getProperties().keySet());
         definedProperties.removeAll(propertiesInOperations);
         for (String propertyNotInLifecycleOp : definedProperties) {
             events.add(error(resource,
                     String.format("Resource property `%s` is not used in the input or output of create, an"
-                            + " instance operation, or the list element of a collection operation.",
+                            + " instance operation, or the list element of a collection operation, and is"
+                            + " not located by a resource lifecycle trait binding.",
                             propertyNotInLifecycleOp)));
         }
 
         return events;
+    }
+
+    /**
+     * Adds the resource properties located by resource lifecycle trait bindings
+     * ({@code @createsResources}, {@code @putsResources}, {@code @readsResources}, and
+     * {@code @updatesResources}) to the set of used properties.
+     *
+     * <p>Operations carrying these traits are usually not bound to the resource, so the
+     * checks for bound operations never see them. Only the names are collected here:
+     * {@link ResourceLifecycleTraitValidator} validates the bindings themselves, so a path
+     * that does not parse or resolve is not counted and not reported again.
+     */
+    private void addLifecycleTraitProperties(Model model, ResourceShape resource, Set<String> properties) {
+        Set<ShapeId> operationIds = new HashSet<>();
+        for (Set<ShapeId> ids : ResourceLifecycleIndex.of(model).getOperations(resource).values()) {
+            operationIds.addAll(ids);
+        }
+        for (ShapeId operationId : operationIds) {
+            OperationShape operation = model.getShape(operationId).flatMap(Shape::asOperationShape).orElse(null);
+            if (operation == null) {
+                continue;
+            }
+            for (LifecycleTraitDescriptor descriptor : LifecycleTraitDescriptor.ALL) {
+                // Delete bindings locate no properties.
+                if (descriptor.propertySide == null) {
+                    continue;
+                }
+                AbstractResourceLifecycleTrait<?> trait = operation.getTrait(descriptor.traitClass).orElse(null);
+                if (trait == null) {
+                    continue;
+                }
+                for (ResourceBinding binding : trait.getBindings()) {
+                    // A binding on the resource's own lifecycle operation of the same kind is
+                    // redundant (ResourceLifecycleTrait warns about it), and that operation's
+                    // members are already checked above, so it does not count here.
+                    if (binding.getResource().equals(resource.getId())
+                            && !descriptor.isLifecycleBound(resource, operationId)) {
+                        addBindingProperties(model,
+                                resource,
+                                operation,
+                                descriptor.propertySide,
+                                (ResourceLifecycleBinding) binding,
+                                properties);
+                    }
+                }
+            }
+        }
+    }
+
+    // Adds the properties a binding locates. A name only counts when its path parses, uses the
+    // supported subset, and resolves against the binding's side, for both the explicit map and
+    // `propertiesFrom`. An unresolved path is only a DANGER in ResourceLifecycleTrait, so counting
+    // it would let a typo clear the unused-property ERROR.
+    private void addBindingProperties(
+            Model model,
+            ResourceShape resource,
+            OperationShape operation,
+            LifecycleTraitDescriptor.Side side,
+            ResourceLifecycleBinding binding,
+            Set<String> properties
+    ) {
+        StructureShape sideStructure = model.getShape(side.of(operation))
+                .flatMap(Shape::asStructureShape)
+                .orElse(null);
+        if (sideStructure == null) {
+            return;
+        }
+
+        for (Map.Entry<String, ResourceMemberBinding> entry : binding.getProperties().entrySet()) {
+            JmespathPathResult result = walk(model, sideStructure, entry.getValue().getPath());
+            if (result != null && result.error == null) {
+                properties.add(entry.getKey());
+            }
+        }
+
+        Optional<String> from = binding.getPropertiesFrom();
+        if (!from.isPresent()) {
+            return;
+        }
+        JmespathPathResult result = walk(model, sideStructure, from.get());
+        if (result != null && result.error == null && !result.root && result.leaf instanceof StructureShape) {
+            MemberInferenceResult inference = ResourceMemberInference.inferByName(model,
+                    resource,
+                    (StructureShape) result.leaf,
+                    ResourceMemberInference.BindingKind.PROPERTY);
+            properties.addAll(inference.matched.keySet());
+        }
+    }
+
+    // Walks a path against a structure, or returns null when the path is invalid or unsupported.
+    private static JmespathPathResult walk(Model model, StructureShape start, String path) {
+        JmespathExpression parsed = LifecycleTraitJmespath.parseSupported(path);
+        return parsed == null ? null : JmespathShapeWalker.walk(model, start, parsed);
     }
 
     private void processCollectionBoundOperation(
