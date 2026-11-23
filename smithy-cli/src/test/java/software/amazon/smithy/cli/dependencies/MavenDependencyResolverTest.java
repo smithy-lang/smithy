@@ -4,6 +4,7 @@
  */
 package software.amazon.smithy.cli.dependencies;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -123,13 +124,16 @@ public class MavenDependencyResolverTest {
 
     @Test
     public void retriesTlsFailures(@TempDir Path cache) throws Exception {
-        // Accepts each connection and closes it before the TLS handshake completes.
+        // Accepts each connection and closes it before the TLS handshake completes. The whole ClientHello record is
+        // read first, because closing a socket with unread data sends a reset, which Apache HttpClient retries on
+        // its own.
         AtomicInteger connections = new AtomicInteger();
         try (ServerSocket server = new ServerSocket(0, 50, InetAddress.getLoopbackAddress())) {
             Thread acceptor = new Thread(() -> {
                 while (!server.isClosed()) {
-                    try (Socket ignored = server.accept()) {
+                    try (Socket socket = server.accept()) {
                         connections.incrementAndGet();
+                        readTlsRecord(socket);
                     } catch (IOException e) {
                         return;
                     }
@@ -247,6 +251,19 @@ public class MavenDependencyResolverTest {
         ArtifactDescriptorResult result = new ArtifactDescriptorResult(
                 new ArtifactDescriptorRequest(artifact, null, null));
         return new ArtifactDescriptorException(result, "Failed to read artifact descriptor for " + artifact, cause);
+    }
+
+    // Reads one TLS record: a 5-byte header whose last two bytes are the length of the body, then the body.
+    // Errors are ignored so that the server keeps accepting connections.
+    private static void readTlsRecord(Socket socket) {
+        try {
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            byte[] header = new byte[5];
+            in.readFully(header);
+            in.readFully(new byte[((header[3] & 0xFF) << 8) | (header[4] & 0xFF)]);
+        } catch (IOException ignored) {
+            // The client closed the connection before sending a full record.
+        }
     }
 
     private static List<Long> resolveAndFail(Path cache, String repositoryUrl) {
