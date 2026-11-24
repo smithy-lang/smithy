@@ -532,9 +532,9 @@ ways:
   at a nested structure or a projection whose members are matched by name to the
   resource's identifiers or properties. The :ref:`resourceIdentifier-trait` and
   :ref:`property-trait` reconcile name differences and decide whether a member is
-  an identifier or a property. As in the standard lifecycle, a member with the
-  ``resourceIdentifier`` trait, or with another trait that is marked with the
-  :ref:`notProperty-trait`, is never a property.
+  an identifier or a property. A member with the ``resourceIdentifier`` trait, or
+  with another trait that is marked with the :ref:`notProperty-trait`, is not
+  bound to a property.
 
   The structure may carry both the resource's identifiers and its properties.
   When inferring properties, a member that matches an identifier is not

@@ -22,18 +22,18 @@ import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 /**
  * Matches the members of a structure to a resource's identifiers or properties
  * by name, honoring {@code @resourceIdentifier}, {@code @property}, {@code @notProperty},
- * and traits marked with {@code @notProperty}, mirroring the standard lifecycle resolution.
+ * and traits marked with {@code @notProperty}.
  *
  * <p>This is the {@code ...From} inference used by the resource lifecycle traits:
  * given the structure a {@code identifiersFrom}/{@code propertiesFrom} pointer
  * resolves to, it reports which members map to a resource identifier or property
  * and which do not. An explicit {@code @resourceIdentifier} or {@code @property}
- * decides which kind a member is bound to, as in the standard lifecycle; otherwise
- * the member name is matched against both. A member bound to the other kind (an
- * identifier when inferring properties, or a property when inferring identifiers)
- * is reported separately rather than as unmatched, because a structure commonly
- * carries both. Matching is by name only; the caller checks that each matched or
- * other-kind member targets the shape of the identifier or property it is bound to.
+ * decides which kind a member is bound to; otherwise the member name is matched
+ * against both. A member bound to the other kind (an identifier when inferring
+ * properties, or a property when inferring identifiers) is reported separately
+ * rather than as unmatched, because a structure commonly carries both. Matching is
+ * by name only; the caller checks that each matched or other-kind member targets
+ * the shape of the identifier or property it is bound to.
  */
 final class ResourceMemberInference {
 
@@ -67,9 +67,10 @@ final class ResourceMemberInference {
             if (member.hasTrait(NotPropertyTrait.ID)) {
                 continue;
             }
-            // As in the standard lifecycle, a member with a trait marked @notProperty, such as
-            // @resourceIdentifier or @idempotencyToken, is never a property. A resource cannot
-            // declare an identifier and a property with the same name, so at most one matches.
+            // A member with a trait marked @notProperty, such as @resourceIdentifier or
+            // @idempotencyToken, is not bound to a resource property, as the notProperty trait
+            // defines. A resource cannot declare an identifier and a property with the same name,
+            // so at most one matches.
             boolean notProperty = propertyIndex.isNotPropertyMember(member);
             String identifier = identifierName(resource, member);
             String property = notProperty ? null : propertyName(resource, member);
