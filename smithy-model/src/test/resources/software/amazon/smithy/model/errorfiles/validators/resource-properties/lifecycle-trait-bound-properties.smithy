@@ -209,3 +209,37 @@ operation MakeWidgetAndSprocket {
         color: String
     }
 }
+
+// Only conflicting members locate `shade`. The conflict is reported, but `shade` still counts as
+// located, so it is not also reported as unused.
+resource Lamp {
+    identifiers: { lampId: LampId }
+    properties: { shade: String }
+}
+
+string LampId
+
+@readonly
+@readsResources([
+    {
+        resource: Lamp
+        identifiers: { lampId: { path: "lampId" } }
+        propertiesFrom: "lamp"
+    }
+])
+operation DescribeLamp {
+    input := {
+        @required
+        lampId: LampId
+    }
+    output := {
+        lamp: LampDescription
+    }
+}
+
+structure LampDescription {
+    shade: String
+
+    @property(name: "shade")
+    lampShade: String
+}

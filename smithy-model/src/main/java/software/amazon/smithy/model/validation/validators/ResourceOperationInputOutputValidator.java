@@ -218,6 +218,9 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                     (StructureShape) result.leaf,
                     ResourceMemberInference.BindingKind.PROPERTY);
             properties.addAll(inference.matched.keySet());
+            // Conflicting members still locate the property; the conflict itself is reported by
+            // ResourceLifecycleTrait, so it is not reported again as unused.
+            properties.addAll(inference.propertyConflicts.keySet());
         }
     }
 
