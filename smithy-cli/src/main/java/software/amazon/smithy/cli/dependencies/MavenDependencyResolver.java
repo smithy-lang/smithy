@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.LongConsumer;
 import java.util.logging.Logger;
+import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession.CloseableSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -51,6 +52,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
     private static final int DEFAULT_MAX_ATTEMPTS = 3;
     private static final long BASE_BACKOFF_MILLIS = 1000;
     private static final long MAX_BACKOFF_MILLIS = 20000;
+    // The HTTP transport retries these responses itself. maven-resolver's default is 429 and 503.
+    private static final String RETRYABLE_HTTP_STATUS_CODES = "429,500,502,503,504";
 
     private final List<RemoteRepository> remoteRepositories = new ArrayList<>();
     private final List<Dependency> dependencies = new ArrayList<>();
@@ -109,6 +112,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
             return new SessionBuilderSupplier(repositorySystem)
                     .get()
                     .withLocalRepositories(new LocalRepository(cacheLocation))
+                    .setConfigProperty(ConfigurationProperties.HTTP_RETRY_HANDLER_SERVICE_UNAVAILABLE,
+                            RETRYABLE_HTTP_STATUS_CODES)
                     .build();
         } catch (RuntimeException e) {
             throw new DependencyResolverException(e);

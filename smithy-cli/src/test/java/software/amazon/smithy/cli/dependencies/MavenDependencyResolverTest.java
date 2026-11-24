@@ -4,14 +4,19 @@
  */
 package software.amazon.smithy.cli.dependencies;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileSystems;
@@ -20,8 +25,12 @@ import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.net.ssl.SSLHandshakeException;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -161,6 +170,52 @@ public class MavenDependencyResolverTest {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {500, 502, 504})
+    public void retriesServerErrors(int status, @TempDir Path cache) throws IOException {
+        String pomPath = "/com/example/a/1.0.0/a-1.0.0.pom";
+        String jarPath = "/com/example/a/1.0.0/a-1.0.0.jar";
+        Map<String, byte[]> files = new ConcurrentHashMap<>();
+        files.put(pomPath,
+                ("<project><modelVersion>4.0.0</modelVersion><groupId>com.example</groupId>"
+                        + "<artifactId>a</artifactId><version>1.0.0</version></project>")
+                        .getBytes(StandardCharsets.UTF_8));
+        files.put(jarPath, emptyJar());
+        Map<String, Integer> requests = new ConcurrentHashMap<>();
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/", exchange -> {
+            String path = exchange.getRequestURI().getPath();
+            int count = requests.merge(path, 1, Integer::sum);
+            if (path.equals(pomPath) && count == 1) {
+                // Retry-After keeps the transport from waiting its default 5 seconds before retrying.
+                exchange.getResponseHeaders().set("Retry-After", "0");
+                respond(exchange, status, new byte[0]);
+            } else if (files.containsKey(path)) {
+                respond(exchange, 200, files.get(path));
+            } else {
+                respond(exchange, 404, new byte[0]);
+            }
+        });
+        server.start();
+        try {
+            List<Long> delays = new ArrayList<>();
+            DependencyResolver resolver = new MavenDependencyResolver(cache.toString(), delays::add);
+            resolver.addRepository(MavenRepository.builder()
+                    .url("http://127.0.0.1:" + server.getAddress().getPort() + "/")
+                    .build());
+            resolver.addDependency("com.example:a:1.0.0");
+
+            List<ResolvedArtifact> artifacts = resolver.resolve();
+
+            Assertions.assertEquals(1, artifacts.size());
+            Assertions.assertEquals(2, requests.get(pomPath));
+            // The HTTP transport retried the response, so resolution didn't need its own retry.
+            Assertions.assertEquals(0, delays.size());
+        } finally {
+            server.stop(0);
+        }
+    }
+
     @Test
     public void doesNotRetryMissingArtifacts(@TempDir Path cache, @TempDir Path repo) {
         List<Long> delays = resolveAndFail(cache, repo.toUri().toString());
@@ -287,6 +342,24 @@ public class MavenDependencyResolverTest {
         } catch (IOException ignored) {
             // The client closed the connection before sending a full record.
         }
+    }
+
+    private static void respond(HttpExchange exchange, int status, byte[] body) throws IOException {
+        exchange.sendResponseHeaders(status, body.length == 0 ? -1 : body.length);
+        if (body.length > 0) {
+            exchange.getResponseBody().write(body);
+        }
+        exchange.close();
+    }
+
+    private static byte[] emptyJar() throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(bytes)) {
+            zip.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+            zip.write("Manifest-Version: 1.0\n".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+        }
+        return bytes.toByteArray();
     }
 
     private static List<Long> resolveAndFail(Path cache, String repositoryUrl) {
