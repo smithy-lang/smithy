@@ -12,7 +12,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.FileSystemException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +41,7 @@ import org.eclipse.aether.transfer.ArtifactNotFoundException;
 import org.eclipse.aether.transfer.ArtifactTransferException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -163,6 +169,21 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
+    public void doesNotRetryLocalFileSystemErrors(@TempDir Path cache) throws IOException {
+        Assumptions.assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+        Files.setPosixFilePermissions(cache, PosixFilePermissions.fromString("r-xr-xr-x"));
+        try {
+            // Permissions are not enforced for some users, such as root.
+            Assumptions.assumeFalse(Files.isWritable(cache));
+            List<Long> delays = resolveAndFail(cache, "https://localhost:1/");
+
+            Assertions.assertEquals(0, delays.size());
+        } finally {
+            Files.setPosixFilePermissions(cache, PosixFilePermissions.fromString("rwxr-xr-x"));
+        }
+    }
+
+    @Test
     public void usesMaxAttemptsFromEnvironment(@TempDir Path cache) {
         EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set("1");
         List<Long> delays = resolveAndFail(cache, "https://localhost:1/");
@@ -221,7 +242,9 @@ public class MavenDependencyResolverTest {
         return Stream.of(
                 Arguments.of(new ArtifactNotFoundException(ARTIFACT, REPOSITORY)),
                 Arguments.of(transferFailure(new HttpTransporterException(401))),
-                Arguments.of(transferFailure(new HttpRFC9457Exception(403, "Forbidden", RFC9457Payload.INSTANCE))));
+                Arguments.of(transferFailure(new HttpRFC9457Exception(403, "Forbidden", RFC9457Payload.INSTANCE))),
+                Arguments.of(transferFailure(new AccessDeniedException("/repo/com/example/missing.pom"))),
+                Arguments.of(transferFailure(new FileSystemException("/repo/com/example/missing.pom"))));
     }
 
     // DependencyCollectionException uses only the first failure as its cause, which here is a missing artifact.

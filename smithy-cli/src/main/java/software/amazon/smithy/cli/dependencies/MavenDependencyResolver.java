@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystemException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -299,7 +300,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
     }
 
     // Retry when any transfer failed with an I/O error, such as a refused connection, a DNS failure, a TLS
-    // error, or a timeout. Failures that are only missing artifacts or HTTP error responses are not retried.
+    // error, or a timeout. Failures that are only missing artifacts, HTTP error responses, or local file system
+    // errors are not retried.
     // DependencyCollectionException exposes only its first failure as the cause and adds every failure as a
     // suppressed exception, so suppressed exceptions are checked too. Returns the I/O error that makes the
     // failure retryable, or null if it isn't retryable.
@@ -308,7 +310,10 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 || e instanceof ArtifactNotFoundException
                 || e instanceof MetadataNotFoundException
                 // An HTTP error response with an RFC 9457 problem details body.
-                || e instanceof HttpRFC9457Exception) {
+                || e instanceof HttpRFC9457Exception
+                // A local file system error, such as permission denied on the local repository or a file://
+                // repository.
+                || e instanceof FileSystemException) {
             return null;
         } else if (e instanceof IOException) {
             return (IOException) e;
