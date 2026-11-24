@@ -48,7 +48,6 @@ import org.eclipse.aether.spi.connector.transport.http.RFC9457.HttpRFC9457Except
 import org.eclipse.aether.spi.connector.transport.http.RFC9457.RFC9457Payload;
 import org.eclipse.aether.transfer.ArtifactNotFoundException;
 import org.eclipse.aether.transfer.ArtifactTransferException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.build.model.MavenRepository;
-import software.amazon.smithy.cli.EnvironmentVariable;
 
 // This test does some light validation checks. Actual resolution is tested through integ tests.
 public class MavenDependencyResolverTest {
@@ -67,11 +65,6 @@ public class MavenDependencyResolverTest {
             "test",
             "default",
             "https://example.com/").build();
-
-    @AfterEach
-    public void clearMaxAttempts() {
-        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.clear();
-    }
 
     @Test
     public void allowsValidDependenciesAndRepos() {
@@ -158,10 +151,8 @@ public class MavenDependencyResolverTest {
             acceptor.start();
 
             String url = "https://127.0.0.1:" + server.getLocalPort() + "/";
-            EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set("1");
-            resolveAndFail(cache, url);
+            resolveAndFail(cache, url, 1);
             int connectionsPerAttempt = connections.getAndSet(0);
-            EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.clear();
             List<Long> delays = resolveAndFail(cache, url);
 
             Assertions.assertEquals(2, delays.size());
@@ -199,7 +190,7 @@ public class MavenDependencyResolverTest {
         server.start();
         try {
             List<Long> delays = new ArrayList<>();
-            DependencyResolver resolver = new MavenDependencyResolver(cache.toString(), delays::add);
+            DependencyResolver resolver = new MavenDependencyResolver(cache.toString(), 3, delays::add);
             resolver.addRepository(MavenRepository.builder()
                     .url("http://127.0.0.1:" + server.getAddress().getPort() + "/")
                     .build());
@@ -236,41 +227,6 @@ public class MavenDependencyResolverTest {
         } finally {
             Files.setPosixFilePermissions(cache, PosixFilePermissions.fromString("rwxr-xr-x"));
         }
-    }
-
-    @Test
-    public void usesMaxAttemptsFromEnvironment(@TempDir Path cache) {
-        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set("1");
-        List<Long> delays = resolveAndFail(cache, "https://localhost:1/");
-
-        Assertions.assertEquals(0, delays.size());
-
-        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set("5");
-        delays = resolveAndFail(cache, "https://localhost:1/");
-
-        Assertions.assertEquals(4, delays.size());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "  "})
-    public void usesDefaultMaxAttemptsWhenEmpty(String value, @TempDir Path cache) {
-        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set(value);
-        List<Long> delays = resolveAndFail(cache, "https://localhost:1/");
-
-        Assertions.assertEquals(2, delays.size());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"0", "-1", "abc"})
-    public void validatesMaxAttemptsWhenResolving(String value, @TempDir Path cache) {
-        EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.set(value);
-        DependencyResolver resolver = new MavenDependencyResolver(cache.toString());
-        resolver.addRepository(MavenRepository.builder().url("https://localhost:1/").build());
-        resolver.addDependency("com.example:missing:1.0.0");
-
-        DependencyResolverException e = Assertions.assertThrows(DependencyResolverException.class,
-                resolver::resolve);
-        Assertions.assertTrue(e.getMessage().contains("SMITHY_MAVEN_MAX_ATTEMPTS"), e.getMessage());
     }
 
     @ParameterizedTest
@@ -363,8 +319,12 @@ public class MavenDependencyResolverTest {
     }
 
     private static List<Long> resolveAndFail(Path cache, String repositoryUrl) {
+        return resolveAndFail(cache, repositoryUrl, 3);
+    }
+
+    private static List<Long> resolveAndFail(Path cache, String repositoryUrl, int maxAttempts) {
         List<Long> delays = new ArrayList<>();
-        DependencyResolver resolver = new MavenDependencyResolver(cache.toString(), delays::add);
+        DependencyResolver resolver = new MavenDependencyResolver(cache.toString(), maxAttempts, delays::add);
         resolver.addRepository(MavenRepository.builder().url(repositoryUrl).build());
         resolver.addDependency("com.example:missing:1.0.0");
 

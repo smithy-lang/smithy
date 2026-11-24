@@ -49,7 +49,7 @@ import software.amazon.smithy.cli.EnvironmentVariable;
 public final class MavenDependencyResolver implements DependencyResolver {
 
     private static final Logger LOGGER = Logger.getLogger(DependencyResolver.class.getName());
-    private static final int DEFAULT_MAX_ATTEMPTS = 3;
+    private static final int MAX_ATTEMPTS = 3;
     private static final long BASE_BACKOFF_MILLIS = 1000;
     private static final long MAX_BACKOFF_MILLIS = 20000;
     // The HTTP transport retries these responses itself. maven-resolver's default is 429 and 503.
@@ -62,6 +62,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
     private final String cacheLocation;
     private CloseableSession session;
     private final Proxy commonProxy;
+    private final int maxAttempts;
     private final LongConsumer sleeper;
 
     public MavenDependencyResolver() {
@@ -72,10 +73,11 @@ public final class MavenDependencyResolver implements DependencyResolver {
      * @param cacheLocation Maven local cache location.
      */
     public MavenDependencyResolver(String cacheLocation) {
-        this(cacheLocation, MavenDependencyResolver::sleep);
+        this(cacheLocation, MAX_ATTEMPTS, MavenDependencyResolver::sleep);
     }
 
-    MavenDependencyResolver(String cacheLocation, LongConsumer sleeper) {
+    MavenDependencyResolver(String cacheLocation, int maxAttempts, LongConsumer sleeper) {
+        this.maxAttempts = maxAttempts;
         this.sleeper = sleeper;
         commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
                 EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
@@ -118,25 +120,6 @@ public final class MavenDependencyResolver implements DependencyResolver {
         } catch (RuntimeException e) {
             throw new DependencyResolverException(e);
         }
-    }
-
-    // Read when resolving rather than in the constructor, so an invalid value doesn't fail commands that are
-    // served from the dependency cache. An empty value is treated as unset.
-    private static int getMaxAttempts() {
-        String value = EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS.get();
-        if (value == null || value.trim().isEmpty()) {
-            return DEFAULT_MAX_ATTEMPTS;
-        }
-        try {
-            int result = Integer.parseInt(value.trim());
-            if (result >= 1) {
-                return result;
-            }
-        } catch (NumberFormatException ignored) {
-            // Fall through to the error below.
-        }
-        throw new DependencyResolverException("Expected a positive integer for "
-                + EnvironmentVariable.SMITHY_MAVEN_MAX_ATTEMPTS + ", but found " + value);
     }
 
     @Override
@@ -271,7 +254,6 @@ public final class MavenDependencyResolver implements DependencyResolver {
         collectRequest.setRepositories(remoteRepositories);
         collectRequest.setDependencies(dependencies);
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, filter);
-        int maxAttempts = getMaxAttempts();
 
         for (int attempt = 1;; attempt++) {
             try {

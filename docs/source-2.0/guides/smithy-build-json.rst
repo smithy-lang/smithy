@@ -369,30 +369,6 @@ variable, no default repositories are assumed when resolving the
     Repositories defined in ``SMITHY_MAVEN_REPOS`` take precedence over
     repositories defined through smithy-build.json configuration.
 
-.. _SMITHY_MAVEN_MAX_ATTEMPTS:
-
-SMITHY_MAVEN_MAX_ATTEMPTS environment variable
-----------------------------------------------
-
-When a transfer fails because of a connection, DNS, TLS, or timeout error,
-the Smithy CLI retries dependency resolution with exponential backoff and
-jitter. Resolution is not retried when every failure is an artifact that
-was not found or an HTTP error response from a repository. Some HTTP error
-responses are retried separately, as described below.
-
-The ``SMITHY_MAVEN_MAX_ATTEMPTS`` environment variable sets the maximum number
-of attempts, including the first attempt. It defaults to ``3``. An empty
-value uses the default. Set it to ``1`` to disable these retries.
-
-Separately, HTTP 429, 500, 502, 503, and 504 responses are retried by the HTTP
-transport, which waits for the time in a ``Retry-After`` header if the
-repository sends one. ``SMITHY_MAVEN_MAX_ATTEMPTS`` doesn't apply to these
-retries.
-
-.. code-block::
-
-    SMITHY_MAVEN_MAX_ATTEMPTS=5
-
 Proxy environment variables
 ---------------------------
 
