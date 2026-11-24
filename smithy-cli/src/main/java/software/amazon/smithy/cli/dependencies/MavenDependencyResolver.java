@@ -274,7 +274,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 // A session remembers which artifacts it has already checked, and would not request an artifact
                 // again after a failed transfer, so retry with a new session. Only retries create one: calling
                 // resolve() again with a new session fails in maven-resolver's prefixes filter with "Recursive
-                // update" during `smithy warmup` on Java 25.
+                // update" during `smithy warmup` on Java 25. Closing the old session shuts down its thread pools.
+                session.close();
                 session = newSession();
             }
         }
