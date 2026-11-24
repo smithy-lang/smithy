@@ -4,3 +4,4 @@
 [ERROR] smithy.example#Gadget: Resource property `nickname` is not used in the input or output of create, an instance operation, or the list element of a collection operation, and is not located by a resource lifecycle trait binding. | ResourceOperationInputOutput
 [WARNING] smithy.example#GetGadget: Resource `smithy.example#Gadget` in `@readsResources` is already bound to this operation via the resource's lifecycle. The trait is redundant. | ResourceLifecycleTrait
 [ERROR] smithy.example#Sprocket: Resource property `color` is not used in the input or output of create, an instance operation, or the list element of a collection operation, and is not located by a resource lifecycle trait binding. | ResourceOperationInputOutput
+[ERROR] smithy.example#DescribeLamp: `propertiesFrom` `lamp` in `@readsResources` resolves to `smithy.example#LampDescription`, which has several members bound to property `shade`: [`shade`, `lampShade`] | ResourceLifecycleTrait

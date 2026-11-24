@@ -17,6 +17,12 @@ import software.amazon.smithy.model.shapes.MemberShape;
 final class MemberInferenceResult {
     // Matched identifier or property name to the structure member that provides it.
     final Map<String, MemberShape> matched = new LinkedHashMap<>();
-    // Members that matched no identifier or property name and are not @notProperty.
+    // Name of an identifier or property of the other kind to the member bound to it. These members
+    // are not inferred, but they must still target that identifier's or property's shape.
+    final Map<String, MemberShape> otherKind = new LinkedHashMap<>();
+    // Property name to the members that resolve to it, when more than one does.
+    final Map<String, List<MemberShape>> propertyConflicts = new LinkedHashMap<>();
+    // Members bound to neither an identifier nor a property, in definition order. Members excluded
+    // by @notProperty or by a trait marked @notProperty are not included.
     final List<MemberShape> unmatched = new ArrayList<>();
 }

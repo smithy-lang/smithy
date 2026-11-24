@@ -181,18 +181,18 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
             String path = entry.getValue().getPath();
 
             if (!validNames.contains(name)) {
-                ctx.error(format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %ss: [%s]",
+                ctx.error(format("%s `%s` in `@%s` does not match any %s of resource `%s`. Valid %s: [%s]",
                         capitalize(kindWord),
                         name,
                         ctx.traitName(),
                         kindWord,
                         ctx.resourceId(),
-                        kindWord,
+                        kindPlural(kind),
                         ValidationUtils.tickedList(validNames)));
                 continue;
             }
 
-            JmespathExpression parsed = parseAndCheck(ctx, kindWord, name, path);
+            JmespathExpression parsed = parseAndCheck(ctx, format("%s `%s`", kindWord, name), path);
             if (parsed == null) {
                 continue;
             }
@@ -234,7 +234,7 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         String fromMember = kind == ResourceMemberInference.BindingKind.IDENTIFIER
                 ? "identifiersFrom"
                 : "propertiesFrom";
-        JmespathExpression parsed = parseAndCheck(ctx, fromMember, fromMember, fromPath);
+        JmespathExpression parsed = parseAndCheck(ctx, format("`%s`", fromMember), fromPath);
         if (parsed == null || sideStructure == null) {
             return;
         }
@@ -270,9 +270,18 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
         StructureShape element = (StructureShape) result.leaf;
         MemberInferenceResult inference =
-                ResourceMemberInference.inferByName(ctx.resource, element, kind);
+                ResourceMemberInference.inferByName(ctx.model, ctx.resource, element, kind);
 
-        if (inference.matched.isEmpty()) {
+        String location = format("`%s` `%s` in `@%s` resolves to `%s`",
+                fromMember,
+                fromPath,
+                ctx.traitName(),
+                element.getId());
+        reportPropertyConflicts(ctx, location, inference.propertyConflicts);
+
+        boolean conflicts = kind == ResourceMemberInference.BindingKind.PROPERTY
+                && !inference.propertyConflicts.isEmpty();
+        if (inference.matched.isEmpty() && !conflicts) {
             ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, whose members match no %s of resource `%s`.",
                     fromMember,
                     fromPath,
@@ -284,20 +293,59 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
 
         if (!inference.unmatched.isEmpty()) {
-            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither a %s nor an "
-                    + "identifier of resource `%s` and are not marked `@notProperty`: [%s]",
+            ctx.error(format("`%s` `%s` in `@%s` resolves to `%s`, which has members that are neither an identifier "
+                    + "nor a property of resource `%s` and are not marked `@notProperty`: [%s]",
                     fromMember,
                     fromPath,
                     ctx.traitName(),
                     element.getId(),
-                    kindWord,
                     ctx.resourceId(),
                     memberNames(inference.unmatched)));
         }
 
-        // Type agreement for matched members.
+        // Type agreement for matched members, and for members bound to the other kind, which are
+        // not inferred here but must still target that identifier's or property's shape.
         for (Map.Entry<String, MemberShape> matched : inference.matched.entrySet()) {
             checkMemberType(ctx, kind, matched.getKey(), matched.getValue());
+        }
+        ResourceMemberInference.BindingKind otherKind = ResourceMemberInference.otherKind(kind);
+        for (Map.Entry<String, MemberShape> other : inference.otherKind.entrySet()) {
+            checkOtherKindType(ctx, location, otherKind, other.getKey(), other.getValue());
+        }
+    }
+
+    // Checks that a member bound to the kind not being inferred targets that identifier's or
+    // property's shape. The message names the pointer, since nothing infers this member.
+    private void checkOtherKindType(
+            Context ctx,
+            String location,
+            ResourceMemberInference.BindingKind kind,
+            String name,
+            MemberShape member
+    ) {
+        ShapeId declared = kind == ResourceMemberInference.BindingKind.IDENTIFIER
+                ? ctx.resource.getIdentifiers().get(name)
+                : ctx.resource.getProperties().get(name);
+        ShapeId expected = unwrapBaseId(ctx.model, declared);
+        ShapeId actual = unwrapBaseId(ctx.model, member.getTarget());
+        if (!actual.equals(expected)) {
+            ctx.error(format("%s, whose member `%s` matches %s `%s` but targets `%s` instead of `%s`.",
+                    location,
+                    member.getMemberName(),
+                    kindWord(kind),
+                    name,
+                    actual,
+                    expected));
+        }
+    }
+
+    // Reports properties that several members of an inferred structure resolve to.
+    private void reportPropertyConflicts(Context ctx, String location, Map<String, List<MemberShape>> conflicts) {
+        for (Map.Entry<String, List<MemberShape>> entry : conflicts.entrySet()) {
+            ctx.error(format("%s, which has several members bound to property `%s`: [%s]",
+                    location,
+                    entry.getKey(),
+                    memberNames(entry.getValue())));
         }
     }
 
@@ -366,15 +414,16 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
         }
     }
 
-    private JmespathExpression parseAndCheck(Context ctx, String kind, String name, String path) {
+    // Parses a path and reports it when invalid or unsupported. The subject names what the path is for,
+    // such as "property `size`" or "`propertiesFrom`".
+    private JmespathExpression parseAndCheck(Context ctx, String subject, String path) {
         JmespathExpression parsed;
         try {
             parsed = JmespathExpression.parse(path);
         } catch (JmespathException e) {
-            ctx.error(format("Invalid JMESPath expression `%s` for %s `%s` in `@%s`: %s",
+            ctx.error(format("Invalid JMESPath expression `%s` for %s in `@%s`: %s",
                     path,
-                    kind,
-                    name,
+                    subject,
                     ctx.traitName(),
                     e.getMessage()));
             return null;
@@ -389,10 +438,9 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
                 }
                 list.append("'").append(expr).append("'");
             }
-            ctx.error(format("JMESPath expression `%s` for %s `%s` in `@%s` contains unsupported expressions: %s",
+            ctx.error(format("JMESPath expression `%s` for %s in `@%s` contains unsupported expressions: %s",
                     path,
-                    kind,
-                    name,
+                    subject,
                     ctx.traitName(),
                     list));
             return null;
@@ -402,6 +450,10 @@ public final class ResourceLifecycleTraitValidator extends AbstractValidator {
 
     private static String kindWord(ResourceMemberInference.BindingKind kind) {
         return kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifier" : "property";
+    }
+
+    private static String kindPlural(ResourceMemberInference.BindingKind kind) {
+        return kind == ResourceMemberInference.BindingKind.IDENTIFIER ? "identifiers" : "properties";
     }
 
     private static String sideName(ShapeId sideStructureId, OperationShape operation) {

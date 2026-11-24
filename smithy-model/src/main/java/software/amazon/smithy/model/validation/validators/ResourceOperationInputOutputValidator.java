@@ -213,10 +213,14 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
         }
         JmespathPathResult result = walk(model, sideStructure, from.get());
         if (result != null && result.error == null && !result.root && result.leaf instanceof StructureShape) {
-            MemberInferenceResult inference = ResourceMemberInference.inferByName(resource,
+            MemberInferenceResult inference = ResourceMemberInference.inferByName(model,
+                    resource,
                     (StructureShape) result.leaf,
                     ResourceMemberInference.BindingKind.PROPERTY);
             properties.addAll(inference.matched.keySet());
+            // Conflicting members still locate the property; the conflict itself is reported by
+            // ResourceLifecycleTrait, so it is not reported again as unused.
+            properties.addAll(inference.propertyConflicts.keySet());
         }
     }
 
