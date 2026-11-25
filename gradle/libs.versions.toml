@@ -6,8 +6,8 @@ spotbugs = "6.2.4"
 spotless = "8.11.0"
 smithy-gradle = "1.5.0"
 assertj = "3.27.7"
-prettier4j = "0.3.0"
-maven-resolver-provider = "3.10.0"
+prettier4j = "0.3.3"
+maven-resolver-provider = "3.10.1"
 # Resolver 2.x core, paired with the Maven 3.9.x provider via maven-resolver-supplier-mvn3.
 # Staying on the Maven 3 provider keeps the Java 8 baseline, upgrading to Maven 4 will
 # require bumping the runtime Java version to 17.
