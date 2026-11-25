@@ -8,6 +8,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -65,5 +67,32 @@ public class PutsResourcesTraitTest {
 
         assertThat(trait.toNode(), equalTo(values));
         assertThat(trait.toBuilder().build(), equalTo(trait));
+    }
+
+    @Test
+    public void loadsAndConvertsNoReplace() {
+        ShapeId target = ShapeId.from("ns.example#MyOperation");
+        ArrayNode values = Node.arrayNode()
+                .withValue(Node.objectNode()
+                        .withMember("resource", Node.from("ns.example#Foo"))
+                        .withMember("noReplace", Node.from(true)))
+                .withValue(Node.objectNode()
+                        .withMember("resource", Node.from("ns.example#Bar")));
+        PutsResourcesTrait trait = (PutsResourcesTrait) new PutsResourcesTrait.Provider()
+                .createTrait(target, values);
+
+        assertTrue(trait.getBindings().get(0).isNoReplace());
+        assertFalse(trait.getBindings().get(1).isNoReplace());
+
+        // Rebuild the trait so toNode serializes the bindings instead of returning the parsed node.
+        PutsResourcesTrait rebuilt = PutsResourcesTrait.builder().bindings(trait.getBindings()).build();
+        assertThat(rebuilt.toNode(), equalTo(values));
+
+        // Trait equality compares nodes, so check the bindings themselves round-trip noReplace.
+        for (ResourcePutBinding binding : trait.getBindings()) {
+            assertThat(binding.toBuilder().build(), equalTo(binding));
+        }
+        assertThat(trait.getBindings().get(0),
+                not(equalTo(trait.getBindings().get(0).toBuilder().noReplace(false).build())));
     }
 }

@@ -13,7 +13,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * and where to find their identifiers in the operation input.
  */
 @SmithyUnstableApi
-public final class PutsResourcesTrait extends AbstractResourceLifecycleTrait<ResourceLifecycleBinding>
+public final class PutsResourcesTrait extends AbstractResourceLifecycleTrait<ResourcePutBinding>
         implements ToSmithyBuilder<PutsResourcesTrait> {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#putsResources");
@@ -23,9 +23,9 @@ public final class PutsResourcesTrait extends AbstractResourceLifecycleTrait<Res
     }
 
     public static final class Provider
-            extends AbstractResourceLifecycleTrait.Provider<PutsResourcesTrait, ResourceLifecycleBinding> {
+            extends AbstractResourceLifecycleTrait.Provider<PutsResourcesTrait, ResourcePutBinding> {
         public Provider() {
-            super(ID, Builder::new, ResourceLifecycleBinding::fromNode);
+            super(ID, Builder::new, ResourcePutBinding::fromNode);
         }
     }
 
@@ -39,7 +39,7 @@ public final class PutsResourcesTrait extends AbstractResourceLifecycleTrait<Res
     }
 
     public static final class Builder
-            extends AbstractResourceLifecycleTrait.Builder<PutsResourcesTrait, Builder, ResourceLifecycleBinding> {
+            extends AbstractResourceLifecycleTrait.Builder<PutsResourcesTrait, Builder, ResourcePutBinding> {
         private Builder() {}
 
         private Builder(PutsResourcesTrait trait) {

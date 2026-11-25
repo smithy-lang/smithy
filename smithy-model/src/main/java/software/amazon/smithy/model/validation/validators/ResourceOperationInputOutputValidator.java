@@ -31,8 +31,8 @@ import software.amazon.smithy.model.traits.NotPropertyTrait;
 import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.ResourceBinding;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
-import software.amazon.smithy.model.traits.ResourceLifecycleBinding;
 import software.amazon.smithy.model.traits.ResourceMemberBinding;
+import software.amazon.smithy.model.traits.ResourcePropertiesBinding;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -173,7 +173,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                                 resource,
                                 operation,
                                 descriptor.propertySide,
-                                (ResourceLifecycleBinding) binding,
+                                (ResourcePropertiesBinding) binding,
                                 properties);
                     }
                 }
@@ -190,7 +190,7 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
             ResourceShape resource,
             OperationShape operation,
             LifecycleTraitDescriptor.Side side,
-            ResourceLifecycleBinding binding,
+            ResourcePropertiesBinding binding,
             Set<String> properties
     ) {
         StructureShape sideStructure = model.getShape(side.of(operation))

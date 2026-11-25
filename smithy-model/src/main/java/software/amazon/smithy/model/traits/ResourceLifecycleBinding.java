@@ -23,9 +23,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * explicit map of name to locator, or inferred from a structure named by a
  * {@code ...From} JMESPath pointer. The side each resolves against
  * (input or output) is determined per trait by the validator.
+ *
+ * <p>Used by the create, read, and update traits. The put trait uses
+ * {@link ResourcePutBinding}, which adds {@code noReplace}.
  */
 @SmithyUnstableApi
-public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithyBuilder<ResourceLifecycleBinding> {
+public final class ResourceLifecycleBinding
+        implements ResourcePropertiesBinding, ToSmithyBuilder<ResourceLifecycleBinding> {
 
     private final ShapeId resource;
     private final Map<String, ResourceMemberBinding> identifiers;
@@ -56,10 +60,12 @@ public final class ResourceLifecycleBinding implements ResourceBinding, ToSmithy
         return Optional.ofNullable(identifiersFrom);
     }
 
+    @Override
     public Map<String, ResourceMemberBinding> getProperties() {
         return properties;
     }
 
+    @Override
     public Optional<String> getPropertiesFrom() {
         return Optional.ofNullable(propertiesFrom);
     }

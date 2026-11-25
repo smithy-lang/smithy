@@ -148,6 +148,10 @@ to call ``CreateTable`` on a table that already exists will return an error.
         // ...
     }
 
+The ``noReplace`` trait only applies to the resource's ``put`` lifecycle
+operation. An operation bound to a resource with the :ref:`putsResources-trait`
+instead declares the same behavior with the binding's ``noReplace`` member.
+
 
 .. smithy-trait:: smithy.api#property
 .. _property-trait:
@@ -579,9 +583,8 @@ to the whole input or output root, nor to a list, map, or scalar.
 Binding structures
 ------------------
 
-``createsResources``, ``putsResources``, ``readsResources``, and
-``updatesResources`` use the ``ResourceLifecycleBinding`` structure,
-which has the following members:
+``createsResources``, ``readsResources``, and ``updatesResources`` use the
+``ResourceLifecycleBinding`` structure, which has the following members:
 
 .. list-table::
     :header-rows: 1
@@ -609,10 +612,28 @@ which has the following members:
       - Structural JMESPath pointing at a nested structure or projection from
         whose members properties are inferred by name.
 
-``deletesResources`` uses the ``ResourceDeletionBinding`` structure, which is
-identical but omits the ``properties`` and ``propertiesFrom`` members.
+``putsResources`` uses the ``ResourcePutBinding`` structure, which is identical
+to ``ResourceLifecycleBinding`` but adds the following member:
 
-Both structures locate values with the ``ResourceMemberBinding`` structure,
+.. list-table::
+    :header-rows: 1
+    :widths: 20 33 47
+
+    * - Property
+      - Type
+      - Description
+    * - noReplace
+      - ``boolean``
+      - Indicates that the operation can only create the resource and cannot
+        replace an existing one. Defaults to ``false``. This is the binding
+        counterpart of the :ref:`noReplace-trait`, which applies only to a
+        resource's ``put`` lifecycle operation.
+
+``deletesResources`` uses the ``ResourceDeletionBinding`` structure, which is
+identical to ``ResourceLifecycleBinding`` but omits the ``properties`` and
+``propertiesFrom`` members.
+
+All three structures locate values with the ``ResourceMemberBinding`` structure,
 which has the following members:
 
 .. list-table::
@@ -678,9 +699,13 @@ Summary
 Trait selector
     ``operation``
 Value type
-    ``list`` of ``ResourceLifecycleBinding`` structures.
+    ``list`` of ``ResourcePutBinding`` structures.
 
 Removing a binding or changing a binding's ``resource`` is a breaking change.
+Changing a binding's ``noReplace`` is reported as a warning, because it changes
+whether consumers treat the operation as able to replace the resource. Adding or
+removing an explicit ``false`` is reported the same way, although it does not
+change the meaning.
 
 .. code-block:: smithy
 
@@ -703,6 +728,37 @@ Removing a binding or changing a binding's ``resource`` is a breaking change.
         forecastId: String
 
         chanceOfRain: Float
+    }
+
+By default, a put is assumed to both create and replace an existing resource.
+Set ``noReplace`` to ``true`` when the operation can only create the resource,
+such as an API that takes a caller-provided identifier and fails if the resource
+already exists:
+
+.. code-block:: smithy
+
+    @putsResources([
+        {
+            resource: Table
+            identifiers: { tableName: { path: "table.tableName" } }
+            noReplace: true
+        }
+    ])
+    @idempotent
+    operation CreateTable {
+        input: CreateTableInput
+        output: CreateTableOutput
+    }
+
+    @input
+    structure CreateTableInput {
+        @required
+        table: TableSpec
+    }
+
+    structure TableSpec {
+        @required
+        tableName: String
     }
 
 .. smithy-trait:: smithy.api#readsResources

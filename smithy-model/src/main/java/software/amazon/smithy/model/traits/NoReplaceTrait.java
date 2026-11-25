@@ -12,6 +12,10 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Indicates that the put lifecycle operation of a resource
  * can only be used to create a resource and cannot replace
  * an existing resource.
+ *
+ * <p>This trait does not apply to operations bound with the
+ * {@link PutsResourcesTrait}; those declare the same behavior with
+ * {@link ResourcePutBinding#isNoReplace()}.
  */
 public final class NoReplaceTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#noReplace");
