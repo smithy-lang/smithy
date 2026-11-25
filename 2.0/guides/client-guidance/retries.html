@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -678,8 +683,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="retrying-requests">
-<span id="client-guidance-retries"></span><h1>Retrying Requests<a class="headerlink" href="#retrying-requests" title="Link to this heading">#</a></h1>
+  <section id="client-guidance-retries">
+<span id="retrying-requests"></span><h1>Retrying Requests<a class="headerlink" href="#client-guidance-retries" title="Link to this heading">#</a></h1>
 <p>Operation requests might fail for a number of reasons that are unrelated to the
 input parameters, such as a transient network issue or excessive load on the
 service. This guide gives recommendations on how Smithy clients can

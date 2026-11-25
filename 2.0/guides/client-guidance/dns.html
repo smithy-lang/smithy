@@ -1,0 +1,1084 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DNS Resolution &#8212; Smithy 2.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=f465e7c3" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=60dbed4a"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6b89569b"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/client-guidance/dns';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/custom.js?v=0fa699fc"></script>
+    <link rel="icon" href="../../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Identity and Authentication" href="identity-auth.html" />
+    <link rel="prev" title="Endpoint Resolution" href="endpoints.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+<script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script>
+<!-- Match the landing page typography: Schibsted Grotesk + JetBrains Mono. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/smithy.svg" class="logo__image only-light" alt="Smithy 2.0 - Home"/>
+    <img src="../../_static/smithy-dark.svg" class="logo__image only-dark pst-js-only" alt="Smithy 2.0 - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav class="bd-navbar-elements navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link nav-internal" href="../../index.html">Documentation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/smithy-examples">Examples</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link nav-external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a>
+    </li>
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/smithy-lang/smithy" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/shape-closures.html">Shape closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">JSON AST</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Guides</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../smithy-cli/index.html">The Smithy CLI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../smithy-build-json.html">smithy-build.json</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../gradle-plugin/index.html">Smithy Gradle Plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../gradle-plugin/gradle-migration-guide.html">Migrating to Gradle plugin version 0.10.0+</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Code Generation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Linting Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../wire-protocol-selection.html">Wire protocol selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../model-translations/index.html">Model Translations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../model-translations/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-codegen/index.html">Creating a Code Generator</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Smithy Client Guidance</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="application-protocols/index.html">Application Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="application-protocols/http.html">HTTP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DNS Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identity-auth.html">Identity and Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interceptors.html">Interceptors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/ai-traits.html">Smithy AI Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/contract-traits.html">Contract traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/event-stream-protocol-compliance-tests.html">Event Stream Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/protocols/index.html">Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-cbor.html">Smithy RPC v2 CBOR protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../additional-specs/protocols/smithy-rpc-v2-json.html">Smithy RPC v2 JSON protocol</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-eventstream.html">Amazon Event Stream Specification</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Languages</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/java/index.html">Java</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/java/quickstart.html">Java Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/java/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/generating-clients.html">Generating Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/configuration.html">Configuring Clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/customization.html">Customizing Client Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/plugins.html">Client Plugins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/java/client/dynamic-client.html">Dynamic Client</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/typescript/quickstart.html">TypeScript Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/typescript/ts-ssdk/index.html">Server Generator for TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/typescript/ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-typescript">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/full-stack-tutorial.html">Smithy Full Stack Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/rust/index.html">Rust</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://smithy-lang.github.io/smithy-rs/design/">Design Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-rs">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../languages/kotlin/quickstart.html">Kotlin Quickstart</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../languages/kotlin/client/index.html">Client User Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../languages/kotlin/client/generating-clients.html">Generating Clients</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin">Source code</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples/tree/main/smithy-kotlin-examples">Smithy Kotlin Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-kotlin/tree/main/docs/design">Smithy Kotlin Design Docs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/golang/index.html">GoLang</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/aws/smithy-go">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/scala/index.html">Scala</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://disneystreaming.github.io/smithy4s/">Documentation</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/disneystreaming/smithy4s">Source code</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/edit/main/docs/source-2.0/guides/client-guidance/dns.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/smithy-lang/smithy/issues/new?title=Issue%20on%20page%20%2Fguides/client-guidance/dns.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+<a href="../../_sources/guides/client-guidance/dns.md.txt" target="_blank"
+   class="btn btn-sm btn-source-file-button"
+   title="View page source"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+
+</a>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>DNS Resolution</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#responsibility-boundaries">Responsibility boundaries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport-integration">Transport integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-resolver-interface">Optional resolver interface</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolution-inputs">Resolution inputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hostname-identity">Hostname identity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#address-selection-and-connections">Address selection and connections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caching">Caching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retries-and-connection-pools">Retries and connection pools</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#proxies-and-redirects">Proxies and redirects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timeouts-and-cancellation">Timeouts and cancellation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#security">Security</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observability">Observability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="client-guidance-dns">
+<span id="dns-resolution"></span><h1>DNS Resolution<a class="headerlink" href="#client-guidance-dns" title="Link to this heading">#</a></h1>
+<p>The Domain Name System (DNS) maps hostnames to network addresses that a
+transport can use to establish connections.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Smithy clients should delegate DNS resolution, caching, address selection, and
+connection failover to their configured transport, language runtime, or
+operating system by default. Clients should provide custom DNS behavior only
+when those facilities cannot satisfy a concrete requirement.</p>
+<p>Implementations should use system resolution or an existing DNS library instead
+of implementing the DNS protocol directly.</p>
+</div>
+<p>System and transport resolvers incorporate behavior outside the DNS protocol
+itself. This can include host files, local caching services, VPN configuration,
+split-horizon DNS, and organizational network policy. Bypassing them can produce
+different results from other applications on the same host.</p>
+<p>A client that accepts a user-provided transport should not resolve endpoint
+hostnames before passing requests to that transport. Doing so can bypass the
+transport's connection pool, proxy behavior, address selection, and DNS cache.</p>
+<section id="responsibility-boundaries">
+<h2>Responsibility boundaries<a class="headerlink" href="#responsibility-boundaries" title="Link to this heading">#</a></h2>
+<p>Endpoint resolution, DNS resolution, and connection establishment solve
+different problems:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Responsibility</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Endpoint resolver</p></td>
+<td><p>Selects a URI and associated endpoint metadata for an operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DNS resolver</p></td>
+<td><p>Maps the URI hostname to one or more network addresses.</p></td>
+</tr>
+<tr class="row-even"><td><p>Connection strategy</p></td>
+<td><p>Chooses when and how to attempt connections to those addresses.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Transport</p></td>
+<td><p>Owns connection pooling, proxies, sockets, TLS, and protocol negotiation.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>An <a class="reference internal" href="endpoints.html"><span class="std std-doc">endpoint resolver</span></a> should not perform DNS queries to determine
+whether an endpoint is available. It selects the endpoint described by the
+service model and client configuration. DNS resolution occurs later, when the
+transport needs to establish a connection.</p>
+<p>A DNS resolver should not open connections or choose an endpoint. It returns
+the addresses known for a hostname. Address ordering can express a preference,
+but the connection strategy determines whether it attempts addresses
+sequentially, interleaved, or concurrently.</p>
+<p>A pooled connection does not require another DNS lookup for every request.
+The transport resolves a hostname when it needs a new connection and lacks a
+usable cached result.</p>
+</section>
+<section id="transport-integration">
+<h2>Transport integration<a class="headerlink" href="#transport-integration" title="Link to this heading">#</a></h2>
+<p>A transport can provide DNS resolution, caching, IPv4 and IPv6 address
+selection, and connection failover. Clients using such a transport do not need
+a Smithy-specific DNS interface.</p>
+<p>If a transport defines its own resolver abstraction, it should allow callers
+to provide an implementation and keep resolution independent from connection
+establishment. A Smithy implementation can adapt user-provided resolvers to an
+existing transport abstraction rather than define a parallel Smithy-specific
+interface.</p>
+<p>DNS configuration belongs to the transport that consumes the results. A
+generated service client should expose transport configuration instead of
+duplicating transport-specific DNS settings.</p>
+<p>Custom DNS behavior is warranted only for:</p>
+<ul class="simple">
+<li><p>Deterministic hostname mappings in tests or local development.</p></li>
+<li><p>A transport that owns socket creation and needs access to every resolved
+address.</p></li>
+<li><p>Address rotation or failover requirements that the configured transport cannot
+provide.</p></li>
+<li><p>Environments that require a specific resolver library or network policy.</p></li>
+</ul>
+<p>Observing DNS timing or failures does not require a custom resolver when the
+transport exposes that telemetry.</p>
+</section>
+<section id="optional-resolver-interface">
+<h2>Optional resolver interface<a class="headerlink" href="#optional-resolver-interface" title="Link to this heading">#</a></h2>
+<p>A transport that needs custom resolution should keep the interface small. For
+example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DnsRequest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">hostname</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">DnsResolver</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">NetworkAddress</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span><span class="n">DnsRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">reportFailure</span><span class="p">(</span>
+<span class="w">            </span><span class="n">DnsRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span>
+<span class="w">            </span><span class="n">NetworkAddress</span><span class="w"> </span><span class="n">address</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">purge</span><span class="p">(</span><span class="n">DnsRequest</span><span class="w"> </span><span class="n">request</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">purgeAll</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">resolve</span></code> should return every usable address in preference order, rather than
+selecting a single address or limiting each address family to one result. It
+should raise an error when resolution fails or produces no usable addresses.</p>
+<p>Addresses should use the language or transport's native parsed representation
+when that representation is available. Returning parsed addresses avoids
+repeated parsing and prevents ambiguity around IPv6 text formatting. In the
+example above, <code class="docutils literal notranslate"><span class="pre">NetworkAddress</span></code> stands in for that native type, such as
+<code class="docutils literal notranslate"><span class="pre">java.net.InetAddress</span></code> in Java.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reportFailure</span></code>, <code class="docutils literal notranslate"><span class="pre">purge</span></code>, and <code class="docutils literal notranslate"><span class="pre">purgeAll</span></code> are optional capabilities. Stateless
+resolvers and resolvers whose caching is owned by the operating system can
+implement them as no-ops. A resolver that supports failure feedback should
+scope it to the hostname and address rather than treating an address as
+globally unhealthy.</p>
+<p>A resolver shared by concurrent requests must be safe for concurrent use.
+Resolution should follow the transport's concurrency model. An asynchronous
+transport should not run a blocking resolver on its event-loop thread.</p>
+<section id="resolution-inputs">
+<h3>Resolution inputs<a class="headerlink" href="#resolution-inputs" title="Link to this heading">#</a></h3>
+<p>For TCP connections, an HTTP client needs only a hostname to resolve addresses.
+Implementations should avoid exposing DNS record types, socket flags, or
+protocol-specific options unless the transport uses them.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DnsRequest</span></code> should initially contain only the hostname. It can later add
+transport-relevant information without requiring DNS features that clients do
+not currently use. For example, a transport that queries HTTPS records
+(<span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9460.html"><strong>RFC 9460</strong></a>) to discover HTTP/3 support also needs the port.</p>
+</section>
+</section>
+<section id="hostname-identity">
+<h2>Hostname identity<a class="headerlink" href="#hostname-identity" title="Link to this heading">#</a></h2>
+<p>Resolving a hostname changes the socket destination, not the identity of the
+endpoint. The transport must continue to use the original hostname for:</p>
+<ul class="simple">
+<li><p>The HTTP request authority and <code class="docutils literal notranslate"><span class="pre">Host</span></code> field.</p></li>
+<li><p>TLS Server Name Indication (SNI).</p></li>
+<li><p>TLS certificate hostname verification.</p></li>
+<li><p>Connection-pool and origin identity.</p></li>
+</ul>
+<p>The resolved address is only the socket destination. Rewriting a request URI to
+use the address is not a general-purpose substitute for transport-level DNS
+integration.</p>
+<p>A transport can provide a connect-to or static-resolution option that connects
+to an address while preserving the original hostname. A Smithy implementation
+can use that option to adapt a custom resolver when the transport preserves the
+required HTTP and TLS semantics.</p>
+<p>An IP literal is already a network address. The transport should bypass DNS
+resolution for IP literals. URI parsing remains responsible for details such as
+brackets around IPv6 literals.</p>
+</section>
+<section id="address-selection-and-connections">
+<h2>Address selection and connections<a class="headerlink" href="#address-selection-and-connections" title="Link to this heading">#</a></h2>
+<p>DNS resolution can return multiple IPv4 and IPv6 addresses. The resolver should
+preserve the ordering produced by the system or resolver library unless it
+implements an intentional, documented address policy.</p>
+<p>Connection establishment should be prepared to try more than one address. A
+failed connection to one address does not imply that resolution failed or that
+the other addresses are unavailable.</p>
+<p>IPv4 and IPv6 connection racing, known as Happy Eyeballs, is a connection
+strategy rather than a DNS resolver feature. Transports that implement it should
+follow <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8305.html"><strong>RFC 8305</strong></a> or a platform facility that provides equivalent behavior.
+Resolver interfaces should return the ordered address set without prescribing
+the racing algorithm.</p>
+<p>Failure feedback should come from the component that attempted the connection.
+It must not be derived from HTTP response status codes.
+Implementations that temporarily deprioritize a failed address should use
+bounded failure state and make the address eligible again after a bounded
+cooldown or a successful refresh.</p>
+</section>
+<section id="caching">
+<h2>Caching<a class="headerlink" href="#caching" title="Link to this heading">#</a></h2>
+<p>When DNS is delegated to the transport, runtime, or operating system, that
+component should retain ownership of its cache. Adding another cache in the
+Smithy client can extend effective lifetimes, interfere with address rotation,
+and make cache invalidation unpredictable.</p>
+<p>A custom resolver that owns a cache should:</p>
+<ul class="simple">
+<li><p>Bound cache size and resource usage.</p></li>
+<li><p>Coalesce concurrent lookups for the same hostname.</p></li>
+<li><p>Distinguish successful results from negative or transient failures when the
+underlying resolver provides that information.</p></li>
+<li><p>Avoid treating a transient resolution failure as a permanent negative result.</p></li>
+<li><p>Document whether stale addresses can be used when refresh fails.</p></li>
+<li><p>Provide explicit invalidation only when callers have a concrete need for it.</p></li>
+</ul>
+<p>DNS record TTLs are not available through every system resolver API. If the
+underlying API provides TTLs, a custom cache should honor them. If it does not,
+an application-level cache duration is a local policy rather than the
+authoritative DNS TTL. Cache documentation should identify it as a local policy.</p>
+<p>This guide does not prescribe background refresh, stale-address retention, or
+eviction policies. A custom resolver that owns a cache should choose them to
+suit the transport and deployment environment it serves.</p>
+</section>
+<section id="retries-and-connection-pools">
+<h2>Retries and connection pools<a class="headerlink" href="#retries-and-connection-pools" title="Link to this heading">#</a></h2>
+<p>An operation <a class="reference internal" href="retries.html"><span class="std std-doc">retry</span></a> that reuses a healthy pooled connection does
+not perform DNS resolution.</p>
+<p>When a retry requires a new connection, the connection strategy should
+try other addresses from the current result before forcing another lookup. A
+transport can re-resolve after connection failures when the cached result has
+expired or its retry policy requests fresh results.</p>
+<p>Clients should not unconditionally purge DNS state or perform a new query for
+every operation attempt. Retry behavior must also respect the operation's
+deadline and avoid multiplying DNS and connection attempts without bounds.</p>
+<p>DNS failures and connection failures should remain distinguishable so that
+retry policies and diagnostics can classify them accurately.</p>
+</section>
+<section id="proxies-and-redirects">
+<h2>Proxies and redirects<a class="headerlink" href="#proxies-and-redirects" title="Link to this heading">#</a></h2>
+<p>Proxy configuration determines whether the transport resolves the proxy
+hostname, the origin hostname, or both. Custom DNS integration must preserve the
+transport's proxy semantics rather than resolving and replacing every hostname
+in advance.</p>
+<p>When a redirect changes the origin hostname, any custom resolution must be
+applied to the new hostname. Redirect handling must continue to preserve the
+new origin's HTTP and TLS identity.</p>
+</section>
+<section id="timeouts-and-cancellation">
+<h2>Timeouts and cancellation<a class="headerlink" href="#timeouts-and-cancellation" title="Link to this heading">#</a></h2>
+<p>The transport should bound DNS resolution with a connection or operation
+deadline. It can expose a separate DNS timeout, include resolution in its
+connection timeout, or use a single operation deadline. Transport documentation
+should define which deadline covers resolution and apply it to every lookup.</p>
+<p>Asynchronous transports should support cancellation while resolution is
+pending when their resolver APIs allow it. If a system resolver cannot be
+cancelled, cancellation should prevent its eventual result from starting a
+connection after the request has been abandoned.</p>
+</section>
+<section id="security">
+<h2>Security<a class="headerlink" href="#security" title="Link to this heading">#</a></h2>
+<p>Implementations should treat DNS results as untrusted network input. Resolving a
+hostname does not establish the identity of the remote peer. Authentication and
+TLS certificate verification must continue to use the original hostname.</p>
+<p>Features that restrict requests to particular networks must validate resolved
+addresses, not only the hostname text. They should validate the address the
+transport connects to at connection time, including after redirects and later
+resolutions, so that DNS changes cannot bypass the restriction.</p>
+<p>Explicit static hostname mappings should take precedence only when configured
+for the transport or call where they are intended. They should not silently
+replace system resolution globally.</p>
+</section>
+<section id="observability">
+<h2>Observability<a class="headerlink" href="#observability" title="Link to this heading">#</a></h2>
+<p>Transports should make DNS failures distinguishable from connection, TLS, and
+HTTP failures. DNS telemetry can record:</p>
+<ul class="simple">
+<li><p>Resolution duration.</p></li>
+<li><p>Whether a result came from a cache, when that information is available.</p></li>
+<li><p>The number and address families of returned addresses.</p></li>
+<li><p>Failure category.</p></li>
+</ul>
+<p>Observability callbacks must not delay resolution or change control flow.
+Implementations should treat hostnames and resolved addresses as customer
+network information and record them only when the telemetry policy permits it.</p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
+<p>A static or fake resolver can test the following behavior without public DNS:</p>
+<ul class="simple">
+<li><p>IPv4-only, IPv6-only, and mixed address results.</p></li>
+<li><p>Multiple addresses and connection failover.</p></li>
+<li><p>Empty results and resolution errors.</p></li>
+<li><p>IP literals bypassing resolution.</p></li>
+<li><p>Preservation of HTTP authority, TLS SNI, and certificate verification.</p></li>
+<li><p>Pooled connections that do not resolve on every request.</p></li>
+<li><p>Retries that use another known address without unbounded re-resolution.</p></li>
+<li><p>Proxy and redirect behavior.</p></li>
+<li><p>Resolver timeouts, cancellation, and concurrent calls.</p></li>
+<li><p>Cache hits, expiry, invalidation, and negative results when custom caching is
+implemented.</p></li>
+<li><p>Temporary address deprioritization when failure feedback is implemented.</p></li>
+</ul>
+<p>Integration tests involving a real resolver should use controlled local
+infrastructure. Tests that depend on public DNS records are vulnerable to
+network availability, caching, and record changes outside the test's control.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="endpoints.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Endpoint Resolution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="identity-auth.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Identity and Authentication</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#responsibility-boundaries">Responsibility boundaries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport-integration">Transport integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-resolver-interface">Optional resolver interface</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resolution-inputs">Resolution inputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hostname-identity">Hostname identity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#address-selection-and-connections">Address selection and connections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caching">Caching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retries-and-connection-pools">Retries and connection pools</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#proxies-and-redirects">Proxies and redirects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timeouts-and-cancellation">Timeouts and cancellation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#security">Security</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observability">Observability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Amazon Web Services
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, Amazon Web Services.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

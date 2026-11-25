@@ -530,9 +530,21 @@ ways:
   expression that locates its value on the appropriate side.
 * **Inferred**: an ``identifiersFrom`` or ``propertiesFrom`` expression points
   at a nested structure or a projection whose members are matched by name to the
-  resource's identifiers or properties. Member-name differences are reconciled
-  with the :ref:`property-trait` and :ref:`resourceIdentifier-trait`, and the
-  :ref:`notProperty-trait` excludes a member.
+  resource's identifiers or properties. The :ref:`resourceIdentifier-trait` and
+  :ref:`property-trait` reconcile name differences and decide whether a member is
+  an identifier or a property. A member with the ``resourceIdentifier`` trait, or
+  with another trait that is marked with the :ref:`notProperty-trait`, is not
+  bound to a property.
+
+  The structure may carry both the resource's identifiers and its properties.
+  When inferring properties, a member that matches an identifier is not
+  inferred, and when inferring identifiers, a member that matches a property is
+  not inferred. Such a member must still target the shape of the identifier or
+  property it matches.
+
+  Any other member is an error unless it is excluded, either with the
+  ``notProperty`` trait where its selector allows it or with another trait that
+  is marked with ``notProperty``.
 * **Unspecified**: neither the explicit map nor the ``...From`` pointer is set.
   The binding only asserts that the operation affects the resource; nothing is
   inferred and nothing is validated for it. For example,
@@ -543,6 +555,14 @@ The explicit map and the ``...From`` pointer may be combined; the map overrides
 inference for a given name. The value located for an identifier must match the
 resource identifier's target shape, and the value located for a property must
 match the resource property's target shape.
+
+A property that a binding locates satisfies the requirement that every declared
+:ref:`resource property <resource-properties>` is used. A property only counts as
+located when its locator or ``...From`` pointer resolves against the operation's
+input or output. A binding on the resource's own lifecycle operation of the same
+kind, such as ``@readsResources`` on the resource's ``read`` operation, is
+redundant and does not count; that operation's members are bound to the resource
+directly.
 
 .. _supported-jmespath:
 

@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -982,7 +987,7 @@ to the <code class="docutils literal notranslate"><span class="pre">&#64;httpApi
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Add the HTTP auth scheme to the classpath</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-http:1.8.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-http:1.9.1"</span><span class="p">)</span>
 <span class="w">    </span><span class="c1">// ...</span>
 <span class="p">}</span>
 </pre></div>

@@ -61,6 +61,7 @@ application-protocols/index
 context
 retries
 endpoints
+dns
 identity-auth
 plugins
 interceptors

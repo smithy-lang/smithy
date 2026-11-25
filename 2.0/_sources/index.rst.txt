@@ -126,6 +126,7 @@ See https://github.com/smithy-lang/awesome-smithy.
     languages/typescript/index
     languages/rust/index
     languages/python/index
+    languages/php/index
     languages/kotlin/index
     languages/golang/index
     languages/scala/index

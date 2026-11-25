@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client-guidance/dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="client-guidance/interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -809,7 +814,7 @@ validators, transforms, and other extensions.</p></td>
 <span class="w">    </span><span class="nt">"imports"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"foo.json"</span><span class="p">,</span><span class="w"> </span><span class="s2">"some/directory"</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.75.0"</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.75.1"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">"projections"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1077,7 +1082,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.75.0"</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-aws-traits:1.75.1"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1444,7 +1449,7 @@ the compiled <a class="reference internal" href="../additional-specs/rules-engin
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">"maven"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-rules-engine:1.75.0"</span>
+<span class="w">            </span><span class="s2">"software.amazon.smithy:smithy-rules-engine:1.75.1"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1454,7 +1459,7 @@ the compiled <a class="reference internal" href="../additional-specs/rules-engin
 <p class="admonition-title">Note</p>
 <p>AWS services like <code class="docutils literal notranslate"><span class="pre">S3</span></code> can have special tree transformations that dramatically improve the BDD compiled result
 both in size and performance. To use them, please use the dedicated transform <code class="docutils literal notranslate"><span class="pre">compileBddForAws</span></code> and
-include the dependency of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-endpoints:1.75.0</span></code>.</p>
+include the dependency of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-endpoints:1.75.1</span></code>.</p>
 </div>
 </section>
 <section id="excludeshapesbyselector">

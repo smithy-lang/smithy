@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1203,15 +1208,26 @@ a resource is deleted by its identifier alone.</p>
 <h3>Specifying identifiers and properties<a class="headerlink" href="#specifying-identifiers-and-properties" title="Link to this heading">#</a></h3>
 <p>Identifiers and properties are each optional and are specified in one of three
 ways:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Explicit</strong>: an <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> or <code class="docutils literal notranslate"><span class="pre">properties</span></code> map associates each
 resource identifier or property name with a <a class="reference internal" href="#supported-jmespath"><span class="std std-ref">JMESPath</span></a>
 expression that locates its value on the appropriate side.</p></li>
 <li><p><strong>Inferred</strong>: an <code class="docutils literal notranslate"><span class="pre">identifiersFrom</span></code> or <code class="docutils literal notranslate"><span class="pre">propertiesFrom</span></code> expression points
 at a nested structure or a projection whose members are matched by name to the
-resource's identifiers or properties. Member-name differences are reconciled
-with the <a class="reference internal" href="#property-trait"><span class="std std-ref">property trait</span></a> and <a class="reference internal" href="#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a>, and the
-<a class="reference internal" href="#notproperty-trait"><span class="std std-ref">notProperty trait</span></a> excludes a member.</p></li>
+resource's identifiers or properties. The <a class="reference internal" href="#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> and
+<a class="reference internal" href="#property-trait"><span class="std std-ref">property trait</span></a> reconcile name differences and decide whether a member is
+an identifier or a property. A member with the <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait, or
+with another trait that is marked with the <a class="reference internal" href="#notproperty-trait"><span class="std std-ref">notProperty trait</span></a>, is not
+bound to a property.</p>
+<p>The structure may carry both the resource's identifiers and its properties.
+When inferring properties, a member that matches an identifier is not
+inferred, and when inferring identifiers, a member that matches a property is
+not inferred. Such a member must still target the shape of the identifier or
+property it matches.</p>
+<p>Any other member is an error unless it is excluded, either with the
+<code class="docutils literal notranslate"><span class="pre">notProperty</span></code> trait where its selector allows it or with another trait that
+is marked with <code class="docutils literal notranslate"><span class="pre">notProperty</span></code>.</p>
+</li>
 <li><p><strong>Unspecified</strong>: neither the explicit map nor the <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointer is set.
 The binding only asserts that the operation affects the resource; nothing is
 inferred and nothing is validated for it. For example,
@@ -1222,6 +1238,13 @@ creates a <code class="docutils literal notranslate"><span class="pre">Forecast<
 inference for a given name. The value located for an identifier must match the
 resource identifier's target shape, and the value located for a property must
 match the resource property's target shape.</p>
+<p>A property that a binding locates satisfies the requirement that every declared
+<a class="reference internal" href="service-types.html#resource-properties"><span class="std std-ref">resource property</span></a> is used. A property only counts as
+located when its locator or <code class="docutils literal notranslate"><span class="pre">...From</span></code> pointer resolves against the operation's
+input or output. A binding on the resource's own lifecycle operation of the same
+kind, such as <code class="docutils literal notranslate"><span class="pre">&#64;readsResources</span></code> on the resource's <code class="docutils literal notranslate"><span class="pre">read</span></code> operation, is
+redundant and does not count; that operation's members are bound to the resource
+directly.</p>
 </section>
 <section id="supported-jmespath">
 <span id="id8"></span><h3>Supported JMESPath<a class="headerlink" href="#supported-jmespath" title="Link to this heading">#</a></h3>

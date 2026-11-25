@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../guides/client-guidance/interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -685,7 +690,7 @@ The plugin facilitates testing client request/responses without the need to set 
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-mock-plugin:1.8.0"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">"software.amazon.smithy.java:client-mock-plugin:1.9.1"</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -749,7 +754,7 @@ The plugin facilitates testing client request/responses without the need to set 
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">smithy</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">1.8.0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.9.1</span></code></p></td>
 <td><p>Smithy Java version in use by client in SemVer format.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ua</span></code></p></td>

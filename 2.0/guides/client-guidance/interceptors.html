@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Client Plugins</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -654,7 +659,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hooks">Hooks</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifybeforecall">modifyBeforeCall</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-guidance-interceptors-modify-before-call">modifyBeforeCall</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#call-wrappers">Call wrappers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-sequence">Hook sequence</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a><ul class="nav section-nav flex-column">
@@ -686,8 +691,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="interceptors">
-<span id="client-guidance-interceptors"></span><h1>Interceptors<a class="headerlink" href="#interceptors" title="Link to this heading">#</a></h1>
+  <section id="client-guidance-interceptors">
+<span id="interceptors"></span><h1>Interceptors<a class="headerlink" href="#client-guidance-interceptors" title="Link to this heading">#</a></h1>
 <p>An <strong>interceptor</strong> is a general-purpose extension point that allows code to
 observe or modify <em>specific</em> stages of a request execution, such as
 serialization, signing, transmission, and deserialization. Interceptors may
@@ -716,8 +721,8 @@ easier to reason about, and helps to ensure that a change in execution order
 doesn't result in different behavior.</p>
 <p>Hooks are intended to be lightweight, so blocking operations should not be
 supported.</p>
-<section id="modifybeforecall">
-<span id="client-guidance-interceptors-modify-before-call"></span><h3>modifyBeforeCall<a class="headerlink" href="#modifybeforecall" title="Link to this heading">#</a></h3>
+<section id="client-guidance-interceptors-modify-before-call">
+<span id="modifybeforecall"></span><h3>modifyBeforeCall<a class="headerlink" href="#client-guidance-interceptors-modify-before-call" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">modifyBeforeCall</span></code> is the first interceptor hook invoked for a call. It runs
 once per call, before call wrappers and outside the execution and retry
 lifecycles. The hook receives the operation input and current client
@@ -1144,7 +1149,7 @@ and deserialization stages retain their defined ordering.</p>
   <nav id="pst-page-toc-nav" class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hooks">Hooks</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifybeforecall">modifyBeforeCall</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#client-guidance-interceptors-modify-before-call">modifyBeforeCall</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#call-wrappers">Call wrappers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hook-sequence">Hook sequence</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling</a><ul class="nav section-nav flex-column">

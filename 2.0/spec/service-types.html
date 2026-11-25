@@ -381,6 +381,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/context.html">Context</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/retries.html">Retrying Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/endpoints.html">Endpoint Resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/dns.html">DNS Resolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/identity-auth.html">Identity and Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/plugins.html">Client Plugins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../guides/client-guidance/interceptors.html">Interceptors</a></li>
@@ -460,7 +461,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java">Source code</a></li>
-<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.8.0/examples">Smithy Java Examples</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-java/tree/1.9.1/examples">Smithy Java Examples</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/typescript/index.html">TypeScript</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -484,6 +485,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/python/index.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-python">Source code</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../languages/php/index.html">PHP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/smithy-lang/smithy-php">Source code</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../languages/kotlin/index.html">Kotlin</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1374,9 +1379,11 @@ binding, the explicit identifier binding is utilized.</p>
 Properties can be referred to in the top level input and output shapes
 of a resource's instance operations, including create, read, update,
 delete, and put, and in the list element of a collection operation's
-input or output. All declared resource properties MUST appear in at
-least one instance operation's input or output, or in the list element
-of a collection operation's input or output.</p>
+input or output. Every declared resource property MUST either appear in
+at least one instance operation's input or output or in the list element
+of a collection operation's input or output, or be located by a
+<a class="reference internal" href="resource-traits.html#resource-lifecycle-association-traits"><span class="std std-ref">resource lifecycle association trait</span></a>
+binding.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single property <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> read by the GetForecast operation, and the
 output operation shape <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> contains that output property.</p>
