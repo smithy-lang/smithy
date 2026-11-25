@@ -1,0 +1,60 @@
+{
+  "version": "1.75.1",
+  "changes": [
+    {
+      "type": "bugfix",
+      "description": "Fix recursive union validation to require all required structure members to terminate.",
+      "pull_requests": [
+        "[#3370](https://github.com/smithy-lang/smithy/pull/3370)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix `propertiesFrom` and `identifiersFrom` inference in resource lifecycle traits: allow structures that carry both the resource's identifiers and its properties, let `@resourceIdentifier` and `@property` decide a member's kind, honor traits marked `@notProperty`, and type-check every member bound to an identifier or property.",
+      "pull_requests": [
+        "[#3381](https://github.com/smithy-lang/smithy/pull/3381)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Count resource properties located by resource lifecycle trait bindings as used in `ResourceOperationInputOutput` validation.",
+      "pull_requests": [
+        "[#3380](https://github.com/smithy-lang/smithy/pull/3380)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix quadratic-time container lookup in ModelTransformer.replaceShapes.",
+      "pull_requests": [
+        "[#3368](https://github.com/smithy-lang/smithy/pull/3368)"
+      ]
+    },
+    {
+      "type": "bugfix",
+      "description": "Fix exponential time in `TopologicalIndex` on models with many converging paths. Recursive closures are now computed lazily and capped for very large models.",
+      "pull_requests": [
+        "[#3373](https://github.com/smithy-lang/smithy/pull/3373)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added a documentation placeholder for Smithy PHP.",
+      "pull_requests": [
+        "[#3374](https://github.com/smithy-lang/smithy/pull/3374)"
+      ]
+    },
+    {
+      "type": "documentation",
+      "description": "Added client guidance for DNS resolution and transport integration.",
+      "pull_requests": [
+        "[#3360](https://github.com/smithy-lang/smithy/pull/3360)"
+      ]
+    },
+    {
+      "type": "other",
+      "description": "Updated the bundled Smithy CLI runtime images to include the latest Amazon Corretto 25 fixes.",
+      "pull_requests": []
+    }
+  ],
+  "date": "2026-11-25"
+}

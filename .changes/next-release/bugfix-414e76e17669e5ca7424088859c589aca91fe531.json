@@ -1,7 +1,0 @@
-{
-  "type": "bugfix",
-  "description": "Fix `propertiesFrom` and `identifiersFrom` inference in resource lifecycle traits: allow structures that carry both the resource's identifiers and its properties, let `@resourceIdentifier` and `@property` decide a member's kind, honor traits marked `@notProperty`, and type-check every member bound to an identifier or property.",
-  "pull_requests": [
-    "[#3381](https://github.com/smithy-lang/smithy/pull/3381)"
-  ]
-}

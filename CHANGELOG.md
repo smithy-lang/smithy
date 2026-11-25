@@ -1,5 +1,38 @@
 # Smithy Changelog
 
+## 1.75.1 (2026-11-25)
+
+### Bug Fixes
+
+- Fix recursive union validation to require all required structure members to
+  terminate. ([#3370](https://github.com/smithy-lang/smithy/pull/3370))
+- Fix `propertiesFrom` and `identifiersFrom` inference in resource lifecycle
+  traits: allow structures that carry both the resource's identifiers and its
+  properties, let `@resourceIdentifier` and `@property` decide a member's kind,
+  honor traits marked `@notProperty`, and type-check every member bound to an
+  identifier or property.
+  ([#3381](https://github.com/smithy-lang/smithy/pull/3381))
+- Count resource properties located by resource lifecycle trait bindings as used
+  in `ResourceOperationInputOutput` validation.
+  ([#3380](https://github.com/smithy-lang/smithy/pull/3380))
+- Fix quadratic-time container lookup in ModelTransformer.replaceShapes.
+  ([#3368](https://github.com/smithy-lang/smithy/pull/3368))
+- Fix exponential time in `TopologicalIndex` on models with many converging
+  paths. Recursive closures are now computed lazily and capped for very large
+  models. ([#3373](https://github.com/smithy-lang/smithy/pull/3373))
+
+### Documentation
+
+- Added a documentation placeholder for Smithy PHP.
+  ([#3374](https://github.com/smithy-lang/smithy/pull/3374))
+- Added client guidance for DNS resolution and transport integration.
+  ([#3360](https://github.com/smithy-lang/smithy/pull/3360))
+
+### Other
+
+- Updated the bundled Smithy CLI runtime images to include the latest Amazon
+  Corretto 25 fixes.
+
 ## 1.75.0 (2026-11-09)
 
 ### Features
@@ -4836,4 +4869,3 @@ components of the documentation will have changed.
   ([#162](https://github.com/awslabs/smithy/pull/162))
 - Allow model assembling from symlink model files / directory
   ([#163](https://github.com/awslabs/smithy/pull/163))
-
