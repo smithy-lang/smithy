@@ -6,6 +6,7 @@ package software.amazon.smithy.docgen.generators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URL;
@@ -163,15 +164,17 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
 
                                 :::{important}
                                 This operation returns partial results in pages, whose maximum size may be
-                                configured with [pageSize](./PaginatedOperation.md#paginatedoperation-request-members-pagesize). Each request may return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken) that may be used as an [input token](./PaginatedOperation.md#paginatedoperation-request-members-nexttoken) in subsequent requests to fetch the next page of results. If the operation does not return an [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), that means that there are no more results. If the operation returns a repeated [output token](./PaginatedOperation.md#paginatedoperation-response-members-nexttoken), there MAY be more results later.
+                                configured with [pageSize](#paginatedoperation-request-members-pagesize). Each request may return an [output token](#paginatedoperation-response-members-nexttoken) that may be used as an [input token](#paginatedoperation-request-members-nexttoken) in subsequent requests to fetch the next page of results. If the operation does not return an [output token](#paginatedoperation-response-members-nexttoken), that means that there are no more results. If the operation returns a repeated [output token](#paginatedoperation-response-members-nexttoken), there MAY be more results later.
                                 :::
 
                                 (paginatedoperation-request-members)=
                                 ## Request Members
 
+                                (paginatedoperation-request-members-nexttoken)=
                                 **nextToken (String)**
                                 : Placeholder documentation for `smithy.example#PaginatedOperationInput$nextToken`
 
+                                (paginatedoperation-request-members-pagesize)=
                                 **pageSize (Integer)**
                                 : Placeholder documentation for `smithy.example#PaginatedOperationInput$pageSize`
 
@@ -179,12 +182,41 @@ public class OperationGeneratorTest extends AbstractDocGenFileTest {
                                 (paginatedoperation-response-members)=
                                 ## Response Members
 
+                                (paginatedoperation-response-members-items)=
                                 **items (List\\<String\\>)**
                                 : Placeholder documentation for `smithy.example#PaginatedOperationOutput$items`
 
+                                (paginatedoperation-response-members-nexttoken)=
                                 **nextToken (String)**
                                 : Placeholder documentation for `smithy.example#PaginatedOperationOutput$nextToken`
                                 """));
 
+    }
+
+    @Test
+    public void testLinksWithinPageUseFragmentOnly() {
+        MockManifest manifest = new MockManifest();
+        execute(manifest);
+        var operationDocs = manifest.expectFileString("/content/operations/PaginatedOperation.md");
+        assertThat(operationDocs,
+                containsString("[pageSize](#paginatedoperation-request-members-pagesize)"));
+        assertThat(operationDocs, not(containsString("](./PaginatedOperation.md#")));
+    }
+
+    @Test
+    public void testLinksToOtherPagesKeepPath() {
+        MockManifest manifest = new MockManifest();
+        execute(manifest);
+        var operationDocs = manifest.expectFileString("/content/operations/GroupOperation.md");
+        assertThat(operationDocs, containsString("[Group](./../shapes/Group.md#group)"));
+    }
+
+    @Test
+    public void testMemberAnchorDoesNotDuplicateListingAnchor() {
+        MockManifest manifest = new MockManifest();
+        execute(manifest);
+        var shapeDocs = manifest.expectFileString("/content/shapes/Group.md");
+        assertThat(shapeDocs, containsString("(group-members)="));
+        assertThat(shapeDocs.indexOf("(group-members)="), equalTo(shapeDocs.lastIndexOf("(group-members)=")));
     }
 }
