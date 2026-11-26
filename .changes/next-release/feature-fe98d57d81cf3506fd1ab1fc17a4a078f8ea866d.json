@@ -1,0 +1,7 @@
+{
+  "type": "feature",
+  "description": "Retry Maven dependency resolution in the Smithy CLI when a transfer fails with a connection, DNS, TLS, or timeout error, or when a repository returns HTTP 500, 502, or 504.",
+  "pull_requests": [
+    "[#3383](https://github.com/smithy-lang/smithy/pull/3383)"
+  ]
+}
