@@ -5,3 +5,6 @@
 [SUPPRESSED] -: Unable to locate a validator named `UnknownValidator2` (Please ignore this) | UnknownValidator_UnknownValidator2
 [WARNING] -: Unable to locate a validator named `UnknownValidator1` | UnknownValidator_UnknownValidator1
 [SUPPRESSED] smithy.example#MyService: This is suppressed | SuppressedValidator.Foo
+[WARNING] smithy.example#MyService: The `@suppress` trait value `IgnoreMe` did not match any validation events. | UnusedSuppression
+[WARNING] smithy.example#GetFoo: The `@suppress` trait value `IgnoreMe.Too` did not match any validation events. | UnusedSuppression
+[WARNING] -: The suppression with ID `SuppressedValidator.Foo` in namespace `smithy.example.ignore.this.one` did not match any validation events. | UnusedSuppression

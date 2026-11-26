@@ -64,7 +64,13 @@ public class ModelBasedEventDecoratorTest {
 
         // Every event should have the applied hint.
         for (ValidationEvent event : result.getValidationEvents()) {
-            assertThat(event.getHint(), equalTo(Optional.of("hi")));
+            // No-op suppression warnings intentionally bypass decorators so that they
+            // cannot be silenced by the suppressions they warn about. This test's
+            // validator factory loads no validators, so the fixture's suppression
+            // matches no events and results in an undecorated warning.
+            if (!event.getId().equals(ModelBasedEventDecorator.UNUSED_SUPPRESSION_EVENT_ID)) {
+                assertThat(event.getHint(), equalTo(Optional.of("hi")));
+            }
         }
     }
 
