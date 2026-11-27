@@ -153,7 +153,7 @@ final class FormatVisitor {
             }
 
             case ENUM_SHAPE_MEMBERS: {
-                return renderMembers(cursor, TreeType.ENUM_SHAPE_MEMBER);
+                return renderMembers(cursor, TreeType.ENUM_SHAPE_MEMBER, Formatter.LINE_OR_SPACE);
             }
 
             case ENUM_SHAPE_MEMBER: {
@@ -175,13 +175,7 @@ final class FormatVisitor {
             }
 
             case SHAPE_MEMBERS: {
-                int previousWidth = memberIndexWidth;
-                memberIndexWidth = findMemberIndexWidth(cursor);
-                try {
-                    return renderMembers(cursor, TreeType.SHAPE_MEMBER);
-                } finally {
-                    memberIndexWidth = previousWidth;
-                }
+                return renderShapeMembers(cursor, Formatter.LINE_OR_SPACE);
             }
 
             case SHAPE_MEMBER: {
@@ -259,7 +253,7 @@ final class FormatVisitor {
             }
 
             case OPERATION_BODY: {
-                return renderMembers(cursor, TreeType.OPERATION_PROPERTY);
+                return renderMembers(cursor, TreeType.OPERATION_PROPERTY, Formatter.LINE_OR_SPACE);
             }
 
             case OPERATION_INPUT: {
@@ -287,8 +281,13 @@ final class FormatVisitor {
                 boolean hasTraits = Optional.ofNullable(cursor.getFirstChild(TreeType.TRAIT_STATEMENTS))
                         .filter(c -> !c.getChildrenByType(TreeType.TRAIT).isEmpty())
                         .isPresent();
-                Doc memberDoc = visit(cursor.getFirstChild(TreeType.SHAPE_MEMBERS));
+                TreeCursor members = cursor.getFirstChild(TreeType.SHAPE_MEMBERS);
                 if (hasComment || hasTraits) {
+                    // An annotation already ends the line. Only separate the braces from a for/with clause.
+                    boolean hasClause =
+                            cursor.getFirstChild(TreeType.FOR_RESOURCE) != null
+                                    || cursor.getFirstChild(TreeType.MIXINS) != null;
+                    Doc memberDoc = renderShapeMembers(members, hasClause ? Formatter.LINE_OR_SPACE : Doc.empty());
                     return Doc.text(" :=")
                             .append(Doc.line())
                             .append(skippedComments(cursor, false))
@@ -297,7 +296,7 @@ final class FormatVisitor {
                             .indent(4);
                 }
 
-                return formatShape(cursor, Doc.text(" :="), memberDoc);
+                return formatShape(cursor, Doc.text(" :="), visit(members));
             }
 
             case OPERATION_ERRORS: {
@@ -792,8 +791,18 @@ final class FormatVisitor {
         return false;
     }
 
+    private Doc renderShapeMembers(TreeCursor cursor, Doc openingSeparator) {
+        int previousWidth = memberIndexWidth;
+        memberIndexWidth = findMemberIndexWidth(cursor);
+        try {
+            return renderMembers(cursor, TreeType.SHAPE_MEMBER, openingSeparator);
+        } finally {
+            memberIndexWidth = previousWidth;
+        }
+    }
+
     // Renders "members" in braces, grouping related comments and members together.
-    private Doc renderMembers(TreeCursor container, TreeType memberType) {
+    private Doc renderMembers(TreeCursor container, TreeType memberType, Doc openingSeparator) {
         boolean useDoubleLineSeparator = hasNonInlineAnnotations(container, memberType);
         Doc separator = useDoubleLineSeparator ? Doc.line().append(Doc.line()) : Doc.line();
         List<TreeCursor> members = container.getChildrenByType(memberType, TreeType.WS);
@@ -801,7 +810,7 @@ final class FormatVisitor {
         members.removeIf(c -> c.getTree().getType() == TreeType.WS && !hasComment(c));
         // Empty structures render as "{}".
         if (!useDoubleLineSeparator && members.isEmpty()) {
-            return Doc.group(Formatter.LINE_OR_SPACE.append(Doc.text("{}")));
+            return Doc.group(openingSeparator.append(Doc.text("{}")));
         }
 
         // Group consecutive comments and members together, and add a new line after each member.
@@ -859,7 +868,7 @@ final class FormatVisitor {
             memberDocs.add(current);
         }
 
-        Doc open = Formatter.LINE_OR_SPACE.append(Formatter.LBRACE);
+        Doc open = openingSeparator.append(Formatter.LBRACE);
         return renderBlock(open, Formatter.RBRACE, Doc.intersperse(separator, memberDocs));
     }
 
