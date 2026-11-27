@@ -7,7 +7,6 @@ package software.amazon.smithy.jmespath.evaluation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.jmespath.JmespathExpression;
 
 class SortByFunction implements Function {
     @Override
@@ -19,7 +18,8 @@ class SortByFunction implements Function {
     public <T> T apply(JmespathRuntime<T> runtime, List<FunctionArgument<T>> functionArguments) {
         checkArgumentCount(2, functionArguments);
         T array = functionArguments.get(0).expectArray();
-        JmespathExpression expression = functionArguments.get(1).expectExpression();
+        FunctionArgument<T> expression = functionArguments.get(1);
+        expression.expectExpression();
 
         List<T> elements = new ArrayList<>();
         for (T element : runtime.asIterable(array)) {
@@ -27,8 +27,8 @@ class SortByFunction implements Function {
         }
 
         Collections.sort(elements, (a, b) -> {
-            T aValue = expression.evaluate(a, runtime);
-            T bValue = expression.evaluate(b, runtime);
+            T aValue = expression.evaluateExpression(a);
+            T bValue = expression.evaluateExpression(b);
             return runtime.compare(aValue, bValue);
         });
 

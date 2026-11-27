@@ -2,6 +2,7 @@ basic.json
 benchmarks.json
 boolean.json
 current.json
+custom_functions.json
 escape.json
 filters.json
 functions.json

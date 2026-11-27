@@ -107,6 +107,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final ObjectNode input;
         private final ObjectNode output;
         private final ErrorExample error;
+        private final ObjectNode before;
+        private final ObjectNode after;
         private final boolean allowConstraintErrors;
 
         private Example(Builder builder) {
@@ -115,6 +117,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             this.input = builder.input;
             this.output = builder.output;
             this.error = builder.error;
+            this.before = builder.before;
+            this.after = builder.after;
             this.allowConstraintErrors = builder.allowConstraintErrors;
         }
 
@@ -154,6 +158,20 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         /**
+         * @return Gets the ghost pre-state snapshot (model-only).
+         */
+        public Optional<ObjectNode> getBefore() {
+            return Optional.ofNullable(before);
+        }
+
+        /**
+         * @return Gets the ghost post-state snapshot (model-only).
+         */
+        public Optional<ObjectNode> getAfter() {
+            return Optional.ofNullable(after);
+        }
+
+        /**
          * @return Returns true if input constraints errors are allowed.
          */
         public boolean getAllowConstraintErrors() {
@@ -173,6 +191,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
             }
+
+            builder.withOptionalMember("before", getBefore());
+            builder.withOptionalMember("after", getAfter());
 
             if (this.allowConstraintErrors) {
                 builder.withMember("allowConstraintErrors", BooleanNode.from(allowConstraintErrors));
@@ -194,12 +215,14 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     && Objects.equals(documentation, example.documentation)
                     && Objects.equals(input, example.input)
                     && Objects.equals(output, example.output)
-                    && Objects.equals(error, example.error);
+                    && Objects.equals(error, example.error)
+                    && Objects.equals(before, example.before)
+                    && Objects.equals(after, example.after);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, documentation, input, output, error, allowConstraintErrors);
+            return Objects.hash(title, documentation, input, output, error, before, after, allowConstraintErrors);
         }
 
         @Override
@@ -209,6 +232,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .input(input)
                     .output(output)
                     .error(error)
+                    .before(before)
+                    .after(after)
                     .allowConstraintErrors(allowConstraintErrors);
         }
 
@@ -225,6 +250,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private ObjectNode input = Node.objectNode();
             private ObjectNode output;
             private ErrorExample error;
+            private ObjectNode before;
+            private ObjectNode after;
             private boolean allowConstraintErrors;
 
             @Override
@@ -254,6 +281,16 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
             public Builder error(ErrorExample error) {
                 this.error = error;
+                return this;
+            }
+
+            public Builder before(ObjectNode before) {
+                this.before = before;
+                return this;
+            }
+
+            public Builder after(ObjectNode after) {
+                this.after = after;
                 return this;
             }
 
@@ -372,6 +409,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .getObjectMember("input", builder::input)
                     .getObjectMember("output", builder::output)
                     .getMember("error", ErrorExample::fromNode, builder::error)
+                    .getObjectMember("before", builder::before)
+                    .getObjectMember("after", builder::after)
                     .getBooleanMember("allowConstraintErrors", builder::allowConstraintErrors);
             return builder.build();
         }

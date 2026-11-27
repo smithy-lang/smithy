@@ -7,10 +7,14 @@ package software.amazon.smithy.model.validation;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeTypeFilter;
@@ -27,6 +31,7 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
             new EnumMap<>(ShapeType.class);
     private final EnumMap<ShapeType, List<NodeValidatorPlugin>> pluginsForTargetShapeTypes =
             new EnumMap<>(ShapeType.class);
+    private final Set<NodeValidatorPlugin> allPlugins = new LinkedHashSet<>();
 
     CompositeNodeValidatorPlugin() {
         for (ShapeType shapeType : ShapeType.values()) {
@@ -52,6 +57,15 @@ final class CompositeNodeValidatorPlugin implements NodeValidatorPlugin {
         }
         for (ShapeType shapeType : filter.targetShapeTypes()) {
             pluginsForTargetShapeTypes.get(shapeType).add(plugin);
+        }
+        allPlugins.add(plugin);
+    }
+
+    // Operation calls are not dispatched by shape type, so every plugin gets the call and
+    // decides for itself (the default applyForOperationCall does nothing).
+    public void applyForOperationCall(OperationShape operation, ObjectNode call, Context context, Emitter emitter) {
+        for (NodeValidatorPlugin plugin : allPlugins) {
+            plugin.applyForOperationCall(operation, call, context, emitter);
         }
     }
 

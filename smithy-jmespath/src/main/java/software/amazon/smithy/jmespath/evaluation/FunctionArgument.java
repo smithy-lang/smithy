@@ -13,9 +13,11 @@ import software.amazon.smithy.jmespath.RuntimeType;
 abstract class FunctionArgument<T> {
 
     protected final JmespathRuntime<T> runtime;
+    protected final boolean modelOnlyFunctions;
 
-    protected FunctionArgument(JmespathRuntime<T> runtime) {
+    protected FunctionArgument(JmespathRuntime<T> runtime, boolean modelOnlyFunctions) {
         this.runtime = runtime;
+        this.modelOnlyFunctions = modelOnlyFunctions;
     }
 
     public T expectValue() {
@@ -46,19 +48,30 @@ abstract class FunctionArgument<T> {
         throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, JmespathExpression expression) {
-        return new Expression<T>(runtime, expression);
+    // Evaluates an expression-reference argument against the given current node, carrying
+    // the model-only function opt-in of the evaluation that built this argument so the same
+    // functions resolve inside &expr as outside it.
+    T evaluateExpression(T current) {
+        throw new JmespathException(JmespathExceptionType.INVALID_TYPE, "invalid-type");
     }
 
-    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value) {
-        return new Value<T>(runtime, value);
+    public static <T> FunctionArgument<T> of(
+            JmespathRuntime<T> runtime,
+            JmespathExpression expression,
+            boolean modelOnlyFunctions
+    ) {
+        return new Expression<T>(runtime, expression, modelOnlyFunctions);
+    }
+
+    public static <T> FunctionArgument<T> of(JmespathRuntime<T> runtime, T value, boolean modelOnlyFunctions) {
+        return new Value<T>(runtime, value, modelOnlyFunctions);
     }
 
     static class Value<T> extends FunctionArgument<T> {
         T value;
 
-        public Value(JmespathRuntime<T> runtime, T value) {
-            super(runtime);
+        public Value(JmespathRuntime<T> runtime, T value, boolean modelOnlyFunctions) {
+            super(runtime, modelOnlyFunctions);
             this.value = value;
         }
 
@@ -107,14 +120,19 @@ abstract class FunctionArgument<T> {
     static class Expression<T> extends FunctionArgument<T> {
         JmespathExpression expression;
 
-        public Expression(JmespathRuntime<T> runtime, JmespathExpression expression) {
-            super(runtime);
+        public Expression(JmespathRuntime<T> runtime, JmespathExpression expression, boolean modelOnlyFunctions) {
+            super(runtime, modelOnlyFunctions);
             this.expression = expression;
         }
 
         @Override
         public JmespathExpression expectExpression() {
             return expression;
+        }
+
+        @Override
+        T evaluateExpression(T current) {
+            return new Evaluator<>(current, runtime, modelOnlyFunctions).visit(expression);
         }
     }
 
