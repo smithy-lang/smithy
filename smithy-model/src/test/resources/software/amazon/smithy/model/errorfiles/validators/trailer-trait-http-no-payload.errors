@@ -1,0 +1,2 @@
+[WARNING] smithy.example#DownloadDocumentOutput$checksum: This shape applies a trait that is unstable: smithy.api#trailer | UnstableTrait.smithy.api#trailer
+[DANGER] smithy.example#DownloadDocumentOutput$checksum: This member is marked with the `trailer` trait, so it is not explicitly bound to the HTTP message. No service contains the structure of this member, so no protocol defines how it is populated. Suppress this event if the protocol this model is used with defines how this member is populated. | HttpPayload.UnboundTrailer

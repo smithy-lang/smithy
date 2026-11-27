@@ -1,0 +1,5 @@
+{
+  "type": "feature",
+  "description": "Added the unstable `@trailer` trait, which marks a member whose value can only be resolved after the sibling streaming blob has been fully consumed, such as a checksum sent in an HTTP or aws-chunked trailer. Trailer members of HTTP operations emit an `HttpPayload.UnboundTrailer` event. The event is a WARNING if at least one protocol is applied to the services that contain the member's structure and every one of those protocols lists `smithy.api#trailer` in its `protocolDefinition` traits, and a suppressible DANGER otherwise. OpenAPI conversion fails on trailer members.",
+  "pull_requests": []
+}

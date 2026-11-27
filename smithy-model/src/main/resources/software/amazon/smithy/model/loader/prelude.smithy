@@ -859,6 +859,36 @@ structure streaming {}
 )
 structure requiresLength {}
 
+/// Indicates that a member's value can only be resolved after the sibling
+/// streaming payload has been fully consumed. Protocols define how the value
+/// is populated, but the member MUST NOT be serialized into the
+/// protocol-specific document of the message.
+///
+/// Code generators MUST expose the member as a late-resolving type, such as a
+/// callback, future, or promise. Accessing the value before the payload has
+/// been fully consumed MUST NOT yield a value, and accessing the value after a
+/// failed or abandoned read MUST yield an error. If no value was delivered by
+/// the time the payload was successfully read, accessing the value MUST yield
+/// an error if the member is required; otherwise, it MUST yield the default
+/// value if the member has a default; otherwise, it MUST yield no value.
+///
+/// Producers MUST be able to supply the value until the payload has been
+/// fully written. A value that is never supplied is treated as not delivered.
+@trait(
+    selector: """
+        structure :not(<-[input]- operation)
+                  :test(> member > blob[trait|streaming])
+        > member :not(> [trait|streaming])"""
+    conflicts: [httpHeader, httpPrefixHeaders, httpPayload, httpResponseCode, httpLabel, httpQuery, httpQueryParams]
+    breakingChanges: [
+        {
+            change: "presence"
+        }
+    ]
+)
+@unstable
+structure trailer {}
+
 /// Indicates that the service may not respond immediately to requests for the targeted
 /// operation. This can allow services more time to prepare more detailed responses or
 /// allow them to hold the request open as it waits for information to become

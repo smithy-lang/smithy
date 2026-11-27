@@ -1008,11 +1008,14 @@ Protocol-specific document payloads
 -----------------------------------
 
 By default, all structure members that are not bound as part of the HTTP
-message are serialized in a protocol-specific document sent in the body of
-the message (e.g., a JSON object). The ``httpPayload`` trait can be used to
+message, other than members marked with the :ref:`trailer-trait`, are
+serialized in a protocol-specific document sent in the body of the message
+(e.g., a JSON object). The ``httpPayload`` trait can be used to
 bind a single top-level operation input, output, or error structure member to
 the body of the HTTP message. Multiple members of the same structure MUST NOT
 be bound to ``httpPayload``.
+
+.. _http-payload-binding:
 
 Binding members to ``httpPayload``
 ----------------------------------
@@ -1026,6 +1029,19 @@ If the ``httpPayload`` trait is present on the structure referenced by the
 output of an operation or a structure targeted by the :ref:`error-trait`,
 then all other structure members MUST be bound to a :ref:`httpHeader-trait`
 or :ref:`httpPrefixHeaders-trait`.
+
+Members marked with the :ref:`trailer-trait` are exempt from these
+requirements. Trailer members cannot be bound with HTTP binding traits and are
+not serialized into the protocol-specific document. Instead, protocols define
+how their values are populated. A :ref:`validation event <validation>` with
+the ID ``HttpPayload.UnboundTrailer`` is emitted for each trailer member of an
+operation marked with the :ref:`http-trait`, whether or not another member is
+bound to ``httpPayload``. The event is a ``WARNING`` if at least one protocol
+is applied to the services that contain the member's structure, and every one
+of those protocols lists ``smithy.api#trailer`` in the ``traits`` property of
+its :ref:`protocolDefinition <protocolDefinition-trait>` trait. Otherwise, the
+event is a ``DANGER`` that can be suppressed for a member when the protocol the
+model is used with defines how its value is populated.
 
 Serialization rules
 -------------------

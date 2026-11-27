@@ -1,0 +1,4 @@
+[WARNING] smithy.example#DownloadFileOutput$checksum: This shape applies a trait that is unstable: smithy.api#trailer | UnstableTrait.smithy.api#trailer
+[WARNING] smithy.example#DownloadFileOutput$size: This shape applies a trait that is unstable: smithy.api#trailer | UnstableTrait.smithy.api#trailer
+[WARNING] smithy.example#DownloadFileOutput$status: This shape applies a trait that is unstable: smithy.api#trailer | UnstableTrait.smithy.api#trailer
+[WARNING] smithy.example#Standalone$checksum: This shape applies a trait that is unstable: smithy.api#trailer | UnstableTrait.smithy.api#trailer
