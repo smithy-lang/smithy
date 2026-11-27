@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Send initial messages as empty JSON objects in rpcv2Json event stream\u2026",
+  "pull_requests": [
+    "[#3392](https://github.com/smithy-lang/smithy/pull/3392)"
+  ]
+}

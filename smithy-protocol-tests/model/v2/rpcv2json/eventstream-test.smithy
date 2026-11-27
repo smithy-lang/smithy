@@ -13,7 +13,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Deserializes an event
+            members, so the frame carries an empty JSON object. Deserializes an event
             whose implicit payload carries every scalar type."""
         protocol: rpcv2Json
         events: [
@@ -22,7 +22,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -58,7 +61,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Deserializes an event
+            members, so the frame carries an empty JSON object. Deserializes an event
             whose payload carries lists of scalars."""
         protocol: rpcv2Json
         events: [
@@ -67,7 +70,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -94,7 +100,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Deserializes an event
+            members, so the frame carries an empty JSON object. Deserializes an event
             whose payload carries maps of scalars."""
         protocol: rpcv2Json
         events: [
@@ -103,7 +109,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -130,7 +139,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Deserializes an event
+            members, so the frame carries an empty JSON object. Deserializes an event
             whose payload nests a structure."""
         protocol: rpcv2Json
         events: [
@@ -139,7 +148,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -164,7 +176,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Deserializes an event
+            members, so the frame carries an empty JSON object. Deserializes an event
             whose payload nests a union."""
         protocol: rpcv2Json
         events: [
@@ -173,7 +185,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -198,7 +213,7 @@ apply EventStreamResponse @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseOutput has no non-stream
-            members, so the frame carries no payload. Dispatches a sequence
+            members, so the frame carries an empty JSON object. Dispatches a sequence
             of events to the correct union variants. The heartbeat event
             models an empty structure, so it carries no payload and
             therefore no :content-type header."""
@@ -209,7 +224,10 @@ apply EventStreamResponse @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -276,7 +294,7 @@ apply EventStreamResponseBlobPayload @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseBlobPayloadOutput has no
-            non-stream members, so the frame carries no payload. A blob
+            non-stream members, so the frame carries an empty JSON object. A blob
             @eventPayload is written as the raw message payload, not
             base64-encoded, and takes the application/octet-stream content
             type. The modeled @eventHeader member is carried as a message
@@ -288,7 +306,10 @@ apply EventStreamResponseBlobPayload @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -314,7 +335,7 @@ apply EventStreamResponseStructPayload @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseStructPayloadOutput has no
-            non-stream members, so the frame carries no payload. A structure
+            non-stream members, so the frame carries an empty JSON object. A structure
             @eventPayload is written as the JSON message payload and takes
             the application/json content type. The modeled @eventHeader member
             is carried as a message header and does not appear in the payload."""
@@ -325,7 +346,10 @@ apply EventStreamResponseStructPayload @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -355,7 +379,7 @@ apply EventStreamResponseUnionPayload @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseUnionPayloadOutput has no
-            non-stream members, so the frame carries no payload. A union
+            non-stream members, so the frame carries an empty JSON object. A union
             @eventPayload is written as the JSON message payload and takes
             the application/json content type. The modeled @eventHeader member
             is carried as a message header and does not appear in the payload."""
@@ -366,7 +390,10 @@ apply EventStreamResponseUnionPayload @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -396,7 +423,7 @@ apply EventStreamResponseHeaders @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseHeadersOutput has no
-            non-stream members, so the frame carries no payload. Each
+            non-stream members, so the frame carries an empty JSON object. Each
             @eventHeader member is carried as a typed event stream message
             header rather than in the payload, and a string @eventPayload takes
             the text/plain content type."""
@@ -407,7 +434,10 @@ apply EventStreamResponseHeaders @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -450,7 +480,7 @@ apply EventStreamResponseImplicitPayload @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamResponseImplicitPayloadOutput has no
-            non-stream members, so the frame carries no payload. With no
+            non-stream members, so the frame carries an empty JSON object. With no
             @eventPayload member, the remaining non-header members form
             an implicit document payload. The @eventHeader member is excluded
             from that payload and appears only as a message header."""
@@ -461,7 +491,10 @@ apply EventStreamResponseImplicitPayload @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -493,7 +526,7 @@ apply EventStreamError @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamErrorOutput has no non-stream members,
-            so the frame carries no payload. A modeled error event uses
+            so the frame carries an empty JSON object. A modeled error event uses
             :message-type "exception" and names the union member in
             :exception-type, and resolves to the modeled error shape rather
             than a generic failure."""
@@ -504,7 +537,10 @@ apply EventStreamError @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -531,7 +567,7 @@ apply EventStreamError @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamErrorOutput has no non-stream members,
-            so the frame carries no payload. An error event arriving after
+            so the frame carries an empty JSON object. An error event arriving after
             successfully delivered events still resolves to the modeled
             error shape, so the events preceding it must not mask it."""
         protocol: rpcv2Json
@@ -541,7 +577,10 @@ apply EventStreamError @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -582,7 +621,7 @@ apply EventStreamError @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamErrorOutput has no non-stream members,
-            so the frame carries no payload. Clients must handle a
+            so the frame carries an empty JSON object. Clients must handle a
             structured but unmodeled error, which uses :message-type
             "error" with the code and message carried entirely in headers
             and no payload."""
@@ -593,7 +632,10 @@ apply EventStreamError @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -614,7 +656,7 @@ apply EventStreamError @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamErrorOutput has no non-stream members,
-            so the frame carries no payload. A modeled error is sent as an
+            so the frame carries an empty JSON object. A modeled error is sent as an
             event with :message-type "exception" naming the union member in
             :exception-type, with the error shape serialized as the payload."""
         protocol: rpcv2Json
@@ -624,7 +666,10 @@ apply EventStreamError @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -648,7 +693,7 @@ apply EventStreamError @eventStreamTests([
         documentation: """
             The server always sends an in-band initial-response frame ahead
             of the stream. EventStreamErrorOutput has no non-stream members,
-            so the frame carries no payload. A modeled error raised after
+            so the frame carries an empty JSON object. A modeled error raised after
             events have already been sent is still sent as an exception
             event, following the events that preceded it."""
         protocol: rpcv2Json
@@ -658,7 +703,10 @@ apply EventStreamError @eventStreamTests([
                 headers: {
                     ":message-type": { string: "event" }
                     ":event-type": { string: "initial-response" }
+                    ":content-type": { string: "application/json" }
                 }
+                body: "{}"
+                bodyMediaType: "application/json"
             }
             {
                 type: "response"
@@ -696,7 +744,11 @@ apply EventStreamError @eventStreamTests([
 apply EventStreamRequest @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamRequestSendMessage"
-        documentation: "Serializes a single struct-payload event onto a request stream"
+        documentation: """
+            The client always sends an in-band initial-request frame ahead of
+            the stream. EventStreamRequestInput has no non-stream members, so
+            the frame carries an empty JSON object. Serializes a single
+            struct-payload event onto a request stream."""
         protocol: rpcv2Json
         initialRequest: {
             method: "POST"
@@ -706,6 +758,16 @@ apply EventStreamRequest @eventStreamTests([
         }
         initialRequestShape: InitialHttpRequest
         events: [
+            {
+                type: "request"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-request" }
+                    ":content-type": { string: "application/json" }
+                }
+                body: "{}"
+                bodyMediaType: "application/json"
+            }
             {
                 type: "request"
                 params: {
@@ -725,6 +787,9 @@ apply EventStreamRequest @eventStreamTests([
     {
         id: "RpcV2JsonEventStreamRequestMultipleEvents"
         documentation: """
+            The client always sends an in-band initial-request frame ahead of
+            the stream. EventStreamRequestInput has no non-stream members, so
+            the frame carries an empty JSON object.
             Serializes a sequence of events onto a request stream, closing with
             an empty-structure event that carries no payload and therefore no
             :content-type header."""
@@ -737,6 +802,16 @@ apply EventStreamRequest @eventStreamTests([
         }
         initialRequestShape: InitialHttpRequest
         events: [
+            {
+                type: "request"
+                headers: {
+                    ":message-type": { string: "event" }
+                    ":event-type": { string: "initial-request" }
+                    ":content-type": { string: "application/json" }
+                }
+                body: "{}"
+                bodyMediaType: "application/json"
+            }
             {
                 type: "request"
                 params: {
