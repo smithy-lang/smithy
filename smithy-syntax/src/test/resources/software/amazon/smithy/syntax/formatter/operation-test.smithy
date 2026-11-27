@@ -68,6 +68,24 @@ operation InlineEmptyInputOutputWithComments {
         for Foo {}
 }
 
+operation InlineInputOutputWithAnnotations {
+    input :=
+        /// Input docs.
+        {
+            value: String
+        }
+
+    output :=
+        @since("1.0")
+        {}
+}
+
+operation InlineInputWithTraitsAndMixins {
+    input :=
+        @since("1.0")
+        with [X] {}
+}
+
 structure Struct {}
 
 resource Foo {}

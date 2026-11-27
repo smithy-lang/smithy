@@ -1,0 +1,7 @@
+{
+  "type": "bugfix",
+  "description": "Fix the indentation of inline operation input and output braces after traits or documentation comments.",
+  "pull_requests": [
+    "[#3390](https://github.com/smithy-lang/smithy/pull/3390)"
+  ]
+}
