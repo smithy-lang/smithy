@@ -68,6 +68,7 @@ software.amazon.smithy.model.traits.SuppressTrait$Provider
 software.amazon.smithy.model.traits.TagsTrait$Provider
 software.amazon.smithy.model.traits.TimestampFormatTrait$Provider
 software.amazon.smithy.model.traits.TitleTrait$Provider
+software.amazon.smithy.model.traits.TrailerTrait$Provider
 software.amazon.smithy.model.traits.TraitDefinition$Provider
 software.amazon.smithy.model.traits.NestedPropertiesTrait$Provider
 software.amazon.smithy.model.traits.NotPropertyTrait$Provider

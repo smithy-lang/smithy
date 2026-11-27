@@ -1,0 +1,7 @@
+[ERROR] smithy.example#DownloadConflictOutput$checksum: Found conflicting traits on member shape: `trailer` conflicts with `httpHeader` | TraitConflict
+[ERROR] smithy.example#DownloadConflictOutput$prefixHeaders: Found conflicting traits on member shape: `trailer` conflicts with `httpPrefixHeaders` | TraitConflict
+[ERROR] smithy.example#DownloadConflictOutput$responseCode: Found conflicting traits on member shape: `trailer` conflicts with `httpResponseCode` | TraitConflict
+[ERROR] smithy.example#DownloadConflictOutput$query: Found conflicting traits on member shape: `trailer` conflicts with `httpQuery` | TraitConflict
+[ERROR] smithy.example#DownloadConflictOutput$queryParams: Found conflicting traits on member shape: `trailer` conflicts with `httpQueryParams` | TraitConflict
+[ERROR] smithy.example#DownloadConflictOutput$label: Found conflicting traits on member shape: `trailer` conflicts with `httpLabel` | TraitConflict
+[ERROR] smithy.example#DownloadConflictPayloadOutput$checksum: Found conflicting traits on member shape: `trailer` conflicts with `httpPayload` | TraitConflict

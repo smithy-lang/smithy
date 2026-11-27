@@ -5,6 +5,7 @@
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -263,6 +265,33 @@ public class HttpBindingIndexTest {
 
         assertThat(requestBindings.get("bar").getLocation(), is(HttpBinding.Location.PAYLOAD));
         assertThat(requestBindings.get("baz").getLocation(), is(HttpBinding.Location.UNBOUND));
+    }
+
+    @Test
+    public void trailerMembersAreAlwaysUnbound() {
+        Model model = Model.assembler()
+                .addImport(HttpBindingIndexTest.class.getResource("http-index-trailer.smithy"))
+                .assemble()
+                .getResult()
+                .get();
+        HttpBindingIndex index = HttpBindingIndex.of(model);
+        Map<String, HttpBinding> withPayload = index.getResponseBindings(
+                ShapeId.from("smithy.example#DownloadWithPayload"));
+        Map<String, HttpBinding> withoutPayload = index.getResponseBindings(
+                ShapeId.from("smithy.example#DownloadWithoutPayload"));
+
+        assertThat(withPayload.get("body").getLocation(), is(HttpBinding.Location.PAYLOAD));
+        assertThat(withPayload.get("checksum").getLocation(), is(HttpBinding.Location.UNBOUND));
+        assertThat(withoutPayload.get("body").getLocation(), is(HttpBinding.Location.DOCUMENT));
+        assertThat(withoutPayload.get("name").getLocation(), is(HttpBinding.Location.DOCUMENT));
+        assertThat(withoutPayload.get("checksum").getLocation(), is(HttpBinding.Location.UNBOUND));
+
+        // Trailer members are never part of the document, even when no member is bound to the payload.
+        assertThat(index.getResponseBindings(ShapeId.from("smithy.example#DownloadWithoutPayload"),
+                HttpBinding.Location.DOCUMENT)
+                .stream()
+                .map(HttpBinding::getMemberName)
+                .collect(Collectors.toList()), containsInAnyOrder("body", "name"));
     }
 
     @Test

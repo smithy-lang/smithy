@@ -536,3 +536,124 @@ Validation
     @streaming
     @requiresLength
     blob FiniteStreamingBlob
+
+
+.. smithy-trait:: smithy.api#trailer
+.. _trailer-trait:
+
+``trailer`` trait
+=================
+
+Summary
+    Indicates that the value of a structure member can only be resolved after
+    the sibling streaming blob member of the structure has been fully
+    consumed.
+Trait selector
+    .. code-block:: none
+
+        structure :not(<-[input]- operation)
+                  :test(> member > blob[trait|streaming])
+        > member :not(> [trait|streaming])
+
+    *A member of a structure that is not used as operation input and that
+    contains a member that targets a streaming blob, excluding the streaming
+    member itself*
+Value type
+    Annotation trait.
+Conflicts with
+    :ref:`httpHeader-trait`, :ref:`httpPrefixHeaders-trait`,
+    :ref:`httpPayload-trait`, :ref:`httpQuery-trait`,
+    :ref:`httpQueryParams-trait`, :ref:`httpLabel-trait`,
+    :ref:`httpResponseCode-trait`
+
+.. warning::
+    This trait is unstable and MAY change in the future.
+
+Some values can only be known after a stream has been sent, such as a checksum
+of the streamed data. The ``trailer`` trait marks members that carry these
+values, called :dfn:`trailer members`. The trait only defines when the value of
+a trailer member can be resolved. Protocols define how the value is populated.
+For example, an HTTP-based protocol could send the value in an HTTP trailer
+field or in the trailing headers of an ``aws-chunked`` encoded body. Trailer
+members MUST NOT be serialized into the protocol-specific document of a
+message, such as the JSON object or XML document that is sent before the
+stream.
+
+Protocols that define how trailer members are populated SHOULD list
+``smithy.api#trailer`` in the ``traits`` property of their
+:ref:`protocolDefinition <protocolDefinition-trait>` trait. Trailer members
+of operations marked with the :ref:`http-trait` receive an
+``HttpPayload.UnboundTrailer`` validation event. The event is a ``WARNING`` if
+at least one protocol is applied to the services that contain the member's
+structure and every one of those protocols lists ``smithy.api#trailer``.
+Otherwise, it is a ``DANGER``. See :ref:`http-payload-binding`.
+
+The ``trailer`` trait can only be applied to the non-streaming members of a
+structure that contains a member targeting a streaming blob, and only when that
+structure is not used as operation input. Members of structures that contain an
+:ref:`event stream <event-streams>` are not currently supported.
+
+The following example defines an operation that downloads a file and sends a
+checksum of the file's contents after the contents have been sent:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @readonly
+    operation DownloadFile {
+        input := {
+            @required
+            fileId: String
+        }
+        output := {
+            @required
+            content: StreamingBlob
+
+            @required
+            @trailer
+            checksum: String
+        }
+    }
+
+    @streaming
+    blob StreamingBlob
+
+
+.. _reading-trailer-members:
+
+Reading trailer members
+-----------------------
+
+Code generators MUST expose trailer members using a late-resolving type, such
+as a callback, future, or promise. Consumers of a trailer member, such as a
+client reading a response, MUST observe the following behavior:
+
+* Accessing the value before the streaming payload has been fully consumed
+  MUST NOT yield a value.
+* Accessing the value after reading the streaming payload has failed or been
+  abandoned MUST yield an error.
+* After the streaming payload has been successfully consumed, accessing the
+  value MUST yield the value that was delivered. If no value was delivered:
+
+  * If the member is marked with the :ref:`required-trait`, accessing the
+    value MUST yield an error.
+  * Otherwise, if the member is marked with the :ref:`default-trait`,
+    accessing the value MUST yield the default value.
+  * Otherwise, accessing the value MUST yield no value.
+
+In the example above, a client that fully reads ``content`` but does not
+receive a ``checksum`` MUST yield an error when ``checksum`` is accessed,
+because ``checksum`` is required.
+
+
+.. _writing-trailer-members:
+
+Writing trailer members
+-----------------------
+
+Producers of a trailer member, such as a server writing a response, MUST be
+able to supply the value of the member at any point until the streaming payload
+has been fully written. A value that is never supplied is not delivered, and
+consumers resolve the member as described in :ref:`reading-trailer-members`.

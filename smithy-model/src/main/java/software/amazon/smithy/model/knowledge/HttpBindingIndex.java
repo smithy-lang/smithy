@@ -35,6 +35,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.TrailerTrait;
 
 /**
  * Computes and indexes the explicit and implicit HTTP bindings of a model.
@@ -448,6 +449,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                         HttpBinding.Location.RESPONSE_CODE,
                         member.getMemberName(),
                         trait));
+            } else if (member.hasTrait(TrailerTrait.ID)) {
+                // Trailers are never part of the document, and binding them is left to protocols.
+                bindings.add(new HttpBinding(member, HttpBinding.Location.UNBOUND, member.getMemberName(), null));
             } else {
                 unbound.add(member);
             }

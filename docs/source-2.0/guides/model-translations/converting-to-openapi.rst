@@ -61,6 +61,11 @@ in a Smithy model are not currently supported in the OpenAPI conversion.
   single property of the input or output of an API operation. This can
   be used for things like Amazon S3's `x-amz-meta-* headers`_. OpenAPI
   does not currently support this kind of header.
+* :ref:`Trailer members <trailer-trait>`: Members marked with the
+  ``trailer`` trait have values that are resolved only after a streaming
+  payload has been fully consumed. OpenAPI cannot describe these values,
+  so the conversion fails if a trailer member is found in the output of
+  an operation in the service.
 * :ref:`greedy-labels`: Greedy labels are used in HTTP URIs to act as a
   placeholder for multiple segments of a URI (for example,
   ``/foo/{baz+}/bar``). Some OpenAPI vendors/tooling support greedy labels
